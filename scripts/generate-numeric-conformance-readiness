@@ -410,7 +410,7 @@ def build_evidence() -> dict[str, Any]:
             "status": "closed:S5-T2-A1",
             "accepted_identity_count": 4,
             "accepted_selection_rule_count": 5,
-            "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             "result_decision_count": 2,
             "accepted_domain_rule_count": 0,
         },

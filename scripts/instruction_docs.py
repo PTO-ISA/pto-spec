@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
+from scripts.adr_records import ADR_TYPE_ORDER, adr_sort_key  # noqa: E402
 from scripts.instruction_contracts import (  # noqa: E402
     ResolvedInstructionContract,
     load_field_domains,
@@ -978,16 +979,45 @@ def render_nav(
             lines.append("  - Status:")
             for name, pages in status_groups:
                 lines.append(f"      - {_display_name(name)}:")
-                for path in pages:
-                    relative = path.relative_to(root / "docs").as_posix()
-                    title_match = re.search(
-                        r"^#\s+(.+)$",
-                        path.read_text(encoding="utf-8"),
-                        re.MULTILINE,
-                    )
-                    title = title_match.group(1).strip() if title_match else path.stem
-                    yaml_title = json.dumps(title, ensure_ascii=False)
-                    lines.append(f"          - {yaml_title}: {relative}")
+                grouped_pages: list[tuple[str | None, list[Path]]]
+                if name == "decisions":
+                    by_type: dict[str, list[Path]] = {
+                        adr_type: [] for adr_type in ADR_TYPE_ORDER
+                    }
+                    for path in pages:
+                        match = re.match(r"([A-Z]+)-([0-9]{4})-", path.name)
+                        if match is None or match.group(1) not in by_type:
+                            raise ValueError(f"invalid typed ADR filename: {path}")
+                        by_type[match.group(1)].append(path)
+                    grouped_pages = [
+                        (
+                            adr_type,
+                            sorted(
+                                by_type[adr_type],
+                                key=lambda path: adr_sort_key(
+                                    "ADR-" + "-".join(path.name.split("-", 2)[:2])
+                                ),
+                            ),
+                        )
+                        for adr_type in ADR_TYPE_ORDER
+                        if by_type[adr_type]
+                    ]
+                else:
+                    grouped_pages = [(None, pages)]
+                for adr_type, group_pages in grouped_pages:
+                    if adr_type is not None:
+                        lines.append(f"          - {adr_type}:")
+                    page_indent = 14 if adr_type is not None else 10
+                    for path in group_pages:
+                        relative = path.relative_to(root / "docs").as_posix()
+                        title_match = re.search(
+                            r"^#\s+(.+)$",
+                            path.read_text(encoding="utf-8"),
+                            re.MULTILINE,
+                        )
+                        title = title_match.group(1).strip() if title_match else path.stem
+                        yaml_title = json.dumps(title, ensure_ascii=False)
+                        lines.append(f"{' ' * page_indent}- {yaml_title}: {relative}")
     return "\n".join(lines) + "\n"
 
 

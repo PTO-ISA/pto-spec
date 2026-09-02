@@ -168,11 +168,11 @@ class ReleaseClosureTest(unittest.TestCase):
             "spec/evidence/architecture-readiness.json",
         )
         self.assertIn(
-            "ADR-0047",
+            "ADR-NUM-0008",
             units["PTO-ARCH-DATA-TYPES-ROUNDING"]["readiness_subjects"],
         )
         self.assertIn(
-            "ADR-0047",
+            "ADR-NUM-0008",
             requirements["PTO-TCVT-CONTRACT-001"]["readiness_subjects"],
         )
 

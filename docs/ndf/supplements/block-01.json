@@ -1,0 +1,992 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "block",
+  "chunk": 1,
+  "entries": [
+    {
+      "id": "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+      "source_path": "asl/block/model/operands/portable-carriers.asl",
+      "title": {
+        "en": "Local assembly consumer readiness",
+        "zh-CN": "Local 组装结果的消费者就绪条件"
+      },
+      "summary": {
+        "en": "This clause separates binding a Local assembled object from reading its payload. A consumer can wait without fault or effects and observes data only after the selected CELL range, or the complete LAST-published set, is ready.",
+        "zh-CN": "本条款将 Local 组装对象的绑定与载荷读取分开。消费者可在无故障、无效果的状态下等待，只有所选 CELL 范围或由 LAST 发布的完整集合就绪后才会观察到数据。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+      "source_path": "asl/block/model/operands/local-generation.asl",
+      "title": {
+        "en": "Local B.ASSEMBLE generation lifecycle",
+        "zh-CN": "Local B.ASSEMBLE 代次生命周期"
+      },
+      "summary": {
+        "en": "This clause groups Local B.ASSEMBLE writers by PE mask and architectural destination identity, with INIT establishing the parent descriptor and LAST controlling publication. Failed or incomplete work remains isolated from the previously committed mapping, payload, definedness, and sources.",
+        "zh-CN": "本条款以 PE 掩码和架构目标标识组织 Local B.ASSEMBLE 写入者，由 INIT 建立父描述符、LAST 控制发布。失败或未完成的工作与先前已提交的映射、载荷、有效性及源对象保持隔离。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001",
+      "source_path": "asl/block/model/operands/portable-carriers.asl",
+      "title": {
+        "en": "B.ASSEMBLE producer effect classes",
+        "zh-CN": "B.ASSEMBLE 生产者效果分类"
+      },
+      "summary": {
+        "en": "This clause classifies each accepted Tile handler group by how its auxiliary effects participate in assembly. Non-rollback effects are rejected before any assembly work, while rollback-safe and atomic auxiliary effects share the assembly transaction and become visible together.",
+        "zh-CN": "本条款按辅助效果参与组装的方式对已接受的 Tile 处理器组分类。不可回滚效果在任何组装工作前即被拒绝；可回滚和原子辅助效果则加入同一组装事务并一同可见。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-RANGE-001",
+      "source_path": "asl/block/operands/B.ASSEMBLE.asl",
+      "title": {
+        "en": "B.ASSEMBLE range modifier",
+        "zh-CN": "B.ASSEMBLE 范围修饰符"
+      },
+      "summary": {
+        "en": "This clause binds the exact B.ASSEMBLE encoding, controls, and wrapped GPR-relative offset to the immediately preceding contiguous B.IOT or B.IOS group. Local parent size codes 11 and 12 fault before reads or carrier changes, while the same raw codes remain meaningful for Shared groups.",
+        "zh-CN": "本条款将 B.ASSEMBLE 的精确编码、控制字段及按 XLEN 回绕的 GPR 相对偏移绑定到紧邻的连续 B.IOT 或 B.IOS 组。Local 父对象使用 SizeCode 11、12 时在读取或改变载体前报错，而相同原始编码在 Shared 组中仍有定义。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
+      "source_path": "asl/block/model/operands/shared-generation.asl",
+      "title": {
+        "en": "Collective Shared assembly publication",
+        "zh-CN": "Shared 集体组装发布"
+      },
+      "summary": {
+        "en": "This clause keeps the current Shared object visible until every participating PE reaches a matching, complete, non-overlapping LAST generation with ready data. Successful publication atomically replaces the full descriptor and payload; rejection leaves the previous generation intact.",
+        "zh-CN": "本条款在所有参与 PE 以一致元数据到达完整、无重叠且数据就绪的 LAST 代次之前，持续保留当前 Shared 对象。成功时完整描述符与载荷原子替换；失败时上一代保持不变。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-SHARED-STANDALONE-001",
+      "source_path": "asl/block/model/operands/range-modifiers.asl",
+      "title": {
+        "en": "Multi-PE Shared destination assembly",
+        "zh-CN": "多 PE Shared 目标组装要求"
+      },
+      "summary": {
+        "en": "This clause distinguishes ordinary single-PE B.IOS publication from multi-PE Shared production. A multi-PE destination without B.ASSEMBLE faults before descriptor, payload, memory, or publication effects, preventing partial collective publication.",
+        "zh-CN": "本条款区分普通单 PE B.IOS 发布与多 PE Shared 生产。多 PE 目标若没有 B.ASSEMBLE，会在描述符、载荷、内存或发布效果发生前报错，从而避免部分集体结果被发布。"
+      }
+    },
+    {
+      "id": "PTO-B-ASSEMBLE-SPECULATION-001",
+      "source_path": "asl/block/model/operands/portable-carriers.asl",
+      "title": {
+        "en": "Speculative assembly contribution identity",
+        "zh-CN": "推测式组装贡献的身份"
+      },
+      "summary": {
+        "en": "This clause tags dynamic assembly writers with instruction-instance and execution-domain identity. Squashing a domain removes its unretired contributions while preserving the older committed mapping, so speculative work cannot leak into published state.",
+        "zh-CN": "本条款为动态组装写入者标记指令实例与执行域身份。撤销某执行域时，仅移除其未退休贡献并保留较旧的已提交映射，避免推测工作泄漏到已发布状态。"
+      }
+    },
+    {
+      "id": "PTO-B-CATR-CONTROL-001",
+      "source_path": "asl/block/attributes/B.CATR.asl",
+      "title": {
+        "en": "B.CATR control and continuation effects",
+        "zh-CN": "B.CATR 控制与延续效果"
+      },
+      "summary": {
+        "en": "This clause makes B.CATR a unique block-header control for operation-defined dimension reduction, post-commit trapping, and far-result exposure. Its trap occurs only after atomic result commit, while far execution exposes results through the initiating core's commit boundary.",
+        "zh-CN": "本条款将 B.CATR 定义为块头中唯一的控制项，用于操作定义的维度归约、提交后陷阱和远端结果公开。陷阱只在结果原子提交后发生，远端执行的结果也只通过发起 Core 的提交边界可见。"
+      }
+    },
+    {
+      "id": "PTO-B-DATR-FIELDS-001",
+      "source_path": "asl/block/attributes/B.DATR.asl",
+      "title": {
+        "en": "B.DATR field presence and applicability",
+        "zh-CN": "B.DATR 字段存在性与适用范围"
+      },
+      "summary": {
+        "en": "This clause preserves the distinction between an omitted B.DATR and explicitly encoded zero fields, then delegates nonzero field applicability to the selected Tile operation schema. TGPR2T receives its dedicated padding and byte-offset interpretation, while reserved bits reject before effects.",
+        "zh-CN": "本条款保留“省略 B.DATR”与“显式编码零值字段”的区别，并把非零字段的适用性交给所选 Tile 操作模式判断。TGPR2T 使用专门的填充值与字节偏移解释，保留位则在产生效果前触发拒绝。"
+      }
+    },
+    {
+      "id": "PTO-B-DIM-WRITE-001",
+      "source_path": "asl/block/attributes/B.DIM.asl",
+      "title": {
+        "en": "B.DIM dimension-register writes",
+        "zh-CN": "B.DIM 维度寄存器写入"
+      },
+      "summary": {
+        "en": "This clause limits B.DIM sources to the absolute architectural GPR range and defines each LB value from the low 16 bits plus the unsigned immediate. Across full and compressed forms, a block exposes at most one write to each selected LB.",
+        "zh-CN": "本条款把 B.DIM 的源限制在绝对架构 GPR 范围，并由 GPR 低 16 位与无符号立即数生成各 LB 值。在完整与压缩形式合并考虑时，一个块对每个选中 LB 最多产生一次写入。"
+      }
+    },
+    {
+      "id": "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+      "source_path": "asl/block/attributes/B.FPATR.asl",
+      "title": {
+        "en": "B.FPATR matrix post-processing controls",
+        "zh-CN": "B.FPATR 矩阵后处理控制"
+      },
+      "summary": {
+        "en": "This clause makes one early B.FPATR record the complete matrix post-processing control for CUBE Matrix blocks. It scopes Shared transposes and CScale, rejects reserved modes before descriptor effects, and makes the destination, enabled reductions, and numeric status visible as one bit-exact atomic result group.",
+        "zh-CN": "本条款将块头前部唯一的 B.FPATR 记录设为 CUBE Matrix 块的完整后处理控制。它限定 Shared 转置与 CScale 的适用范围，在描述符效果前拒绝保留模式，并将目标结果、启用的归约输出及数值状态作为一个位精确的原子结果组公开。"
+      }
+    },
+    {
+      "id": "PTO-B-HINT-LIFECYCLE-001",
+      "source_path": "asl/block/lifecycle/B.HINT.asl",
+      "title": {
+        "en": "B.HINT and trace-block lifecycle",
+        "zh-CN": "B.HINT 与跟踪块生命周期"
+      },
+      "summary": {
+        "en": "This clause keeps ordinary hints functionally inert and unique within a block header, while TRACE can open an empty trace block only on the predecessor-selected path. An installed trace block remains active until an explicit stop or subsequent block start.",
+        "zh-CN": "本条款使普通提示对功能结果无影响，并限制其在块头中唯一出现；TRACE 只有位于前驱提交所选路径时才能打开空跟踪块。已安装的跟踪块持续有效，直到显式停止或后续块启动。"
+      }
+    },
+    {
+      "id": "PTO-B-IOR-BINDING-001",
+      "source_path": "asl/block/operands/B.IOR.asl",
+      "title": {
+        "en": "B.IOR GPR operand binding",
+        "zh-CN": "B.IOR 的 GPR 操作数绑定"
+      },
+      "summary": {
+        "en": "This clause defines how complete block schemas consume absolute GPR selectors and preserves omission separately from an encoded zero selector. It also closes the exceptional TGPR2T 3+1 source layout and indexed TLSU base/stride rules before any allocation, read, or effect.",
+        "zh-CN": "本条款定义完整块模式如何消费绝对 GPR 选择器，并保留“省略”与“编码零选择器”的区别。它还在分配、读取或产生效果前闭合 TGPR2T 特有的 3+1 源布局以及索引 TLSU 的基址/步长规则。"
+      }
+    },
+    {
+      "id": "PTO-B-IOS-SHARED-STATE-001",
+      "source_path": "asl/block/operands/B.IOS.asl",
+      "title": {
+        "en": "B.IOS Shared object binding",
+        "zh-CN": "B.IOS 的 Shared 对象绑定"
+      },
+      "summary": {
+        "en": "This clause maps B.IOS to the absolute S0..S63 namespace and one Core-wide Shared allocation, independent of the participating-PE mask. A zero mask is inert, one issuer publishes a complete parent, multi-PE destinations use B.ASSEMBLE, and pending sources wait without consumption.",
+        "zh-CN": "本条款将 B.IOS 映射到绝对 S0..S63 命名空间和一个 Core 范围的 Shared 分配，其容量不随参与 PE 掩码倍增。零掩码无效果；单一发布者产生完整父对象，多 PE 目标使用 B.ASSEMBLE，未就绪源则等待且不消费绑定。"
+      }
+    },
+    {
+      "id": "PTO-B-IOT-STREAM-001",
+      "source_path": "asl/block/operands/B.IOT.asl",
+      "title": {
+        "en": "B.IOT Local stream and generation order",
+        "zh-CN": "B.IOT 的 Local 流与代次顺序"
+      },
+      "summary": {
+        "en": "This clause defines one B.IOT stream by a common PE mask, one terminating L marker, per-PE Local capacity, and newest-first source resolution. Each successful destination becomes the newest generation in its hand while older source generations remain available.",
+        "zh-CN": "本条款以共同 PE 掩码、唯一终止 L 标记、每 PE Local 容量及“最新优先”的源解析定义一条 B.IOT 流。每个成功目标成为其 hand 中的最新代次，旧源代次仍保持可访问。"
+      }
+    },
+    {
+      "id": "PTO-B-SUBVIEW-DESCRIPTOR-001",
+      "source_path": "asl/block/model/operands/subview-descriptor.asl",
+      "title": {
+        "en": "Bounded Local CUBE subview descriptor",
+        "zh-CN": "有界 Local CUBE 子视图描述符"
+      },
+      "summary": {
+        "en": "This clause derives a Local CUBE subview descriptor from its parent, offset, and CELL-ordered capacity without changing the parent lifetime or payload. Unsupported operation families, empty valid geometry, and out-of-range views fault before effects.",
+        "zh-CN": "本条款从父描述符、偏移和按 CELL 排列的容量派生 Local CUBE 子视图描述符，而不改变父对象的生命周期或载荷。不支持的操作族、空有效几何及越界视图都会在产生效果前报错。"
+      }
+    },
+    {
+      "id": "PTO-B-SUBVIEW-RANGE-001",
+      "source_path": "asl/block/operands/B.SUBVIEW.asl",
+      "title": {
+        "en": "B.SUBVIEW range modifier",
+        "zh-CN": "B.SUBVIEW 范围修饰符"
+      },
+      "summary": {
+        "en": "This clause attaches the exact B.SUBVIEW encoding and wrapped GPR-relative offset to the immediately preceding contiguous B.IOT or B.IOS group. It preserves raw controls and distinguishes Local-invalid size codes from their legal Shared interpretation before carrier changes.",
+        "zh-CN": "本条款将 B.SUBVIEW 的精确编码和按 XLEN 回绕的 GPR 相对偏移附着到紧邻的连续 B.IOT 或 B.IOS 组。它保留原始控制字段，并在改变载体前区分 Local 中非法的 SizeCode 与其在 Shared 中的合法解释。"
+      }
+    },
+    {
+      "id": "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+      "source_path": "asl/block/model/operands/shared-generation.asl",
+      "title": {
+        "en": "Per-PE Shared subview offsets",
+        "zh-CN": "Shared 子视图的逐 PE 偏移"
+      },
+      "summary": {
+        "en": "This clause evaluates a Shared B.SUBVIEW offset in each participating PE's private GPR context while keeping one common encoded size. Different selected PEs can therefore materialize distinct ranges from the same published Shared parent.",
+        "zh-CN": "本条款在每个参与 PE 的私有 GPR 上下文中计算 Shared B.SUBVIEW 偏移，同时保留共同的编码大小。因此，不同选中 PE 可以从同一个已发布 Shared 父对象形成不同范围。"
+      }
+    },
+    {
+      "id": "PTO-BARG-CONTINUATION-001",
+      "source_path": "asl/block/model/state/barg.asl",
+      "title": {
+        "en": "BARG block continuation state",
+        "zh-CN": "BARG 块延续状态"
+      },
+      "summary": {
+        "en": "This clause establishes the BARG fields initialized by BSTART and limits next-PC selection to block boundaries at BSTOP or a following BSTART. Control flow therefore remains attached to the retiring block's stored continuation rather than changing mid-block.",
+        "zh-CN": "本条款确定 BSTART 初始化的 BARG 字段，并将下一 PC 的选择限制在 BSTOP 或后续 BSTART 的块边界。因而控制流始终依附于退休块保存的延续信息，不会在块内中途改变。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-ERCOV-RESERVED-001",
+      "source_path": "asl/block/lifecycle/ERCOV.asl",
+      "title": {
+        "en": "Reserved ERCOV encoding family",
+        "zh-CN": "保留的 ERCOV 编码族"
+      },
+      "summary": {
+        "en": "This clause reserves every ERCOV selector combination. Any matching encoding faults before register reads or changes to memory-command, trap-context, execution-context, or TPC state, keeping the family free of partial behavior.",
+        "zh-CN": "本条款保留 ERCOV 的所有选择器组合。任何匹配编码都会在读取寄存器或改变内存命令、陷阱上下文、执行上下文及 TPC 状态前报错，确保该编码族没有部分行为。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-ESAVE-RESERVED-001",
+      "source_path": "asl/block/lifecycle/ESAVE.asl",
+      "title": {
+        "en": "Reserved ESAVE encoding family",
+        "zh-CN": "保留的 ESAVE 编码族"
+      },
+      "summary": {
+        "en": "This clause reserves every ESAVE selector combination. Matching forms fault before register access or architecture-visible state changes, so no legacy or implementation-specific save behavior enters PTO semantics.",
+        "zh-CN": "本条款保留 ESAVE 的所有选择器组合。匹配形式在访问寄存器或改变架构可见状态前报错，从而避免旧有或实现特定的保存行为进入 PTO 语义。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001",
+      "source_path": "asl/block/model/dispatch/tile-execution.asl",
+      "title": {
+        "en": "TGPR2T numeric Tile result boundary",
+        "zh-CN": "TGPR2T 数值 Tile 结果边界"
+      },
+      "summary": {
+        "en": "This clause keeps TGPR2T output as an ordinary numeric U8 CUBE Tile, separate from predicate-cell and implicit-mask concepts. Its complete schema owns destination shape, definedness, and padding validation before atomic publication.",
+        "zh-CN": "本条款将 TGPR2T 输出限定为普通的数值 U8 CUBE Tile，与谓词 CELL 或隐式掩码概念分离。其完整模式在原子发布前负责校验目标形态、整体有效性和填充规则。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001",
+      "source_path": "asl/block/model/dispatch/tgpr2t-schema.asl",
+      "title": {
+        "en": "TGPR2T complete operand schema",
+        "zh-CN": "TGPR2T 完整操作数模式"
+      },
+      "summary": {
+        "en": "This clause fixes TGPR2T to two contiguous source-only B.IOR records, one terminating destination B.IOT, and one of two exact shape pairs. Missing, reordered, surplus, destination-bearing, or wrong-shape records reject before allocation or source access.",
+        "zh-CN": "本条款将 TGPR2T 固定为两条连续的纯源 B.IOR、一条终止型目标 B.IOT，以及两组精确形状之一。缺失、乱序、冗余、带目标或形状错误的记录都会在分配或读取源之前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-MSET-FILL-001",
+      "source_path": "asl/block/lifecycle/MSET.asl",
+      "title": {
+        "en": "MSET byte-fill range",
+        "zh-CN": "MSET 字节填充范围"
+      },
+      "summary": {
+        "en": "This clause defines MSET as a byte replication over the full unsigned XLEN length from absolute GPR operands. Nonempty wrapped ranges reject, and complete preflight precedes the first visible byte write, avoiding partial fills.",
+        "zh-CN": "本条款将 MSET 定义为使用绝对 GPR 操作数、覆盖完整无符号 XLEN 长度的字节复制。非空且回绕的范围会被拒绝，完整预检先于首个可见字节写入，从而避免部分填充。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-TILE-OPERATION-APPLICABILITY-001",
+      "source_path": "asl/block/model/operands/subview-descriptor.asl",
+      "title": {
+        "en": "B.SUBVIEW operation applicability",
+        "zh-CN": "B.SUBVIEW 的操作适用范围"
+      },
+      "summary": {
+        "en": "This clause makes B.SUBVIEW structurally available across all accepted Tile operations while leaving dtype, layout, shape, and definedness checks with the selected operation handler. The modifier does not introduce a second legality model.",
+        "zh-CN": "本条款使 B.SUBVIEW 在结构上适用于所有已接受 Tile 操作，同时由所选操作处理器继续负责数据类型、布局、形状和有效性检查。该修饰符不会引入第二套合法性模型。"
+      }
+    },
+    {
+      "id": "PTO-BLOCK-XB-RESERVED-001",
+      "source_path": "asl/block/encoding/XB.asl",
+      "title": {
+        "en": "Reserved XB encoding family",
+        "zh-CN": "保留的 XB 编码族"
+      },
+      "summary": {
+        "en": "This clause reserves the complete raw XB encoding family. Matching values fault before operand decode or changes to command, block, memory, cross-block, or control-flow state, leaving no implementation-defined execution path.",
+        "zh-CN": "本条款保留整个 XB 原始编码族。匹配值在操作数解码或改变命令、块、内存、跨块及控制流状态前报错，不留下由实现自行定义的执行路径。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-CALL-DECISION-BINDING-001",
+      "source_path": "asl/block/execution/BSTART.CALL.asl",
+      "title": {
+        "en": "BSTART.CALL decision binding",
+        "zh-CN": "BSTART.CALL 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTART.CALL mnemonic owner as the executable binding for its accepted assembly, encoding, default, effect, ordering, and fault decisions. Implementers trace all observable BSTART.CALL behavior to that owner and its operation region.",
+        "zh-CN": "本条款将 BSTART.CALL 助记符所有者确立为其已接受的汇编、编码、默认值、效果、顺序和故障决策的可执行绑定。实现者可将所有可观察 BSTART.CALL 行为追溯到该所有者及其操作区域。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-DECISION-BINDING-001",
+      "source_path": "asl/block/lifecycle/BSTART.asl",
+      "title": {
+        "en": "BSTART decision binding",
+        "zh-CN": "BSTART 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTART mnemonic owner as the executable binding for its accepted assembly, encoding, default, effect, ordering, and fault decisions. It prevents a separate block-start interpretation from diverging from the owning operation region.",
+        "zh-CN": "本条款将 BSTART 助记符所有者确立为其已接受的汇编、编码、默认值、效果、顺序和故障决策的可执行绑定，避免另设的块启动解释偏离 owning operation 区域。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-FP-CONTROL-001",
+      "source_path": "asl/block/execution/BSTART.FP.asl",
+      "title": {
+        "en": "BSTART.FP control-flow forms",
+        "zh-CN": "BSTART.FP 控制流形式"
+      },
+      "summary": {
+        "en": "This clause limits BSTART.FP to the assigned branch forms and initializes floating-block continuation state only after predecessor retirement succeeds. Deleted call forms and nonzero fixup payloads reject before effects, so no partial FP block is installed.",
+        "zh-CN": "本条款将 BSTART.FP 限定为已分配的分支形式，并仅在前驱成功退休后初始化浮点块延续状态。已删除的调用形式及非零 Fixup 载荷在产生效果前被拒绝，因此不会安装部分 FP 块。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-GMOV-COLLECTIVE-001",
+      "source_path": "asl/block/execution/BSTART.GMOV.asl",
+      "title": {
+        "en": "GMOV four-PE collective transfer",
+        "zh-CN": "GMOV 四 PE 集体传输"
+      },
+      "summary": {
+        "en": "This clause defines GMOV as a four-PE rendezvous over peer-resolved Local sources, with preflight before any selected destination write. The PE mask selects only destination writes, and the operation has no global-memory or Shared-register effect.",
+        "zh-CN": "本条款将 GMOV 定义为基于各对端解析 Local 源的四 PE 汇合，并在任何选中目标写入前完成预检。PE 掩码只选择目标写入，该操作不产生全局内存或 Shared 寄存器效果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-ICALL-DECISION-BINDING-001",
+      "source_path": "asl/block/execution/BSTART.ICALL.asl",
+      "title": {
+        "en": "BSTART.ICALL decision binding",
+        "zh-CN": "BSTART.ICALL 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTART.ICALL mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and fault boundaries. All observable indirect-call block-start behavior is traced to that operation region.",
+        "zh-CN": "本条款将 BSTART.ICALL 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障边界的可执行绑定。所有可观察的间接调用块启动行为都可追溯到该操作区域。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+      "source_path": "asl/block/execution/BSTART.MGATHER.CAS.asl",
+      "title": {
+        "en": "MGATHER.CAS block operand schema",
+        "zh-CN": "MGATHER.CAS 块操作数模式"
+      },
+      "summary": {
+        "en": "This clause fixes the participating MGATHER.CAS block to an explicit GM base/element-stride binding, LB0, and two ordered Local Tile records carrying index, expected, replacement, and destination operands. Omitted dimensions and attributes take the operation defaults, while unused B.IOR fields remain zero.",
+        "zh-CN": "本条款将参与执行的 MGATHER.CAS 块固定为显式 GM 基址/元素步长绑定、LB0，以及两条有序 Local Tile 记录，分别携带索引、期望值、替换值和目标。省略的维度与属性采用该操作默认值，未使用的 B.IOR 字段保持为零。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+      "source_path": "asl/block/execution/BSTART.MGATHER.MASK.asl",
+      "title": {
+        "en": "Masked gather block operand schema",
+        "zh-CN": "带掩码 gather 块操作数模式"
+      },
+      "summary": {
+        "en": "This clause fixes MGATHER.MASK to one explicit base/element-stride B.IOR, LB0, and one terminating Local Tile record containing index, mask, and destination. Missing or extra structure is rejected before memory or destination effects, while omitted fields use the masked-gather defaults.",
+        "zh-CN": "本条款将 MGATHER.MASK 固定为一条显式基址/元素步长 B.IOR、LB0，以及一条包含索引、掩码和目标的终止型 Local Tile 记录。结构缺失或冗余会在内存或目标效果前被拒绝，省略字段采用带掩码 gather 的默认值。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-MGATHER-SCHEMA-001",
+      "source_path": "asl/block/execution/BSTART.MGATHER.asl",
+      "title": {
+        "en": "Gather block operand schema",
+        "zh-CN": "Gather 块操作数模式"
+      },
+      "summary": {
+        "en": "This clause defines the complete MGATHER block shape: explicit base and element stride, LB0, and one terminating Local record carrying index and destination. The unused GPR fields remain zero and omitted dimensions or attributes resolve through the MGATHER defaults.",
+        "zh-CN": "本条款定义 MGATHER 的完整块形态：显式基址与元素步长、LB0，以及一条携带索引和目标的终止型 Local 记录。未使用的 GPR 字段保持为零，省略的维度或属性按 MGATHER 默认值解析。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+      "source_path": "asl/block/execution/BSTART.MSCATTER.MASK.asl",
+      "title": {
+        "en": "Masked scatter block operand schema",
+        "zh-CN": "带掩码 scatter 块操作数模式"
+      },
+      "summary": {
+        "en": "This clause defines masked scatter as an explicit GM base/element-stride binding plus two ordered source-only Local records: data with index, then the sole terminating mask record. No destination Tile is allocated, and malformed ordering or unused GPR fields reject before stores.",
+        "zh-CN": "本条款将带掩码 scatter 定义为显式 GM 基址/元素步长绑定，加上两条有序的纯源 Local 记录：先是数据与索引，再是唯一终止的掩码记录。该操作不分配目标 Tile，顺序错误或未使用 GPR 字段非法时会在存储前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-MSCATTER-SCHEMA-001",
+      "source_path": "asl/block/execution/BSTART.MSCATTER.asl",
+      "title": {
+        "en": "Scatter block operand schema",
+        "zh-CN": "Scatter 块操作数模式"
+      },
+      "summary": {
+        "en": "This clause fixes MSCATTER to an explicit GM base/element-stride binding, LB0, and one terminating source-only Local record containing data and index. Omitted dimensions and attributes use scatter defaults, and no destination Tile is produced.",
+        "zh-CN": "本条款将 MSCATTER 固定为显式 GM 基址/元素步长绑定、LB0，以及一条包含数据和索引的终止型纯源 Local 记录。省略的维度和属性采用 scatter 默认值，操作不会生成目标 Tile。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-SFU-DECISION-BINDING-001",
+      "source_path": "asl/block/execution/BSTART.SFU.asl",
+      "title": {
+        "en": "BSTART.SFU decision binding",
+        "zh-CN": "BSTART.SFU 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTART.SFU mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and faults. Specialized-function block dispatch therefore has one traceable source of observable behavior.",
+        "zh-CN": "本条款将 BSTART.SFU 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障的可执行绑定。因此，专用功能块分派只有一个可追溯的可观察行为来源。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-STD-CONTROL-001",
+      "source_path": "asl/block/execution/BSTART.STD.asl",
+      "title": {
+        "en": "BSTART.STD control-flow forms",
+        "zh-CN": "BSTART.STD 控制流形式"
+      },
+      "summary": {
+        "en": "This clause limits BSTART.STD to the assigned branch forms and installs standard-block BARG state only after the predecessor retires. Nonzero fixups and deleted call forms reject before effects, preventing a partially initialized standard block.",
+        "zh-CN": "本条款将 BSTART.STD 限定为已分配的分支形式，并仅在前驱退休后安装标准块 BARG 状态。非零 Fixup 和已删除调用形式在产生效果前被拒绝，避免形成部分初始化的标准块。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-SYS-CONTROL-001",
+      "source_path": "asl/block/execution/BSTART.SYS.asl",
+      "title": {
+        "en": "BSTART.SYS sequential control",
+        "zh-CN": "BSTART.SYS 顺序控制"
+      },
+      "summary": {
+        "en": "This clause defines BSTART.SYS as a fall-through-only system-block start with a zero displacement. It publishes the block PC and SYS type after predecessor retirement but does not install selectable BPCN, TYPE, or TAKEN continuation state.",
+        "zh-CN": "本条款将 BSTART.SYS 定义为仅顺序落下且位移为零的系统块启动。它在前驱退休后发布块 PC 与 SYS 类型，但不安装可供选择的 BPCN、TYPE 或 TAKEN 延续状态。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TEPL-DECISION-BINDING-001",
+      "source_path": "asl/block/execution/BSTART.TEPL.asl",
+      "title": {
+        "en": "BSTART.TEPL compatibility binding",
+        "zh-CN": "BSTART.TEPL 兼容绑定"
+      },
+      "summary": {
+        "en": "This clause keeps the BSTART.TEPL owner as the executable compatibility binding for its accepted encoding, defaults, effects, ordering, and faults. Compatibility spelling does not create a second semantic path beside the VEC or SFU operation owner.",
+        "zh-CN": "本条款保留 BSTART.TEPL 所有者，作为其已接受编码、默认值、效果、顺序和故障的可执行兼容绑定。兼容助记符不会在 VEC 或 SFU 操作所有者之外建立第二条语义路径。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMV.ACC.asl",
+      "title": {
+        "en": "TGEMV with explicit accumulator",
+        "zh-CN": "带显式累加器的 TGEMV"
+      },
+      "summary": {
+        "en": "This clause defines the Local-only TGEMV.ACC form with M fixed to one, explicit C input and newly published D output, and one complete B.FPATR post-processing record. Shared bindings and transpose controls are excluded; all schema and source checks complete before C is preserved and D plus auxiliary results publish atomically.",
+        "zh-CN": "本条款定义仅使用 Local 的 TGEMV.ACC：M 固定为一，显式读取 C 并新发布 D，同时使用一条完整 B.FPATR 后处理记录。Shared 绑定和转置控制被排除；所有模式与源检查完成后，C 保持不变，D 与辅助结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
+      "title": {
+        "en": "TGEMV with row bias",
+        "zh-CN": "带行偏置的 TGEMV"
+      },
+      "summary": {
+        "en": "This clause defines the Local-only TGEMV.BIAS form with M fixed to one and a Local row-major 1xN bias source. Shared operands and transpose are excluded, while one B.FPATR closes post-processing and successful outputs publish atomically after complete preflight.",
+        "zh-CN": "本条款定义仅使用 Local 的 TGEMV.BIAS，M 固定为一，并读取一个 Local 行主序 1×N 偏置源。Shared 操作数和转置被排除；一条 B.FPATR 闭合后处理，完整预检后成功结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMV-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMV.asl",
+      "title": {
+        "en": "Base TGEMV contract",
+        "zh-CN": "基础 TGEMV 契约"
+      },
+      "summary": {
+        "en": "This clause defines the Local-only TGEMV form with M fixed to one, positive N and K dimensions, and one compatible matrix numeric class. Shared bindings and transpose are illegal; a zero PE mask is inert, and successful outputs appear atomically after complete schema and source preflight.",
+        "zh-CN": "本条款定义仅使用 Local 的 TGEMV：M 固定为一，N、K 为正，并使用兼容的矩阵数值类别。Shared 绑定和转置均非法；PE 掩码为零时无效果，完整模式与源预检后成功结果原子可见。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMVMX.ACC.asl",
+      "title": {
+        "en": "MX TGEMV with explicit accumulator",
+        "zh-CN": "带显式累加器的 MX TGEMV"
+      },
+      "summary": {
+        "en": "This clause extends Local-only TGEMV.ACC with per-matrix E8M0 scale operands when the selected MX input type requires them. C and D use distinct encoded identities, C persists, Shared and transpose remain excluded, and all outputs publish atomically after complete preflight.",
+        "zh-CN": "本条款在仅使用 Local 的 TGEMV.ACC 上增加按矩阵独立绑定的 E8M0 缩放源，具体取决于所选 MX 输入类型。C 与 D 使用不同编码身份且 C 保持不变；Shared 与转置仍被排除，完整预检后所有输出原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
+      "title": {
+        "en": "MX TGEMV with row bias",
+        "zh-CN": "带行偏置的 MX TGEMV"
+      },
+      "summary": {
+        "en": "This clause combines Local-only TGEMV bias processing with the E8M0 scale operands required independently by each MX matrix side. M remains one, Shared and transpose are excluded, and the bias plus matrix sources feed one atomically published post-processed result.",
+        "zh-CN": "本条款把仅使用 Local 的 TGEMV 偏置处理与 MX 两侧按需独立使用的 E8M0 缩放源结合起来。M 保持为一，Shared 与转置被排除，偏置和矩阵源共同产生一个原子发布的后处理结果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TGEMVMX-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TGEMVMX.asl",
+      "title": {
+        "en": "Base MX TGEMV contract",
+        "zh-CN": "基础 MX TGEMV 契约"
+      },
+      "summary": {
+        "en": "This clause defines Local-only MX TGEMV with M fixed to one and E8M0 scale sources attached independently to matrix sides that require them. Shared operands and transpose are excluded, and complete schema, capacity, readiness, and alias checks precede atomic output publication.",
+        "zh-CN": "本条款定义仅使用 Local 的 MX TGEMV，M 固定为一，并为需要缩放的矩阵侧独立绑定 E8M0 源。Shared 操作数和转置被排除，完整的模式、容量、就绪与别名检查先于结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-CUBE-001",
+      "source_path": "asl/block/execution/BSTART.TLOAD.asl",
+      "title": {
+        "en": "TLOAD CUBE layout conversion",
+        "zh-CN": "TLOAD 的 CUBE 布局转换"
+      },
+      "summary": {
+        "en": "This clause assigns ND2M32, ND2M16, and ND2N8 layouts to Local CUBE conversion during TLOAD. The BSTART data type supplies the element type, LB1 and LB0 define valid rows and columns, and LB2 or Shared destinations are rejected.",
+        "zh-CN": "本条款将 ND2M32、ND2M16 和 ND2N8 布局用于 TLOAD 的 Local CUBE 转换。元素类型来自 BSTART 数据类型，LB1 与 LB0 分别给出有效行列；LB2 或 Shared 目标会被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-MEMORY-001",
+      "source_path": "asl/block/execution/BSTART.TLOAD.asl",
+      "title": {
+        "en": "TLOAD memory footprint and publication",
+        "zh-CN": "TLOAD 内存范围与发布"
+      },
+      "summary": {
+        "en": "This clause derives each selected TLOAD footprint from the PE-private GM base and byte row stride, then preflights it before publishing a Local or Shared destination. One PE can publish a complete Shared parent; multi-PE production instead uses explicit B.ASSEMBLE ranges.",
+        "zh-CN": "本条款由各 PE 私有的 GM 基址和字节行步长计算选中 TLOAD 的访问范围，并在发布 Local 或 Shared 目标前完成预检。单个 PE 可发布完整 Shared 父对象；多 PE 生产则使用带显式范围的 B.ASSEMBLE。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMUL.ACC.asl",
+      "title": {
+        "en": "TMATMUL with explicit accumulator",
+        "zh-CN": "带显式累加器的 TMATMUL"
+      },
+      "summary": {
+        "en": "This clause defines TMATMUL.ACC with explicit C input and newly published D, Local per-PE dimensions or cooperative Core-total M, and compatible matrix types. Shared primaries can replace defined matrix groups, but C and outputs remain Local; complete preflight preserves C and enables atomic publication of D and post-processing results.",
+        "zh-CN": "本条款定义 TMATMUL.ACC：显式读取 C 并新发布 D，维度可为每 PE 的 Local 值或协作执行的 Core 总 M，矩阵类型需兼容。Shared 主输入可替换指定矩阵组，但 C 与输出保持 Local；完整预检后 C 不变，D 与后处理结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
+      "title": {
+        "en": "TMATMUL with row bias",
+        "zh-CN": "带行偏置的 TMATMUL"
+      },
+      "summary": {
+        "en": "This clause defines TMATMUL.BIAS with a Local row-major 1xN bias, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use the complete PE group and Core-total M; successful outputs publish atomically after Shared readiness and full legality preflight.",
+        "zh-CN": "本条款定义 TMATMUL.BIAS：使用 Local 行主序 1×N 偏置、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用完整 PE 组和 Core 总 M；Shared 就绪及全部合法性预检完成后，成功结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMUL-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMUL.asl",
+      "title": {
+        "en": "Base TMATMUL contract",
+        "zh-CN": "基础 TMATMUL 契约"
+      },
+      "summary": {
+        "en": "This clause defines the base matrix-multiply form across Local operands and supported cooperative Shared-primary combinations. It distinguishes per-PE dimensions from Core-total cooperative M, requires complete Shared publication and preflight, and publishes outputs atomically while preserving sources.",
+        "zh-CN": "本条款定义基础矩阵乘形式，覆盖 Local 操作数及受支持的协作 Shared 主输入组合。它区分每 PE 维度与协作执行的 Core 总 M，要求 Shared 完整发布并完成预检，随后原子发布输出且保留源对象。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMULMX.ACC.asl",
+      "title": {
+        "en": "MX TMATMUL with explicit accumulator",
+        "zh-CN": "带显式累加器的 MX TMATMUL"
+      },
+      "summary": {
+        "en": "This clause adds independently required E8M0 scales to TMATMUL.ACC while retaining explicit, distinct C and D operands. Local and cooperative Shared-primary forms share complete readiness and legality preflight; C persists and all destination, reduction, and numeric-status results publish atomically.",
+        "zh-CN": "本条款在 TMATMUL.ACC 上增加矩阵两侧按需独立使用的 E8M0 缩放源，同时保留显式且相互区分的 C、D 操作数。Local 与协作 Shared 主输入形式共用完整就绪与合法性预检；C 保持不变，目标、归约和数值状态结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
+      "title": {
+        "en": "MX TMATMUL with row bias",
+        "zh-CN": "带行偏置的 MX TMATMUL"
+      },
+      "summary": {
+        "en": "This clause combines MX matrix scaling with a Local 1xN bias and supported Local or cooperative Shared-primary operands. Each matrix side contributes an E8M0 scale only when its type requires one, and successful post-processed outputs publish atomically after full preflight.",
+        "zh-CN": "本条款将 MX 矩阵缩放、Local 1×N 偏置以及受支持的 Local 或协作 Shared 主输入组合起来。每个矩阵侧仅在其类型需要时提供 E8M0 缩放源，完整预检后后处理结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMATMULMX-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TMATMULMX.asl",
+      "title": {
+        "en": "Base MX TMATMUL contract",
+        "zh-CN": "基础 MX TMATMUL 契约"
+      },
+      "summary": {
+        "en": "This clause defines the base MX matrix multiply with independently required E8M0 scales and supported Local or cooperative Shared-primary operands. Cooperative execution uses Core-total M and all PEs; complete source, shape, capacity, and readiness checks precede atomic output publication.",
+        "zh-CN": "本条款定义基础 MX 矩阵乘，包含矩阵两侧按需独立使用的 E8M0 缩放源，以及受支持的 Local 或协作 Shared 主输入。协作执行使用 Core 总 M 与全部 PE；完整的源、形状、容量和就绪检查先于结果原子发布。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TMOV-SHARED-001",
+      "source_path": "asl/block/execution/BSTART.TMOV.asl",
+      "title": {
+        "en": "TMOV Shared publication and consumption",
+        "zh-CN": "TMOV 的 Shared 发布与消费"
+      },
+      "summary": {
+        "en": "This clause separates complete single-issuer Local-to-Shared publication from multi-PE assembly and makes Shared-to-Local wait for a whole-ready parent without consuming bindings. B.SUBVIEW is the only partial-source mechanism, and a zero PE mask has no effect.",
+        "zh-CN": "本条款区分单发布者完整 Local-to-Shared 发布与多 PE 组装，并使 Shared-to-Local 在不消费绑定的情况下等待完整父对象就绪。B.SUBVIEW 是唯一的部分源机制，PE 掩码为零时无效果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TPREFETCH-MEMORY-001",
+      "source_path": "asl/block/execution/BSTART.TPREFETCH.asl",
+      "title": {
+        "en": "TPREFETCH memory-event boundary",
+        "zh-CN": "TPREFETCH 内存事件边界"
+      },
+      "summary": {
+        "en": "This clause gives TPREFETCH the same typed, strided footprint preflight and load-event ordering, fault, and restart decomposition as TLOAD, but without destination publication. All four PE footprints are validated before any observable prefetch effect.",
+        "zh-CN": "本条款使 TPREFETCH 与 TLOAD 共用带类型、带步长的访问范围预检，以及加载事件的顺序、故障与重启分解，但不发布目标。四个 PE 的访问范围都在任何可观察预取效果前完成校验。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TSTORE-CUBE-001",
+      "source_path": "asl/block/execution/BSTART.TSTORE.asl",
+      "title": {
+        "en": "TSTORE CUBE layout conversion",
+        "zh-CN": "TSTORE 的 CUBE 布局转换"
+      },
+      "summary": {
+        "en": "This clause assigns M322ND, M162ND, and N82ND layouts to Local CUBE conversion during TSTORE. The BSTART data type remains the element type, LB1 and LB0 select valid rows and columns, and LB2 or Shared bindings are excluded.",
+        "zh-CN": "本条款将 M322ND、M162ND 和 N82ND 布局用于 TSTORE 的 Local CUBE 转换。元素类型仍由 BSTART 数据类型给出，LB1 与 LB0 选择有效行列；LB2 和 Shared 绑定被排除。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TSTORE-MEMORY-001",
+      "source_path": "asl/block/execution/BSTART.TSTORE.asl",
+      "title": {
+        "en": "TSTORE memory preflight and retry",
+        "zh-CN": "TSTORE 内存预检与重试"
+      },
+      "summary": {
+        "en": "This clause preflights the complete GM footprint before storing and preserves the Local or Shared source. A pending Shared source leaves the block active for retry without payload reads, binding consumption, or GM effects; any nonzero Shared PE subset can participate, while a zero mask is inert.",
+        "zh-CN": "本条款在存储前预检完整 GM 访问范围，并保留 Local 或 Shared 源。Shared 源未就绪时，块保持活动以便重试，同时不读取载荷、不消费绑定且不产生 GM 效果；任意非零 Shared PE 子集均可参与，零掩码无效果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-VEC-DECISION-BINDING-001",
+      "source_path": "asl/block/execution/BSTART.VEC.asl",
+      "title": {
+        "en": "BSTART.VEC decision binding",
+        "zh-CN": "BSTART.VEC 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTART.VEC mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and faults. VEC block execution therefore follows one traceable operation region rather than a separate catalog description.",
+        "zh-CN": "本条款将 BSTART.VEC 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障的可执行绑定。因此，VEC 块执行遵循一个可追溯的操作区域，而非独立的目录描述。"
+      }
+    },
+    {
+      "id": "PTO-BSTOP-DECISION-BINDING-001",
+      "source_path": "asl/block/lifecycle/BSTOP.asl",
+      "title": {
+        "en": "BSTOP decision binding",
+        "zh-CN": "BSTOP 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the BSTOP mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and fault boundaries. Observable block-stop and continuation behavior is derived from that owner.",
+        "zh-CN": "本条款将 BSTOP 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障边界的可执行绑定。可观察的块停止与延续行为均由该所有者导出。"
+      }
+    },
+    {
+      "id": "PTO-C-BSTART-CONTROL-001",
+      "source_path": "asl/block/encoding/C.BSTART.asl",
+      "title": {
+        "en": "Compressed standard block start",
+        "zh-CN": "压缩标准块启动"
+      },
+      "summary": {
+        "en": "This clause defines C.BSTART as a compressed standard-block opener with direct or conditional transfer. Its signed halfword displacement is based on the C.BSTART address, and the retiring predecessor commits before the new block becomes visible.",
+        "zh-CN": "本条款将 C.BSTART 定义为带直接或条件转移的压缩标准块启动。其有符号半字位移以 C.BSTART 地址为基准，退休中的前驱先提交，新块随后才可见。"
+      }
+    },
+    {
+      "id": "PTO-C-BSTART-FP-CONTROL-001",
+      "source_path": "asl/block/encoding/C.BSTART.FP.asl",
+      "title": {
+        "en": "Compressed floating block control",
+        "zh-CN": "压缩浮点块控制"
+      },
+      "summary": {
+        "en": "This clause limits C.BSTART.FP to FALL, IND, and RET. IND snapshots the retiring standard or floating continuation before commit, while unassigned branch types reject before effects, keeping compressed FP control flow closed.",
+        "zh-CN": "本条款将 C.BSTART.FP 限定为 FALL、IND 和 RET。IND 在提交前快照退休中标准块或浮点块的延续地址；未分配的分支类型在产生效果前被拒绝，使压缩 FP 控制流保持封闭。"
+      }
+    },
+    {
+      "id": "PTO-C-BSTART-STD-CONTROL-001",
+      "source_path": "asl/block/encoding/C.BSTART.STD.asl",
+      "title": {
+        "en": "Compressed standard block control",
+        "zh-CN": "压缩标准块控制"
+      },
+      "summary": {
+        "en": "This clause limits C.BSTART.STD to FALL, IND, and RET, with IND snapshotting the retiring continuation before commit. Branch type zero remains C.BSTOP and other unassigned values reject before effects.",
+        "zh-CN": "本条款将 C.BSTART.STD 限定为 FALL、IND 和 RET，IND 在提交前快照退休中的延续地址。分支类型零保留给 C.BSTOP，其他未分配值在产生效果前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-C-BSTART-SYS-CONTROL-001",
+      "source_path": "asl/block/encoding/C.BSTART.SYS.asl",
+      "title": {
+        "en": "Compressed system block start",
+        "zh-CN": "压缩系统块启动"
+      },
+      "summary": {
+        "en": "This clause defines C.BSTART.SYS as the single compressed sequential system-block opener. It installs no selecting BPCN, TYPE, or TAKEN fields, so the compressed system block cannot introduce an alternate continuation choice.",
+        "zh-CN": "本条款将 C.BSTART.SYS 定义为唯一的压缩顺序系统块启动。它不安装用于选择的 BPCN、TYPE 或 TAKEN 字段，因此该压缩系统块不会引入备用延续选择。"
+      }
+    },
+    {
+      "id": "PTO-C-BSTOP-DECISION-BINDING-001",
+      "source_path": "asl/block/lifecycle/C.BSTOP.asl",
+      "title": {
+        "en": "C.BSTOP decision binding",
+        "zh-CN": "C.BSTOP 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the C.BSTOP mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and fault boundaries. Compressed block-stop behavior remains aligned with that operation region.",
+        "zh-CN": "本条款将 C.BSTOP 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障边界的可执行绑定。压缩块停止行为始终与该操作区域一致。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
+      "source_path": "asl/block/model/dispatch/cube-tmatmul.asl",
+      "title": {
+        "en": "Distinct matrix accumulator input and output",
+        "zh-CN": "矩阵累加输入与输出分离"
+      },
+      "summary": {
+        "en": "This clause separates the explicit matrix accumulator C from the published destination D before allocation and execution. C remains unchanged, while D, enabled reductions, and numeric status become visible together, preventing destructive accumulator reuse.",
+        "zh-CN": "本条款在分配与执行前将显式矩阵累加器 C 与发布目标 D 分离。C 保持不变，D、启用的归约结果和数值状态同时可见，从而避免破坏性复用累加器。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-CELL-TRANSPORT-001",
+      "source_path": "asl/block/attributes/B.DATR.asl",
+      "title": {
+        "en": "CUBE CELL transport layouts",
+        "zh-CN": "CUBE CELL 传输布局"
+      },
+      "summary": {
+        "en": "This clause assigns six B.DATR layout codes to conversion between ND global-memory layout and Local CUBE organizations. The layout selects transport conversion direction and shape but does not create a separate Tile instruction identity.",
+        "zh-CN": "本条款将六个 B.DATR 布局编码分配给 ND 全局内存布局与 Local CUBE 组织之间的转换。布局只选择传输转换的方向与形态，不会产生独立的 Tile 指令身份。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-CSCALE-001",
+      "source_path": "asl/block/attributes/B.FPATR.asl",
+      "title": {
+        "en": "Matrix accumulator CScale input",
+        "zh-CN": "矩阵累加器 CScale 输入"
+      },
+      "summary": {
+        "en": "This clause limits CScale to an explicit Local U8 CUBE_M32 [M,1] input for FP32 TMATMUL.ACC and TMATMULMX.ACC. It scales C before reductions, activation, quantization, and conversion, cannot alias outputs, and has no effect when disabled.",
+        "zh-CN": "本条款将 CScale 限定为 FP32 TMATMUL.ACC 与 TMATMULMX.ACC 的显式 Local U8 CUBE_M32 [M,1] 输入。它在归约、激活、量化和转换前缩放 C，不能与输出别名；未启用时不改变结果。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+      "source_path": "asl/block/model/dispatch/cube-tmatmul.asl",
+      "title": {
+        "en": "Cooperative matrix M-row distribution",
+        "zh-CN": "协作矩阵 M 行分配"
+      },
+      "summary": {
+        "en": "This clause interprets cooperative TMATMUL LB0 as Core-total group_M and distributes valid rows across all four PEs using the two defined per-PE capacities. A zero-row PE still joins collective and Shared validation but suppresses compute-only Local accesses and outputs; TGEMV remains Local-only.",
+        "zh-CN": "本条款将协作 TMATMUL 的 LB0 解释为 Core 总 group_M，并按两档每 PE 容量在四个 PE 间分配有效行。分到零行的 PE 仍参与集体与 Shared 校验，但抑制仅用于计算的 Local 访问和输出；TGEMV 仍仅使用 Local。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-SHARED-TRANSPOSE-001",
+      "source_path": "asl/block/attributes/B.FPATR.asl",
+      "title": {
+        "en": "Logical transpose of Shared matrix inputs",
+        "zh-CN": "Shared 矩阵输入的逻辑转置"
+      },
+      "summary": {
+        "en": "This clause gives Shared A and B independent logical-transpose controls that also apply to their separately bound scales. Local-side transpose remains outside the contract, and neither Shared source is physically mutated.",
+        "zh-CN": "本条款为 Shared A、B 提供相互独立的逻辑转置控制，并同步作用于各自单独绑定的缩放源。Local 侧转置不在该契约内，两个 Shared 源也不会被物理修改。"
+      }
+    },
+    {
+      "id": "PTO-FENTRY-RESTARTABLE-FRAME-001",
+      "source_path": "asl/block/lifecycle/FENTRY.asl",
+      "title": {
+        "en": "Restartable FENTRY frame save",
+        "zh-CN": "可重启的 FENTRY 栈帧保存"
+      },
+      "summary": {
+        "en": "This clause snapshots the inclusive R2..R23 register ring before changing sp, then commits descending stack stores one memory step at a time. A retry resumes at the first uncommitted step instead of repeating completed stores.",
+        "zh-CN": "本条款在改变 sp 前快照 R2..R23 的完整寄存器环，并逐个内存步骤提交向下的栈存储。重试从首个未提交步骤继续，不会重复已经完成的存储。"
+      }
+    },
+    {
+      "id": "PTO-FEXIT-RESTARTABLE-FRAME-001",
+      "source_path": "asl/block/lifecycle/FEXIT.asl",
+      "title": {
+        "en": "Restartable FEXIT frame restore",
+        "zh-CN": "可重启的 FEXIT 栈帧恢复"
+      },
+      "summary": {
+        "en": "This clause restores the inclusive R2..R23 ring with a precise first-uncommitted-load restart point. Retrying the instruction does not apply the stack adjustment twice or repeat already committed loads.",
+        "zh-CN": "本条款以精确的“首个未提交加载”为重启点恢复 R2..R23 的完整寄存器环。指令重试不会重复调整栈指针，也不会再次执行已提交的加载。"
+      }
+    },
+    {
+      "id": "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+      "source_path": "asl/block/lifecycle/FRET.RA.asl",
+      "title": {
+        "en": "Restartable return using saved ra",
+        "zh-CN": "使用已保存 ra 的可重启返回"
+      },
+      "summary": {
+        "en": "This clause snapshots and validates the pre-restore ra target before any frame effect, then restores the register ring and finally publishes only that retained target. Later restored state cannot silently replace the selected return address.",
+        "zh-CN": "本条款在任何栈帧效果前快照并校验恢复前的 ra 目标，随后恢复寄存器环，最后只发布该保留目标。后续恢复的状态不会悄然替换已选择的返回地址。"
+      }
+    },
+    {
+      "id": "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+      "source_path": "asl/block/lifecycle/FRET.STK.asl",
+      "title": {
+        "en": "Restartable return using stack target",
+        "zh-CN": "使用栈目标的可重启返回"
+      },
+      "summary": {
+        "en": "This clause defines stack slot zero as the validated return target and begins the restored ring at ra. Remaining slots restore afterward, and the retained target becomes visible only when the restartable frame sequence completes.",
+        "zh-CN": "本条款将栈槽零定义为经过校验的返回目标，并从 ra 开始恢复寄存器环。其余槽位随后恢复，保留的目标只在可重启栈帧序列完成时才可见。"
+      }
+    },
+    {
+      "id": "PTO-HL-QMT-GQM-001",
+      "source_path": "asl/block/lifecycle/HL.QMT.asl",
+      "title": {
+        "en": "GQM queue management transaction",
+        "zh-CN": "GQM 队列管理事务"
+      },
+      "summary": {
+        "en": "This clause orders GQM queue query or atomic initialization before event and suspend-or-restore actions. The conflicting s+r combination rejects before reads, and SrcR is accessed only for initialization, preventing unrelated operand or queue effects.",
+        "zh-CN": "本条款规定先查询或原子初始化 GQM 队列，再执行事件及挂起/恢复动作。冲突的 s+r 组合在读取前被拒绝，SrcR 也只在初始化时访问，从而避免无关的操作数或队列效果。"
+      }
+    },
+    {
+      "id": "PTO-HL-QPOP-GQM-001",
+      "source_path": "asl/block/lifecycle/HL.QPOP.asl",
+      "title": {
+        "en": "Atomic GQM queue pop",
+        "zh-CN": "GQM 队列原子出队"
+      },
+      "summary": {
+        "en": "This clause treats HL.QPOP as one atomic head removal with optional post-success notification and data-before-status publication. Normal operation provides acquire ordering unless relaxed; empty, absent, or corrupt queues report status without mutation.",
+        "zh-CN": "本条款将 HL.QPOP 视为一次原子队头移除，可在成功后发送通知，并先发布数据再发布状态。除显式放宽外，正常操作提供 acquire 顺序；空、缺失或损坏的队列只报告状态而不修改内容。"
+      }
+    },
+    {
+      "id": "PTO-HL-QPUSH-GQM-001",
+      "source_path": "asl/block/lifecycle/HL.QPUSH.asl",
+      "title": {
+        "en": "Atomic GQM queue push",
+        "zh-CN": "GQM 队列原子入队"
+      },
+      "summary": {
+        "en": "This clause treats HL.QPUSH as one atomic insertion at the selected end with optional post-success notification. Normal operation provides release ordering unless relaxed; full, suspended, absent, or corrupt queues report status without inserting data.",
+        "zh-CN": "本条款将 HL.QPUSH 视为在所选端的一次原子插入，并可在成功后发送通知。除显式放宽外，正常操作提供 release 顺序；满、挂起、缺失或损坏的队列只报告状态而不插入数据。"
+      }
+    },
+    {
+      "id": "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+      "source_path": "asl/block/execution/BSTART.TMOV.asl",
+      "title": {
+        "en": "Reserved legacy Shared movement forms",
+        "zh-CN": "保留的旧 Shared 移动形式"
+      },
+      "summary": {
+        "en": "This clause retires the former independent Shared movement function encodings in favor of canonical TMOV and TSTORE combined with B.SUBVIEW or B.ASSEMBLE. Range, readiness, and publication semantics therefore remain in one path, while Function 13 GMOV is unaffected.",
+        "zh-CN": "本条款停用旧有的独立 Shared 移动功能编码，改由规范 TMOV、TSTORE 配合 B.SUBVIEW 或 B.ASSEMBLE 表达。范围、就绪与发布语义因而保留在一条路径中，Function 13 的 GMOV 不受影响。"
+      }
+    },
+    {
+      "id": "PTO-L-BSTOP-DECISION-BINDING-001",
+      "source_path": "asl/block/lifecycle/L.BSTOP.asl",
+      "title": {
+        "en": "L.BSTOP decision binding",
+        "zh-CN": "L.BSTOP 决策绑定"
+      },
+      "summary": {
+        "en": "This clause identifies the L.BSTOP mnemonic owner as the executable binding for accepted assembly, encoding, defaults, effects, ordering, and fault boundaries. Long-form block-stop behavior remains traceable to that operation region.",
+        "zh-CN": "本条款将 L.BSTOP 助记符所有者确立为已接受汇编、编码、默认值、效果、顺序和故障边界的可执行绑定。长格式块停止行为可持续追溯到该操作区域。"
+      }
+    },
+    {
+      "id": "PTO-MCOPY-RESTART-001",
+      "source_path": "asl/block/lifecycle/MCOPY.asl",
+      "title": {
+        "en": "Restartable non-overlapping MCOPY",
+        "zh-CN": "可重启的非重叠 MCOPY"
+      },
+      "summary": {
+        "en": "This clause snapshots absolute source, destination, and full XLEN length, then rejects wrapped or overlapping nonempty ranges before copying forward. Each memory step is a precise restart boundary, so a retry never repeats a committed copy step.",
+        "zh-CN": "本条款快照绝对源地址、目标地址和完整 XLEN 长度，并在正向复制前拒绝回绕或重叠的非空范围。每个内存步骤都是精确重启边界，因此重试不会重复已提交的复制步骤。"
+      }
+    },
+    {
+      "id": "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+      "source_path": "asl/block/model/dispatch/start.asl",
+      "title": {
+        "en": "Predecessor-selected BSTART installation",
+        "zh-CN": "由前驱选择的 BSTART 安装"
+      },
+      "summary": {
+        "en": "This clause commits an active predecessor before considering a fetched following BSTART. The new block is installed only when the predecessor-selected TPC matches the fetched PC; otherwise the selected TPC is preserved and the unchosen-path BSTART has no effect.",
+        "zh-CN": "本条款在处理已取到的后续 BSTART 前先提交活动前驱。只有前驱选择的 TPC 与取指 PC 相同时才安装新块；否则保留所选 TPC，未选路径上的 BSTART 不产生效果。"
+      }
+    },
+    {
+      "id": "PTO-REQ-BUNDLE-STATE-001",
+      "source_path": "asl/block/model/state/control-state.asl",
+      "title": {
+        "en": "Bundle-control state ownership",
+        "zh-CN": "Bundle 控制状态归属"
+      },
+      "summary": {
+        "en": "This clause assigns all architecture-visible bundle-control state to the PTO-STATE-BLOCK-CONTROL owner. Implementers can therefore trace block-active state, continuation, bindings, and related control transitions to one normative state unit.",
+        "zh-CN": "本条款将全部架构可见 Bundle 控制状态归属于 PTO-STATE-BLOCK-CONTROL 所有者。因此，实现者可将块活动状态、延续、绑定及相关控制转移追溯到同一个规范状态单元。"
+      }
+    }
+  ]
+}

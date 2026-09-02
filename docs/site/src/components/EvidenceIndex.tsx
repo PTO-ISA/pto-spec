@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import {useLocation} from '@docusaurus/router';
 import styles from './PtoWorkbench.module.css';
 import {firstText, itemSearchText, list, record, sourceHref, type UnknownRecord} from './data';
 import AslCode from './AslCode';
@@ -85,6 +86,7 @@ function EvidenceSource({id, url}: {id: string; url: string}): React.JSX.Element
 }
 
 export default function EvidenceIndex({tests, adrs, evidence}: EvidenceIndexProps): React.JSX.Element {
+  const chinese = useLocation().pathname.startsWith('/zh-CN/');
   const [query, setQuery] = useState('');
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['adrs']));
   const [pages, setPages] = useState<Record<string, number>>({});
@@ -135,7 +137,7 @@ export default function EvidenceIndex({tests, adrs, evidence}: EvidenceIndexProp
                 const path = firstText(item, ['path', 'sourcePath', 'artifact'], 'Source path unavailable');
                 const status = firstText(item, ['status', 'result', 'outcome']);
                 const href = sourceHref(record(item.source)) || sourceHref(item);
-                const title = firstText(item, ['title', 'summary']);
+                const title = firstText(item, [chinese ? 'titleZh' : 'title', 'title', 'summary']);
                 const requirements = list(item.requirements).map((value) => firstText(record({value}), ['value'])).filter(Boolean);
                 const passCondition = firstText(item, ['passCondition']);
                 const sourceAssetUrl = firstText(item, ['sourceAssetUrl']);

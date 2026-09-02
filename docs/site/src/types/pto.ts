@@ -139,6 +139,8 @@ export interface PtoArchitectureGuide {
 
 export interface PtoNdfClause {
   id: string;
+  title: PtoLocalizedText;
+  summary: PtoLocalizedText;
   kind: string;
   level: string;
   layer: string;
@@ -176,6 +178,7 @@ export interface PtoTestEvidence {
 export interface PtoAdrRecord {
   id: string;
   title: string;
+  titleZh: string;
   status: string;
   path: string;
   accepted: string | null;
@@ -437,6 +440,8 @@ export interface PtoNdfCatalogEntry {
   layer: string;
   status: string;
   text: string | null;
+  title: PtoLocalizedText | null;
+  summary: PtoLocalizedText | null;
   route: string;
   sourcePath: string;
   sourceSha256: string;

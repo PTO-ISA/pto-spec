@@ -301,7 +301,7 @@ EXCLUDED_PUBLIC_TILE_OPERATIONS = {
 EXCLUDED_PUBLIC_TILE_OPERATIONS.update(
     {
         name: (
-            "ADR-0103 retires this pinned public symbol from the active PTO ISA; "
+            "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; "
             "its former selector is reserved-illegal and has no accepted alias "
             "or replacement."
         )

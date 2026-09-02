@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import unittest
 
-from scripts.adr_records import load_adrs, parse_adr, validate_adr_graph
+from scripts.adr_records import ADR_TYPE_ORDER, load_adrs, parse_adr, validate_adr_graph
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,8 +23,9 @@ class AdrRecordTest(unittest.TestCase):
 
     def metadata(self, **updates: object) -> dict[str, object]:
         metadata: dict[str, object] = {
-            "id": "ADR-0075",
+            "id": "ADR-BLOCK-0001",
             "title": "Example",
+            "title_zh": "示例决策",
             "status": "draft",
             "authors": ["architect"],
             "approvers": [],
@@ -41,13 +42,13 @@ class AdrRecordTest(unittest.TestCase):
             "superseded_by": [],
             "implementation_issue": None,
             "release_impact": "not-required",
-            "legacy_ids": [],
+            "legacy_ids": ["ADR-0075"],
         }
         metadata.update(updates)
         return metadata
 
     def write_metadata(
-        self, root: Path, name: str = "0075-example.md", **updates: object
+        self, root: Path, name: str = "BLOCK-0001-example.md", **updates: object
     ) -> Path:
         return self.write_adr(
             root,
@@ -57,12 +58,14 @@ class AdrRecordTest(unittest.TestCase):
         )
 
     def parsed_record(
-        self, root: Path, number: int, **updates: object
+        self, root: Path, number: int, *, adr_type: str = "BLOCK", **updates: object
     ):
-        adr_id = f"ADR-{number:04d}"
+        serial = {75: 1, 76: 2}.get(number, number)
+        adr_id = f"ADR-{adr_type}-{serial:04d}"
+        updates.setdefault("legacy_ids", [f"ADR-{number:04d}"])
         path = self.write_metadata(
             root,
-            name=f"{number:04d}-example.md",
+            name=f"{adr_type}-{serial:04d}-example.md",
             id=adr_id,
             **updates,
         )
@@ -79,9 +82,7 @@ class AdrRecordTest(unittest.TestCase):
 
     def initialize_repository(self, root: Path, *tracked: Path) -> str:
         subprocess.run(["git", "init", "-q", str(root)], check=True)
-        subprocess.run(
-            ["git", "config", "user.name", "ADR test"], cwd=root, check=True
-        )
+        subprocess.run(["git", "config", "user.name", "ADR test"], cwd=root, check=True)
         subprocess.run(
             ["git", "config", "user.email", "adr@example.com"],
             cwd=root,
@@ -90,13 +91,16 @@ class AdrRecordTest(unittest.TestCase):
         marker = root / "README.md"
         marker.write_text("baseline\n", encoding="utf-8")
         subprocess.run(
-            ["git", "add", "README.md", *[str(path.relative_to(root)) for path in tracked]],
+            [
+                "git",
+                "add",
+                "README.md",
+                *[str(path.relative_to(root)) for path in tracked],
+            ],
             cwd=root,
             check=True,
         )
-        subprocess.run(
-            ["git", "commit", "-q", "-m", "baseline"], cwd=root, check=True
-        )
+        subprocess.run(["git", "commit", "-q", "-m", "baseline"], cwd=root, check=True)
         return subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=root, text=True
         ).strip()
@@ -105,9 +109,7 @@ class AdrRecordTest(unittest.TestCase):
         subprocess.run(
             ["git", "add", str(path.relative_to(root))], cwd=root, check=True
         )
-        subprocess.run(
-            ["git", "commit", "-q", "-m", "land ADR"], cwd=root, check=True
-        )
+        subprocess.run(["git", "commit", "-q", "-m", "land ADR"], cwd=root, check=True)
 
     def write_instruction(
         self,
@@ -218,27 +220,44 @@ class AdrRecordTest(unittest.TestCase):
                 index["summary"]["record_count"],
                 len(load_adrs(ROOT / "docs/status/decisions")),
             )
-            self.assertEqual(index["summary"]["legacy_id_count"], 198)
+            self.assertEqual(
+                index["summary"]["legacy_id_count"], len(index["legacy_map"])
+            )
             self.assertEqual(
                 len([key for key in index["legacy_map"] if key.startswith("PRD-")]),
                 183,
             )
-            self.assertEqual(index["legacy_map"]["PRD-001"], "ADR-0075")
-            self.assertEqual(index["legacy_map"]["PRD-144"], "ADR-0078")
-            self.assertEqual(index["legacy_map"]["PRD-145"], "ADR-0078")
-            self.assertEqual(index["legacy_map"]["PRD-183"], "ADR-0085")
+            self.assertEqual(
+                index["legacy_map"]["PRD-001"], index["legacy_adr_map"]["ADR-0075"]
+            )
+            self.assertEqual(
+                index["legacy_map"]["PRD-144"], index["legacy_adr_map"]["ADR-0078"]
+            )
+            self.assertEqual(
+                index["legacy_map"]["PRD-145"], index["legacy_adr_map"]["ADR-0078"]
+            )
+            self.assertEqual(
+                index["legacy_map"]["PRD-183"], index["legacy_adr_map"]["ADR-0085"]
+            )
+            self.assertEqual(index["type_order"], list(ADR_TYPE_ORDER))
+            self.assertEqual(
+                sum(index["summary"]["type_counts"].values()),
+                index["summary"]["record_count"],
+            )
             self.assertEqual(
                 {
                     row["id"]
                     for row in index["records"]
                     if row.get("release_boundary") is True
                 },
-                {"ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110"}
+                {
+                    index["legacy_adr_map"][legacy_id]
+                    for legacy_id in ("ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110")
+                },
             )
             self.assertTrue(
                 all(
-                    "release_boundary" not in row
-                    or row["release_boundary"] is True
+                    "release_boundary" not in row or row["release_boundary"] is True
                     for row in index["records"]
                 )
             )
@@ -267,8 +286,10 @@ class AdrRecordTest(unittest.TestCase):
 
     def test_repository_scoped_impacts_match_preserved_decisions(self) -> None:
         records = {
-            record.adr_id: record
+            legacy_id: record
             for record in load_adrs(ROOT / "docs/status/decisions")
+            for legacy_id in record.legacy_ids
+            if re.fullmatch(r"ADR-[0-9]{4}", legacy_id)
         }
         pc = records["ADR-0021"]
         self.assertEqual(
@@ -392,7 +413,9 @@ class AdrRecordTest(unittest.TestCase):
             result = self.run_checker(root)
             self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_non_boundary_record_rejects_retired_selected_baseline_impacts(self) -> None:
+    def test_non_boundary_record_rejects_retired_selected_baseline_impacts(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             instruction = self.write_instruction(root)
@@ -410,11 +433,11 @@ class AdrRecordTest(unittest.TestCase):
             result = self.run_checker(root)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("unknown current NDF PTO-EXAMPLE-CONTRACT", result.stderr)
-            self.assertIn(
-                "unknown current ASL unit PTO-SCALAR-EXAMPLE", result.stderr
-            )
+            self.assertIn("unknown current ASL unit PTO-SCALAR-EXAMPLE", result.stderr)
 
-    def test_release_boundary_rejects_impacts_absent_from_current_and_baseline(self) -> None:
+    def test_release_boundary_rejects_impacts_absent_from_current_and_baseline(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             instruction = self.write_instruction(root)
@@ -495,9 +518,27 @@ class AdrRecordTest(unittest.TestCase):
                 result.stderr,
             )
 
+    def test_uncommitted_typed_rename_uses_legacy_path_provenance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            baseline = self.initialize_repository(root)
+            old_path = root / "docs/status/decisions/0075-example.md"
+            old_path.parent.mkdir(parents=True, exist_ok=True)
+            old_path.write_text("historical ADR body\n", encoding="utf-8")
+            self.land_adr(root, old_path)
+            old_path.unlink()
+            self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=baseline,
+                legacy_ids=["ADR-0075"],
+            )
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_missing_frontmatter_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "0075-example.md"
+            path = Path(directory) / "BLOCK-0001-example.md"
             path.write_text("# ADR 0075: Example\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "JSON frontmatter"):
                 parse_adr(path)
@@ -506,8 +547,8 @@ class AdrRecordTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = self.write_adr(
                 Path(directory),
-                "0075-example.md",
-                '{"id":"ADR-0075","title":"Example","status":"done"}',
+                "BLOCK-0001-example.md",
+                '{"id":"ADR-BLOCK-0001","title":"Example","status":"done"}',
                 "# ADR 0075: Example",
             )
             with self.assertRaisesRegex(ValueError, "status"):
@@ -525,48 +566,52 @@ class AdrRecordTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = self.write_metadata(Path(directory))
             record = parse_adr(path)
-            self.assertEqual(record.adr_id, "ADR-0075")
+            self.assertEqual(record.adr_id, "ADR-BLOCK-0001")
+            self.assertEqual(record.title_zh, "示例决策")
             self.assertEqual(record.authors, ("architect",))
             self.assertEqual(record.target_releases, ("unassigned",))
             self.assertFalse(record.release_boundary)
             self.assertFalse(record.interface_change)
             self.assertEqual(record.path, path)
 
-    def test_new_adr_number_requires_explicit_interface_change(self) -> None:
+    def test_new_typed_adr_requires_explicit_interface_change(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             with self.assertRaisesRegex(ValueError, "interface_change=true"):
                 parse_adr(
                     self.write_metadata(
                         root,
-                        name="0111-example.md",
-                        id="ADR-0111",
+                        name="TILE-0001-example.md",
+                        id="ADR-TILE-0001",
+                        legacy_ids=[],
                     )
                 )
             record = parse_adr(
                 self.write_metadata(
                     root,
-                    name="0111-example.md",
-                    id="ADR-0111",
+                    name="TILE-0001-example.md",
+                    id="ADR-TILE-0001",
+                    legacy_ids=[],
                     interface_change=True,
                 )
             )
             self.assertTrue(record.interface_change)
 
-    def test_reserved_gap_number_cannot_be_reused(self) -> None:
+    def test_old_adr_identity_is_accepted_as_a_legacy_alias(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaisesRegex(ValueError, "reserved historical ADR number"):
-                parse_adr(
-                    self.write_metadata(
-                        Path(directory),
-                        name="0104-example.md",
-                        id="ADR-0104",
-                    )
+            record = parse_adr(
+                self.write_metadata(
+                    Path(directory),
+                    legacy_ids=["ADR-0104"],
                 )
+            )
+            self.assertEqual(record.legacy_ids, ("ADR-0104",))
 
     def test_interface_change_must_be_boolean(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaisesRegex(ValueError, "interface_change must be a boolean"):
+            with self.assertRaisesRegex(
+                ValueError, "interface_change must be a boolean"
+            ):
                 parse_adr(
                     self.write_metadata(
                         Path(directory),
@@ -602,13 +647,15 @@ class AdrRecordTest(unittest.TestCase):
                     self.write_metadata(root, release_boundary=True)
                 ).release_boundary
             )
-            with self.assertRaisesRegex(ValueError, "release_boundary must be a boolean"):
+            with self.assertRaisesRegex(
+                ValueError, "release_boundary must be a boolean"
+            ):
                 parse_adr(self.write_metadata(root, release_boundary="true"))
 
     def test_filename_must_match_id(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = self.write_metadata(Path(directory), name="0076-example.md")
-            with self.assertRaisesRegex(ValueError, "filename.*ADR-0075"):
+            path = self.write_metadata(Path(directory), name="BLOCK-0002-example.md")
+            with self.assertRaisesRegex(ValueError, "filename.*ADR-BLOCK-0001"):
                 parse_adr(path)
 
     def test_accepted_adr_requires_approvers_and_date(self) -> None:
@@ -652,7 +699,7 @@ class AdrRecordTest(unittest.TestCase):
             path = self.write_metadata(
                 Path(directory),
                 status="superseded",
-                superseded_by=["ADR-0076"],
+                superseded_by=["ADR-BLOCK-0002"],
             )
             with self.assertRaisesRegex(ValueError, "superseded.*date"):
                 parse_adr(path)
@@ -701,7 +748,9 @@ class AdrRecordTest(unittest.TestCase):
                 "https://example.com/issues/75?label=architecture%20decision#status",
             )
 
-    def test_implementation_issue_rejects_controls_and_bad_percent_escapes(self) -> None:
+    def test_implementation_issue_rejects_controls_and_bad_percent_escapes(
+        self,
+    ) -> None:
         invalid_uris = (
             "issues/75",
             "https://example.com/issues/\n75",
@@ -791,7 +840,13 @@ class AdrRecordTest(unittest.TestCase):
             schema["properties"]["affected_units"]["items"]["not"]["pattern"],
             "^PTO-MODEL-",
         )
-        self.assertEqual(schema["properties"]["id"]["not"]["const"], "ADR-0104")
+        self.assertEqual(
+            schema["properties"]["id"]["pattern"],
+            "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$",
+        )
+        self.assertIn(
+            "ADR-[0-9]{4}", schema["properties"]["legacy_ids"]["items"]["pattern"]
+        )
         self.assertTrue(
             any(
                 row.get("then", {}).get("properties", {}).get("interface_change")
@@ -806,60 +861,94 @@ class AdrRecordTest(unittest.TestCase):
             first = self.parsed_record(root / "first", 75)
             second = self.parsed_record(root / "second", 75)
             self.assertTrue(
-                any("duplicate ADR id ADR-0075" in error for error in validate_adr_graph([first, second]))
+                any(
+                    "duplicate ADR id ADR-BLOCK-0001" in error
+                    for error in validate_adr_graph([first, second])
+                )
             )
 
     def test_unknown_adr_reference_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            record = self.parsed_record(Path(directory), 75, resolves=["ADR-9999"])
+            record = self.parsed_record(Path(directory), 75, resolves=["ADR-GOV-9999"])
             self.assertTrue(
-                any("unknown ADR reference ADR-9999" in error for error in validate_adr_graph([record]))
+                any(
+                    "unknown ADR reference ADR-GOV-9999" in error
+                    for error in validate_adr_graph([record])
+                )
             )
 
-    def test_future_adr_numbers_must_be_contiguous(self) -> None:
+    def test_category_serials_must_be_contiguous_from_one(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            record = self.parsed_record(root, 112, interface_change=True)
+            record = self.parsed_record(root, 76)
             self.assertTrue(
-                any("contiguous from ADR-0111" in error for error in validate_adr_graph([record]))
+                any(
+                    "BLOCK ADR serials must be contiguous from 0001" in error
+                    for error in validate_adr_graph([record])
+                )
             )
 
     def test_supersession_cycles_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             first = self.parsed_record(
-                root / "first", 75, supersedes=["ADR-0076"], superseded_by=["ADR-0076"]
+                root / "first",
+                75,
+                supersedes=["ADR-BLOCK-0002"],
+                superseded_by=["ADR-BLOCK-0002"],
             )
             second = self.parsed_record(
-                root / "second", 76, supersedes=["ADR-0075"], superseded_by=["ADR-0075"]
+                root / "second",
+                76,
+                supersedes=["ADR-BLOCK-0001"],
+                superseded_by=["ADR-BLOCK-0001"],
             )
             self.assertTrue(
-                any("supersession cycle" in error for error in validate_adr_graph([first, second]))
+                any(
+                    "supersession cycle" in error
+                    for error in validate_adr_graph([first, second])
+                )
             )
 
     def test_duplicate_legacy_ids_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            first = self.parsed_record(root / "first", 75, legacy_ids=["PRD-001"])
-            second = self.parsed_record(root / "second", 76, legacy_ids=["PRD-001"])
+            first = self.parsed_record(
+                root / "first", 75, legacy_ids=["ADR-0075", "PRD-001"]
+            )
+            second = self.parsed_record(
+                root / "second", 76, legacy_ids=["ADR-0076", "PRD-001"]
+            )
             self.assertTrue(
-                any("duplicate legacy id PRD-001" in error for error in validate_adr_graph([first, second]))
+                any(
+                    "duplicate legacy id PRD-001" in error
+                    for error in validate_adr_graph([first, second])
+                )
             )
 
     def test_supersession_must_be_reciprocal(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            first = self.parsed_record(root / "first", 75, supersedes=["ADR-0076"])
+            first = self.parsed_record(
+                root / "first", 75, supersedes=["ADR-BLOCK-0002"]
+            )
             second = self.parsed_record(root / "second", 76)
             self.assertTrue(
-                any("not reciprocal" in error for error in validate_adr_graph([first, second]))
+                any(
+                    "not reciprocal" in error
+                    for error in validate_adr_graph([first, second])
+                )
             )
 
     def test_reciprocal_supersession_is_valid(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            first = self.parsed_record(root / "first", 75, supersedes=["ADR-0076"])
-            second = self.parsed_record(root / "second", 76, superseded_by=["ADR-0075"])
+            first = self.parsed_record(
+                root / "first", 75, supersedes=["ADR-BLOCK-0002"]
+            )
+            second = self.parsed_record(
+                root / "second", 76, superseded_by=["ADR-BLOCK-0001"]
+            )
             self.assertEqual(validate_adr_graph([first, second]), [])
 
     def test_load_adrs_sorts_records_and_skips_template(self) -> None:
@@ -870,17 +959,17 @@ class AdrRecordTest(unittest.TestCase):
             (root / "0000-template.md").write_text("not an ADR", encoding="utf-8")
             self.assertEqual(
                 tuple(record.adr_id for record in load_adrs(root)),
-                ("ADR-0075", "ADR-0076"),
+                ("ADR-BLOCK-0001", "ADR-BLOCK-0002"),
             )
 
-    def test_load_adrs_recurses_in_deterministic_path_order(self) -> None:
+    def test_load_adrs_uses_explicit_type_order_not_path_order(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            self.parsed_record(root / "z-last", 75)
-            self.parsed_record(root / "a-first", 76)
+            self.parsed_record(root / "a-first", 75, adr_type="NUM")
+            self.parsed_record(root / "z-last", 76, adr_type="GOV")
             self.assertEqual(
                 tuple(record.adr_id for record in load_adrs(root)),
-                ("ADR-0076", "ADR-0075"),
+                ("ADR-GOV-0002", "ADR-NUM-0001"),
             )
 
     def test_checker_prints_validated_record_count(self) -> None:
@@ -897,10 +986,10 @@ class AdrRecordTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             decisions = root / "docs/status/decisions"
-            self.parsed_record(decisions, 75, resolves=["ADR-9999"])
+            self.parsed_record(decisions, 75, resolves=["ADR-GOV-9999"])
             result = self.run_checker(root)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("unknown ADR reference ADR-9999", result.stderr)
+            self.assertIn("unknown ADR reference ADR-GOV-9999", result.stderr)
             self.assertEqual(result.stdout, "")
 
     def test_checker_rejects_malformed_nested_adr(self) -> None:
@@ -908,7 +997,7 @@ class AdrRecordTest(unittest.TestCase):
             root = Path(directory)
             nested = root / "docs/status/decisions/topic"
             nested.mkdir(parents=True)
-            (nested / "0075-example.md").write_text(
+            (nested / "BLOCK-0001-example.md").write_text(
                 "# ADR 0075: Missing metadata\n", encoding="utf-8"
             )
             result = self.run_checker(root)
@@ -920,12 +1009,10 @@ class AdrRecordTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             decisions = root / "docs/status/decisions"
-            self.parsed_record(
-                decisions / "topic", 75, resolves=["ADR-9999"]
-            )
+            self.parsed_record(decisions / "topic", 75, resolves=["ADR-GOV-9999"])
             result = self.run_checker(root)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("unknown ADR reference ADR-9999", result.stderr)
+            self.assertIn("unknown ADR reference ADR-GOV-9999", result.stderr)
             self.assertEqual(result.stdout, "")
 
     def test_checker_rejects_each_missing_status_dependent_field(self) -> None:
@@ -964,7 +1051,7 @@ class AdrRecordTest(unittest.TestCase):
             ),
             (
                 "superseded date",
-                {"status": "superseded", "superseded_by": ["ADR-0076"]},
+                {"status": "superseded", "superseded_by": ["ADR-BLOCK-0002"]},
                 "superseded ADR requires a supersession date",
             ),
             (

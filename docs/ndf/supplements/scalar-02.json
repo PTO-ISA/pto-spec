@@ -1,0 +1,992 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "scalar",
+  "chunk": 2,
+  "entries": [
+    {
+      "id": "PTO-J-DECISION-BINDING-001",
+      "source_path": "asl/scalar/bru/J.asl",
+      "title": {
+        "en": "J executable decision binding",
+        "zh-CN": "J 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for J to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 J 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-JR-DECISION-BINDING-001",
+      "source_path": "asl/scalar/bru/JR.asl",
+      "title": {
+        "en": "JR executable decision binding",
+        "zh-CN": "JR 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for JR to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 JR 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-LSRGET-BARG-001",
+      "source_path": "asl/scalar/sys/LSRGET.asl",
+      "title": {
+        "en": "LSRGET active BARG view",
+        "zh-CN": "LSRGET 活动 BARG 视图"
+      },
+      "summary": {
+        "en": "This clause maps LSRGET IDs 0, 1, and 2 to BPC, the Standard/Floating-block BPCN, and the packed BARG control word. Reserved IDs and an inapplicable ID 1 are rejected before any destination effect.",
+        "zh-CN": "本条目说明 LSRGET 的 ID 0、1、2 分别读取 BPC、Standard/Floating Block 的 BPCN 和打包后的 BARG 控制字；保留 ID 或不适用的 ID 1 会在产生目标写入前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-OR-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/OR.asl",
+      "title": {
+        "en": "OR executable decision binding",
+        "zh-CN": "OR 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for OR to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 OR 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-PRF-NONFAULTING-HINT-001",
+      "source_path": "asl/scalar/agu/PRF.asl",
+      "title": {
+        "en": "PRF non-faulting address hint",
+        "zh-CN": "PRF 非故障地址提示"
+      },
+      "summary": {
+        "en": "This clause treats PRF as modified-and-shifted address formation for a non-faulting hint. Every destination encoding is a non-writing alias, so legal execution produces no translation, memory event, ordering edge, or destination effect.",
+        "zh-CN": "本条目将 PRF 界定为对寄存器地址进行修饰和移位后形成的非故障提示。所有目标编码都是不写入的别名，因此合法执行不会产生地址转换、内存事件、顺序边或目标写入。"
+      }
+    },
+    {
+      "id": "PTO-PRFI-U-NONFAULTING-HINT-001",
+      "source_path": "asl/scalar/agu/PRFI.U.asl",
+      "title": {
+        "en": "PRFI.U non-faulting L1 hint",
+        "zh-CN": "PRFI.U 非故障 L1 提示"
+      },
+      "summary": {
+        "en": "This clause defines PRFI.U as forming one non-faulting L1 hint address from a sign-extended, unscaled 12-bit byte displacement. Every destination encoding is non-writing, with no translation, memory event, ordering edge, or destination effect.",
+        "zh-CN": "本条目说明 PRFI.U 将未缩放的 12 位字节位移符号扩展后形成一个非故障 L1 提示地址。所有目标编码均不写入，也不会产生地址转换、内存事件、顺序边或目标影响。"
+      }
+    },
+    {
+      "id": "PTO-REQ-AGU-SRCRTYPE-001",
+      "source_path": "asl/scalar/model/dispatch/decode.asl",
+      "title": {
+        "en": "AGU SrcRType decoding",
+        "zh-CN": "AGU 源类型字段解码"
+      },
+      "summary": {
+        "en": "This clause gives all register-offset AGU forms a common SrcRType interpretation before the encoded or fixed left shift: 00 leaves the value unchanged, 01 selects .sw, and 10 selects .uw. Encoding 11 is rejected before source reads or effects.",
+        "zh-CN": "本条目统一寄存器偏移 AGU 形式在编码或固定左移之前对 SrcRType 的解释：00 保持原值，01 选择 .sw，10 选择 .uw；编码 11 会在读取源操作数或产生架构影响前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-REQ-SCALAR-BODY-ENTRY-001",
+      "source_path": "asl/scalar/model/dispatch/top-level.asl",
+      "title": {
+        "en": "Scalar bundle-body entry",
+        "zh-CN": "Scalar Bundle Body 进入边界"
+      },
+      "summary": {
+        "en": "This clause places the bundle body-entry transition immediately after successful scalar decode and before applicability or operand checks. An unmatched carrier causes no entry, while a later scalar fault leaves the body-active transition visible.",
+        "zh-CN": "本条目将 Bundle Body 的进入转换放在 Scalar 形式成功解码之后、适用性或操作数检查之前。未匹配的载体不会进入 Body；解码后发生的 Scalar 故障则保留已进入 Body 的可见状态。"
+      }
+    },
+    {
+      "id": "PTO-REV-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/REV.asl",
+      "title": {
+        "en": "REV executable decision binding",
+        "zh-CN": "REV 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for REV to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 REV 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-SCVTF-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/SCVTF.asl",
+      "title": {
+        "en": "SCVTF executable decision binding",
+        "zh-CN": "SCVTF 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for SCVTF to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 SCVTF 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-SD-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SD.U.asl",
+      "title": {
+        "en": "SD.U store commit boundary",
+        "zh-CN": "SD.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SD.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SD.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SD-XOR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SD.XOR.asl",
+      "title": {
+        "en": "SD.XOR atomic commit boundary",
+        "zh-CN": "SD.XOR 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SD.XOR: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SD.XOR 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SDI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SDI.asl",
+      "title": {
+        "en": "SDI store commit boundary",
+        "zh-CN": "SDI 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SDI: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SDI 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SDI-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SDI.U.asl",
+      "title": {
+        "en": "SDI.U store commit boundary",
+        "zh-CN": "SDI.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SDI.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SDI.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SETC-AND-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.AND.asl",
+      "title": {
+        "en": "SETC.AND conditional-block setter",
+        "zh-CN": "SETC.AND 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.AND to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.AND 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-ANDI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.ANDI.asl",
+      "title": {
+        "en": "SETC.ANDI conditional-block setter",
+        "zh-CN": "SETC.ANDI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.ANDI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.ANDI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-EQ-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.EQ.asl",
+      "title": {
+        "en": "SETC.EQ conditional-block setter",
+        "zh-CN": "SETC.EQ 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.EQ to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.EQ 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-EQI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.EQI.asl",
+      "title": {
+        "en": "SETC.EQI conditional-block setter",
+        "zh-CN": "SETC.EQI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.EQI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.EQI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-GE-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.GE.asl",
+      "title": {
+        "en": "SETC.GE conditional-block setter",
+        "zh-CN": "SETC.GE 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.GE to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.GE 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-GEI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.GEI.asl",
+      "title": {
+        "en": "SETC.GEI conditional-block setter",
+        "zh-CN": "SETC.GEI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.GEI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.GEI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-GEU-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.GEU.asl",
+      "title": {
+        "en": "SETC.GEU conditional-block setter",
+        "zh-CN": "SETC.GEU 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.GEU to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.GEU 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-GEUI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.GEUI.asl",
+      "title": {
+        "en": "SETC.GEUI conditional-block setter",
+        "zh-CN": "SETC.GEUI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.GEUI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.GEUI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-LT-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.LT.asl",
+      "title": {
+        "en": "SETC.LT conditional-block setter",
+        "zh-CN": "SETC.LT 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.LT to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.LT 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-LTI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.LTI.asl",
+      "title": {
+        "en": "SETC.LTI conditional-block setter",
+        "zh-CN": "SETC.LTI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.LTI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.LTI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-LTU-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.LTU.asl",
+      "title": {
+        "en": "SETC.LTU conditional-block setter",
+        "zh-CN": "SETC.LTU 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.LTU to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.LTU 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-LTUI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.LTUI.asl",
+      "title": {
+        "en": "SETC.LTUI conditional-block setter",
+        "zh-CN": "SETC.LTUI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.LTUI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.LTUI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-NE-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.NE.asl",
+      "title": {
+        "en": "SETC.NE conditional-block setter",
+        "zh-CN": "SETC.NE 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.NE to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.NE 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-NEI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.NEI.asl",
+      "title": {
+        "en": "SETC.NEI conditional-block setter",
+        "zh-CN": "SETC.NEI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.NEI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.NEI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-OR-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.OR.asl",
+      "title": {
+        "en": "SETC.OR conditional-block setter",
+        "zh-CN": "SETC.OR 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.OR to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.OR 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-ORI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/SETC.ORI.asl",
+      "title": {
+        "en": "SETC.ORI conditional-block setter",
+        "zh-CN": "SETC.ORI 条件块设置器"
+      },
+      "summary": {
+        "en": "This clause confines SETC.ORI to an active Conditional block. Only the first successful SETC in that block can snapshot sources and atomically update CommitArgument and BARG.TAKEN; a rejected attempt leaves the shared marker available.",
+        "zh-CN": "本条目将 SETC.ORI 限定在活动的 Conditional Block 中。该 Block 内只有首个成功的 SETC 可以快照源操作数并原子更新 CommitArgument 与 BARG.TAKEN；被拒绝的尝试不会占用共享标记。"
+      }
+    },
+    {
+      "id": "PTO-SETC-TGT-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/SETC.TGT.asl",
+      "title": {
+        "en": "SETC.TGT BPCN update boundary",
+        "zh-CN": "SETC.TGT BPCN 更新边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined update boundary for SETC.TGT: placement and source readiness are checked before the complete scalar source is copied into the applicable active block's BARG.BPCN. Rejection preserves the previous target and pending-block state.",
+        "zh-CN": "本条目记录 SETC.TGT 的 ADR 更新边界：先检查放置位置和源就绪状态，再把完整 Scalar 源值写入适用活动 Block 的 BARG.BPCN；若被拒绝，原目标和待处理 Block 状态保持不变。"
+      }
+    },
+    {
+      "id": "PTO-SETRET-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/bru/SETRET.asl",
+      "title": {
+        "en": "SETRET retained-return update",
+        "zh-CN": "SETRET 保留返回状态更新"
+      },
+      "summary": {
+        "en": "This clause records SETRET's ADR-defined outcome: the pre-increment TPC plus the zero-extended, halfword-scaled immediate updates architectural ra and retained return state atomically, while retirement remains sequential and installs no direct branch target.",
+        "zh-CN": "本条目记录 SETRET 的 ADR 决策结果：用递增前的 TPC 加上零扩展且按半字缩放的立即数，原子更新架构 ra 与保留返回状态；指令仍按顺序退休，不直接安装分支目标。"
+      }
+    },
+    {
+      "id": "PTO-SH-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SH.asl",
+      "title": {
+        "en": "SH store commit boundary",
+        "zh-CN": "SH 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SH: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SH 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SH-PCR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SH.PCR.asl",
+      "title": {
+        "en": "SH.PCR store commit boundary",
+        "zh-CN": "SH.PCR 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SH.PCR: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SH.PCR 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SH-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SH.U.asl",
+      "title": {
+        "en": "SH.U store commit boundary",
+        "zh-CN": "SH.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SH.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SH.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SHI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SHI.asl",
+      "title": {
+        "en": "SHI store commit boundary",
+        "zh-CN": "SHI 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SHI: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SHI 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SHI-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SHI.U.asl",
+      "title": {
+        "en": "SHI.U store commit boundary",
+        "zh-CN": "SHI.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SHI.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SHI.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SLL-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SLL.asl",
+      "title": {
+        "en": "SLL alias-safe publication",
+        "zh-CN": "SLL 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SLL's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SLL 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SLLI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SLLI.asl",
+      "title": {
+        "en": "SLLI alias-safe publication",
+        "zh-CN": "SLLI 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SLLI's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SLLI 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SLLIW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SLLIW.asl",
+      "title": {
+        "en": "SLLIW alias-safe publication",
+        "zh-CN": "SLLIW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SLLIW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SLLIW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SLLW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SLLW.asl",
+      "title": {
+        "en": "SLLW alias-safe publication",
+        "zh-CN": "SLLW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SLLW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SLLW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRA-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRA.asl",
+      "title": {
+        "en": "SRA alias-safe publication",
+        "zh-CN": "SRA 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRA's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRA 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRAI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRAI.asl",
+      "title": {
+        "en": "SRAI alias-safe publication",
+        "zh-CN": "SRAI 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRAI's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRAI 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRAIW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRAIW.asl",
+      "title": {
+        "en": "SRAIW alias-safe publication",
+        "zh-CN": "SRAIW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRAIW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRAIW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRAW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRAW.asl",
+      "title": {
+        "en": "SRAW alias-safe publication",
+        "zh-CN": "SRAW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRAW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRAW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRL-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRL.asl",
+      "title": {
+        "en": "SRL alias-safe publication",
+        "zh-CN": "SRL 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRL's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRL 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRLI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRLI.asl",
+      "title": {
+        "en": "SRLI alias-safe publication",
+        "zh-CN": "SRLI 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRLI's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRLI 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRLIW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRLIW.asl",
+      "title": {
+        "en": "SRLIW alias-safe publication",
+        "zh-CN": "SRLIW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRLIW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRLIW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SRLW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SRLW.asl",
+      "title": {
+        "en": "SRLW alias-safe publication",
+        "zh-CN": "SRLW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SRLW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SRLW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SSRGET-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/SSRGET.asl",
+      "title": {
+        "en": "SSRGET access rejection boundary",
+        "zh-CN": "SSRGET 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places SSRGET's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 SSRGET 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-SSRSET-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/SSRSET.asl",
+      "title": {
+        "en": "SSRSET access rejection boundary",
+        "zh-CN": "SSRSET 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places SSRSET's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 SSRSET 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-SSRSWAP-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/SSRSWAP.asl",
+      "title": {
+        "en": "SSRSWAP access rejection boundary",
+        "zh-CN": "SSRSWAP 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places SSRSWAP's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 SSRSWAP 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-SUB-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SUB.asl",
+      "title": {
+        "en": "SUB alias-safe publication",
+        "zh-CN": "SUB 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SUB's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SUB 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SUBI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SUBI.asl",
+      "title": {
+        "en": "SUBI alias-safe publication",
+        "zh-CN": "SUBI 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SUBI's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SUBI 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SUBIW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SUBIW.asl",
+      "title": {
+        "en": "SUBIW alias-safe publication",
+        "zh-CN": "SUBIW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SUBIW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SUBIW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SUBW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/SUBW.asl",
+      "title": {
+        "en": "SUBW alias-safe publication",
+        "zh-CN": "SUBW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records SUBW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 SUBW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-SW-ADD-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.ADD.asl",
+      "title": {
+        "en": "SW.ADD atomic commit boundary",
+        "zh-CN": "SW.ADD 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.ADD: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.ADD 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SW.asl",
+      "title": {
+        "en": "SW store commit boundary",
+        "zh-CN": "SW 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SW 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SW-AND-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.AND.asl",
+      "title": {
+        "en": "SW.AND atomic commit boundary",
+        "zh-CN": "SW.AND 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.AND: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.AND 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-OR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.OR.asl",
+      "title": {
+        "en": "SW.OR atomic commit boundary",
+        "zh-CN": "SW.OR 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.OR: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.OR 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-PCR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SW.PCR.asl",
+      "title": {
+        "en": "SW.PCR store commit boundary",
+        "zh-CN": "SW.PCR 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.PCR: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SW.PCR 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SW-SMAX-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.SMAX.asl",
+      "title": {
+        "en": "SW.SMAX atomic commit boundary",
+        "zh-CN": "SW.SMAX 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.SMAX: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.SMAX 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-SMIN-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.SMIN.asl",
+      "title": {
+        "en": "SW.SMIN atomic commit boundary",
+        "zh-CN": "SW.SMIN 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.SMIN: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.SMIN 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SW.U.asl",
+      "title": {
+        "en": "SW.U store commit boundary",
+        "zh-CN": "SW.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SW.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SW-UMAX-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.UMAX.asl",
+      "title": {
+        "en": "SW.UMAX atomic commit boundary",
+        "zh-CN": "SW.UMAX 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.UMAX: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.UMAX 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-UMIN-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.UMIN.asl",
+      "title": {
+        "en": "SW.UMIN atomic commit boundary",
+        "zh-CN": "SW.UMIN 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.UMIN: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.UMIN 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SW-XOR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.XOR.asl",
+      "title": {
+        "en": "SW.XOR atomic commit boundary",
+        "zh-CN": "SW.XOR 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SW.XOR: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SW.XOR 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SWAPB-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SWAPB.asl",
+      "title": {
+        "en": "SWAPB atomic commit boundary",
+        "zh-CN": "SWAPB 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWAPB: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SWAPB 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SWAPD-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SWAPD.asl",
+      "title": {
+        "en": "SWAPD atomic commit boundary",
+        "zh-CN": "SWAPD 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWAPD: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SWAPD 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SWAPH-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SWAPH.asl",
+      "title": {
+        "en": "SWAPH atomic commit boundary",
+        "zh-CN": "SWAPH 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWAPH: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SWAPH 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SWAPW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SWAPW.asl",
+      "title": {
+        "en": "SWAPW atomic commit boundary",
+        "zh-CN": "SWAPW 原子提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWAPW: preflight the complete atomic access before effects, then commit its selected width, ordering, memory update, event, and result as one atomic outcome.",
+        "zh-CN": "本条目记录 SWAPW 的 ADR 决策边界：在产生任何影响前预检完整原子访问，随后将所选宽度、顺序、内存更新、事件和结果作为一个原子结果提交。"
+      }
+    },
+    {
+      "id": "PTO-SWI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SWI.asl",
+      "title": {
+        "en": "SWI store commit boundary",
+        "zh-CN": "SWI 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWI: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SWI 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-SWI-U-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/agu/SWI.U.asl",
+      "title": {
+        "en": "SWI.U store commit boundary",
+        "zh-CN": "SWI.U 存储提交边界"
+      },
+      "summary": {
+        "en": "This clause records the ADR-defined boundary for SWI.U: snapshot address and data sources, apply its width and address-update mode, preflight the access, then commit the store event and any base update at the restart boundary.",
+        "zh-CN": "本条目记录 SWI.U 的 ADR 决策边界：先快照地址与数据源，再应用该助记符的宽度和地址更新模式，完成访问预检后，在规定的重启边界提交存储事件及可能的基址更新。"
+      }
+    },
+    {
+      "id": "PTO-TLB-IA-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/TLB.IA.asl",
+      "title": {
+        "en": "TLB.IA access rejection boundary",
+        "zh-CN": "TLB.IA 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places TLB.IA's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 TLB.IA 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-TLB-IALL-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/TLB.IALL.asl",
+      "title": {
+        "en": "TLB.IALL access rejection boundary",
+        "zh-CN": "TLB.IALL 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places TLB.IALL's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 TLB.IALL 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-TLB-IAV-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/TLB.IAV.asl",
+      "title": {
+        "en": "TLB.IAV access rejection boundary",
+        "zh-CN": "TLB.IAV 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places TLB.IAV's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 TLB.IAV 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-TLB-IV-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/sys/TLB.IV.asl",
+      "title": {
+        "en": "TLB.IV access rejection boundary",
+        "zh-CN": "TLB.IV 访问拒绝边界"
+      },
+      "summary": {
+        "en": "This clause places TLB.IV's instruction-specific system or maintenance access check before effects. A rejected attempt preserves destination, queue, and system state apart from the ordinary instruction-attempt trap envelope.",
+        "zh-CN": "本条目将 TLB.IV 特有的系统或维护访问域检查置于所有影响之前。若尝试被拒绝，除普通指令尝试的 Trap 包络外，目标、队列和系统状态均保持不变。"
+      }
+    },
+    {
+      "id": "PTO-UCVTF-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/UCVTF.asl",
+      "title": {
+        "en": "UCVTF executable decision binding",
+        "zh-CN": "UCVTF 可执行决策绑定"
+      },
+      "summary": {
+        "en": "This clause anchors the accepted decisions for UCVTF to its mnemonic-local assembly, encoding legality, defaults, effects, ordering, fault boundaries, and executable operation region.",
+        "zh-CN": "本条目将 UCVTF 的已接受决策绑定到该助记符本地定义的汇编形式、编码合法性、默认值、状态与内存影响、顺序、故障边界及可执行操作区域，便于实现者定位完整依据。"
+      }
+    },
+    {
+      "id": "PTO-XOR-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/XOR.asl",
+      "title": {
+        "en": "XOR alias-safe publication",
+        "zh-CN": "XOR 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records XOR's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 XOR 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-XORI-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/XORI.asl",
+      "title": {
+        "en": "XORI alias-safe publication",
+        "zh-CN": "XORI 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records XORI's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 XORI 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-XORIW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/XORIW.asl",
+      "title": {
+        "en": "XORIW alias-safe publication",
+        "zh-CN": "XORIW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records XORIW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 XORIW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    },
+    {
+      "id": "PTO-XORW-ADR-CONTRACT-001",
+      "source_path": "asl/scalar/alu/XORW.asl",
+      "title": {
+        "en": "XORW alias-safe publication",
+        "zh-CN": "XORW 别名安全结果发布"
+      },
+      "summary": {
+        "en": "This clause records XORW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
+        "zh-CN": "本条目记录 XORW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
+      }
+    }
+  ]
+}

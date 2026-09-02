@@ -18,6 +18,56 @@ architecture authority. Current records remain in the
 [decision directory](../status/decisions/); unresolved choices remain in the
 [open-question index](../status/open/index.md).
 
+## Typed decision identities
+
+ADR identities use `ADR-TYPE-NNNN`. `NNNN` is allocated independently within
+one canonical decision type rather than from one repository-wide sequence.
+
+| Type | Decision area |
+| --- | --- |
+| `GOV` | architecture scope, normative ownership, catalog governance, and compatibility |
+| `STATE` | architectural state, system registers, traps, interrupts, and commit-visible control |
+| `MEM` | memory model, addressing, atomics, TLSU memory behavior, and restart |
+| `BLOCK` | Block lifecycle, command attributes, operand binding, and extension reservations |
+| `SCALAR` | Scalar instruction semantics and family-wide legality closure |
+| `TILE` | general Tile, VEC, SFU, conversion, reduction, and data-operation closure |
+| `CUBE` | CUBE, matrix, CELL layout, cooperative execution, and Shared matrix behavior |
+| `NUM` | numeric formats, rounding, flags, exceptional values, accuracy, and variation |
+
+Allocate the next serial in the owning type. If a decision crosses several
+areas, choose the first architecture owner whose public contract is changed;
+record other affected surfaces through `affected_ndf` and `affected_units`
+rather than minting multiple ADR identities.
+
+The pre-migration `ADR-NNNN` identity remains in `legacy_ids` and resolves
+through `legacy_adr_map` in the generated index. Historical ASL or AVS evidence
+may retain that alias so an identifier-only migration does not change normative
+source digests.
+
+## Bilingual decision records
+
+Every active ADR carries an English `title`, a Chinese `title_zh`, and one
+`Bilingual decision detail / 双语决策详述` section. The supplement explains, in
+both languages, why the decision was needed, the detailed choice, what changed,
+and the explicit scope boundary. It records reviewed rationale and impact; it
+does not replace the owning ASL/NDF semantics.
+
+New and amended ADRs start from `0000-template.md` and pass:
+
+```bash
+scripts/check-adrs
+scripts/check-adr-bilingual
+```
+
+Explicit NDF clauses have non-normative bilingual supplements under
+`docs/ndf/supplements/`. Each supplement is keyed by the stable NDF ID and exact
+owning ASL path. The website may display the localized title and summary, but
+the NDF body inside the owning ASL remains authoritative. Validate complete
+coverage with `scripts/check-ndf-supplements`. Synthetic `PTO-INST-*`
+instruction-contract identities use the owning instruction's existing
+bilingual reference projection instead of duplicating that explanation in the
+NDF supplement catalog.
+
 ## NDF ownership
 
 An architecture issue names the full baseline commit, changed stable `PTO-*`
@@ -62,7 +112,8 @@ and regenerate the index, changelog, readiness, traceability, and manifest.
 2. Classify the work as an interface definition or an implementation
    correction.
 3. For an interface definition, update the existing topic ADR or allocate the
-   next available ADR number only when no existing record owns the interface.
+   next serial in the owning ADR type only when no existing record owns the
+   interface.
 4. Review alternatives, compatibility, release impact, and evidence needs.
 5. Accept, reject, or retain the proposal as draft.
 6. Update the owning ASL/NDF and focused AVS points. An implementation

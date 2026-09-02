@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the named hardware-profile ADR-0088 special-value checkpoint."""
+"""Generate the named hardware-profile ADR-NUM-0015 special-value checkpoint."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ SCALAR_FORMS = ROOT / "spec/catalog/scalar-forms.json"
 COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 OUTPUT = ROOT / "spec/evidence/numeric-special-value-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
+    "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md"
 )
 PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
 EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
@@ -196,9 +196,9 @@ def generate() -> dict[str, Any]:
     tuple_count = sum(len(row["type_names"]) for row in operation_scope)
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:ADR-0088-SC2",
-        "decision_id": "ADR-0088",
-        "checkpoint_id": "ADR-0088-SC2",
+        "target": "S5-T2-A2:ADR-NUM-0015-SC2",
+        "decision_id": "ADR-NUM-0015",
+        "checkpoint_id": "ADR-NUM-0015-SC2",
         "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "profile_id": PROFILE_ID,
@@ -272,7 +272,7 @@ def generate() -> dict[str, Any]:
         },
         "sources": [
             source(
-                "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
+                "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md"
             ),
             source("spec/hardware-conformance-profile.json"),
             source("spec/evidence/numeric-format-namespace-contract.json"),

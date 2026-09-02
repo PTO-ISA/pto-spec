@@ -338,7 +338,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             [
                 "spec/catalog/tile-operations.json",
                 "spec/evidence/release-traceability-readiness.json",
-                "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+                "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
             ],
         )
     if family == "TLSU":
@@ -350,7 +350,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             ],
             [
                 "spec/evidence/tlsu-totality.json",
-                "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+                "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
             ],
         )
     if family == "CUBE":
@@ -363,7 +363,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             [
                 "spec/catalog/tile-operations.json",
                 "spec/evidence/release-traceability-readiness.json",
-                "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+                "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
             ],
         )
     raise ValueError(f"unknown tile family for {name}: {family}")
@@ -548,7 +548,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                     "spec/evidence/instruction-contract-closure.json",
                     "spec/evidence/release-traceability-readiness.json",
                     *(
-                        ["docs/status/decisions/0066-addtpc-page-scaled-immediate.md"]
+                        ["docs/status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md"]
                         if row["mnemonic"] in SCALAR_SEMANTIC_DIVERGENCES
                         else []
                     ),
@@ -573,7 +573,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             classification = "divergence"
             disposition = "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence."
             abi_change_acceptance = {
-                "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+                "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
                 "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
                 "kind": "accepted-0.58.0-command-encoding-break",
             }
@@ -617,7 +617,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                     "spec/catalog/command-forms.json",
                     "spec/evidence/bundle-command-totality.json",
                     "spec/evidence/release-traceability-readiness.json",
-                    "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+                    "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
                 ],
             }
         )
@@ -671,7 +671,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
             classification = "divergence"
             disposition = "The independent snapshot retains the superseded VEC/SFU carrier selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest selector divergence."
             abi_change_acceptance = {
-                "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+                "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
                 "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
                 "kind": "accepted-0.58.0-compact-tepl-selector-break",
             }
@@ -897,7 +897,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
                 "classification": "divergence",
                 "encoding_match": False,
                 "abi_change_acceptance": {
-                    "decision": "docs/status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+                    "decision": "docs/status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
                     "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/49",
                     "kind": "accepted-0.58.0-command-encoding-break",
                 },
@@ -909,7 +909,7 @@ def prune_existing_to_catalog() -> dict[str, Any]:
                 ),
                 "evidence": sorted(
                     set(source_row["evidence"])
-                    | {"docs/status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md"}
+                    | {"docs/status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md"}
                 ),
             }
         )

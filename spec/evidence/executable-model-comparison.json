@@ -140,7 +140,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md",
+        "docs/status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md",
         "spec/catalog/scalar-forms.json",
         "spec/evidence/instruction-contract-closure.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -2421,7 +2421,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md",
+        "docs/status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md",
         "spec/catalog/scalar-forms.json",
         "spec/evidence/instruction-contract-closure.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9360,14 +9360,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9388,14 +9388,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9419,7 +9419,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9443,7 +9443,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9467,7 +9467,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9491,7 +9491,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9515,7 +9515,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9539,7 +9539,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9560,14 +9560,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9588,14 +9588,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9619,7 +9619,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9640,14 +9640,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9668,14 +9668,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9699,7 +9699,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9723,7 +9723,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9747,7 +9747,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9771,7 +9771,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9795,7 +9795,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9819,7 +9819,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9843,7 +9843,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9867,7 +9867,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9891,7 +9891,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9915,7 +9915,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9939,7 +9939,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9963,7 +9963,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -9987,7 +9987,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10011,7 +10011,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10035,7 +10035,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10059,7 +10059,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10083,7 +10083,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10107,7 +10107,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10131,7 +10131,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10152,14 +10152,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10183,7 +10183,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10207,7 +10207,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10231,7 +10231,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10255,7 +10255,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10279,7 +10279,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10303,7 +10303,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10327,7 +10327,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10351,7 +10351,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10375,7 +10375,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10399,7 +10399,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10423,7 +10423,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10447,7 +10447,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10471,7 +10471,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10495,7 +10495,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10519,7 +10519,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10543,7 +10543,7 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10567,7 +10567,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10591,7 +10591,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10615,7 +10615,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10639,7 +10639,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10663,7 +10663,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10687,7 +10687,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10711,7 +10711,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10735,7 +10735,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10759,7 +10759,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10783,7 +10783,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10807,7 +10807,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10831,7 +10831,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10855,7 +10855,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10879,7 +10879,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10903,7 +10903,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10927,7 +10927,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10951,7 +10951,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -10972,14 +10972,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-command-encoding-break"
       },
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11003,7 +11003,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11027,7 +11027,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11051,7 +11051,7 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11075,7 +11075,7 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11099,7 +11099,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11123,7 +11123,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11147,7 +11147,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11171,7 +11171,7 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
+        "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "spec/evidence/release-traceability-readiness.json"
@@ -11195,7 +11195,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11219,7 +11219,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11243,7 +11243,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11267,7 +11267,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11288,14 +11288,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11319,7 +11319,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11343,7 +11343,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11367,7 +11367,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11391,7 +11391,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11415,7 +11415,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11436,14 +11436,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11464,14 +11464,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11492,14 +11492,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11520,14 +11520,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11548,14 +11548,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11576,14 +11576,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11604,14 +11604,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11632,14 +11632,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11660,14 +11660,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11688,14 +11688,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11716,14 +11716,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11744,14 +11744,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11772,14 +11772,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11800,14 +11800,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11831,7 +11831,7 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11855,7 +11855,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11879,7 +11879,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11903,7 +11903,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11927,7 +11927,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11948,14 +11948,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -11979,7 +11979,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12003,7 +12003,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12027,7 +12027,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12051,7 +12051,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12075,7 +12075,7 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12096,14 +12096,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12124,14 +12124,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12152,14 +12152,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12180,14 +12180,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12208,14 +12208,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12236,14 +12236,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12264,14 +12264,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12292,14 +12292,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12320,14 +12320,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12348,14 +12348,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12376,14 +12376,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12404,14 +12404,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12432,14 +12432,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12460,14 +12460,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12488,14 +12488,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12516,14 +12516,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12544,14 +12544,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12572,14 +12572,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12600,14 +12600,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12628,14 +12628,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12656,14 +12656,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12684,14 +12684,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12712,14 +12712,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12740,14 +12740,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12768,14 +12768,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12796,14 +12796,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12824,14 +12824,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12852,14 +12852,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12880,14 +12880,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12908,14 +12908,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12936,14 +12936,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12964,14 +12964,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -12992,14 +12992,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13020,14 +13020,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13048,14 +13048,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13076,14 +13076,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13104,14 +13104,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13132,14 +13132,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13160,14 +13160,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13188,14 +13188,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13216,14 +13216,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13244,14 +13244,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13272,14 +13272,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13300,14 +13300,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13328,14 +13328,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13356,14 +13356,14 @@
     },
     {
       "abi_change_acceptance": {
-        "decision": "docs/status/decisions/0056-pto-linx-common-encoding-and-gm-access.md",
+        "decision": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
         "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
         "kind": "accepted-0.58.0-compact-tepl-selector-break"
       },
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13387,7 +13387,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13411,7 +13411,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13435,7 +13435,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13459,7 +13459,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13483,7 +13483,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13507,7 +13507,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13531,7 +13531,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13555,7 +13555,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13579,7 +13579,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13603,7 +13603,7 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
+        "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/tlsu-totality.json"
       ],
@@ -13627,7 +13627,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13651,7 +13651,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13675,7 +13675,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13699,7 +13699,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13723,7 +13723,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13747,7 +13747,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13771,7 +13771,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13795,7 +13795,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13819,7 +13819,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13843,7 +13843,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13867,7 +13867,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13891,7 +13891,7 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
+        "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13915,7 +13915,7 @@
       "bundle_bridge_representable": null,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13939,7 +13939,7 @@
       "bundle_bridge_representable": null,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13963,7 +13963,7 @@
       "bundle_bridge_representable": null,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],
@@ -13987,7 +13987,7 @@
       "bundle_bridge_representable": null,
       "classification": "divergence",
       "evidence": [
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
+        "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
         "spec/evidence/release-traceability-readiness.json"
       ],

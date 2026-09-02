@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed ADR-0087 numeric format namespace checkpoint."""
+"""Generate the fail-closed ADR-NUM-0014 numeric format namespace checkpoint."""
 
 from __future__ import annotations
 
@@ -26,10 +26,10 @@ EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/0040-numeric-format-namespace-ownership.md"
+    "docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md"
 )
 CLASSIFICATION_ACCEPTANCE_RECORD = (
-    "docs/status/decisions/0048-numeric-format-value-classification.md"
+    "docs/status/decisions/NUM-0009-numeric-format-value-classification.md"
 )
 
 NAN_CAPABLE_TYPES = {
@@ -182,11 +182,11 @@ def generate() -> dict[str, Any]:
     executable_comparison = load(EXECUTABLE_COMPARISON)
     hardware_profile = load(HARDWARE_PROFILE)
 
-    adr0087 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0087")
-    require(adr0087["status"] == "draft", "ADR-0087 status drift")
+    adr0087 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-NUM-0014")
+    require(adr0087["status"] == "draft", "ADR-NUM-0014 status drift")
     require(
         adr0087["acceptance_record"] is None,
-        "ADR-0087 must remain unaccepted while format and legality rules are open",
+        "ADR-NUM-0014 must remain unaccepted while format and legality rules are open",
     )
     require(
         scalar_totality["status"] == "closed" and scalar_totality["target"] == "S4-T5",
@@ -345,13 +345,13 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:ADR-0087",
-        "decision_id": "ADR-0087",
-        "checkpoint_id": "ADR-0087-SC1",
+        "target": "S5-T2-A2:ADR-NUM-0014",
+        "decision_id": "ADR-NUM-0014",
+        "checkpoint_id": "ADR-NUM-0014-SC1",
         "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "classification_acceptance_record": CLASSIFICATION_ACCEPTANCE_RECORD,
-        "classification_checkpoint_id": "ADR-0087-SC2:ADR-0088-SC1",
+        "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
         "policy": {
             "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
@@ -409,35 +409,35 @@ def generate() -> dict[str, Any]:
         },
         "open_residuals": [
             {
-                "id": "ADR-0087-R1",
+                "id": "ADR-NUM-0014-R1",
                 "rule": "close every operation/type/profile legality tuple against the 0.58.0 type namespace",
             },
             {
-                "id": "ADR-0087-R2",
+                "id": "ADR-NUM-0014-R2",
                 "rule": "publish independently checked result vectors for every supported floating type",
             },
             {
-                "id": "ADR-0087-R3",
+                "id": "ADR-NUM-0014-R3",
                 "rule": "apply the accepted value classes and canonical NaNs to every supported operation and prove each exceptional result rule",
             },
             {
-                "id": "ADR-0087-R4",
+                "id": "ADR-NUM-0014-R4",
                 "rule": "prove packed-lane ordering and sibling preservation for every packed four-bit operation",
             },
             {
-                "id": "ADR-0087-R5",
+                "id": "ADR-NUM-0014-R5",
                 "rule": "prove E8M0 scale-carrier legality and MX scale application",
             },
             {
-                "id": "ADR-0087-R6",
+                "id": "ADR-NUM-0014-R6",
                 "rule": "prove target availability and rejection before effects for unsupported tuples",
             },
             {
-                "id": "ADR-0087-R7",
+                "id": "ADR-NUM-0014-R7",
                 "rule": "obtain accepted architecture and formal-model review of the numeric result contract",
             },
             {
-                "id": "ADR-0087-R8",
+                "id": "ADR-NUM-0014-R8",
                 "rule": "record downstream byte-and-effect parity for the immutable profile contract",
             },
         ],
@@ -464,14 +464,14 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/tile/model/memory/*.asl"),
             *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
             source(
-                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md"
             ),
-            source("docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"),
+            source("docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md"),
             source(
-                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
             ),
             source(
-                "docs/status/decisions/0048-numeric-format-value-classification.md"
+                "docs/status/decisions/NUM-0009-numeric-format-value-classification.md"
             ),
         ],
         "summary": {

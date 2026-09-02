@@ -35,7 +35,7 @@
 
 - [ ] **Step 1: Add a failing version-neutral ADR check**
 
-Create a test that reads `docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md` and rejects release-owned language:
+Create a test that reads `docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md` and rejects release-owned language:
 
 ```python
 FORBIDDEN_ADR_PATTERNS = (
@@ -202,7 +202,7 @@ git commit -m "build: separate architecture and release closure"
 - Modify: `specification.toml`
 - Modify: `scripts/generate-release-manifest`
 - Modify: `spec/evidence/pto-isa-0582-hardware-numeric-vectors.json`
-- Modify: `docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md`
+- Modify: `docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md`
 - Test: `tests/scripts/test_architecture_release_boundary.py`
 - Test: `tests/scripts/test_release_closure.py`
 
@@ -255,7 +255,7 @@ python3 -m unittest \
   tests.scripts.test_architecture_release_boundary \
   tests.scripts.test_release_closure
 ! rg -n '\b0\.[0-9]+(?:\.[0-9]+)?\b|post-0\.|mode-function-v[0-9]+|must not merge until' \
-  docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md
+  docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md
 ```
 
 Expected: tests pass and the scan finds nothing.
@@ -267,7 +267,7 @@ git add -- \
   specification.toml \
   scripts/generate-release-manifest \
   spec/evidence/pto-isa-0582-hardware-numeric-vectors.json \
-  docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md \
+  docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md \
   tests/scripts/test_release_closure.py
 git commit -m "docs: keep binder architecture version neutral"
 ```

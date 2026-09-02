@@ -174,24 +174,44 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
         except ValueError:
             errors.append(f"{record.adr_id} path is outside repository root {root}")
             continue
-        result = subprocess.run(
-            [
-                "git",
-                "-C",
-                str(root),
-                "log",
-                "--follow",
-                "--format=%P",
-                "--",
-                relative.as_posix(),
-            ],
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        parents = result.stdout.splitlines()
-        if result.returncode != 0 or not parents or not parents[-1].split():
-            diagnostic = result.stderr.strip() or "no first landing commit with a parent"
+        candidates: list[Path] = []
+        old_ids = [
+            legacy_id
+            for legacy_id in record.legacy_ids
+            if re.fullmatch(r"ADR-[0-9]{4}", legacy_id)
+        ]
+        filename = re.fullmatch(r"[A-Z]+-[0-9]{4}-(.+\.md)", relative.name)
+        if len(old_ids) == 1 and filename is not None:
+            candidates.append(
+                relative.with_name(
+                    f"{old_ids[0].removeprefix('ADR-')}-{filename.group(1)}"
+                )
+            )
+        candidates.append(relative)
+
+        parents: list[str] = []
+        diagnostic = "no first landing commit with a parent"
+        for candidate in candidates:
+            result = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(root),
+                    "log",
+                    "--follow",
+                    "--format=%P",
+                    "--",
+                    candidate.as_posix(),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            parents = result.stdout.splitlines()
+            if result.returncode == 0 and parents and parents[-1].split():
+                break
+            diagnostic = result.stderr.strip() or diagnostic
+        else:
             errors.append(f"{record.adr_id} baseline provenance unavailable: {diagnostic}")
             continue
         expected = parents[-1].split()[0]

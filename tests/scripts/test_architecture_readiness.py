@@ -32,7 +32,7 @@ class ArchitectureReadinessTest(unittest.TestCase):
         released_versions: tuple[str, ...] = (),
     ):
         return derive_row(
-            subject_id="ADR-9999",
+            subject_id="ADR-GOV-9999",
             adr_status=adr_status,
             ndf_ids=("PTO-EXAMPLE-001",),
             unit_ids=("PTO-EXAMPLE-UNIT",),
@@ -118,8 +118,8 @@ class ArchitectureReadinessTest(unittest.TestCase):
         by_id = {row.subject_id: row for row in rows}
 
         self.assertEqual(len(by_id), len(rows))
-        self.assertEqual(by_id["ADR-0086"].stage, "draft")
-        self.assertEqual(by_id["ADR-0095"].stage, "draft")
+        self.assertEqual(by_id["ADR-NUM-0013"].stage, "draft")
+        self.assertEqual(by_id["ADR-NUM-0022"].stage, "draft")
         self.assertFalse(
             any(row.stage in {"validated", "released"} for row in rows)
         )
@@ -129,7 +129,7 @@ class ArchitectureReadinessTest(unittest.TestCase):
                 for row in rows
                 if row.subject_id not in {
                     *{f"ADR-{value:04d}" for value in range(86, 96)},
-                    "ADR-0097",
+                    "ADR-CUBE-0010",
                 }
             )
         )

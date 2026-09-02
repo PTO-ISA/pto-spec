@@ -21,6 +21,9 @@ fail() {
 }
 
 ./scripts/check-active-paths
+./scripts/check-adr-id-migration
+./scripts/check-adr-bilingual
+./scripts/check-ndf-supplements
 python3 scripts/generate-mnemonic-description-inventory --check
 python3 scripts/check-mnemonic-explanations
 
@@ -42,23 +45,32 @@ required_files=(
     asl/scalar/alu/ADD.asl
     asl/tile/memory-and-data-movement/regular/TLOAD.asl
     docs/mkdocs/mkdocs.yml
-    docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md
-    docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
-    docs/status/decisions/0039-numeric-rounding-selector-ownership.md
-    docs/status/decisions/0047-numeric-rounding-semantics.md
-    docs/status/decisions/0040-numeric-format-namespace-ownership.md
-    docs/status/decisions/0048-numeric-format-value-classification.md
-    docs/status/decisions/0049-hardware-subnormal-policy.md
-    docs/status/decisions/0050-hardware-special-value-checkpoint.md
-    docs/status/decisions/0051-predicate-state-namespace-boundary.md
-    docs/status/decisions/0041-a2a3-mx-profile-applicability.md
-    docs/status/decisions/0042-numeric-variation-point-ownership.md
-    docs/status/decisions/0043-public-numeric-type-identity-and-availability.md
-    docs/status/decisions/0044-public-integer-conversion-result-subset.md
-    docs/status/decisions/0052-direct-tile-and-bundle-catalog-closure.md
-    docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md
-    docs/status/decisions/0046-separate-execution-mask-and-warp-predicates.md
+    docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md
+    docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md
+    docs/status/decisions/NUM-0003-numeric-rounding-selector-ownership.md
+    docs/status/decisions/NUM-0008-numeric-rounding-semantics.md
+    docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md
+    docs/status/decisions/NUM-0009-numeric-format-value-classification.md
+    docs/status/decisions/NUM-0010-hardware-subnormal-policy.md
+    docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md
+    docs/status/decisions/BLOCK-0003-predicate-state-namespace-boundary.md
+    docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md
+    docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md
+    docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md
+    docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md
+    docs/status/decisions/GOV-0004-direct-tile-and-bundle-catalog-closure.md
+    docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md
+    docs/status/decisions/BLOCK-0002-separate-execution-mask-and-warp-predicates.md
     spec/release-inputs.json
+    spec/adr-id-migration.json
+    spec/schemas/pto-adr-id-migration.schema.json
+    spec/schemas/pto-ndf-supplements.schema.json
+    docs/ndf/supplements/arch-01.json
+    docs/ndf/supplements/block-01.json
+    docs/ndf/supplements/scalar-01.json
+    docs/ndf/supplements/scalar-02.json
+    docs/ndf/supplements/tile-01.json
+    docs/ndf/supplements/tile-02.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
     spec/catalog/numeric-profile-identities.json
@@ -84,6 +96,9 @@ required_files=(
     scripts/asl_tests.py
     tests/README.md
     scripts/check-asl-layout
+    scripts/check-adr-id-migration
+    scripts/check-adr-bilingual
+    scripts/check-ndf-supplements
     scripts/check-active-paths
     scripts/check-asl-tests
     scripts/check-ndf

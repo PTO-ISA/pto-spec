@@ -1,0 +1,1004 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "scalar",
+  "chunk": 1,
+  "entries": [
+    {
+      "id": "PTO-ACRC-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/ACRC.asl",
+      "title": {
+        "en": "ACRC instruction contract",
+        "zh-CN": "ACRC 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the complete ACRC contract in its owning ASL, covering the context-close request, final-position marker, legality, ordering, and fault boundary. Implementers can trace every accepted ACRC decision to one executable operation.",
+        "zh-CN": "本条把 ACRC 的完整契约集中到所属 ASL，涵盖上下文关闭请求、末尾位置标记、合法性、执行顺序和异常边界。实现者可由此把所有已接受的 ACRC 决策追溯到唯一的可执行操作。"
+      }
+    },
+    {
+      "id": "PTO-ACRE-IMPLICIT-STOP-001",
+      "source_path": "asl/scalar/sys/ACRE.asl",
+      "title": {
+        "en": "ACRE implicit SYS-block stop",
+        "zh-CN": "ACRE 的 SYS Block 隐式停止"
+      },
+      "summary": {
+        "en": "This clause defines ACRE as the terminating operation and implicit stop of an active SYS block. It also exposes the observable sequence: validate without mutation, commit the block, then atomically consume and restore the saved context; reserved request values have no recovery effects.",
+        "zh-CN": "本条说明 ACRE 是活动 SYS Block 的终止操作和隐式停止点。其可观察顺序为：先无副作用地验证，再提交 Block，最后原子地消费并恢复已保存上下文；保留的请求值不会产生恢复效果。"
+      }
+    },
+    {
+      "id": "PTO-ADD-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/ADD.asl",
+      "title": {
+        "en": "ADD instruction contract",
+        "zh-CN": "ADD 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors ADD assembly, encoding legality, operand transformation, fixed-width addition, destination publication, ordering, and faults in the owning ASL. It gives implementers one executable source for the instruction's observable result and retirement behavior.",
+        "zh-CN": "本条把 ADD 的汇编形式、编码合法性、操作数变换、定宽加法、结果发布、执行顺序和异常边界集中到所属 ASL。实现者可从这一处获得指令结果和退役行为的可执行依据。"
+      }
+    },
+    {
+      "id": "PTO-ADDTPC-PAGE-001",
+      "source_path": "asl/scalar/bru/ADDTPC.asl",
+      "title": {
+        "en": "ADDTPC page-relative value",
+        "zh-CN": "ADDTPC 页相对值"
+      },
+      "summary": {
+        "en": "This clause describes ADDTPC as a value-producing page-relative calculation from the current instruction TPC. The signed immediate is scaled by 4 KiB and wraps at XLEN; the result goes through Reg5 without installing a control-flow target or directly changing TPC.",
+        "zh-CN": "本条说明 ADDTPC 以当前指令 TPC 为基准生成页相对数值。带符号立即数按 4 KiB 缩放并在 XLEN 宽度回绕，结果经 Reg5 发布，但不会安装控制流目标，也不会直接修改 TPC。"
+      }
+    },
+    {
+      "id": "PTO-AND-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/AND.asl",
+      "title": {
+        "en": "AND instruction contract",
+        "zh-CN": "AND 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors AND assembly, encoding legality, right-source transformation, bitwise conjunction, destination publication, ordering, and faults in the owning ASL. It keeps the observable result and retirement boundary tied to one executable definition.",
+        "zh-CN": "本条把 AND 的汇编形式、编码合法性、右操作数变换、按位与、结果发布、执行顺序和异常边界集中到所属 ASL，使可观察结果和退役边界始终对应同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-BCNT-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/BCNT.asl",
+      "title": {
+        "en": "BCNT instruction contract",
+        "zh-CN": "BCNT 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the complete BCNT contract in its owning ASL. The executable definition selects a wrapping scalar field, counts its set bits, publishes an XLEN result, and defines all legality, ordering, and fault boundaries.",
+        "zh-CN": "本条把 BCNT 的完整契约集中到所属 ASL。可执行定义负责选择可回绕的标量位域、统计置位数、发布 XLEN 结果，并界定合法性、执行顺序和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-BIC-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/BIC.asl",
+      "title": {
+        "en": "BIC instruction contract",
+        "zh-CN": "BIC 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the complete BIC contract in its owning ASL. It ties wrapping-field selection and bit clearing to the instruction's encoded legality, XLEN result, destination effects, ordering, and faults.",
+        "zh-CN": "本条把 BIC 的完整契约集中到所属 ASL，将可回绕位域选择和清零操作与编码合法性、XLEN 结果、目的操作、执行顺序及异常边界绑定在一起。"
+      }
+    },
+    {
+      "id": "PTO-BIS-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/BIS.asl",
+      "title": {
+        "en": "BIS instruction contract",
+        "zh-CN": "BIS 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the complete BIS contract in its owning ASL. It ties wrapping-field selection and bit setting to the instruction's encoded legality, XLEN result, destination effects, ordering, and faults.",
+        "zh-CN": "本条把 BIS 的完整契约集中到所属 ASL，将可回绕位域选择和置位操作与编码合法性、XLEN 结果、目的操作、执行顺序及异常边界绑定在一起。"
+      }
+    },
+    {
+      "id": "PTO-BSE-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/BSE.asl",
+      "title": {
+        "en": "BSE instruction contract",
+        "zh-CN": "BSE 指令契约"
+      },
+      "summary": {
+        "en": "This clause identifies the owning ASL as the complete BSE contract for publishing a nonblocking SendEvent execution-control request. The same owner defines accepted encodings, state effects, ordering, and rejection behavior.",
+        "zh-CN": "本条确定所属 ASL 是 BSE 发布非阻塞 SendEvent 执行控制请求的完整契约来源，并由同一处定义可接受编码、状态影响、执行顺序和拒绝行为。"
+      }
+    },
+    {
+      "id": "PTO-BWE-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/BWE.asl",
+      "title": {
+        "en": "BWE instruction contract",
+        "zh-CN": "BWE 指令契约"
+      },
+      "summary": {
+        "en": "This clause identifies the owning ASL as the complete BWE contract for publishing a nonblocking WaitEvent execution-control request. The same owner defines accepted encodings, state effects, ordering, and rejection behavior.",
+        "zh-CN": "本条确定所属 ASL 是 BWE 发布非阻塞 WaitEvent 执行控制请求的完整契约来源，并由同一处定义可接受编码、状态影响、执行顺序和拒绝行为。"
+      }
+    },
+    {
+      "id": "PTO-BWI-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/BWI.asl",
+      "title": {
+        "en": "BWI instruction contract",
+        "zh-CN": "BWI 指令契约"
+      },
+      "summary": {
+        "en": "This clause identifies the owning ASL as the complete BWI contract for publishing a nonblocking WaitInterrupt execution-control request. The same owner defines accepted encodings, state effects, ordering, and rejection behavior.",
+        "zh-CN": "本条确定所属 ASL 是 BWI 发布非阻塞 WaitInterrupt 执行控制请求的完整契约来源，并由同一处定义可接受编码、状态影响、执行顺序和拒绝行为。"
+      }
+    },
+    {
+      "id": "PTO-BWT-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/BWT.asl",
+      "title": {
+        "en": "BWT instruction contract",
+        "zh-CN": "BWT 指令契约"
+      },
+      "summary": {
+        "en": "This clause identifies the owning ASL as the complete BWT contract for publishing a nonblocking WaitTimeout execution-control request. The same owner defines accepted encodings, state effects, ordering, and rejection behavior.",
+        "zh-CN": "本条确定所属 ASL 是 BWT 发布非阻塞 WaitTimeout 执行控制请求的完整契约来源，并由同一处定义可接受编码、状态影响、执行顺序和拒绝行为。"
+      }
+    },
+    {
+      "id": "PTO-BXS-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/BXS.asl",
+      "title": {
+        "en": "BXS instruction contract",
+        "zh-CN": "BXS 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors BXS field selection, extraction, sign extension, destination publication, legality, ordering, and faults in the owning ASL. The observable result is an XLEN value derived from the selected wrapping field.",
+        "zh-CN": "本条把 BXS 的位域选择、提取、符号扩展、结果发布、合法性、执行顺序和异常边界集中到所属 ASL。可观察结果是由选定可回绕位域得到的 XLEN 数值。"
+      }
+    },
+    {
+      "id": "PTO-BXU-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/BXU.asl",
+      "title": {
+        "en": "BXU instruction contract",
+        "zh-CN": "BXU 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors BXU field selection, extraction, zero extension, destination publication, legality, ordering, and faults in the owning ASL. The observable result is an XLEN value derived from the selected wrapping field.",
+        "zh-CN": "本条把 BXU 的位域选择、提取、零扩展、结果发布、合法性、执行顺序和异常边界集中到所属 ASL。可观察结果是由选定可回绕位域得到的 XLEN 数值。"
+      }
+    },
+    {
+      "id": "PTO-C-CMP-EQI-DECISION-BINDING-001",
+      "source_path": "asl/scalar/bru/C.CMP.EQI.asl",
+      "title": {
+        "en": "C.CMP.EQI instruction contract",
+        "zh-CN": "C.CMP.EQI 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the compressed equality-with-immediate comparison in its owning ASL, including encoded operands, boolean result publication, ordering, and faults. It prevents the comparison form from being defined independently of its executable operation.",
+        "zh-CN": "本条把压缩的立即数相等比较集中到所属 ASL，涵盖编码操作数、布尔结果发布、执行顺序和异常边界，避免该比较形式脱离可执行操作而被单独解释。"
+      }
+    },
+    {
+      "id": "PTO-C-CMP-NEI-DECISION-BINDING-001",
+      "source_path": "asl/scalar/bru/C.CMP.NEI.asl",
+      "title": {
+        "en": "C.CMP.NEI instruction contract",
+        "zh-CN": "C.CMP.NEI 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the compressed inequality-with-immediate comparison in its owning ASL, including encoded operands, boolean result publication, ordering, and faults. It prevents the comparison form from being defined independently of its executable operation.",
+        "zh-CN": "本条把压缩的立即数不等比较集中到所属 ASL，涵盖编码操作数、布尔结果发布、执行顺序和异常边界，避免该比较形式脱离可执行操作而被单独解释。"
+      }
+    },
+    {
+      "id": "PTO-C-EBREAK-CAUSE-001",
+      "source_path": "asl/scalar/sys/C.EBREAK.asl",
+      "title": {
+        "en": "C.EBREAK trap cause",
+        "zh-CN": "C.EBREAK 陷阱原因"
+      },
+      "summary": {
+        "en": "This clause explains how C.EBREAK exposes its encoded immediate through the software-breakpoint trap. Trap 50 receives the zero-extended five-bit value in the 24-bit cause field, with no separate architectural breakpoint-tag state.",
+        "zh-CN": "本条说明 C.EBREAK 如何通过软件断点陷阱呈现编码立即数：陷阱 50 的 24 位 cause 字段接收零扩展后的 5 位数值，架构中不另设断点标签状态。"
+      }
+    },
+    {
+      "id": "PTO-C-SETC-EQ-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/C.SETC.EQ.asl",
+      "title": {
+        "en": "C.SETC.EQ conditional setter",
+        "zh-CN": "C.SETC.EQ 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines C.SETC.EQ to an active Conditional block and shares one first-success marker with the other SETC setters. A successful occurrence snapshots its sources and updates CommitArgument and BARG.TAKEN atomically; a rejected occurrence leaves the marker available.",
+        "zh-CN": "本条把 C.SETC.EQ 限定在活动 Conditional Block 内，并与其他 SETC 设置指令共享“首次成功”标记。成功执行会快照源值并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝的执行不会占用该标记。"
+      }
+    },
+    {
+      "id": "PTO-C-SETC-NE-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/C.SETC.NE.asl",
+      "title": {
+        "en": "C.SETC.NE conditional setter",
+        "zh-CN": "C.SETC.NE 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines C.SETC.NE to an active Conditional block and shares one first-success marker with the other SETC setters. A successful occurrence snapshots its sources and updates CommitArgument and BARG.TAKEN atomically; a rejected occurrence leaves the marker available.",
+        "zh-CN": "本条把 C.SETC.NE 限定在活动 Conditional Block 内，并与其他 SETC 设置指令共享“首次成功”标记。成功执行会快照源值并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝的执行不会占用该标记。"
+      }
+    },
+    {
+      "id": "PTO-C-SETC-TGT-SNAPSHOT-001",
+      "source_path": "asl/scalar/alu/C.SETC.TGT.asl",
+      "title": {
+        "en": "C.SETC.TGT target snapshot",
+        "zh-CN": "C.SETC.TGT 目标快照"
+      },
+      "summary": {
+        "en": "This clause records how C.SETC.TGT captures a complete scalar value into BARG.BPCN for an active Standard or Floating block. Applicability and duplicate checks occur before source readiness, so only the first successful occurrence changes the pending target.",
+        "zh-CN": "本条说明 C.SETC.TGT 如何在活动 Standard 或 Floating Block 中把完整标量值快照到 BARG.BPCN。适用性和重复检查先于源就绪检查，因此只有第一次成功执行会改变待提交目标。"
+      }
+    },
+    {
+      "id": "PTO-C-SETRET-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/C.SETRET.asl",
+      "title": {
+        "en": "C.SETRET instruction contract",
+        "zh-CN": "C.SETRET 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors C.SETRET in its owning ASL, where an unsigned halfword-scaled TPC-relative return address is materialized in ra and captured return state. Encoding, ordering, retirement, and fault behavior remain part of that single executable contract.",
+        "zh-CN": "本条把 C.SETRET 集中到所属 ASL，其中无符号半字缩放的 TPC 相对返回地址会写入 ra 和捕获的返回状态。编码、执行顺序、退役和异常行为均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-C-SSRGET-DIRECT-IDS-001",
+      "source_path": "asl/scalar/sys/C.SSRGET.asl",
+      "title": {
+        "en": "C.SSRGET direct register IDs",
+        "zh-CN": "C.SSRGET 直接寄存器 ID"
+      },
+      "summary": {
+        "en": "This clause narrows the compressed system-register read to direct IDs 0, 1, and 16. Other five-bit IDs are rejected before the implicit T-destination effect, making unsuccessful decoding externally side-effect free.",
+        "zh-CN": "本条把压缩系统寄存器读取限定为直接 ID 0、1 和 16。其他 5 位 ID 会在隐式 T 目的操作之前被拒绝，因此失败的解码不会留下可观察副作用。"
+      }
+    },
+    {
+      "id": "PTO-CLZ-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/CLZ.asl",
+      "title": {
+        "en": "CLZ instruction contract",
+        "zh-CN": "CLZ 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors CLZ field selection, leading-zero count, XLEN result publication, legality, ordering, and faults in the owning ASL. The count is defined over the selected wrapping scalar field rather than an independently inferred operand width.",
+        "zh-CN": "本条把 CLZ 的位域选择、前导零计数、XLEN 结果发布、合法性、执行顺序和异常边界集中到所属 ASL。计数范围取自选定的可回绕标量位域，而不是另行推断的操作数宽度。"
+      }
+    },
+    {
+      "id": "PTO-CTZ-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/CTZ.asl",
+      "title": {
+        "en": "CTZ instruction contract",
+        "zh-CN": "CTZ 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors CTZ field selection, trailing-zero count, XLEN result publication, legality, ordering, and faults in the owning ASL. The count is defined over the selected wrapping scalar field rather than an independently inferred operand width.",
+        "zh-CN": "本条把 CTZ 的位域选择、尾随零计数、XLEN 结果发布、合法性、执行顺序和异常边界集中到所属 ASL。计数范围取自选定的可回绕标量位域，而不是另行推断的操作数宽度。"
+      }
+    },
+    {
+      "id": "PTO-EBREAK-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/EBREAK.asl",
+      "title": {
+        "en": "EBREAK instruction contract",
+        "zh-CN": "EBREAK 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors EBREAK assembly, encoding legality, trap effects, ordering, and faults in the owning ASL. Its executable operation raises software-breakpoint trap 50 and carries the encoded four-bit immediate as the cause.",
+        "zh-CN": "本条把 EBREAK 的汇编形式、编码合法性、陷阱效果、执行顺序和异常边界集中到所属 ASL。其可执行操作触发软件断点陷阱 50，并以编码的 4 位立即数作为 cause。"
+      }
+    },
+    {
+      "id": "PTO-FABS-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FABS.asl",
+      "title": {
+        "en": "FABS instruction contract",
+        "zh-CN": "FABS 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FABS carrier selection and bit-level result in the owning ASL. The operation clears the selected FP64 or FP32 sign bit, preserves every other carrier bit, and produces no numeric flags; legality and faults stay with the same owner.",
+        "zh-CN": "本条把 FABS 的载体选择和位级结果集中到所属 ASL。该操作清除所选 FP64 或 FP32 载体的符号位、保留其余各位且不产生数值标志；合法性和异常边界也由同一处定义。"
+      }
+    },
+    {
+      "id": "PTO-FCVTA-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FCVTA.asl",
+      "title": {
+        "en": "FCVTA instruction contract",
+        "zh-CN": "FCVTA 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FCVTA source and destination formats, fixed round-away conversion, result publication, numeric effects, legality, and faults in the owning ASL. Implementers can trace all supported floating-to-integer cases to one executable definition.",
+        "zh-CN": "本条把 FCVTA 的源格式、目的格式、固定远离零舍入转换、结果发布、数值影响、合法性和异常边界集中到所属 ASL。实现者可将所有受支持的浮点到整数转换追溯到同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-FCVTM-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FCVTM.asl",
+      "title": {
+        "en": "FCVTM instruction contract",
+        "zh-CN": "FCVTM 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FCVTM source and destination formats, fixed round-down conversion, result publication, numeric effects, legality, and faults in the owning ASL. Implementers can trace all supported floating-to-integer cases to one executable definition.",
+        "zh-CN": "本条把 FCVTM 的源格式、目的格式、固定向下舍入转换、结果发布、数值影响、合法性和异常边界集中到所属 ASL。实现者可将所有受支持的浮点到整数转换追溯到同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-FCVTN-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FCVTN.asl",
+      "title": {
+        "en": "FCVTN instruction contract",
+        "zh-CN": "FCVTN 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FCVTN source and destination formats, fixed round-nearest conversion, result publication, numeric effects, legality, and faults in the owning ASL. Implementers can trace all supported floating-to-integer cases to one executable definition.",
+        "zh-CN": "本条把 FCVTN 的源格式、目的格式、固定最近值舍入转换、结果发布、数值影响、合法性和异常边界集中到所属 ASL。实现者可将所有受支持的浮点到整数转换追溯到同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-FCVTP-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FCVTP.asl",
+      "title": {
+        "en": "FCVTP instruction contract",
+        "zh-CN": "FCVTP 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FCVTP source and destination formats, fixed round-up conversion, result publication, numeric effects, legality, and faults in the owning ASL. Implementers can trace all supported floating-to-integer cases to one executable definition.",
+        "zh-CN": "本条把 FCVTP 的源格式、目的格式、固定向上舍入转换、结果发布、数值影响、合法性和异常边界集中到所属 ASL。实现者可将所有受支持的浮点到整数转换追溯到同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-FCVTZ-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FCVTZ.asl",
+      "title": {
+        "en": "FCVTZ instruction contract",
+        "zh-CN": "FCVTZ 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FCVTZ source and destination formats, fixed round-toward-zero conversion, result publication, numeric effects, legality, and faults in the owning ASL. Implementers can trace all supported floating-to-integer cases to one executable definition.",
+        "zh-CN": "本条把 FCVTZ 的源格式、目的格式、固定向零舍入转换、结果发布、数值影响、合法性和异常边界集中到所属 ASL。实现者可将所有受支持的浮点到整数转换追溯到同一份可执行定义。"
+      }
+    },
+    {
+      "id": "PTO-FENCE-D-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/FENCE.D.asl",
+      "title": {
+        "en": "FENCE.D instruction contract",
+        "zh-CN": "FENCE.D 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FENCE.D ordering masks and reservation effects in the owning ASL. The executable contract records predecessor and successor masks, invalidates the local reservation, and defines legality, ordering, retirement, and faults.",
+        "zh-CN": "本条把 FENCE.D 的排序掩码和保留状态影响集中到所属 ASL。可执行契约记录前驱与后继掩码、使本地 reservation 失效，并定义合法性、执行顺序、退役和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-FENCE-I-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/FENCE.I.asl",
+      "title": {
+        "en": "FENCE.I instruction contract",
+        "zh-CN": "FENCE.I 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors FENCE.I instruction-visibility effects in the owning ASL. The executable contract invalidates the reservation, advances the instruction-cache epoch, and defines the associated legality, ordering, retirement, and faults.",
+        "zh-CN": "本条把 FENCE.I 的指令可见性影响集中到所属 ASL。可执行契约使 reservation 失效、推进指令缓存 epoch，并定义相关合法性、执行顺序、退役和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-FMAX-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FMAX.asl",
+      "title": {
+        "en": "FMAX instruction contract",
+        "zh-CN": "FMAX 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the selected carrier formats and architecture-owned maximum behavior in the owning ASL. Ordered comparison, NaN handling, signed-zero selection, numeric effects, publication, and faults remain one executable contract.",
+        "zh-CN": "本条把所选载体格式和架构定义的最大值行为集中到所属 ASL。有序比较、NaN 处理、带符号零选择、数值影响、结果发布和异常边界共同构成一份可执行契约。"
+      }
+    },
+    {
+      "id": "PTO-FMIN-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FMIN.asl",
+      "title": {
+        "en": "FMIN instruction contract",
+        "zh-CN": "FMIN 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the selected carrier formats and architecture-owned minimum behavior in the owning ASL. Ordered comparison, NaN handling, signed-zero selection, numeric effects, publication, and faults remain one executable contract.",
+        "zh-CN": "本条把所选载体格式和架构定义的最小值行为集中到所属 ASL。有序比较、NaN 处理、带符号零选择、数值影响、结果发布和异常边界共同构成一份可执行契约。"
+      }
+    },
+    {
+      "id": "PTO-FNE-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FNE.asl",
+      "title": {
+        "en": "FNE instruction contract",
+        "zh-CN": "FNE 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors ordered quiet inequality in the owning ASL, including carrier selection, NaN-sensitive numeric effects, canonical XLEN boolean publication, legality, ordering, and faults.",
+        "zh-CN": "本条把有序静默不等比较集中到所属 ASL，涵盖载体选择、与 NaN 相关的数值影响、规范 XLEN 布尔值发布、合法性、执行顺序和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-FNES-DECISION-BINDING-001",
+      "source_path": "asl/scalar/fsu/FNES.asl",
+      "title": {
+        "en": "FNES instruction contract",
+        "zh-CN": "FNES 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors ordered signaling inequality in the owning ASL, including carrier selection, NaN-sensitive numeric effects, canonical XLEN boolean publication, legality, ordering, and faults.",
+        "zh-CN": "本条把有序信号不等比较集中到所属 ASL，涵盖载体选择、与 NaN 相关的数值影响、规范 XLEN 布尔值发布、合法性、执行顺序和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-HL-ADDI-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ADDI.asl",
+      "title": {
+        "en": "HL.ADDI immediate-add contract",
+        "zh-CN": "HL.ADDI 立即数加法契约"
+      },
+      "summary": {
+        "en": "This clause explains how HL.ADDI reconstructs its split unsigned 24-bit immediate and adds it to a snapshotted Reg5 source at XLEN width. The result wraps, publishes through the common destination map, advances TPC by six bytes, and leaves unrelated architectural state unchanged.",
+        "zh-CN": "本条说明 HL.ADDI 如何重组分段编码的无符号 24 位立即数，并与快照后的 Reg5 源在 XLEN 宽度相加。结果按宽度回绕、经通用目的映射发布、使 TPC 前进 6 字节，同时不改变无关架构状态。"
+      }
+    },
+    {
+      "id": "PTO-HL-ADDIW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ADDIW.asl",
+      "title": {
+        "en": "HL.ADDIW word-add contract",
+        "zh-CN": "HL.ADDIW 字加法契约"
+      },
+      "summary": {
+        "en": "This clause explains the word form of split-immediate addition. HL.ADDIW uses the low 32 bits of the source and zero-extended 24-bit immediate, sign-extends the 32-bit result to XLEN, publishes through the common destination map, and advances TPC by six bytes.",
+        "zh-CN": "本条说明分段立即数加法的字宽形式。HL.ADDIW 使用源值和零扩展 24 位立即数的低 32 位，将 32 位结果符号扩展到 XLEN，经通用目的映射发布，并使 TPC 前进 6 字节。"
+      }
+    },
+    {
+      "id": "PTO-HL-ADDTPC-PAGE-001",
+      "source_path": "asl/scalar/bru/HL.ADDTPC.asl",
+      "title": {
+        "en": "HL.ADDTPC page-relative value",
+        "zh-CN": "HL.ADDTPC 页相对值"
+      },
+      "summary": {
+        "en": "This clause describes HL.ADDTPC as a value-producing calculation from the current instruction TPC using a signed 32-bit displacement scaled by 4 KiB. The XLEN-wrapping result goes through Reg5 without installing a control-flow target or directly changing TPC.",
+        "zh-CN": "本条说明 HL.ADDTPC 以当前指令 TPC 和按 4 KiB 缩放的带符号 32 位位移生成数值。结果在 XLEN 宽度回绕并经 Reg5 发布，但不会安装控制流目标，也不会直接修改 TPC。"
+      }
+    },
+    {
+      "id": "PTO-HL-ANDI-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ANDI.asl",
+      "title": {
+        "en": "HL.ANDI immediate-AND contract",
+        "zh-CN": "HL.ANDI 立即数按位与契约"
+      },
+      "summary": {
+        "en": "This clause describes exact reconstruction of the split signed 24-bit immediate and its sign extension before XLEN bitwise conjunction. A snapshotted Reg5 source feeds the operation; the result uses the common destination map, advances TPC by six bytes, and leaves unrelated state unchanged.",
+        "zh-CN": "本条说明分段编码的带符号 24 位立即数如何精确重组并符号扩展，再参与 XLEN 按位与。操作使用快照后的 Reg5 源，结果经通用目的映射发布、使 TPC 前进 6 字节，并保持无关状态不变。"
+      }
+    },
+    {
+      "id": "PTO-HL-ANDIW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ANDIW.asl",
+      "title": {
+        "en": "HL.ANDIW word immediate-AND contract",
+        "zh-CN": "HL.ANDIW 字宽立即数按位与契约"
+      },
+      "summary": {
+        "en": "This clause describes the word form of split-immediate conjunction. HL.ANDIW combines the low 32 bits of the source with the low word of a sign-extended 24-bit immediate, then sign-extends the 32-bit result to XLEN and publishes it through the common destination map.",
+        "zh-CN": "本条说明分段立即数按位与的字宽形式。HL.ANDIW 将源值低 32 位与符号扩展后 24 位立即数的低字进行按位与，再把 32 位结果符号扩展到 XLEN 并经通用目的映射发布。"
+      }
+    },
+    {
+      "id": "PTO-HL-BFI-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.BFI.asl",
+      "title": {
+        "en": "HL.BFI instruction contract",
+        "zh-CN": "HL.BFI 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors HL.BFI in its owning ASL. The executable contract snapshots its base and source, inserts ascending low source bits into an inclusive wrapping destination interval, publishes the XLEN result, and defines legality, ordering, and faults.",
+        "zh-CN": "本条把 HL.BFI 集中到所属 ASL。可执行契约会快照基值和源值，把源值的连续低位插入含端点且可回绕的目的区间，发布 XLEN 结果，并定义合法性、执行顺序和异常边界。"
+      }
+    },
+    {
+      "id": "PTO-HL-CCAT-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.CCAT.asl",
+      "title": {
+        "en": "HL.CCAT concatenation contract",
+        "zh-CN": "HL.CCAT 拼接契约"
+      },
+      "summary": {
+        "en": "This clause defines the observable shape of the 128-bit concatenate-and-shift operation. It snapshots both Reg5 sources, shifts the complete concatenation for all amounts 0–127, publishes the low half before the high half, and advances TPC without touching unrelated state.",
+        "zh-CN": "本条说明 128 位拼接右移操作的可观察形态：先快照两个 Reg5 源，对完整拼接值执行 0–127 范围内的右移，先发布低半部再发布高半部，随后推进 TPC，且不改变无关状态。"
+      }
+    },
+    {
+      "id": "PTO-HL-CCATW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.CCATW.asl",
+      "title": {
+        "en": "HL.CCATW word-concatenation contract",
+        "zh-CN": "HL.CCATW 字拼接契约"
+      },
+      "summary": {
+        "en": "This clause defines the word-sized concatenate-and-shift operation. It combines the low 32 bits of both sources, assigns every seven-bit shift value, sign-extends and publishes the low result before the high result, and yields two zeros for shifts 64–127.",
+        "zh-CN": "本条说明字宽拼接右移操作：拼接两个源值的低 32 位，为所有 7 位移位量赋予含义，将低结果和高结果分别符号扩展并依次发布；移位量 64–127 时两个结果均为零。"
+      }
+    },
+    {
+      "id": "PTO-HL-DIV-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.DIV.asl",
+      "title": {
+        "en": "HL.DIV instruction contract",
+        "zh-CN": "HL.DIV 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors signed XLEN division in the owning ASL. Source snapshots, quotient and remainder calculation, quotient-first publication, special arithmetic cases, destination aliases, retirement, and faults are governed by one executable contract.",
+        "zh-CN": "本条把有符号 XLEN 除法集中到所属 ASL。源值快照、商余计算、先商后余的发布顺序、特殊算术情况、目的别名、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-DIVU-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.DIVU.asl",
+      "title": {
+        "en": "HL.DIVU instruction contract",
+        "zh-CN": "HL.DIVU 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors unsigned XLEN division in the owning ASL. Source snapshots, quotient and remainder calculation, quotient-first publication, zero-divisor handling, destination aliases, retirement, and faults are governed by one executable contract.",
+        "zh-CN": "本条把无符号 XLEN 除法集中到所属 ASL。源值快照、商余计算、先商后余的发布顺序、除数为零的处理、目的别名、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-DIVUW-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.DIVUW.asl",
+      "title": {
+        "en": "HL.DIVUW instruction contract",
+        "zh-CN": "HL.DIVUW 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors unsigned low-32-bit division in the owning ASL. It keeps source snapshots, word-sized arithmetic, result extension, quotient-first publication, zero-divisor behavior, destination aliases, retirement, and faults together.",
+        "zh-CN": "本条把无符号低 32 位除法集中到所属 ASL，将源值快照、字宽算术、结果扩展、先商后余的发布顺序、除数为零的处理、目的别名、退役和异常边界统一定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-DIVW-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.DIVW.asl",
+      "title": {
+        "en": "HL.DIVW instruction contract",
+        "zh-CN": "HL.DIVW 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors signed low-32-bit division in the owning ASL. It keeps source snapshots, word-sized arithmetic, result extension, quotient-first publication, zero-divisor and overflow behavior, destination aliases, retirement, and faults together.",
+        "zh-CN": "本条把有符号低 32 位除法集中到所属 ASL，将源值快照、字宽算术、结果扩展、先商后余的发布顺序、除数为零和溢出处理、目的别名、退役和异常边界统一定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-LIS-DECISION-BINDING-001",
+      "source_path": "asl/scalar/alu/HL.LIS.asl",
+      "title": {
+        "en": "HL.LIS instruction contract",
+        "zh-CN": "HL.LIS 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors HL.LIS immediate reconstruction and publication in the owning ASL. The split encoded 32-bit value is sign-extended to XLEN and sent through RegDst, while legality, ordering, retirement, and faults remain part of the same executable contract.",
+        "zh-CN": "本条把 HL.LIS 的立即数组合和结果发布集中到所属 ASL。分段编码的 32 位数值被符号扩展到 XLEN 并经 RegDst 发布，合法性、执行顺序、退役和异常边界也由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-LUI-UPPER-HALF-001",
+      "source_path": "asl/scalar/alu/HL.LUI.asl",
+      "title": {
+        "en": "HL.LUI upper-half immediate",
+        "zh-CN": "HL.LUI 高半部立即数"
+      },
+      "summary": {
+        "en": "This clause describes HL.LUI as exact immediate placement rather than arithmetic sign extension. The reconstructed 32-bit immediate occupies result bits 63:32, the low 32 bits are zero, and an all-zero immediate materializes zero through RegDst.",
+        "zh-CN": "本条说明 HL.LUI 执行精确的立即数位置装载，而不是算术符号扩展。重组后的 32 位立即数放入结果位 63:32，低 32 位清零；全零立即数经 RegDst 生成零值。"
+      }
+    },
+    {
+      "id": "PTO-HL-MADDW-WORD-HALVES-001",
+      "source_path": "asl/scalar/alu/HL.MADDW.asl",
+      "title": {
+        "en": "HL.MADDW signed word halves",
+        "zh-CN": "HL.MADDW 有符号字结果拆分"
+      },
+      "summary": {
+        "en": "This clause defines how HL.MADDW interprets and publishes its two-result multiply-add. It snapshots the signed low 32 bits of all sources, computes modulo 2^64, then sign-extends and publishes the low 32-bit half before the high half.",
+        "zh-CN": "本条说明 HL.MADDW 如何解释并发布双结果乘加：先快照所有源值的有符号低 32 位，按模 2^64 计算，再将低 32 位和高 32 位分别符号扩展并依次发布。"
+      }
+    },
+    {
+      "id": "PTO-HL-ORI-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ORI.asl",
+      "title": {
+        "en": "HL.ORI immediate-OR contract",
+        "zh-CN": "HL.ORI 立即数按位或契约"
+      },
+      "summary": {
+        "en": "This clause describes exact reconstruction and sign extension of the split signed 24-bit immediate before XLEN inclusive-or. The snapshotted source and common destination map make aliases deterministic; successful execution advances TPC and leaves unrelated state unchanged.",
+        "zh-CN": "本条说明分段编码的带符号 24 位立即数如何精确重组和符号扩展，再参与 XLEN 按位或。源值快照和通用目的映射使别名行为确定；成功执行推进 TPC 并保持无关状态不变。"
+      }
+    },
+    {
+      "id": "PTO-HL-ORIW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.ORIW.asl",
+      "title": {
+        "en": "HL.ORIW word immediate-OR contract",
+        "zh-CN": "HL.ORIW 字宽立即数按位或契约"
+      },
+      "summary": {
+        "en": "This clause describes the word form of split-immediate inclusive-or. It combines the low 32 bits of the source and sign-extended immediate, sign-extends the 32-bit result to XLEN, publishes through the common destination map, and advances TPC.",
+        "zh-CN": "本条说明分段立即数按位或的字宽形式：使用源值和符号扩展立即数的低 32 位，将 32 位结果符号扩展到 XLEN，经通用目的映射发布，并推进 TPC。"
+      }
+    },
+    {
+      "id": "PTO-HL-PRF-A-CACHE-MODEL-001",
+      "source_path": "asl/scalar/agu/HL.PRF.A.asl",
+      "title": {
+        "en": "HL.PRF.A cache-level hint",
+        "zh-CN": "HL.PRF.A 缓存层级提示"
+      },
+      "summary": {
+        "en": "This clause assigns model values 0, 1, and 2 to non-binding L1, L2, and L3 hints and reserves the remaining encodings. A legal hint forms an address without translation, memory events, ordering edges, data-access faults, or placement guarantees, then publishes that address after source snapshot.",
+        "zh-CN": "本条把 model 值 0、1、2 分别解释为非约束性的 L1、L2、L3 提示，其余编码保留。合法提示会在不产生地址翻译、内存事件、排序边、数据访问异常或放置保证的情况下形成地址，并在源值快照后发布该地址。"
+      }
+    },
+    {
+      "id": "PTO-HL-PRF-CACHE-MODEL-001",
+      "source_path": "asl/scalar/agu/HL.PRF.asl",
+      "title": {
+        "en": "HL.PRF cache-level hint",
+        "zh-CN": "HL.PRF 缓存层级提示"
+      },
+      "summary": {
+        "en": "This clause assigns model values 0, 1, and 2 to non-binding L1, L2, and L3 hints and reserves the remaining encodings. A legal hint forms an address without translation, memory events, ordering edges, data-access faults, placement guarantees, or destination effects.",
+        "zh-CN": "本条把 model 值 0、1、2 分别解释为非约束性的 L1、L2、L3 提示，其余编码保留。合法提示形成地址时不会产生地址翻译、内存事件、排序边、数据访问异常、放置保证或目的操作。"
+      }
+    },
+    {
+      "id": "PTO-HL-PRFI-U-CACHE-MODEL-001",
+      "source_path": "asl/scalar/agu/HL.PRFI.U.asl",
+      "title": {
+        "en": "HL.PRFI.U cache-level hint",
+        "zh-CN": "HL.PRFI.U 缓存层级提示"
+      },
+      "summary": {
+        "en": "This clause assigns model values 0, 1, and 2 to non-binding L1, L2, and L3 hints and reserves the remaining encodings. The immediate-update form computes its encoded address without translation, memory events, ordering edges, data-access faults, placement guarantees, or destination effects.",
+        "zh-CN": "本条把 model 值 0、1、2 分别解释为非约束性的 L1、L2、L3 提示，其余编码保留。该立即数更新形式计算编码地址时不会产生地址翻译、内存事件、排序边、数据访问异常、放置保证或目的操作。"
+      }
+    },
+    {
+      "id": "PTO-HL-PRFI-UA-CACHE-MODEL-001",
+      "source_path": "asl/scalar/agu/HL.PRFI.UA.asl",
+      "title": {
+        "en": "HL.PRFI.UA cache-level hint",
+        "zh-CN": "HL.PRFI.UA 缓存层级提示"
+      },
+      "summary": {
+        "en": "This clause assigns model values 0, 1, and 2 to non-binding L1, L2, and L3 hints and reserves the remaining encodings. The legal immediate-update form computes its address without architectural memory effects and publishes the effective address after source snapshot.",
+        "zh-CN": "本条把 model 值 0、1、2 分别解释为非约束性的 L1、L2、L3 提示，其余编码保留。合法的立即数更新形式在不产生架构内存效果的情况下计算地址，并在源值快照后发布有效地址。"
+      }
+    },
+    {
+      "id": "PTO-HL-REM-RESULT-ORDER-001",
+      "source_path": "asl/scalar/alu/HL.REM.asl",
+      "title": {
+        "en": "HL.REM result order",
+        "zh-CN": "HL.REM 结果顺序"
+      },
+      "summary": {
+        "en": "This clause fixes the two-result order for signed XLEN remainder operations. Both sources are snapshotted first; RegDst0 receives the remainder before RegDst1 receives the quotient, so duplicate destinations and queue pushes have deterministic effects while arithmetic corner cases follow the paired division contract.",
+        "zh-CN": "本条固定有符号 XLEN 余数操作的双结果顺序。两个源值先被快照，RegDst0 先接收余数、RegDst1 后接收商，因此重复目的和队列压入具有确定效果；算术边界情况沿用配对除法契约。"
+      }
+    },
+    {
+      "id": "PTO-HL-REMU-RESULT-ORDER-001",
+      "source_path": "asl/scalar/alu/HL.REMU.asl",
+      "title": {
+        "en": "HL.REMU result order",
+        "zh-CN": "HL.REMU 结果顺序"
+      },
+      "summary": {
+        "en": "This clause fixes the two-result order for unsigned XLEN remainder operations. Both sources are snapshotted first; RegDst0 receives the remainder before RegDst1 receives the quotient, making aliases and queue pushes deterministic while zero-divisor behavior follows the paired division contract.",
+        "zh-CN": "本条固定无符号 XLEN 余数操作的双结果顺序。两个源值先被快照，RegDst0 先接收余数、RegDst1 后接收商，使目的别名和队列压入具有确定效果；除数为零的处理沿用配对除法契约。"
+      }
+    },
+    {
+      "id": "PTO-HL-REMUW-RESULT-ORDER-001",
+      "source_path": "asl/scalar/alu/HL.REMUW.asl",
+      "title": {
+        "en": "HL.REMUW result order",
+        "zh-CN": "HL.REMUW 结果顺序"
+      },
+      "summary": {
+        "en": "This clause fixes the two-result order for unsigned low-32-bit remainder operations. Both sources are snapshotted first; the extended remainder is published before the extended quotient, making aliases and queue pushes deterministic while corner cases follow the paired word-division contract.",
+        "zh-CN": "本条固定无符号低 32 位余数操作的双结果顺序。两个源值先被快照，扩展后的余数先于扩展后的商发布，使目的别名和队列压入具有确定效果；边界情况沿用配对字宽除法契约。"
+      }
+    },
+    {
+      "id": "PTO-HL-REMW-RESULT-ORDER-001",
+      "source_path": "asl/scalar/alu/HL.REMW.asl",
+      "title": {
+        "en": "HL.REMW result order",
+        "zh-CN": "HL.REMW 结果顺序"
+      },
+      "summary": {
+        "en": "This clause fixes the two-result order for signed low-32-bit remainder operations. Both sources are snapshotted first; the extended remainder is published before the extended quotient, making aliases and queue pushes deterministic while zero-divisor and overflow cases follow the paired word-division contract.",
+        "zh-CN": "本条固定有符号低 32 位余数操作的双结果顺序。两个源值先被快照，扩展后的余数先于扩展后的商发布，使目的别名和队列压入具有确定效果；除数为零和溢出情况沿用配对字宽除法契约。"
+      }
+    },
+    {
+      "id": "PTO-HL-SD-UPO-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SD.UPO.asl",
+      "title": {
+        "en": "HL.SD.UPO instruction contract",
+        "zh-CN": "HL.SD.UPO 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPO doubleword store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian eight-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPO 双字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 8 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-SD-UPR-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SD.UPR.asl",
+      "title": {
+        "en": "HL.SD.UPR instruction contract",
+        "zh-CN": "HL.SD.UPR 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPR doubleword store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian eight-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPR 双字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 8 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-ANDI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.ANDI.asl",
+      "title": {
+        "en": "HL.SETC.ANDI conditional setter",
+        "zh-CN": "HL.SETC.ANDI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.ANDI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence combines the snapshotted condition and updates CommitArgument and BARG.TAKEN atomically; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.ANDI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会组合快照后的条件并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-EQI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.EQI.asl",
+      "title": {
+        "en": "HL.SETC.EQI conditional setter",
+        "zh-CN": "HL.SETC.EQI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.EQI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.EQI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-GEI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.GEI.asl",
+      "title": {
+        "en": "HL.SETC.GEI conditional setter",
+        "zh-CN": "HL.SETC.GEI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.GEI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the signed comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.GEI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照有符号比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-GEUI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.GEUI.asl",
+      "title": {
+        "en": "HL.SETC.GEUI conditional setter",
+        "zh-CN": "HL.SETC.GEUI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.GEUI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the unsigned comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.GEUI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照无符号比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-LTI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.LTI.asl",
+      "title": {
+        "en": "HL.SETC.LTI conditional setter",
+        "zh-CN": "HL.SETC.LTI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.LTI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the signed comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.LTI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照有符号比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-LTUI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.LTUI.asl",
+      "title": {
+        "en": "HL.SETC.LTUI conditional setter",
+        "zh-CN": "HL.SETC.LTUI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.LTUI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the unsigned comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.LTUI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照无符号比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-NEI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.NEI.asl",
+      "title": {
+        "en": "HL.SETC.NEI conditional setter",
+        "zh-CN": "HL.SETC.NEI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.NEI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence snapshots the comparison inputs and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.NEI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会快照比较输入并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETC-ORI-CONDITIONAL-SETTER-001",
+      "source_path": "asl/scalar/bru/HL.SETC.ORI.asl",
+      "title": {
+        "en": "HL.SETC.ORI conditional setter",
+        "zh-CN": "HL.SETC.ORI 条件设置"
+      },
+      "summary": {
+        "en": "This clause confines HL.SETC.ORI to an active Conditional block and shares one first-success marker with all SETC setters. A successful occurrence combines the snapshotted condition and atomically updates CommitArgument and BARG.TAKEN; rejection leaves the marker free.",
+        "zh-CN": "本条把 HL.SETC.ORI 限定在活动 Conditional Block 内，并与全部 SETC 设置指令共享“首次成功”标记。成功执行会组合快照后的条件并原子更新 CommitArgument 和 BARG.TAKEN；被拒绝时标记仍可使用。"
+      }
+    },
+    {
+      "id": "PTO-HL-SETRET-DECISION-BINDING-001",
+      "source_path": "asl/scalar/bru/HL.SETRET.asl",
+      "title": {
+        "en": "HL.SETRET instruction contract",
+        "zh-CN": "HL.SETRET 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors HL.SETRET return-address formation and publication in the owning ASL. Encoding, source snapshot, captured return state, destination effects, ordering, retirement, and faults remain tied to the executable operation.",
+        "zh-CN": "本条把 HL.SETRET 的返回地址形成和发布集中到所属 ASL。编码、源值快照、捕获的返回状态、目的操作、执行顺序、退役和异常边界均与可执行操作保持一致。"
+      }
+    },
+    {
+      "id": "PTO-HL-SH-UPO-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SH.UPO.asl",
+      "title": {
+        "en": "HL.SH.UPO instruction contract",
+        "zh-CN": "HL.SH.UPO 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPO halfword store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian two-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPO 半字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 2 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-SH-UPR-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SH.UPR.asl",
+      "title": {
+        "en": "HL.SH.UPR instruction contract",
+        "zh-CN": "HL.SH.UPR 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPR halfword store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian two-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPR 半字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 2 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-SSRGET-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/HL.SSRGET.asl",
+      "title": {
+        "en": "HL.SSRGET instruction contract",
+        "zh-CN": "HL.SSRGET 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the full encoded system-register read in the owning ASL. Address legality, access checks, returned value, destination effects, ordering, retirement, and faults are interpreted through that single executable contract.",
+        "zh-CN": "本条把完整编码的系统寄存器读取集中到所属 ASL。地址合法性、访问检查、返回值、目的操作、执行顺序、退役和异常边界均通过同一份可执行契约解释。"
+      }
+    },
+    {
+      "id": "PTO-HL-SSRSET-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/HL.SSRSET.asl",
+      "title": {
+        "en": "HL.SSRSET instruction contract",
+        "zh-CN": "HL.SSRSET 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the full encoded system-register write in the owning ASL. Address legality, access checks, source snapshot, register effects, ordering, retirement, and faults are interpreted through that single executable contract.",
+        "zh-CN": "本条把完整编码的系统寄存器写入集中到所属 ASL。地址合法性、访问检查、源值快照、寄存器效果、执行顺序、退役和异常边界均通过同一份可执行契约解释。"
+      }
+    },
+    {
+      "id": "PTO-HL-SUBI-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.SUBI.asl",
+      "title": {
+        "en": "HL.SUBI immediate-subtract contract",
+        "zh-CN": "HL.SUBI 立即数减法契约"
+      },
+      "summary": {
+        "en": "This clause explains how HL.SUBI reconstructs its split unsigned 24-bit immediate and subtracts it from a snapshotted Reg5 source at XLEN width. The result wraps, publishes through the common destination map, advances TPC by six bytes, and leaves unrelated state unchanged.",
+        "zh-CN": "本条说明 HL.SUBI 如何重组分段编码的无符号 24 位立即数，并从快照后的 Reg5 源中减去该值。结果在 XLEN 宽度回绕、经通用目的映射发布、使 TPC 前进 6 字节，同时不改变无关状态。"
+      }
+    },
+    {
+      "id": "PTO-HL-SUBIW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.SUBIW.asl",
+      "title": {
+        "en": "HL.SUBIW word-subtract contract",
+        "zh-CN": "HL.SUBIW 字减法契约"
+      },
+      "summary": {
+        "en": "This clause describes the word form of split-immediate subtraction. HL.SUBIW uses the low 32 bits of the source and zero-extended 24-bit immediate, sign-extends the 32-bit result to XLEN, publishes through the common destination map, and advances TPC by six bytes.",
+        "zh-CN": "本条说明分段立即数减法的字宽形式。HL.SUBIW 使用源值和零扩展 24 位立即数的低 32 位，将 32 位结果符号扩展到 XLEN，经通用目的映射发布，并使 TPC 前进 6 字节。"
+      }
+    },
+    {
+      "id": "PTO-HL-SW-UPO-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SW.UPO.asl",
+      "title": {
+        "en": "HL.SW.UPO instruction contract",
+        "zh-CN": "HL.SW.UPO 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPO word store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian four-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPO 字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 4 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-SW-UPR-DECISION-BINDING-001",
+      "source_path": "asl/scalar/agu/HL.SW.UPR.asl",
+      "title": {
+        "en": "HL.SW.UPR instruction contract",
+        "zh-CN": "HL.SW.UPR 指令契约"
+      },
+      "summary": {
+        "en": "This clause anchors the UPR word store in its owning ASL. Source snapshots, encoded address formation, aligned little-endian four-byte memory effect, update behavior, ordering, retirement, and faults remain one executable contract.",
+        "zh-CN": "本条把 UPR 字存储集中到所属 ASL。源值快照、编码地址形成、对齐的小端 4 字节内存效果、更新行为、执行顺序、退役和异常边界均由同一份可执行契约定义。"
+      }
+    },
+    {
+      "id": "PTO-HL-XORI-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.XORI.asl",
+      "title": {
+        "en": "HL.XORI immediate-XOR contract",
+        "zh-CN": "HL.XORI 立即数按位异或契约"
+      },
+      "summary": {
+        "en": "This clause describes exact reconstruction and sign extension of the split signed 24-bit immediate before XLEN exclusive-or. The snapshotted source and common destination map make aliases deterministic; successful execution advances TPC and leaves unrelated state unchanged.",
+        "zh-CN": "本条说明分段编码的带符号 24 位立即数如何精确重组和符号扩展，再参与 XLEN 按位异或。源值快照和通用目的映射使别名行为确定；成功执行推进 TPC 并保持无关状态不变。"
+      }
+    },
+    {
+      "id": "PTO-HL-XORIW-CONTRACT-001",
+      "source_path": "asl/scalar/alu/HL.XORIW.asl",
+      "title": {
+        "en": "HL.XORIW word immediate-XOR contract",
+        "zh-CN": "HL.XORIW 字宽立即数按位异或契约"
+      },
+      "summary": {
+        "en": "This clause describes the word form of split-immediate exclusive-or. It combines the low 32 bits of the source and sign-extended immediate, sign-extends the 32-bit result to XLEN, publishes through the common destination map, and advances TPC.",
+        "zh-CN": "本条说明分段立即数按位异或的字宽形式：使用源值和符号扩展立即数的低 32 位，将 32 位结果符号扩展到 XLEN，经通用目的映射发布，并推进 TPC。"
+      }
+    }
+  ]
+}

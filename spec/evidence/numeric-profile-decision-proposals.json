@@ -12,13 +12,13 @@
     "path": "spec/catalog/numeric-profile-identities.json",
     "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef",
     "status": "identity-framework-closed-rules-open",
-    "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+    "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
     "sha256": "f1eb0a6399a46be34dbc11e07b96a8cb61f0d710f10bc770e4f5f3ee2ded060e",
     "status": "state-owner-matrix-closed-profile-production-open",
-    "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+    "acceptance_record": "docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
     "architecture_condition_closed_form_count": 11,
     "profile_condition_open_form_count": 19,
@@ -28,7 +28,7 @@
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
     "sha256": "b6ef41d8b5718e6cfbe073dca5b1c5760942707900346646d933735aac66d96a",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
-    "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+    "acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
@@ -43,7 +43,7 @@
     "path": "spec/evidence/numeric-subnormal-contract.json",
     "sha256": "5c6a0fce6e4ba6860ae9e18d3a0c055c6dadbd2221a7b69add30f2d460cf2e28",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
-    "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
+    "acceptance_record": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
@@ -63,7 +63,7 @@
     "path": "spec/evidence/numeric-special-value-contract.json",
     "sha256": "248d2ab931f339494c6d787a835776d5d52a1c3569fde6e6347a7ad5fade1a1d",
     "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
-    "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
+    "acceptance_record": "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
     "format_count": 25,
     "nan_capable_type_count": 10,
     "signaling_nan_capable_type_count": 7,
@@ -82,9 +82,9 @@
     "path": "spec/evidence/numeric-format-namespace-contract.json",
     "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
-    "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
-    "classification_checkpoint_id": "ADR-0087-SC2:ADR-0088-SC1",
-    "classification_acceptance_record": "docs/status/decisions/0048-numeric-format-value-classification.md",
+    "acceptance_record": "docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md",
+    "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
+    "classification_acceptance_record": "docs/status/decisions/NUM-0009-numeric-format-value-classification.md",
     "tile_data_type_count": 25,
     "tile_storage_width_counts": {
       "4": 5,
@@ -118,7 +118,7 @@
     "path": "spec/evidence/public-numeric-type-baseline.json",
     "sha256": "43de5052f27109a972caf9f39bce6f50dbf924cc7ed29d0050677d08c7793d25",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
-    "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+    "acceptance_record": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
     "public_floating_type_count": 8,
     "public_integer_type_count": 8,
@@ -137,7 +137,7 @@
     "path": "spec/evidence/public-integer-conversion-contract.json",
     "sha256": "280f0fcfb279c4c453465708d8081b135d3e3135b2498fc8e0042e4b70b70c10",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
-    "acceptance_record": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
+    "acceptance_record": "docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
     "candidate_ordered_pair_count": 64,
     "same_width_pair_count": 16,
@@ -157,7 +157,7 @@
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
     "sha256": "851aa222c5c9f5cb0e192ab7e753f1501a6819c8de8aebcd99aef574815d07a8",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
-    "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+    "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
     "operation_count": 6,
     "selector_count": 6,
@@ -176,7 +176,7 @@
     "path": "spec/evidence/numeric-variation-point-ownership.json",
     "sha256": "df4f6a56fb9b5a542cfe2df1daeece75739cc011487041947a0731c068840f6e",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
-    "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+    "acceptance_record": "docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md",
     "variation_point_count": 84,
     "unique_dimension_count": 38,
     "domain_count": 17,
@@ -208,31 +208,31 @@
       "id": "PF-01",
       "rule": "PTO specifications are authoritative and backend behavior is evidence only",
       "status": "accepted",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-02",
       "rule": "support restriction is distinct from result semantics",
       "status": "accepted",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-03",
       "rule": "delegated numeric variation is named, visible, and bounded",
       "status": "accepted",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-04",
       "rule": "unknown or missing numeric selections reject before effects",
       "status": "accepted",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "id": "PF-05",
       "rule": "CPU observation is neither architecture nor an independent oracle",
       "status": "accepted",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     }
   ],
   "profile_proposals": [
@@ -250,7 +250,7 @@
         "public-target-profiles"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "cpu-observation",
@@ -266,7 +266,7 @@
         "public-target-profiles"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a2a3-target",
@@ -283,7 +283,7 @@
         "public-type-system"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     },
     {
       "partition_id": "a5-target",
@@ -300,7 +300,7 @@
         "public-type-system"
       ],
       "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
     }
   ],
   "profile_hooks": [
@@ -335,7 +335,7 @@
   ],
   "decision_proposals": [
     {
-      "adr": "ADR-0047",
+      "adr": "ADR-NUM-0008",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -355,10 +355,10 @@
       ],
       "status": "accepted",
       "accepted": true,
-      "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
+      "acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
     },
     {
-      "adr": "ADR-0049",
+      "adr": "ADR-NUM-0010",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -376,10 +376,10 @@
       ],
       "status": "accepted",
       "accepted": true,
-      "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
+      "acceptance_record": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
     },
     {
-      "adr": "ADR-0086",
+      "adr": "ADR-NUM-0013",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -404,7 +404,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0087",
+      "adr": "ADR-NUM-0014",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -429,7 +429,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0088",
+      "adr": "ADR-NUM-0015",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -453,7 +453,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0089",
+      "adr": "ADR-NUM-0016",
       "affected_domains": [
         "scalar-binary",
         "scalar-fp-convert",
@@ -467,7 +467,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0090",
+      "adr": "ADR-NUM-0017",
       "affected_domains": [
         "scalar-fp-convert",
         "scalar-fp-to-integer",
@@ -481,7 +481,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0091",
+      "adr": "ADR-NUM-0018",
       "affected_domains": [
         "scalar-binary",
         "scalar-unary",
@@ -494,7 +494,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0092",
+      "adr": "ADR-NUM-0019",
       "affected_domains": [
         "tile-compare",
         "tile-order",
@@ -505,7 +505,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0093",
+      "adr": "ADR-NUM-0020",
       "affected_domains": [
         "tile-dequantize",
         "tile-quantize"
@@ -515,7 +515,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0094",
+      "adr": "ADR-NUM-0021",
       "affected_domains": [
         "cube-matrix"
       ],
@@ -524,7 +524,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0095",
+      "adr": "ADR-NUM-0022",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -564,14 +564,14 @@
         "ScalarFPBinaryProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -603,14 +603,14 @@
         "ScalarFPUnaryProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -643,13 +643,13 @@
         "ScalarFPFusedProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -683,13 +683,13 @@
         "ScalarFPToIntegerProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -719,14 +719,14 @@
         "ScalarFPConvertProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -757,12 +757,12 @@
         "ScalarIntegerToFPProfile"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -815,13 +815,13 @@
         "TileProfileBinary"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -863,13 +863,13 @@
         "TileSquareRoot"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -899,12 +899,12 @@
         "TileProfileMatrixAccumulate"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -935,11 +935,11 @@
         "TileProfileCompare"
       ],
       "decision_adr_ids": [
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -981,13 +981,13 @@
         "TileProfileReductionStep"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1032,13 +1032,13 @@
         "TileProfileExpand"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1068,13 +1068,13 @@
         "TileProfileConvert"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1104,14 +1104,14 @@
         "TileProfileQuantize"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0093",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0020",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1141,14 +1141,14 @@
         "TileProfileDequantize"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0093",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0020",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1180,11 +1180,11 @@
         "TileProfileValueIsNaN"
       ],
       "decision_adr_ids": [
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1229,13 +1229,13 @@
         "TileProfileMatrixScaledAccumulate"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0094",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0021",
+        "ADR-NUM-0022"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",

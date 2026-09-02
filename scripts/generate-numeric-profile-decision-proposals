@@ -61,11 +61,11 @@ def generate() -> dict[str, Any]:
 
     require(
         subnormal_contract["schema_version"] == 1
-        and subnormal_contract["decision_id"] == "ADR-0049"
+        and subnormal_contract["decision_id"] == "ADR-NUM-0010"
         and subnormal_contract["status"]
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
         and subnormal_contract["acceptance_record"]
-        == "docs/status/decisions/0049-hardware-subnormal-policy.md"
+        == "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
         and subnormal_contract["summary"]
         == {
             "subnormal_capable_type_count": 11,
@@ -87,12 +87,12 @@ def generate() -> dict[str, Any]:
     )
     require(
         special_value_contract["schema_version"] == 1
-        and special_value_contract["decision_id"] == "ADR-0088"
-        and special_value_contract["checkpoint_id"] == "ADR-0088-SC2"
+        and special_value_contract["decision_id"] == "ADR-NUM-0015"
+        and special_value_contract["checkpoint_id"] == "ADR-NUM-0015-SC2"
         and special_value_contract["status"]
         == "named-hardware-special-value-checkpoint-accepted-adr0088-open"
         and special_value_contract["acceptance_record"]
-        == "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
+        == "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md"
         and special_value_contract["summary"]
         == {
             "format_count": 25,
@@ -127,7 +127,7 @@ def generate() -> dict[str, Any]:
     )
     require(
         scalar_flag_contract["schema_version"] == 1
-        and scalar_flag_contract["decision_id"] == "ADR-0089"
+        and scalar_flag_contract["decision_id"] == "ADR-NUM-0016"
         and scalar_flag_contract["status"]
         == "state-owner-matrix-closed-profile-production-open"
         and scalar_flag_contract["summary"]["producer_owner_closed_form_count"] == 30
@@ -139,7 +139,7 @@ def generate() -> dict[str, Any]:
     )
     require(
         rounding_selector_contract["schema_version"] == 1
-        and rounding_selector_contract["decision_id"] == "ADR-0047"
+        and rounding_selector_contract["decision_id"] == "ADR-NUM-0008"
         and rounding_selector_contract["status"]
         == "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open"
         and rounding_selector_contract["summary"]
@@ -158,11 +158,11 @@ def generate() -> dict[str, Any]:
     )
     require(
         format_namespace_contract["schema_version"] == 1
-        and format_namespace_contract["decision_id"] == "ADR-0087"
+        and format_namespace_contract["decision_id"] == "ADR-NUM-0014"
         and format_namespace_contract["status"]
         == "namespace-carrier-and-value-classification-closed-operation-rules-open"
         and format_namespace_contract["classification_checkpoint_id"]
-        == "ADR-0087-SC2:ADR-0088-SC1"
+        == "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1"
         and format_namespace_contract["value_classification"]["status"] == "closed"
         and len(format_namespace_contract["value_classification"]["formats"])
         == 25
@@ -201,8 +201,8 @@ def generate() -> dict[str, Any]:
     )
     require(
         public_type_baseline["schema_version"] == 1
-        and public_type_baseline["decision_id"] == "ADR-0087"
-        and public_type_baseline["checkpoint_id"] == "ADR-0087-SC2"
+        and public_type_baseline["decision_id"] == "ADR-NUM-0014"
+        and public_type_baseline["checkpoint_id"] == "ADR-NUM-0014-SC2"
         and public_type_baseline["status"]
         == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open"
         and public_type_baseline["summary"]
@@ -225,9 +225,9 @@ def generate() -> dict[str, Any]:
     )
     require(
         public_integer_conversion["schema_version"] == 1
-        and public_integer_conversion["target"] == "S5-T2-A6:ADR-0090-SC1"
-        and public_integer_conversion["decision_id"] == "ADR-0090"
-        and public_integer_conversion["checkpoint_id"] == "ADR-0090-SC1"
+        and public_integer_conversion["target"] == "S5-T2-A6:ADR-NUM-0017-SC1"
+        and public_integer_conversion["decision_id"] == "ADR-NUM-0017"
+        and public_integer_conversion["checkpoint_id"] == "ADR-NUM-0017-SC1"
         and public_integer_conversion["status"]
         == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
         and public_integer_conversion["summary"]
@@ -365,7 +365,7 @@ def generate() -> dict[str, Any]:
             "path": "spec/catalog/numeric-profile-identities.json",
             "sha256": hashlib.sha256(IDENTITY_CATALOG.read_bytes()).hexdigest(),
             "status": identity_catalog["status"],
-            "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+            "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
         },
         "scalar_flag_contract": {
             "path": "spec/evidence/scalar-numeric-flag-contract.json",
@@ -437,7 +437,7 @@ def generate() -> dict[str, Any]:
                 PROFILE_APPLICABILITY_CONTRACT.read_bytes()
             ).hexdigest(),
             "status": profile_applicability_contract["status"],
-            "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
+            "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md",
             **profile_applicability_contract["summary"],
         },
         "variation_point_contract": {
@@ -460,31 +460,31 @@ def generate() -> dict[str, Any]:
                 "id": "PF-01",
                 "rule": "PTO specifications are authoritative and backend behavior is evidence only",
                 "status": "accepted",
-                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-02",
                 "rule": "support restriction is distinct from result semantics",
                 "status": "accepted",
-                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-03",
                 "rule": "delegated numeric variation is named, visible, and bounded",
                 "status": "accepted",
-                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-04",
                 "rule": "unknown or missing numeric selections reject before effects",
                 "status": "accepted",
-                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             },
             {
                 "id": "PF-05",
                 "rule": "CPU observation is neither architecture nor an independent oracle",
                 "status": "accepted",
-                "acceptance_record": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+                "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
             },
         ],
         "profile_proposals": profile_proposals,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed ADR-0095 numeric variation-point ownership ledger."""
+"""Generate the fail-closed ADR-NUM-0022 numeric variation-point ownership ledger."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ APPLICABILITY_CONTRACT = (
     ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
 )
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/0042-numeric-variation-point-ownership.md"
+    "docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md"
 )
 OUTPUT = ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 
@@ -85,44 +85,44 @@ DIMENSION_IDS = {
 }
 
 PRIMARY_DECISION_CANDIDATES = {
-    "rounding": ("ADR-0047",),
-    "NaN and infinity": ("ADR-0088",),
-    "signed zero": ("ADR-0088",),
-    "subnormal handling": ("ADR-0049",),
-    "NV/DZ/OF/UF/NX flags": ("ADR-0089",),
-    "domain errors": ("ADR-0091", "ADR-0095"),
-    "single-rounding behavior": ("ADR-0047",),
-    "overflow and underflow": ("ADR-0090", "ADR-0094", "ADR-0095"),
-    "rounding-mode result": ("ADR-0047",),
-    "out-of-range result": ("ADR-0090",),
-    "saturation or indefinite value": ("ADR-0090",),
-    "NV/NX flags": ("ADR-0089",),
-    "source and destination format mapping": ("ADR-0087",),
-    "NaN payload": ("ADR-0088",),
-    "NV/OF/UF/NX flags": ("ADR-0089",),
-    "signedness": ("ADR-0087",),
-    "destination format": ("ADR-0087",),
-    "overflow": ("ADR-0090", "ADR-0092", "ADR-0095"),
-    "NX flag": ("ADR-0089",),
-    "data-type interpretation": ("ADR-0087",),
-    "saturation": ("ADR-0090", "ADR-0094", "ADR-0095"),
-    "divide-by-zero": ("ADR-0091", "ADR-0088", "ADR-0095"),
-    "multiply-add precision": ("ADR-0095",),
-    "ordered and unordered comparison": ("ADR-0092",),
-    "NaN behavior": ("ADR-0088",),
-    "result encoding": ("ADR-0087",),
-    "accumulation width": ("ADR-0094", "ADR-0092"),
-    "reduction order": ("ADR-0092",),
-    "arg tie-breaking": ("ADR-0092",),
-    "scale interpretation": ("ADR-0093",),
-    "zero-point interpretation": ("ADR-0093",),
-    "clamping": ("ADR-0093", "ADR-0090"),
-    "exception behavior": ("ADR-0093", "ADR-0088"),
-    "data-type ordering": ("ADR-0092",),
-    "NaN placement": ("ADR-0088",),
-    "equal-value stability": ("ADR-0092",),
-    "ascending and descending tie behavior": ("ADR-0092",),
-    "input product precision": ("ADR-0094",),
+    "rounding": ("ADR-NUM-0008",),
+    "NaN and infinity": ("ADR-NUM-0015",),
+    "signed zero": ("ADR-NUM-0015",),
+    "subnormal handling": ("ADR-NUM-0010",),
+    "NV/DZ/OF/UF/NX flags": ("ADR-NUM-0016",),
+    "domain errors": ("ADR-NUM-0018", "ADR-NUM-0022"),
+    "single-rounding behavior": ("ADR-NUM-0008",),
+    "overflow and underflow": ("ADR-NUM-0017", "ADR-NUM-0021", "ADR-NUM-0022"),
+    "rounding-mode result": ("ADR-NUM-0008",),
+    "out-of-range result": ("ADR-NUM-0017",),
+    "saturation or indefinite value": ("ADR-NUM-0017",),
+    "NV/NX flags": ("ADR-NUM-0016",),
+    "source and destination format mapping": ("ADR-NUM-0014",),
+    "NaN payload": ("ADR-NUM-0015",),
+    "NV/OF/UF/NX flags": ("ADR-NUM-0016",),
+    "signedness": ("ADR-NUM-0014",),
+    "destination format": ("ADR-NUM-0014",),
+    "overflow": ("ADR-NUM-0017", "ADR-NUM-0019", "ADR-NUM-0022"),
+    "NX flag": ("ADR-NUM-0016",),
+    "data-type interpretation": ("ADR-NUM-0014",),
+    "saturation": ("ADR-NUM-0017", "ADR-NUM-0021", "ADR-NUM-0022"),
+    "divide-by-zero": ("ADR-NUM-0018", "ADR-NUM-0015", "ADR-NUM-0022"),
+    "multiply-add precision": ("ADR-NUM-0022",),
+    "ordered and unordered comparison": ("ADR-NUM-0019",),
+    "NaN behavior": ("ADR-NUM-0015",),
+    "result encoding": ("ADR-NUM-0014",),
+    "accumulation width": ("ADR-NUM-0021", "ADR-NUM-0019"),
+    "reduction order": ("ADR-NUM-0019",),
+    "arg tie-breaking": ("ADR-NUM-0019",),
+    "scale interpretation": ("ADR-NUM-0020",),
+    "zero-point interpretation": ("ADR-NUM-0020",),
+    "clamping": ("ADR-NUM-0020", "ADR-NUM-0017"),
+    "exception behavior": ("ADR-NUM-0020", "ADR-NUM-0015"),
+    "data-type ordering": ("ADR-NUM-0019",),
+    "NaN placement": ("ADR-NUM-0015",),
+    "equal-value stability": ("ADR-NUM-0019",),
+    "ascending and descending tie behavior": ("ADR-NUM-0019",),
+    "input product precision": ("ADR-NUM-0021",),
 }
 
 
@@ -222,7 +222,7 @@ def generate() -> dict[str, Any]:
     )
     require(formats["summary"]["adr0087_complete"] is False, "format decision unexpectedly complete")
     require(
-        public_types["target"] == "S5-T2-A5:ADR-0087-SC2"
+        public_types["target"] == "S5-T2-A5:ADR-NUM-0014-SC2"
         and public_types["status"]
         == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
         "public type baseline identity drift",
@@ -234,7 +234,7 @@ def generate() -> dict[str, Any]:
         "public type baseline summary drift",
     )
     require(
-        integer_conversion["target"] == "S5-T2-A6:ADR-0090-SC1"
+        integer_conversion["target"] == "S5-T2-A6:ADR-NUM-0017-SC1"
         and integer_conversion["status"]
         == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
         and integer_conversion["summary"]["accepted_unequal_width_tuple_count"]
@@ -246,11 +246,11 @@ def generate() -> dict[str, Any]:
     require(applicability["summary"]["tuple_count"] == 150, "applicability tuple drift")
     require(applicability["summary"]["result_rule_count"] == 0, "applicability result rule unexpectedly accepted")
 
-    adr0095 = next(row for row in decisions["decisions"] if row["adr"] == "ADR-0095")
+    adr0095 = next(row for row in decisions["decisions"] if row["adr"] == "ADR-NUM-0022")
     require(
         adr0095["status"] == "draft"
         and adr0095["acceptance_record"] is None,
-        "ADR-0095 must remain open",
+        "ADR-NUM-0022 must remain open",
     )
 
     domains = {row["id"]: row for row in inventory["contract_domains"]}
@@ -300,7 +300,7 @@ def generate() -> dict[str, Any]:
             decision_ids = domain_inputs[domain_id]["decision_adr_ids"]
             primary_decision_id = primary_decision(dimension, decision_ids)
             points_by_domain[domain_id].append(point_id)
-            rounding_rule_accepted = primary_decision_id == "ADR-0047"
+            rounding_rule_accepted = primary_decision_id == "ADR-NUM-0008"
             variation_points.append(
                 {
                     "id": point_id,
@@ -313,7 +313,7 @@ def generate() -> dict[str, Any]:
                     "requirement_id": domain["requirement"],
                     "decision_ownership": {
                         "primary_decision_id": primary_decision_id,
-                        "cross_cutting_decision_ids": ["ADR-0086", "ADR-0095"],
+                        "cross_cutting_decision_ids": ["ADR-NUM-0013", "ADR-NUM-0022"],
                     },
                     "decision_owner_kind": "portable-architecture",
                     "decision_owner_id": "pto-numeric-v1",
@@ -440,8 +440,8 @@ def generate() -> dict[str, Any]:
     return {
         "schema_version": 1,
         "artifact_id": "numeric-variation-point-ownership",
-        "target": "S5-T2-A4:ADR-0095",
-        "decision_id": "ADR-0095",
+        "target": "S5-T2-A4:ADR-NUM-0022",
+        "decision_id": "ADR-NUM-0022",
         "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {

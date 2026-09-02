@@ -1,0 +1,313 @@
+#!/usr/bin/env python3
+"""Validate the serial-to-typed ADR identifier migration contract."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+MAPPING_PATH = ROOT / "spec/adr-id-migration.json"
+ALLOWED_TYPES = ("GOV", "STATE", "MEM", "BLOCK", "SCALAR", "TILE", "CUBE", "NUM")
+RECORD_FIELDS = {
+    "old_id",
+    "new_id",
+    "old_path",
+    "new_path",
+    "type",
+    "old_body_sha256",
+}
+OLD_ID_RE = re.compile(r"^ADR-([0-9]{4})$")
+NEW_ID_RE = re.compile(r"^ADR-([A-Z]+)-([0-9]{4})$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _front_matter_and_body(path: Path) -> tuple[object, bytes]:
+    data = path.read_bytes()
+    lines = data.splitlines(keepends=True)
+    delimiters = [
+        index
+        for index, line in enumerate(lines)
+        if line.rstrip(b"\r\n") == b"---"
+    ]
+    if len(delimiters) < 2 or delimiters[0] != 0:
+        raise ValueError("must contain JSON front matter between two --- lines")
+    metadata_bytes = b"".join(lines[1 : delimiters[1]])
+    try:
+        metadata = json.loads(metadata_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"has invalid JSON front matter: {error}") from error
+    return metadata, b"".join(lines[delimiters[1] + 1 :])
+
+
+def _safe_repository_path(value: object) -> Path | None:
+    if not isinstance(value, str):
+        return None
+    path = Path(value)
+    if path.is_absolute() or ".." in path.parts:
+        return None
+    return path
+
+
+def _normalize_migrated_body(body: bytes, records: list[dict[str, object]]) -> bytes:
+    """Restore mapped identifiers and paths before comparing preserved prose."""
+
+    normalized = body
+    replacements: list[tuple[bytes, bytes]] = []
+    for record in records:
+        old_id = str(record.get("old_id", ""))
+        new_id = str(record.get("new_id", ""))
+        old_path = str(record.get("old_path", ""))
+        new_path = str(record.get("new_path", ""))
+        replacements.extend(
+            (
+                (new_id.encode(), old_id.encode()),
+                (new_path.encode(), old_path.encode()),
+                (Path(new_path).name.encode(), Path(old_path).name.encode()),
+            )
+        )
+    # Longest first prevents a shorter token from partially consuming a path.
+    for new, old in sorted(replacements, key=lambda pair: len(pair[0]), reverse=True):
+        if new:
+            normalized = normalized.replace(new, old)
+    return normalized
+
+
+def _historical_body(root: Path, old_path: str) -> bytes | None:
+    deletion = subprocess.run(
+        [
+            "git", "-C", str(root), "log", "-1", "--diff-filter=D",
+            "--format=%H", "--", old_path,
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    revision = "HEAD"
+    if deletion.returncode == 0 and deletion.stdout.strip():
+        revision = deletion.stdout.strip() + "^"
+    result = subprocess.run(
+        ["git", "-C", str(root), "show", f"{revision}:{old_path}"],
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    lines = result.stdout.splitlines(keepends=True)
+    delimiters = [
+        index for index, line in enumerate(lines) if line.rstrip(b"\r\n") == b"---"
+    ]
+    if len(delimiters) < 2 or delimiters[0] != 0:
+        return None
+    return b"".join(lines[delimiters[1] + 1 :])
+
+
+def _preserves_historical_lines(old_body: bytes, new_body: bytes) -> bool:
+    heading = re.compile(rb"^# ADR(?:-[A-Z]+)?[- ][0-9]{4}:")
+
+    def lines(body: bytes) -> list[bytes]:
+        return [
+            heading.sub(b"# <ADR-ID>:", line)
+            for line in body.splitlines()
+        ]
+
+    old_lines = lines(old_body)
+    new_lines = iter(lines(new_body))
+    return all(any(candidate == expected for candidate in new_lines) for expected in old_lines)
+
+
+def validate_migration(root: Path, mapping_path: Path) -> list[str]:
+    errors: list[str] = []
+    try:
+        document = json.loads(mapping_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"cannot read ADR ID migration map: {error}"]
+    if not isinstance(document, dict):
+        return ["ADR ID migration map must be an object"]
+    if set(document) != {"schema", "schema_version", "types", "records"}:
+        errors.append("migration map top-level fields must be exact")
+    if document.get("schema") != "pto.adr-id-migration":
+        errors.append("migration map schema must be pto.adr-id-migration")
+    if document.get("schema_version") != 1:
+        errors.append("migration map schema_version must be 1")
+    if document.get("types") != list(ALLOWED_TYPES):
+        errors.append("migration map types must use the canonical type order")
+    raw_records = document.get("records")
+    if not isinstance(raw_records, list):
+        return errors + ["migration map records must be an array"]
+    records: list[dict[str, object]] = []
+    for index, raw_record in enumerate(raw_records):
+        if not isinstance(raw_record, dict):
+            errors.append(f"record {index} must be an object")
+            continue
+        records.append(raw_record)
+        if set(raw_record) != RECORD_FIELDS:
+            errors.append(f"record {index} fields must be exact")
+
+    seen: dict[str, set[str]] = {
+        field: set() for field in ("old_id", "new_id", "old_path", "new_path")
+    }
+    expected_order: list[tuple[int, int]] = []
+    actual_order: list[tuple[int, int]] = []
+    by_type: dict[str, list[tuple[int, int]]] = {type_name: [] for type_name in ALLOWED_TYPES}
+
+    for index, record in enumerate(records):
+        for field in seen:
+            value = record.get(field)
+            if not isinstance(value, str):
+                errors.append(f"record {index} {field} must be a string")
+            elif value in seen[field]:
+                errors.append(f"record {index} duplicates {field} {value}")
+            else:
+                seen[field].add(value)
+
+        type_name = record.get("type")
+        if type_name not in ALLOWED_TYPES:
+            errors.append(f"record {index} has unsupported type {type_name!r}")
+            continue
+        old_match = OLD_ID_RE.fullmatch(str(record.get("old_id", "")))
+        new_match = NEW_ID_RE.fullmatch(str(record.get("new_id", "")))
+        if old_match is None:
+            errors.append(f"record {index} old_id must match ADR-####")
+        if new_match is None:
+            errors.append(f"record {index} new_id must match ADR-TYPE-####")
+        elif new_match.group(1) != type_name:
+            errors.append(f"record {index} new_id type disagrees with type")
+
+        old_path = _safe_repository_path(record.get("old_path"))
+        new_path = _safe_repository_path(record.get("new_path"))
+        if old_path is None or new_path is None:
+            errors.append(f"record {index} paths must be safe repository-relative strings")
+        elif old_match is not None and new_match is not None:
+            old_serial = int(old_match.group(1))
+            new_serial = int(new_match.group(2))
+            old_prefix = f"{old_serial:04d}-"
+            new_prefix = f"{type_name}-{new_serial:04d}-"
+            if old_path.parent != Path("docs/status/decisions") or not old_path.name.startswith(old_prefix):
+                errors.append(f"record {index} old_path does not agree with old_id")
+            if new_path.parent != old_path.parent or not new_path.name.startswith(new_prefix):
+                errors.append(f"record {index} new_path does not agree with new_id")
+            old_slug = old_path.name[len(old_prefix) :]
+            new_slug = new_path.name[len(new_prefix) :]
+            if old_slug != new_slug:
+                errors.append(f"record {index} new_path must preserve the old filename slug")
+            type_index = ALLOWED_TYPES.index(type_name)
+            actual_order.append((type_index, old_serial))
+            by_type[type_name].append((old_serial, new_serial))
+
+        digest = record.get("old_body_sha256")
+        if not isinstance(digest, str) or SHA256_RE.fullmatch(digest) is None:
+            errors.append(f"record {index} old_body_sha256 must be lowercase SHA-256")
+
+    for type_index, type_name in enumerate(ALLOWED_TYPES):
+        ordered = sorted(by_type[type_name])
+        expected_serials = list(range(1, len(ordered) + 1))
+        if [new_serial for _, new_serial in ordered] != expected_serials:
+            errors.append(f"{type_name} new serials must be contiguous in ascending old-ID order")
+        expected_order.extend((type_index, old_serial) for old_serial, _ in ordered)
+    if actual_order != expected_order:
+        errors.append("records must be grouped by canonical type order and ascending old ID")
+
+    old_paths = {Path(str(record.get("old_path", ""))) for record in records}
+    new_paths = {Path(str(record.get("new_path", ""))) for record in records}
+    actual_decisions = {
+        path.relative_to(root)
+        for path in (root / "docs/status/decisions").glob("*.md")
+        if path.name != "0000-template.md"
+    }
+    old_exists = {path for path in old_paths if (root / path).is_file()}
+    new_exists = {path for path in new_paths if (root / path).is_file()}
+    for index, record in enumerate(records):
+        old_path = Path(str(record.get("old_path", "")))
+        new_path = Path(str(record.get("new_path", "")))
+        count = int((root / old_path).is_file()) + int((root / new_path).is_file())
+        if count != 1:
+            errors.append(f"record {index} requires exactly one of old_path and new_path")
+
+    if old_exists and new_exists:
+        errors.append("ADR tree must not mix pre- and post-migration paths")
+    active_paths = old_paths if old_exists else new_paths
+    if actual_decisions != active_paths:
+        missing = sorted(path.as_posix() for path in active_paths - actual_decisions)
+        extra = sorted(path.as_posix() for path in actual_decisions - active_paths)
+        if missing:
+            errors.append(f"ADR migration coverage is missing: {', '.join(missing)}")
+        if extra:
+            errors.append(f"ADR migration coverage has unexpected files: {', '.join(extra)}")
+
+    post_migration = bool(new_exists) and not old_exists
+    for index, record in enumerate(records):
+        path_key = "new_path" if post_migration else "old_path"
+        expected_id_key = "new_id" if post_migration else "old_id"
+        path = root / str(record.get(path_key, ""))
+        if not path.is_file():
+            continue
+        try:
+            metadata, body = _front_matter_and_body(path)
+        except (OSError, ValueError) as error:
+            errors.append(f"record {index} {path_key} {error}")
+            continue
+        if not isinstance(metadata, dict) or metadata.get("id") != record.get(expected_id_key):
+            errors.append(f"record {index} front-matter id does not match {expected_id_key}")
+        if post_migration:
+            normalized_complete_body = _normalize_migrated_body(body, records)
+            historical = _historical_body(root, str(record.get("old_path", "")))
+            if historical is not None:
+                if hashlib.sha256(historical).hexdigest() != record.get("old_body_sha256"):
+                    errors.append(f"record {index} historical body disagrees with migration digest")
+                elif not _preserves_historical_lines(historical, normalized_complete_body):
+                    errors.append(f"record {index} bilingual expansion changed historical prose")
+                continue
+            supplement = b"\n## Bilingual decision detail / "
+            if supplement in body:
+                start = body.index(supplement)
+                following = body.find(b"\n## ", start + len(supplement))
+                before = body[:start].rstrip(b"\r\n")
+                if following < 0:
+                    body = before + b"\n"
+                else:
+                    after = body[following:].lstrip(b"\r\n")
+                    body = before + b"\n\n" + after
+            body = _normalize_migrated_body(body, records)
+        candidate_bodies = [body]
+        if post_migration:
+            old_id = str(record.get("old_id", ""))
+            spaced_heading = body.replace(
+                f"# {old_id}:".encode(),
+                f"# ADR {old_id.removeprefix('ADR-')}:".encode(),
+                1,
+            )
+            candidate_bodies.append(spaced_heading)
+        if not any(
+            hashlib.sha256(candidate).hexdigest() == record.get("old_body_sha256")
+            for candidate in candidate_bodies
+        ):
+            errors.append(f"record {index} body SHA-256 does not preserve the pre-migration body")
+    return errors
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--mapping", type=Path, default=None)
+    args = parser.parse_args(argv)
+    root = args.root.resolve()
+    mapping = args.mapping or root / "spec/adr-id-migration.json"
+    errors = validate_migration(root, mapping)
+    if errors:
+        print("ADR ID migration check failed:", file=sys.stderr)
+        for error in errors:
+            print(f"- {error}", file=sys.stderr)
+        return 1
+    print("ADR ID migration check passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

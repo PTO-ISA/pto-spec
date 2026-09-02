@@ -1,0 +1,86 @@
+{
+  "$id": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/schemas/pto-adr-id-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "records": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "new_id": {
+            "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$",
+            "type": "string"
+          },
+          "new_path": {
+            "pattern": "^docs/status/decisions/(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}-[^/]+\\.md$",
+            "type": "string"
+          },
+          "old_body_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "old_id": {
+            "pattern": "^ADR-[0-9]{4}$",
+            "type": "string"
+          },
+          "old_path": {
+            "pattern": "^docs/status/decisions/[0-9]{4}-[^/]+\\.md$",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "GOV",
+              "STATE",
+              "MEM",
+              "BLOCK",
+              "SCALAR",
+              "TILE",
+              "CUBE",
+              "NUM"
+            ]
+          }
+        },
+        "required": [
+          "old_id",
+          "new_id",
+          "old_path",
+          "new_path",
+          "type",
+          "old_body_sha256"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema": {
+      "const": "pto.adr-id-migration"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "types": {
+      "prefixItems": [
+        {"const": "GOV"},
+        {"const": "STATE"},
+        {"const": "MEM"},
+        {"const": "BLOCK"},
+        {"const": "SCALAR"},
+        {"const": "TILE"},
+        {"const": "CUBE"},
+        {"const": "NUM"}
+      ],
+      "items": false,
+      "minItems": 8,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "schema_version",
+    "types",
+    "records"
+  ],
+  "title": "PTO ADR identifier migration",
+  "type": "object"
+}

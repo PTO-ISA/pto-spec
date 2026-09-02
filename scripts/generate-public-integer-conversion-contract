@@ -28,7 +28,7 @@ ASL_TESTS = (
 )
 OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/0044-public-integer-conversion-result-subset.md"
+    "docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md"
 )
 
 
@@ -52,11 +52,11 @@ def generate() -> dict[str, Any]:
     inventory = load(NUMERIC_CONTRACTS)
     comparison = load(EXECUTABLE_COMPARISON)
 
-    adr0090 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0090")
+    adr0090 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-NUM-0017")
     require(
         adr0090["status"] == "draft"
         and adr0090["acceptance_record"] is None,
-        "ADR-0090 must remain open",
+        "ADR-NUM-0017 must remain open",
     )
     require(
         types["summary"]["public_integer_type_count"] == 8
@@ -147,9 +147,9 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A6:ADR-0090-SC1",
-        "decision_id": "ADR-0090",
-        "checkpoint_id": "ADR-0090-SC1",
+        "target": "S5-T2-A6:ADR-NUM-0017-SC1",
+        "decision_id": "ADR-NUM-0017",
+        "checkpoint_id": "ADR-NUM-0017-SC1",
         "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
@@ -215,24 +215,24 @@ def generate() -> dict[str, Any]:
         },
         "open_residuals": [
             {
-                "id": "ADR-0090-R1",
+                "id": "ADR-NUM-0017-R1",
                 "rule": "decide same-width integer signedness conversions",
             },
             {
-                "id": "ADR-0090-R2",
+                "id": "ADR-NUM-0017-R2",
                 "rule": "complete floating and float/integer conversion results",
             },
             {
-                "id": "ADR-0090-R3",
+                "id": "ADR-NUM-0017-R3",
                 "rule": "complete every operation/type/profile support tuple",
             },
             {
-                "id": "ADR-0090-R4",
+                "id": "ADR-NUM-0017-R4",
                 "rule": "define overflow, saturation, indefinite, NaN, and infinity results",
             },
-            {"id": "ADR-0090-R5", "rule": "define rounding and numeric-flag results"},
+            {"id": "ADR-NUM-0017-R5", "rule": "define rounding and numeric-flag results"},
             {
-                "id": "ADR-0090-R6",
+                "id": "ADR-NUM-0017-R6",
                 "rule": "publish independent target-conformance vectors",
             },
         ],

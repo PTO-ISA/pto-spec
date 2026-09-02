@@ -5,7 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "id", "title", "status", "authors", "approvers", "created",
+    "id", "title", "title_zh", "status", "authors", "approvers", "created",
     "accepted", "rejected", "superseded", "baseline", "target_releases", "affected_ndf",
     "affected_units", "resolves", "supersedes", "superseded_by",
     "implementation_issue", "release_impact", "legacy_ids"
@@ -13,10 +13,10 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^ADR-[0-9]{4}$",
-      "not": {"const": "ADR-0104"}
+      "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$"
     },
     "title": {"type": "string", "minLength": 1},
+    "title_zh": {"type": "string", "minLength": 1, "pattern": "[\\u3400-\\u9fff]"},
     "status": {"enum": ["draft", "accepted", "rejected", "superseded"]},
     "authors": {
       "type": "array", "minItems": 1, "uniqueItems": true,
@@ -53,15 +53,15 @@
     },
     "resolves": {
       "type": "array", "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+      "items": {"type": "string", "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$"}
     },
     "supersedes": {
       "type": "array", "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+      "items": {"type": "string", "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$"}
     },
     "superseded_by": {
       "type": "array", "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+      "items": {"type": "string", "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$"}
     },
     "implementation_issue": {
       "type": ["string", "null"],
@@ -78,7 +78,7 @@
     "interface_change": {
       "type": "boolean",
       "default": false,
-      "description": "True only when the ADR defines a new externally visible PTO interface. Required for newly allocated ADR numbers beginning with ADR-0111."
+      "description": "True only when the ADR defines a new externally visible PTO interface. Required for a newly allocated typed ADR that has no legacy ADR-#### identity."
     },
     "amendments": {
       "type": "array",
@@ -101,13 +101,19 @@
       "type": "array", "uniqueItems": true,
       "items": {
         "type": "string",
-        "pattern": "^(PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)$"
+        "pattern": "^(ADR-[0-9]{4}|PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)$"
       }
     }
   },
   "allOf": [
     {
-      "if": {"properties": {"id": {"pattern": "^ADR-(?:01(?:1[1-9]|[2-9][0-9])|0[2-9][0-9]{2}|[1-9][0-9]{3})$"}}},
+      "if": {
+        "properties": {
+          "legacy_ids": {
+            "not": {"contains": {"pattern": "^ADR-[0-9]{4}$"}}
+          }
+        }
+      },
       "then": {
         "required": ["interface_change"],
         "properties": {"interface_change": {"const": true}}

@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A5:ADR-0087-SC2",
-  "decision_id": "ADR-0087",
-  "checkpoint_id": "ADR-0087-SC2",
+  "target": "S5-T2-A5:ADR-NUM-0014-SC2",
+  "decision_id": "ADR-NUM-0014",
+  "checkpoint_id": "ADR-NUM-0014-SC2",
   "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
-  "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+  "acceptance_record": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
   "policy": {
     "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
     "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
@@ -507,19 +507,19 @@
   },
   "open_residuals": [
     {
-      "id": "ADR-0087-R1",
+      "id": "ADR-NUM-0014-R1",
       "rule": "complete every scalar and tile operation/type/profile legality tuple"
     },
     {
-      "id": "ADR-0087-R2",
+      "id": "ADR-NUM-0014-R2",
       "rule": "publish independent numeric result and exception vectors for every supported tuple"
     },
     {
-      "id": "ADR-0087-R3",
+      "id": "ADR-NUM-0014-R3",
       "rule": "record downstream byte-and-effect parity for the immutable hardware profile"
     },
     {
-      "id": "ADR-0087-R4",
+      "id": "ADR-NUM-0014-R4",
       "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"
     }
   ],
@@ -537,7 +537,7 @@
       "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
     },
     {
-      "path": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
+      "path": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
       "sha256": "4fa14704464afe3ea85b98835f2f6e7d6fa832a1f297100f41414cd3faf66924"
     }
   ],

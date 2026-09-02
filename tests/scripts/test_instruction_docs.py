@@ -628,18 +628,18 @@ class InstructionDocsTest(unittest.TestCase):
         decisions = self.root / "docs/status/decisions"
         decisions.mkdir(parents=True)
         (decisions / "0000-template.md").write_text(
-            "# ADR-0000: Decision template\n", encoding="utf-8"
+            "# ADR-TYPE-0000: Decision template\n", encoding="utf-8"
         )
-        (decisions / "0001-accepted.md").write_text(
-            "# ADR-0001: Accepted decision\n", encoding="utf-8"
+        (decisions / "GOV-0001-accepted.md").write_text(
+            "# ADR-GOV-0001: Accepted decision\n", encoding="utf-8"
         )
 
         navigation = render_nav(load_doc_index(self.root), Path("docs"), self.root)
 
         self.assertNotIn("0000-template.md", navigation)
-        self.assertNotIn("ADR-0000", navigation)
+        self.assertNotIn("ADR-TYPE-0000", navigation)
         self.assertIn(
-            '          - "ADR-0001: Accepted decision": status/decisions/0001-accepted.md',
+            '              - "ADR-GOV-0001: Accepted decision": status/decisions/GOV-0001-accepted.md',
             navigation,
         )
 

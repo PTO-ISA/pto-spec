@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Validate bilingual decision-detail supplements for every PTO ADR."""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.adr_records import load_adrs  # noqa: E402
+
+
+SECTION = "## Bilingual decision detail / 双语决策详述"
+HEADINGS = (
+    "### Why this decision / 为什么做出此决策",
+    "### Detailed decision / 详细决策",
+    "### What changed / 改动内容",
+    "### Scope and boundaries / 范围与边界",
+)
+CHINESE = re.compile(r"[\u3400-\u9fff]")
+ENGLISH_WORD = re.compile(r"\b[A-Za-z][A-Za-z-]*\b")
+
+
+def _body(path: Path) -> str:
+    return path.read_text(encoding="utf-8").split("---", 2)[2]
+
+
+def validate(root: Path) -> list[str]:
+    errors: list[str] = []
+    for record in load_adrs(root / "docs/status/decisions"):
+        body = _body(record.path)
+        positions = [body.find(heading) for heading in (SECTION, *HEADINGS)]
+        if any(position < 0 for position in positions):
+            missing = [
+                heading
+                for heading, position in zip((SECTION, *HEADINGS), positions, strict=True)
+                if position < 0
+            ]
+            errors.append(f"{record.adr_id}: missing bilingual headings: {', '.join(missing)}")
+            continue
+        if positions != sorted(positions):
+            errors.append(f"{record.adr_id}: bilingual headings are out of order")
+            continue
+        sections: dict[str, str] = {}
+        for index, heading in enumerate(HEADINGS):
+            start = positions[index + 1] + len(heading)
+            end = positions[index + 2] if index + 2 < len(positions) else len(body)
+            sections[heading] = body[start:end]
+        for heading, text in sections.items():
+            if len(CHINESE.findall(text)) < 20:
+                errors.append(f"{record.adr_id}: {heading} needs substantive Chinese text")
+            if len(ENGLISH_WORD.findall(text)) < 20:
+                errors.append(f"{record.adr_id}: {heading} needs substantive English text")
+        changes = sections[HEADINGS[2]]
+        if "#### English" not in changes or "#### 中文" not in changes:
+            errors.append(f"{record.adr_id}: change detail requires English and 中文 lists")
+        if record.status == "draft" and not (
+            "does not authorize implementation" in body
+            and "不授权实现" in body
+        ):
+            errors.append(f"{record.adr_id}: draft bilingual detail must deny implementation authority")
+    return errors
+
+
+def main() -> int:
+    errors = validate(ROOT)
+    if errors:
+        print("\n".join(f"error: {error}" for error in errors), file=sys.stderr)
+        return 1
+    print("ADR bilingual details passed: 104 records")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

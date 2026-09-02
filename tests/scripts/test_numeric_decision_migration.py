@@ -12,18 +12,18 @@ from scripts.adr_records import load_adrs
 ROOT = Path(__file__).resolve().parents[2]
 FORMER_PD_IDS = {f"PD-{value:02d}" for value in range(1, 13)}
 EXPECTED_MAPPING = {
-    "PD-01": "ADR-0086",
-    "PD-02": "ADR-0087",
-    "PD-03": "ADR-0047",
-    "PD-04": "ADR-0049",
-    "PD-05": "ADR-0088",
-    "PD-06": "ADR-0089",
-    "PD-07": "ADR-0090",
-    "PD-08": "ADR-0091",
-    "PD-09": "ADR-0092",
-    "PD-10": "ADR-0093",
-    "PD-11": "ADR-0094",
-    "PD-12": "ADR-0095",
+    "PD-01": "ADR-NUM-0013",
+    "PD-02": "ADR-NUM-0014",
+    "PD-03": "ADR-NUM-0008",
+    "PD-04": "ADR-NUM-0010",
+    "PD-05": "ADR-NUM-0015",
+    "PD-06": "ADR-NUM-0016",
+    "PD-07": "ADR-NUM-0017",
+    "PD-08": "ADR-NUM-0018",
+    "PD-09": "ADR-NUM-0019",
+    "PD-10": "ADR-NUM-0020",
+    "PD-11": "ADR-NUM-0021",
+    "PD-12": "ADR-NUM-0022",
 }
 ALL_NUMERIC_DOMAINS = {
     "cube-matrix",
@@ -45,18 +45,18 @@ ALL_NUMERIC_DOMAINS = {
     "tile-unary",
 }
 EXPECTED_DOMAINS_BY_ADR = {
-    "ADR-0047": ALL_NUMERIC_DOMAINS - {"tile-compare", "tile-order"},
-    "ADR-0049": ALL_NUMERIC_DOMAINS
+    "ADR-NUM-0008": ALL_NUMERIC_DOMAINS - {"tile-compare", "tile-order"},
+    "ADR-NUM-0010": ALL_NUMERIC_DOMAINS
     - {
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
         "tile-compare",
         "tile-order",
     },
-    "ADR-0086": ALL_NUMERIC_DOMAINS,
-    "ADR-0087": ALL_NUMERIC_DOMAINS,
-    "ADR-0088": ALL_NUMERIC_DOMAINS - {"scalar-integer-to-fp"},
-    "ADR-0089": {
+    "ADR-NUM-0013": ALL_NUMERIC_DOMAINS,
+    "ADR-NUM-0014": ALL_NUMERIC_DOMAINS,
+    "ADR-NUM-0015": ALL_NUMERIC_DOMAINS - {"scalar-integer-to-fp"},
+    "ADR-NUM-0016": {
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
@@ -64,7 +64,7 @@ EXPECTED_DOMAINS_BY_ADR = {
         "scalar-integer-to-fp",
         "scalar-unary",
     },
-    "ADR-0090": {
+    "ADR-NUM-0017": {
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
@@ -72,17 +72,17 @@ EXPECTED_DOMAINS_BY_ADR = {
         "tile-dequantize",
         "tile-quantize",
     },
-    "ADR-0091": {
+    "ADR-NUM-0018": {
         "scalar-binary",
         "scalar-unary",
         "tile-binary",
         "tile-expand",
         "tile-unary",
     },
-    "ADR-0092": {"tile-compare", "tile-order", "tile-reduction"},
-    "ADR-0093": {"tile-dequantize", "tile-quantize"},
-    "ADR-0094": {"cube-matrix"},
-    "ADR-0095": ALL_NUMERIC_DOMAINS,
+    "ADR-NUM-0019": {"tile-compare", "tile-order", "tile-reduction"},
+    "ADR-NUM-0020": {"tile-dequantize", "tile-quantize"},
+    "ADR-NUM-0021": {"cube-matrix"},
+    "ADR-NUM-0022": ALL_NUMERIC_DOMAINS,
 }
 
 
@@ -115,8 +115,8 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             if legacy_id in FORMER_PD_IDS
         }
         self.assertEqual(draft_legacy, FORMER_PD_IDS - {"PD-03", "PD-04"})
-        self.assertEqual(records["ADR-0047"].status, "accepted")
-        self.assertEqual(records["ADR-0049"].status, "accepted")
+        self.assertEqual(records["ADR-NUM-0008"].status, "accepted")
+        self.assertEqual(records["ADR-NUM-0010"].status, "accepted")
 
     def test_numeric_evidence_uses_adr_ids_and_preserves_maturity(self) -> None:
         inputs = json.loads(
@@ -145,8 +145,8 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             artifact = json.loads((ROOT / relative).read_text(encoding="utf-8"))
             self.assertEqual(artifact["profile_id"], accepted_profile)
         for relative in (
-            "docs/status/decisions/0049-hardware-subnormal-policy.md",
-            "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
+            "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
+            "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
         ):
             self.assertIn(
                 accepted_profile,
@@ -167,10 +167,10 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             )
         )["summary"]
         rounding_body = (
-            ROOT / "docs/status/decisions/0047-numeric-rounding-semantics.md"
+            ROOT / "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
         ).read_text(encoding="utf-8")
         subnormal_body = (
-            ROOT / "docs/status/decisions/0049-hardware-subnormal-policy.md"
+            ROOT / "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn(

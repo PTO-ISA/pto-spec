@@ -1,0 +1,308 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "arch",
+  "chunk": 1,
+  "entries": [
+    {
+      "id": "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
+      "source_path": "asl/arch/overview/architecture.asl",
+      "title": {
+        "en": "Instruction completion and memory-event ownership",
+        "zh-CN": "指令完成与内存事件归属"
+      },
+      "summary": {
+        "en": "This clause makes reachable ASL dispatch, completion, and memory-event owners the single path for describing a successful instruction attempt. An implementation therefore observes completion and architecture-visible memory events only through those connected owners, rather than through a parallel execution path.",
+        "zh-CN": "本条款将可达的 ASL 分派、完成和内存事件所有者确立为描述成功指令尝试的唯一通路。因此，实现只能通过这些相连的所有者观察完成状态和架构可见内存事件，不能另设并行的执行语义路径。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
+      "source_path": "asl/arch/overview/encoding-ownership.asl",
+      "title": {
+        "en": "Reserved conditional block-branch forms",
+        "zh-CN": "保留的条件块分支形式"
+      },
+      "summary": {
+        "en": "This clause keeps the named two-level conditional block-body encodings outside the active PTO scalar instruction set. Matching encodings are rejected before operand access or state changes, and tools do not emit their reserved spellings.",
+        "zh-CN": "本条款将所列两级条件块体编码排除在现行 PTO 标量指令集之外。匹配编码在读取操作数或改变状态前即被拒绝，工具也不会输出这些保留助记符。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-ENCODING-OWNERSHIP-001",
+      "source_path": "asl/arch/overview/encoding-ownership.asl",
+      "title": {
+        "en": "PTO encoding ownership and reservations",
+        "zh-CN": "PTO 编码归属与保留范围"
+      },
+      "summary": {
+        "en": "This clause defines which scalar, block, and Tile encodings belong to PTO and separates reserved families from permanently deleted names. Reserved forms remain unavailable for future assignment, while deleted spellings are assembler errors and do not by themselves reserve their former slots.",
+        "zh-CN": "本条款界定 PTO 对标量、Block 和 Tile 编码的归属，并区分保留编码族与永久删除的名称。保留形式不能重新分配；已删除助记符只是汇编错误，其旧槽位不会因此继续被占用。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "source_path": "asl/arch/profile/extension-first-use.asl",
+      "title": {
+        "en": "Optional extension first-use trap boundary",
+        "zh-CN": "可选扩展首次使用陷阱边界"
+      },
+      "summary": {
+        "en": "This clause isolates an optional precise trap at the first use of an extension from the portable default, which remains inert. When enabled by an external execution definition, the covered extension kinds, control state, trap timing, retry state, and save progress are all exposed as one coherent boundary.",
+        "zh-CN": "本条款把扩展首次使用时的可选精确陷阱与保持无动作的可移植默认行为隔离开来。若外部执行定义启用该机制，所覆盖的扩展种类、控制状态、陷阱时序、重试状态和保存进度共同构成一个完整边界。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-GM-ACCESS-001",
+      "source_path": "asl/arch/memory-model/global-memory-access.asl",
+      "title": {
+        "en": "Global-memory Tile access addressing",
+        "zh-CN": "Tile 全局内存访问寻址"
+      },
+      "summary": {
+        "en": "This clause explains how TLOAD and TSTORE derive per-PE global-memory addresses from B.IOR base and row-stride bindings, including omission defaults and packed four-bit columns. All selected accesses are preflighted before effects; a zero PE mask is inert, and overlapping regions have no architecture-defined inter-PE order.",
+        "zh-CN": "本条款说明 TLOAD 和 TSTORE 如何由 B.IOR 的基址与行步长绑定为各 PE 计算全局内存地址，并涵盖省略默认值及四位压缩列。所有选中访问在产生效果前统一预检；PE 掩码为零时无效果，重叠区域也不具有架构规定的 PE 间顺序。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-STATE-CLOSURE-001",
+      "source_path": "asl/arch/overview/architecture.asl",
+      "title": {
+        "en": "Closure of architecture-visible state",
+        "zh-CN": "架构可见状态的封闭集合"
+      },
+      "summary": {
+        "en": "This clause enumerates the complete set of architecture-visible state owners and excludes hidden state from the portable contract. Observable state changes arise only from accepted ASL transitions owned by those units.",
+        "zh-CN": "本条款列举架构可见状态的完整所有者集合，并将隐藏状态排除在可移植契约之外。所有可观察状态变化都来自这些单元所拥有的已接受 ASL 状态转移。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-TEPL-ALIAS-001",
+      "source_path": "asl/arch/overview/instruction-classification.asl",
+      "title": {
+        "en": "Canonical VEC and SFU block-start names",
+        "zh-CN": "VEC 与 SFU 块启动的规范名称"
+      },
+      "summary": {
+        "en": "This clause preserves the TEPL mode/function encoding carrier while assigning canonical BSTART.VEC and BSTART.SFU spellings according to the selected Tile operation. BSTART.TEPL remains accepted for compatibility but is not produced by canonical assembly or disassembly.",
+        "zh-CN": "本条款保留 TEPL 的模式/功能编码载体，同时依据所选 Tile 操作采用规范助记符 BSTART.VEC 或 BSTART.SFU。BSTART.TEPL 仅作为兼容写法继续接受，规范汇编与反汇编不会生成它。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
+      "source_path": "asl/arch/overview/instruction-classification.asl",
+      "title": {
+        "en": "Direct Tile execution-engine selection",
+        "zh-CN": "直接 Tile 操作的执行引擎选择"
+      },
+      "summary": {
+        "en": "This clause assigns every direct Tile operation to exactly one execution engine: VEC, TLSU, CUBE, or SFU. The assignment separates elementwise, memory-transfer, matrix, and specialized-complex behavior so dispatch has one unambiguous engine destination.",
+        "zh-CN": "本条款把每个直接 Tile 操作唯一归入 VEC、TLSU、CUBE 或 SFU 执行引擎。该划分区分逐元素、内存传输、矩阵及专用复杂操作，使分派始终只有一个明确的引擎目标。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
+      "source_path": "asl/arch/overview/instruction-classification.asl",
+      "title": {
+        "en": "Direct Tile operation classes",
+        "zh-CN": "直接 Tile 操作分类"
+      },
+      "summary": {
+        "en": "This clause gives every direct Tile operation one programming-model class while keeping that class independent of execution-engine choice. The classification provides a stable documentation and catalog boundary even when different classes use the same engine.",
+        "zh-CN": "本条款为每个直接 Tile 操作指定唯一的编程模型类别，同时保持类别与执行引擎选择相互独立。即使不同类别使用同一引擎，该分类仍为文档和目录提供稳定边界。"
+      }
+    },
+    {
+      "id": "PTO-COMMON-CONVERSION-PROFILE-001",
+      "source_path": "asl/arch/profile/reference-conversion.asl",
+      "title": {
+        "en": "Shared scalar and Tile conversion results",
+        "zh-CN": "标量与 Tile 共用的转换结果"
+      },
+      "summary": {
+        "en": "This clause unifies scalar conversion and TCVT results for their shared floating-point and integer type set. Equal source, destination, and control inputs therefore produce the same value properties and numeric flags across both instruction paths, with scalar conversion using its defined no-saturation setting.",
+        "zh-CN": "本条款统一标量转换与 TCVT 在共有浮点和整数类型集合上的结果规则。因此，相同的源类型、目标类型和控制输入在两条指令路径上产生一致的数值属性与状态标志；标量转换采用其既定的非饱和设置。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-HIF4-SCALE-001",
+      "source_path": "asl/arch/data-types/formats/hif4-scale.asl",
+      "title": {
+        "en": "HiF4 matrix-scale word layout",
+        "zh-CN": "HiF4 矩阵缩放字布局"
+      },
+      "summary": {
+        "en": "This clause fixes the bit-level layout and interpretation of one HiF4 matrix-scale U32 word. Implementers can decode one E6M2 value and the associated E1_8 and E1_16 exponent fields without relying on host floating-point behavior, including the assigned quiet-NaN scale encoding.",
+        "zh-CN": "本条款固定一个 HiF4 矩阵缩放 U32 字的位布局与解释方式。实现可直接解码一个 E6M2 值及其配套的 E1_8、E1_16 指数字段，无需依赖宿主浮点行为，并能识别已分配的静默 NaN 缩放编码。"
+      }
+    },
+    {
+      "id": "PTO-FP19-PARAMETER-CARRIER-001",
+      "source_path": "asl/arch/data-types/fp19.asl",
+      "title": {
+        "en": "FP19 matrix-parameter carrier format",
+        "zh-CN": "FP19 矩阵参数载体"
+      },
+      "summary": {
+        "en": "This clause defines the FP19 sign, exponent, and fraction fields used by matrix post-processing parameters and narrows which encodings are legal for scales and activation parameters. Illegal subnormal or non-finite carriers are detected before architecture-visible effects.",
+        "zh-CN": "本条款定义矩阵后处理参数所用 FP19 的符号位、指数和尾数字段，并限定缩放值与激活参数可使用的编码。次正规或非有限的非法载体会在产生架构可见效果前被发现。"
+      }
+    },
+    {
+      "id": "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+      "source_path": "asl/arch/profile/matrix-postprocess.asl",
+      "title": {
+        "en": "Bit-exact matrix post-processing",
+        "zh-CN": "位精确矩阵后处理"
+      },
+      "summary": {
+        "en": "This clause orders accumulator reduction, activation-dependent scaling, destination conversion, and special-result canonicalization as one matrix post-processing pipeline. The destination, enabled auxiliary outputs, and sticky numeric flags become visible together in a non-faulting commit.",
+        "zh-CN": "本条款把累加器归约、依激活方式选择的缩放、目标转换和特殊结果规范化组织成一条矩阵后处理流水线。目标结果、启用的辅助输出和粘滞数值标志在一次不触发故障的提交中同时可见。"
+      }
+    },
+    {
+      "id": "PTO-MATRIX-QUANT-BITEXACT-001",
+      "source_path": "asl/arch/profile/matrix-quantization.asl",
+      "title": {
+        "en": "Bit-exact matrix quantization",
+        "zh-CN": "位精确矩阵量化"
+      },
+      "summary": {
+        "en": "This clause fixes the order of FP19 scaling, intermediate rounding and saturation, signed-offset addition, and final destination encoding for Matrix PreQuant. Shift modes similarly expose a defined arithmetic shift and S16 saturation result, eliminating implementation-selected staging.",
+        "zh-CN": "本条款固定 Matrix PreQuant 中 FP19 缩放、中间舍入与饱和、有符号偏移相加及最终目标编码的顺序。移位模式同样给出确定的算术右移与 S16 饱和结果，避免由实现自行选择处理阶段。"
+      }
+    },
+    {
+      "id": "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+      "source_path": "asl/arch/data-types/numeric-formats.asl",
+      "title": {
+        "en": "Exact finite-value decomposition",
+        "zh-CN": "有限数值的精确分解"
+      },
+      "summary": {
+        "en": "This clause provides an integer-only decomposition for every valid finite floating or scale encoding. Consumers receive availability, sign, integer significand, and binary exponent fields that reconstruct the exact value; invalid, non-finite, and integer Tile encodings report no decomposition.",
+        "zh-CN": "本条款为每个有效的有限浮点或缩放编码提供纯整数分解。使用者得到可用标志、符号、整数有效数和二进制指数，可据此精确重构数值；无效、非有限及整数 Tile 编码则报告不可分解。"
+      }
+    },
+    {
+      "id": "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+      "source_path": "asl/arch/data-types/format-descriptor.asl",
+      "title": {
+        "en": "Floating and scale format descriptors",
+        "zh-CN": "浮点与缩放格式描述符"
+      },
+      "summary": {
+        "en": "This clause supplies one exact descriptor for every assigned floating or scale Tile DataType, covering carrier shape, lane structure, field widths, bias, constrained bits, and special values. Integer Tile types explicitly have no floating-format descriptor, preventing accidental reinterpretation.",
+        "zh-CN": "本条款为每个已分配的浮点或缩放 Tile 数据类型提供精确描述符，涵盖载体形态、lane 结构、字段宽度、偏置、约束位和特殊值。整数 Tile 类型明确没有浮点格式描述符，从而避免误解释。"
+      }
+    },
+    {
+      "id": "PTO-NUMERIC-STATUS-STICKY-001",
+      "source_path": "asl/arch/state/numeric-status.asl",
+      "title": {
+        "en": "Sticky numeric-status flags",
+        "zh-CN": "粘滞数值状态标志"
+      },
+      "summary": {
+        "en": "This clause maps the five numeric conditions to CORE_STATE[36:32] and defines successful updates as a bitwise accumulation. Once set, an earlier NV, DZ, OF, UF, or NX indication remains observable until another architectural mechanism clears it.",
+        "zh-CN": "本条款将五类数值条件映射到 CORE_STATE[36:32]，并把成功操作的更新定义为按位累积。NV、DZ、OF、UF 或 NX 一旦置位，便持续可见，直至其他架构机制将其清除。"
+      }
+    },
+    {
+      "id": "PTO-RELEASE-VERIFICATION",
+      "source_path": "asl/arch/overview/architecture.asl",
+      "title": {
+        "en": "Exact-commit release verification",
+        "zh-CN": "精确提交版本的发布验证"
+      },
+      "summary": {
+        "en": "This clause ties release status to one exact repository commit and its pinned ASL model, independent AVS results, coverage, generated projections, and release evidence. Passing artifacts from another commit or only part of the required evidence cannot establish that release candidate.",
+        "zh-CN": "本条款把发布状态绑定到一个精确的仓库提交，以及该提交对应的固定 ASL 模型、独立 AVS 结果、覆盖率、生成投影和发布证据。其他提交的通过结果或不完整证据都不能证明当前发布候选。"
+      }
+    },
+    {
+      "id": "PTO-REQ-INSTRUCTION-DISPATCH-001",
+      "source_path": "asl/arch/dispatch/top-level.asl",
+      "title": {
+        "en": "Unique encoded-instruction dispatch entry",
+        "zh-CN": "唯一编码指令分派入口"
+      },
+      "summary": {
+        "en": "This clause makes ExecutePTOInstruction the sole entry for encoded instructions, prioritizing accepted 64-bit command forms and otherwise routing non-64-bit inputs to scalar decode. Unmatched 64-bit values produce one illegal-instruction attempt, while ExecuteNextPTOInstruction adds fetch but no second decoder.",
+        "zh-CN": "本条款将 ExecutePTOInstruction 设为编码指令的唯一入口：优先识别已接受的 64 位命令形式，其余非 64 位输入进入标量解码。无法匹配的 64 位值形成一次非法指令尝试；ExecuteNextPTOInstruction 只增加取指，不再引入第二套解码器。"
+      }
+    },
+    {
+      "id": "PTO-REQ-INSTRUCTION-FETCH-001",
+      "source_path": "asl/arch/memory-model/instruction-fetch.asl",
+      "title": {
+        "en": "Precise variable-length instruction fetch",
+        "zh-CN": "精确的变长指令取指"
+      },
+      "summary": {
+        "en": "This clause defines a two-stage, little-endian fetch for 16-, 32-, 48-, and 64-bit instructions, with alignment and range checks before remaining bytes are read. A denied, unmapped, overflowing, or truncated fetch faults at the original TPC without a decoded attempt or partial instruction effect.",
+        "zh-CN": "本条款定义面向 16、32、48 和 64 位指令的两阶段小端取指，并在读取剩余字节前完成对齐与范围检查。被拒绝、未映射、溢出或截断的取指在原始 TPC 处报错，不产生已解码尝试或部分指令效果。"
+      }
+    },
+    {
+      "id": "PTO-REQ-PHYSICAL-MEMORY-BINDING-001",
+      "source_path": "asl/arch/memory-model/address-space.asl",
+      "title": {
+        "en": "Physical-memory binding boundary",
+        "zh-CN": "物理内存绑定边界"
+      },
+      "summary": {
+        "en": "This clause routes PTO memory access through byte-level physical storage primitives while leaving translation, permission, ordering, preflight, precise-fault, and commit behavior under ASL ownership. External storage can replace the reference backing array without turning its fixed model bounds into implementation limits.",
+        "zh-CN": "本条款将 PTO 内存访问接入字节级物理存储原语，同时由 ASL 继续掌管地址转换、权限、顺序、预检、精确故障和提交行为。外部存储可替换参考后备数组，而不会把模型中的固定边界误作实现上限。"
+      }
+    },
+    {
+      "id": "PTO-REQ-STATE-001",
+      "source_path": "asl/arch/programming-model/execution-context.asl",
+      "title": {
+        "en": "Architectural execution-state ownership",
+        "zh-CN": "执行状态归属"
+      },
+      "summary": {
+        "en": "This clause identifies the architecture units that collectively own execution-visible state. Implementers can trace every visible GPR, queue, control, fault, memory, maintenance, system-register, and trap-context effect to one of those owners.",
+        "zh-CN": "本条款标识共同拥有执行可见状态的架构单元。实现者可将每个可见的 GPR、队列、控制、故障、内存、维护、系统寄存器和陷阱上下文效果追溯到其中一个所有者。"
+      }
+    },
+    {
+      "id": "PTO-SOURCE-HIERARCHY",
+      "source_path": "asl/arch/overview/architecture.asl",
+      "title": {
+        "en": "Normative source hierarchy",
+        "zh-CN": "规范源层级"
+      },
+      "summary": {
+        "en": "This clause places current architecture contracts in mnemonic or architecture ASL and treats catalogs and Markdown as deterministic projections or evidence. When representations disagree, implementers return to the owning ASL rather than deriving semantics from generated material.",
+        "zh-CN": "本条款将现行架构契约置于助记符 ASL 或架构 ASL 中，并把目录与 Markdown 视为确定性投影或证据。不同表示发生冲突时，实现者应回到 owning ASL，而不是从生成材料推导语义。"
+      }
+    },
+    {
+      "id": "PTO-TCVT-E8M0-PROFILE-001",
+      "source_path": "asl/arch/profile/e8m0-conversion.asl",
+      "title": {
+        "en": "TCVT conversion to E8M0",
+        "zh-CN": "TCVT 转换为 E8M0 格式"
+      },
+      "summary": {
+        "en": "This clause defines the accepted source types and result classes for TCVT-to-E8M0, including exponent rounding, invalid inputs, saturation choice, range endpoints, and numeric flags. The observable byte result and OF, UF, NX, or NV status therefore follow one shared conversion path.",
+        "zh-CN": "本条款定义 TCVT 转换为 E8M0 时接受的源类型与结果类别，包括指数舍入、无效输入、饱和选择、范围端点和数值标志。因此，可观察的字节结果以及 OF、UF、NX 或 NV 状态都来自同一转换路径。"
+      }
+    },
+    {
+      "id": "PTO-TILE-CAPACITY-PER-PE",
+      "source_path": "asl/arch/overview/architecture.asl",
+      "title": {
+        "en": "Independent Local and Shared Tile capacity",
+        "zh-CN": "独立的 Local 与 Shared Tile 容量"
+      },
+      "summary": {
+        "en": "This clause separates per-PE Local allocation from Core-wide Shared allocation, each with its own 256 KiB pool. B.IOT charges the selected Local capacity independently to each PE, while B.IOS describes one complete Shared allocation, so the two spaces never consume a combined budget.",
+        "zh-CN": "本条款将每个 PE 的 Local 分配与整个 Core 的 Shared 分配分开，两者各自拥有独立的 256 KiB 空间。B.IOT 对每个选中 PE 单独计入 Local 容量，B.IOS 描述一个完整 Shared 分配，因此两类空间不会共用预算。"
+      }
+    }
+  ]
+}
