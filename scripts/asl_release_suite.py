@@ -7,6 +7,7 @@ import argparse
 import concurrent.futures
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -31,6 +32,22 @@ from scripts.asl_units import generate_source_order
 MatrixEntry = Mapping[str, object]
 Result = Mapping[str, object]
 PointRunner = Callable[[AslExecutionPoint, PreparedAslInputs], int]
+
+# Deterministic scheduling weights derived only from the exact page inputs.
+# They affect submission order, never matrix membership or release correctness.
+RESET_COST = 1000.0
+LOOP_COST = 25.0
+KIND_COSTS = {
+    "decode-positive": 1.0,
+    "decode-negative": 1.0,
+    "static-invariant": 1.0,
+    "atomicity": 4.0,
+    "ordering": 4.0,
+    "execution": 5.0,
+    "fault": 6.0,
+    "boundary": 6.0,
+    "state-transition": 7.0,
+}
 
 
 def require_exact_head(requested: str, actual: str, status: str) -> None:
@@ -57,6 +74,53 @@ def _matrix_by_id(entries: Sequence[MatrixEntry]) -> dict[str, MatrixEntry]:
     if not planned:
         raise ValueError("planned matrix is empty")
     return planned
+
+
+def _source_execution_cost(text: str) -> float:
+    """Estimate relative interpreter cost without using prior test outcomes."""
+
+    reset_count = text.count("ResetProfileState();")
+    loop_count = sum(
+        line.lstrip().startswith(("for ", "while ", "repeat "))
+        for line in text.splitlines()
+    )
+    return 1.0 + reset_count * RESET_COST + loop_count * LOOP_COST + len(text) / 4096
+
+
+def _estimated_point_cost(
+    root: Path,
+    point: AslExecutionPoint,
+    prepared: PreparedAslInputs,
+) -> float:
+    cost = KIND_COSTS.get(point.kind, 1.0)
+    test_path = root / point.path
+    if test_path.is_file():
+        cost += _source_execution_cost(test_path.read_text(encoding="utf-8"))
+    validation_paths = getattr(prepared, "validation_paths", {})
+    validation_path = validation_paths.get(point.validation_entrypoint)
+    if validation_path is not None and validation_path.is_file():
+        cost += _source_execution_cost(validation_path.read_text(encoding="utf-8"))
+    return cost
+
+
+def _execution_order(
+    planned: Mapping[str, MatrixEntry],
+    estimated_costs: Mapping[str, float],
+) -> list[str]:
+    unknown = sorted(set(estimated_costs) - set(planned))
+    if unknown:
+        raise ValueError(
+            "execution cost hints contain unplanned IDs: " + ", ".join(unknown)
+        )
+    normalized: dict[str, float] = {}
+    for test_id in planned:
+        cost = float(estimated_costs.get(test_id, 0.0))
+        if not math.isfinite(cost) or cost < 0:
+            raise ValueError(
+                f"execution cost hint for {test_id} must be finite and nonnegative"
+            )
+        normalized[test_id] = cost
+    return sorted(planned, key=lambda test_id: (-normalized[test_id], test_id))
 
 
 def aggregate_results(
@@ -328,6 +392,7 @@ def execute_matrix(
     jobs: int,
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     point_runner: PointRunner | None = None,
+    estimated_costs: Mapping[str, float] | None = None,
     output: TextIO = sys.stdout,
 ) -> list[dict[str, object]]:
     """Execute each ID independently and load exactly one result per invocation."""
@@ -345,6 +410,12 @@ def execute_matrix(
     planned = _matrix_by_id(entries)
     points = {test_id: execution_point(entry) for test_id, entry in planned.items()}
     prepared = prepare_page_inputs(root, entries, timeout_seconds=timeout_seconds)
+    if estimated_costs is None:
+        estimated_costs = {
+            test_id: _estimated_point_cost(root, point, prepared)
+            for test_id, point in points.items()
+        }
+    execution_order = _execution_order(planned, estimated_costs)
     if point_runner is None:
 
         def point_runner(point: AslExecutionPoint, inputs: PreparedAslInputs) -> int:
@@ -361,7 +432,9 @@ def execute_matrix(
 
     loaded: list[dict[str, object]] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
-        futures = {pool.submit(run_one, test_id): test_id for test_id in planned}
+        futures = {
+            pool.submit(run_one, test_id): test_id for test_id in execution_order
+        }
         completions = (
             (futures[future], future.result())
             for future in concurrent.futures.as_completed(futures)

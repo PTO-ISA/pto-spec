@@ -108,6 +108,13 @@ preferred over contiguous ID slices to reduce mnemonic/category clustering.
 Historical durations may be emitted as non-normative performance evidence, but
 must never change matrix membership or release correctness.
 
+Within each fixed page, the runner may submit likely expensive points first
+using a deterministic estimate derived from that page's exact test and
+validation text, including full-reset and loop markers. This ordering hint does
+not change page membership, matrix bytes, per-ID isolation, result ordering, or
+the final exact-set aggregate. Prior PASS results and machine-specific timing
+history are not scheduling authority.
+
 ## Testing strategy
 
 Regression tests must prove:
