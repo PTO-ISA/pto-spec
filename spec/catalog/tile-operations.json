@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 108,
+  "operation_count": 126,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [],
@@ -5067,13 +5067,13 @@
     {
       "arguments": [
         {
+          "constant": "GMAtomic_CAS"
+        },
+        {
           "operand": "destination0"
         },
         {
           "operand": "address"
-        },
-        {
-          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -5098,11 +5098,11 @@
         "pad_union": "pad-value"
       },
       "disposition": "accepted-direct-operation",
-      "effect_contract": "MGATHER_CAS",
+      "effect_contract": "GM_ATOM_CAS",
       "family": "TLSU",
       "fault_contract": "ExecuteTileInstruction",
       "function": 8,
-      "legality_handler": "TileOperandsLegal_MGATHER_CAS",
+      "legality_handler": "GM_ATOM_CAS",
       "name": "MGATHER_CAS",
       "operands": [
         {
@@ -5112,10 +5112,6 @@
         {
           "field": "address",
           "role": "base-address"
-        },
-        {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
         },
         {
           "field": "source0",
@@ -5131,15 +5127,16 @@
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "semantic_handler": "MGATHER_CAS",
+      "semantic_handler": "GM_ATOM_CAS",
       "state_effects": [
-        "operand:destination0:observed-old-values",
+        "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
-        "operand:source1:expected-values",
-        "operand:source2:replacement-values",
-        "runtime:CurrentBundlePadValue:physical-padding"
+        "operand:source0:indices",
+        "operand:source1:expected",
+        "operand:source2:replacement"
+      ],
+      "catalog_indices": [
+        89
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6296,6 +6293,1165 @@
       ],
       "classification": "layout-and-rearrangement",
       "engine": "SFU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_EXCH"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.EXCH",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 9,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_EXCH",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "replacement"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:replacement"
+      ],
+      "catalog_indices": [
+        108
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_MAX"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.MAX",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 10,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_MAX",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        109
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_MIN"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.MIN",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 11,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_MIN",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        110
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_ADD"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.ADD",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 12,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_ADD",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        111
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_INC"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.INC",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 14,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_INC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "limit"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:limit"
+      ],
+      "catalog_indices": [
+        112
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_DEC"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.DEC",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 15,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_DEC",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "limit"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:limit"
+      ],
+      "catalog_indices": [
+        113
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_AND"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.AND",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 16,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_AND",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        114
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_OR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.OR",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 17,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_OR",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        115
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMAtomic_XOR"
+        },
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MGATHER.XOR",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_ATOM_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 18,
+      "legality_handler": "GM_ATOM_VALUE",
+      "name": "MGATHER_XOR",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "state_effects": [
+        "operand:destination0:destination",
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        116
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_MAX"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.MAX",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 19,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_MAX",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        117
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_MIN"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.MIN",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 20,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_MIN",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        118
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_ADD"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.ADD",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 21,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_ADD",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        119
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_INC"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.INC",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 22,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_INC",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "limit"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:limit"
+      ],
+      "catalog_indices": [
+        120
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_DEC"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.DEC",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 23,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_DEC",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "limit"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:limit"
+      ],
+      "catalog_indices": [
+        121
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_AND"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.AND",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 24,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_AND",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        122
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_OR"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.OR",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 25,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_OR",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        123
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_XOR"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.XOR",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_VALUE",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 26,
+      "legality_handler": "GM_RED_VALUE",
+      "name": "MSCATTER_XOR",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        },
+        {
+          "field": "source1",
+          "role": "value"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_VALUE",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices",
+        "operand:source1:value"
+      ],
+      "catalog_indices": [
+        124
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "constant": "GMReduction_POPC"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        }
+      ],
+      "command_mnemonic": "BSTART.MSCATTER.POPC",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "GM_RED_POPC",
+      "family": "TLSU",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 27,
+      "legality_handler": "GM_RED_POPC",
+      "name": "MSCATTER_POPC",
+      "operands": [
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "indices"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "semantic_handler": "GM_RED_POPC",
+      "state_effects": [
+        "operand:address:base-address",
+        "operand:source0:indices"
+      ],
+      "catalog_indices": [
+        125
+      ],
+      "classification": "memory-and-data-movement",
+      "engine": "TLSU"
     }
   ],
   "reserved": {
@@ -6377,7 +7533,7 @@
     ],
     "tlsu_functions": [
       [
-        15,
+        28,
         31
       ]
     ]

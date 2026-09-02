@@ -791,6 +791,6 @@ test('forced no-WebGL path keeps the complete static-index entry point', async (
   await expect(page.getByRole('button', {name: 'Open WebGL graph'})).toHaveCount(0);
   await expect(page.getByRole('link', {name: /complete static relationship index/i})).toBeVisible();
   await page.getByRole('link', {name: /complete static relationship index/i}).click();
-  await expect(page.getByText('Page 1 of 23', {exact: true})).toBeVisible();
+  await expect(page.getByText(/Page 1 of \d+/, {exact: true})).toBeVisible();
   await expect(page.getByText(/Clause SHA-256/).first()).toBeVisible();
 });

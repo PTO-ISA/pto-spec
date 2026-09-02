@@ -18,6 +18,10 @@ git submodule update --init --recursive
 ```
 
 The pull-request lane does not need opam or a prepared ASLRef checkout.
+It runs source-contract checks and isolated Python test modules concurrently,
+reports command durations, and lists the slowest Python modules. Set
+`PTO_PYTHON_TEST_JOBS=1` when debugging order-dependent behavior, or choose a
+larger bounded value for a host with more cores.
 
 ## Full-model environment
 

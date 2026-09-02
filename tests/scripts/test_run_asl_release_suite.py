@@ -276,6 +276,149 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
                 sorted((first["id"], second["id"])),
             )
 
+    def test_heavy_points_start_first_without_changing_result_order(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entries = []
+            for name in ("LIGHT", "HEAVY", "MEDIUM"):
+                entry = dict(MATRIX[0])
+                entry["id"] = f"PTO-AVS-ARCH-{name}-001"
+                entry["display_name"] = f"ARCH {name.lower()} | execution | {name.lower()}"
+                entries.append(entry)
+            estimates = {
+                "PTO-AVS-ARCH-LIGHT-001": 1.0,
+                "PTO-AVS-ARCH-HEAVY-001": 30.0,
+                "PTO-AVS-ARCH-MEDIUM-001": 10.0,
+            }
+            started: list[str] = []
+
+            def fake_point_runner(point: object, _: object) -> int:
+                test_id = str(getattr(point, "test_id"))
+                started.append(test_id)
+                entry = next(item for item in entries if item["id"] == test_id)
+                payload = {
+                    **result(test_id=test_id),
+                    "display_name": entry["display_name"],
+                }
+                path = root / "build/asl-test-results" / test_id / "result.json"
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                return 0
+
+            with patch(
+                "scripts.asl_release_suite.prepare_page_inputs",
+                return_value=SimpleNamespace(name="prepared"),
+            ):
+                results = execute_matrix(
+                    root,
+                    entries,
+                    jobs=1,
+                    point_runner=fake_point_runner,
+                    estimated_costs=estimates,
+                    output=io.StringIO(),
+                )
+
+            self.assertEqual(
+                started,
+                [
+                    "PTO-AVS-ARCH-HEAVY-001",
+                    "PTO-AVS-ARCH-MEDIUM-001",
+                    "PTO-AVS-ARCH-LIGHT-001",
+                ],
+            )
+            self.assertEqual(
+                [item["id"] for item in results],
+                sorted(str(entry["id"]) for entry in entries),
+            )
+
+    def test_commit_derived_cost_starts_reset_heavy_validation_first(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            light = dict(MATRIX[0])
+            light["id"] = "PTO-AVS-ARCH-LIGHT-001"
+            light["display_name"] = "ARCH light | execution | light"
+            heavy = dict(MATRIX[0])
+            heavy["id"] = "PTO-AVS-ARCH-HEAVY-001"
+            heavy["display_name"] = "ARCH heavy | execution | heavy"
+            heavy["validation_entrypoint"] = "ValidateHeavy"
+            heavy["validation_sha256"] = "h" * 64
+            entries = [light, heavy]
+            shared = root / "build/asl-page-inputs"
+            shared.mkdir(parents=True)
+            light_validation = shared / "validation-light.asl"
+            light_validation.write_text("func ValidateLight()\nbegin\nend;\n")
+            heavy_validation = shared / "validation-heavy.asl"
+            heavy_validation.write_text(
+                "func ValidateHeavy()\nbegin\n"
+                + "    ResetProfileState();\n" * 20
+                + "end;\n"
+            )
+            prepared = asl_release_suite.PreparedAslInputs(
+                model_path=shared / "pto-spec.asl",
+                validation_paths={
+                    None: light_validation,
+                    "ValidateHeavy": heavy_validation,
+                },
+            )
+            started: list[str] = []
+
+            def fake_point_runner(point: object, _: object) -> int:
+                test_id = str(getattr(point, "test_id"))
+                started.append(test_id)
+                entry = next(item for item in entries if item["id"] == test_id)
+                payload = {
+                    **result(test_id=test_id),
+                    "display_name": entry["display_name"],
+                    "validation_entrypoint": entry["validation_entrypoint"],
+                    "validation_sha256": entry["validation_sha256"],
+                }
+                path = root / "build/asl-test-results" / test_id / "result.json"
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                return 0
+
+            with patch(
+                "scripts.asl_release_suite.prepare_page_inputs",
+                return_value=prepared,
+            ):
+                execute_matrix(
+                    root,
+                    entries,
+                    jobs=1,
+                    point_runner=fake_point_runner,
+                    output=io.StringIO(),
+                )
+
+            self.assertEqual(
+                started,
+                ["PTO-AVS-ARCH-HEAVY-001", "PTO-AVS-ARCH-LIGHT-001"],
+            )
+
+    def test_execution_cost_hints_reject_unknown_or_invalid_values(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepared = SimpleNamespace(name="prepared")
+            for costs, message in (
+                ({"PTO-AVS-ARCH-UNKNOWN-001": 1.0}, "unplanned IDs"),
+                ({str(MATRIX[0]["id"]): -1.0}, "finite and nonnegative"),
+                ({str(MATRIX[0]["id"]): float("nan")}, "finite and nonnegative"),
+            ):
+                with self.subTest(costs=costs):
+                    with (
+                        patch(
+                            "scripts.asl_release_suite.prepare_page_inputs",
+                            return_value=prepared,
+                        ),
+                        self.assertRaisesRegex(ValueError, message),
+                    ):
+                        execute_matrix(
+                            root,
+                            MATRIX,
+                            jobs=1,
+                            estimated_costs=costs,
+                            output=io.StringIO(),
+                        )
+
     def test_page_preparation_rejects_a_test_file_hash_mismatch_before_building(
         self,
     ) -> None:

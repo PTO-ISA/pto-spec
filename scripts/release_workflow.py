@@ -19,25 +19,8 @@ from scripts.workflow_contract import (
 )
 
 
-PR_GATES = (
-    "./scripts/check-asl-layout",
-    "./scripts/check-ndf",
-    "./scripts/check-adrs",
-    "./scripts/check-asl-tests",
-    "./scripts/check-release-event-schema",
-    "./scripts/check-model-closure-schema",
-    "python3 scripts/project_asl_catalogs.py --root . --check",
-    "python3 scripts/instruction_docs.py --check",
-    "python3 scripts/generate-mnemonic-avs.py --check",
-    "python3 scripts/generate-bundle-operation-matrix.py --check",
-    "./scripts/generate-bundle-command-totality --check",
-    "./scripts/generate-public-source-reconciliation --check",
-    "python3 scripts/check-publication-hygiene",
-    "./scripts/check-release-workflow",
-    "./scripts/check-repository --structure-only",
-    "git diff --check",
-)
-PR_TOOLING_COMMAND = "python3 -m unittest discover -s tests/scripts -p 'test_*.py'"
+PR_GATES = ("./scripts/check-pr --source",)
+PR_TOOLING_COMMAND = "./scripts/check-pr --tooling"
 
 
 def _expected_source_run_bodies() -> list[tuple[str, ...]]:

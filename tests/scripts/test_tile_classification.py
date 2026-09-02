@@ -12,7 +12,7 @@ EXPECTED_CLASSES = {
     "elementwise-tile-tile": "TABS TADD TAND TCMP TCVT TDIV TEXP TFMA TLOG TMAX TMIN TMUL TNEG TNOT TOR TRECIP TRELU TREM TRSQRT TSEL TSHL TSHR TSQRT TSUB TXOR",
     "tile-scalar-and-immediate": "TADDS TANDS TCMPS TDIVS TEXPANDS TMAXS TMINS TMULS TORS TREMS TSELS TSHLS TSHRS TSUBS TXORS",
     "reduce-and-expand": "TCOLARGMAX TCOLARGMIN TCOLEXPAND TCOLEXPANDADD TCOLEXPANDDIV TCOLEXPANDEXPDIF TCOLEXPANDMAX TCOLEXPANDMIN TCOLEXPANDMUL TCOLEXPANDSUB TCOLMAX TCOLMIN TCOLPROD TCOLSUM TROWARGMAX TROWARGMIN TROWEXPAND TROWEXPANDADD TROWEXPANDDIV TROWEXPANDEXPDIF TROWEXPANDMAX TROWEXPANDMIN TROWEXPANDMUL TROWEXPANDSUB TROWMAX TROWMIN TROWPROD TROWSUM",
-    "memory-and-data-movement": "GMOV MGATHER MGATHER_CAS MGATHER_MASK MSCATTER MSCATTER_MASK TLOAD TPREFETCH TSTORE",
+    "memory-and-data-movement": "MGATHER_ADD MGATHER_AND MGATHER_CAS MGATHER_DEC MGATHER_EXCH MGATHER_INC MGATHER_MAX MGATHER_MIN MGATHER_OR MGATHER_XOR GMOV MGATHER MGATHER_MASK MSCATTER MSCATTER_MASK MSCATTER_ADD MSCATTER_AND MSCATTER_DEC MSCATTER_INC MSCATTER_MAX MSCATTER_MIN MSCATTER_OR MSCATTER_POPC MSCATTER_XOR TLOAD TPREFETCH TSTORE",
     "matrix-and-matrix-vector": "TGEMV TGEMV_ACC TGEMV_BIAS TGEMV_MX TGEMV_MX_ACC TGEMV_MX_BIAS TMATMUL TMATMUL_ACC TMATMUL_BIAS TMATMUL_MX TMATMUL_MX_ACC TMATMUL_MX_BIAS",
     "layout-and-rearrangement": "TCONCAT TGPR2T TEXTRACT TIMG2COL TINSERT TMOV TPACK TPERMUTE TSHUF TUNPACK",
     "irregular-and-complex": "TCI TDEQUANT TGATHER THISTOGRAM TMRGSORT TQUANT TSCATTER TSORT TTRI",
@@ -55,7 +55,7 @@ class TileClassificationTest(unittest.TestCase):
                 "elementwise-tile-tile": 25,
                 "tile-scalar-and-immediate": 15,
                 "reduce-and-expand": 28,
-                "memory-and-data-movement": 9,
+                "memory-and-data-movement": 27,
                 "matrix-and-matrix-vector": 12,
                 "layout-and-rearrangement": 10,
                 "irregular-and-complex": 9,
@@ -76,7 +76,7 @@ class TileClassificationTest(unittest.TestCase):
             if record.mnemonic in SFU_ELEMENTWISE:
                 self.assertEqual(engine, "SFU")
 
-        self.assertEqual(by_engine, {"VEC": 31, "SFU": 55, "TLSU": 10, "CUBE": 12})
+        self.assertEqual(by_engine, {"VEC": 31, "SFU": 55, "TLSU": 28, "CUBE": 12})
 
         actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
         self.assertEqual(actual_vec, EXPECTED_VEC)

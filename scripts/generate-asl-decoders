@@ -7341,7 +7341,7 @@ def command_bundle_kind(row: dict) -> str:
         return "System"
     if any(
         token in mnemonic
-        for token in (".MGATHER", ".MSCATTER", ".TLOAD", ".TSTORE", ".TPREFETCH")
+        for token in (".MGATHER", ".MSCATTER", ".TLOAD", ".TSTORE", ".TPREFETCH", ".ATOM", ".RED")
     ):
         return "TileMemory"
     if any(token in mnemonic for token in (".CUBE", ".TGEMV", ".TMATMUL")):
@@ -7367,6 +7367,8 @@ def command_bundle_operation_class(row: dict) -> str:
             ".MGATHER",
             ".MSCATTER",
             ".TLOAD",
+            ".ATOM",
+            ".RED",
             ".TSTORE",
             ".TMOV",
             ".GMOV",

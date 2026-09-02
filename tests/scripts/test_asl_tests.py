@@ -385,6 +385,36 @@ class AslTestsTest(unittest.TestCase):
         ):
             load_test_points(self.root, (unit(),))
 
+    def test_indexes_callable_names_once_per_test_point(self) -> None:
+        self.write(
+            test_source().replace(
+                "func main() => integer\n",
+                "func LocalFirst() => integer\n"
+                "begin\n"
+                "    return 1;\n"
+                "end;\n"
+                "func main() => integer\n",
+            ).replace("    return 0;", "    return LocalFirst();"),
+        )
+        second = self.path.with_name("arch-state-registers-002.asl")
+        self.write(
+            test_source(test_id="PTO-AVS-ARCH-STATE-REGISTERS-002").replace(
+                "func main() => integer\n",
+                "func LocalSecond() => integer\n"
+                "begin\n"
+                "    return 2;\n"
+                "end;\n"
+                "func main() => integer\n",
+            ).replace("    return 0;", "    return LocalSecond();"),
+            path=second,
+        )
+
+        with patch("scripts.asl_tests._call_names", wraps=asl_tests._call_names) as calls:
+            points = load_test_points(self.root, (unit(),))
+
+        self.assertEqual(len(points), 2)
+        self.assertEqual(calls.call_count, 2)
+
     def test_rejects_missing_or_unknown_requirement_coverage(self) -> None:
         self.write()
         point = load_test_points(self.root, (unit(),))[0]

@@ -4,37 +4,68 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
-commands=(
-    "./scripts/check-asl-layout"
-    "./scripts/check-ndf"
+source_commands=(
     "./scripts/check-adrs"
-    "./scripts/check-asl-tests"
+    "make --no-print-directory check-decoder-partition"
     "./scripts/check-release-event-schema"
     "./scripts/check-model-closure-schema"
     "./scripts/check-release-workflow"
     "./scripts/check-repository --structure-only"
-    "python3 -m unittest discover -s tests/scripts -p 'test_*.py'"
-    "python3 scripts/project_asl_catalogs.py --root . --check"
-    "python3 scripts/instruction_docs.py --check"
-    "python3 scripts/generate-mnemonic-avs.py --check"
-    "python3 scripts/generate-bundle-operation-matrix.py --check"
-    "./scripts/generate-bundle-command-totality --check"
-    "./scripts/generate-public-source-reconciliation --check"
-    "python3 scripts/check-publication-hygiene"
     "git diff --check"
 )
+tooling_commands=(
+    "./scripts/run-python-tests"
+)
 
-if [[ ${1:-} == --list ]]; then
-    printf '%s\n' "${commands[@]}"
-    exit 0
+run_commands() {
+    local lane=$1
+    shift
+    local command started finished
+    for command in "$@"; do
+        started=$(date +%s)
+        printf '+ [%s] %s\n' "$lane" "$command"
+        bash -c "$command"
+        finished=$(date +%s)
+        printf 'PASS [%s] %ss %s\n' "$lane" "$((finished - started))" "$command"
+    done
+}
+
+case ${1:-} in
+    --list)
+        printf '%s\n' "${source_commands[@]}" "${tooling_commands[@]}"
+        exit 0
+        ;;
+    --source)
+        [[ $# -eq 1 ]] || { echo "usage: $0 [--list|--source|--tooling]" >&2; exit 2; }
+        run_commands source "${source_commands[@]}"
+        exit 0
+        ;;
+    --tooling)
+        [[ $# -eq 1 ]] || { echo "usage: $0 [--list|--source|--tooling]" >&2; exit 2; }
+        run_commands tooling "${tooling_commands[@]}"
+        exit 0
+        ;;
+    "")
+        ;;
+    *)
+        echo "usage: $0 [--list|--source|--tooling]" >&2
+        exit 2
+        ;;
+esac
+
+run_commands source "${source_commands[@]}" &
+source_pid=$!
+run_commands tooling "${tooling_commands[@]}" &
+tooling_pid=$!
+
+source_status=0
+tooling_status=0
+wait "$source_pid" || source_status=$?
+wait "$tooling_pid" || tooling_status=$?
+
+if [[ $source_status -ne 0 || $tooling_status -ne 0 ]]; then
+    printf 'PR check failed: source=%s tooling=%s\n' "$source_status" "$tooling_status" >&2
+    exit 1
 fi
 
-if [[ $# -ne 0 ]]; then
-    echo "usage: $0 [--list]" >&2
-    exit 2
-fi
-
-for command in "${commands[@]}"; do
-    printf '+ %s\n' "$command"
-    bash -c "$command"
-done
+echo "PR check passed"

@@ -32,9 +32,9 @@ NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0585-hardware-numeric-vectors
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 NUMERIC_PROFILE_RELEASE = "0.58.5"
 
-FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 10, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 76}
-COMMAND_FAMILY_COUNTS = {'CMD': 71, 'BBD': 5}
+FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 28, 'CUBE': 12}
+FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 94}
+COMMAND_FAMILY_COUNTS = {'CMD': 89, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
 ILLEGAL_DATATYPES = (31,)
@@ -95,7 +95,25 @@ EXPECTED_TLSU_MAP = {
     6: 'MGATHER_MASK',
     7: 'MSCATTER_MASK',
     8: 'MGATHER_CAS',
+    9: 'MGATHER_EXCH',
+    10: 'MGATHER_MAX',
+    11: 'MGATHER_MIN',
+    12: 'MGATHER_ADD',
     13: 'GMOV',
+    14: 'MGATHER_INC',
+    15: 'MGATHER_DEC',
+    16: 'MGATHER_AND',
+    17: 'MGATHER_OR',
+    18: 'MGATHER_XOR',
+    19: 'MSCATTER_MAX',
+    20: 'MSCATTER_MIN',
+    21: 'MSCATTER_ADD',
+    22: 'MSCATTER_INC',
+    23: 'MSCATTER_DEC',
+    24: 'MSCATTER_AND',
+    25: 'MSCATTER_OR',
+    26: 'MSCATTER_XOR',
+    27: 'MSCATTER_POPC',
 }
 EXPECTED_CUBE_MAP = {
     0: 'TMATMUL',
@@ -121,6 +139,24 @@ EXPECTED_NON_TEPL_COMMANDS = {
     'MGATHER_MASK': 'BSTART.MGATHER.MASK',
     'MSCATTER_MASK': 'BSTART.MSCATTER.MASK',
     'MGATHER_CAS': 'BSTART.MGATHER.CAS',
+    'MGATHER_EXCH': 'BSTART.MGATHER.EXCH',
+    'MGATHER_MAX': 'BSTART.MGATHER.MAX',
+    'MGATHER_MIN': 'BSTART.MGATHER.MIN',
+    'MGATHER_ADD': 'BSTART.MGATHER.ADD',
+    'MGATHER_INC': 'BSTART.MGATHER.INC',
+    'MGATHER_DEC': 'BSTART.MGATHER.DEC',
+    'MGATHER_AND': 'BSTART.MGATHER.AND',
+    'MGATHER_OR': 'BSTART.MGATHER.OR',
+    'MGATHER_XOR': 'BSTART.MGATHER.XOR',
+    'MSCATTER_MAX': 'BSTART.MSCATTER.MAX',
+    'MSCATTER_MIN': 'BSTART.MSCATTER.MIN',
+    'MSCATTER_ADD': 'BSTART.MSCATTER.ADD',
+    'MSCATTER_INC': 'BSTART.MSCATTER.INC',
+    'MSCATTER_DEC': 'BSTART.MSCATTER.DEC',
+    'MSCATTER_AND': 'BSTART.MSCATTER.AND',
+    'MSCATTER_OR': 'BSTART.MSCATTER.OR',
+    'MSCATTER_XOR': 'BSTART.MSCATTER.XOR',
+    'MSCATTER_POPC': 'BSTART.MSCATTER.POPC',
     'GMOV': 'BSTART.GMOV',
     'TMATMUL': 'BSTART.TMATMUL',
     'TMATMUL_BIAS': 'BSTART.TMATMUL.BIAS',
@@ -294,7 +330,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 108")
+        raise SystemExit("tile operation_count must be exactly 126")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")

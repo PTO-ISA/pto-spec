@@ -225,8 +225,8 @@ def _load_record(root: Path, path: Path) -> InstructionRecord | None:
     if alias_of is not None:
         if surface != "block" or not isinstance(alias_of, str) or not alias_of:
             raise ValueError(f"{path}: only Block instructions may declare alias_of")
-        if alias_engine not in {"VEC", "SFU"}:
-            raise ValueError(f"{path}: Block engine alias must declare VEC or SFU")
+        if alias_engine not in {"VEC", "SFU", "TLSU"}:
+            raise ValueError(f"{path}: Block engine alias must declare VEC, SFU, or TLSU")
         if catalog_records or catalog_indices:
             raise ValueError(f"{path}: encoding alias must not own catalog records")
     elif not catalog_records:

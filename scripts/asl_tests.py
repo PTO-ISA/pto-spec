@@ -30,6 +30,7 @@ from scripts.asl_validation_shards import EMPTY_VALIDATION_SHARD, VALIDATION_CAL
 
 TEST_PREFIX = "// PTO-TEST: "
 TEST_ID = re.compile(r"PTO-AVS-[A-Z0-9]+(?:-[A-Z0-9]+)*")
+CALL_NAME = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 SUPPORTED_KINDS = frozenset(
     {
         "decode-positive",
@@ -287,6 +288,13 @@ def _validate_main(path: Path, text: str) -> tuple[str, ...]:
     )
 
 
+def _call_names(text: str) -> frozenset[str]:
+    """Return callable-looking identifiers after removing ASL comments."""
+
+    uncommented = "\n".join(line.split("//", 1)[0] for line in text.splitlines())
+    return frozenset(CALL_NAME.findall(uncommented))
+
+
 def load_test_points(
     root: Path,
     units: Sequence[AslUnit],
@@ -299,7 +307,7 @@ def load_test_points(
 
     units_by_source = {unit.source_path: unit for unit in units}
     known_sources = set(units_by_source)
-    loaded: list[tuple[AslTestPoint, str, tuple[str, ...]]] = []
+    loaded: list[tuple[AslTestPoint, tuple[str, ...], frozenset[str]]] = []
     test_root = root / "tests/asl"
     raw_files: list[tuple[Path, Path, str, dict[str, object]]] = []
     observed_selected_ids: set[str] = set()
@@ -417,25 +425,25 @@ def load_test_points(
                     validation_entrypoint=validation_entrypoint,
                     validation_sha256=validation_sha256,
                 ),
-                text,
                 helpers,
+                _call_names(text),
             )
         )
 
     helper_owners: dict[str, set[Path]] = {}
-    for point, _, helpers in loaded:
+    for point, helpers, _ in loaded:
         for helper in helpers:
             helper_owners.setdefault(helper, set()).add(point.path)
-    for point, text, _ in loaded:
-        uncommented = "\n".join(line.split("//", 1)[0] for line in text.splitlines())
-        for helper, owners in sorted(helper_owners.items()):
-            if point.path in owners:
-                continue
-            if re.search(rf"\b{re.escape(helper)}\s*\(", uncommented):
-                owner_list = ", ".join(path.as_posix() for path in sorted(owners))
-                raise ValueError(
-                    f"{point.path}: cross-test function dependency {helper}; owned by {owner_list}"
-                )
+    known_helpers = frozenset(helper_owners)
+    for point, helpers, calls in loaded:
+        foreign_helpers = sorted((calls & known_helpers) - set(helpers))
+        if foreign_helpers:
+            helper = foreign_helpers[0]
+            owners = helper_owners[helper]
+            owner_list = ", ".join(path.as_posix() for path in sorted(owners))
+            raise ValueError(
+                f"{point.path}: cross-test function dependency {helper}; owned by {owner_list}"
+            )
 
     return tuple(sorted((item[0] for item in loaded), key=lambda point: point.test_id))
 

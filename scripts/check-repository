@@ -102,6 +102,7 @@ required_files=(
     scripts/run-asl-page
     scripts/run-asl-test
     scripts/run-asl-release-suite
+    scripts/run-python-tests
     scripts/check-release-manifest
     scripts/check-script-entrypoints
     scripts/encoding_witness.py

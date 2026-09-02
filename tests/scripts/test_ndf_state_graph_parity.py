@@ -12,7 +12,7 @@ from scripts.ndf import state_index
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 NDF_ROOT = REPOSITORY_ROOT / "tools" / "ndf"
-NDF_REVISION = "5e3e6b5f09e06b09aaf52844c4b37e38362ac097"
+NDF_REVISION = "ed356980ce7ecb2e8482902988d5012fb54058b3"
 
 
 def expected_counts() -> dict[str, int]:

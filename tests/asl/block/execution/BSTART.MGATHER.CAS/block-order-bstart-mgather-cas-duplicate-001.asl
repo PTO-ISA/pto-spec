@@ -2,7 +2,7 @@
 pure func DuplicateCasStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00811181;
-    instruction[31:27] = Zeros{5} + 27;
+    instruction[31:27] = Zeros{5} + 26;
     return instruction;
 end;
 
@@ -38,9 +38,9 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
@@ -48,7 +48,7 @@ begin
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 10);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 20);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 30);
-    Store(Zeros{PTO_XLEN} + 0x180, 1, Zeros{PTO_XLEN} + 10);
+    Store(Zeros{PTO_XLEN} + 0x180, 2, Zeros{PTO_XLEN} + 10);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x180);
     let started = ExecuteCommandInstruction(DuplicateCasStart(), 32);
     assert started == CommandExecution_Executed;
@@ -76,7 +76,7 @@ begin
     end;
     assert writes == 1;
     StopMemoryEventCapture();
-    let memory = LoadUnsigned(Zeros{PTO_XLEN} + 0x180, 1);
+    let memory = LoadUnsigned(Zeros{PTO_XLEN} + 0x180, 2);
     assert (memory == Zeros{PTO_XLEN} + 20 &&
             observed0 == Zeros{PTO_XLEN} + 10 &&
             observed1 == Zeros{PTO_XLEN} + 20) ||
