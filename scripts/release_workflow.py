@@ -493,7 +493,7 @@ def _release_jobs() -> dict[str, object]:
                     "name": "Build exact NDF impact",
                     "shell": "bash",
                     "env": {"PTO_COMMIT": "${{ inputs.commit }}"},
-                    "run-sha256": "451d985bfaca2be61a63e53b5d10378f2b769de41dbd2e7308222758aa067da8",
+                    "run-sha256": "eec2b08005cc6eae7ba51a148d93f245abaf397354ce8801d44a985961ab3a04",
                 },
                 {
                     "name": "Run twice and validate exact closure",

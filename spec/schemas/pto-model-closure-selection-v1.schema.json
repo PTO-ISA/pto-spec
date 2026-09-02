@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/schemas/pto-model-closure-selection-v1.schema.json",
+  "title": "PTO compiler-to-ASL model closure selection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema",
+    "release",
+    "adoption_baseline_commit",
+    "mandatory_case_ids",
+    "pre_adoption_policy",
+    "post_adoption_policy"
+  ],
+  "properties": {
+    "$schema": {"const": "spec/schemas/pto-model-closure-selection-v1.schema.json"},
+    "schema": {"const": "pto.model-closure-selection.v1"},
+    "release": {"const": "0.58.5"},
+    "adoption_baseline_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "mandatory_case_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"}
+    },
+    "pre_adoption_policy": {"const": "representative-family-canaries"},
+    "post_adoption_policy": {"const": "all-changed-instruction-identities-require-explicit-cases"}
+  }
+}

@@ -66,10 +66,12 @@ SOURCE_PATHS = (
     "spec/evidence/release-traceability-readiness.json",
     "spec/evidence/architecture-readiness.json",
     "spec/release-inputs.json",
+    "spec/model-closure-selection.json",
     "spec/release-selection.json",
     "spec/schemas/pto-release-selection.schema.json",
     "spec/schemas/pto-closure-run-envelope-v1.schema.json",
     "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+    "spec/schemas/pto-model-closure-selection-v1.schema.json",
     "spec/schemas/pto-spec-release-event-v1.schema.json",
 )
 GATES = (
@@ -174,6 +176,8 @@ GATES = (
             "scripts/run-model-closure",
             "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
             "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+            "spec/model-closure-selection.json",
+            "spec/schemas/pto-model-closure-selection-v1.schema.json",
         ],
     },
 )

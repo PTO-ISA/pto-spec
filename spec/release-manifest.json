@@ -3478,7 +3478,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "7b636b0a5f83ac0cb7ccce62d8f0df8f4b0a9babd6b5ee97473a54e0a3318507"
+      "sha256": "7e56d8af16a8b6ab93e79141269f089be3af98af2082fe9a56e1985babeae2ea"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3489,8 +3489,12 @@
       "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
+      "path": "spec/model-closure-selection.json",
+      "sha256": "4242c734e22cbfe91a801dfe8633548d2ac3dce1df2c326914529f0fe712a222"
+    },
+    {
       "path": "spec/release-inputs.json",
-      "sha256": "9421760ce41d1d711f26f3da31dab7375d2b0c64f27a2da3e4524a618c69fc3e"
+      "sha256": "4a23a1cfef93245c1ceeb4a88f1f73f321d402e2812613d6a371c3152ef9411e"
     },
     {
       "path": "spec/release-selection.json",
@@ -3503,6 +3507,10 @@
     {
       "path": "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
       "sha256": "71fff5c5ba2a4aedbaf5b7c5c3a5736c4b63af1e5a77f33b65233cd1c36ff00d"
+    },
+    {
+      "path": "spec/schemas/pto-model-closure-selection-v1.schema.json",
+      "sha256": "f2d9cbfdc8e1d4053c155ef7ba0690cdbbb935118c31418e8912a9d83e64e5ae"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3536,7 +3544,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "cc5678e6c94374a848400c8e06ab0a3c282d0ffd40ab594f2a8d3cd6babbbb2a",
+  "content_sha256": "3d887e7ce81f43ee64b5e4bcce88d528773face9806738e56fecf48948865b75",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
