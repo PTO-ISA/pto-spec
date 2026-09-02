@@ -85,6 +85,20 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         self.assertIn("ScalarHandlerOfForm(3) == ScalarHandler_ScalarBinary", document)
         self.assertIn("DecodeScalarOperandRaw", document)
 
+    def test_gm_semantic_witness_results_match_their_operands(self) -> None:
+        atom = self.module["GM_ATOM_SEMANTIC_OPERATIONS"]
+        reduction = self.module["GM_RED_SEMANTIC_OPERATIONS"]
+
+        self.assertEqual(atom["MGATHER_EXCH"][2:4], ("9", "9"))
+        self.assertEqual(atom["MGATHER_INC"][2], "4")
+        self.assertEqual(atom["MGATHER_OR"][2], "0xF3")
+        self.assertEqual(atom["MGATHER_XOR"][2], "0xF3")
+        self.assertEqual(reduction["MSCATTER_ADD"][1], "8")
+        self.assertEqual(reduction["MSCATTER_INC"][1], "4")
+        self.assertEqual(reduction["MSCATTER_AND"][1], "1")
+        self.assertEqual(reduction["MSCATTER_OR"][1], "7")
+        self.assertEqual(reduction["MSCATTER_XOR"][1], "6")
+
     def test_block_engine_alias_gets_complete_operation_partition_point(self) -> None:
         alias = instruction_unit(
             "block",

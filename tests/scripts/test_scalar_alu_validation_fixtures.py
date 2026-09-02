@@ -90,7 +90,7 @@ class ScalarALUValidationFixtureTest(unittest.TestCase):
             GENERATOR["emit_canonical_command_execution_setup"](
                 "ExecuteFrameEntry", row
             )
-        self.assertIn("WriteGPR(2, Zeros{PTO_XLEN} + 0x100)", output.getvalue())
+        self.assertIn("WriteGPR(1, Zeros{PTO_XLEN} + 0x100)", output.getvalue())
 
         output = io.StringIO()
         with redirect_stdout(output):
@@ -205,8 +205,9 @@ class ScalarALUValidationFixtureTest(unittest.TestCase):
             )
 
         emitted = output.getvalue()
-        self.assertIn("BundleTransfer_Direct", emitted)
+        self.assertIn("BundleTransfer_Conditional", emitted)
         self.assertIn("Zeros{PTO_XLEN} + 8", emitted)
+        self.assertIn("FALSE", emitted)
 
 
 if __name__ == "__main__":

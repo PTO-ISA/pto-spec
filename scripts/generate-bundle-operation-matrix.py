@@ -120,6 +120,8 @@ def fixture_data_type(row: dict) -> int:
     handler performs the actual legality check.
     """
     name = row.get("name", row.get("operation"))
+    if name == "TGPR2T":
+        return 27  # TGPR2T always publishes a numeric U8 CUBE destination.
     if name in CELL_REARRANGEMENT_OPERATIONS:
         return 25  # U32 is accepted by every CELL rearrangement data role.
     if name in {
@@ -343,6 +345,10 @@ def binding_groups(row: dict, selected_role: str | None = None) -> list[list[str
     fields = tile_fields(row)
     if not fields:
         return []
+    if row["name"] == "TGPR2T":
+        # TGPR2T source0..source3 are carried by its dedicated 3+1 B.IOR
+        # stream.  Its only Local Tile carrier is the destination B.IOT.
+        return [["destination0"]]
     if row["family"] == "TLSU":
         # B.IOS carries exactly one Shared source or destination and the
         # Shared operation schemas consume one binding.  A role case binds
@@ -411,6 +417,8 @@ def dimension_words(row: dict) -> list[int]:
     # One FP16 M16 CELL is a 1x4 logical view. Matrix handlers retain their
     # compact one-value defaults; ordinary Local handlers use the view shape.
     name = row.get("name", row.get("operation"))
+    if name == "TGPR2T":
+        return [0x43 | (4 << 20), 0x1043 | (32 << 20)]
     if name in CELL_REARRANGEMENT_OPERATIONS:
         return []
     if name == "TSORT":
@@ -496,7 +504,9 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         "decoded_start": f"0x{start_word(row, starts):08x}",
         "decoded_attributes": (["B.DATR"] if datr_word(row) is not None else []) + ["B.DIM"] + (["B.FPATR"] if row["family"] == "CUBE" else []),
         "decoded_operand_commands": ["B.IOR", "B.IOT", "B.IOS"],
-        "modifier": ("B.SUBVIEW" if role_kind == "source" else
+        "modifier": ("none" if row["name"] == "TGPR2T" and
+                      role_kind == "source" else
+                      "B.SUBVIEW" if role_kind == "source" else
                       "B.ASSEMBLE INIT_LAST" if role_kind == "destination" else "none"),
         "binding_groups": groups,
         "binding_words": [
@@ -814,6 +824,14 @@ def render_case(row: dict) -> list[str]:
         lines += [
             f"    let dim_{value:x} = ExecuteCommandInstruction({asl_word(value)}, 32);",
             f"    assert dim_{value:x} == CommandExecution_Executed;",
+        ]
+    if row["operation"] == "TGPR2T":
+        lines += [
+            "    WriteGPR(5, Zeros{PTO_XLEN} + 1);",
+            f"    let tgpr_sources_0 = ExecuteCommandInstruction({asl_word(0x20310013)}, 32);",
+            f"    let tgpr_sources_1 = ExecuteCommandInstruction({asl_word(0x00028013)}, 32);",
+            "    assert tgpr_sources_0 == CommandExecution_Executed;",
+            "    assert tgpr_sources_1 == CommandExecution_Executed;",
         ]
     if row["gpr_word"] is not None:
         lines += [
