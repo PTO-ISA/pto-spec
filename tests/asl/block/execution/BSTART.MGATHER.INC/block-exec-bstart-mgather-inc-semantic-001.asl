@@ -7,7 +7,7 @@ begin
     let (result, performed) = GMAtomicResult(GMAtomic_INC, TileDataType_U32,
         Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 5,
         Zeros{PTO_XLEN} + 0, Zeros{PTO_XLEN} + 0);
-    assert result == Zeros{PTO_XLEN} + 5;
+    assert result == Zeros{PTO_XLEN} + 4;
     assert performed;
     return 0;
 end;

@@ -10,8 +10,8 @@ begin
     assert a_ready && b_ready;
     let a_element = TileStorageIndex(_Tiles[[1]], 0, 0);
     let b_element = TileStorageIndex(_Tiles[[2]], 0, 0);
-    _Tiles[[1]].payload[[a_element]] = Zeros{PTO_XLEN} + 2;
-    _Tiles[[2]].payload[[b_element]] = Zeros{PTO_XLEN} + 3;
+    _Tiles[[1]].payload[[a_element]] = Zeros{PTO_XLEN} + 0x4000;
+    _Tiles[[2]].payload[[b_element]] = Zeros{PTO_XLEN} + 0x4200;
     MarkTileValidRegionDefined(1);
     MarkTileValidRegionDefined(2);
 end;
@@ -34,7 +34,7 @@ begin
     ConfigureTileForMask(3, 128, 32, 1, 1, 1,
         TileDataType_FP32, TileLayout_RowMajor,
         TileLocation_Any, '1111');
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     StartCubeBiasBlock();
     AddBundleTileBinding(
         FALSE, 0, 0, '1111', TRUE, TRUE, 1, 2, FALSE);
@@ -46,7 +46,7 @@ begin
     let d = _Tiles[[destination]];
     assert d.layout == TileLayout_CUBE_M16;
     assert d.payload[[TileStorageIndex(d, 0, 0)]] ==
-        Zeros{PTO_XLEN} + 11;
+        Zeros{PTO_XLEN} + 0x41300000;
 
     ResetProfileState();
     PrepareCubeBiasPrimaries();

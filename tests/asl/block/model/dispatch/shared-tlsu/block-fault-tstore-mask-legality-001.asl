@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"fault","summary":"Canonical Function 1 accepts partial Shared consumers and retired Function 14 stays reserved.","pass_condition":"A one-PE Function 1 store writes the complete parent through that PE while Function 14 rejects at decode before memory effects.","related_sources":["asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"fault","summary":"Canonical Function 1 accepts partial Shared consumers and reserved Function 31 rejects.","pass_condition":"A one-PE Function 1 store writes the complete parent through that PE while Function 31 rejects at decode before memory effects.","related_sources":["asl/tile/model/memory/shared-movement.asl"]}
 pure func StoreMaskTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -41,7 +41,7 @@ begin
     ClearFault();
     _Memory[[0]] = Zeros{8};
     let retired_start = ExecuteCommandInstruction(
-        StoreMaskTestTLSUStart('01110', Zeros{5} + 24), 32);
+        StoreMaskTestTLSUStart('11111', Zeros{5} + 24), 32);
     assert retired_start == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
     assert !_BundleActive;

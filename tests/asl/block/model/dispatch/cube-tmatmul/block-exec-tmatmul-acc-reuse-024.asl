@@ -29,16 +29,16 @@ begin
         TileDataType_FP32, TileLayout_CUBE_M16,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready && c_ready;
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x4200);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
 
     StartReuseACC(0, 6);
     let first_completed = ExecuteBundleTileOperation();
     assert first_completed;
     let first_destination = BundleMatrixDestinationAt(0);
     assert ReadTileElement(first_destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 11;
+        Zeros{PTO_XLEN} + 0x41300000;
     let first_before = ReadTileElement(first_destination, 0, 0);
 
     ResetBundleControlState();
@@ -48,7 +48,7 @@ begin
     let second_destination = BundleMatrixDestinationAt(0);
     assert second_destination != first_destination;
     assert ReadTileElement(second_destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 17;
+        Zeros{PTO_XLEN} + 0x41880000;
     assert ReadTileElement(first_destination, 0, 0) == first_before;
     return 0;
 end;

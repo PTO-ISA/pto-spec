@@ -49,6 +49,7 @@ begin
         10, 256, 1, 2, TileDataType_FP32,
         TileLayout_CUBE_M32, TileLocation_Matrix);
     assert mask_ready && source_ready;
+    InstallRelativeTileFixture(8, 8);
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN} + 1);
     _Tiles[[8]].contents_defined = TRUE;

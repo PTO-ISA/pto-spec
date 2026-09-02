@@ -40,7 +40,8 @@ begin
     InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    for operation = 0 to PTO_TILE_OPERATION_COUNT - 1 looplimit 109 do
+    for operation = 0 to PTO_TILE_OPERATION_COUNT - 1
+        looplimit PTO_TILE_OPERATION_COUNT do
         assert BundleSubviewOperationApplicabilityIsTotal(operation);
     end;
     let started = ExecuteCommandInstruction(Start(), 32);

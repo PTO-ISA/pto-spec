@@ -39,6 +39,8 @@ begin
     let right = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert left && right;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
 end;

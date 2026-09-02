@@ -40,11 +40,11 @@ begin
     BeginBundleAt(
         ReadTPC(),
         BundleKind_Floating,
-        BundleTransfer_Direct,
+        BundleTransfer_Conditional,
         Zeros{PTO_XLEN} + 0x440,
+        Zeros{PTO_XLEN} + 0x400,
         Zeros{PTO_XLEN} + 0x404,
-        Zeros{PTO_XLEN} + 0x404,
-        TRUE);
+        FALSE);
     let indirect = ExecuteCommandInstruction(Zeros{64} + 0x00005001, 32);
     assert indirect == CommandExecution_Executed;
     assert _BARG.transfer_type == BundleTransfer_Indirect;

@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x500);
-    var direct = Zeros{64} + 0x00000011;
-    direct[31:7] = Zeros{25} + 8;
-    let first = ExecuteCommandInstruction(direct, 32);
+    var predecessor = Zeros{64} + 0x00003001;
+    predecessor[31:15] = Zeros{17} + 8;
+    let first = ExecuteCommandInstruction(predecessor, 32);
     assert first == CommandExecution_Executed;
 
     var icall = Zeros{64} + 0x50166001;

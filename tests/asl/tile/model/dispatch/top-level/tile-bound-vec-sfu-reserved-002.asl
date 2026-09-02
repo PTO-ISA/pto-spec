@@ -128,7 +128,7 @@ begin
             rejected = (rejected + 1) as integer {0..256};
         end;
     end;
-    assert rejected == 43;
+    assert rejected == 42;
 end;
 
 func main() => integer

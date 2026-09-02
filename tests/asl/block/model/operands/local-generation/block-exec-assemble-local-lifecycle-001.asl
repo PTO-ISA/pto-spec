@@ -56,6 +56,8 @@ begin
     let source1 = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert source && source1;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
     let init_done = RunWriter(TRUE, FALSE, 4, 4);

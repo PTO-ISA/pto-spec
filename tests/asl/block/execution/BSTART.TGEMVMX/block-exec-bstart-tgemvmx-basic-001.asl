@@ -9,8 +9,8 @@ begin
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready;
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);
 
     var start: bits(64) = Zeros{64} + 0x01431181;
     start[31:27] = Zeros{5} + 4;
@@ -26,6 +26,6 @@ begin
     assert completed;
     let destination = BundleMatrixDestinationAt(0);
     assert ReadTileElement(destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 6;
+        Zeros{PTO_XLEN} + 0x40c00000;
     return 0;
 end;

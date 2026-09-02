@@ -9,8 +9,8 @@ begin
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready;
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 6);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4600);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4700);
     var start: bits(64) = Zeros{64} + 0x00031181;
     start[31:27] = Zeros{5} + 4;
     let started = ExecuteCommandInstruction(start, 32);
@@ -25,6 +25,7 @@ begin
     assert _Tiles[[destination]].data_type == TileDataType_FP32;
     assert _Tiles[[destination]].valid_rows == 1;
     assert _Tiles[[destination]].valid_columns == 1;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 42;
+    assert ReadTileElement(destination, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x42280000;
     return 0;
 end;

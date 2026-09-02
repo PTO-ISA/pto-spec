@@ -46,6 +46,8 @@ begin
     let source1_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert source0_ready && source1_ready;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 6);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
     let started = ExecuteCommandInstruction(StartTMATMULFP16(), 32);
@@ -87,6 +89,8 @@ begin
     let n8_source_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert m32_source_ready && n8_source_ready;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 16);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 17);
     MarkTileValidRegionDefined(1);
@@ -172,6 +176,8 @@ begin
     let zero_right = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert zero_parent && zero_right;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     _Tiles[[1]].valid_rows = 0;
     let zero_start = ExecuteCommandInstruction(StartTMATMULFP16(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
@@ -195,6 +201,8 @@ begin
     let oob_right = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert oob_parent && oob_right;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     let oob_start = ExecuteCommandInstruction(StartTMATMULFP16(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);

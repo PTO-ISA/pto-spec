@@ -37,6 +37,8 @@ begin
     let source1 = ConfigureCubeTileForMask(2, 256, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert source && source1;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
 end;
@@ -172,7 +174,7 @@ begin
     let closed = Run(TRUE, TRUE, 1, 0);
     assert closed && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].closed;
     let after_last = Run(FALSE, FALSE, 0, 0);
-    assert !after_last && _LastFault == Fault_BundleControl;
+    assert !after_last && _LastFault == Fault_TileLegality;
 
     // Force the architectural capacity boundary after the decoded sources
     // exist; INIT allocation fails atomically without changing them.
