@@ -3642,7 +3642,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "8f634c9814592f9c22f91d6f9a23ab811ef03897b9cd92cca0703e97dce04f90"
+      "sha256": "ad363a74a6556dace025fe48d3c68fe4a80ed1115d4e5f8b36052880149f9b10"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3653,12 +3653,28 @@
       "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
+      "path": "spec/model-closure-selection.json",
+      "sha256": "4242c734e22cbfe91a801dfe8633548d2ac3dce1df2c326914529f0fe712a222"
+    },
+    {
       "path": "spec/release-inputs.json",
-      "sha256": "13570bcef4fd50ea324d6f6100e6a008973dee5f9495e5bdd4b3ef8ad3119c8e"
+      "sha256": "4a23a1cfef93245c1ceeb4a88f1f73f321d402e2812613d6a371c3152ef9411e"
     },
     {
       "path": "spec/release-selection.json",
       "sha256": "acb71cc4cb37f7561d1b2be85eba7601b6640c3f6abf503429e2125c52bb9706"
+    },
+    {
+      "path": "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+      "sha256": "b70056448b0325d2252b462f355168ca02926f2884f6b007e4ea13747c878667"
+    },
+    {
+      "path": "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+      "sha256": "71fff5c5ba2a4aedbaf5b7c5c3a5736c4b63af1e5a77f33b65233cd1c36ff00d"
+    },
+    {
+      "path": "spec/schemas/pto-model-closure-selection-v1.schema.json",
+      "sha256": "f2d9cbfdc8e1d4053c155ef7ba0690cdbbb935118c31418e8912a9d83e64e5ae"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3666,7 +3682,7 @@
     },
     {
       "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
-      "sha256": "5b73fc15917140e93cd6634b4cf76f418df5d44c437af258368f6999ae2fc995"
+      "sha256": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
     },
     {
       "path": "specification.toml",
@@ -3692,7 +3708,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "4f78d159af832da650d3ee0b241488a4199a8abc55f5c5ce6a6528fcb1552dc8",
+  "content_sha256": "0e961e05bfeac75fb5fc80a5e032ae6acc6b67b40e3d3b83567963240b9c99f5",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

@@ -28,6 +28,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/check-adrs",
                 "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
+                "./scripts/check-model-closure-schema",
                 "./scripts/check-release-workflow",
                 "./scripts/check-repository --structure-only",
                 "git diff --check",

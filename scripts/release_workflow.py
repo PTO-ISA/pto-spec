@@ -387,8 +387,9 @@ def _release_jobs() -> dict[str, object]:
                         "PTO_COMMIT": "${{ inputs.commit }}",
                         "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
                         "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
                     },
-                    "run-sha256": "e3da783987097f0ba2b83ecb2404f7fc6298a11d500cb0fd675ce04505a944d3",
+                    "run-sha256": "5d3fe8e746e1e3c791cfb1cdf96d55544a2d33c6131a70e08b9687bfb861031c",
                 },
                 {
                     "name": "Check out exact PTO-SPEC candidate",
@@ -470,7 +471,7 @@ def _release_jobs() -> dict[str, object]:
                 {
                     "name": "Prepare exact ASL and LLVM tools",
                     "shell": "bash",
-                    "run-sha256": "51e9512bc9568b9e5a246b7c3efc0d18871a28e35c63c73d9fb47258bb89b1fe",
+                    "run-sha256": "73efbb308d02af5936c45dd7bf371d4f70ebd7eb55440003101c173876292c54",
                 },
                 {
                     "name": "Build exact NDF impact",
@@ -510,7 +511,7 @@ def _release_jobs() -> dict[str, object]:
         "validate": {
             "name": "Release / validate",
             "if": "always()",
-            "needs": ["full-validation", "release-evidence", "release-site"],
+            "needs": ["full-validation", "release-evidence", "release-site", "model-closure"],
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "10",
             "steps": [
@@ -521,9 +522,12 @@ def _release_jobs() -> dict[str, object]:
                         "FULL_VALIDATION_RESULT": "${{ needs.full-validation.result }}",
                         "RELEASE_EVIDENCE_RESULT": "${{ needs.release-evidence.result }}",
                         "RELEASE_SITE_RESULT": "${{ needs.release-site.result }}",
+                        "MODEL_CLOSURE_RESULT": "${{ needs.model-closure.result }}",
                         "SITE_ARTIFACT_DIGEST": "${{ needs.release-site.outputs.artifact-digest }}",
+                        "MODEL_CLOSURE_ARTIFACT_DIGEST": "${{ needs.model-closure.outputs.artifact-digest }}",
+                        "MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256": "${{ needs.model-closure.outputs.semantic-payload-sha256 }}",
                     },
-                    "run-sha256": "9bc522e05c09d2cc8563987bfe45aceacb1d03cc0977bb16534843980ca9e7b6",
+                    "run-sha256": "e58862eea94e3195693a4815b4a4b7b9a73d317c937148fa3b0080e514b99207",
                 }
             ],
         },
@@ -545,7 +549,17 @@ def validate_release_workflow(workflow: str) -> list[str]:
                             "description": "Exact reviewed commit to verify (40 lowercase hexadecimal characters)",
                             "required": "true",
                             "type": "string",
-                        }
+                        },
+                        "llvm_commit": {
+                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.5",
+                            "required": "true",
+                            "type": "string",
+                        },
+                        "asl_model_commit": {
+                            "description": "Exact reviewed PTO ASL-MODEL commit and AVS corpus",
+                            "required": "true",
+                            "type": "string",
+                        },
                     }
                 }
             },
