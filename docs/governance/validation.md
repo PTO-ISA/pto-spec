@@ -25,6 +25,17 @@ make repo-check
 git diff --check
 ```
 
+`make pr-check` runs two fail-closed lanes concurrently: source/projection
+contracts and isolated Python test modules. Each command reports elapsed time,
+and the Python runner prints the slowest modules. Use
+`PTO_PYTHON_TEST_JOBS=<N>` to set its bounded module-level parallelism. The
+default is at most four workers. To diagnose one lane independently, run:
+
+```bash
+./scripts/check-pr --source
+./scripts/check-pr --tooling
+```
+
 For a focused ASL rerun, list exact stable IDs and execute the resulting page
 with host-sized parallelism:
 
@@ -70,8 +81,9 @@ matrix, and reproduce registered evidence.
 - A canary that is expected to fail is proof that rejection works. Do not weaken
   it to make a lane pass.
 - Generated `build/` and `.cache/` output remains untracked.
-- Commands that write the same shared `build/` artifact must run sequentially;
-  only independent ASL point execution is parallelized with `-j`.
+- Commands that write the same shared `build/` artifact must run sequentially.
+  Independent PR lanes, isolated Python test modules, and ASL point execution
+  may use bounded parallelism.
 
 Use `scripts/generate-review-summary --base REF --head REF` to enumerate the
 merge-base semantic delta. The report is a deterministic review aid, not a

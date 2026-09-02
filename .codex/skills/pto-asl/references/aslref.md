@@ -66,7 +66,8 @@ scheduling points. Its `scripts/prepare-aslref` step is the sole owner of fetchi
 checkout. The repository `scripts/aslref` wrapper remains the canonical entry point for local and CI validation, but it
 is deliberately read-only: it verifies the prepared checkout origin, commit, and executable, then runs it. If preparation
 is missing or stale, the launcher fails closed and instructs the caller to run `make setup`; it must not mutate a shared
-cache from a parallel worker.
+cache from a parallel worker. Each independent test process must invoke this
+prepared executable through the read-only launcher.
 
 ASLRef parses and types every declaration assembled for a point, including test functions that its `main()` never
 calls. Each point should therefore include the complete normative specification but only the test-library and generated
