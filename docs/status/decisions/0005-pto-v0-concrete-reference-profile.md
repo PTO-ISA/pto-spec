@@ -68,7 +68,10 @@ direct conformance calls must have identical name sets.
 
 PTO v0 defines:
 
-- deterministic raw-carrier numeric operations, explicitly not IEEE-754;
+- deterministic typed reference numeric operations. Finite scalar FP32/FP64
+  and the shared scalar/TCVT conversion subset use their accepted mathematical
+  rules; remaining raw-carrier or delegated hooks do not claim IEEE-754 or
+  target-hardware conformance;
 - identity address translation with full bounded-memory access for ACR0 and
   ACR1 and a protected upper region for ACR2 through ACR15;
 - explicit ACR0..ACR15 state and ACR0-only extended system-register families;

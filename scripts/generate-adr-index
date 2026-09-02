@@ -28,6 +28,10 @@ def _record_row(record: AdrRecord) -> dict[str, object]:
     row["path"] = record.path.relative_to(ROOT).as_posix()
     if not record.release_boundary:
         row.pop("release_boundary")
+    if not record.interface_change:
+        row.pop("interface_change")
+    if not record.amendments:
+        row.pop("amendments")
     return row
 
 

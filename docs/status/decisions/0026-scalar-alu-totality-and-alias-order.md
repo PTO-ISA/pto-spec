@@ -232,7 +232,7 @@ halves and returns zero results for shifts of 64 or greater.
 
 Materialization and extension forms preserve their encoded signedness.
 Conditional select treats only zero as false. Its `SrcRType` encodings `00`,
-`01`, and `10` are unmodified aliases; encoding `11` negates the selected
+`01`, and `11` are unmodified aliases; encoding `10` negates the selected
 right operand before the destination write. `C.SETC.TGT` and `C.SETRET` retain
 the control effects assigned by the canonical ALU catalog.
 

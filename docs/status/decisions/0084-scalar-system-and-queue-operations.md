@@ -810,10 +810,10 @@ time advance and exception entry may occur.
 
 `PRF [SrcL, SrcR<modifier><<shamt>]` snapshots its two scalar sources and
 forms `EA = SrcL + (Modify(SrcR, SrcRType) << shamt)` modulo XLEN. `SrcL` and
-`SrcR` use the complete Reg5 source namespace. `SrcRType=0` leaves the
-full-width right source unchanged, `1` sign-extends its low 32 bits, `2`
-zero-extends its low 32 bits, and `3` performs full-width two's-complement
-negation. Every five-bit shift value from 0 through 31 is assigned.
+`SrcR` use the complete Reg5 source namespace. `SrcRType=0` sign-extends the
+low 32 bits, `1` zero-extends the low 32 bits, `2` performs full-width
+two's-complement negation, and `3` leaves the full-width right source
+unchanged. Every five-bit shift value from 0 through 31 is assigned.
 
 The encoded `RegDst` field is architecturally ignored. Every value from 0
 through 31 is an assigned semantic alias, no value names a destination, and

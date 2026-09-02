@@ -182,6 +182,7 @@ export interface PtoAdrRecord {
   affectedNdf: string[];
   affectedUnits: string[];
   targetReleases: string[];
+  interfaceChange: boolean;
   decisionAssetUrl: string;
   githubUrl: string;
   sourceSha256: string;

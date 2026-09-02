@@ -94,6 +94,7 @@ interface AdrIndexRecord {
   affected_units: string[];
   target_releases: string[];
   release_boundary?: boolean;
+  interface_change?: boolean;
 }
 
 interface AdrIndexData {
@@ -2633,6 +2634,7 @@ function publicAdr(root: string, release: PtoReleaseIdentity, record: AdrIndexRe
     affectedNdf: record.affected_ndf,
     affectedUnits: record.affected_units,
     targetReleases: record.target_releases,
+    interfaceChange: record.interface_change === true,
     decisionAssetUrl: `/evidence/decisions/${record.id}.json`,
     githubUrl: sourceUrl(release.commit, record.path),
     sourceSha256: sha256(source),

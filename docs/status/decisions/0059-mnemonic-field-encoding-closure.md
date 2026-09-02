@@ -4,10 +4,12 @@
   "title": "Mnemonic and Encoded-Field Contract Closure",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "PTO ISA maintainers"
+    "PTO ISA maintainers",
+    "zhoubot"
   ],
   "created": "2026-08-11",
   "accepted": "2026-08-11",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
   "target_releases": [
-    "0.58.1"
+    "0.58.1",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-ACRC-DECISION-BINDING-001",
@@ -363,7 +366,13 @@
     "PTO-XOR-ADR-CONTRACT-001",
     "PTO-XORI-ADR-CONTRACT-001",
     "PTO-XORIW-ADR-CONTRACT-001",
-    "PTO-XORW-ADR-CONTRACT-001"
+    "PTO-XORW-ADR-CONTRACT-001",
+    "PTO-INST-SCALAR-CSEL",
+    "PTO-INST-SCALAR-FCVTA",
+    "PTO-INST-SCALAR-FCVTM",
+    "PTO-INST-SCALAR-FCVTN",
+    "PTO-INST-SCALAR-FCVTP",
+    "PTO-INST-SCALAR-FCVTZ"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
@@ -997,14 +1006,63 @@
     "PTO-TILE-TSUBS",
     "PTO-TILE-TTRI",
     "PTO-TILE-TXOR",
-    "PTO-TILE-TXORS"
+    "PTO-TILE-TXORS",
+    "PTO-SCALAR-MODEL-DISPATCH-DECODE",
+    "PTO-SCALAR-MODEL-DISPATCH-FSU",
+    "PTO-SCALAR-MODEL-FSU-PROFILE"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/197",
+      "affected_ndf": [
+        "PTO-INST-SCALAR-CSEL"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-CSEL",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE"
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/205",
+      "affected_ndf": [
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-FCVTM-DECISION-BINDING-001",
+        "PTO-FCVTN-DECISION-BINDING-001",
+        "PTO-FCVTP-DECISION-BINDING-001",
+        "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-FCVTM",
+        "PTO-SCALAR-FCVTN",
+        "PTO-SCALAR-FCVTP",
+        "PTO-SCALAR-FCVTZ",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE"
+      ]
+    }
+  ]
 }
 ---
 # ADR 0059: Mnemonic and Encoded-Field Contract Closure
@@ -1401,3 +1459,19 @@ active normative trees do not retain parallel legacy definitions.
 None. The architectural decisions required for this design were explicitly
 confirmed before this record was written. Implementation findings that expose a
 new semantic ambiguity must be recorded as a new open item rather than guessed.
+
+## Encoded-field corrections {#PTO-DEC-0059-0585-CORRECTIONS}
+
+<!-- ndf: kind=info level=must layer=L0 status=accepted -->
+
+Corrections to an already assigned encoded interface update the owning ASL and
+evidence without allocating a new ADR. In particular:
+
+- `CSEL` raw selector `10` negates the false source; `00`, `01`, and `11` are
+  unmodified aliases.
+- `FCVTA/M/N/P/Z` raw destination codes 0..3 select unsigned 64/32/16/8 and
+  4..7 select signed 64/32/16/8; 8..31 are reserved.
+
+Issues [#197](https://github.com/PTO-ISA/pto-spec/issues/197) and
+[#205](https://github.com/PTO-ISA/pto-spec/issues/205) preserve the exact
+compiler encodings, regression evidence, and implementation history.

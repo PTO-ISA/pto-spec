@@ -39,6 +39,15 @@ The two lookup orders are therefore:
 ```text
 Current semantics: owning ASL/NDF -> generated mirror -> AVS -> commit-scoped evidence
 Decision history: ADR index -> affected ASL/NDF
+
+ADR allocation is narrower than normative implementation work. Allocate a new
+ADR only for a new externally visible PTO interface; implementation corrections
+under an existing interface update ASL/tests directly. Reuse and amend the
+existing topic ADR whenever it already owns the interface.
+
+PTO-SPEC carries only PTO-owned NDF identifiers. ASL-Model owns and numbers its
+own model NDF records; link those downstream records as evidence rather than
+copying their IDs into PTO metadata.
 ```
 
 ## Migration evidence

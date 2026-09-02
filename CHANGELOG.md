@@ -6,33 +6,28 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ## Release 0.58.5
 
 ### Architecture
-- [ADR-0111](docs/status/decisions/0111-asl-functional-model-execution-boundary.md): ASL instruction fetch and functional-model boundary
+- [ADR-0001](docs/status/decisions/0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
 
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
-- [ADR-0115](docs/status/decisions/0115-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
-- [ADR-0118](docs/status/decisions/0118-trace-preserves-predecessor-transfer.md): B.HINT TRACE preserves the predecessor-selected transfer
-- [ADR-0122](docs/status/decisions/0122-frame-lifecycle-architectural-sp.md): Bind frame lifecycle to architectural sp GPR1
 
 ### Cross-cutting
+- [ADR-0028](docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
+- [ADR-0032](docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md): Bundle-command totality and PTO-v0 profile boundaries
+- [ADR-0059](docs/status/decisions/0059-mnemonic-field-encoding-closure.md): Mnemonic and Encoded-Field Contract Closure
+- [ADR-0061](docs/status/decisions/0061-barg-bpcn-commit-state.md): Bundle commit state uses BARG/BPCN
+- [ADR-0075](docs/status/decisions/0075-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-0078](docs/status/decisions/0078-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
+- [ADR-0080](docs/status/decisions/0080-tile-elementwise-and-irregular-operations.md): Tile elementwise and irregular operations
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
 - [ADR-0107](docs/status/decisions/0107-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 - [ADR-0108](docs/status/decisions/0108-0584-1-to-0585-compatibility.md): PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary
 - [ADR-0109](docs/status/decisions/0109-local-single-object-cap.md): Local single-object cap versus aggregate Local pool
 - [ADR-0110](docs/status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
-- [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
-- [ADR-0113](docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md): CUBE predicate carriers and TGPR2T superseding contract
-- [ADR-0114](docs/status/decisions/0114-scalar-stream-enters-bundle-body.md): Decoded scalar stream enters the active bundle body
-- [ADR-0119](docs/status/decisions/0119-finite-scalar-floating-reference-profile.md): Bind finite scalar FP32 and FP64 pto-v0 reference semantics
-- [ADR-0121](docs/status/decisions/0121-mset-complete-xlen-length.md): Restore MSET complete-XLEN arbitrary length semantics
-- [ADR-0124](docs/status/decisions/0124-finite-scalar-fp16-destination.md): Complete scalar conversion and shared Tile conversion semantics
-- [ADR-0125](docs/status/decisions/0125-indexed-tlsu-row-stride.md): Bind indexed TLSU row-stride addressing
 
 ### Scalar
-- [ADR-0116](docs/status/decisions/0116-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
-- [ADR-0117](docs/status/decisions/0117-byte-granular-hl-bfi.md): Define HL.BFI as byte-granular insertion
-- [ADR-0120](docs/status/decisions/0120-csel-negate-selector-encoding.md): Assign CSEL raw selector 10 to false-source negation
-- [ADR-0123](docs/status/decisions/0123-fp-to-integer-dsttype-encoding.md): Restore FP-to-integer raw DstType encoding
+- [ADR-0025](docs/status/decisions/0025-scalar-bitfield-and-reverse-bounds.md): Scalar bitfield and byte-reversal bounds
+- [ADR-0029](docs/status/decisions/0029-scalar-agu-totality-and-restart.md): Scalar AGU totality, aliases, and restart
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
@@ -136,7 +131,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-0022](docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
-- [ADR-0032](docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md): Bundle-command totality and PTO-v0 profile boundaries
 - [ADR-0055](docs/status/decisions/0055-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
 
 ### Cross-cutting
@@ -150,7 +144,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0020](docs/status/decisions/0020-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-0021](docs/status/decisions/0021-scalar-pc-relative-and-return-address.md): Scalar PC-relative and return-address state
 - [ADR-0023](docs/status/decisions/0023-uniform-instruction-attempt-status.md): Uniform instruction-attempt status and fault isolation
+- [ADR-0028](docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
 - [ADR-0031](docs/status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md): Scalar SYS totality and PTO-v0 profile boundaries
+- [ADR-0032](docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md): Bundle-command totality and PTO-v0 profile boundaries
 - [ADR-0033](docs/status/decisions/0033-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-0034](docs/status/decisions/0034-cube-raw-carrier-totality.md): CUBE raw-carrier totality and composite preflight
 - [ADR-0035](docs/status/decisions/0035-vec-sfu-carrier-totality.md): VEC/SFU carrier totality and profile boundary
@@ -172,7 +168,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0025](docs/status/decisions/0025-scalar-bitfield-and-reverse-bounds.md): Scalar bitfield and byte-reversal bounds
 - [ADR-0026](docs/status/decisions/0026-scalar-alu-totality-and-alias-order.md): Scalar ALU totality and alias order
 - [ADR-0027](docs/status/decisions/0027-scalar-bru-totality-and-target-legality.md): Scalar BRU totality and target legality
-- [ADR-0028](docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
 - [ADR-0029](docs/status/decisions/0029-scalar-agu-totality-and-restart.md): Scalar AGU totality, aliases, and restart
 - [ADR-0030](docs/status/decisions/0030-scalar-amo-totality-and-reservation.md): Scalar AMO totality, reservations, and restart
 - [ADR-0066](docs/status/decisions/0066-addtpc-page-scaled-immediate.md): ADDTPC page-scaled immediate

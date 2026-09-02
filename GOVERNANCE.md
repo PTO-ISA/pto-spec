@@ -14,6 +14,11 @@ All architecture changes use stable `PTO-*` clauses and the
 The [ADR process](docs/governance/adr-process.md) owns decision states, NDF
 responsibilities, and supersession rules.
 
+PTO-SPEC owns only PTO architecture NDF identities. Downstream repositories,
+including ASL-Model, own and number their own NDF records. Downstream IDs may
+be linked as integration evidence but must not appear as PTO ADR
+`affected_ndf`, `affected_units`, or ASL NDF regions.
+
 ## Validation policy
 
 The repository has three distinct lanes: lightweight pull-request feedback,
@@ -27,9 +32,17 @@ workflows and validation scripts remain the executable contracts.
 
 ## Change control
 
-- **Normative architecture** changes state, legality, results, ordering,
-  faults, profiles, encodings, or assembly. It requires an NDF issue, reviewed
-  decision state, owning ASL/NDF change, and focused executable evidence.
+- **Interface definition** changes an externally visible encoding, operand or
+  bundle schema, architectural state interface, legality/fault contract,
+  ordering/commit boundary, profile contract, or assembly interface. It
+  requires an NDF issue, reviewed decision state, owning ASL/NDF change, and
+  focused executable evidence. Update the existing topic ADR when one already
+  owns that interface; allocate a new ADR only for a genuinely new interface
+  decision.
+- **Implementation correction** fixes ASL wording, decode, dispatch, helper,
+  reference-profile implementation, model-bound leakage, or tests under an
+  unchanged interface. Fix the owning ASL/tests directly and preserve the
+  issue, commit, and executable evidence; do not allocate an ADR.
 - **Toolchain** updates the audited ASLRef pin or build environment and stays
   isolated from architecture behavior.
 - **Governance or projection** changes policy, workflow, generation, or

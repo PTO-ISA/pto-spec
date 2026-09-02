@@ -4,10 +4,12 @@
   "title": "Scalar FSU totality and numeric-profile boundary",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-07-31",
   "accepted": "2026-07-31",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
   "target_releases": [
-    "unassigned"
+    "unassigned",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-FABS-DECISION-BINDING-001",
@@ -29,7 +32,28 @@
     "PTO-FNE-DECISION-BINDING-001",
     "PTO-FNES-DECISION-BINDING-001",
     "PTO-SCVTF-DECISION-BINDING-001",
-    "PTO-UCVTF-DECISION-BINDING-001"
+    "PTO-UCVTF-DECISION-BINDING-001",
+    "PTO-INST-SCALAR-FADD",
+    "PTO-INST-SCALAR-FCVT",
+    "PTO-INST-SCALAR-FCVTA",
+    "PTO-INST-SCALAR-FCVTM",
+    "PTO-INST-SCALAR-FCVTN",
+    "PTO-INST-SCALAR-FCVTP",
+    "PTO-INST-SCALAR-FCVTZ",
+    "PTO-INST-SCALAR-FDIV",
+    "PTO-INST-SCALAR-FEXP",
+    "PTO-INST-SCALAR-FMADD",
+    "PTO-INST-SCALAR-FMSUB",
+    "PTO-INST-SCALAR-FMUL",
+    "PTO-INST-SCALAR-FNMADD",
+    "PTO-INST-SCALAR-FNMSUB",
+    "PTO-INST-SCALAR-FRECIP",
+    "PTO-INST-SCALAR-FSQRT",
+    "PTO-INST-SCALAR-FSUB",
+    "PTO-INST-SCALAR-SCVTF",
+    "PTO-INST-SCALAR-UCVTF",
+    "PTO-COMMON-CONVERSION-PROFILE-001",
+    "PTO-TCVT-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-SCALAR-FABS",
@@ -61,14 +85,130 @@
     "PTO-SCALAR-FSQRT",
     "PTO-SCALAR-FSUB",
     "PTO-SCALAR-SCVTF",
-    "PTO-SCALAR-UCVTF"
+    "PTO-SCALAR-UCVTF",
+    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+    "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+    "PTO-SCALAR-MODEL-DISPATCH-FSU",
+    "PTO-SCALAR-MODEL-FSU-PROFILE",
+    "PTO-TILE-MODEL-NUMERIC-FORMATS",
+    "PTO-TILE-TCVT"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "dba352e1eed67e365f5fa3d8f8987f9454900ed0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/196",
+      "affected_ndf": [
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-FCVTM-DECISION-BINDING-001",
+        "PTO-FCVTN-DECISION-BINDING-001",
+        "PTO-FCVTP-DECISION-BINDING-001",
+        "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FADD",
+        "PTO-INST-SCALAR-FCVT",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-INST-SCALAR-FDIV",
+        "PTO-INST-SCALAR-FEXP",
+        "PTO-INST-SCALAR-FMADD",
+        "PTO-INST-SCALAR-FMSUB",
+        "PTO-INST-SCALAR-FMUL",
+        "PTO-INST-SCALAR-FNMADD",
+        "PTO-INST-SCALAR-FNMSUB",
+        "PTO-INST-SCALAR-FRECIP",
+        "PTO-INST-SCALAR-FSQRT",
+        "PTO-INST-SCALAR-FSUB",
+        "PTO-INST-SCALAR-SCVTF",
+        "PTO-INST-SCALAR-UCVTF",
+        "PTO-SCVTF-DECISION-BINDING-001",
+        "PTO-UCVTF-DECISION-BINDING-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+        "PTO-SCALAR-FADD",
+        "PTO-SCALAR-FCVT",
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-FCVTM",
+        "PTO-SCALAR-FCVTN",
+        "PTO-SCALAR-FCVTP",
+        "PTO-SCALAR-FCVTZ",
+        "PTO-SCALAR-FDIV",
+        "PTO-SCALAR-FEXP",
+        "PTO-SCALAR-FMADD",
+        "PTO-SCALAR-FMSUB",
+        "PTO-SCALAR-FMUL",
+        "PTO-SCALAR-FNMADD",
+        "PTO-SCALAR-FNMSUB",
+        "PTO-SCALAR-FRECIP",
+        "PTO-SCALAR-FSQRT",
+        "PTO-SCALAR-FSUB",
+        "PTO-SCALAR-SCVTF",
+        "PTO-SCALAR-UCVTF"
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "baseline": "7c1fea1f866eb9fc787a7935de26228ca01483c9",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/206",
+      "affected_ndf": [
+        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-FCVTM-DECISION-BINDING-001",
+        "PTO-FCVTN-DECISION-BINDING-001",
+        "PTO-FCVTP-DECISION-BINDING-001",
+        "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FCVT",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-INST-SCALAR-SCVTF",
+        "PTO-INST-SCALAR-UCVTF",
+        "PTO-SCVTF-DECISION-BINDING-001",
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-UCVTF-DECISION-BINDING-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+        "PTO-SCALAR-FCVT",
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-FCVTM",
+        "PTO-SCALAR-FCVTN",
+        "PTO-SCALAR-FCVTP",
+        "PTO-SCALAR-FCVTZ",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE",
+        "PTO-SCALAR-SCVTF",
+        "PTO-SCALAR-UCVTF",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ]
+    }
+  ]
 }
 ---
 # ADR 0028: Scalar FSU totality and numeric-profile boundary
@@ -134,14 +274,13 @@ R0..R23, T#1..T#4, and U#1..U#4. Destination 0 and 24 through 29 discard;
 destination overlap, all-sources-same-GPR, and same-queue source/push cases use
 the pre-instruction source values.
 
-The deterministic PTO-v0 raw-carrier functions close Stage 4 reference
-semantics only. Modular carrier arithmetic, carrier multiplication/division,
-identity/increment unary surrogates, and raw conversion normalization are
-reproducible executable rules, not IEEE-754 or hardware claims. The
-real-number helper layer in `asl/scalar/floating.asl` is not the decoded FSU
-definition. A named target profile must close S5-T2 for target format names,
-correct rounding, approximation accuracy, exceptional values, saturation,
-and OF/UF/NX production.
+The deterministic PTO-v0 profile now binds finite FP32 and FP64 arithmetic,
+fused operations, elementary operations, and conversions through the selected
+rounding and sticky-status contracts. Integer and raw-carrier helpers remain
+fixed-width carrier operations; other floating formats retain their explicit
+profile hooks. A named target profile must still close S5-T2 for any behavior
+that PTO-v0 leaves profile-defined, including target-specific accuracy and
+format availability.
 
 ## Rationale
 
@@ -161,3 +300,23 @@ fault context plus no partial register, queue, flag, or TPC effect. A further
 35 direct helper cases prove arbitrary returned flag bits are ORed into every
 seed class. Repository checks derive the exact inventory from the catalogs and
 reject missing, extra, or reclassified evidence.
+
+## Scalar and shared conversion closure
+
+The scalar floating code namespace is `0=FP64`, `1=FP32`, `2=FP16`, and
+`3=E4M3`. `FCVT` accepts the complete 4x4 floating matrix. The FP-to-integer
+family accepts unsigned 64/32/16/8 destinations in raw codes 0..3 and signed
+64/32/16/8 destinations in raw codes 4..7; codes 8..31 are reserved. `SCVTF`
+and `UCVTF` use integer source codes 0..3 and floating destination codes 0..3.
+
+Scalar conversion and `TCVT` share one conversion profile for FP64, FP32,
+FP16, E4M3, S64/S32/S16/S8, and U64/U32/U16/U8. Scalar supplies saturation
+disabled; `TCVT` supplies its resolved rounding and saturation controls.
+Tile-only formats remain owned by their Tile profile rules.
+
+Issues [#196](https://github.com/PTO-ISA/pto-spec/issues/196),
+[#205](https://github.com/PTO-ISA/pto-spec/issues/205), and
+[#206](https://github.com/PTO-ISA/pto-spec/issues/206) record the implementation
+and interface closure. Finite-profile implementation bugs and corrections to
+an already assigned raw encoding are fixed directly in ASL; they do not
+allocate separate ADR numbers.

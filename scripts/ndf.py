@@ -14,6 +14,8 @@ REGION_BEGIN = re.compile(r"^// NDF-BEGIN: (PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 REGION_END = re.compile(r"^// NDF-END: (PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 METADATA_PREFIX = "// ndf: "
 REFERENCE = re.compile(r"\[\[(PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*)\]\]")
+DOWNSTREAM_MODEL_ID = re.compile(r"\bPTO-MODEL-[A-Z0-9]+(?:-[A-Z0-9]+)*\b")
+HTTPS_URL = re.compile(r"https://[^\s)]+")
 MARKDOWN_NDF = re.compile(r"(?:\{#PTO-[A-Z0-9-]+\}|<!--\s*ndf:)")
 INSTRUCTION_PREFIX = "// PTO-INSTRUCTION: "
 UNIT_PREFIX = "// PTO-UNIT: "
@@ -140,6 +142,11 @@ def parse_ndf_regions(text: str, source: Path) -> tuple[NdfClause, ...]:
                 errors.append(f"{source}:{line_number}: nested NDF region {begin.group(1)}")
                 continue
             active_id = begin.group(1)
+            if active_id.startswith("PTO-MODEL-"):
+                errors.append(
+                    f"{source}:{line_number}: downstream ASL-Model NDF identifier "
+                    f"{active_id} is forbidden in PTO-SPEC"
+                )
             active_line = line_number
             metadata_line = 0
             metadata_raw = None
@@ -164,6 +171,20 @@ def parse_ndf_regions(text: str, source: Path) -> tuple[NdfClause, ...]:
             body = "\n".join(body_lines).strip()
             if not body:
                 errors.append(f"{source}:{active_line}: NDF clause {active_id} has an empty body")
+            references = tuple(REFERENCE.findall(body))
+            for reference in references:
+                if reference.startswith("PTO-MODEL-"):
+                    errors.append(
+                        f"{source}:{active_line}: downstream ASL-Model NDF reference "
+                        f"{reference} is forbidden in PTO-SPEC"
+                    )
+            body_without_urls = HTTPS_URL.sub("", body)
+            plain_downstream = DOWNSTREAM_MODEL_ID.search(body_without_urls)
+            if plain_downstream is not None:
+                errors.append(
+                    f"{source}:{active_line}: downstream ASL-Model NDF identifier "
+                    f"{plain_downstream.group(0)} is forbidden in PTO-SPEC normative text"
+                )
             if not errors or all(not error.startswith(f"{source}:") for error in errors):
                 clauses.append(
                     NdfClause(
@@ -175,7 +196,7 @@ def parse_ndf_regions(text: str, source: Path) -> tuple[NdfClause, ...]:
                         body=body,
                         source=source,
                         line=active_line,
-                        references=tuple(REFERENCE.findall(body)),
+                        references=references,
                     )
                 )
             active_id = None

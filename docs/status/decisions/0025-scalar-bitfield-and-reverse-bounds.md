@@ -4,10 +4,12 @@
   "title": "Scalar bitfield and byte-reversal bounds",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-07-31",
   "accepted": "2026-07-31",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
   "target_releases": [
-    "unassigned"
+    "unassigned",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-BCNT-DECISION-BINDING-001",
@@ -25,7 +28,9 @@
     "PTO-BXU-DECISION-BINDING-001",
     "PTO-CLZ-DECISION-BINDING-001",
     "PTO-CTZ-DECISION-BINDING-001",
-    "PTO-REV-DECISION-BINDING-001"
+    "PTO-REV-DECISION-BINDING-001",
+    "PTO-HL-BFI-DECISION-BINDING-001",
+    "PTO-INST-SCALAR-HL-BFI"
   ],
   "affected_units": [
     "PTO-SCALAR-BCNT",
@@ -35,14 +40,38 @@
     "PTO-SCALAR-BXU",
     "PTO-SCALAR-CLZ",
     "PTO-SCALAR-CTZ",
-    "PTO-SCALAR-REV"
+    "PTO-SCALAR-REV",
+    "PTO-SCALAR-HL-BFI",
+    "PTO-SCALAR-MODEL-ALU-BITFIELD",
+    "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+    "PTO-SCALAR-MODEL-DISPATCH-ALU"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/194",
+      "affected_ndf": [
+        "PTO-HL-BFI-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-HL-BFI"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-HL-BFI",
+        "PTO-SCALAR-MODEL-ALU-BITFIELD",
+        "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+        "PTO-SCALAR-MODEL-DISPATCH-ALU"
+      ]
+    }
+  ]
 }
 ---
 # ADR 0025: Scalar bitfield and byte-reversal bounds
@@ -64,11 +93,12 @@ that is not a multiple of eight completes normally and returns zero; it is not
 an illegal instruction and raises no fault. `imml` and `immr` remain independent
 encoded operands and must not be collapsed or substituted for one another.
 
-`HL.BFI` uses its independently encoded `immr` as the first destination bit and
-`imms` as the last destination bit. The inclusive destination interval wraps
-through bit 63 when the last bit precedes the first bit. Source bit zero is
-inserted at the first destination bit, with ascending source bits following the
-wrapping destination interval.
+`HL.BFI` is byte-granular. `imms[2:0]` selects destination byte offset `M`, and
+`immr[2:0]` encodes byte count `N` minus one. The operation snapshots both
+sources, copies the low `N` bytes of `SrcR`, and replaces `N` bytes of `SrcL`
+starting at byte `M`, wrapping modulo eight bytes. Encodings with either
+six-bit field above seven are reserved and reject before source reads or
+architectural effects.
 
 All source values are read before the first destination write. Consequently,
 an absolute or temporary-queue destination that aliases a source observes the
@@ -76,10 +106,12 @@ pre-instruction source value.
 
 ## Rationale
 
-This disposition makes every value of the two six-bit bounds total without
-silently treating adjacent fields as one operand. It preserves the existing PTO
-catalog and executable reference behavior while making the non-byte `REV` result
-an explicit architecture rule rather than an incidental implementation choice.
+This disposition keeps the ordinary bitfield operands independent while
+restoring the established byte-field interface of `HL.BFI`. The earlier
+bit-granular `HL.BFI` ASL was an implementation defect, not a new interface
+decision. Issue
+[#194](https://github.com/PTO-ISA/pto-spec/issues/194) records the exact
+compiler-shaped correction and evidence.
 
 ## Verification
 

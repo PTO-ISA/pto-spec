@@ -65,6 +65,47 @@ class NdfTest(unittest.TestCase):
             any("mismatched NDF end PTO-OTHER" in error for error in check_repository(self.root))
         )
 
+    def test_rejects_downstream_asl_model_ndf_namespace(self) -> None:
+        foreign = VALID_CLAUSE.replace(
+            "PTO-TILE-CAPACITY",
+            "PTO-MODEL-STEP-001",
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "downstream ASL-Model NDF identifier PTO-MODEL-STEP-001",
+        ):
+            parse_ndf_regions(foreign, Path("asl/architecture.asl"))
+
+    def test_rejects_downstream_asl_model_ndf_reference(self) -> None:
+        foreign_reference = VALID_CLAUSE.replace(
+            "selected PE.",
+            "selected PE; see [[PTO-MODEL-STEP-001]].",
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "downstream ASL-Model NDF reference PTO-MODEL-STEP-001",
+        ):
+            parse_ndf_regions(foreign_reference, Path("asl/architecture.asl"))
+
+    def test_rejects_plain_downstream_asl_model_identifier(self) -> None:
+        foreign_text = VALID_CLAUSE.replace(
+            "selected PE.",
+            "selected PE under PTO-MODEL-STEP-001.",
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "downstream ASL-Model NDF identifier PTO-MODEL-STEP-001",
+        ):
+            parse_ndf_regions(foreign_text, Path("asl/architecture.asl"))
+
+    def test_allows_downstream_identifier_inside_repository_url(self) -> None:
+        linked = VALID_CLAUSE.replace(
+            "selected PE.",
+            "selected PE; evidence: https://github.com/PTO-ISA/asl-model/blob/main/docs/PTO-MODEL-STEP-001.md.",
+        )
+        clauses = parse_ndf_regions(linked, Path("asl/architecture.asl"))
+        self.assertEqual(len(clauses), 1)
+
     def test_rejects_invalid_metadata(self) -> None:
         self.write(
             "asl/architecture.asl",

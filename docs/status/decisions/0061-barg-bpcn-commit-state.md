@@ -4,10 +4,12 @@
   "title": "Bundle commit state uses BARG/BPCN",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-08-11",
   "accepted": "2026-08-11",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
   "target_releases": [
-    "0.58.1"
+    "0.58.1",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-BARG-CONTINUATION-001",
@@ -24,7 +27,10 @@
     "PTO-C-BSTOP-DECISION-BINDING-001",
     "PTO-C-SETC-TGT-SNAPSHOT-001",
     "PTO-L-BSTOP-DECISION-BINDING-001",
-    "PTO-SETC-TGT-ADR-CONTRACT-001"
+    "PTO-SETC-TGT-ADR-CONTRACT-001",
+    "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+    "PTO-B-HINT-LIFECYCLE-001",
+    "PTO-INST-BLOCK-B-HINT"
   ],
   "affected_units": [
     "PTO-BLOCK-BSTART",
@@ -33,14 +39,49 @@
     "PTO-BLOCK-L-BSTOP",
     "PTO-BLOCK-MODEL-STATE-BARG",
     "PTO-SCALAR-C-SETC-TGT",
-    "PTO-SCALAR-SETC-TGT"
+    "PTO-SCALAR-SETC-TGT",
+    "PTO-BLOCK-MODEL-DISPATCH-START",
+    "PTO-BLOCK-B-HINT",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "3918b6aa0ffcc73be79699d4e18c15d8ccc13ba2",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/192",
+      "affected_ndf": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-START"
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "baseline": "6df97a3cf31aa83b2c90a8664c2ccb15ef74c8d9",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/195",
+      "affected_ndf": [
+        "PTO-B-HINT-LIFECYCLE-001",
+        "PTO-INST-BLOCK-B-HINT"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-HINT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    }
+  ]
 }
 ---
 # ADR 0061: Bundle commit state uses BARG/BPCN
@@ -118,3 +159,17 @@ state after successful commit. A final block MUST end with a BSTOP form.
 - `asl/block/lifecycle/BSTOP.asl`
 - `asl/block/lifecycle/C.BSTOP.asl`
 - `asl/block/lifecycle/L.BSTOP.asl`
+
+## Selected-boundary installation
+
+A fetched following `BSTART` or `B.HINT TRACE` first commits its active
+predecessor. It installs the fetched boundary only when the committed TPC
+equals that instruction's PC. If the predecessor selected another direct,
+conditional, indirect, call, or return continuation, the selected TPC remains
+committed and the unselected-path boundary is not installed. Failed predecessor
+commit preserves the prior rollback behavior.
+
+Issues [#192](https://github.com/PTO-ISA/pto-spec/issues/192) and
+[#195](https://github.com/PTO-ISA/pto-spec/issues/195) record the focused
+control-flow evidence. This is part of the existing BARG/BPCN commit interface,
+not a separate decision family.
