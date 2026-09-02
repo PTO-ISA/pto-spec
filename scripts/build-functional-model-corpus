@@ -1,0 +1,660 @@
+#!/usr/bin/env python3
+"""Build deterministic, low-address functional-model ELF corpus artifacts."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import struct
+import subprocess
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CORPUS = ROOT / "tests" / "functional-model" / "corpus"
+SCHEMA = "pto-functional-model-corpus-v1"
+MODEL_LIMIT = 65536
+EM_LINX = 233
+PT_LOAD = 1
+PF_X = 1
+PF_W = 2
+SHT_NOTE = 7
+
+CASES = {
+    "scalar_stop_pc": {
+        "entry": 0x100,
+        "stop_pc": 0x114,
+        "max_steps": 6,
+        "lengths": [16, 16, 32, 48, 16, 32],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x102, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0A96, "length_bits": 16, "sequence": 3},
+            {"pre_tpc": 0x102, "post_tpc": 0x104, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x13D6, "length_bits": 16, "sequence": 4},
+            {"pre_tpc": 0x104, "post_tpc": 0x108, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x00208185, "length_bits": 32, "sequence": 5},
+            {"pre_tpc": 0x108, "post_tpc": 0x10E, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0000C095800E, "length_bits": 48, "sequence": 6},
+            {"pre_tpc": 0x10E, "post_tpc": 0x110, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0016, "length_bits": 16, "sequence": 7},
+            {"pre_tpc": 0x110, "post_tpc": 0x114, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x03C1A069, "length_bits": 32, "sequence": 8,
+             "memory_writes": [
+                 {"address": 0x200, "value": 0x19},
+                 {"address": 0x201, "value": 0},
+                 {"address": 0x202, "value": 0},
+                 {"address": 0x203, "value": 0},
+             ]},
+        ],
+        "result_address": 0x200,
+        "golden": bytes.fromhex("19000000"),
+        "requirements": [
+            "PTO-REQ-INSTRUCTION-FETCH-001",
+            "PTO-INST-SCALAR-SW-PCR",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-MEMORY-ADAPTER-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
+        ],
+        "avs_ids": [
+            "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-16-002",
+            "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-32-001",
+            "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-48-003",
+            "PTO-AVS-AGU-SW-PCR-EXEC-001",
+        ],
+        "trace_requirements": {},
+    },
+    "block_64_stop_pc": {
+        "entry": 0x280,
+        "stop_pc": 0x280,
+        "max_steps": 2,
+        "lengths": [32, 64],
+        "expected_trace": [
+            {"pre_tpc": 0x280, "post_tpc": 0x284, "pre_bpc": 0,
+             "post_bpc": 0x280, "raw_instruction_le": 0x00000011,
+             "length_bits": 32, "sequence": 3},
+            {"pre_tpc": 0x284, "post_tpc": 0x280, "pre_bpc": 0x280,
+             "post_bpc": 0, "raw_instruction_le": 0x000000010000000F,
+             "length_bits": 64, "sequence": 4},
+        ],
+        "result_address": 0x380,
+        "golden": bytes.fromhex("a55a0000"),
+        "requirements": [
+            "PTO-REQ-INSTRUCTION-FETCH-001",
+            "PTO-L-BSTOP-DECISION-BINDING-001",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
+        ],
+        "avs_ids": ["PTO-AVS-ARCH-NEXT-INSTRUCTION-COMMAND-64-004"],
+        "trace_requirements": {
+            "required_length_bits": 64,
+            "final_bundle_active": False,
+        },
+    },
+    "tile_tadd_stop_pc": {
+        "entry": 0x100,
+        "stop_pc": 0x134,
+        "max_steps": 18,
+        "lengths": [32, 16, 16, 16, 32, 32, 32, 16, 16, 16,
+                    32, 32, 16, 16, 16, 32, 32, 16],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x104, "pre_bpc": 0,
+             "post_bpc": 0x100, "raw_instruction_le": 0xC8011181,
+             "length_bits": 32, "sequence": 3},
+            {"pre_tpc": 0x104, "post_tpc": 0x106, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 4},
+            {"pre_tpc": 0x106, "post_tpc": 0x108, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 5},
+            {"pre_tpc": 0x108, "post_tpc": 0x10A, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 6},
+            {"pre_tpc": 0x10A, "post_tpc": 0x10E, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x00008013,
+             "length_bits": 32, "sequence": 7},
+            {"pre_tpc": 0x10E, "post_tpc": 0x112, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x000AEE13,
+             "length_bits": 32, "sequence": 8},
+            {"pre_tpc": 0x112, "post_tpc": 0x116, "pre_bpc": 0x100,
+             "post_bpc": 0x112, "raw_instruction_le": 0xC8019181,
+             "length_bits": 32, "sequence": 9},
+            {"pre_tpc": 0x116, "post_tpc": 0x118, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 10},
+            {"pre_tpc": 0x118, "post_tpc": 0x11A, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 11},
+            {"pre_tpc": 0x11A, "post_tpc": 0x11C, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 12},
+            {"pre_tpc": 0x11C, "post_tpc": 0x120, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x000ACE13,
+             "length_bits": 32, "sequence": 13},
+            {"pre_tpc": 0x120, "post_tpc": 0x124, "pre_bpc": 0x112,
+             "post_bpc": 0x120, "raw_instruction_le": 0xC8111181,
+             "length_bits": 32, "sequence": 14},
+            {"pre_tpc": 0x124, "post_tpc": 0x126, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 15},
+            {"pre_tpc": 0x126, "post_tpc": 0x128, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 16},
+            {"pre_tpc": 0x128, "post_tpc": 0x12A, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 17},
+            {"pre_tpc": 0x12A, "post_tpc": 0x12E, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x00008013,
+             "length_bits": 32, "sequence": 18},
+            {"pre_tpc": 0x12E, "post_tpc": 0x132, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x00085E13,
+             "length_bits": 32, "sequence": 19},
+            {"pre_tpc": 0x132, "post_tpc": 0x134, "pre_bpc": 0x120,
+             "post_bpc": 0, "raw_instruction_le": 0,
+             "length_bits": 16, "sequence": 20,
+             "memory_writes": [
+                 {"address": 0xF00, "value": 0x32},
+                 {"address": 0xF01, "value": 0},
+                 {"address": 0xF02, "value": 0},
+                 {"address": 0xF03, "value": 0},
+             ]},
+        ],
+        "result_address": 0xF00,
+        "golden": bytes.fromhex("32000000"),
+        "requirements": [
+            "PTO-REQ-INSTRUCTION-FETCH-001",
+            "PTO-INST-TILE-TLOAD",
+            "PTO-INST-TILE-TADD",
+            "PTO-INST-TILE-TSTORE",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-MEMORY-ADAPTER-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
+        ],
+        "avs_ids": [
+            "PTO-AVS-TILE-TLOAD-DIRECT-001",
+            "PTO-AVS-TILE-TADD-ELEMENTS-001",
+            "PTO-AVS-TILE-TSTORE-DIRECT-001",
+        ],
+        "trace_requirements": {
+            "required_length_bits": 32,
+            "final_bundle_active": False,
+        },
+    },
+    "host_exit_group": {
+        "entry": 0x100,
+        "stop_pc": 0x10E,
+        "stop_kind": "exit_group",
+        "exit_status": 7,
+        "max_steps": 4,
+        "lengths": [16, 32, 32, 32],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x102, "pre_bpc": 0,
+             "post_bpc": 0, "raw_instruction_le": 0x11D6,
+             "length_bits": 16, "sequence": 3},
+            {"pre_tpc": 0x102, "post_tpc": 0x106, "pre_bpc": 0,
+             "post_bpc": 0, "raw_instruction_le": 0x05E00495,
+             "length_bits": 32, "sequence": 4},
+            {"pre_tpc": 0x106, "post_tpc": 0x10A, "pre_bpc": 0,
+             "post_bpc": 0x106, "raw_instruction_le": 0x00001081,
+             "length_bits": 32, "sequence": 5},
+            {"pre_tpc": 0x10A, "post_tpc": 0x10E, "pre_bpc": 0x106,
+             "post_bpc": 0x106, "raw_instruction_le": 0x0010302B,
+             "length_bits": 32, "sequence": 7,
+             "step_state": 3, "instruction_status": 1,
+             "request_token": 1, "request_type": 94,
+             "request_argument0": 7},
+        ],
+        "result_address": 0x200,
+        "golden": bytes.fromhex("e7010000"),
+        "requirements": [
+            "PTO-REQ-INSTRUCTION-FETCH-001",
+            "PTO-REQ-SCALAR-BODY-ENTRY-001",
+            "PTO-INST-SCALAR-ACRC",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-HOST-REQUEST-001",
+            "SSM-ABI-PTO-EXIT-GROUP-001",
+        ],
+        "avs_ids": [
+            "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+            "PTO-AVS-SYS-ACRC-EXEC-001",
+            "PTO-AVS-SYS-ACRC-TERMINAL-001",
+        ],
+        "allowed_requests": [94],
+        "trace_requirements": {
+            "required_host_request": 94,
+            "final_bundle_active": True,
+        },
+    },
+}
+
+
+class CorpusError(ValueError):
+    pass
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    return sha256_bytes(path.read_bytes())
+
+
+def memory_write_sha256(writes: list[dict[str, int]]) -> str:
+    canonical = bytearray(b"pto-memory-write-log-v1\0")
+    canonical += struct.pack("<Q", len(writes))
+    for write in writes:
+        canonical += struct.pack("<QB", write["address"], write["value"])
+    return sha256_bytes(canonical)
+
+
+def expected_trace(config: dict[str, object]) -> list[dict[str, object]]:
+    result = []
+    for source in config["expected_trace"]:
+        row = dict(source)
+        writes = [dict(write) for write in row.get("memory_writes", [])]
+        row["memory_writes"] = writes
+        row["memory_write_count"] = len(writes)
+        row["memory_write_sha256"] = memory_write_sha256(writes)
+        result.append(row)
+    return result
+
+
+def command_version(path: Path) -> str:
+    result = subprocess.run(
+        [str(path), "--version"], text=True, capture_output=True, check=True
+    )
+    lines = result.stdout.splitlines() or result.stderr.splitlines()
+    if not lines:
+        raise CorpusError(f"{path} produced no version identity")
+    return lines[0]
+
+
+def checked_slice(data: bytes, offset: int, size: int, label: str) -> bytes:
+    if offset < 0 or size < 0 or offset > len(data) or size > len(data) - offset:
+        raise CorpusError(f"{label} lies outside ELF")
+    return data[offset : offset + size]
+
+
+def align4(value: int) -> int:
+    return (value + 3) & ~3
+
+
+def identity_note_source(isa_identity: dict[str, str]) -> str:
+    description = (
+        json.dumps(isa_identity, sort_keys=True, separators=(",", ":")).encode()
+        + b"\0"
+    )
+    values = ",".join(str(value) for value in description)
+    return "\n".join(
+        [
+            '.section .note.pto.corpus,"a",@note',
+            ".p2align 2",
+            ".long 4",
+            f".long {len(description)}",
+            ".long 1",
+            ".byte 80,84,79,0",
+            ".p2align 2",
+            f".byte {values}",
+            ".p2align 2",
+            "",
+        ]
+    )
+
+
+def parse_isa_note(
+    data: bytes, section_headers: list[tuple[int, ...]], shstrndx: int
+) -> dict[str, str]:
+    if shstrndx >= len(section_headers):
+        raise CorpusError("invalid section-name string table")
+    string_section = section_headers[shstrndx]
+    strings = checked_slice(
+        data, string_section[4], string_section[5], "section-name string table"
+    )
+    matches: list[dict[str, str]] = []
+    for section in section_headers:
+        name_offset, section_type, _, _, offset, size, _, _, _, _ = section
+        if name_offset >= len(strings):
+            raise CorpusError("section name lies outside string table")
+        end = strings.find(b"\0", name_offset)
+        if end < 0:
+            raise CorpusError("unterminated section name")
+        name = strings[name_offset:end].decode("utf-8")
+        if name != ".note.pto.isa" or section_type != SHT_NOTE:
+            continue
+        notes = checked_slice(data, offset, size, "PTO ISA note")
+        cursor = 0
+        while cursor < len(notes):
+            if len(notes) - cursor < 12:
+                raise CorpusError("truncated PTO ISA note header")
+            namesz, descsz, note_type = struct.unpack_from("<III", notes, cursor)
+            cursor += 12
+            note_name = checked_slice(notes, cursor, namesz, "PTO ISA note name")
+            cursor = align4(cursor + namesz)
+            description = checked_slice(
+                notes, cursor, descsz, "PTO ISA note description"
+            )
+            cursor = align4(cursor + descsz)
+            if note_name != b"PTO\0" or note_type != 1:
+                continue
+            if not description.endswith(b"\0"):
+                raise CorpusError("PTO ISA note description is not terminated")
+            try:
+                payload = json.loads(description[:-1])
+            except (UnicodeDecodeError, json.JSONDecodeError) as error:
+                raise CorpusError("invalid PTO ISA note JSON") from error
+            if not isinstance(payload, dict) or set(payload) != {
+                "release",
+                "encoding_abi",
+                "encoding_projection_sha256",
+            } or not all(isinstance(value, str) for value in payload.values()):
+                raise CorpusError("invalid PTO ISA note contract")
+            matches.append(payload)
+    if len(matches) != 1:
+        raise CorpusError("ELF must contain exactly one PTO ISA identity note")
+    return matches[0]
+
+
+def inspect_elf(path: Path) -> dict[str, object]:
+    data = path.read_bytes()
+    if len(data) < 64:
+        raise CorpusError("truncated ELF header")
+    header = struct.unpack_from("<16sHHIQQQIHHHHHH", data)
+    ident = header[0]
+    if ident[:4] != b"\x7fELF" or ident[4] != 2 or ident[5] != 1:
+        raise CorpusError("requires ELF64 little-endian")
+    elf_type, machine = header[1], header[2]
+    entry, phoff, shoff = header[4], header[5], header[6]
+    ehsize, phentsize, phnum = header[8], header[9], header[10]
+    shentsize, shnum, shstrndx = header[11], header[12], header[13]
+    if elf_type != 2 or machine != EM_LINX or ehsize != 64:
+        raise CorpusError("unexpected ELF type, machine, or header size")
+    if phentsize != 56 or phnum == 0:
+        raise CorpusError("invalid program-header table")
+
+    segments: list[dict[str, int | str]] = []
+    executable_entry = False
+    for index in range(phnum):
+        raw = checked_slice(data, phoff + index * phentsize, phentsize, "program header")
+        p_type, flags, offset, vaddr, _, filesz, memsz, align = struct.unpack(
+            "<IIQQQQQQ", raw
+        )
+        if p_type != PT_LOAD:
+            continue
+        if filesz > memsz or vaddr + memsz > MODEL_LIMIT:
+            raise CorpusError("PT_LOAD exceeds functional-model bound")
+        if not flags & 4:
+            raise CorpusError("PT_LOAD must be readable")
+        if flags & PF_W and flags & PF_X:
+            raise CorpusError("writable executable PT_LOAD")
+        checked_slice(data, offset, filesz, "PT_LOAD file range")
+        for prior in segments:
+            prior_start = int(prior["address"])
+            prior_end = prior_start + int(prior["memsz"])
+            if vaddr < prior_end and prior_start < vaddr + memsz:
+                raise CorpusError("overlapping PT_LOAD segments")
+        if flags & PF_X and vaddr <= entry < vaddr + memsz:
+            executable_entry = True
+        flag_text = "R" + ("W" if flags & PF_W else "") + ("X" if flags & PF_X else "")
+        segments.append(
+            {
+                "address": vaddr,
+                "filesz": filesz,
+                "memsz": memsz,
+                "align": align,
+                "flags": flag_text,
+            }
+        )
+    if not segments or not executable_entry:
+        raise CorpusError("entry is not in an executable PT_LOAD")
+
+    symbols: dict[str, tuple[int, int]] = {}
+    if shentsize != 64:
+        raise CorpusError("invalid section-header entry size")
+    section_headers = [
+        struct.unpack(
+            "<IIQQQQIIQQ",
+            checked_slice(data, shoff + index * shentsize, shentsize, "section header"),
+        )
+        for index in range(shnum)
+    ]
+    isa_note = parse_isa_note(data, section_headers, shstrndx)
+    for section in section_headers:
+        _, section_type, _, _, offset, size, link, _, _, entry_size = section
+        if section_type != 2:
+            continue
+        if entry_size != 24 or link >= len(section_headers):
+            raise CorpusError("invalid symbol table")
+        string_section = section_headers[link]
+        strings = checked_slice(data, string_section[4], string_section[5], "string table")
+        symtab = checked_slice(data, offset, size, "symbol table")
+        for symbol_offset in range(0, len(symtab), entry_size):
+            name_offset, info, _, shndx, value, symbol_size = struct.unpack_from(
+                "<IBBHQQ", symtab, symbol_offset
+            )
+            if name_offset >= len(strings):
+                raise CorpusError("symbol name lies outside string table")
+            end = strings.find(b"\0", name_offset)
+            if end < 0:
+                raise CorpusError("unterminated symbol name")
+            name = strings[name_offset:end].decode("utf-8")
+            if name:
+                symbols[name] = (value, shndx)
+    for required in ("_start", "cross_model_result", "cross_model_result_size"):
+        if required not in symbols:
+            raise CorpusError(f"missing ELF symbol {required}")
+    if symbols["_start"][0] != entry:
+        raise CorpusError("ELF entry does not equal _start")
+    if symbols["cross_model_result_size"][0] != 4:
+        raise CorpusError("result-size symbol must be absolute value four")
+    return {
+        "entry": entry,
+        "segments": segments,
+        "result_address": symbols["cross_model_result"][0],
+        "result_size": symbols["cross_model_result_size"][0],
+        "isa": isa_note,
+    }
+
+
+def build_case(
+    name: str,
+    config: dict[str, object],
+    *,
+    clang: Path,
+    lld: Path,
+    readelf: Path,
+    output_root: Path,
+    tool_identity: dict[str, object],
+    isa_identity: dict[str, str],
+) -> dict[str, object]:
+    source = CORPUS / f"{name}.S"
+    linker = CORPUS / f"{name}.ld"
+    input_identity = {
+        "source_sha256": sha256_file(source),
+        "linker_sha256": sha256_file(linker),
+        "builder_sha256": sha256_file(Path(__file__)),
+        "schema_sha256": sha256_file(
+            ROOT / "spec" / "schemas" / "pto-functional-model-corpus-v1.schema.json"
+        ),
+        "build_recipe": "linx-clang-assemble-lld-static-et-exec-v1",
+        "profile": "pto-functional-reference-v1",
+        "release_manifest_sha256": sha256_file(ROOT / "spec" / "release-manifest.json"),
+        "clang_sha256": tool_identity["clang_sha256"],
+        "lld_sha256": tool_identity["lld_sha256"],
+    }
+    artifact_id = sha256_bytes(
+        json.dumps(input_identity, sort_keys=True, separators=(",", ":")).encode()
+    )
+    artifact = output_root / f"{name}-{artifact_id[:16]}"
+    artifact.mkdir(parents=True, exist_ok=True)
+    elf = artifact / f"{name}.elf"
+    with tempfile.TemporaryDirectory(prefix=f"pto-{name}-") as temporary:
+        object_path = Path(temporary) / f"{name}.o"
+        identity_source = Path(temporary) / "identity.S"
+        identity_object = Path(temporary) / "identity.o"
+        built_elf = Path(temporary) / f"{name}.elf"
+        identity_source.write_text(identity_note_source(isa_identity), encoding="utf-8")
+        subprocess.run(
+            [str(clang), "-target", "linx64-unknown-elf", "-c", "-nostdlib", "-o", object_path, source],
+            check=True,
+        )
+        subprocess.run(
+            [str(clang), "-target", "linx64-unknown-elf", "-c", "-nostdlib",
+             "-o", identity_object, identity_source],
+            check=True,
+        )
+        subprocess.run(
+            [str(lld), "-m", "elf64linx", "-T", linker, "-o", built_elf,
+             object_path, identity_object],
+            check=True,
+        )
+        shutil.copy2(built_elf, elf)
+    subprocess.run([str(readelf), "-h", "-l", "-s", elf], check=True, capture_output=True)
+    observed = inspect_elf(elf)
+    if observed["entry"] != config["entry"]:
+        raise CorpusError(f"{name} entry mismatch")
+    if observed["result_address"] != config["result_address"]:
+        raise CorpusError(f"{name} result address mismatch")
+    if observed["isa"] != isa_identity:
+        raise CorpusError(f"{name} PTO ISA identity mismatch")
+    stack_base = 0xE00
+    stack_top = 0xF00
+    for segment in observed["segments"]:
+        segment_start = int(segment["address"])
+        segment_end = segment_start + int(segment["memsz"])
+        if stack_base < segment_end and segment_start < stack_top:
+            raise CorpusError(f"{name} PT_LOAD overlaps runner stack")
+
+    golden = artifact / f"{name}.golden.bin"
+    golden.write_bytes(config["golden"])
+    manifest = {
+        "schema": SCHEMA,
+        "case": {
+            "id": name,
+            "isa": {
+                "profile": "pto-functional-reference-v1",
+                "model_profile": "pto-functional-model-experimental-v1",
+                "version": isa_identity["release"],
+                "encoding_abi": isa_identity["encoding_abi"],
+                "encoding_projection_sha256":
+                    isa_identity["encoding_projection_sha256"],
+            },
+            "requirements": config["requirements"],
+            "model_requirements": config["model_requirements"],
+            "avs_ids": config["avs_ids"],
+            "inputs": input_identity,
+            "elf": {
+                "filename": elf.name,
+                "sha256": sha256_file(elf),
+                "entry": observed["entry"],
+                "segments": observed["segments"],
+            },
+            "initial_gprs": {},
+            "stack": {"top": stack_top, "size": stack_top - stack_base},
+            "stop_policy": {
+                "kind": config.get("stop_kind", "stop_pc"),
+                "stop_pc": config["stop_pc"],
+                "max_steps": config["max_steps"],
+                **({"exit_status": config["exit_status"]}
+                   if config.get("stop_kind") == "exit_group" else {}),
+            },
+            "allowed_requests": config.get("allowed_requests", []),
+            "expected_length_sequence": config["lengths"],
+            "expected_trace": expected_trace(config),
+            "trace_requirements": config["trace_requirements"],
+            "result": {
+                "symbol": "cross_model_result",
+                "size_symbol": "cross_model_result_size",
+                "address": observed["result_address"],
+                "size": observed["result_size"],
+            },
+            "golden": {
+                "filename": golden.name,
+                "sha256": sha256_file(golden),
+                "size": len(config["golden"]),
+                "derivation": "independent checked arithmetic/sentinel bytes; no model invocation",
+            },
+        },
+        "toolchain": tool_identity,
+    }
+    manifest_path = artifact / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return {
+        "id": name,
+        "artifact_id": artifact_id,
+        "directory": artifact.name,
+        "elf_sha256": manifest["case"]["elf"]["sha256"],
+        "golden_sha256": manifest["case"]["golden"]["sha256"],
+        "manifest_sha256": sha256_file(manifest_path),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--clang", type=Path, required=True)
+    parser.add_argument("--lld", type=Path, required=True)
+    parser.add_argument("--readelf", type=Path, required=True)
+    parser.add_argument(
+        "--output", type=Path, default=ROOT / "build" / "functional-model-corpus"
+    )
+    arguments = parser.parse_args()
+    for tool in (arguments.clang, arguments.lld, arguments.readelf):
+        if not tool.is_file():
+            raise CorpusError(f"missing tool {tool}")
+    tool_identity = {
+        "clang": arguments.clang.name,
+        "clang_sha256": sha256_file(arguments.clang),
+        "clang_version": command_version(arguments.clang),
+        "lld": arguments.lld.name,
+        "lld_sha256": sha256_file(arguments.lld),
+        "lld_version": command_version(arguments.lld),
+        "readelf": arguments.readelf.name,
+        "readelf_sha256": sha256_file(arguments.readelf),
+        "readelf_version": command_version(arguments.readelf),
+    }
+    release_manifest = json.loads(
+        (ROOT / "spec" / "release-manifest.json").read_text(encoding="utf-8")
+    )
+    isa_identity = {
+        "release": release_manifest["release"],
+        "encoding_abi": release_manifest["encoding_abi"],
+        "encoding_projection_sha256":
+            release_manifest["encoding_projection_sha256"],
+    }
+    arguments.output.mkdir(parents=True, exist_ok=True)
+    rows = [
+        build_case(
+            name,
+            config,
+            clang=arguments.clang,
+            lld=arguments.lld,
+            readelf=arguments.readelf,
+            output_root=arguments.output,
+            tool_identity=tool_identity,
+            isa_identity=isa_identity,
+        )
+        for name, config in CASES.items()
+    ]
+    index = {
+        "schema": "pto-functional-model-corpus-index-v1",
+        "cases": rows,
+        "toolchain": tool_identity,
+    }
+    index_path = arguments.output / "manifest.json"
+    index_path.write_text(json.dumps(index, indent=2, sort_keys=True) + "\n")
+    print(index_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
