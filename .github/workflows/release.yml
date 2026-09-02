@@ -162,10 +162,12 @@ jobs:
           PTO_COMMIT: ${{ inputs.commit }}
           LLVM_COMMIT: ${{ inputs.llvm_commit }}
           ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
+          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
         run: |
           [[ "$PTO_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           [[ "$LLVM_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           [[ "$ASL_MODEL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"
 
       - name: Check out exact PTO-SPEC candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -254,6 +256,10 @@ jobs:
         shell: bash
         run: |
           make setup build
+          python3 build/closure/llvm-project/llvm/utils/pto/generate_pto_isa_identity.py \
+            --manifest spec/release-manifest.json \
+            --output build/closure/llvm-project/llvm/include/llvm/BinaryFormat/PTOISA.h \
+            --check
           cmake -S build/closure/llvm-project/llvm \
             -B build/closure/llvm-build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \

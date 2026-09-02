@@ -404,8 +404,9 @@ def _release_jobs() -> dict[str, object]:
                         "PTO_COMMIT": "${{ inputs.commit }}",
                         "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
                         "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
                     },
-                    "run-sha256": "e3da783987097f0ba2b83ecb2404f7fc6298a11d500cb0fd675ce04505a944d3",
+                    "run-sha256": "5d3fe8e746e1e3c791cfb1cdf96d55544a2d33c6131a70e08b9687bfb861031c",
                 },
                 {
                     "name": "Check out exact PTO-SPEC candidate",
@@ -487,7 +488,7 @@ def _release_jobs() -> dict[str, object]:
                 {
                     "name": "Prepare exact ASL and LLVM tools",
                     "shell": "bash",
-                    "run-sha256": "51e9512bc9568b9e5a246b7c3efc0d18871a28e35c63c73d9fb47258bb89b1fe",
+                    "run-sha256": "73efbb308d02af5936c45dd7bf371d4f70ebd7eb55440003101c173876292c54",
                 },
                 {
                     "name": "Build exact NDF impact",

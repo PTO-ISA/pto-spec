@@ -861,6 +861,16 @@ class HostedFullValidationContractTest(unittest.TestCase):
             '          test "$MODEL_CLOSURE_RESULT" = success\n',
             '          test -n "$MODEL_CLOSURE_RESULT"\n',
         )
+        self.assert_release_rejected(
+            '          test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"\n',
+            '          test -n "$WORKFLOW_COMMIT"\n',
+        )
+
+    def test_release_checks_llvm_identity_freshness_before_build(self) -> None:
+        self.assert_release_rejected(
+            "          python3 build/closure/llvm-project/llvm/utils/pto/generate_pto_isa_identity.py \\\n",
+            "          true \\\n",
+        )
 
     def test_nightly_requires_schedule_and_manual_dispatch(self) -> None:
         self.assert_nightly_rejected('    - cron: "17 2 * * *"\n', "")
