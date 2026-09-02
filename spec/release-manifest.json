@@ -3334,7 +3334,7 @@
     },
     {
       "path": "asl/tile/model/memory/addressing.asl",
-      "sha256": "72093f9c52daa306f9a9c9673fb21b49ad791573612b445b9cbc89e8bb17abc0"
+      "sha256": "0f2e18b2ad192ae74fb9258bc8843d6ee99b88d2165f6d2351ca3691061da556"
     },
     {
       "path": "asl/tile/model/memory/atomics.asl",
@@ -3622,7 +3622,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "fd42d4938023e15f3d3d67a7801a9abe333de4cff3fcd58227554a2a8a884a19"
+      "sha256": "c128c8ddc948b16b408f2ee46d468b69eea85907230fc56c5d0753c8d13fca6f"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3630,15 +3630,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "5f900e490483c1c47296ffd3891539fe2735fd097383f89652bbb82d7b9fb160"
+      "sha256": "e2ec95bb7feac920036fcfcc6fae8b58b8a658d20c4005de7d9a3982d8decd43"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0617cc58f02fb5e7cfc107460dc16f5f2b39d88e73dcddb5aa4199b0f8feb5a5"
+      "sha256": "9c06eb360f82d99e754bd5243624663643f3c9655bb5035e4ab30e6a25595ac6"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "df4fb74d7f5bc30b2a4f27a48d8105d30198b66cdd7c3bb0a2aa11bc90cca89e"
+      "sha256": "7abaa380c53086ea46d72cc179e90b56aac963cae1e7597ff3bdd2a5d8aaada6"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3684,7 +3684,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "5ef8d33a0bb05b8683e51d8f5bc832a0c0ac6a94d32245f6ad84ee46f3418661",
+  "content_sha256": "2d666b70c2230586ff899d3961f857632af50ff292e6901de4e69f71c8f95669",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7881,7 +7881,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/addressing.md",
-      "sha256": "a95249ce2396a2ad26e13869db00179a08aa500c38e0e9cbaa4815bf45090bd5"
+      "sha256": "61d901a0b051abc8d553cc63673bf722e0ab83f9e4da033af8a23a4be49c7f2e"
     },
     {
       "kind": "generated-documentation",
