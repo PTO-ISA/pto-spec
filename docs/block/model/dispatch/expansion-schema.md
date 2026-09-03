@@ -101,16 +101,12 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]);
     let valid_rows = if _BundleDimensionPresent[[1]] then
         UInt(_BundleDimensions[[1]]) else 1;
-    let columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) else valid_columns;
     if TileOperationUsesClosedRowExpansionSchema(operation) then
         return _Tiles[[broadcast]].valid_rows == valid_rows &&
-               _Tiles[[broadcast]].valid_columns == 1 &&
-               _Tiles[[broadcast]].columns == 1;
+               _Tiles[[broadcast]].valid_columns == 1;
     end;
     return _Tiles[[broadcast]].valid_rows == 1 &&
-           _Tiles[[broadcast]].valid_columns == valid_columns &&
-           _Tiles[[broadcast]].columns == columns;
+           _Tiles[[broadcast]].valid_columns == valid_columns;
 end;
 
 readonly func SelectedBundleClosedExpansionSchemaLegal(
@@ -154,27 +150,27 @@ begin
         data_type = selected_destination_type;
     end;
     if (!expdif && !TileVecArithmeticDataTypeSupported(data_type)) ||
-       !TileDescriptorLegal(broadcast) ||
-       _Tiles[[broadcast]].storage_kind != TileStorage_Numeric ||
+       !TileReductionAndExpansionLayoutSupported(
+           CurrentBundleTileLayout()) ||
+       _Tiles[[broadcast]].layout != CurrentBundleTileLayout() ||
+       !TileReductionAndExpansionRowLimitLegal(
+           _Tiles[[broadcast]].layout, _Tiles[[broadcast]].valid_rows) ||
+       !TileReductionAndExpansionSourceLegal(broadcast) ||
        _Tiles[[broadcast]].data_type != source_data_type ||
-       _Tiles[[broadcast]].layout != TileLayout_RowMajor ||
-       !TileSourceContentsDefined(broadcast) ||
-       !TileSourceEncodingsValid(broadcast) ||
        !SelectedBundleExpansionBroadcastShapeMatches(
-           operation,
-           broadcast) then
+           operation, broadcast) then
         return FALSE;
     end;
 
     if copy then
         return TRUE;
     end;
-    return TileDescriptorLegal(binding.source0) &&
-           _Tiles[[binding.source0]].storage_kind == TileStorage_Numeric &&
+    return _Tiles[[binding.source0]].layout == CurrentBundleTileLayout() &&
+           TileReductionAndExpansionRowLimitLegal(
+               _Tiles[[binding.source0]].layout,
+               _Tiles[[binding.source0]].valid_rows) &&
+           TileReductionAndExpansionSourceLegal(binding.source0) &&
            _Tiles[[binding.source0]].data_type == source_data_type &&
-           _Tiles[[binding.source0]].layout == TileLayout_RowMajor &&
-           TileSourceContentsDefined(binding.source0) &&
-           TileSourceEncodingsValid(binding.source0) &&
            SelectedBundleComparisonShapeMatches(binding.source0) &&
            ((TileOperationOfIndex(operation) != TileOperation_TROWEXPANDDIV &&
              TileOperationOfIndex(operation) != TileOperation_TCOLEXPANDDIV) ||

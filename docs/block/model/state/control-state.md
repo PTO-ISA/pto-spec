@@ -150,8 +150,8 @@ begin
     let code = UInt(data_layout);
     return code == 0 || code == 1 || code == 3 || code == 4 ||
            code == 6 || code == 8 || code == 9 || code == 17 ||
-           code == 18 || code == 20 || (21 <= code && code <= 28) ||
-           code == 30;
+           code == 18 || code == 20 || (21 <= code && code <= 29) ||
+           code == 30 || code == 31;
 end;
 
 pure func TileDataLayoutOfCode(data_layout: bits(5)) => TileDataLayout
@@ -175,7 +175,9 @@ begin
     elsif code == 26 then return TileDataLayout_N82ND;
     elsif code == 27 then return TileDataLayout_NZ2ND;
     elsif code == 28 then return TileDataLayout_NZ2DN;
+    elsif code == 29 then return TileDataLayout_CUBE_M32;
     elsif code == 30 then return TileDataLayout_NZ2ZN;
+    elsif code == 31 then return TileDataLayout_CUBE_M16;
     else return TileDataLayout_NORM;
     end;
 end;
@@ -201,7 +203,9 @@ begin
         when TileDataLayout_N82ND => return Zeros{5} + 26;
         when TileDataLayout_NZ2ND => return Zeros{5} + 27;
         when TileDataLayout_NZ2DN => return Zeros{5} + 28;
+        when TileDataLayout_CUBE_M32 => return Zeros{5} + 29;
         when TileDataLayout_NZ2ZN => return Zeros{5} + 30;
+        when TileDataLayout_CUBE_M16 => return Zeros{5} + 31;
     end;
 end;
 
@@ -270,6 +274,8 @@ begin
              TileDataLayout_M322ND,
              TileDataLayout_M162ND,
              TileDataLayout_N82ND => unreachable;
+        when TileDataLayout_CUBE_M32 => return TileLayout_CUBE_M32;
+        when TileDataLayout_CUBE_M16 => return TileLayout_CUBE_M16;
     end;
 end;
 
@@ -296,6 +302,8 @@ begin
              TileDataLayout_M322ND,
              TileDataLayout_M162ND,
              TileDataLayout_N82ND => unreachable;
+        when TileDataLayout_CUBE_M32 => return TileLayout_CUBE_M32;
+        when TileDataLayout_CUBE_M16 => return TileLayout_CUBE_M16;
     end;
 end;
 

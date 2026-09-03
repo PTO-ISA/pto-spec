@@ -1069,6 +1069,7 @@ nav:
               - "ADR-TILE-0009: Tile scalar and immediate operations": status/decisions/ADR-TILE-0009-tile-scalar-and-immediate-operations.md
               - "ADR-TILE-0010: Tile reduction, expansion, and generation": status/decisions/ADR-TILE-0010-tile-reduction-expansion-and-generation.md
               - "ADR-TILE-0011: Tile conversion, layout, and partial operations": status/decisions/ADR-TILE-0011-tile-conversion-layout-and-partial-operations.md
+              - "ADR-TILE-0012: CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion": status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md
           - CUBE:
               - "ADR-CUBE-0001: A2/A3 MX CUBE profile applicability": status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md
               - "ADR-CUBE-0002: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/ADR-CUBE-0002-b-fpatr-complete-bundle-postprocess.md

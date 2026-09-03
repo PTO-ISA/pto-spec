@@ -194,6 +194,10 @@ begin
             let columns = if explicit_shape then explicit_columns else
                 BundleDestinationPhysicalColumns(
                     shape_source_valid, shape_source);
+            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then
+                if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
+            else CurrentBundleTileLayout();
             let destination_type = if destination_ordinal == 0 then
                 primary_output_type else if matrix then accumulator_type
                 else TileDataType_U32;
@@ -216,13 +220,21 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
+            let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
+                destination_layout == TileLayout_CUBE_M32;
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
-            if !TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
-                   valid_rows, auxiliary_valid_columns, destination_type) ||
-               rows * auxiliary_columns >
+            let shape_legal = if cube_destination then
+                TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
+                    auxiliary_valid_columns, destination_type,
+                    destination_layout)
+            else
+                TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
+                    valid_rows, auxiliary_valid_columns, destination_type);
+            if !shape_legal ||
+               (!cube_destination && rows * auxiliary_columns >
                    TileLogicalElementCapacity(capacity_bytes,
-                       destination_type) then
+                       destination_type)) then
                 SetFault(Fault_TileAllocation, ReadTPC());
                 return FALSE;
             end;
@@ -239,7 +251,10 @@ begin
             let valid_columns = if explicit_shape then
                 explicit_valid_columns else BundleDestinationValidColumns(
                     shape_source_valid, shape_source);
-            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16 else CurrentBundleTileLayout();
+            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then
+                if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
+            else CurrentBundleTileLayout();
             let columns = if explicit_shape then explicit_columns else
                 BundleDestinationPhysicalColumns(
                     shape_source_valid, shape_source);
@@ -265,7 +280,10 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
-            let tgpr2t = decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T;
+            let tgpr2t = (decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
+                destination_layout == TileLayout_CUBE_M16 ||
+                destination_layout == TileLayout_CUBE_M32;
             if !ConfigureBundleTileDestination(resolved[[binding]],
                     capacity_bytes, valid_rows, auxiliary_columns,
                     auxiliary_valid_columns, destination_type,

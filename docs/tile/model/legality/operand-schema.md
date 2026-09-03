@@ -135,9 +135,8 @@ end;
 readonly func TileOperandsLegal_ExecuteTileFillScalar(
     destination: TileIndex, scalar: Word) => boolean
 begin
-    return TileDescriptorLegal(destination) &&
+    return TileReductionAndExpansionDescriptorLegal(destination) &&
            _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
-           _Tiles[[destination]].layout == TileLayout_RowMajor &&
            TileFillPadDataTypeSupported(
                _Tiles[[destination]].data_type);
 end;

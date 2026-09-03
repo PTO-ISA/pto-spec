@@ -71,7 +71,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,21,22,23,24,25,26,27,28,30]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
 
 ### Fields
 
@@ -181,7 +181,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
 | b_datr_32_c161a042ff38 | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
 | b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB | operation-defined default rounding |
-| b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–9, 17–18, 20–28, 30 | none | 2, 5, 7, 10–16, 19, 29, 31 | tile data layout or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
+| b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–9, 17–18, 20–31 | none | 2, 5, 7, 10–16, 19 | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
 
 - `b_datr_32_c161a042ff38.CMode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_datr_32_c161a042ff38.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -191,7 +191,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Field | Architectural role |
 | --- | --- |
-| Layout | tile data layout or exact GM-to-CUBE/CUBE-to-GM conversion selector |
+| Layout | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector |
 | DataType | concrete Tile element type or DTYPE_NONE inheritance sentinel |
 | PadValueOrByteId | operation-selected padding value or byte identifier |
 | CMode | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE |
@@ -250,14 +250,14 @@ end;
 
 ## Defaults and encoded zero
 
-- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings.
+- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.
 - An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.
 
 ## Legality
 
 - B.DATR may appear at most once, after BSTART and before the block body.
 - DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.
-- Layout codes 0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 21 through 28, and 30 are assigned. Codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively.
+- Layout codes 0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.
 - CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.

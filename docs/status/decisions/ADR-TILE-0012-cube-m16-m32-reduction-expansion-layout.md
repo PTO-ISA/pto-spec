@@ -212,3 +212,35 @@ This accepted ADR is a normative ISA change with release impact `required`.
 The target release remains `unassigned` until release planning assigns one.
 Current semantic meaning is owned by the affected ASL/NDF clauses and their
 generated projections.
+
+## Bilingual decision detail / 双语决策详述
+
+### Why this decision / 为什么做出此决策
+
+The affected Tile operations previously specified RowMajor behavior only, while the existing CUBE model and transport selectors left direct Local CUBE operation layout selection incomplete.
+
+受影响的 Tile 操作此前仅规定 RowMajor 行为，而现有 CUBE 模型和传输选择器未闭合直接 Local CUBE 操作的布局选择。
+
+### Detailed decision / 详细决策
+
+The accepted contract adds direct Local M32 and M16 selectors and closes same-layout CUBE operation behavior without changing generic CUBE geometry or transport semantics.
+
+已接受的契约增加直接 Local M32 和 M16 选择器，并闭合相同布局的 CUBE 操作行为，同时不改变通用 CUBE 几何或传输语义。
+
+### What changed / 改动内容
+
+#### English
+
+- Added direct Local Layout 29/31 mapping and operation-specific reduction/expansion legality.
+- Preserved RowMajor defaults, transport codes 21..26, and atomic rejection behavior.
+
+#### 中文
+
+- 增加直接 Local Layout 29/31 映射以及归约/扩展操作特定的合法性。
+- 保留 RowMajor 默认值、21..26 传输代码和原子拒绝行为。
+
+### Scope and boundaries / 范围与边界
+
+This decision is limited to the affected PTO ASL/NDF owners and their required generated projections, focused executable evidence, and catalogs. It does not specify backend behavior, software splitting, or unrelated operations.
+
+本决策仅限于受影响的 PTO ASL/NDF 所有者及其所需生成投影、重点可执行证据和目录；不规定后端行为、软件拆分或无关操作。

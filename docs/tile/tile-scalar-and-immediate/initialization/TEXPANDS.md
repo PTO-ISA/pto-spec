@@ -225,7 +225,7 @@ end;
 - TEXPANDS is selected only by the TEPL raw carrier Mode 1 Function 27 and executes on VEC.
 - Exactly one terminating Local B.IOT supplies no source and one newly allocated Local numeric destination. B.IOS and additional Tile bindings are illegal.
 - The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
-- The destination is row-major, its physical Rows and Col are powers of two, and its valid rectangle fits within physical capacity.
+- The destination uses selected RowMajor, CUBE_M16, or CUBE_M32 layout; CUBE_M16 valid_rows is at most 16 and CUBE_M32 valid_rows is at most 32, with physical geometry derived from the selected layout and capacity.
 - Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, faults, or destination effects.
 

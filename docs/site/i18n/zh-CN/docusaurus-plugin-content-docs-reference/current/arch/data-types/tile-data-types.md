@@ -193,7 +193,9 @@ type TileDataLayout of enumeration {
     TileDataLayout_ND2N8,
     TileDataLayout_M322ND,
     TileDataLayout_M162ND,
-    TileDataLayout_N82ND
+    TileDataLayout_N82ND,
+    TileDataLayout_CUBE_M32,
+    TileDataLayout_CUBE_M16
 };
 
 type TilePadValue of enumeration {
