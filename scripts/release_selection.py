@@ -254,9 +254,15 @@ def validate_selection(
                 or publication_version in row.get("target_releases", ())
             )
         }
+        publication_adrs = {
+            adr_id: row
+            for adr_id, row in adrs.items()
+            if row.get("status") == "accepted"
+            and publication_version in row.get("target_releases", ())
+        }
         boundary_adrs = {
             adr_id: row
-            for adr_id, row in target_adrs.items()
+            for adr_id, row in publication_adrs.items()
             if row.get("release_boundary") is True
         }
         if publication_version != baseline_identity and not boundary_adrs:
@@ -265,7 +271,7 @@ def validate_selection(
                 "with release_boundary=true is required"
             )
 
-        coverage_adrs = target_adrs
+        coverage_adrs = publication_adrs
         if publication_version == baseline_identity and has_drift:
             coverage_adrs = {
                 adr_id: row
