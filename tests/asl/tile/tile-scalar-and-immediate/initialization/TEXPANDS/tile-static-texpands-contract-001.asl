@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: tile-scalar-and-immediate/initialization
-    // block: BSTART.VEC TEXPANDS, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | B.IOR ScalarGPR, zero, zero, ->zero (optional) | BSTOP
+    // block: BSTART.VEC TEXPANDS, DataType | B.DATR Layout, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | B.IOR ScalarGPR, zero, zero, ->zero (optional) | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000000111011') == 39;
     assert TileOperationOfIndex(39) == TileOperation_TEXPANDS;
     assert TileHandlerOfIndex(39) == TileHandler_ExecuteTileFillScalar;
