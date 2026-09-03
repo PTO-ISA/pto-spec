@@ -312,7 +312,7 @@ test('custom routes expose the stable desktop rail and accessible mobile navigat
   ];
   for (const route of routes) {
     await page.goto(route.path);
-    if (testInfo.project.name === 'desktop-chromium') {
+    if (testInfo.project.name.startsWith('desktop-')) {
       const rail = page.locator('aside[aria-label="Left specification navigation"]');
       await expect(rail).toBeVisible();
       await expect(rail.getByRole('navigation', {name: 'Specification navigation'})).toBeVisible();
