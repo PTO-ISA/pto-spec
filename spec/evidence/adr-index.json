@@ -8302,6 +8302,98 @@
       "title_zh": "Tile \u8f6c\u6362\u3001\u5e03\u5c40\u4e0e\u90e8\u5206\u533a\u57df\u64cd\u4f5c"
     },
     {
+      "accepted": "2026-09-03",
+      "affected_ndf": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWSUM-CONTRACT-001",
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TROWEXPANDMAX-CONTRACT-001",
+        "PTO-TROWEXPANDMIN-CONTRACT-001",
+        "PTO-TROWEXPANDMUL-CONTRACT-001",
+        "PTO-TROWEXPANDSUB-CONTRACT-001",
+        "PTO-TCOLEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPANDADD-CONTRACT-001",
+        "PTO-TCOLEXPANDDIV-CONTRACT-001",
+        "PTO-TCOLEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TCOLEXPANDMAX-CONTRACT-001",
+        "PTO-TCOLEXPANDMIN-CONTRACT-001",
+        "PTO-TCOLEXPANDMUL-CONTRACT-001",
+        "PTO-TCOLEXPANDSUB-CONTRACT-001",
+        "PTO-TEXPANDS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWSUM",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TROWEXPAND",
+        "PTO-TILE-TROWEXPANDADD",
+        "PTO-TILE-TROWEXPANDDIV",
+        "PTO-TILE-TROWEXPANDEXPDIF",
+        "PTO-TILE-TROWEXPANDMAX",
+        "PTO-TILE-TROWEXPANDMIN",
+        "PTO-TILE-TROWEXPANDMUL",
+        "PTO-TILE-TROWEXPANDSUB",
+        "PTO-TILE-TCOLEXPAND",
+        "PTO-TILE-TCOLEXPANDADD",
+        "PTO-TILE-TCOLEXPANDDIV",
+        "PTO-TILE-TCOLEXPANDEXPDIF",
+        "PTO-TILE-TCOLEXPANDMAX",
+        "PTO-TILE-TCOLEXPANDMIN",
+        "PTO-TILE-TCOLEXPANDMUL",
+        "PTO-TILE-TCOLEXPANDSUB",
+        "PTO-TILE-TEXPANDS"
+      ],
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "authors": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "baseline": "ae04395a024046e2b77395ffc2e732804181c22f",
+      "created": "2026-09-03",
+      "id": "ADR-TILE-0012",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/228",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion",
+      "title_zh": "Tile \u5f52\u7ea6\u4e0e\u6269\u5c55\u7684 CUBE_M16/CUBE_M32 \u5e03\u5c40\u95ed\u5408"
+    },
+    {
       "accepted": "2026-07-31",
       "affected_ndf": [
         "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
@@ -10151,7 +10243,7 @@
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 302,
-    "record_count": 104,
+    "record_count": 105,
     "type_counts": {
       "BLOCK": 17,
       "CUBE": 17,
@@ -10160,7 +10252,7 @@
       "NUM": 22,
       "SCALAR": 6,
       "STATE": 13,
-      "TILE": 11
+      "TILE": 12
     }
   },
   "type_order": [
