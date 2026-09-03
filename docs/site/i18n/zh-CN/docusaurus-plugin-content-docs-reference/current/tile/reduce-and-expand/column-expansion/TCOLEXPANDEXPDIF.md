@@ -35,7 +35,7 @@ The current instruction contract is owned by the ASL source linked above.
 - `source0` 的精确契约角色是“持久 Local 完整形状数值源”。
 - `source1` 的精确契约角色是“持久 Local 单行广播源”。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
+参与操作的源与目标描述符采用所选的 RowMajor、CUBE_M16 或 CUBE_M32 布局，并遵循当前契约规定的逻辑形状关系。
 操作读取的每个源坐标都必须在目标发布前处于已定义状态。
 `PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
 
@@ -170,7 +170,7 @@ end;
 
 ```asm
 BSTART.SFU TCOLEXPANDEXPDIF, DataType
-B.DATR DataType, PadValue (optional)
+B.DATR Layout, DataType, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -241,7 +241,7 @@ end;
 - The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.
 - The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
 - Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
-- PadValueOrByteId and DataType are the only applicable B.DATR fields. B.IOR and B.IOS are illegal.
+- Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
@@ -271,4 +271,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR Layout, DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

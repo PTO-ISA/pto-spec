@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 每行都按严格递增的列顺序扫描，不允许重新关联。
 
-多个相等的胜出值会保留最低列索引，目标存储 S32 或 U32 索引。
+多个相等的胜出值会保留最低列索引，目标存储 U32 索引。
 
 浮点结果与元素状态遵循当前具名数值配置档；可移植契约拥有选择、形状、发布与故障顺序。
 
@@ -116,7 +116,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local S32 or U32 index destination |
+| destination0 | new Local U32 index destination |
 | source0 | persistent Local numeric source |
 
 ## Decode
@@ -134,7 +134,7 @@ end;
 
 ```asm
 BSTART.SFU TROWARGMIN, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -198,12 +198,12 @@ end;
 - The destination DataType is U32 regardless of source DataType.
 - The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The reduction source allocated capacity is at most 2048 bytes and is checked before the source snapshot or destination allocation.
 - The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one; its physical geometry is derived from the selected layout and capacity.
-- PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
 - For each valid row, compute an increasing-column TMIN scan that retains the lowest winning index.
-- Write the selected column index as S32 or U32; equal winning values retain the lowest index.
+- Write the selected column index as U32; equal winning values retain the lowest index.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically.
 
 ## Memory effects and ordering
@@ -226,4 +226,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TROWARGMIN, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TROWARGMIN, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

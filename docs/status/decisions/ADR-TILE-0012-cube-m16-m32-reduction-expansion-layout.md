@@ -16,7 +16,7 @@
   "superseded": null,
   "baseline": "ae04395a024046e2b77395ffc2e732804181c22f",
   "target_releases": [
-    "0.58.5"
+    "unassigned"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
@@ -122,7 +122,7 @@
   "legacy_ids": [
     "ADR-0111"
   ],
-  "release_boundary": true
+  "release_boundary": false
 }
 ---
 # ADR-TILE-0012: CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
@@ -134,6 +134,10 @@ row/column expansion, and scalar expansion operations. The decision is based on
 baseline `ae04395a024046e2b77395ffc2e732804181c22f`. It extends the existing
 mnemonic contracts without changing the generic CUBE descriptor or the existing
 GM/Local CUBE transport selectors.
+
+The RFC's proposed cross-cutting clause names remain planning identifiers rather
+than new normative owners. APPLY binds this decision to the existing stable
+mnemonic clauses listed in `affected_ndf`, avoiding duplicate normative text.
 
 ## Decisions
 
@@ -240,11 +244,13 @@ The implementation and generated projections must prove:
 9. NDF, ASL, generated catalog/documentation, decoder, AVS, ADR-index, and
    release-traceability projections remain consistent.
 
-## Release boundary
+## Release consequences
 
-This accepted ADR is a normative ISA change with release impact `required`
-for target release `0.58.5`. The release boundary is `0.58.5`. Current semantic
-meaning is owned by the affected ASL/NDF clauses and their generated projections.
+This accepted ADR is a normative ISA change with release impact `required`.
+Its target release remains unassigned until release planning assigns one, and
+this architecture integration does not rewrite the published release identity.
+Current semantic meaning is owned by the affected ASL/NDF clauses and their
+generated projections.
 
 ## Bilingual decision detail / 双语决策详述
 

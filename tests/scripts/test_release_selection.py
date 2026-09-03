@@ -313,7 +313,7 @@ class ReleaseSelectionTest(unittest.TestCase):
 
         self.assertEqual(result.blockers, ())
 
-    def test_repository_policy_selects_the_current_release_without_drift(self) -> None:
+    def test_repository_policy_reports_unassigned_architecture_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
@@ -333,14 +333,17 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
 
         self.assertEqual(policy["excluded_draft_adrs"], drafts)
-        self.assertEqual(result.blockers, ())
+        self.assertEqual(len(result.blockers), 2)
+        self.assertTrue(result.blockers[0].startswith("release NDF drift"))
+        self.assertTrue(result.blockers[1].startswith("release ASL unit drift"))
+        self.assertIn("ADR-TILE-0012", result.selected_adr_ids)
         self.assertGreater(len(result.selected_ndf_ids), 100)
         self.assertEqual(
             set(result.selected_adr_ids),
             {row["subject_id"] for row in readiness["rows"] if row["stage"] != "draft"},
         )
 
-    def test_repository_manifest_records_exact_selection_expansion(self) -> None:
+    def test_repository_manifest_remains_the_frozen_release_selection(self) -> None:
         manifest = json.loads(
             (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
         )
@@ -358,12 +361,15 @@ class ReleaseSelectionTest(unittest.TestCase):
         self.assertEqual(selection["blockers"], [])
         self.assertEqual(policy["architecture_version"], "0.58.5")
         self.assertEqual(policy["publication_version"], "0.58.5.0")
-        self.assertEqual(
-            [row["id"] for row in selection["expanded_ndf"]],
-            list(result.selected_ndf_ids),
+        self.assertNotIn("ADR-TILE-0012", selection["selected_adr_ids"])
+        self.assertIn("ADR-TILE-0012", result.selected_adr_ids)
+        frozen_ndf = {row["id"]: row["sha256"] for row in selection["expanded_ndf"]}
+        current_ndf = dict(result.ndf_digests)
+        self.assertNotEqual(
+            frozen_ndf["PTO-TROWSUM-CONTRACT-001"],
+            current_ndf["PTO-TROWSUM-CONTRACT-001"],
         )
-        self.assertEqual(selection["selected_adr_ids"], list(result.selected_adr_ids))
-        self.assertEqual(result.blockers, ())
+        self.assertEqual(len(result.blockers), 2)
 
 
 if __name__ == "__main__":

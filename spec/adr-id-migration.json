@@ -538,7 +538,7 @@
       "old_path": "docs/status/decisions/0111-cube-m16-m32-reduction-expansion-layout.md",
       "new_path": "docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md",
       "type": "TILE",
-      "old_body_sha256": "f5f281bb4e1d66aedb20914066894fb78b1495446caef0bd2df9ca2b190f63be"
+      "old_body_sha256": "0b54e0b7b0674e3620d414bbb4bd8ca509584765cd2d62070acddbb9ddf9c711"
     },
     {
       "old_id": "ADR-0041",

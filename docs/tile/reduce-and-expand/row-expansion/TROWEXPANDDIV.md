@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpanddiv-mechanism role=mechanism -->
 ## Operation mechanism
 
-The broadcast source has one physical and valid column; its row value is reused across every valid destination column.
+The broadcast source has one valid column; its physical column extent is derived from the selected layout, and its row value is reused across every valid destination column.
 
 The full-shape source, when present, and broadcast source are snapshotted before result construction.
 
@@ -137,7 +137,7 @@ end;
 
 ```asm
 BSTART.SFU TROWEXPANDDIV, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -209,7 +209,7 @@ end;
 - The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.
 - The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
 - Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
-- PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.
+- Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
@@ -240,4 +240,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TROWEXPANDDIV, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TROWEXPANDDIV, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

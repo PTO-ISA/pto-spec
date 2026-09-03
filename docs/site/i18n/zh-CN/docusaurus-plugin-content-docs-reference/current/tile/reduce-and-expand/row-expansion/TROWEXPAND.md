@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-mechanism role=mechanism -->
 ## 操作机制
 
-广播源的物理列与有效列都是一；其行值会复用于每个有效目标列。
+广播源的有效列为一；物理列数由所选布局派生，其行值会复用于每个有效目标列。
 
 TROWEXPAND 没有完整形状源 Tile。唯一输入 Tile 是单列广播源；它会在构造按位复制结果前完成快照。
 
@@ -132,7 +132,7 @@ end;
 
 ```asm
 BSTART.SFU TROWEXPAND, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -200,7 +200,7 @@ end;
 - The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.
 - The destination geometry is the B.DIM-derived geometry.
 - Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
-- PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.
+- Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
@@ -230,4 +230,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TROWEXPAND, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TROWEXPAND, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

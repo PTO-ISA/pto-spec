@@ -31,10 +31,10 @@ The handler uses the resolved valid region rather than treating physical padding
 <!-- PTO-READER-BLOCK: tile-tcolargmax-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local S32 or U32 index destination**.
+- `destination0` has the exact contract role **new Local U32 index destination**.
 - `source0` has the exact contract role **persistent Local numeric source**.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+Participating source and destination descriptors use the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical-shape relationships stated by the current contract.
 Every source coordinate read by the operation must be defined before execution reaches destination publication.
 `PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
 
@@ -107,7 +107,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local S32 or U32 index destination |
+| destination0 | new Local U32 index destination |
 | source0 | persistent Local numeric source |
 
 ## Decode
@@ -125,7 +125,7 @@ end;
 
 ```asm
 BSTART.SFU TCOLARGMAX, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -189,12 +189,12 @@ end;
 - The destination DataType is U32 regardless of source DataType.
 - The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The reduction source allocated capacity is at most 2048 bytes and is checked before the source snapshot or destination allocation.
 - The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol; its physical geometry is derived from the selected layout and capacity.
-- PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
 - For each valid column, compute an increasing-row TMAX scan that retains the lowest winning index.
-- Write the selected row index as S32 or U32; equal winning values retain the lowest index.
+- Write the selected row index as U32; equal winning values retain the lowest index.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically.
 
 ## Memory effects and ordering
@@ -217,4 +217,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TCOLARGMAX, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TCOLARGMAX, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

@@ -8416,7 +8416,6 @@
       ],
       "path": "docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md",
       "rejected": null,
-      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -8424,7 +8423,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.5"
+        "unassigned"
       ],
       "title": "CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion",
       "title_zh": "Tile \u5f52\u7ea6\u4e0e\u6269\u5c55\u7684 CUBE_M16/CUBE_M32 \u5e03\u5c40\u95ed\u5408"

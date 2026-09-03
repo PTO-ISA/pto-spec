@@ -843,6 +843,8 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
+        "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
         "PTO-AVS-BLOCK-MGATHER-GATHER-001",
         "PTO-AVS-TILE-TEXPANDS-CUBE-LAYOUT-002"
       ]
@@ -17438,6 +17440,7 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-TILE-TROWEXPANDADD-TYPED-001"
       ]
     },
@@ -17614,6 +17617,7 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
         "PTO-AVS-BLOCK-TROWSUM-SCHEMA-001",
         "PTO-AVS-TILE-REDUCTION-CUBE-001"
       ]
@@ -18843,10 +18847,10 @@
     "asl/tile/model/legality/matrix-postprocess.asl": "67a3e10ff840fe720de99090384cd5da1c7e2a1d8cdbc5ea2a1b6ff07bbee9ee",
     "asl/tile/model/legality/matrix-shape.asl": "de080a69a6b193f3748d33f3a4b989ce2b724fe69864cbc21957b8864b1e4c2e",
     "asl/tile/model/legality/memory-schema.asl": "adf05d65417e96f55ac0f8a13035cf0c30715a76c164b09eaa9eb425d2029b3d",
-    "asl/tile/model/legality/operand-schema.asl": "2cf35b8c683f8dcdd7f826e28fd8cac0db01815dad1920e2f95b73e86cb03dce",
+    "asl/tile/model/legality/operand-schema.asl": "e6bbbef5c3990c1937cf192f8a6853221805fea2de9c5b4536e6785d669426e0",
     "asl/tile/model/legality/pe-mask.asl": "0725c4ce0deb99b2d0f870a94fb609288adf149dd33300a33e096046a90d54bb",
     "asl/tile/model/legality/predicate-carriers.asl": "e5566216efe63e6e9ee4ea34c770bc11252d6bb03e5e481853dcbfdfc718fe4b",
-    "asl/tile/model/legality/reduction-and-expansion.asl": "18f8c217756238fca83abaacdbce1effd0164e42df862a78dfaaa1d61da076fc",
+    "asl/tile/model/legality/reduction-and-expansion.asl": "0fcc5ad77d0c947ff7b43dbc6953770ad56b0dd329e133e3e471964fb7eccd89",
     "asl/tile/model/legality/sorting.asl": "01fc46968d49c487acb39715dc5a8b971e3f19735037f3c3be869f34c47c0742",
     "asl/tile/model/memory/addressing.asl": "0f2e18b2ad192ae74fb9258bc8843d6ee99b88d2165f6d2351ca3691061da556",
     "asl/tile/model/memory/atomics.asl": "6bbf02618e08d269ffd2ecb63724705458f269c3c4645c6b7cb5d54c529a803e",
@@ -18870,34 +18874,34 @@
     "asl/tile/model/state/local-registers.asl": "495ef15a1f8299b33cbebfe20c49edf5c1a30a94a9d99c612fd8b0eb3ad21461",
     "asl/tile/model/state/shared-registers.asl": "d1ad6b70bb22cc7fefa86029f9f9592334b24337260e5a25b1e42c1f3d904696",
     "asl/tile/model/state/types.asl": "74c19f4f240be11c2d8ea09a9afba9432bb42c46c44e1f90274f41464ed6aa83",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl": "ee162d3077d5e33d9d3818c85803dcb4b21a2740659b1aaef64263c06140747b",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl": "fb8fcd47fabe6dbc08fe0cbf7dcde760dfbd1584900633e3dbb0b3a9e6bb0192",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl": "def018521524c84a8fa8b104b559949ffc12cbf47891e2fecfe1c09de976a274",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl": "8a241dfd96ca05adf4b20ea02079238d15d71503800dab809f675a83b6763d63",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl": "5acc61b9989cb379005c6e2f5ed17cd9ebd0819e1a6531ca7f212b969ed9a8f5",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl": "ce2126dd94e0c7b5fa85850cde39690d9acc7ceb96be4c1fe43caa43ac0e7c63",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl": "d9e09ea1cc90bf97900ecf533aa9148c77419805650fc915fcc5e04fe045eaab",
-    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl": "c99613ccfd69ba9abf77179036020724866b06d8c98e7369a5237e847ff0be7f",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl": "76748a0ff5e49bf8d4969d2092f8efdac0ee9d85ad31cf486a89e3b3c6cbae87",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl": "bc4f91b4da87d6ded5e1f1cfd1ce4c4729d87fb8449f37847e56baef00b9e2c4",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl": "77164dc6874e680b540442181757ad2c0d1c931fce38521c13fac8cc1a6b64b3",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl": "bcfaaac7551af6fe2c0d2d80c27f8772e03a19e55602c49e4bc5fca3e981a426",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl": "c378603880a950ecb60d31a8aa74e436924b1742796d8e8ceae1e28b5f47b19b",
-    "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl": "d94a85b870f31d4223d1ef789bb48a8c6ebdcb1a9223f79ba2906462a9d99e40",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl": "7d1cbf2e651472d99b9fccb3e4892587819843b8559a903649b9489a82e78d12",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl": "9216202262743fa47a78a7982dc0e89d29f211f344389b8d716f99f717d16b31",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl": "2919db3e1c533e3a10928e944136ded084e4094ee08e0ae36f17f98cb8508867",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl": "f76b9b15ae5ff21c603e251a4d6c7ffba08bdfd834e4764f50dff5690298644c",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl": "bcbd814ff4642708b29434ac4cffc07e61b1e8712da9a59601ab584e000c36ba",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl": "3444a7cd13f57d1f5049f76a647984f2c53a389bd233ccd0451d7bbb7e0fc9a3",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl": "a8110e91b9d9f82d6829a6139648539a33b4b94f9c167fa009793e55cd41950d",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl": "bcfa653369a7ae8f941fb38ef101d6550bcb65bf0f2cff11552a4b124903b26e",
-    "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl": "4623f84e499a76a8d43d4d3fdf01f4145a5a66008a626d72f46545336851bc3c",
-    "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl": "54f53c6cd3e5f71c0e86c3d252564db038c67e69e4286e5a328ad19db782ab1d",
-    "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl": "2dc989706847236f658a86e727dc94fbe279ba7708f6d02f4fd0ba9b58d846c0",
-    "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl": "158265bd32c79b5cd01ed6ff23f2426f335c4db78bb47b8956237d9853e1a59d",
-    "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl": "0b41df1957757f8a78b4ec9cc8dc5273f1fe3fb3aec0453138b2be99d8bb7135",
-    "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl": "dc5251aad1a72c26a8deb730f1c4207b7acb8983350978707c0af8d8e3b34a7b",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl": "ab36bcb3dc7ce441d9fffd908d07a36c58f2d9e3e93cf1a9a49250193976417e",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl": "199451cca984408969c72cb631ad126d6bbad4e70ffe539299f1d56ad935c75f",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl": "3d280548df7f62b915a179c09a126c65a3d52f8382fbea2e861cc79e5efeb8b7",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl": "118824485698e45bf875778bb81a4104afbe842c90826c23806a2b98674f2a17",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl": "78350ba9cc6c7de433c1f741b2aaaba69e993d1afc9da0393201e8c8ab8762cb",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl": "e589caeae736b7f93cdb786472df2ae4a82bd593368441c7083607cbf1fd4a92",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl": "667a9527dc4bb0692d25493b7e7ec2286912c8e365f2946683c68752066473e0",
+    "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl": "7d045d41b308ccb9df799fc9afa4afc57debd8b08d7bb25d505a4ec5c3b98d7c",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl": "cfeb896ec587795eca2a6d91fb5239bbb0f8c7b8f0110761be83a989d61a47fa",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl": "1fc6df0a1d4ecb307f6830f7dddf816b535103d9d7dcf6ed456464d572f77faf",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl": "fd65bbe737ef96cbf679bc1199398799ead1e752807f95f5ebf367f9379cd54b",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl": "bbb42ee238dd12af96e647293e24a4ecf9913a4ca16ccdd510dacbda35e3a87c",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl": "574814d85a07855bdd5255a5aea85c05fb9afcccc6fd5f94d88476e087ae1d10",
+    "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl": "e32bb97a3436e428eb9ffda0b3de8fad096ade4ba0bf7c624f37f6b9809c61ec",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl": "505b21d384b3056e80249476f55e1849adfbbe1181b0eb937fd37188043698b4",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl": "044c3548e0c0abb06992f0ddfec5605e0d581ebcac99bbe833cc3f5d8d7dbfaf",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl": "e712cba746198da0997b267ba4f74026b9fb7a706eeb7fb7f6eaa262e0ac0436",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl": "6e472e1606fcf84d0306e7c65a86236b59d8e9f6e0a8f5c98a3235c204e4a8b4",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl": "b3a17df2b3388ad949aceb12114e8576ab61652f2b9e0ad2cb1a58a4c889de98",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl": "74016f61f2151e35a415187af9d047ad7e09350f1a5b1ce447edb73f3edced67",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl": "13d79bbd36780abee0f7e2103da5d666cfdba96fb18a3dbf12474a903228a37e",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl": "d3e2a86c6d8068f33bb902219e65dc6770a94903cb397be5f6d38c2dd8bca20c",
+    "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl": "f7a305935ee891928d6bfe35f2b74558fbac632d650c29e466b5083a2d7a6959",
+    "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl": "2d20a9d3b350431883d8c1f950608235f0b503dfc1f72433fd9a3488acf97a33",
+    "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl": "955457d03236c822b2824623d6b02bb6924f15879ad2743b0cfb75d180947554",
+    "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl": "eb528e66c0a4239f447a2a2cac8067e42012a9931913b7e0925bb8996f32b3b8",
+    "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl": "bb76935ab5d747ecdb2e51c14b689e28a606bbeec0b23f07908346891451c388",
+    "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl": "322add5b774ecdbb08a76baca33f4effe35b7e31015f7eed8118d15f216153ba",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl": "4a708515d4a4653a5cec85bdea92a85f2e8949523abc5d068fa2ef51d400fd84",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS.asl": "b16f0f7bb1688162714cf70c73c18070997d5122cc5e12c8076eab8c687ea4ae",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TMAXS.asl": "e7940c29a821703c3ffdd046feebcb194c1886d3e747d07ffc8343d7f4b99e10",
@@ -18905,7 +18909,7 @@
     "asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl": "1caed8cd850b14e5020a344f7d2836f14e6ef9131d065b0c609c1cfecf1a16f1",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl": "03a008103ce5d9c7f44ea332daafba8d606904ed0935d1cb1eb9e1ab467186b7",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl": "6fe9e8d850f0a2bf6e86af51c3e7f4254ba57806a079c082b5e8c6818107714c",
-    "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl": "f9720b7313c39c6311d067a2032448bc4e2e723c88d4ed36c37964995ceb70bc",
+    "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl": "76d3deae6370014e966ab569879985e3b546010b3bd2b272e2a87f006f142119",
     "asl/tile/tile-scalar-and-immediate/logical/TANDS.asl": "a2159c33c13407ea81903ddd2205ad5cfeb10473e98caf61c5173c2e418f04ca",
     "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl": "f2c3678431527954de76b175f9e17ab6d11c099bf9d574f6e700e4717acd8a4d",
     "asl/tile/tile-scalar-and-immediate/logical/TORS.asl": "d3d38d146b61493dbd184a0394e3442d6c7746e40ad0f297162d7c327c3fb1f7",
@@ -19741,10 +19745,10 @@
     "docs/tile/model/legality/matrix-postprocess.md": "f64d9b1d82d960adb4145443898213e5555427d435fc00e15cd66ce5823c0520",
     "docs/tile/model/legality/matrix-shape.md": "6aab9e2c122ddf23dd374d600a23878d5134d95643fbcd96099fa7ae11d96ae2",
     "docs/tile/model/legality/memory-schema.md": "0c67254edbc98098748aee53a48ca29aef26c4b880a8607c637cae44f43cb3ff",
-    "docs/tile/model/legality/operand-schema.md": "57593a2a443db3f3684669eb7fe53fa4e619f48c780504b6f0d5fd76f640eedb",
+    "docs/tile/model/legality/operand-schema.md": "c4d996654fa01cc89cbf63cab55354d1688c335af23c6a8f897770197a15a40e",
     "docs/tile/model/legality/pe-mask.md": "4367e7084d46af15df1ebd1749d038f63e349ea0995f74400d5ebf7d21ff3779",
     "docs/tile/model/legality/predicate-carriers.md": "b196db2b0f6b663879bcda93bf9cb741fb2ce429bafbacb4eeaa804605fd6e4f",
-    "docs/tile/model/legality/reduction-and-expansion.md": "61bf8b856dbd2eee11536bc8e72feb1e41cb6a04669290e7309bb5a38d00a686",
+    "docs/tile/model/legality/reduction-and-expansion.md": "7907bd253aecc372210675ae42c0e4b37fc35b7f8039ff8771a1864e425b307b",
     "docs/tile/model/legality/sorting.md": "3ba39fcb47508ae5f09aaad04d13dd2135fbbd1b5bc9343d864a3505d296679d",
     "docs/tile/model/memory/addressing.md": "61d901a0b051abc8d553cc63673bf722e0ab83f9e4da033af8a23a4be49c7f2e",
     "docs/tile/model/memory/atomics.md": "7221bb9240cf56735bb51a7629a3835fca2dc07d91fbca73d95e93db26b84ff6",
@@ -19768,34 +19772,34 @@
     "docs/tile/model/state/local-registers.md": "ea86c5d74d6d5e76eb5e6988ff7227b2b28c4d0bb781c38c03eae221bbbb2626",
     "docs/tile/model/state/shared-registers.md": "93de852b2840c65a2ae2267d5186a4abe4bf1b8d8cb1c33c4b622b958f30a5e4",
     "docs/tile/model/state/types.md": "862a54a65b0b4bc8c2a7096021f4a0592da6dc37de2d2806bc02cdb770557af2",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPAND.md": "dd349c38bf1c1c95539abc4403eb530c80bd751d10571ffae9b64ded542d5382",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.md": "57c1c1fa7dd3ef3976420e1af13e1ed9d637c41b018d159c6f7733b081d5fcaa",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.md": "66ae1041f63a7599c8f6e18e534d4ffabc5c0d438c36e97625bae8bba00219b9",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.md": "a415174a23530775c4f9e0df31e2a78c1e78328bc0c7c61a2e2ace7524877a94",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.md": "1e72ebb8fa19ea54962387e0474a2430fd6a9a0f678d908c9f3f1630ca957d43",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.md": "317fedb4e6ae230e67ca75e76dd0d846e0f3369d8a3db015c3349e5986f4301f",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.md": "55473e589ea54b212c0e10c4f6b5d0423399fcdd4464e09bd00e58bd94916959",
-    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.md": "d277e8344a8e4cfb3f9dfc392ac96abb339cc63f912158359126ad16c0df7fa1",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLARGMAX.md": "6a742656d5d0d18cab247451df097cfe8284f5b766c89332d26cad9e62490acd",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLARGMIN.md": "5125cdfebce3e46a5c5e6e90a1ba8c9c5c877603a7e749deee4b2669d02f50bc",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLMAX.md": "41e1fa782ffc4f1e4fcd4a06a9373e7c536f6a75e7997232fbf490d333a1be5f",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLMIN.md": "67665934e757abf385dbcbef2467f6dee609155a9e85e8b017052d61ab12f8ca",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLPROD.md": "f6744e6c4ff93c3763159e0a378cb1f6aa419e36d0caa186e8dc9e617130029b",
-    "docs/tile/reduce-and-expand/column-reduction/TCOLSUM.md": "d9dac35a08290e493ba2b74021c529bc8405525482e98110ecbfb73e9354621d",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "84e4ee8b551b8d8b512e1effe7afbfe47d02fd08fca121782dc4d4d51e765434",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md": "6b1400e6afd6b72de85d1486d0ad2922eb1acd115961ca37a858499c443631b4",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md": "0fe9cbbbbd5f675c33844639e0e0e908e8ae94c0714467169df2e90c5f7cc4b9",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md": "93da654d96671ecac07328c8a595078219acf216d3abce1744f57095ee4bc7d4",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.md": "234cb8aa479cbea5d51c21a2ba2b850c34f967e225246983ab3ee1ca91391622",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md": "f567c3550b58093bded2f0c43c6fd4deab19607b22e085bb19413c2434530fff",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md": "a1b95acdcc26ac120838adbe929cb70fbb20c2f871a7de596312a59b4d5325a0",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md": "923d8b66426820ef04f38d6c68eb8d57d91ebd3595fca69e9bab24b7e6e508d9",
-    "docs/tile/reduce-and-expand/row-reduction/TROWARGMAX.md": "938d5a93246d97326c120c887dc067c90d20db30e08adc1316fe4a91b52dd3fb",
-    "docs/tile/reduce-and-expand/row-reduction/TROWARGMIN.md": "e3393768a50919c451c108fd243e1d405b7706403d04a31bfaf5f403489942ad",
-    "docs/tile/reduce-and-expand/row-reduction/TROWMAX.md": "7bf033671c44403043718ac7d625eec50e650a4dfff011c181bb73a7f33e7983",
-    "docs/tile/reduce-and-expand/row-reduction/TROWMIN.md": "e28d206fc6cced79bd9cdb386baf621a8ddfb3ebe30885c7db631c0073e33f4c",
-    "docs/tile/reduce-and-expand/row-reduction/TROWPROD.md": "905505ca4783f4e72a219f7a505b9fb50a23de796bd152a53dd14f471136e3fa",
-    "docs/tile/reduce-and-expand/row-reduction/TROWSUM.md": "35f1f3c5c8c01313685d00c1db403c72f09995e183d6cf6d41980d2b86d9e6fe",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPAND.md": "6924fc1e88c8ae61b0b973b8958d459123f026ce3710aab4931e9d2d903e1924",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.md": "fbd5ce0b0417f67b2ebffc24182477036e978ccea3d690d9e893d9817647fc43",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.md": "cf2c7fc1dfde93403cd6294f7e3b2e985ecd26627938e883435847e982cc33d6",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.md": "5cd3321e1059aa7970df2b2d18ec47b44a4e9909260827461a75e92c5d316356",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.md": "7a212fae560d5409d86ce2fa46e953f21339dd616f4b364c6424d61f06c75cb6",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.md": "d35e98ca4a9d6302931e0d8af8ff51e53e183f2875e94f94df466f4dadba3b00",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.md": "18e309606a0da6b41a6d12cdf7d70c436280c2c00fa827259a9e8f34ebd044a2",
+    "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.md": "5417d60dbcecf697a71bd6b75e6807a6cddd373d9b3380015399cd865383bd67",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLARGMAX.md": "480a5899c71f5d80bec8c8731e495b8887499b665dccd09487d4366912115b58",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLARGMIN.md": "266e892d80788d52a2ff9d8f4bab02143ed2ea3be26b1d471e98b1c241277f16",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLMAX.md": "b7d6e674f7b37811d509b8492fa9c81425c1fc13c52eadefc79d34a07192e6c4",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLMIN.md": "b7ff17c712d5007b50665bd269539391c92308404dfa7deae33fa7955d66e173",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLPROD.md": "518aa6fd309716f3def25a96e03d3e3e7da09cda621fa86db45faa144bb8e64c",
+    "docs/tile/reduce-and-expand/column-reduction/TCOLSUM.md": "6135796fafadba37843c9a4346752a17d3cd19163c405a58e76003a0e87a6fc9",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "8c85ff21a56d02d7aefa8aeeec49f0589adf7df0db9ccfa9d6e7040db117900f",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md": "98bae6972ac48af9c892be3c24433ea16e54be1fc2d8dd8d317259228f67a928",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md": "f3d1849d60b9b3c5b46058d5bc81a8d509c79ccd4c24ee708c8c41afd30f13de",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md": "2e2ab8d7a8825f6338cf18d0c9cbecbe64d7312bb04a65533d247456e58b1eb9",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.md": "fd5b488c73cf3a74a098247f6f8a64991e2199f0df291993c71172c072c7341a",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md": "c2ebb6d1c0b5e37d51f55278f2cde007b426e9621b33eae2e8b0f19a7b68ada0",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md": "e49507766d23bfddf959443cef3b1c1a400a26ba38ea3387aad6534de2a841e5",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md": "90eead9e5c872e3c426204ee0d9145dcf8916ee1e5573eb83cc0431b41fc53ab",
+    "docs/tile/reduce-and-expand/row-reduction/TROWARGMAX.md": "16918eb4ad916cb3a3a36d1bf9b04a4a2d482e5726fc134a95ffc1dbfb9ca671",
+    "docs/tile/reduce-and-expand/row-reduction/TROWARGMIN.md": "ccdc18ebfdc3ea6b4a788090815fa12c0de71ff5e62f880a66e3f66a2bb52db5",
+    "docs/tile/reduce-and-expand/row-reduction/TROWMAX.md": "89aa6ad14ed534da98fafa851f1531f225403fd6871df66441817c334a50a4d0",
+    "docs/tile/reduce-and-expand/row-reduction/TROWMIN.md": "ce7b61610328a2faa0f5775e9805a3065e5024bdb92e989b67520bd88a16b2a9",
+    "docs/tile/reduce-and-expand/row-reduction/TROWPROD.md": "57e1db995357d77cd91edaa5d00e374dedef07211ebccb6a26ddf1806181a495",
+    "docs/tile/reduce-and-expand/row-reduction/TROWSUM.md": "5ca259d0cd8a159f9bbf8ffd89d66ee3e49967f2f6bff9f12ac6e8ba36e84704",
     "docs/tile/tile-scalar-and-immediate/arithmetic/TADDS.md": "286a2bb53f2fdd75171396cf3bc5a8432f1e50ef6513963f0cb504c8eccddc09",
     "docs/tile/tile-scalar-and-immediate/arithmetic/TDIVS.md": "9db29f86a00333a4834a3c21402623783ac793a477bcb70b54897e86ddae568b",
     "docs/tile/tile-scalar-and-immediate/arithmetic/TMAXS.md": "57cfe884169c7a5371cd1e224c1705b1a23baf0d69c18b899984c085ad1cbcf3",
@@ -19803,7 +19807,7 @@
     "docs/tile/tile-scalar-and-immediate/arithmetic/TMULS.md": "b58a46b97d62b906fc2df7e5c30cc23c74d4e639ce1662663a362eebcf0101ef",
     "docs/tile/tile-scalar-and-immediate/arithmetic/TREMS.md": "70fd4d1dd93b817abea1e479eb806fedcd3474dcd646dbdc6c176272b64a8647",
     "docs/tile/tile-scalar-and-immediate/arithmetic/TSUBS.md": "56fd452cd3c4965814bb782cfb8bfd8ddc078b826dca8e899d20469612467ec5",
-    "docs/tile/tile-scalar-and-immediate/initialization/TEXPANDS.md": "7d6f983666b235f4622d07b21582c716e46c29f49dda54e1d1449730f0fd845f",
+    "docs/tile/tile-scalar-and-immediate/initialization/TEXPANDS.md": "d9652e2d24299ba1d263e6d808ad3c3d77f6bc7076c4f752b1a27b96d9ce73a7",
     "docs/tile/tile-scalar-and-immediate/logical/TANDS.md": "bf79a976a79a52aa989d47488609444c66a7f5c14173287fdeb67918fb9f9bc2",
     "docs/tile/tile-scalar-and-immediate/logical/TCMPS.md": "b1b9916168dba68dfbf16b3cd02a50bea841954672853f2094504991cc04c9ff",
     "docs/tile/tile-scalar-and-immediate/logical/TORS.md": "4b27ab90e7a70f5f7876af799d1880fa0ab5726a15232742949296a499e33ae6",
@@ -19811,8 +19815,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "4b6b99ff646c30669b837a28c66d1c2abca1107a88efb95d22b41c47c5ea0460",
-    "spec/evidence/instruction-contract-closure.json": "dc96c146cbfa890941dcda121721f6a1f8fe5146499a1f58df9d6a8f8586337e",
+    "spec/evidence/adr-index.json": "ff25d037965c623d3e4da07eb6a0126e98fdc6556bca0b9abe8bacbb3b210d87",
+    "spec/evidence/instruction-contract-closure.json": "f58b4fcd560f5deef55e839ae77fe749f8522ab27610f7b8a985e2d70d0a68c8",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -20012,8 +20016,8 @@
     "tests/asl/block/attributes/B.CATR/block-fault-b-catr-placement-001.asl": "a4b8e84bf0c70e3fa24bd3d4e615d73d703f99c55774dc864ebf6de241f6ad4d",
     "tests/asl/block/attributes/B.CATR/block-fault-b-catr-post-trap-001.asl": "36b44c529d1f7894dcd3b0816c743f5f4666db3c025624e6ae5f4e5c23bee95c",
     "tests/asl/block/attributes/B.CATR/block-state-b-catr-fields-001.asl": "199b4e3995ec10701429f2a0cb0e577a510bc2cb2602c6e5bbd2b93cdacfd61c",
-    "tests/asl/block/attributes/B.DATR/block-bound-b-datr-cube-reserved-003.asl": "4207712040d63f65847372f6579de184b0842640bc4283760c6e3d3c2ae2a935",
-    "tests/asl/block/attributes/B.DATR/block-bound-b-datr-layout-map-001.asl": "dcd491ccaca2da771ac30023423e5b10e49afb3a01b545abc747669e7ddcc0b7",
+    "tests/asl/block/attributes/B.DATR/block-bound-b-datr-cube-reserved-003.asl": "ccb361636d4c385ffb4a5c0034f26f9c59024e7dcc7a862a06fb97f15033504e",
+    "tests/asl/block/attributes/B.DATR/block-bound-b-datr-layout-map-001.asl": "ff2595c95bef0f8953e17b38ee614826276f12d067a5244c8ab3d71ee6eb439c",
     "tests/asl/block/attributes/B.DATR/block-bound-b-datr-rmode-001.asl": "0fd204367c659e0f4519b95983e7b228c4155eea13e3e6cb6654ced750d82e42",
     "tests/asl/block/attributes/B.DATR/block-decode-b-datr-canonical-001.asl": "f42b97165059fc07dc48693b6ef21da777fe57f2a7e28d23869542c4a9b65822",
     "tests/asl/block/attributes/B.DATR/block-decode-b-datr-cube-layouts-002.asl": "4960a8cf4f73e602335fd303d01bdd521f349f595387f4a7eae099fe6ce09978",
@@ -20391,6 +20395,7 @@
     "tests/asl/block/model/dispatch/destination-shape/block-static-destination-shape-contract-001.asl": "738448f8e0559e05c510bfacce47d958cef23e2bd26608ec52e358ac22746687",
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpand-schema-001.asl": "1b79a2bac253fd75a7e6076af1597270bae24b8204a419aa19afcb9e1f6f9cb8",
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpanddiv-zero-001.asl": "75ef48af5eea8527f7787c1e4f92e6800fcfa87ec20de8a7a5f3686dc71a5009",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl": "ea6227770736aaae82269fc07948b8639cf7b18220193477d426e40b7a0955f7",
     "tests/asl/block/model/dispatch/expansion-schema/block-static-expansion-schema-contract-001.asl": "586a275f002d3d80db2475105cb0461e66536558029ba53d619fe167b94fd565",
     "tests/asl/block/model/dispatch/generation-schema/block-bound-tci-schema-001.asl": "9d86fd4a038f9a63525bacf3ed689229d36ca7019ee9e7471dd621933e2f8aa9",
     "tests/asl/block/model/dispatch/generation-schema/block-bound-ttri-schema-001.asl": "9b1d78e0af23516a696b5ed73a07677290d40976724e19f944809985e79ce957",
@@ -20404,6 +20409,7 @@
     "tests/asl/block/model/dispatch/quantization-schema/block-bound-quantization-schema-001.asl": "f2e528603cc3d406fd12ea38d363164ebfe6087d8c1f849208540a269c9b73b0",
     "tests/asl/block/model/dispatch/quantization-schema/block-static-quantization-schema-contract-001.asl": "5c18945171a69b79c29859ce4b7eab089b49444bf87326e36e11c6d92147f29e",
     "tests/asl/block/model/dispatch/reduction-schema/block-bound-trowsum-schema-001.asl": "93d0643418ade6de8b418e0839ff22ab512ef23d5ccd4d640a37288f68edf0ae",
+    "tests/asl/block/model/dispatch/reduction-schema/block-exec-cube-reduction-bundle-002.asl": "fcb07eaca8ccad3522f41aadc9a348009f586e8bbaca553d8547b924ba1fd644",
     "tests/asl/block/model/dispatch/reduction-schema/block-static-reduction-schema-contract-001.asl": "47350f615c9f4dc735d53fc63c361882b357baba28478f51a1eafe894074086c",
     "tests/asl/block/model/dispatch/scalar-schema/block-bound-scalar-schema-tgpr2t-class-001.asl": "6b7660c4c9a23467ccdfa0c5107c9845f1ece50abdfb9c16579425c987dd5099",
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
@@ -23512,7 +23518,7 @@
     "tests/asl/tile/model/execution/elementwise/tile-exec-and-aliasing-001.asl": "f491848f5b07285b0d8fdd78f8aeb4683fae618cd54560a9d68d66aef66ec272",
     "tests/asl/tile/model/execution/elementwise/tile-exec-stage4-carrier-001.asl": "7370f69918aa6def48ae3e52b1d32962ed7a91eeb22043088073a10b9ff6d314",
     "tests/asl/tile/model/execution/elementwise/tile-static-elementwise-contract-001.asl": "c7ba7ab11c1d6c547b0443b93d0d370af10c2a4ff146fa678bcd9c096745ed8e",
-    "tests/asl/tile/model/execution/expansion/tile-exec-expansion-cube-001.asl": "536611bc0ee159db760516fa4a63c5cb86d87e202e1a9f65338a0242e65f1bb2",
+    "tests/asl/tile/model/execution/expansion/tile-exec-expansion-cube-001.asl": "85dffd4bab926520d17cf5dd4b6b7b053c47785b8ebac949c07e1a5adcb94a87",
     "tests/asl/tile/model/execution/expansion/tile-exec-expansion-operations-001.asl": "4a4d067de7ac8253c91255c39880a1147b5c762715c25ab34d56cccd425f5e74",
     "tests/asl/tile/model/execution/expansion/tile-exec-stage4-copy-001.asl": "d0a06f32e114ae0c21891d9c6775d98a1fd03f7d6f1f944ea815d13d068ad7e9",
     "tests/asl/tile/model/execution/expansion/tile-static-expansion-contract-001.asl": "5cba3cde84fda63716707232adbaeb0d1bb5b3b8a1d7af8749aa5ff690a789e0",
@@ -23626,69 +23632,69 @@
     "tests/asl/tile/model/state/shared-registers/tile-static-shared-registers-contract-001.asl": "41ace1df72cbc81e095759473372c59d81f9266c1dd5684899534c783fa4fc68",
     "tests/asl/tile/model/state/types/tile-static-types-contract-001.asl": "228af532b8217931e8cc2756327928c45c6423c1d0efd11d0e15b0fe04f9c526",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND/tile-exec-tcolexpand-copy-001.asl": "77641f26cb0be68dcb001445b70a9c33ffa641ef14a53330134adec39d699a6f",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND/tile-static-tcolexpand-contract-001.asl": "63062bcd124824c4e8ef89d8a2003f015cd242bb4b3c7f92c4834fde686e5e5b",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND/tile-static-tcolexpand-contract-001.asl": "8b3b95d8f8de011ffd47fadd17cfd3035b8605652ec517797df251b9e353222a",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD/tile-exec-tcolexpandadd-typed-001.asl": "d7746bdafa42a8edc2f45efb5d9e83392a0aa2f377c37d4aae2a86317d59fa83",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD/tile-static-tcolexpandadd-contract-001.asl": "2fb731760c7685d8ec5ab48f46451dfad2f1ca2831fe3b6ca797363f39c39705",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD/tile-static-tcolexpandadd-contract-001.asl": "25f79deded43928067545125105642c79f9383154a7cabb6c647a44cea7cd9dd",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV/tile-exec-tcolexpanddiv-signed-001.asl": "ff98746af9f975b7361fc6731ec09e640c1f3aec20bca4a64de15b3c74818498",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV/tile-static-tcolexpanddiv-contract-001.asl": "d6b17bb94b922b27d332ca83474d04113f6ecf1da10d9cc964c91ab070f67407",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV/tile-static-tcolexpanddiv-contract-001.asl": "13929d1cbbc462e9d941a416c571e3291e9002cdf40cc35f8442fc037d8dc309",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF/tile-exec-tcolexpandexpdif-compose-001.asl": "0858fd25291baa473570e38dd8dfefbf48972cf6279fafccc30939987b50152a",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF/tile-static-tcolexpandexpdif-contract-001.asl": "5b991027f1827e9304aa6dc70c24388416c315b65f2bfe14992d5d527af3412c",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF/tile-static-tcolexpandexpdif-contract-001.asl": "1e5270c914bb9b4ae13f9f27cf7b1e3ef1963f5fb7cb9b3e805c18e98868bd8a",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX/tile-exec-tcolexpandmax-unsigned-001.asl": "e785cf0c34619abf2aba550475044a54a47c21f3550b603e66daceb422acb1f0",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX/tile-static-tcolexpandmax-contract-001.asl": "37058468c9ee69a7fcf41fd983bba8b57fdf48279f3c2122be35155fa609999a",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX/tile-static-tcolexpandmax-contract-001.asl": "66250b4f8aa5de8c0e4b969fdfd9e0686d40ee1980e2fe949fe7f638a1a8f3aa",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN/tile-exec-tcolexpandmin-signed-001.asl": "6e0a5a1def3e2b11f332d9ca8b3c4cfc3df463096d073ba3b7b19e2b042d4916",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN/tile-static-tcolexpandmin-contract-001.asl": "7024b650e9611a3e13cbfd40c48064eb918629bfbcfd12b8b1fbb0d7c0671b62",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN/tile-static-tcolexpandmin-contract-001.asl": "8f197242cbf039f6522f074b10905dc57b7b7e3e991624fdd30d76e2a36c9220",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL/tile-exec-tcolexpandmul-typed-001.asl": "e56fc60dda4e47aba38bcc4b519d2e83b963774c8ba9a12834ea65cf16f21476",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL/tile-static-tcolexpandmul-contract-001.asl": "07eff85d212b9673e90c8b13bc093b0d0adaa1315f19683f1fe79600ba6768ed",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL/tile-static-tcolexpandmul-contract-001.asl": "c83f5307dc0b64eb1edab277632db04fd8f5bcd6c84488feb88c4e89c3eee927",
     "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB/tile-exec-tcolexpandsub-typed-001.asl": "5fc3dfd25484e343a555302915b089cb97d3f14fd5240f07a2dd488af9112505",
-    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB/tile-static-tcolexpandsub-contract-001.asl": "d9db463a5cc3f07a7609b37a5a58bd59e56447dd5fe35f08b9f01032000602d7",
+    "tests/asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB/tile-static-tcolexpandsub-contract-001.asl": "ab8c621b2fcfa409e95cd74418c0aef185da7e38159be01a5569795f8f74a305",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-exec-tcolargmax-tie-001.asl": "dd02b6208e15ba18c4d4d4da701f3f38d5cf0cc486878018bb4346bd4c24afd2",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-static-tcolargmax-contract-001.asl": "a9b6a23334ad720c6b993a5ddcba92cf2b7bdee2a8e5a418594297eb91b10c61",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-static-tcolargmax-contract-001.asl": "84fb5280c57fdebe63ba111f1dabfff8133d10139776f839e022cb9fd19a1828",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-exec-tcolargmin-tie-001.asl": "a36094e47267e738a72a9afa2770ab591daabc673c1b2d989915a21b7ab10b2e",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-static-tcolargmin-contract-001.asl": "d1617393115d8d5fe981b883e4dbcbd94c8f39ddd1c10e54a4665bb7f15b9018",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-static-tcolargmin-contract-001.asl": "f67b15fd420ecb2cb018c9ba355d4b81eae33f5448a1fb77663460c890fbc25b",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMAX/tile-bound-tcolmax-type-domain-002.asl": "f82d667994d8741937f8fbec45a22a4e5eced7d55b138bd52ae5ca7440ecf436",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMAX/tile-exec-tcolmax-u16-001.asl": "c378c7c09fab1d6c6d4c4a07ab233da970b34cb29c3ac3df14e73abde995d4da",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMAX/tile-static-tcolmax-contract-001.asl": "143646ff67c1a5f61d7ed672afc648ededc5bbf784a8e340d25d4b1e056f39fb",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMAX/tile-static-tcolmax-contract-001.asl": "6481d12bdc194d7db7ad57fd8ff9715314645a3893ca49e6b932995569ab5755",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMIN/tile-bound-tcolmin-type-domain-002.asl": "dbfd2c5b9a4891ba498d6b6db45c5768ede9fceaa1174cf6b3f1cd87c3772aff",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMIN/tile-exec-tcolmin-s8-001.asl": "2f648ccee903d7d06d511ff345c6413d5d8f941b7f95dbce5c23702dc68e142b",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMIN/tile-static-tcolmin-contract-001.asl": "0b36fde044b9d00cafd2afc4d9f6a086097b808b844f1eaaa3daf973f0380327",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMIN/tile-static-tcolmin-contract-001.asl": "119ecdcc9473a0d2b3fbcd63cc9f39dacfcece46c979385e770f6ac5e6010a7e",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLPROD/tile-bound-tcolprod-type-domain-002.asl": "72b40da3485b3e7b6512921028235b0682803ae3ed6eb7ecbeecefc0a8992312",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLPROD/tile-exec-tcolprod-columns-001.asl": "d5107d7bd5d2f7fe310ae9f32ec49f58f134961b82fe9da91cd2b3fb3957c394",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLPROD/tile-static-tcolprod-contract-001.asl": "6c91949e7635d92744db35b4220e0cf8a7934bccb05801f03984cb796a4457d6",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLPROD/tile-static-tcolprod-contract-001.asl": "1ce612b5b8b2412b8880e4d98d7a0a67a46b87e5ec2213db678d2f52fc7b4dc9",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLSUM/tile-bound-tcolsum-type-domain-002.asl": "5a2ea2acc466c50357fe9e306daa90f19dd220ff2b912f6027f31caafaa271af",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLSUM/tile-exec-tcolsum-columns-001.asl": "9a7d6691d8901bc9d7c09665077a1e12a976c6b94b2709c6bd50f54b3be94fa4",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLSUM/tile-static-tcolsum-contract-001.asl": "f1844f663ee263df2de92e2b0e1b9337ece4267b18084daf220aa3cec4e7716d",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLSUM/tile-static-tcolsum-contract-001.asl": "03e4176fc234c34497f3e1a875f6ce1dc0a731e915cadbbf4b351cb2f7c11522",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPAND/tile-exec-trowexpand-copy-001.asl": "5f7cbb4fd3ba4ee826d4860a759c68591593f4b33432f4644ba88517a5c05c72",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPAND/tile-static-trowexpand-contract-001.asl": "f04ef4ae6eb00b6d24e0ef9c5e2551adc6111f64daa4538b6aa9f72471960c47",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPAND/tile-static-trowexpand-contract-001.asl": "c334800fc176a8d221564c4bd69d73260c517e46d6fa9785ab66d907aa312941",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD/tile-exec-trowexpandadd-typed-001.asl": "20ccbecb36c0485829187326a37f3a4522b310ff24c6b82d923383160e8d7973",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD/tile-static-trowexpandadd-contract-001.asl": "560c10dc4e16e19d72edf3077ef01caf84a5081f2f1026731bd14c7612889bd7",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD/tile-static-trowexpandadd-contract-001.asl": "4ef8ec7e189fae8c9e5dc340db06d186487b5a90de8df73712cf191927f05d61",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV/tile-exec-trowexpanddiv-signed-001.asl": "3869a95de077c4acc5eb159685f7469dbbb6c9d19bd8b211edc0f5336a24d3ab",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV/tile-static-trowexpanddiv-contract-001.asl": "b59251362c6607d7f42a5fa20685c58972f2030c130e5ef4d98d82fba3fec7dc",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV/tile-static-trowexpanddiv-contract-001.asl": "86406b7e7f3bf91efa80d9d9561c8ebb974923b87d96600cacffc6eb5e187113",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF/tile-exec-trowexpandexpdif-compose-001.asl": "ccd6c4adf8f0fc2ae372f5b8829ea3b06c8b83b4025803258a0afbb64071d5f2",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF/tile-exec-trowexpandexpdif-stage3-decoded-001.asl": "26f755a9474693881d9f4f75678a8030f25a2173502fe14ab5f8ace3f25ecda8",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF/tile-static-trowexpandexpdif-contract-001.asl": "3ff9ebdc0b3755f4c2ffd44cb305d5bc0aeef968b2d82330d3a78338f4f1ab05",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF/tile-static-trowexpandexpdif-contract-001.asl": "9c5e1de9a5880c9208394ce32677e44af4c158ac21df15d1faf72af454d17302",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX/tile-exec-trowexpandmax-unsigned-001.asl": "792443d7a8497ed7746a789d1bb7b8d56e8dda2d62d0a22269d271b3f8763e1f",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX/tile-static-trowexpandmax-contract-001.asl": "e5ee53f9a88d588de83cd894881a3c1eb37fcc5f7163b938fde41c910c0a78c7",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX/tile-static-trowexpandmax-contract-001.asl": "ec74f091250810bc5b147333f659421ed2869616cd11d7a688c9a4ec93b9aa15",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN/tile-exec-trowexpandmin-signed-001.asl": "489e747f8837d271b44bf0383ff3f1d74eb9d42773a20f9e2e22e14d021b2d95",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN/tile-static-trowexpandmin-contract-001.asl": "e76e4a41cb10531b24532863d997d840be296ec25c874a17e8776a9819a9795c",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN/tile-static-trowexpandmin-contract-001.asl": "7cfbb123e7195835e3dd8d2300a8e3a2e297f7bc95e0a888b201d7684a962317",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL/tile-exec-trowexpandmul-typed-001.asl": "53e3464d9a6ec69073f9af8a814c7b2b8a8af154a3fa8a8aa2d86e1af7097d55",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL/tile-static-trowexpandmul-contract-001.asl": "9f03092162e48a7f8b91361a9eb09eaed46e3ee6b26a03970e78ec9650d1035d",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL/tile-static-trowexpandmul-contract-001.asl": "5766bcd0f3e727fbc6127d38878399d5aa3b37682926b2c727b002f9a82eecf1",
     "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB/tile-exec-trowexpandsub-typed-001.asl": "794fcac2e16c4d56802560cfa240e44883808a71965d09fb8e7a6b8126036309",
-    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB/tile-static-trowexpandsub-contract-001.asl": "56c09b8d4877fac72e3b40e3f5e16b692545a8bcca07f872939c3bc63ebadec0",
+    "tests/asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB/tile-static-trowexpandsub-contract-001.asl": "872e7935fa5e7768d78f5c96e500205e34761ede2191dda31517e4854a06e752",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMAX/tile-exec-trowargmax-tie-001.asl": "a527b86d62fc04161f8c86d96b75ab397acd2e8800f822cb1a7fc95528daaa08",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMAX/tile-static-trowargmax-contract-001.asl": "3588ea2779d9bf3f14694ab0d88edc9fdf6efcecd1b5c05bf583476a17ddaa44",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMAX/tile-static-trowargmax-contract-001.asl": "bd59eaeafd4c528025d8d0e4b43d18b2d7ef267db29eba5cfd6e952f87704fb7",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-bound-trowargmin-shape-001.asl": "77ca073ec4caf3c8089a58f3dffc734a778f3b26f80c22d7e31d1e4dd3d2e63a",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-exec-trowargmin-index-dtype-decoded-001.asl": "0ac07ccb789535e6947a1a085b5928cc7e43b0ca985d95a28cda84a57cb2bfaf",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-exec-trowargmin-index-dtype-decoded-001.asl": "d0605c09d0994e158a1327fe8852cafb6133f067b5add7edf6ded0b0ea3d29fd",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-exec-trowargmin-tie-001.asl": "43093b9cbc9c2a2fde893680815b15cc889cbd0eb3bb7d07c740b30a40bb3776",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-static-trowargmin-contract-001.asl": "7501d606d7ddd0912022bf5e9fb92454539e329ce18dd25bfade6b4c05b1f33a",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWARGMIN/tile-static-trowargmin-contract-001.asl": "fabf9e852eda25ae567b5171b24871fbe2ff8d82012b3a398fe67ef641fb5ca1",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWMAX/tile-exec-trowmax-u16-001.asl": "ba0bacdd136a0c8f8cb0e2ce83e01790c8fb92e72ca5f7679ddc787c925606d9",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWMAX/tile-exec-trowmax-u16-decoded-001.asl": "138a88971059cd212e841394deeb14649e024f61848d7270ebf8f6c56565e6c9",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWMAX/tile-static-trowmax-contract-001.asl": "68aab62b7e480a681211a37d931c04979ab8d49d57e70ccf1fde38e740f3fb14",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWMAX/tile-static-trowmax-contract-001.asl": "9c0324c4fda6e89e911872f2e819a14d84b9b257cf8d9d884f93f85c7f7958aa",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWMIN/tile-exec-trowmin-s8-001.asl": "933bf8cd3bad01373e2535c28486bc4f68965f89c9a17409bbbf3bd9dcddd1c2",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWMIN/tile-static-trowmin-contract-001.asl": "fdc8bfbd9475049558b2e341a90fc6036c50df3860ca4bc6486c1b1cc35be51e",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWMIN/tile-static-trowmin-contract-001.asl": "08ea0f51c00644bba086836f54598349d3b2f529f896ca58b605897ea2aac52d",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWPROD/tile-exec-trowprod-one-001.asl": "04024ea0f0122de9db9c753451bcf9f83e50d7093521efd5a753eae68ecba94c",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWPROD/tile-static-trowprod-contract-001.asl": "3a9a27b84c6f751dbe20e9be03ad7759ef7e164c3202b9b671c69c9269af2831",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWPROD/tile-static-trowprod-contract-001.asl": "032b9d5438963e7a8b5e7c46f25286fed4790d483a7e6558c0a35f35164104a1",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-exec-trowsum-u8-wrap-001.asl": "c9f3e17fd9de39b76b1754e3c8e7178b43a9ce6d9afd0abdfd185f5e983ae96c",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-static-trowsum-contract-001.asl": "80e6cba4d1c6e0dffb658eea19814ec8975ef0519c79d65f3b74ca2fcd406351",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-static-trowsum-contract-001.asl": "7a22f79731da796792148ec265fcd23e0691c13c45f9cd66c56e5859dc0a5d3b",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-type-domain-002.asl": "df64f5ca871157a8ab8d74f47a93cef8add7e72fd12842f6da915a6c89b88ba8",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-types-001.asl": "dca3f9b8d99b5ae4ce49c71fc9984c5c36797ff6d8efc4b733aa1fd1cf977c21",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-exec-tadds-bundle-001.asl": "d5ddaa5c8663f94e6c3c597f7bdf8718223959c61b56c394c6d06cde8c55861b",
@@ -23716,9 +23722,9 @@
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-static-tsubs-contract-001.asl": "62bb1050440b268c611a43d9bd7e5b4c2844d57a694247423660fdddda5d5d71",
     "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-bound-texpands-types-001.asl": "b31dcbdb1c207dc473287b04265fcc5685901df4a80d9472a5169b3656469f7e",
     "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-exec-texpands-bundle-001.asl": "2184a2548cbfbcbd68b2d4d5feb48627606c521ee95305395329c48ee56cbb53",
-    "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-exec-texpands-cube-layout-002.asl": "b436d045343f949b73d62bc662c830f876f5701d1ba51c5bc158f9135f30ba8c",
+    "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-exec-texpands-cube-layout-002.asl": "c87f6975927fa3e4896833788e467c791093d4ec4a4944601445cffea76ccdd8",
     "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-state-texpands-padding-001.asl": "eb0a7ac363c498e2fded5a007793ee73d567b42ecb962cfb3b303b2ae17e0160",
-    "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-static-texpands-contract-001.asl": "8b32e3edff2a56203b6c1ac60c8f105781404e474498a74ede4ae0673443e9b8",
+    "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-static-texpands-contract-001.asl": "eb1ed9f3554901c22d838a248ef4e37c971dc71021210cd033c93c2cb2e89494",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TANDS/tile-bound-tands-types-001.asl": "37282faa52ff116e667ece40e500faec2a61eda957b03d1418cb5634ac151f39",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TANDS/tile-exec-tands-bits-001.asl": "6aec0e2b37f92766eb1e3d473097306dd46423f2dc4f705b889020232d790b2d",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TANDS/tile-exec-tands-e8m0-carrier-003.asl": "337410da84596a74557e2878ffe9cf23961f92018364b3dd4c3e2011d2fe5100",
@@ -23761,7 +23767,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1076,
     "status": "closed",
-    "test_count": 3939,
+    "test_count": 3941,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -33011,7 +33017,7 @@
         "PTO-CUBE-CELL-TRANSPORT-001",
         "PTO-INST-BLOCK-B-DATR"
       ],
-      "sha256": "4207712040d63f65847372f6579de184b0842640bc4283760c6e3d3c2ae2a935",
+      "sha256": "ccb361636d4c385ffb4a5c0034f26f9c59024e7dcc7a862a06fb97f15033504e",
       "source": "asl/block/attributes/B.DATR.asl"
     },
     {
@@ -33051,7 +33057,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-DATR"
       ],
-      "sha256": "dcd491ccaca2da771ac30023423e5b10e49afb3a01b545abc747669e7ddcc0b7",
+      "sha256": "ff2595c95bef0f8953e17b38ee614826276f12d067a5244c8ab3d71ee6eb439c",
       "source": "asl/block/attributes/B.DATR.asl"
     },
     {
@@ -35080,6 +35086,28 @@
       "requirements": [],
       "sha256": "35d511fa10888c342f0ac04b60cf85dd3ee15ebf070194180ece8e6fd181ae3f",
       "source": "asl/block/model/dispatch/commands.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001"
+      ],
+      "sha256": "ea6227770736aaae82269fc07948b8639cf7b18220193477d426e40b7a0955f7",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/reduction-schema/block-exec-cube-reduction-bundle-002.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWSUM-CONTRACT-001"
+      ],
+      "sha256": "fcb07eaca8ccad3522f41aadc9a348009f586e8bbaca553d8547b924ba1fd644",
+      "source": "asl/block/model/dispatch/reduction-schema.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-DTYPE-NONE-RESOLUTION-001",
@@ -56987,7 +57015,7 @@
         "PTO-TCOLEXPAND-CONTRACT-001",
         "PTO-TEXPANDS-CONTRACT-001"
       ],
-      "sha256": "536611bc0ee159db760516fa4a63c5cb86d87e202e1a9f65338a0242e65f1bb2",
+      "sha256": "85dffd4bab926520d17cf5dd4b6b7b053c47785b8ebac949c07e1a5adcb94a87",
       "source": "asl/tile/model/execution/expansion.asl"
     },
     {
@@ -59077,7 +59105,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLARGMAX"
       ],
-      "sha256": "a9b6a23334ad720c6b993a5ddcba92cf2b7bdee2a8e5a418594297eb91b10c61",
+      "sha256": "84fb5280c57fdebe63ba111f1dabfff8133d10139776f839e022cb9fd19a1828",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl"
     },
     {
@@ -59097,7 +59125,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLARGMIN"
       ],
-      "sha256": "d1617393115d8d5fe981b883e4dbcbd94c8f39ddd1c10e54a4665bb7f15b9018",
+      "sha256": "f67b15fd420ecb2cb018c9ba355d4b81eae33f5448a1fb77663460c890fbc25b",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl"
     },
     {
@@ -59128,7 +59156,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPAND"
       ],
-      "sha256": "63062bcd124824c4e8ef89d8a2003f015cd242bb4b3c7f92c4834fde686e5e5b",
+      "sha256": "8b3b95d8f8de011ffd47fadd17cfd3035b8605652ec517797df251b9e353222a",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl"
     },
     {
@@ -59138,7 +59166,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDADD"
       ],
-      "sha256": "2fb731760c7685d8ec5ab48f46451dfad2f1ca2831fe3b6ca797363f39c39705",
+      "sha256": "25f79deded43928067545125105642c79f9383154a7cabb6c647a44cea7cd9dd",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl"
     },
     {
@@ -59170,7 +59198,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDDIV"
       ],
-      "sha256": "d6b17bb94b922b27d332ca83474d04113f6ecf1da10d9cc964c91ab070f67407",
+      "sha256": "13929d1cbbc462e9d941a416c571e3291e9002cdf40cc35f8442fc037d8dc309",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl"
     },
     {
@@ -59191,7 +59219,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDEXPDIF"
       ],
-      "sha256": "5b991027f1827e9304aa6dc70c24388416c315b65f2bfe14992d5d527af3412c",
+      "sha256": "1e5270c914bb9b4ae13f9f27cf7b1e3ef1963f5fb7cb9b3e805c18e98868bd8a",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl"
     },
     {
@@ -59201,7 +59229,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDMAX"
       ],
-      "sha256": "37058468c9ee69a7fcf41fd983bba8b57fdf48279f3c2122be35155fa609999a",
+      "sha256": "66250b4f8aa5de8c0e4b969fdfd9e0686d40ee1980e2fe949fe7f638a1a8f3aa",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl"
     },
     {
@@ -59233,7 +59261,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDMIN"
       ],
-      "sha256": "7024b650e9611a3e13cbfd40c48064eb918629bfbcfd12b8b1fbb0d7c0671b62",
+      "sha256": "8f197242cbf039f6522f074b10905dc57b7b7e3e991624fdd30d76e2a36c9220",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl"
     },
     {
@@ -59243,7 +59271,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDMUL"
       ],
-      "sha256": "07eff85d212b9673e90c8b13bc093b0d0adaa1315f19683f1fe79600ba6768ed",
+      "sha256": "c83f5307dc0b64eb1edab277632db04fd8f5bcd6c84488feb88c4e89c3eee927",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl"
     },
     {
@@ -59264,7 +59292,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLEXPANDSUB"
       ],
-      "sha256": "d9db463a5cc3f07a7609b37a5a58bd59e56447dd5fe35f08b9f01032000602d7",
+      "sha256": "ab8c621b2fcfa409e95cd74418c0aef185da7e38159be01a5569795f8f74a305",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl"
     },
     {
@@ -59285,7 +59313,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLMAX"
       ],
-      "sha256": "143646ff67c1a5f61d7ed672afc648ededc5bbf784a8e340d25d4b1e056f39fb",
+      "sha256": "6481d12bdc194d7db7ad57fd8ff9715314645a3893ca49e6b932995569ab5755",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl"
     },
     {
@@ -59325,7 +59353,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLMIN"
       ],
-      "sha256": "0b36fde044b9d00cafd2afc4d9f6a086097b808b844f1eaaa3daf973f0380327",
+      "sha256": "119ecdcc9473a0d2b3fbcd63cc9f39dacfcece46c979385e770f6ac5e6010a7e",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl"
     },
     {
@@ -59355,7 +59383,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLPROD"
       ],
-      "sha256": "6c91949e7635d92744db35b4220e0cf8a7934bccb05801f03984cb796a4457d6",
+      "sha256": "1ce612b5b8b2412b8880e4d98d7a0a67a46b87e5ec2213db678d2f52fc7b4dc9",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl"
     },
     {
@@ -59385,7 +59413,7 @@
       "requirements": [
         "PTO-INST-TILE-TCOLSUM"
       ],
-      "sha256": "f1844f663ee263df2de92e2b0e1b9337ece4267b18084daf220aa3cec4e7716d",
+      "sha256": "03e4176fc234c34497f3e1a875f6ce1dc0a731e915cadbbf4b351cb2f7c11522",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl"
     },
     {
@@ -60025,7 +60053,7 @@
         "PTO-TEXPANDS-CONTRACT-001",
         "PTO-B-DATR-FIELDS-001"
       ],
-      "sha256": "b436d045343f949b73d62bc662c830f876f5701d1ba51c5bc158f9135f30ba8c",
+      "sha256": "c87f6975927fa3e4896833788e467c791093d4ec4a4944601445cffea76ccdd8",
       "source": "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl"
     },
     {
@@ -60045,7 +60073,7 @@
       "requirements": [
         "PTO-INST-TILE-TEXPANDS"
       ],
-      "sha256": "8b32e3edff2a56203b6c1ac60c8f105781404e474498a74ede4ae0673443e9b8",
+      "sha256": "eb1ed9f3554901c22d838a248ef4e37c971dc71021210cd033c93c2cb2e89494",
       "source": "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl"
     },
     {
@@ -62234,7 +62262,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWARGMAX"
       ],
-      "sha256": "3588ea2779d9bf3f14694ab0d88edc9fdf6efcecd1b5c05bf583476a17ddaa44",
+      "sha256": "bd59eaeafd4c528025d8d0e4b43d18b2d7ef267db29eba5cfd6e952f87704fb7",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl"
     },
     {
@@ -62254,7 +62282,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWARGMIN"
       ],
-      "sha256": "0ac07ccb789535e6947a1a085b5928cc7e43b0ca985d95a28cda84a57cb2bfaf",
+      "sha256": "d0605c09d0994e158a1327fe8852cafb6133f067b5add7edf6ded0b0ea3d29fd",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl"
     },
     {
@@ -62274,7 +62302,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWARGMIN"
       ],
-      "sha256": "7501d606d7ddd0912022bf5e9fb92454539e329ce18dd25bfade6b4c05b1f33a",
+      "sha256": "fabf9e852eda25ae567b5171b24871fbe2ff8d82012b3a398fe67ef641fb5ca1",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl"
     },
     {
@@ -62305,7 +62333,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPAND"
       ],
-      "sha256": "f04ef4ae6eb00b6d24e0ef9c5e2551adc6111f64daa4538b6aa9f72471960c47",
+      "sha256": "c334800fc176a8d221564c4bd69d73260c517e46d6fa9785ab66d907aa312941",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl"
     },
     {
@@ -62315,7 +62343,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDADD"
       ],
-      "sha256": "560c10dc4e16e19d72edf3077ef01caf84a5081f2f1026731bd14c7612889bd7",
+      "sha256": "4ef8ec7e189fae8c9e5dc340db06d186487b5a90de8df73712cf191927f05d61",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl"
     },
     {
@@ -62347,7 +62375,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDDIV"
       ],
-      "sha256": "b59251362c6607d7f42a5fa20685c58972f2030c130e5ef4d98d82fba3fec7dc",
+      "sha256": "86406b7e7f3bf91efa80d9d9561c8ebb974923b87d96600cacffc6eb5e187113",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl"
     },
     {
@@ -62368,7 +62396,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDEXPDIF"
       ],
-      "sha256": "3ff9ebdc0b3755f4c2ffd44cb305d5bc0aeef968b2d82330d3a78338f4f1ab05",
+      "sha256": "9c5e1de9a5880c9208394ce32677e44af4c158ac21df15d1faf72af454d17302",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl"
     },
     {
@@ -62378,7 +62406,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDMAX"
       ],
-      "sha256": "e5ee53f9a88d588de83cd894881a3c1eb37fcc5f7163b938fde41c910c0a78c7",
+      "sha256": "ec74f091250810bc5b147333f659421ed2869616cd11d7a688c9a4ec93b9aa15",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl"
     },
     {
@@ -62410,7 +62438,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDMIN"
       ],
-      "sha256": "e76e4a41cb10531b24532863d997d840be296ec25c874a17e8776a9819a9795c",
+      "sha256": "7cfbb123e7195835e3dd8d2300a8e3a2e297f7bc95e0a888b201d7684a962317",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl"
     },
     {
@@ -62420,7 +62448,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDMUL"
       ],
-      "sha256": "9f03092162e48a7f8b91361a9eb09eaed46e3ee6b26a03970e78ec9650d1035d",
+      "sha256": "5766bcd0f3e727fbc6127d38878399d5aa3b37682926b2c727b002f9a82eecf1",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl"
     },
     {
@@ -62441,7 +62469,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWEXPANDSUB"
       ],
-      "sha256": "56c09b8d4877fac72e3b40e3f5e16b692545a8bcca07f872939c3bc63ebadec0",
+      "sha256": "872e7935fa5e7768d78f5c96e500205e34761ede2191dda31517e4854a06e752",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl"
     },
     {
@@ -62462,7 +62490,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWMAX"
       ],
-      "sha256": "68aab62b7e480a681211a37d931c04979ab8d49d57e70ccf1fde38e740f3fb14",
+      "sha256": "9c0324c4fda6e89e911872f2e819a14d84b9b257cf8d9d884f93f85c7f7958aa",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl"
     },
     {
@@ -62502,7 +62530,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWMIN"
       ],
-      "sha256": "fdc8bfbd9475049558b2e341a90fc6036c50df3860ca4bc6486c1b1cc35be51e",
+      "sha256": "08ea0f51c00644bba086836f54598349d3b2f529f896ca58b605897ea2aac52d",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl"
     },
     {
@@ -62522,7 +62550,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWPROD"
       ],
-      "sha256": "3a9a27b84c6f751dbe20e9be03ad7759ef7e164c3202b9b671c69c9269af2831",
+      "sha256": "032b9d5438963e7a8b5e7c46f25286fed4790d483a7e6558c0a35f35164104a1",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl"
     },
     {
@@ -62532,7 +62560,7 @@
       "requirements": [
         "PTO-INST-TILE-TROWSUM"
       ],
-      "sha256": "80e6cba4d1c6e0dffb658eea19814ec8975ef0519c79d65f3b74ca2fcd406351",
+      "sha256": "7a22f79731da796792148ec265fcd23e0691c13c45f9cd66c56e5859dc0a5d3b",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
     },
     {
@@ -68122,12 +68150,14 @@
         "ADR-TILE-0004"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-BLOCK-TROWEXPANDDIV-ZERO-001"
       ],
       "source": "asl/block/model/dispatch/expansion-schema.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA-STATIC-001",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-BLOCK-TROWEXPANDDIV-ZERO-001"
@@ -68279,11 +68309,13 @@
         "ADR-TILE-0004"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
         "PTO-AVS-BLOCK-TROWSUM-SCHEMA-001"
       ],
       "source": "asl/block/model/dispatch/reduction-schema.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA-STATIC-001",
         "PTO-AVS-BLOCK-TROWSUM-SCHEMA-001"
       ]

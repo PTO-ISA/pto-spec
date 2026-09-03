@@ -257,7 +257,6 @@ class AdrRecordTest(unittest.TestCase):
                         "ADR-0102",
                         "ADR-0108",
                         "ADR-0110",
-                        "ADR-0111",
                     )
                 },
             )

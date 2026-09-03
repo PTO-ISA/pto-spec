@@ -46,13 +46,23 @@ begin
     return TileCubeDescriptorLegal(tile);
 end;
 
-readonly func TileReductionAndExpansionSourceLegal(index: TileIndex)
+readonly func TileReductionAndExpansionSourceContentsDefined(index: TileIndex)
     => boolean
 begin
     let tile = _Tiles[[index]];
     if !TileReductionAndExpansionDescriptorLegal(index) ||
        tile.storage_kind != TileStorage_Numeric ||
        !tile.contents_defined then
+        return FALSE;
+    end;
+    return TRUE;
+end;
+
+readonly func TileReductionAndExpansionSourceLegal(index: TileIndex)
+    => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TileReductionAndExpansionSourceContentsDefined(index) then
         return FALSE;
     end;
     if tile.layout == TileLayout_RowMajor then
@@ -90,6 +100,18 @@ end;
 readonly func TileReductionSourceCapacityLegal(index: TileIndex) => boolean
 begin
     return _Tiles[[index]].capacity_bytes <= 2048;
+end;
+
+readonly func TileOperandsLegal_ExecuteTileFillScalar(
+    destination: TileIndex, scalar: Word) => boolean
+begin
+    return TileReductionAndExpansionDescriptorLegal(destination) &&
+           TileReductionAndExpansionRowLimitLegal(
+               _Tiles[[destination]].layout,
+               _Tiles[[destination]].valid_rows) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+           TileFillPadDataTypeSupported(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_ExecuteTileReduction(
@@ -165,9 +187,14 @@ readonly func TileOperandsLegal_ExecuteTileExpand(
     source: TileIndex,
     broadcast_source: TileIndex) => boolean
 begin
+    let copy = operation == TileExpand_COPY;
     if !TileReductionAndExpansionDescriptorLegal(destination) ||
-       !TileReductionAndExpansionSourceLegal(source) ||
-       !TileReductionAndExpansionSourceLegal(broadcast_source) then
+       !(if copy then
+             TileReductionAndExpansionSourceContentsDefined(source) &&
+             TileReductionAndExpansionSourceContentsDefined(broadcast_source)
+         else
+             TileReductionAndExpansionSourceLegal(source) &&
+             TileReductionAndExpansionSourceLegal(broadcast_source)) then
         return FALSE;
     end;
 

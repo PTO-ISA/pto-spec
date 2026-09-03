@@ -34,7 +34,7 @@ The handler uses the resolved valid region rather than treating physical padding
 - `destination0` has the exact contract role **new Local numeric destination**.
 - `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+The destination descriptor uses the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical shape stated by the current contract.
 `PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
 
 <!-- PTO-READER-BLOCK: tile-texpands-effects role=effects -->
@@ -167,7 +167,7 @@ end;
 
 ```asm
 BSTART.VEC TEXPANDS, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -226,7 +226,7 @@ end;
 - Exactly one terminating Local B.IOT supplies no source and one newly allocated Local numeric destination. B.IOS and additional Tile bindings are illegal.
 - The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
 - The destination uses selected RowMajor, CUBE_M16, or CUBE_M32 layout; CUBE_M16 valid_rows is at most 16 and CUBE_M32 valid_rows is at most 32, with physical geometry derived from the selected layout and capacity.
-- Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
+- Only RegSrc0 may be nonzero in B.IOR; Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, faults, or destination effects.
 
 ## State effects
@@ -251,4 +251,4 @@ end;
 
 ## Examples
 
-- BSTART.VEC TEXPANDS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP
+- BSTART.VEC TEXPANDS, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP
