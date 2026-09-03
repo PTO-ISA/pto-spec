@@ -72,5 +72,5 @@ release_gate_readiness = "gate-contract-and-parallel-topology-closed-stage-S6-T2
 architectural_completion = "open"
 
 [toolchain]
-aslref_repository = "https://github.com/herd/herdtools7.git"
+aslref_repository = "https://github.com/PTO-ISA/herdtools7.git"
 aslref_pin_file = ".aslref-version"

@@ -3686,7 +3686,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "50725f088f8faa734345c8099360fea892cf0a9d7e90fb5a311fd26157225fa8"
+      "sha256": "96345c2c7a8eaca2ed570645ed8510fdb0cfcb679620226704dce75aa574ddd0"
     }
   ],
   "catalog_counts": {
@@ -3708,7 +3708,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "0e961e05bfeac75fb5fc80a5e032ae6acc6b67b40e3d3b83567963240b9c99f5",
+  "content_sha256": "7d2260c61defb090b96597d78c86118c0d9d080f46596555750c9e68c9de9967",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

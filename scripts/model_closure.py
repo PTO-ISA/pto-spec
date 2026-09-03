@@ -174,7 +174,7 @@ def validate_lock(lock: object, expected: dict[str, str]) -> list[str]:
         repositories.get("aslref"),
         "ASLRef repository",
         errors,
-        expected_repository="https://github.com/herd/herdtools7.git",
+        expected_repository="https://github.com/PTO-ISA/herdtools7.git",
         expected_commit=expected["aslref_commit"],
     )
 

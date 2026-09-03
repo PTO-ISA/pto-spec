@@ -61,7 +61,7 @@ def valid_payload() -> dict[str, object]:
                 "tree": EXPECTED["ndf_tree"],
             },
             "aslref": {
-                "repository": "https://github.com/herd/herdtools7.git",
+                "repository": "https://github.com/PTO-ISA/herdtools7.git",
                 "commit": EXPECTED["aslref_commit"],
                 "tree": "b" * 40,
             },
