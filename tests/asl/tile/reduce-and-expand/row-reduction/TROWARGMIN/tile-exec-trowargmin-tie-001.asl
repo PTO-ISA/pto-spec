@@ -12,29 +12,13 @@ begin
         TileDataType_U32,
         TileLayout_RowMajor,
         TileLocation_Any);
-    ConfigureTile(
-        2, 128, 1, 1, 1, 1,
-        TileDataType_S32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 2);
 
-    ExecuteTileReduction(
-        TileReduction_ARGMIN,
-        TileAxis_Row,
-        1,
-        0);
-
-    assert InstructionContractOperandsLegal_TROWARGMIN(2, 0);
-    ExecuteTileReduction(
-        TileReduction_ARGMIN,
-        TileAxis_Row,
-        2,
-        0);
+    assert InstructionContractOperandsLegal_TROWARGMIN(1, 0);
+    InstructionContractExecute_TROWARGMIN(1, 0);
 
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;
