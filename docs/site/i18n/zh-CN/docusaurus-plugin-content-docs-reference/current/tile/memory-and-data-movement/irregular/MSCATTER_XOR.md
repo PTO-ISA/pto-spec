@@ -16,7 +16,35 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-purpose role=purpose -->
+## 目的与范围
 
+`MSCATTER_XOR` 是该已接受操作的稳定阅读入口。规范 `ASL` 源文件和本页生成的 contract 章节仍是架构行为的唯一 owner。
+
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-mechanism role=mechanism -->
+## 如何阅读操作
+
+应结合生成的 Decode 与 Operation 章节定位所选形式和语义 handler。本指南不增加另一套执行算法。
+
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-inputs role=inputs-outputs -->
+## 输入与输出
+
+以生成的 Operands and results 表和 Block composition 章节作为编码角色与架构角色的完整映射，不应从本摘要推断省略的操作数或结果。
+
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-effects role=effects -->
+## 效果与状态
+
+完整效果边界由生成的 State effects 以及 Memory effects and ordering 章节给出。可执行点只证明 owner 得到覆盖，不构成另一份语义来源。
+
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-constraints role=constraints -->
+## 边界与故障
+
+下方 Defaults、Legality 与 Exceptions 规定接受域和故障边界。保留值及不支持的组合仍由这些生成章节管理。
+
+<!-- PTO-READER-BLOCK: tile-mscatter-xor-example role=example -->
+## 非规范用法示例
+
+生成的 `MSCATTER_XOR` 示例仅用于拼写与导航。替换操作数时必须遵守下方 owner 定义的 legality 和状态合同。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

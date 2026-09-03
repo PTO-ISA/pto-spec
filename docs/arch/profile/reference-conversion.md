@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-purpose role=purpose-scope -->
+## Purpose and scope
 
+This page is the stable reader entry point for one architecture `ASL` owner. The generated unit below remains the complete source of architectural meaning.
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-concepts role=concepts-state -->
+## Concepts and visible state
+
+Use the generated declarations and embedded requirement regions to identify the concepts and state referenced by this owner. This guide does not add state or rename an existing concept.
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-rules role=rules-interactions -->
+## Rules and interactions
+
+Follow the dependency metadata and calls in the generated unit to reach interacting owners. Generated documentation and evidence remain projections of those sources.
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-boundaries role=boundaries -->
+## Architectural boundaries
+
+Treat every fixed bound, profile hook, fault, and unspecified case exactly as written in the generated owner. No implementation behavior is promoted by this reader guide.
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-example role=example-usage -->
+## Non-normative reading example
+
+Start with the generated unit identity, locate the relevant requirement region, and then follow referenced owners before consulting executable evidence.
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-conversion-related role=related-owners-navigation -->
+## Related owners
+
+The dependency list and linked source path below are the navigation index for related architecture owners. Current meaning always returns to the named `ASL` source.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 四个 `SrcType` 值均已分配。不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
 
-raw `DstType=0..3` 所选的 FP64、FP32、FP16 或 E4M3 目的类型 已分配；`15..31` 为保留值，并在产生效果前拒绝。
+raw `DstType=0..3` 所选的 FP64、FP32、FP16 或 E4M3 目的类型已分配；`4..31` 为保留值，并在产生效果前拒绝。
 
 可移植指令契约拥有载体选择、源快照、标志累积、发布和故障顺序；当前具名配置档拥有数值结果和产生的标志。
 
