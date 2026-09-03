@@ -17143,6 +17143,7 @@
         "PTO-AVS-ARCH-PROFILE-REFERENCE-CONVERSION-STATIC-001",
         "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001",
         "PTO-AVS-ARCH-PROFILE-REFERENCE-QUANTIZATION-STATIC-001",
+        "PTO-AVS-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS-STATIC-001",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-FP16-001",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002",
@@ -17493,6 +17494,7 @@
         "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
         "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
         "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS",
         "PTO-SCALAR-FABS",
         "PTO-SCALAR-FADD",
         "PTO-SCALAR-FCVT",
@@ -22928,17 +22930,17 @@
   "sources": {
     "adr_records": {
       "count": 104,
-      "sha256": "0c1b48ea1d3db9edc023cbcc45e6140cf41ac8515ce9591dd897f94392cf4244"
+      "sha256": "4df2bce2388e235405ec7a6456f0cc589b5867f3061ea5d27dd18c3b9c188477"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "ba4b13d890add56a972923ca31abcdd6d332d4f16802df89ff9bd174612d4750"
+      "sha256": "dc96c146cbfa890941dcda121721f6a1f8fe5146499a1f58df9d6a8f8586337e"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c4b43d8c481f0f48569f3f7cfbc0879685197c7e0e6555a1c0ecb457cc739328",
-      "test_count": 3935,
-      "unit_count": 897
+      "sha256": "934fe9e5d7d85b068767bee274a399d926e07f38a6445ece15138e8ac6634ab0",
+      "test_count": 3936,
+      "unit_count": 898
     }
   },
   "stage_order": [

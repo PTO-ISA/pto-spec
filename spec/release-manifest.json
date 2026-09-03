@@ -3630,23 +3630,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "aa66d75a5a8384c96640ae0401ea531b632617be5777dc8c48b287d12686d4a5"
+      "sha256": "77a336194e0ce632db8a3057e65c1438f14e1daef38e9adbfed51bb748ab60b5"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "ba4b13d890add56a972923ca31abcdd6d332d4f16802df89ff9bd174612d4750"
+      "sha256": "dc96c146cbfa890941dcda121721f6a1f8fe5146499a1f58df9d6a8f8586337e"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "786bf2873d5d1551def7d9bdafb1d9d8bc714eed7e7af45c6365a3490014de34"
+      "sha256": "87e274c976ad0992d7fe305efb50762a7d8d5b4c9fe52e9d1ad69305f7e776f7"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6949f9c9aa39d9bcf804b4cfc4c49bb59c1c571e2c2849c8a2277f23be55af0d"
+      "sha256": "8f634c9814592f9c22f91d6f9a23ab811ef03897b9cd92cca0703e97dce04f90"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "daafb4794aeed9117359f9214f43a0ec213945f425824207d0ebb198eb3cf9b6"
+      "sha256": "934fe9e5d7d85b068767bee274a399d926e07f38a6445ece15138e8ac6634ab0"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3692,7 +3692,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "923080a62794f21506e1ac686494a42579417b1d4734560d610d4137aeeba662",
+  "content_sha256": "4f78d159af832da650d3ee0b241488a4199a8abc55f5c5ce6a6528fcb1552dc8",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3929,7 +3929,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/memory-model/instruction-fetch.md",
-      "sha256": "658b1780385e5b7d9b77400526c65ad3c860d659aa9c9c994877dbd5a513bc53"
+      "sha256": "810831537dcf8209a661d4f32607e3b84c2d6a06e5a2321f7bc8d372c974b8ad"
     },
     {
       "kind": "generated-documentation",
@@ -3984,7 +3984,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-conversion.md",
-      "sha256": "15b252326d0055568b2369cf74977f6e9679f38ac2ec27943f136a7e2c5cfcf7"
+      "sha256": "e65567d768d8e1322fa8b5437844e802e6f7276529e96c43da1d7be548423a15"
     },
     {
       "kind": "generated-documentation",
@@ -3999,7 +3999,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-scalar-fp-specials.md",
-      "sha256": "74f7a4ee69d0b1bba1ed1c2014dc019f598336fed86304d6cdc0188cb8562074"
+      "sha256": "6ef9febcf866d8b76905cd286dedf8b1560d7072c5033c035a0a47dd62437113"
     },
     {
       "kind": "generated-documentation",
@@ -4174,12 +4174,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.ADD.md",
-      "sha256": "ca1751939ad5ee1eed2da33e2567c9265036c453d51da37cd1c62e0ff105feba"
+      "sha256": "7700cf22dc6fcb3d0f1d9242706bc388cb50b55634b4c172e13ae5e0b9aef3eb"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.AND.md",
-      "sha256": "0f0e33b83aa6aa42a9fe53396729c9d2fcdfa52789e4c79eac73ad3583ee2585"
+      "sha256": "c83e810b94bcb429df7daf9b2cbb65b41eb6811f4a5ed47f65296d5dc049bd68"
     },
     {
       "kind": "generated-documentation",
@@ -4189,17 +4189,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.DEC.md",
-      "sha256": "6a38c9ba5790d03a81453d938917725b31c29f37ffc31638bbebb652a116c64d"
+      "sha256": "286cacd781af632a345f447d7d5ecc4c2638ced9ffc00ccb260e1f62774bd0f0"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.EXCH.md",
-      "sha256": "0eddb59849e670a0f833223518e84ab9fb21b5d75bba4a7a7a5d467812ff39ac"
+      "sha256": "6446b9a4ee814c6e2307807d955d92222740a2b7040b008361991fdf18f9a324"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.INC.md",
-      "sha256": "818589127522e6ff1d89c92866172130339388df470d8fab2544c8fd3644d4a2"
+      "sha256": "4f735973ccca2ccc8c072b45fc4113d35616181b8b6112b7b631ec899ab972e3"
     },
     {
       "kind": "generated-documentation",
@@ -4209,22 +4209,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.MAX.md",
-      "sha256": "00750a6a01d320812c29caae7be00a24ec0130e832b07c2af982a82cf02ceccc"
+      "sha256": "53776a6e545c4c765ba91b23ba305ce5fcf54740b6f3dcab063ec628165ec366"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.MIN.md",
-      "sha256": "8a551a5cdd4ef1e42c3b16b169b0bddf7e83d6960b5a492130a104e1f4b9bde8"
+      "sha256": "ed92c3bbb60db538d00fafa3a3a00af0e768f94f7e72182ade6218f5fb6b31c6"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.OR.md",
-      "sha256": "0f07f2e77e8852fe021f3f938dd451b98dd8fc44d4face1c950e68caa1e98c9f"
+      "sha256": "6623704443d71329149b0d9144522635e0a3880f7e1d697f40bee3ab61183049"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.XOR.md",
-      "sha256": "bf7926e2eafea7b8d3828af5c0a14047cb331d700c56bbb6a74d4b7eee6b77bf"
+      "sha256": "d6b7f76db5e17b8c3cf4502b77e504d18d941a46c54002e0c4192e6c0fba9b2c"
     },
     {
       "kind": "generated-documentation",
@@ -4234,22 +4234,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.ADD.md",
-      "sha256": "736595fe8ff240699e57f18573cfc439b078867e5580443ec57e7c8e1e959061"
+      "sha256": "6a065a8d4a4b063539cc53da2168c3d6ceaddd6dcb2cbb7805101bd9617cd14e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.AND.md",
-      "sha256": "63bb8fbbbe48a1954a6677dda0162ebe092ddffd8d3593be8259a607ab7fd812"
+      "sha256": "4453324e48bbe16413ec2d15e8dfef922538d87823955365fe55b475b3325d3f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.DEC.md",
-      "sha256": "63aae3de564efd1bbaeb8138525b05d72e0322aee90e48ba892b79fe07b510a7"
+      "sha256": "04f84901db2a349d48e10ad70c9507abcb5a8bcce94fb2198eafdc8a3e025487"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.INC.md",
-      "sha256": "45fcbc207f41ee89fa3fbaaa6233d53432c6a4a66e1f41b35625c695cdc2ad3a"
+      "sha256": "c5ef84c4ea15ecacb2076b2693589869a90c12fa4ed50f44829d0c99958e5643"
     },
     {
       "kind": "generated-documentation",
@@ -4259,27 +4259,27 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.MAX.md",
-      "sha256": "0b74a7e65f852ebbae74e5387b115b1531b7b499dbcbf701dd2db8838d3bc7e1"
+      "sha256": "e8d79f2b9e51c853f2fef9793f226d77d0bcfdbad641fafbce5cce8dc4b7328e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.MIN.md",
-      "sha256": "3a1029054ed8c0a3d209f17df869f404030efd2b3ad18c9eb3f8ffd5d4d2ad56"
+      "sha256": "20ba5d5689527b77f300d203f94b0b7f5b3051aaecc1e9c9d8e2f609638ccae5"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.OR.md",
-      "sha256": "c91ca0b6e31ba66f555fa7319b1a152ef8301954553ade1104c063d667faea19"
+      "sha256": "844029320bebdd4497b5cd2c9296e7de58706e12578ff9aa26dcfd4bb570a2c4"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.POPC.md",
-      "sha256": "09737659c4f7f5fc119ebc8d93a1b2a295fef7b8eb1315808479a47b7070e8ed"
+      "sha256": "1b6fe12d28462dc518db8bbb20019a020044646b435f1611cfa378c7d7d44a4d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.XOR.md",
-      "sha256": "5ac5febfb3a917b2366ede0701ff5c938a16fe36e82f6e449ccc9230c0a07fed"
+      "sha256": "fda5cc875a1f6442fc39720ed63ed6b56effd60573ea93d64d0597c8fc49651b"
     },
     {
       "kind": "generated-documentation",
@@ -7419,7 +7419,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TGPR2T.md",
-      "sha256": "32e6021fc007ab65c73cb28c2c4274c5fb5faa380a347891ef9e157665173fff"
+      "sha256": "95f9829e8c387f2eb67008e0c19e2f14fed9d201987cc025d0eea51138bf10ab"
     },
     {
       "kind": "generated-documentation",
@@ -7524,32 +7524,32 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_ADD.md",
-      "sha256": "ebcdf12d36a0a27a475c947773fa58dac06f70d8112cbd14dafe65dff4deabb6"
+      "sha256": "b2c71749a9334a2769ce5bdc142f455a278946de4485332c8eeaf76dafa479b3"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_AND.md",
-      "sha256": "c925e95b2101851a731dc96d3b07241e73ca688580d8d88bfaa1192ab7e97ca6"
+      "sha256": "4b9fb59ae3cbf726e6c49d64ef10273e38658f1d670e587c852f1f1b32a9e00f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
-      "sha256": "da32d1435d1e1044c6d4ed880b7289978d4cf31986be4daf742057edf5fbd47f"
+      "sha256": "b15637b0c2d8854b7b16ded2fc6f5658e20333bc82ff8e9976e5718f50520a3f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_DEC.md",
-      "sha256": "b719ba42b10252d03ddf42770625b3e9ad0ddb495459391f97b7cf5b5a22f60b"
+      "sha256": "bfd2bd8c184d6e03b92a898e0512d5631a92db6283ad448568353e3e5f9cdadd"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_EXCH.md",
-      "sha256": "bb9d97e7a4b52d7aae6ed68f1753201a25d18ade1ef2263c46d71f5e9457b44a"
+      "sha256": "a0a015cc90f1a1587cb1babf025f299669e8f35539278c8f7785c8b313401615"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_INC.md",
-      "sha256": "1ae9cacf68296ce3184ae15bcfd86bcb2b4f75c121c0a9875f185073e93f7ccc"
+      "sha256": "1fefcd6d480de88250daa4c1bce21852cb7c7cd9e6e2769b9b9cf99a498eb55f"
     },
     {
       "kind": "generated-documentation",
@@ -7559,22 +7559,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_MAX.md",
-      "sha256": "4b031534fda21351a22adda811143d03280978a3fb2044222991d20a56b62c1b"
+      "sha256": "fe14dcc7f3543f17b0c205bae046ea27980cbaf93fd1f62434ee41bc002e86e0"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_MIN.md",
-      "sha256": "46ba27b5d02cd2317f7205c15c04235fbb8252476425625a92d4921e3c4391d1"
+      "sha256": "09a4f5c6adbfa719c14d55363d96ca0737da991613fad2829f0c0178b6521f72"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_OR.md",
-      "sha256": "404d0a30da06a4d560c17d238d93f2da6cabbdcf7192726e060b108dfdb62496"
+      "sha256": "4ba081584839afa212309ef01f861736437f3cc9f9bcef3e3235811b084b5f9a"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_XOR.md",
-      "sha256": "e23de2f2ccf4aa620f4031d5a0374036d992ae4e8c159c83a7125fafd5f252ad"
+      "sha256": "2992ac288befbe1ee7f5d492a72d8dfb5a4fadd235f6e8db1b857fdb911f0a6c"
     },
     {
       "kind": "generated-documentation",
@@ -7584,22 +7584,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_ADD.md",
-      "sha256": "9ec67c55354e6f100288bb9fe161b2331557be9b5de2311ab96c015419f38d32"
+      "sha256": "7cb05e2125e3257a8b0930ef8ac1ac858be39ce1488c0deb90c4962e49e6cb7a"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_AND.md",
-      "sha256": "71acd59b8c90d5454704a23044f17700285519bf3241e6598691591ff8ebd4d6"
+      "sha256": "a8799702a5d018ce43528b5f49adf7291fbf8a55d2c033a4ed4a7175c823cf40"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_DEC.md",
-      "sha256": "2000d3854a2214be5d16718b3800b60d6b68e44d7eeffc2f5dc50eb58f24ebb1"
+      "sha256": "639aba56d4b10fa8cc5e6e32efbde7a60ce94bd3f78904e46801dd1e9da16fad"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_INC.md",
-      "sha256": "76ba54cb28fdd250e6434a7eba535345c7588c195f3b1e286cb322e9c0a8afb9"
+      "sha256": "170d5e43119fd2563cf0905acdda5dd4a5695159a98dafd3329dc282ec972ec5"
     },
     {
       "kind": "generated-documentation",
@@ -7609,27 +7609,27 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MAX.md",
-      "sha256": "4d9383932046e73e518b21664b2b54f113af97566368051266cca220e2ae2c22"
+      "sha256": "6a7b948058447006566a3ffb05ddba53521b01d0b330523a7d7620c9def268e7"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MIN.md",
-      "sha256": "d9efeb26dc325648e4143b30e3c62ceba26d0256959d6eb55f3d83cde6188a0b"
+      "sha256": "d6e39b1452c018c7f3a17440e0e713d1dc3afaa6960b3c319cb97e267a05409a"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_OR.md",
-      "sha256": "af3472060d0801ce636073507f5aaeaf9625453090bf768178da32a4665e2041"
+      "sha256": "296b14dfd9ebfa04ded80a371cc7b99f874b51c3ec700aaa56489d5cf9bea480"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_POPC.md",
-      "sha256": "6e4adf5762c9f1d92920ff98b1668968e0812b392cc19960a0be1e9efb2edf77"
+      "sha256": "8838934c45038d3f210f8ab85ef9f65f1358968c025973c81ca613c869e5b9f6"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_XOR.md",
-      "sha256": "58d613890ae7968be0d759b8eeeab2641590393d3b961602ef1bebc80ffb3433"
+      "sha256": "a4900cf74cce891fece71f1d62e2c73e0d479c5d46a6b2d1b3a662353c70dcac"
     },
     {
       "kind": "generated-documentation",
