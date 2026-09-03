@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001","source":"asl/block/execution/BSTART.TMATMUL.BIAS.asl","requirements":["PTO-BSTART-TMATMUL-BIAS-CONTRACT-001","PTO-TMATMUL-BIAS-CONTRACT-001","PTO-INST-BLOCK-BSTART-TMATMUL-BIAS"],"kind":"execution","summary":"TMATMUL.BIAS adds one 1xN private-result Bias after each dot product.","pass_condition":"A mixed S16 by S8 2x2 product adds one S32 1x2 Bias across both result rows and commits one new S32 destination.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl","asl/tile/model/execution/cube.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001","source":"asl/block/execution/BSTART.TMATMUL.BIAS.asl","requirements":["PTO-B-DATR-MATRIX-ACC-CONTROL-001","PTO-BSTART-TMATMUL-BIAS-CONTRACT-001","PTO-CUBE-INTERNAL-ACCUMULATOR-001","PTO-TMATMUL-BIAS-CONTRACT-001","PTO-INST-BLOCK-BSTART-TMATMUL-BIAS"],"kind":"execution","summary":"TMATMUL.BIAS CCTRL=01 publishes a Bias-seeded raw partial D and a transparent-cache replacement hint.","pass_condition":"A mixed S16 by S8 2x2 product adds one S32 1x2 Bias across both result rows and always commits one new raw S32 destination.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl","asl/tile/model/execution/cube.asl","asl/tile/model/execution/internal-accumulator.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -28,7 +28,7 @@ begin
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
-    SetBundleDataAttributeState(Zeros{5} + 19, Zeros{5}, Zeros{2},
+    SetBundleDataAttributeState(Zeros{5} + 19, Zeros{5}, '01',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);

@@ -1,7 +1,8 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-ACC-TYPES-022","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-ACCUMULATOR-OUTPUT-001"],"kind":"execution","summary":"ACC forms use explicit FP32 S32 and U32 accumulator classes","pass_condition":"each input class publishes C plus A times B into distinct D while preserving C","related_sources":["asl/tile/model/execution/cube.asl","asl/tile/model/legality/matrix-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-ACC-TYPES-022","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-B-DATR-MATRIX-ACC-CONTROL-001","PTO-CUBE-ACCUMULATOR-OUTPUT-001","PTO-CUBE-INTERNAL-ACCUMULATOR-001"],"kind":"execution","summary":"ACC forms use explicit FP32 S32 and U32 accumulator classes for every CCTRL value.","pass_condition":"all four FP32 CCTRL values and representative integer classes publish C plus A times B into distinct D while preserving explicit C.","related_sources":["asl/tile/model/execution/cube.asl","asl/tile/model/execution/internal-accumulator.asl","asl/tile/model/legality/matrix-shape.asl"]}
 func RunAccumulatorTypeCase(input_type: TileDataType,
                             input_encoding: bits(5),
-                            accumulator_type: TileDataType)
+                            accumulator_type: TileDataType,
+                            cctrl: bits(2))
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(4, 128, 1, 1,
@@ -29,6 +30,10 @@ begin
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
+    SetBundleDataAttributeState(
+        input_encoding, Zeros{5}, cctrl, Zeros{3}, Zeros{3},
+        FALSE, FALSE);
+    _BundleDataAttributesPresent = TRUE;
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 6, 0, FALSE);
     AddBundleTileBinding(
@@ -47,10 +52,16 @@ end;
 func main() => integer
 begin
     RunAccumulatorTypeCase(
-        TileDataType_FP16, Zeros{5} + 4, TileDataType_FP32);
+        TileDataType_FP16, Zeros{5} + 4, TileDataType_FP32, '00');
     RunAccumulatorTypeCase(
-        TileDataType_S8, Zeros{5} + 19, TileDataType_S32);
+        TileDataType_FP16, Zeros{5} + 4, TileDataType_FP32, '01');
     RunAccumulatorTypeCase(
-        TileDataType_U8, Zeros{5} + 27, TileDataType_U32);
+        TileDataType_FP16, Zeros{5} + 4, TileDataType_FP32, '10');
+    RunAccumulatorTypeCase(
+        TileDataType_FP16, Zeros{5} + 4, TileDataType_FP32, '11');
+    RunAccumulatorTypeCase(
+        TileDataType_S8, Zeros{5} + 19, TileDataType_S32, '00');
+    RunAccumulatorTypeCase(
+        TileDataType_U8, Zeros{5} + 27, TileDataType_U32, '00');
     return 0;
 end;

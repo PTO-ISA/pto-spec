@@ -138,6 +138,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): A2/A3 MX CUBE profile applicability
+- [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-MEM-0006](docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-MEM-0007](docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access

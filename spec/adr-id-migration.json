@@ -677,6 +677,14 @@
       "old_body_sha256": "afa83b3db789266039a7eef63e5968fe6ee3f0756037dd99bf4491be8a7a4607"
     },
     {
+      "old_id": "ADR-0112",
+      "new_id": "ADR-CUBE-0018",
+      "old_path": "docs/status/decisions/0112-internal-acc-partial-sum-routing.md",
+      "new_path": "docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md",
+      "type": "CUBE",
+      "old_body_sha256": "0e5b8dc7e30707a7be78df2df8d25bcd12e8d8bc86d03029fd6e82f26696e593"
+    },
+    {
       "old_id": "ADR-0037",
       "new_id": "ADR-NUM-0001",
       "old_path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",

@@ -21,6 +21,7 @@
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
+    "PTO-B-DATR-MATRIX-ACC-CONTROL-001",
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
@@ -37,6 +38,7 @@
     "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
     "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
     "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
     "PTO-CUBE-CELL-TRANSPORT-001",
     "PTO-TGEMV-ACC-CONTRACT-001",
     "PTO-TGEMV-BIAS-CONTRACT-001",
@@ -69,6 +71,8 @@
     "PTO-BLOCK-BSTART-TMATMULMX",
     "PTO-BLOCK-BSTART-TMATMULMX-ACC",
     "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-ACCUMULATOR-ROUTING",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
     "PTO-TILE-TGEMV",
     "PTO-TILE-TGEMV-ACC",
     "PTO-TILE-TGEMV-BIAS",
@@ -80,7 +84,9 @@
     "PTO-TILE-TMATMUL-BIAS",
     "PTO-TILE-TMATMUL-MX",
     "PTO-TILE-TMATMUL-MX-ACC",
-    "PTO-TILE-TMATMUL-MX-BIAS"
+    "PTO-TILE-TMATMUL-MX-BIAS",
+    "PTO-TILE-MODEL-EXECUTION-CUBE",
+    "PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"
   ],
   "resolves": [],
   "supersedes": [
@@ -89,6 +95,26 @@
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "not-required",
+  "amendments": [
+    {
+      "date": "2026-09-04",
+      "baseline": "5f1cb735aa00ad061ec77c691f6a913711316f92",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/234#issuecomment-5529151834",
+      "affected_ndf": [
+        "PTO-B-DATR-MATRIX-ACC-CONTROL-001",
+        "PTO-CUBE-ACCUMULATOR-OUTPUT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-ACCUMULATOR-ROUTING",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-TILE-MODEL-EXECUTION-CUBE",
+        "PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"
+      ]
+    }
+  ],
   "legacy_ids": [
     "PRD-049",
     "PRD-050",
@@ -269,6 +295,18 @@ preflight, snapshots, and commit are otherwise unchanged from `TMATMUL`.
 defined. `PE_MASK=0000` is the strict no-op; every executing Local binding uses
 `1111`. The canonical binding sequence is the `1 x K` vector, the `K x N`
 matrix, and the explicit new `1 x N` Local destination.
+
+## 2026-09-04 amendment: raw-partial output and transparent InternalAcc hints
+
+ADR-CUBE-0018 assigns matrix CCTRL without replacing explicit TileReg C or D.
+For all ACC forms, C remains the validated architectural accumulator input. For
+all successful forms, D remains a newly allocated and atomically published
+architectural destination. CCTRL[1] is a non-binding cache-use or prefetch hint
+for explicit C and is reserved-zero on init=1 forms. CCTRL[0] selects raw
+accumulator-type D output and may hint transparent-cache replacement with the
+identical published result; zero retains final post-processing. Cache state and
+hint handling cannot change results, faults, allocation, publication, source
+lifetime, or ordering.
 
 ## Bilingual decision detail / 双语决策详述
 

@@ -435,6 +435,7 @@ end;
 
 - Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four reduction enable bits default to disabled. TransA=0 and TransB=0 select no logical transpose; CScaleEn=0 disables accumulator scaling.
 - Omitting B.FPATR is not a default for a CUBE Matrix block: complete-bundle preflight rejects the missing command before allocation or effects.
+- CCTRL[0]=0 selects the final-output path. CCTRL[0]=1 requires final-output post-processing and auxiliary-output controls to remain zero except for legal accumulator-input CScale.
 
 ## Legality
 
@@ -447,12 +448,14 @@ end;
 - Func=2, ElementWiseEn=0, Reserved[10]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.
 - Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.
 - The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.
+- When matrix CCTRL[0]=1, PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn must all be zero; legal CScale remains an accumulator-input transform and D publishes the raw accumulator type.
 
 ## State effects
 
 - Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA, TransB, and CScaleEn.
 - Trap save and recovery preserve the complete latched descriptor with the pending block.
 - Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook.
+- CCTRL[0]=1 bypasses final-output post-processing and auxiliary publication while preserving legal CScale before raw accumulator-type D publication.
 
 ## Memory effects and ordering
 
@@ -464,6 +467,7 @@ end;
 
 - Complete field, B.DATR, operand-schema, alias, shape, and allocation preflight precedes every source consumption and destination effect.
 - D, RowMaxOut, and GroupMaxOut are published as one atomic complete-block output group; rejection exposes none of them.
+- Raw-partial CCTRL validation is part of complete preflight; transparent-cache hints cannot change B.FPATR legality, D publication, auxiliary-output suppression, faults, or numeric status.
 
 ## Exceptions
 

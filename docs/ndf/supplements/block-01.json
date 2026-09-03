@@ -987,6 +987,18 @@
         "en": "This clause assigns all architecture-visible bundle-control state to the PTO-STATE-BLOCK-CONTROL owner. Implementers can therefore trace block-active state, continuation, bindings, and related control transitions to one normative state unit.",
         "zh-CN": "本条款将全部架构可见 Bundle 控制状态归属于 PTO-STATE-BLOCK-CONTROL 所有者。因此，实现者可将块活动状态、延续、绑定及相关控制转移追溯到同一个规范状态单元。"
       }
+    },
+    {
+      "id": "PTO-B-DATR-MATRIX-ACC-CONTROL-001",
+      "source_path": "asl/block/attributes/B.DATR.asl",
+      "title": {
+        "en": "Matrix accumulator control alias in B.DATR",
+        "zh-CN": "B.DATR 中的矩阵累加器控制别名"
+      },
+      "summary": {
+        "en": "This clause selects PadValueOrByteId as matrix-only CCTRL while preserving non-matrix padding and byte-identifier meanings. Omission selects zero, AccOutMode is bit zero, AccInMode is bit one, and inapplicable or reserved combinations reject before effects.",
+        "zh-CN": "本条款仅在矩阵操作中将 PadValueOrByteId 选作 CCTRL，同时保留非矩阵填充和字节标识含义。省略选择零，AccOutMode 为第零位，AccInMode 为第一位，不适用或保留组合在产生效果前拒绝。"
+      }
     }
   ]
 }

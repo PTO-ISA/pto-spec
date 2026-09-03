@@ -2380,7 +2380,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 16 for the TGEMV M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TGEMV.ACC DataType",
@@ -2447,7 +2450,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 18 for the TGEMV_ACC M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TGEMV.BIAS DataType",
@@ -2514,7 +2520,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 17 for the TGEMV_BIAS M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TGEMVMX DataType",
@@ -2581,7 +2590,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 20 for the TGEMV_MX M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TGEMVMX.ACC DataType",
@@ -2648,7 +2660,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 22 for the TGEMV_MX_ACC M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TGEMVMX.BIAS DataType",
@@ -2715,7 +2730,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 21 for the TGEMV_MX_BIAS M=1 Matrix-vector complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TLOAD DataType",
@@ -2849,7 +2867,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 0 for the TMATMUL Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMATMUL.ACC DataType",
@@ -2916,7 +2937,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 2 for the TMATMUL_ACC Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMATMUL.BIAS DataType",
@@ -2983,7 +3007,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 1 for the TMATMUL_BIAS Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMATMULMX DataType",
@@ -3050,7 +3077,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 4 for the TMATMUL_MX Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMATMULMX.ACC DataType",
@@ -3117,7 +3147,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 6 for the TMATMUL_MX_ACC Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMATMULMX.BIAS DataType",
@@ -3184,7 +3217,10 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Starts CUBE Function 5 for the TMATMUL_MX_BIAS Matrix-matrix complete-bundle operation.",
-      "status": "accepted"
+      "status": "accepted",
+      "state_effects": [
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
+      ]
     },
     {
       "asm": "BSTART.TMOV DataType",

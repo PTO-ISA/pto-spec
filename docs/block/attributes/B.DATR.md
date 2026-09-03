@@ -176,7 +176,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | b_datr_32_c161a042ff38 | CMode | 3 | 0–5 | none | 6–7 | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE | EQ |
-| b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value or byte identifier | Zero padding, or ByteId zero when the selected operation interprets the union as a byte identifier |
+| b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control | Zero padding, ByteId zero, or matrix CCTRL=00 as selected by the operation schema |
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
 | b_datr_32_c161a042ff38 | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
@@ -193,7 +193,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | Layout | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector |
 | DataType | concrete Tile element type or DTYPE_NONE inheritance sentinel |
-| PadValueOrByteId | operation-selected padding value or byte identifier |
+| PadValueOrByteId | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control |
 | CMode | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE |
 | RMode | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB |
 | Sat | saturation enable |
@@ -220,7 +220,10 @@ Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the firs
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.DATR.asl -->
 ```asl
-// B.DATR fields retain their operation-selected meanings. For TGPR2T,
+// B.DATR fields retain their operation-selected meanings. For matrix/CUBE
+// operation schemas, PadValueOrByteId is selected as CCTRL[1:0]: CCTRL[0]
+// selects raw-partial D plus a cache-replacement hint and CCTRL[1] is an
+// explicit-C cache-use/prefetch hint; omission selects 00. For TGPR2T,
 // PadValueOrByteId is numeric U8 Zero/Max whole-tile padding, RMode[16:15]
 // selects ByteOffset 0..3, and RMode[17] is reserved-zero. Null padding is
 // rejected by TGPR2T before allocation or publication.
@@ -252,6 +255,7 @@ end;
 
 - B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.
 - An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.
+- For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint.
 
 ## Legality
 
@@ -261,6 +265,7 @@ end;
 - CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
+- Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.
 
 ## State effects
 

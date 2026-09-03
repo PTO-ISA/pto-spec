@@ -4,7 +4,6 @@
 // forms also name their Local accumulator input C explicitly;
 // C is snapshotted before D is written so D == C has read-old/write-new
 // behavior.
-
 impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
                                          destination_type: TileDataType,
                                          left_type: TileDataType,
@@ -14,14 +13,12 @@ impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Wo
 begin
     return accumulator + MultiplyWord(left, right);
 end;
-
 impdef func TileProfileMatrixBias(value: Word, bias: Word,
                                   destination_type: TileDataType,
                                   bias_type: TileDataType) => Word
 begin
     return value + bias;
 end;
-
 impdef func TileProfileMatrixScaledAccumulate(
     accumulator: Word, left: Word, right: Word,
     left_scale: Word, right_scale: Word,
@@ -40,7 +37,6 @@ begin
         right;
     return accumulator + MultiplyWord(scaled_left, scaled_right);
 end;
-
 func MarkLocalTileValidRegionDefined(tile: TileInfo) => TileInfo
 begin
     var result = tile;
@@ -58,8 +54,8 @@ begin
     result.contents_defined = TRUE;
     return result;
 end;
-
 func MatrixProductResultFromTiles(destination: TileIndex,
+                                  destination_tile: TileInfo,
                                   accumulator: TileIndex,
                                   left_tile: TileInfo,
                                   right_tile: TileInfo,
@@ -67,7 +63,6 @@ func MatrixProductResultFromTiles(destination: TileIndex,
                                   c_scale: TileIndex,
                                   c_scale_present: boolean) => TileInfo
 begin
-    let destination_tile = _Tiles[[destination]];
     let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
@@ -101,7 +96,6 @@ begin
                    c_scale,
                    left_tile.valid_rows as integer {1..65535});
     end;
-
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     var result: TileInfo = destination_tile;
@@ -120,10 +114,9 @@ begin
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileStorageIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            var sum: Word = MatrixInitialAccumulatorValue(
+            var sum = MatrixInitialAccumulatorValue(
                 accumulator_tile, accumulate,
-                row as integer {0..65535},
-                column as integer {0..65535},
+                row as integer {0..65535}, column as integer {0..65535},
                 c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileStorageIndex(left_tile,
@@ -141,15 +134,14 @@ begin
     result.payload = result_payload;
     return MarkLocalTileValidRegionDefined(result);
 end;
-
 func MatrixProductResult(destination: TileIndex, accumulator: TileIndex,
                          left: TileIndex, right: TileIndex,
                          accumulate: boolean) => TileInfo
 begin
-    return MatrixProductResultFromTiles(destination, accumulator,
-        _Tiles[[left]], _Tiles[[right]], accumulate, 0, FALSE);
+    return MatrixProductResultFromTiles(destination, _Tiles[[destination]],
+        accumulator, _Tiles[[left]], _Tiles[[right]], accumulate,
+        0, FALSE);
 end;
-
 func MatrixBiasResult(input: TileInfo, bias: TileIndex,
                       intermediate_type: TileDataType) => TileInfo
 begin
@@ -175,8 +167,8 @@ begin
     result.payload = result_payload;
     return result;
 end;
-
 func MatrixMXProductResultFromTiles(destination: TileIndex,
+                                    destination_tile: TileInfo,
                                     accumulator: TileIndex,
                                     left_tile: TileInfo,
                                     left_scale_tile: TileInfo,
@@ -188,7 +180,6 @@ func MatrixMXProductResultFromTiles(destination: TileIndex,
                                     c_scale: TileIndex,
                                     c_scale_present: boolean) => TileInfo
 begin
-    let destination_tile = _Tiles[[destination]];
     let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
@@ -226,7 +217,6 @@ begin
                    c_scale,
                    left_tile.valid_rows as integer {1..65535});
     end;
-
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
     let left_scale_payload = left_scale_tile.payload;
@@ -242,10 +232,9 @@ begin
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileStorageIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            var sum: Word = MatrixInitialAccumulatorValue(
+            var sum = MatrixInitialAccumulatorValue(
                 accumulator_tile, accumulate,
-                row as integer {0..65535},
-                column as integer {0..65535},
+                row as integer {0..65535}, column as integer {0..65535},
                 c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileStorageIndex(left_tile,
@@ -289,7 +278,6 @@ begin
     result.payload = result_payload;
     return MarkLocalTileValidRegionDefined(result);
 end;
-
 func MatrixMXProductResult(destination: TileIndex, accumulator: TileIndex,
                            left: TileIndex, left_scale: TileIndex,
                            right: TileIndex, right_scale: TileIndex,
@@ -300,40 +288,51 @@ begin
     let right_scale_present =
         TileMXInputTypeNeedsScale(_Tiles[[right]].data_type);
     return MatrixMXProductResultFromTiles(
-        destination, accumulator,
+        destination, _Tiles[[destination]], accumulator,
         _Tiles[[left]], _Tiles[[left_scale]], left_scale_present,
         _Tiles[[right]], _Tiles[[right_scale]], right_scale_present,
         accumulate, 0, FALSE);
 end;
-
 func MatrixMXProductResultWithOptionalScales(
-    destination: TileIndex, accumulator: TileIndex,
+    destination: TileIndex, destination_tile: TileInfo, accumulator: TileIndex,
     left: TileInfo, left_scale: TileInfo, left_scale_present: boolean,
     right: TileInfo, right_scale: TileInfo, right_scale_present: boolean,
     accumulate: boolean,
     c_scale: TileIndex, c_scale_present: boolean) => TileInfo
 begin
-    return MatrixMXProductResultFromTiles(destination, accumulator,
-        left, left_scale, left_scale_present, right, right_scale,
+    return MatrixMXProductResultFromTiles(destination, destination_tile,
+        accumulator, left, left_scale, left_scale_present, right, right_scale,
         right_scale_present, accumulate, c_scale, c_scale_present);
 end;
-
-func TMATMULShared(destination: TileIndex, accumulator: TileIndex,
+func CommitMatrixRawPartial(destination: TileIndex, result: TileInfo,
+                              accumulator_type: TileDataType)
+begin
+    // Spill uses the destination object reserved by complete preflight.  This
+    // publishes only the raw accumulator result and deliberately bypasses
+    // MatrixPostProcessResult and all auxiliary output publication.
+    assert result.allocated && result.contents_defined;
+    assert result.data_type == accumulator_type;
+    _Tiles[[destination]] = result;
+end;
+func TMATMULShared(destination: TileIndex, destination_tile: TileInfo,
+                   accumulator: TileIndex,
                    left: TileInfo, right: TileInfo,
                    bias: TileIndex, use_bias: boolean,
                    accumulate: boolean,
-                   c_scale: TileIndex, c_scale_present: boolean)
+                   c_scale: TileIndex, c_scale_present: boolean,
+                   partial_output: boolean)
 begin
     let intermediate_type = TileOrdinaryMatrixAccumulatorType(
         left.data_type, right.data_type);
-    let product = MatrixProductResultFromTiles(destination, accumulator,
-        left, right, accumulate, c_scale, c_scale_present);
+    let product = MatrixProductResultFromTiles(destination, destination_tile,
+        accumulator, left, right, accumulate, c_scale, c_scale_present);
     let result = if use_bias then
         MatrixBiasResult(product, bias, intermediate_type)
         else product;
-    CommitMatrixResult(destination, result, intermediate_type);
+    if partial_output then
+        CommitMatrixRawPartial(destination, result, intermediate_type);
+    else CommitMatrixResult(destination, result, intermediate_type); end;
 end;
-
 func TMATMULMXShared(destination: TileIndex, accumulator: TileIndex,
                      left: TileInfo, left_scale: TileInfo,
                      right: TileInfo, right_scale: TileInfo,
@@ -341,7 +340,8 @@ func TMATMULMXShared(destination: TileIndex, accumulator: TileIndex,
                      accumulate: boolean)
 begin
     let intermediate_type = TileDataType_FP32;
-    let product = MatrixMXProductResultFromTiles(destination, accumulator,
+    let product = MatrixMXProductResultFromTiles(
+        destination, _Tiles[[destination]], accumulator,
         left, left_scale, TRUE, right, right_scale, TRUE,
         accumulate, 0, FALSE);
     let result = if use_bias then
@@ -349,26 +349,27 @@ begin
         else product;
     CommitMatrixResult(destination, result, intermediate_type);
 end;
-
 func TMATMULMXSharedWithOptionalScales(
-    destination: TileIndex, accumulator: TileIndex,
+    destination: TileIndex, destination_tile: TileInfo, accumulator: TileIndex,
     left: TileInfo, left_scale: TileInfo, left_scale_present: boolean,
     right: TileInfo, right_scale: TileInfo, right_scale_present: boolean,
     bias: TileIndex, use_bias: boolean, accumulate: boolean,
-    c_scale: TileIndex, c_scale_present: boolean)
+    c_scale: TileIndex, c_scale_present: boolean,
+    partial_output: boolean)
 begin
     let intermediate_type = TileDataType_FP32;
     let product = MatrixMXProductResultWithOptionalScales(
-        destination, accumulator,
+        destination, destination_tile, accumulator,
         left, left_scale, left_scale_present,
         right, right_scale, right_scale_present,
         accumulate, c_scale, c_scale_present);
     let result = if use_bias then
         MatrixBiasResult(product, bias, intermediate_type)
         else product;
-    CommitMatrixResult(destination, result, intermediate_type);
+    if partial_output then
+        CommitMatrixRawPartial(destination, result, intermediate_type);
+    else CommitMatrixResult(destination, result, intermediate_type); end;
 end;
-
 func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex)
 begin
     let result = MatrixProductResult(destination, destination,
@@ -377,7 +378,6 @@ begin
         TileOrdinaryMatrixAccumulatorType(
             _Tiles[[left]].data_type, _Tiles[[right]].data_type));
 end;
-
 func TMATMUL_BIAS(destination: TileIndex, left: TileIndex, right: TileIndex,
                   bias: TileIndex)
 begin
@@ -388,7 +388,6 @@ begin
     let result = MatrixBiasResult(product, bias, intermediate_type);
     CommitMatrixResult(destination, result, intermediate_type);
 end;
-
 func TMATMUL_ACC(destination: TileIndex, accumulator: TileIndex,
                  left: TileIndex, right: TileIndex)
 begin
@@ -398,7 +397,6 @@ begin
         TileOrdinaryMatrixAccumulatorType(
             _Tiles[[left]].data_type, _Tiles[[right]].data_type));
 end;
-
 func TMATMUL_MX(destination: TileIndex, left: TileIndex,
                 left_scale: TileIndex, right: TileIndex,
                 right_scale: TileIndex)
@@ -407,7 +405,6 @@ begin
         left, left_scale, right, right_scale, FALSE);
     CommitMatrixResult(destination, result, TileDataType_FP32);
 end;
-
 func TMATMUL_MX_BIAS(destination: TileIndex, left: TileIndex,
                      left_scale: TileIndex, right: TileIndex,
                      right_scale: TileIndex,
@@ -418,7 +415,6 @@ begin
     let result = MatrixBiasResult(product, bias, TileDataType_FP32);
     CommitMatrixResult(destination, result, TileDataType_FP32);
 end;
-
 func TMATMUL_MX_ACC(destination: TileIndex, accumulator: TileIndex,
                     left: TileIndex, left_scale: TileIndex,
                     right: TileIndex, right_scale: TileIndex)
@@ -427,7 +423,6 @@ begin
         left, left_scale, right, right_scale, TRUE);
     CommitMatrixResult(destination, result, TileDataType_FP32);
 end;
-
 func TGEMV(destination: TileIndex, left_vector: TileIndex,
            right_matrix: TileIndex)
 begin
@@ -439,7 +434,6 @@ begin
             _Tiles[[left_vector]].data_type,
             _Tiles[[right_matrix]].data_type));
 end;
-
 func TGEMV_BIAS(destination: TileIndex, left_vector: TileIndex,
                 right_matrix: TileIndex, bias: TileIndex)
 begin
@@ -452,7 +446,6 @@ begin
     let result = MatrixBiasResult(product, bias, intermediate_type);
     CommitMatrixResult(destination, result, intermediate_type);
 end;
-
 func TGEMV_ACC(destination: TileIndex, accumulator: TileIndex,
                left_vector: TileIndex, right_matrix: TileIndex)
 begin
@@ -464,7 +457,6 @@ begin
             _Tiles[[left_vector]].data_type,
             _Tiles[[right_matrix]].data_type));
 end;
-
 func TGEMV_MX(destination: TileIndex, left_vector: TileIndex,
               left_scale: TileIndex, right_matrix: TileIndex,
               right_scale: TileIndex)
