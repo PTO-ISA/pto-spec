@@ -3638,7 +3638,7 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "8d1226e14becb38383e2b805904c47078a1ca80ac96b9a45aff3425c94e08f74"
+      "sha256": "a10727bc9fc467c49a43431ecc4c294167cf9ed887ed87c4388007b5f8e839fb"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3646,7 +3646,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "ff7bd4eadc276a707da954822b5065d17b741f17a12c957ed35160a57f42697b"
+      "sha256": "57eec1992f4a8707d32dddc1d222b8ebdd656621ff34b339194476e2a814f216"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3692,7 +3692,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "bd89efdbbd2e616c091b37d0fd3fa037a9d3ce52087171342c023927e6402500",
+  "content_sha256": "2c4e264f195b06dd428fd0fb4588619c2d403f22b1d6abbbcd171a59f9ed1bed",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -8237,10 +8237,7 @@
   "release_selection": {
     "architecture_version": "0.58.5",
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-    "blockers": [
-      "release NDF drift is not covered by an accepted target ADR: PTO-INST-TILE-TCOLARGMAX, PTO-INST-TILE-TCOLARGMIN, PTO-INST-TILE-TCOLEXPAND, PTO-INST-TILE-TCOLEXPANDADD, PTO-INST-TILE-TCOLEXPANDDIV, PTO-INST-TILE-TCOLEXPANDEXPDIF, PTO-INST-TILE-TCOLEXPANDMAX, PTO-INST-TILE-TCOLEXPANDMIN, PTO-INST-TILE-TCOLEXPANDMUL, PTO-INST-TILE-TCOLEXPANDSUB, PTO-INST-TILE-TCOLMAX, PTO-INST-TILE-TCOLMIN, PTO-INST-TILE-TCOLPROD, PTO-INST-TILE-TCOLSUM, PTO-INST-TILE-TEXPANDS, PTO-INST-TILE-TROWARGMAX, PTO-INST-TILE-TROWARGMIN, PTO-INST-TILE-TROWEXPAND, PTO-INST-TILE-TROWEXPANDADD, PTO-INST-TILE-TROWEXPANDDIV, PTO-INST-TILE-TROWEXPANDEXPDIF, PTO-INST-TILE-TROWEXPANDMAX, PTO-INST-TILE-TROWEXPANDMIN, PTO-INST-TILE-TROWEXPANDMUL, PTO-INST-TILE-TROWEXPANDSUB, PTO-INST-TILE-TROWMAX, PTO-INST-TILE-TROWMIN, PTO-INST-TILE-TROWPROD, PTO-INST-TILE-TROWSUM",
-      "release ASL unit drift is not covered by an accepted target ADR: PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES, PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
-    ],
+    "blockers": [],
     "excluded_draft_adrs": [
       "ADR-NUM-0013",
       "ADR-NUM-0014",

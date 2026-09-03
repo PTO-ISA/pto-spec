@@ -16,7 +16,7 @@
   "superseded": null,
   "baseline": "ae04395a024046e2b77395ffc2e732804181c22f",
   "target_releases": [
-    "unassigned"
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
@@ -109,7 +109,9 @@
     "PTO-TILE-TCOLEXPANDMIN",
     "PTO-TILE-TCOLEXPANDMUL",
     "PTO-TILE-TCOLEXPANDSUB",
-    "PTO-TILE-TEXPANDS"
+    "PTO-TILE-TEXPANDS",
+    "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
   ],
   "resolves": [],
   "supersedes": [],
@@ -117,7 +119,10 @@
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/228",
   "release_impact": "required",
   "interface_change": true,
-  "legacy_ids": []
+  "legacy_ids": [
+    "ADR-0111"
+  ],
+  "release_boundary": true
 }
 ---
 # ADR-TILE-0012: CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
@@ -237,10 +242,9 @@ The implementation and generated projections must prove:
 
 ## Release boundary
 
-This accepted ADR is a normative ISA change with release impact `required`.
-The target release remains `unassigned` until release planning assigns one.
-Current semantic meaning is owned by the affected ASL/NDF clauses and their
-generated projections.
+This accepted ADR is a normative ISA change with release impact `required`
+for target release `0.58.5`. The release boundary is `0.58.5`. Current semantic
+meaning is owned by the affected ASL/NDF clauses and their generated projections.
 
 ## Bilingual decision detail / 双语决策详述
 

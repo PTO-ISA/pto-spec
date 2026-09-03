@@ -103,7 +103,8 @@
     "ADR-0107": "ADR-CUBE-0016",
     "ADR-0108": "ADR-GOV-0009",
     "ADR-0109": "ADR-BLOCK-0017",
-    "ADR-0110": "ADR-CUBE-0017"
+    "ADR-0110": "ADR-CUBE-0017",
+    "ADR-0111": "ADR-TILE-0012"
   },
   "legacy_map": {
     "ADR-0001": "ADR-GOV-0001",
@@ -210,6 +211,7 @@
     "ADR-0108": "ADR-GOV-0009",
     "ADR-0109": "ADR-BLOCK-0017",
     "ADR-0110": "ADR-CUBE-0017",
+    "ADR-0111": "ADR-TILE-0012",
     "PD-01": "ADR-NUM-0013",
     "PD-02": "ADR-NUM-0014",
     "PD-02-SC2": "ADR-NUM-0006",
@@ -8394,7 +8396,9 @@
         "PTO-TILE-TCOLEXPANDMIN",
         "PTO-TILE-TCOLEXPANDMUL",
         "PTO-TILE-TCOLEXPANDSUB",
-        "PTO-TILE-TEXPANDS"
+        "PTO-TILE-TEXPANDS",
+        "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -8407,9 +8411,12 @@
       "id": "ADR-TILE-0012",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/228",
       "interface_change": true,
-      "legacy_ids": [],
+      "legacy_ids": [
+        "ADR-0111"
+      ],
       "path": "docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -8417,7 +8424,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.5"
       ],
       "title": "CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion",
       "title_zh": "Tile \u5f52\u7ea6\u4e0e\u6269\u5c55\u7684 CUBE_M16/CUBE_M32 \u5e03\u5c40\u95ed\u5408"
@@ -10271,7 +10278,7 @@
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
-    "legacy_id_count": 302,
+    "legacy_id_count": 303,
     "record_count": 105,
     "type_counts": {
       "BLOCK": 17,

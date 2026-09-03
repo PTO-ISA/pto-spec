@@ -252,7 +252,13 @@ class AdrRecordTest(unittest.TestCase):
                 },
                 {
                     index["legacy_adr_map"][legacy_id]
-                    for legacy_id in ("ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110")
+                    for legacy_id in (
+                        "ADR-0099",
+                        "ADR-0102",
+                        "ADR-0108",
+                        "ADR-0110",
+                        "ADR-0111",
+                    )
                 },
             )
             self.assertTrue(

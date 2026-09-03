@@ -19811,7 +19811,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "34ba0827308d1501d2be50bde3e349af898fcf0ba96d45ac8cf25f309115782a",
+    "spec/evidence/adr-index.json": "4b6b99ff646c30669b837a28c66d1c2abca1107a88efb95d22b41c47c5ea0460",
     "spec/evidence/instruction-contract-closure.json": "dc96c146cbfa890941dcda121721f6a1f8fe5146499a1f58df9d6a8f8586337e",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -64060,7 +64060,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-NUM-0004",
-        "ADR-NUM-0006"
+        "ADR-NUM-0006",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-TILEDATATYPE-RESERVED-001"
@@ -89642,7 +89643,9 @@
       "documentation": "docs/tile/model/legality/reduction-and-expansion.md",
       "id": "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/legality/reduction-and-expansion.asl",
       "surface": "tile",
