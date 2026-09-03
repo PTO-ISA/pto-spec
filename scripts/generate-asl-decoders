@@ -92,6 +92,8 @@ TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "ExecuteTileBinary",
     "ExecuteTileCompare",
     "ExecuteTileCompareScalar",
+    "ExecuteTileExpand",
+    "ExecuteTileReduction",
     "ExecuteTileSelect",
     "ExecuteTileSelectScalar",
     "ExecuteTileScalar",

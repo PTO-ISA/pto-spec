@@ -85,16 +85,23 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
-    return TileVecArithmeticDataTypeSupported(data_type) &&
-           TileDescriptorLegal(source) &&
-           _Tiles[[source]].storage_kind == TileStorage_Numeric &&
-           _Tiles[[source]].data_type == data_type &&
-           _Tiles[[source]].layout == TileLayout_RowMajor &&
-           _Tiles[[source]].valid_rows > 0 &&
-           _Tiles[[source]].valid_columns > 0 &&
-           SelectedBundleComparisonShapeMatches(source) &&
-           TileSourceContentsDefined(source) &&
-           TileSourceEncodingsValid(source);
+    let source_tile = _Tiles[[source]];
+    let source_type_legal = if TileReductionOperationReturnsIndex(operation) then
+        TileArgReductionSourceDataTypeSupported(data_type)
+    else
+        TileVecArithmeticDataTypeSupported(data_type);
+    return source_type_legal &&
+           TileReductionAndExpansionLayoutSupported(
+               CurrentBundleTileLayout()) &&
+           source_tile.layout == CurrentBundleTileLayout() &&
+           TileReductionAndExpansionRowLimitLegal(
+               source_tile.layout, source_tile.valid_rows) &&
+           TileReductionSourceCapacityLegal(source) &&
+           TileReductionAndExpansionSourceLegal(source) &&
+           source_tile.data_type == data_type &&
+           source_tile.valid_rows > 0 &&
+           source_tile.valid_columns > 0 &&
+           SelectedBundleComparisonShapeMatches(source);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

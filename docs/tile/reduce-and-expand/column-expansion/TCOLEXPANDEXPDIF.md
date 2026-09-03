@@ -35,7 +35,7 @@ The handler uses the resolved valid region rather than treating physical padding
 - `source0` has the exact contract role **persistent Local full-shape numeric source**.
 - `source1` has the exact contract role **persistent Local one-row broadcast source**.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+Participating source and destination descriptors use the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical-shape relationships stated by the current contract.
 Every source coordinate read by the operation must be defined before execution reaches destination publication.
 `PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
 
@@ -170,7 +170,7 @@ end;
 
 ```asm
 BSTART.SFU TCOLEXPANDEXPDIF, DataType
-B.DATR DataType, PadValue (optional)
+B.DATR Layout, DataType, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -238,10 +238,10 @@ end;
 - BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.
 - Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
 - The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.
-- The broadcast source has ValidRow equal to one and ValidCol and physical Col equal to the destination.
-- The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.
-- Every source is a fully defined row-major numeric Tile with valid numeric encodings.
-- PadValueOrByteId and DataType are the only applicable B.DATR fields. B.IOR and B.IOS are illegal.
+- The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.
+- The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
+- Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
+- Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
@@ -265,10 +265,10 @@ end;
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 
 ## Examples
 
-- BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR Layout, DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

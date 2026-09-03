@@ -162,6 +162,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-TILE-0004](docs/status/decisions/ADR-TILE-0004-bundle-command-totality-and-profile-boundaries.md): Bundle-command totality and PTO-v0 profile boundaries
 - [ADR-TILE-0005](docs/status/decisions/ADR-TILE-0005-cube-raw-carrier-totality.md): CUBE raw-carrier totality and composite preflight
 - [ADR-TILE-0006](docs/status/decisions/ADR-TILE-0006-vec-sfu-carrier-totality.md): VEC/SFU carrier totality and profile boundary
+- [ADR-TILE-0012](docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md): CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
 
 ### Scalar
 - [ADR-MEM-0003](docs/status/decisions/ADR-MEM-0003-pc-relative-and-unscaled-agu-addressing.md): PC-relative and unscaled AGU addressing

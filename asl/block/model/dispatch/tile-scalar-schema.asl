@@ -319,6 +319,11 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
+    let valid_rows = (if _BundleDimensionPresent[[1]] then
+        UInt(_BundleDimensions[[1]]) else 1) as integer {1..65535};
     return TileVecArithmeticDataTypeSupported(data_type) &&
-           CurrentBundleTileLayout() == TileLayout_RowMajor;
+           TileReductionAndExpansionLayoutSupported(
+               CurrentBundleTileLayout()) &&
+           TileReductionAndExpansionRowLimitLegal(
+               CurrentBundleTileLayout(), valid_rows);
 end;

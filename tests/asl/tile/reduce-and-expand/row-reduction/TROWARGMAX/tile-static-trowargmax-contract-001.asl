@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: reduce-and-expand/row-reduction
-    // block: BSTART.SFU TROWARGMAX, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TROWARGMAX, DataType | B.DATR Layout, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001001100') == 52;
     assert TileOperationOfIndex(52) == TileOperation_TROWARGMAX;
     assert TileHandlerOfIndex(52) == TileHandler_ExecuteTileReduction;

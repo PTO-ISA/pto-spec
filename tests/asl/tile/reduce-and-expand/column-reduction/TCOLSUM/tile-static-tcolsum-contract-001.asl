@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: reduce-and-expand/column-reduction
-    // block: BSTART.SFU TCOLSUM, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TCOLSUM, DataType | B.DATR Layout, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001010000') == 54;
     assert TileOperationOfIndex(54) == TileOperation_TCOLSUM;
     assert TileHandlerOfIndex(54) == TileHandler_ExecuteTileReduction;

@@ -2190,6 +2190,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2242,6 +2243,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2294,6 +2296,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2346,6 +2349,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2398,6 +2402,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2453,6 +2458,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2508,6 +2514,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2568,6 +2575,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2628,6 +2636,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2688,6 +2697,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2748,6 +2758,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2808,6 +2819,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2868,6 +2880,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "DataType",
           "PadValueOrByteId"
         ],
@@ -2926,6 +2939,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2941,7 +2955,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new Local S32 or U32 index destination"
+          "role": "new Local U32 index destination"
         },
         {
           "field": "source0",
@@ -2952,7 +2966,7 @@
       "selector": "0x04C",
       "semantic_handler": "ExecuteTileReduction",
       "state_effects": [
-        "operand:destination0:new-local-s32-or-u32-index-destination",
+        "operand:destination0:new-local-u32-index-destination",
         "operand:source0:persistent-local-numeric-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
@@ -2978,6 +2992,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -2993,7 +3008,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new Local S32 or U32 index destination"
+          "role": "new Local U32 index destination"
         },
         {
           "field": "source0",
@@ -3004,7 +3019,7 @@
       "selector": "0x04D",
       "semantic_handler": "ExecuteTileReduction",
       "state_effects": [
-        "operand:destination0:new-local-s32-or-u32-index-destination",
+        "operand:destination0:new-local-u32-index-destination",
         "operand:source0:persistent-local-numeric-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
@@ -3030,6 +3045,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3082,6 +3098,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3134,6 +3151,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3186,6 +3204,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3241,6 +3260,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3296,6 +3316,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3356,6 +3377,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3416,6 +3438,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3476,6 +3499,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3536,6 +3560,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3596,6 +3621,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3656,6 +3682,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "DataType",
           "PadValueOrByteId"
         ],
@@ -3714,6 +3741,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3729,7 +3757,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new Local S32 or U32 index destination"
+          "role": "new Local U32 index destination"
         },
         {
           "field": "source0",
@@ -3740,7 +3768,7 @@
       "selector": "0x05C",
       "semantic_handler": "ExecuteTileReduction",
       "state_effects": [
-        "operand:destination0:new-local-s32-or-u32-index-destination",
+        "operand:destination0:new-local-u32-index-destination",
         "operand:source0:persistent-local-numeric-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
@@ -3766,6 +3794,7 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "Layout",
           "PadValueOrByteId"
         ],
         "pad_union": "pad-value"
@@ -3781,7 +3810,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new Local S32 or U32 index destination"
+          "role": "new Local U32 index destination"
         },
         {
           "field": "source0",
@@ -3792,7 +3821,7 @@
       "selector": "0x05D",
       "semantic_handler": "ExecuteTileReduction",
       "state_effects": [
-        "operand:destination0:new-local-s32-or-u32-index-destination",
+        "operand:destination0:new-local-u32-index-destination",
         "operand:source0:persistent-local-numeric-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],

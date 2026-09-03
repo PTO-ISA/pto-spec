@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-SHAPE-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"boundary","summary":"TROWARGMIN accepts one-column S32 or U32 index destinations and rejects a non-index destination.","pass_condition":"Both S32 and U32 destinations are legal while an S16 destination is rejected before execution.","related_sources":["asl/tile/model/legality/reduction-and-expansion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-SHAPE-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"boundary","summary":"TROWARGMIN accepts a one-column U32 index destination and rejects S32 or non-index destinations.","pass_condition":"A U32 destination is legal while S32 and S16 destinations are rejected before execution.","related_sources":["asl/tile/model/legality/reduction-and-expansion.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -62,7 +62,7 @@ begin
         TileAxis_Row,
         2,
         0);
-    assert TileOperandsLegal_ExecuteTileReduction(
+    assert !TileOperandsLegal_ExecuteTileReduction(
         TileReduction_ARGMIN,
         TileAxis_Row,
         3,

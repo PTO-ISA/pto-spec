@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-INDEX-DTYPE-DECODED-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"execution","summary":"decoded TROWARGMIN accepts S32 and U32 index destinations and rejects S16 before result publication","pass_condition":"decoded dispatch, binding, destination preflight, execution, and publication succeed for S32 and U32 destinations; S16 faults before result effects","related_sources":["asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-INDEX-DTYPE-DECODED-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"execution","summary":"decoded TROWARGMIN publishes a U32 index destination and rejects S32 or S16 destinations before result publication","pass_condition":"the complete decoded bundle allocates and publishes U32 indices; manually preallocated S32 and S16 destinations fault atomically before result effects","related_sources":["asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
 pure func TrowargminIndexDtypeDecodedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -47,66 +47,8 @@ begin
         TRUE);
 end;
 
-func main() => integer
+func TestRejectedIndexDestination(data_type: TileDataType)
 begin
-    PrepareDecodedTrowargmin();
-    let operation = DecodeTileOperation(
-        TileDecode_TEPL,
-        Zeros{12} + 0x04D)
-        as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    assert TileOperationOfIndex(operation) == TileOperation_TROWARGMIN;
-    assert BundleOperationBindingsComplete(operation);
-    assert SelectedBundleClosedReductionSchemaLegal(operation);
-    let s32_resolved = ResolveBundleTileDestinationsWithShapeAndType(
-        TRUE,
-        2,
-        1,
-        1,
-        TRUE,
-        TileDataType_S32);
-    assert s32_resolved;
-    let s32_destination = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[s32_destination]].data_type == TileDataType_S32;
-    let (s32_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL,
-        Zeros{12} + 0x04D,
-        BundleTileInstructionOperands(operation));
-    assert s32_status == TileExecution_Executed;
-    assert _LastFault == Fault_None;
-    assert ReadTileElement(s32_destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(s32_destination, 1, 0) ==
-        Zeros{PTO_XLEN} + 1;
-
-    PrepareDecodedTrowargmin();
-    let u32_operation = DecodeTileOperation(
-        TileDecode_TEPL,
-        Zeros{12} + 0x04D)
-        as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    assert TileOperationOfIndex(u32_operation) == TileOperation_TROWARGMIN;
-    assert BundleOperationBindingsComplete(u32_operation);
-    assert SelectedBundleClosedReductionSchemaLegal(u32_operation);
-    let u32_resolved = ResolveBundleTileDestinationsWithShapeAndType(
-        TRUE,
-        2,
-        1,
-        1,
-        TRUE,
-        TileDataType_U32);
-    assert u32_resolved;
-    let u32_destination = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[u32_destination]].data_type == TileDataType_U32;
-    let (u32_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL,
-        Zeros{12} + 0x04D,
-        BundleTileInstructionOperands(u32_operation));
-    assert u32_status == TileExecution_Executed;
-    assert _LastFault == Fault_None;
-    assert ReadTileElement(u32_destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(u32_destination, 1, 0) ==
-        Zeros{PTO_XLEN} + 1;
-
     PrepareDecodedTrowargmin();
     let rejected_operation = DecodeTileOperation(
         TileDecode_TEPL,
@@ -121,10 +63,10 @@ begin
         1,
         1,
         TRUE,
-        TileDataType_S16);
+        data_type);
     assert rejected_resolved;
     let rejected_destination = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[rejected_destination]].data_type == TileDataType_S16;
+    assert _Tiles[[rejected_destination]].data_type == data_type;
     let source_before = ReadTileElement(0, 0, 0);
     let (rejected_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL,
@@ -136,5 +78,27 @@ begin
     RollBackBundleTileDestinations();
     assert !_Tiles[[rejected_destination]].allocated;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+end;
+
+func main() => integer
+begin
+    PrepareDecodedTrowargmin();
+    let operation = DecodeTileOperation(
+        TileDecode_TEPL,
+        Zeros{12} + 0x04D)
+        as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    assert TileOperationOfIndex(operation) == TileOperation_TROWARGMIN;
+    assert BundleOperationBindingsComplete(operation);
+    assert SelectedBundleClosedReductionSchemaLegal(operation);
+    let completed = ExecuteBundleTileOperation();
+    assert completed;
+    assert _LastFault == Fault_None;
+    let destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[destination]].data_type == TileDataType_U32;
+    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 1;
+
+    TestRejectedIndexDestination(TileDataType_S32);
+    TestRejectedIndexDestination(TileDataType_S16);
     return 0;
 end;

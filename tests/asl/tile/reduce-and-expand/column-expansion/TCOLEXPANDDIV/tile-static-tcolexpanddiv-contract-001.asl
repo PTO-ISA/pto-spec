@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: reduce-and-expand/column-expansion
-    // block: BSTART.SFU TCOLEXPANDDIV, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TCOLEXPANDDIV, DataType | B.DATR Layout, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001011000') == 62;
     assert TileOperationOfIndex(62) == TileOperation_TCOLEXPANDDIV;
     assert TileHandlerOfIndex(62) == TileHandler_ExecuteTileExpand;

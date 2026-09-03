@@ -35,7 +35,7 @@ The current instruction contract is owned by the ASL source linked above.
 - `source0` 的精确契约角色是“持久 Local 完整形状数值源”。
 - `source1` 的精确契约角色是“持久 Local 单行广播源”。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
+参与操作的源与目标描述符采用所选的 RowMajor、CUBE_M16 或 CUBE_M32 布局，并遵循当前契约规定的逻辑形状关系。
 操作读取的每个源坐标都必须在目标发布前处于已定义状态。
 `PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
 
@@ -127,7 +127,7 @@ end;
 
 ```asm
 BSTART.SFU TCOLEXPANDMIN, DataType
-B.DATR PadValue (optional)
+B.DATR Layout, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -195,10 +195,10 @@ end;
 - Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.
 - The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.
 - The destination and both sources use exactly the selected DataType.
-- The broadcast source has ValidRow equal to one and ValidCol and physical Col equal to the destination.
-- The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.
-- Every source is a fully defined row-major numeric Tile with valid numeric encodings.
-- PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.
+- The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.
+- The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
+- Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
+- Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
@@ -222,10 +222,10 @@ end;
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 
 ## Examples
 
-- BSTART.SFU TCOLEXPANDMIN, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TCOLEXPANDMIN, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
