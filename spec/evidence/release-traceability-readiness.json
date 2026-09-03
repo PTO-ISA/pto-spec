@@ -17420,6 +17420,7 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-TILE-EXPANSION-CUBE-001",
         "PTO-AVS-TILE-TROWEXPAND-COPY-001"
@@ -18179,7 +18180,7 @@
     "asl/block/model/dispatch/descriptor-legality.asl": "27f2ba835f892d4e5f8107aacba994fa7730fcb9eb159251c6b808657b864574",
     "asl/block/model/dispatch/destination-auxiliary.asl": "5349586b821d6af60a1ae34717e36e3ad2776c9e8cb10f7ef2e08fa356baf029",
     "asl/block/model/dispatch/destination-shape.asl": "1f0e2e14fa33950b2fd582affb4104372e7671daa4d737a0e22ba26796951b5a",
-    "asl/block/model/dispatch/expansion-schema.asl": "d7c78196487b4c31ac6123cd003a3c5f90c8cc79c34ebc5343fef540abd91ff5",
+    "asl/block/model/dispatch/expansion-schema.asl": "5d860e3164f66fd642efe8d39b925ef4b7308a20ebfc40277dfc610b2a516dcf",
     "asl/block/model/dispatch/generation-schema.asl": "a1a4e348a9641229b73df1129fac3624d3fd96905eae4a835cdac4ee49f70e67",
     "asl/block/model/dispatch/histogram-schema.asl": "5954e97443dbfee83399475432bb504d7e6f2affb54c1c8b4f0643c719127ee6",
     "asl/block/model/dispatch/matrix-scale.asl": "b6ec56e602786648e5e764aafef07837029b84b9595707d389bd1b998cab4505",
@@ -19077,7 +19078,7 @@
     "docs/block/model/dispatch/descriptor-legality.md": "b0b16da3bb2f1f73763e21109a4059b2f7a7221411ee7f83066641040e8fbb52",
     "docs/block/model/dispatch/destination-auxiliary.md": "0862f094ccabfdbcd9e3f3c9f7d3f10ae8278c1f212f5837d80a905ed6104c66",
     "docs/block/model/dispatch/destination-shape.md": "47e2d1d239c5bc7564000d4da6731b02325658a225074cd65cb0f4fd2f96f982",
-    "docs/block/model/dispatch/expansion-schema.md": "a6b8e0b135e0ccbb9d6c06ea42565e7143fc1a568bf19850b1995d8fd93e32bc",
+    "docs/block/model/dispatch/expansion-schema.md": "7eb97c3d1f803202bd34f6de59a72a66407b1b659038da76e0265825d960c3c2",
     "docs/block/model/dispatch/generation-schema.md": "2e28f1dd639e7986711ee463be648b4cbe69f99ce2929dbde39893e8df427fc3",
     "docs/block/model/dispatch/histogram-schema.md": "071c11fa227f2f3530898c2defe8d0055122e35a85396cb9393a0081d092eb2e",
     "docs/block/model/dispatch/matrix-scale.md": "4478ae7b790c580883c284e9b9527e0360a5b5e0aca4eb66510788403bba4a6d",
@@ -20395,7 +20396,7 @@
     "tests/asl/block/model/dispatch/destination-shape/block-static-destination-shape-contract-001.asl": "738448f8e0559e05c510bfacce47d958cef23e2bd26608ec52e358ac22746687",
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpand-schema-001.asl": "1b79a2bac253fd75a7e6076af1597270bae24b8204a419aa19afcb9e1f6f9cb8",
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpanddiv-zero-001.asl": "75ef48af5eea8527f7787c1e4f92e6800fcfa87ec20de8a7a5f3686dc71a5009",
-    "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl": "ea6227770736aaae82269fc07948b8639cf7b18220193477d426e40b7a0955f7",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl": "899d073775e4ca27731e64a4f489311cd3931189516aa1f2871b765672c5fed0",
     "tests/asl/block/model/dispatch/expansion-schema/block-static-expansion-schema-contract-001.asl": "586a275f002d3d80db2475105cb0461e66536558029ba53d619fe167b94fd565",
     "tests/asl/block/model/dispatch/generation-schema/block-bound-tci-schema-001.asl": "9d86fd4a038f9a63525bacf3ed689229d36ca7019ee9e7471dd621933e2f8aa9",
     "tests/asl/block/model/dispatch/generation-schema/block-bound-ttri-schema-001.asl": "9b1d78e0af23516a696b5ed73a07677290d40976724e19f944809985e79ce957",
@@ -35093,9 +35094,10 @@
       "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl",
       "requirements": [
         "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
         "PTO-TROWEXPANDADD-CONTRACT-001"
       ],
-      "sha256": "ea6227770736aaae82269fc07948b8639cf7b18220193477d426e40b7a0955f7",
+      "sha256": "899d073775e4ca27731e64a4f489311cd3931189516aa1f2871b765672c5fed0",
       "source": "asl/block/model/dispatch/expansion-schema.asl"
     },
     {

@@ -155,7 +155,9 @@ begin
        _Tiles[[broadcast]].layout != CurrentBundleTileLayout() ||
        !TileReductionAndExpansionRowLimitLegal(
            _Tiles[[broadcast]].layout, _Tiles[[broadcast]].valid_rows) ||
-       !TileReductionAndExpansionSourceLegal(broadcast) ||
+       !(if copy then
+             TileReductionAndExpansionSourceContentsDefined(broadcast)
+         else TileReductionAndExpansionSourceLegal(broadcast)) ||
        _Tiles[[broadcast]].data_type != source_data_type ||
        !SelectedBundleExpansionBroadcastShapeMatches(
            operation, broadcast) then
