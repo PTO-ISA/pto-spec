@@ -2,7 +2,7 @@
 
 [![PR checks](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main&event=push)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml?query=branch%3Amain)
 [![Exact-head release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
-[![PTO ISA v0.58.4](https://img.shields.io/badge/PTO_ISA-v0.58.4-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4)
+[![PTO ISA v0.58.5](https://img.shields.io/badge/PTO_ISA-v0.58.5-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.5.0)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the executable ASL1 specification of the PTO Instruction Set
@@ -11,7 +11,7 @@ Tile operations, architectural state, legality, faults, completion, profiles,
 and memory ordering in one reviewable model.
 
 The working tree is a normative draft and may contain architecture changes for
-a future release. PTO ISA v0.58.4 is the latest published release; release
+a future release. PTO ISA v0.58.5 is the latest published release; release
 identity is bound to an immutable commit and its reproducible formal evidence.
 
 ## PTO ISA at a glance
@@ -19,15 +19,15 @@ identity is bound to an immutable commit and its reproducible formal evidence.
 | Surface | Current executable inventory |
 | --- | ---: |
 | Scalar instruction forms | 466 |
-| Active bundle and command forms | 76 |
-| Direct Tile operations | 109 |
+| Active bundle and command forms | 94 |
+| Direct Tile operations | 126 |
 | Tile execution engines | 4 |
 | Tile semantic classes | 7 |
-| Architecture and instruction ASL units | 849 |
-| Independently runnable AVS points | 3,675 |
+| Architecture and instruction ASL units | 898 |
+| Independently runnable AVS points | 3,936 |
 
-Direct Tile operations select one of four execution engines: 35 VEC operations,
-10 TLSU operations, 12 CUBE operations, and 52 SFU operations. Classification
+Direct Tile operations select one of four execution engines: 31 VEC operations,
+28 TLSU operations, 12 CUBE operations, and 55 SFU operations. Classification
 is independent of engine selection, so programming intent and execution
 placement remain separate architecture concepts.
 

@@ -69665,6 +69665,15 @@
           "asm": "hl.prf{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw}><<<shamt>]",
           "constraints": [
             {
+              "field": "SrcRType",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2
+              ]
+            },
+            {
               "field": "model",
               "operator": "one-of",
               "values": [
@@ -69809,14 +69818,19 @@
             "assigned_ranges": [
               [
                 0,
-                3
+                2
               ]
             ],
             "field": "SrcRType",
             "form_id": "hl_prf_48_39641863bb21",
             "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                3,
+                3
+              ]
+            ],
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -69936,6 +69950,15 @@
           },
           "asm": "hl.prf.a{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}",
           "constraints": [
+            {
+              "field": "SrcRType",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2
+              ]
+            },
             {
               "field": "model",
               "operator": "one-of",
@@ -70110,14 +70133,19 @@
             "assigned_ranges": [
               [
                 0,
-                3
+                2
               ]
             ],
             "field": "SrcRType",
             "form_id": "hl_prf_a_48_267dc57d14f4",
             "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                3,
+                3
+              ]
+            ],
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -122085,6 +122113,10 @@
               "role": "base-address"
             },
             {
+              "field": "scalar0",
+              "role": "GM row stride in elements"
+            },
+            {
               "field": "source0",
               "role": "indices"
             },
@@ -122102,6 +122134,7 @@
           "state_effects": [
             "operand:destination0:destination",
             "operand:address:base-address",
+            "operand:scalar0:GM row stride in elements",
             "operand:source0:indices",
             "operand:source1:expected",
             "operand:source2:replacement"
@@ -122117,7 +122150,7 @@
           "BSTART.MGATHER.CAS DataType",
           "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
           "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, zero, zero, ->zero",
+          "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
@@ -122129,7 +122162,7 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
+          "BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, RowStrideGPR, zero, ->zero; BSTOP"
         ],
         "exceptions": [
           "Unsupported operation/type tuples raise Fault_TileLegality before effects."
@@ -122149,6 +122182,10 @@
           {
             "field": "address",
             "role": "base-address"
+          },
+          {
+            "field": "scalar0",
+            "role": "GM row stride in elements"
           },
           {
             "field": "source0",

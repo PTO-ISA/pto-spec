@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-purpose role=purpose-scope -->
+## 目的与范围
 
+本页是一个架构 `ASL` owner 的稳定阅读入口。下方生成的单元仍是架构含义的完整来源。
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-concepts role=concepts-state -->
+## 概念与可见状态
+
+通过生成的声明和嵌入式 requirement 区域识别该 owner 引用的概念与状态。本指南不增加状态，也不重命名现有概念。
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-rules role=rules-interactions -->
+## 规则与交互
+
+沿生成单元中的依赖元数据和调用关系找到交互 owner。生成文档与证据始终只是这些源文件的投影。
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-boundaries role=boundaries -->
+## 架构边界
+
+固定边界、profile hook、故障及未规定情况均以生成 owner 的原文为准。本阅读指南不会提升任何实现行为。
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-example role=example-usage -->
+## 非规范阅读示例
+
+先从生成的单元标识开始，定位相关 requirement 区域，再沿引用的 owner 导航，最后查阅可执行证据。
+
+<!-- PTO-READER-BLOCK: arch-profile-reference-scalar-fp-specials-related role=related-owners-navigation -->
+## 相关 owner
+
+下方依赖列表和源文件链接构成相关架构 owner 的导航索引；当前含义最终都应回到命名的 `ASL` 源文件。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

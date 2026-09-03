@@ -16,7 +16,35 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-mscatter-or-purpose role=purpose -->
+## Purpose and scope
 
+`MSCATTER_OR` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-or-mechanism role=mechanism -->
+## How to read the operation
+
+Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-or-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-or-effects role=effects -->
+## Effects and state
+
+Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-or-constraints role=constraints -->
+## Boundaries and failures
+
+Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-or-example role=example -->
+## Non-normative usage example
+
+Treat the generated `MSCATTER_OR` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
