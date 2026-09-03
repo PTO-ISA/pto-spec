@@ -826,6 +826,40 @@ class HostedFullValidationContractTest(unittest.TestCase):
             '          test -n "$FULL_VALIDATION_RESULT"\n',
         )
 
+    def test_release_requires_exact_llvm_and_asl_model_candidates(self) -> None:
+        self.assert_release_rejected(
+            "      llvm_commit:\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        required: true\n",
+            "      llvm_commit:\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        required: false\n",
+        )
+        self.assert_release_rejected(
+            "          ref: ${{ inputs.asl_model_commit }}\n",
+            "          ref: main\n",
+        )
+
+    def test_release_model_closure_is_mandatory_and_same_run(self) -> None:
+        self.assert_release_rejected(
+            "  model-closure:\n",
+            "  optional-model-closure:\n",
+        )
+        self.assert_release_rejected(
+            '          test "$MODEL_CLOSURE_RESULT" = success\n',
+            '          test -n "$MODEL_CLOSURE_RESULT"\n',
+        )
+        self.assert_release_rejected(
+            '          test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"\n',
+            '          test -n "$WORKFLOW_COMMIT"\n',
+        )
+
+    def test_release_checks_llvm_identity_freshness_before_build(self) -> None:
+        self.assert_release_rejected(
+            "          python3 build/closure/llvm-project/llvm/utils/pto/generate_pto_isa_identity.py \\\n",
+            "          true \\\n",
+        )
+
     def test_nightly_requires_schedule_and_manual_dispatch(self) -> None:
         self.assert_nightly_rejected('    - cron: "17 2 * * *"\n', "")
         self.assert_nightly_rejected("  workflow_dispatch:\n", "")

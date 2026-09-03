@@ -69,6 +69,12 @@ Generated exhaustive coverage also keeps one case per result file. A generator
 must delete obsolete generated results, reject unexpected extras in `--check`
 mode, and must not recreate multi-case shards.
 
+Cross-component source programs, linker scripts, independent golden results,
+and LLVM-to-ASL execution cases live in `PTO-ISA/asl-model`, not in this
+repository. A normative instruction change updates its owning PTO-SPEC ASL and
+direct AVS here, then adds or updates the corresponding ASL-MODEL obligation and
+case before the exact-head release closure can pass.
+
 ## Develop and review
 
 Create the regression or contract test first and observe the intended failure.

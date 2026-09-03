@@ -1,0 +1,16 @@
+{
+  "$schema": "spec/schemas/pto-model-closure-selection-v1.schema.json",
+  "schema": "pto.model-closure-selection.v1",
+  "release": "0.58.5",
+  "adoption_baseline_commit": "33637171b96b402a14319561662cb741e9cc6f87",
+  "mandatory_case_ids": [
+    "block_64_stop_pc",
+    "host_exit_group",
+    "scalar-c-return",
+    "scalar-ir-return",
+    "scalar_stop_pc",
+    "tile_tadd_stop_pc"
+  ],
+  "pre_adoption_policy": "representative-family-canaries",
+  "post_adoption_policy": "all-changed-instruction-identities-require-explicit-cases"
+}

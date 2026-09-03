@@ -370,10 +370,148 @@ def _release_jobs() -> dict[str, object]:
                 },
             ],
         },
+        "model-closure": {
+            "name": "Release / LLVM-to-ASL model closure",
+            "needs": "full-validation",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "360",
+            "outputs": {
+                "semantic-payload-sha256": "${{ steps.closure.outputs.semantic-payload-sha256 }}",
+                "artifact-digest": "${{ steps.closure-artifact.outputs.artifact-digest }}",
+            },
+            "steps": [
+                {
+                    "name": "Validate exact component inputs",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                    },
+                    "run-sha256": "5d3fe8e746e1e3c791cfb1cdf96d55544a2d33c6131a70e08b9687bfb861031c",
+                },
+                {
+                    "name": "Check out exact PTO-SPEC candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "ref": "${{ inputs.commit }}",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                        "submodules": "recursive",
+                    },
+                },
+                {
+                    "name": "Check out exact LLVM candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "LinxISA/llvm-project",
+                        "ref": "${{ inputs.llvm_commit }}",
+                        "path": "build/closure/llvm-project",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Check out exact ASL-MODEL candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/asl-model",
+                        "ref": "${{ inputs.asl_model_commit }}",
+                        "path": "build/closure/asl-model",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Resolve ASL-MODEL dependency pins",
+                    "id": "model-pins",
+                    "shell": "bash",
+                    "run-sha256": "8ab9953b7720e985fcc7f32c1cf1cddcb1b7fc25c8907ed9da2a9ffd24549f17",
+                },
+                {
+                    "name": "Check out ASL-MODEL pinned NDF",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/normative_language",
+                        "ref": "${{ steps.model-pins.outputs.ndf }}",
+                        "path": "build/closure/asl-model/tools/ndf",
+                        "fetch-depth": "1",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Check out ASL-MODEL pinned PTO graph",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/pto-spec",
+                        "ref": "${{ steps.model-pins.outputs.pto }}",
+                        "path": "build/closure/asl-model/vendor/pto-spec",
+                        "fetch-depth": "1",
+                        "persist-credentials": "false",
+                        "submodules": "false",
+                    },
+                },
+                {
+                    "name": "Set up pinned OCaml",
+                    "uses": "ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0",
+                    "with": {"ocaml-compiler": "5.2.1", "dune-cache": "true"},
+                },
+                {
+                    "name": "Restore closure build caches",
+                    "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+                    "with": {
+                        "path": ".cache/herdtools7\n"
+                        "build/closure/llvm-build\n"
+                        "tools/ndf/target\n"
+                        "build/closure/asl-model/tools/ndf/target",
+                        "key": "pto-closure-${{ runner.os }}-${{ runner.arch }}-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                    },
+                },
+                {
+                    "name": "Prepare exact ASL and LLVM tools",
+                    "shell": "bash",
+                    "run-sha256": "73efbb308d02af5936c45dd7bf371d4f70ebd7eb55440003101c173876292c54",
+                },
+                {
+                    "name": "Build exact NDF impact",
+                    "shell": "bash",
+                    "env": {"PTO_COMMIT": "${{ inputs.commit }}"},
+                    "run-sha256": "eec2b08005cc6eae7ba51a148d93f245abaf397354ce8801d44a985961ab3a04",
+                },
+                {
+                    "name": "Run twice and validate exact closure",
+                    "id": "closure",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                        "RUN_ID": "${{ github.run_id }}",
+                        "RUN_ATTEMPT": "${{ github.run_attempt }}",
+                    },
+                    "run-sha256": "0ff603d871c6f37d3fe4a87635dee5cef9b50088d2eda715810f9906b7fbaa72",
+                },
+                {
+                    "name": "Upload immutable model closure evidence",
+                    "id": "closure-artifact",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/closure/ndf-impact.json\n"
+                        "build/model-closure-run-1/evidence\n"
+                        "build/model-closure-run-2/evidence",
+                        "if-no-files-found": "error",
+                        "retention-days": "90",
+                    },
+                },
+            ],
+        },
         "validate": {
             "name": "Release / validate",
             "if": "always()",
-            "needs": ["full-validation", "release-evidence", "release-site"],
+            "needs": ["full-validation", "release-evidence", "release-site", "model-closure"],
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "10",
             "steps": [
@@ -384,9 +522,12 @@ def _release_jobs() -> dict[str, object]:
                         "FULL_VALIDATION_RESULT": "${{ needs.full-validation.result }}",
                         "RELEASE_EVIDENCE_RESULT": "${{ needs.release-evidence.result }}",
                         "RELEASE_SITE_RESULT": "${{ needs.release-site.result }}",
+                        "MODEL_CLOSURE_RESULT": "${{ needs.model-closure.result }}",
                         "SITE_ARTIFACT_DIGEST": "${{ needs.release-site.outputs.artifact-digest }}",
+                        "MODEL_CLOSURE_ARTIFACT_DIGEST": "${{ needs.model-closure.outputs.artifact-digest }}",
+                        "MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256": "${{ needs.model-closure.outputs.semantic-payload-sha256 }}",
                     },
-                    "run-sha256": "9bc522e05c09d2cc8563987bfe45aceacb1d03cc0977bb16534843980ca9e7b6",
+                    "run-sha256": "e58862eea94e3195693a4815b4a4b7b9a73d317c937148fa3b0080e514b99207",
                 }
             ],
         },
@@ -408,7 +549,17 @@ def validate_release_workflow(workflow: str) -> list[str]:
                             "description": "Exact reviewed commit to verify (40 lowercase hexadecimal characters)",
                             "required": "true",
                             "type": "string",
-                        }
+                        },
+                        "llvm_commit": {
+                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.5",
+                            "required": "true",
+                            "type": "string",
+                        },
+                        "asl_model_commit": {
+                            "description": "Exact reviewed PTO ASL-MODEL commit and AVS corpus",
+                            "required": "true",
+                            "type": "string",
+                        },
                     }
                 }
             },

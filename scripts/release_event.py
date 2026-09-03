@@ -18,6 +18,7 @@ REQUIRED_FIELDS = (
     "release_id",
     "release_url",
     "release_manifest_sha256",
+    "model_closure_semantic_payload_sha256",
     "published_at",
 )
 TAG = re.compile(
@@ -83,6 +84,12 @@ def validate_release_event(payload: object) -> list[str]:
     if not isinstance(manifest_hash, str) or SHA256.fullmatch(manifest_hash) is None:
         errors.append(
             "release_manifest_sha256 must be 64 lowercase hexadecimal characters"
+        )
+
+    closure_hash = payload.get("model_closure_semantic_payload_sha256")
+    if not isinstance(closure_hash, str) or SHA256.fullmatch(closure_hash) is None:
+        errors.append(
+            "model_closure_semantic_payload_sha256 must be 64 lowercase hexadecimal characters"
         )
 
     published_at = payload.get("published_at")

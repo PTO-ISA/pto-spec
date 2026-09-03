@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""Run ASL-MODEL's exact LLVM-to-ASL closure from PTO-SPEC release CI."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.model_closure import invocation_path  # noqa: E402
+
+EXPECTED_RELEASE = "0.58.5"
+EXPECTED_PUBLICATION = "0.58.5.0"
+EXPECTED_ABI = "pto-isa-0.58.5-mode-function-v1"
+EXPECTED_PROJECTION = "f1d274691e7eeebc8117e838a26b716cfb9b455d131ded03f951be04129b1a07"
+
+
+def _git(root: Path, *arguments: str) -> str:
+    return subprocess.run(
+        ["git", "-C", str(root), *arguments],
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout.strip()
+
+
+def _repository(root: Path) -> str:
+    return _git(root, "remote", "get-url", "origin")
+
+
+def _identity() -> dict[str, str]:
+    specification = tomllib.loads((ROOT / "specification.toml").read_text(encoding="utf-8"))
+    release = specification["release"]
+    manifest = json.loads((ROOT / "spec/release-manifest.json").read_text(encoding="utf-8"))
+    identity = {
+        "release": release["architecture_version"],
+        "publication_version": release["publication_version"],
+        "encoding_abi": release["encoding_abi"],
+        "encoding_projection_sha256": manifest["encoding_projection_sha256"],
+    }
+    expected = {
+        "release": EXPECTED_RELEASE,
+        "publication_version": EXPECTED_PUBLICATION,
+        "encoding_abi": EXPECTED_ABI,
+        "encoding_projection_sha256": EXPECTED_PROJECTION,
+    }
+    if identity != expected:
+        raise ValueError("PTO-SPEC release identity is not the approved 0.58.5 closure")
+    return identity
+
+
+def _affected_pto_ids(document: object) -> list[str]:
+    if (
+        not isinstance(document, dict)
+        or document.get("schema_version") != "0.1"
+        or document.get("command") != "impact pto-release"
+        or document.get("ok") is not True
+        or document.get("diagnostics") != []
+        or not isinstance(document.get("data"), dict)
+    ):
+        raise ValueError("NDF impact command did not produce a clean v0.1 result")
+    report = document["data"]
+    if report.get("schema_version") != "1":
+        raise ValueError("NDF PTO release impact report schema mismatch")
+    changes = report.get("changes")
+    targets = report.get("conformance_targets")
+    if not isinstance(changes, list) or not isinstance(targets, list):
+        raise ValueError("NDF impact changes or conformance targets are missing")
+    conformance_targets = {
+        item.get("target_uri")
+        for item in targets
+        if isinstance(item, dict)
+        and isinstance(item.get("consumer_uri"), str)
+        and item["consumer_uri"].startswith("ndf://asl-model/")
+        and isinstance(item.get("target_uri"), str)
+    }
+    affected: set[str] = set()
+    for item in changes:
+        if not isinstance(item, dict) or not isinstance(item.get("uri"), str):
+            raise ValueError("NDF impact contains a malformed change")
+        uri = item["uri"]
+        if uri in conformance_targets or (
+            uri.startswith("ndf://pto-spec/PTO-INST-")
+            and item.get("kind") in {"added", "modified", "moved"}
+        ):
+            affected.add(uri.removeprefix("ndf://pto-spec/"))
+    return sorted(affected)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--asl-model-root", required=True, type=Path)
+    parser.add_argument("--llvm-root", required=True, type=Path)
+    parser.add_argument("--ndf-root", required=True, type=Path)
+    parser.add_argument("--aslref-root", required=True, type=Path)
+    parser.add_argument("--asl-spec", required=True, type=Path)
+    parser.add_argument("--clang", required=True, type=Path)
+    parser.add_argument("--llvm-mc", required=True, type=Path)
+    parser.add_argument("--ld-lld", required=True, type=Path)
+    parser.add_argument("--aslref", required=True, type=Path)
+    parser.add_argument("--impact", required=True, type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument(
+        "--selection",
+        type=Path,
+        default=ROOT / "spec/model-closure-selection.json",
+    )
+    parser.add_argument("--mandatory-case-id", action="append", default=[])
+    parser.add_argument("--workflow-commit", required=True)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--run-attempt", required=True, type=int)
+    parser.add_argument("--timestamp", required=True)
+    parser.add_argument("--runner-image", required=True)
+    parser.add_argument("--builder-identity", required=True)
+    parser.add_argument("--target", default="linx64-unknown-none-elf")
+    arguments = parser.parse_args()
+    try:
+        impact_path = arguments.impact.resolve()
+        asl_model_root = arguments.asl_model_root.resolve()
+        llvm_root = arguments.llvm_root.resolve()
+        output_root = arguments.output.resolve()
+        impact = json.loads(impact_path.read_text(encoding="utf-8"))
+        affected = _affected_pto_ids(impact)
+        selection = json.loads(arguments.selection.read_text(encoding="utf-8"))
+        if (
+            selection.get("schema") != "pto.model-closure-selection.v1"
+            or selection.get("release") != EXPECTED_RELEASE
+        ):
+            raise ValueError("model closure selection identity mismatch")
+        selected_mandatory = selection.get("mandatory_case_ids")
+        if (
+            not isinstance(selected_mandatory, list)
+            or not selected_mandatory
+            or selected_mandatory != sorted(set(selected_mandatory))
+        ):
+            raise ValueError("model closure selection has invalid mandatory cases")
+        if arguments.mandatory_case_id and (
+            sorted(set(arguments.mandatory_case_id)) != selected_mandatory
+        ):
+            raise ValueError("command-line mandatory cases differ from release selection")
+        request = {
+            "schema": "pto-closure-request-v1",
+            "identity": _identity(),
+            "repositories": {
+                "pto_spec": {
+                    "repository": _repository(ROOT),
+                    "commit": _git(ROOT, "rev-parse", "HEAD"),
+                    "path": str(ROOT),
+                },
+                "llvm": {
+                    "repository": _repository(llvm_root),
+                    "commit": _git(llvm_root, "rev-parse", "HEAD"),
+                    "path": str(llvm_root),
+                },
+                "asl_model": {
+                    "repository": _repository(asl_model_root),
+                    "commit": _git(asl_model_root, "rev-parse", "HEAD"),
+                    "path": str(asl_model_root),
+                },
+            },
+            "policy": {
+                "affected_pto_ids": affected,
+                "mandatory_case_ids": selected_mandatory,
+            },
+        }
+        output_root.mkdir(parents=True, exist_ok=False)
+        request_path = output_root / "closure-request.json"
+        request_path.write_text(
+            json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        evidence = output_root / "evidence"
+        subprocess.run(
+            [
+                str(asl_model_root / "scripts/pto-closure"),
+                "--request", str(request_path),
+                "--ndf-impact", str(impact_path),
+                "--ndf-root", str(invocation_path(arguments.ndf_root)),
+                "--aslref-root", str(invocation_path(arguments.aslref_root)),
+                "--asl-spec", str(invocation_path(arguments.asl_spec)),
+                "--clang", str(invocation_path(arguments.clang)),
+                "--llvm-mc", str(invocation_path(arguments.llvm_mc)),
+                "--ld-lld", str(invocation_path(arguments.ld_lld)),
+                "--aslref", str(invocation_path(arguments.aslref)),
+                "--target", arguments.target,
+                "--output", str(evidence),
+                "--workflow-repository", "PTO-ISA/pto-spec",
+                "--workflow-path", ".github/workflows/release.yml",
+                "--workflow-commit", arguments.workflow_commit,
+                "--run-id", arguments.run_id,
+                "--run-attempt", str(arguments.run_attempt),
+                "--timestamp", arguments.timestamp,
+                "--runner-image", arguments.runner_image,
+                "--builder-identity", arguments.builder_identity,
+            ],
+            check=True,
+            cwd=asl_model_root,
+        )
+        subprocess.run(
+            [
+                str(ROOT / "scripts/check-model-closure"),
+                "--semantic-payload", str(evidence / "closure-semantic-payload.json"),
+                "--run-envelope", str(evidence / "closure-run-envelope.json"),
+                "--pto-commit", _git(ROOT, "rev-parse", "HEAD"),
+                "--llvm-repository", _repository(llvm_root),
+                "--llvm-commit", _git(llvm_root, "rev-parse", "HEAD"),
+                "--asl-model-commit", _git(asl_model_root, "rev-parse", "HEAD"),
+                "--workflow-commit", arguments.workflow_commit,
+                "--run-id", arguments.run_id,
+                "--run-attempt", str(arguments.run_attempt),
+            ],
+            check=True,
+            cwd=ROOT,
+        )
+    except (OSError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError) as error:
+        print(f"error: model closure failed: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

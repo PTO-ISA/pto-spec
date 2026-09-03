@@ -28,7 +28,9 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/check-adrs",
                 "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
+                "./scripts/check-model-closure-schema",
                 "./scripts/check-release-workflow",
+                "./scripts/generate-release-gate-readiness --check",
                 "./scripts/check-repository --structure-only",
                 "git diff --check",
                 "./scripts/run-python-tests",
@@ -115,6 +117,12 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertIn("run_source_checks\nrun_tooling_checks", checker)
         self.assertNotIn("source_pid", checker)
         self.assertNotIn("tooling_pid", checker)
+
+    def test_local_runner_executes_every_listed_source_command_once(self) -> None:
+        checker = SCRIPT.read_text(encoding="utf-8")
+
+        for index in range(8):
+            self.assertEqual(checker.count(f"${{source_commands[{index}]}}"), 1)
 
     def test_local_runner_uses_professional_summary_output(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")

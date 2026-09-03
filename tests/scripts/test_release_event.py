@@ -21,6 +21,7 @@ VALID_PAYLOAD = {
     "release_id": 123,
     "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
     "release_manifest_sha256": "a" * 64,
+    "model_closure_semantic_payload_sha256": "b" * 64,
     "published_at": "2026-08-10T00:00:00Z",
 }
 
@@ -99,6 +100,7 @@ class ReleaseEventTest(unittest.TestCase):
         for digest in ("a" * 63, "A" * 64, "g" * 64):
             with self.subTest(digest=digest):
                 self.assert_invalid(release_manifest_sha256=digest)
+                self.assert_invalid(model_closure_semantic_payload_sha256=digest)
 
     def test_missing_or_invalid_utc_timestamp_is_rejected(self) -> None:
         missing = dict(VALID_PAYLOAD)

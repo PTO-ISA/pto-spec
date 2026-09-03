@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 import subprocess
 import tempfile
 import unittest
@@ -16,6 +17,7 @@ MAKEFILE = ROOT / "Makefile"
 RELEASE_GATE = ROOT / "spec/evidence/release-gate-readiness.json"
 SPECIFICATION = ROOT / "specification.toml"
 RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
+MODEL_CLOSURE_RUNNER = ROOT / "scripts/run-model-closure"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 
 
@@ -30,6 +32,17 @@ def pending_release_decisions() -> tuple[str, ...]:
 
 
 class ReleaseClosureTest(unittest.TestCase):
+    def test_model_closure_runner_accepts_current_release_identity(self) -> None:
+        namespace = runpy.run_path(str(MODEL_CLOSURE_RUNNER))
+        identity = namespace["_identity"]()
+        manifest = json.loads(
+            (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            identity["encoding_projection_sha256"],
+            manifest["encoding_projection_sha256"],
+        )
+
     def test_release_identity_is_0585_and_owns_0585_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
@@ -51,6 +64,11 @@ class ReleaseClosureTest(unittest.TestCase):
         gate = json.loads(RELEASE_GATE.read_text(encoding="utf-8"))
         self.assertIn("scripts/check-release-workflow", gate["sources"])
         self.assertIn("scripts/check-release-event-schema", gate["sources"])
+        self.assertIn("scripts/check-model-closure", gate["sources"])
+        self.assertIn("scripts/check-model-closure-schema", gate["sources"])
+        self.assertIn("scripts/model_closure.py", gate["sources"])
+        self.assertIn("scripts/generate-model-closure-impact", gate["sources"])
+        self.assertIn("scripts/run-model-closure", gate["sources"])
         self.assertIn("scripts/release_event.py", gate["sources"])
         self.assertIn(
             "spec/schemas/pto-spec-release-event-v1.schema.json", gate["sources"]
@@ -76,6 +94,26 @@ class ReleaseClosureTest(unittest.TestCase):
                 "name": "formal mnemonic implementation closure",
                 "command": "python3 scripts/manual_semantic_audit.py",
                 "evidence": ["scripts/manual_semantic_audit.py"],
+            },
+            gate["gates"],
+        )
+        self.assertIn(
+            {
+                "id": "RG-11",
+                "name": "LLVM-to-ASL model closure",
+                "command": "scripts/check-model-closure <same-run artifacts>",
+                "evidence": [
+                    ".github/workflows/release.yml",
+                    "scripts/check-model-closure",
+                    "scripts/check-model-closure-schema",
+                    "scripts/model_closure.py",
+                    "scripts/generate-model-closure-impact",
+                    "scripts/run-model-closure",
+                    "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+                    "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+                    "spec/model-closure-selection.json",
+                    "spec/schemas/pto-model-closure-selection-v1.schema.json",
+                ],
             },
             gate["gates"],
         )
@@ -142,6 +180,10 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/evidence/release-traceability-readiness.json",
                 "spec/evidence/mnemonic-descriptions/coverage-summary.json",
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
+                "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+                "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+                "spec/model-closure-selection.json",
+                "spec/schemas/pto-model-closure-selection-v1.schema.json",
             },
         )
         for row in registry["evidence"]:

@@ -80,6 +80,7 @@ required_files=(
     docs/ndf/supplements/scalar-02.json
     docs/ndf/supplements/tile-01.json
     docs/ndf/supplements/tile-02.json
+    spec/model-closure-selection.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
     spec/catalog/numeric-profile-identities.json
@@ -95,6 +96,9 @@ required_files=(
     spec/evidence/release-traceability-readiness.json
     spec/evidence/mnemonic-descriptions/schema.json
     spec/evidence/mnemonic-descriptions/coverage-summary.json
+    spec/schemas/pto-closure-run-envelope-v1.schema.json
+    spec/schemas/pto-closure-semantic-payload-v1.schema.json
+    spec/schemas/pto-model-closure-selection-v1.schema.json
     scripts/generate-mnemonic-description-inventory
     scripts/generate-mnemonic-description-coverage
     scripts/check-mnemonic-explanations
@@ -112,6 +116,10 @@ required_files=(
     scripts/check-asl-tests
     scripts/check-ndf
     scripts/check-release-closure
+    scripts/check-model-closure
+    scripts/check-model-closure-schema
+    scripts/generate-model-closure-impact
+    scripts/run-model-closure
     scripts/print-asl-test-matrix
     scripts/prepare-aslref
     scripts/report-asl-page-results
@@ -136,6 +144,16 @@ pin=$(tr -d '[:space:]' < .aslref-version)
 origin=$(tr -d '[:space:]' < .aslref-origin)
 [[ $origin == https://github.com/PTO-ISA/herdtools7.git ]] ||
     fail ".aslref-origin must name the PTO-ISA herdtools7 fork"
+specification_origin=$(python3 - <<'PY'
+import pathlib
+import tomllib
+
+data = tomllib.loads(pathlib.Path("specification.toml").read_text(encoding="utf-8"))
+print(data.get("toolchain", {}).get("aslref_repository", ""))
+PY
+) || fail "specification.toml does not contain valid ASLRef toolchain metadata"
+[[ $specification_origin == "$origin" ]] ||
+    fail "specification.toml ASLRef repository must match .aslref-origin"
 
 if git ls-files | grep -Eq '^(build|\.cache)/'; then
     fail "generated build or cache files are tracked"

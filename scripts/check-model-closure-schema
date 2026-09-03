@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""Check the two versioned model-closure artifact schemas."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CONTRACTS = {
+    "spec/schemas/pto-closure-semantic-payload-v1.schema.json": (
+        "pto-closure-semantic-payload-v1",
+        {"schema", "closure_lock", "closure_lock_sha256", "ndf_impact", "obligations", "cases", "case_manifests"},
+    ),
+    "spec/schemas/pto-closure-run-envelope-v1.schema.json": (
+        "pto-closure-run-envelope-v1",
+        {"schema", "semantic_payload_sha256", "workflow", "run", "runner", "artifact_sha256", "attestation"},
+    ),
+}
+SELECTION = ROOT / "spec/model-closure-selection.json"
+SELECTION_SCHEMA = ROOT / "spec/schemas/pto-model-closure-selection-v1.schema.json"
+
+
+def validate() -> list[str]:
+    errors: list[str] = []
+    for relative, (schema_name, required) in CONTRACTS.items():
+        try:
+            document = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"{relative}: invalid JSON schema: {error}")
+            continue
+        if document.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+            errors.append(f"{relative}: must use JSON Schema draft 2020-12")
+        if document.get("type") != "object" or document.get("additionalProperties") is not False:
+            errors.append(f"{relative}: root must be a closed object")
+        if set(document.get("required", [])) != required:
+            errors.append(f"{relative}: required field set mismatch")
+        properties = document.get("properties")
+        if not isinstance(properties, dict) or set(properties) != required:
+            errors.append(f"{relative}: property field set mismatch")
+            continue
+        if properties.get("schema") != {"const": schema_name}:
+            errors.append(f"{relative}: artifact schema discriminator mismatch")
+    try:
+        selection = json.loads(SELECTION.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"spec/model-closure-selection.json: invalid selection: {error}")
+        return errors
+    expected_fields = {
+        "$schema", "schema", "release", "adoption_baseline_commit",
+        "mandatory_case_ids", "pre_adoption_policy", "post_adoption_policy",
+    }
+    if set(selection) != expected_fields:
+        errors.append("model closure selection field set mismatch")
+    if selection.get("schema") != "pto.model-closure-selection.v1":
+        errors.append("model closure selection schema mismatch")
+    if selection.get("release") != "0.58.5":
+        errors.append("model closure selection release mismatch")
+    baseline = selection.get("adoption_baseline_commit")
+    if not isinstance(baseline, str) or len(baseline) != 40 or any(
+        character not in "0123456789abcdef" for character in baseline
+    ):
+        errors.append("model closure adoption baseline must be 40 lowercase hex")
+    cases = selection.get("mandatory_case_ids")
+    if not isinstance(cases, list) or not cases or cases != sorted(set(cases)):
+        errors.append("model closure mandatory cases must be non-empty, sorted, and unique")
+    if selection.get("pre_adoption_policy") != "representative-family-canaries":
+        errors.append("model closure pre-adoption policy mismatch")
+    if selection.get("post_adoption_policy") != (
+        "all-changed-instruction-identities-require-explicit-cases"
+    ):
+        errors.append("model closure post-adoption policy mismatch")
+    try:
+        selection_schema = json.loads(SELECTION_SCHEMA.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"model closure selection schema is invalid: {error}")
+        return errors
+    if (
+        selection_schema.get("$schema")
+        != "https://json-schema.org/draft/2020-12/schema"
+        or selection_schema.get("type") != "object"
+        or selection_schema.get("additionalProperties") is not False
+        or set(selection_schema.get("required", [])) != expected_fields
+        or set(selection_schema.get("properties", {})) != expected_fields
+    ):
+        errors.append("model closure selection JSON schema contract mismatch")
+    return errors
+
+
+def main() -> int:
+    errors = validate()
+    if errors:
+        for error in errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    print("model closure schema contracts passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
