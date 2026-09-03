@@ -180,6 +180,7 @@ nav:
               - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
               - Commands: block/model/dispatch/commands.md
               - Comparison Schema: block/model/dispatch/comparison-schema.md
+              - CUBE Accumulator Routing: block/model/dispatch/cube-accumulator-routing.md
               - CUBE Destination: block/model/dispatch/cube-destination.md
               - CUBE Tmatmul: block/model/dispatch/cube-tmatmul.md
               - Decode: block/model/dispatch/decode.md
@@ -879,6 +880,7 @@ nav:
               - Generation: tile/model/execution/generation.md
               - Image To Column: tile/model/execution/image-to-column.md
               - Indexed Rearrangement: tile/model/execution/indexed-rearrangement.md
+              - Internal Accumulator: tile/model/execution/internal-accumulator.md
               - Matrix Scale: tile/model/execution/matrix-scale.md
               - Minmax: tile/model/execution/minmax.md
               - Postprocess: tile/model/execution/postprocess.md
@@ -1078,6 +1080,7 @@ nav:
               - "ADR-CUBE-0015: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/ADR-CUBE-0015-shared-source-subview-per-pe.md
               - "ADR-CUBE-0016: Remove legacy Shared movement Functions": status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md
               - "ADR-CUBE-0017: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/ADR-CUBE-0017-tcvt-cube-m16-m32-layout-closure.md
+              - "ADR-CUBE-0018: InternalAcc partial-sum routing for CUBE matrix operations": status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md
           - NUM:
               - "ADR-NUM-0001: Numeric profile identity and bounded variation framework": status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md
               - "ADR-NUM-0002: Scalar numeric flag state and producer ownership": status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md

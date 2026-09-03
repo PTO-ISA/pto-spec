@@ -1,13 +1,14 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
-
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"]}
 // NDF-BEGIN: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// Every Matrix ACC form MUST read explicit C and publish distinct D. C's
-// encoded relative selector MUST differ from zero-extended DstTile before
-// allocation, and direct Tile calls MUST use different C/D TileIndex values.
-// C MUST persist while D, reductions, and numeric status publish atomically.
+// Every Matrix ACC form MUST bind explicit C and D. C's encoded relative
+// selector MUST differ from zero-extended DstTile before any effects, and
+// direct Tile calls MUST use different C/D TileIndex values. C MUST remain the
+// architectural accumulator input and MUST persist while D, reductions, and
+// numeric status publish atomically. CCTRL[1] MAY hint transparent cache use or
+// prefetch of C. CCTRL[0] selects raw accumulator-type D output and MAY hint
+// transparent cache replacement with the identical published D value.
 // NDF-END: PTO-CUBE-ACCUMULATOR-OUTPUT-001
-
 // NDF-BEGIN: PTO-CUBE-GROUP-M-DISTRIBUTION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // Every cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL form MUST
@@ -18,7 +19,6 @@
 // compute-only Local resolution, dependency, subview, alias, allocation,
 // generation, payload, parameter, and output effects. TGEMV remains Local-only.
 // NDF-END: PTO-CUBE-GROUP-M-DISTRIBUTION-001
-
 readonly func BundleCubeMatrixSelected() => boolean
 begin
     return _BundleOperation.valid &&
@@ -27,16 +27,13 @@ begin
            TileMatrixFunctionAssigned(
                UInt(_BundleOperation.selector[4:0]));
 end;
-
 readonly func BundleTMATMULDataAttributesLegal() => boolean
 begin
     if !_BundleDataAttributesPresent then return TRUE; end;
     return _BundleDataAttributes.data_layout == Zeros{5} &&
-           _BundleDataAttributes.pad_value == Zeros{2} &&
            _BundleDataAttributes.comparison_mode == Zeros{3} &&
            !_BundleDataAttributes.canonicalize;
 end;
-
 readonly func BundleTMATMULMasksAgree() => boolean
 begin
     var seen = FALSE;
@@ -59,7 +56,6 @@ begin
     end;
     return seen;
 end;
-
 readonly func BundleTMATMULSharedMasksAreZero() => boolean
 begin
     for binding = 0 to 3 do
@@ -70,7 +66,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func BundleMatrixPostProcessSourceCount() => integer {0..3}
 begin
     return
@@ -84,14 +79,12 @@ begin
                _BundleFixedPointAttributes.relu_mode)
          then 1 else 0);
 end;
-
 readonly func BundleMatrixDestinationCount() => integer {1..3}
 begin
     return 1 +
         (if _BundleFixedPointAttributes.row_max_en then 1 else 0) +
         (if _BundleFixedPointAttributes.group_max_en then 1 else 0);
 end;
-
 readonly func BundleMatrixDynamicBindingsComplete(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     function: integer {0..31},
@@ -115,19 +108,16 @@ begin
            BundleTileBindingStreamTerminated() &&
            BundleOperationScalarBindingSchemaLegal(operation);
 end;
-
 pure func BundleTMATMULCooperativeSelected(
     function: integer {0..31},
     shared_count: integer {0..4}) => boolean
 begin
     return shared_count > 0 && !TileMatrixFunctionIsGEMV(function);
 end;
-
 pure func BundleTMATMULCooperativeMaskValueLegal(mask: bits(4)) => boolean
 begin
     return mask == '1111';
 end;
-
 readonly func BundleTMATMULCooperativeMasksLegal(
     function: integer {0..31},
     shared_count: integer {0..4}) => boolean
@@ -151,7 +141,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func BundleTMATMULSelectedMask() => bits(4)
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
@@ -161,7 +150,6 @@ begin
     end;
     return Zeros{4};
 end;
-
 readonly func BundleTMATMULCurrentPEInactive() => boolean
 begin
     if !BundleCubeMatrixSelected() then return FALSE; end;
@@ -175,7 +163,6 @@ begin
     return BundleMatrixCooperativeValidM(
         group_m as integer {1..65535}, _CurrentMemoryAgent) == 0;
 end;
-
 readonly func BundleMatrixPrimaryDestinationCapacityBytes()
     => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536,
                 131072,262144}
@@ -189,7 +176,6 @@ begin
     end;
     return 0;
 end;
-
 readonly func BundleMatrixAccumulatorDestinationIndicesDistinct(
     function: integer {0..31}) => boolean
 begin
@@ -215,7 +201,6 @@ begin
     if !found then return FALSE; end;
     return accumulator != destination_hand;
 end;
-
 func ExecuteBundleTMATMULOperation() => boolean
 begin
     // Zero-mask B.IOT/B.IOS commands do not install bindings.  Their sole
@@ -225,12 +210,10 @@ begin
        BundleTMATMULSharedMasksAreZero() then
         return TRUE;
     end;
-
     if !_BundleFixedPointAttributes.valid then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-
     let decoded = DecodeTileOperation(TileDecode_CUBE,
         BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
@@ -239,6 +222,7 @@ begin
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let function = UInt(_BundleOperation.selector[4:0]);
+    let cctrl = BundleTMATMULCCTRL();
     let left_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     let right_type = if _BundleDataAttributesPresent then
@@ -254,6 +238,8 @@ begin
        !BundleMatrixDynamicBindingsComplete(
            operation, function, left_type, right_type, shared_count) ||
        !BundleTMATMULDataAttributesLegal() ||
+       !BundleTMATMULAccumulatorControlLegal(function, cctrl) ||
+       !BundleTMATMULPartialPostProcessLegal(cctrl) ||
        !BundleTMATMULDimensionsLegal(shared_count) ||
        !SelectedBundleTileMasksLegal() ||
        !BundleTMATMULMasksAgree() ||
@@ -299,7 +285,6 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-
     let mathematical_sources = TileMatrixLocalMathematicalSourceCount(
         function, left_type, right_type, shared_count) +
         (if _BundleFixedPointAttributes.c_scale_en then 1 else 0);
@@ -347,12 +332,12 @@ begin
     let allocation_mask = if cooperative then
         BundleMatrixCooperativeCurrentPEMask(m, _CurrentMemoryAgent)
     else BundleTMATMULSelectedMask();
+    let partial_output = BundleTMATMULRawPartialOutput(cctrl);
     if !ResolveBundleTMATMULDestination(
            pe_m, n, result_type, TRUE, primary_layout,
            allocation_mask) then
         return FALSE;
     end;
-
     let operands = BundleTileInstructionOperands(operation);
     var left = _Tiles[[0]];
     var right = _Tiles[[0]];
@@ -367,13 +352,11 @@ begin
     var c_scale: TileIndex = operands.destination0;
     var local_ordinal: integer {0..6} = 0;
     var shared_ordinal: integer {0..4} = 0;
-
     if TileMatrixFunctionUsesAccumulator(function) then
         accumulator = BundleMatrixSourceAt(
             local_ordinal as integer {0..8});
         local_ordinal = (local_ordinal + 1) as integer {0..6};
     end;
-
     if shared_count == 0 then
         left = _Tiles[[BundleMatrixSourceAt(
             local_ordinal as integer {0..8})]];
@@ -472,25 +455,37 @@ begin
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(
                left, right, bias, TileMatrixFunctionUsesMX(function));
+    if TileMatrixFunctionUsesAccumulator(function) &&
+       BundleTMATMULAccumulatorPrefetchHint(cctrl) then
+        TileProfileInternalAccumulatorPrefetchHint(
+            accumulator, _Tiles[[accumulator]].cube_storage_bytes);
+    end;
     let destination = BundleMatrixDestinationAt(0);
+    let destination_template = _Tiles[[destination]];
     if TileMatrixFunctionUsesMX(function) then
         TMATMULMXSharedWithOptionalScales(
-            destination, accumulator,
+            destination, destination_template, accumulator,
             left, left_scale, left_scale_present,
             right, right_scale, right_scale_present,
             bias, TileMatrixFunctionUsesBias(function),
             TileMatrixFunctionUsesAccumulator(function),
-            c_scale, _BundleFixedPointAttributes.c_scale_en);
+            c_scale, _BundleFixedPointAttributes.c_scale_en,
+            cctrl[0:0] != Zeros{1});
     else
         TMATMULShared(
-            destination, accumulator, left, right, bias,
+            destination, destination_template, accumulator, left, right, bias,
             TileMatrixFunctionUsesBias(function),
             TileMatrixFunctionUsesAccumulator(function),
-            c_scale, _BundleFixedPointAttributes.c_scale_en);
+            c_scale, _BundleFixedPointAttributes.c_scale_en,
+            cctrl[0:0] != Zeros{1});
     end;
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;
+    end;
+    if partial_output then
+        TileProfileInternalAccumulatorReplacementHint(
+            destination, _Tiles[[destination]].cube_storage_bytes);
     end;
     if shared_count > 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});

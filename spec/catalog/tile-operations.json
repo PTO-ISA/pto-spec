@@ -5244,9 +5244,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL",
@@ -5274,7 +5275,8 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:left",
-        "operand:source1:right"
+        "operand:source1:right",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5300,9 +5302,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL_BIAS",
@@ -5335,7 +5338,8 @@
         "operand:destination0:destination",
         "operand:source0:left",
         "operand:source1:right",
-        "operand:source2:bias"
+        "operand:source2:bias",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5361,9 +5365,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL_ACC",
@@ -5396,7 +5401,8 @@
         "operand:destination0:destination",
         "operand:source0:accumulator",
         "operand:source1:left",
-        "operand:source2:right"
+        "operand:source2:right",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5425,9 +5431,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL_MX",
@@ -5465,7 +5472,8 @@
         "operand:source0:left",
         "operand:source1:row-scale",
         "operand:source2:right",
-        "operand:source3:column-scale"
+        "operand:source3:column-scale",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5497,9 +5505,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL_MX_BIAS",
@@ -5542,7 +5551,8 @@
         "operand:source1:row-scale",
         "operand:source2:right",
         "operand:source3:column-scale",
-        "operand:source4:bias"
+        "operand:source4:bias",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5574,9 +5584,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TMATMUL_MX_ACC",
@@ -5619,7 +5630,8 @@
         "operand:source1:left",
         "operand:source2:row-scale",
         "operand:source3:right",
-        "operand:source4:column-scale"
+        "operand:source4:column-scale",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5642,9 +5654,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV",
@@ -5672,7 +5685,8 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:source0:left-vector",
-        "operand:source1:right-matrix"
+        "operand:source1:right-matrix",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5698,9 +5712,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV_BIAS",
@@ -5733,7 +5748,8 @@
         "operand:destination0:destination",
         "operand:source0:left-vector",
         "operand:source1:right-matrix",
-        "operand:source2:bias"
+        "operand:source2:bias",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5759,9 +5775,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV_ACC",
@@ -5794,7 +5811,8 @@
         "operand:destination0:destination",
         "operand:source0:accumulator",
         "operand:source1:left-vector",
-        "operand:source2:right-matrix"
+        "operand:source2:right-matrix",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5823,9 +5841,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV_MX",
@@ -5863,7 +5882,8 @@
         "operand:source0:left-vector",
         "operand:source1:row-scale",
         "operand:source2:right-matrix",
-        "operand:source3:column-scale"
+        "operand:source3:column-scale",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5895,9 +5915,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV_MX_BIAS",
@@ -5940,7 +5961,8 @@
         "operand:source1:row-scale",
         "operand:source2:right-matrix",
         "operand:source3:column-scale",
-        "operand:source4:bias"
+        "operand:source4:bias",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"
@@ -5972,9 +5994,10 @@
         "allowed_nonzero_fields": [
           "DataType",
           "RMode",
-          "Sat"
+          "Sat",
+          "PadValueOrByteId"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "matrix-cctrl"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TGEMV_MX_ACC",
@@ -6017,7 +6040,8 @@
         "operand:source1:left-vector",
         "operand:source2:row-scale",
         "operand:source3:right-matrix",
-        "operand:source4:column-scale"
+        "operand:source4:column-scale",
+        "runtime:CurrentBundleCCTRL:raw-partial-and-transparent-cache-hints"
       ],
       "classification": "matrix-and-matrix-vector",
       "engine": "CUBE"

@@ -40,13 +40,33 @@
     "PTO-TILE-TMATMUL-MX-ACC",
     "PTO-TILE-TGEMV-ACC",
     "PTO-TILE-TGEMV-MX-ACC",
-    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+    "PTO-TILE-MODEL-EXECUTION-CUBE",
+    "PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/106",
   "release_impact": "required",
+  "amendments": [
+    {
+      "date": "2026-09-04",
+      "baseline": "5f1cb735aa00ad061ec77c691f6a913711316f92",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/234#issuecomment-5529151834",
+      "affected_ndf": [
+        "PTO-CUBE-ACCUMULATOR-OUTPUT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-TILE-MODEL-EXECUTION-CUBE",
+        "PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"
+      ]
+    }
+  ],
   "legacy_ids": [
     "ADR-0073"
   ]
@@ -164,6 +184,16 @@ prove:
 7. atomic D/auxiliary/status publication;
 8. rollback on late output capacity and parameter failures; and
 9. unchanged source lifetime and Matrix instruction encodings.
+
+## 2026-09-04 amendment: raw D and transparent-cache hints
+
+ADR-CUBE-0018 preserves this decision's explicit, distinct C and D boundary.
+CCTRL[0]=1 selects raw accumulator-type D instead of final post-processing, but
+D remains newly allocated and atomically published. CCTRL[1] may provide a
+non-binding transparent-cache use or prefetch hint for explicit C, and
+CCTRL[0]=1 may hint cache replacement with the identical published D value.
+Cache behavior cannot replace C or D or alter results, faults, allocation,
+publication, source lifetime, or ordering.
 
 ## Bilingual decision detail / 双语决策详述
 

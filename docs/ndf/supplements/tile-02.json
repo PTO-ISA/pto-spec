@@ -795,6 +795,18 @@
         "en": "TXORS XORs every valid Local integer element with the per-participating-PE scalar selected by optional B.IOR.RegSrc0. The selected integer data type controls interpretation and the renamed destination, while B.DATR contributes only padding. Legality and allocation checks precede source and scalar snapshots, after which payload, padding, status, and descriptor become visible together.",
         "zh-CN": "TXORS 将每个有效 Local 整数元素与可选 B.IOR.RegSrc0 为各参与 PE 选择的标量执行按位异或。所选整数数据类型控制操作解释与重命名目标，B.DATR 只贡献填充。合法性和分配检查先于源与标量快照，随后载荷、填充、状态和描述符一起可见。"
       }
+    },
+    {
+      "id": "PTO-CUBE-INTERNAL-ACCUMULATOR-001",
+      "source_path": "asl/tile/model/execution/internal-accumulator.asl",
+      "title": {
+        "en": "Opaque implementation-managed InternalAcc backing store",
+        "zh-CN": "不透明的实现管理 InternalAcc 后备存储"
+      },
+      "summary": {
+        "en": "This clause keeps InternalAcc as one opaque 128 KiB implementation-profile backing store with raw capacity and word access hooks. Portable ASL exposes no validity, shape, layout, dtype, owner, provenance, or activity metadata, and capacity misses select the required explicit D spill.",
+        "zh-CN": "本条款将 InternalAcc 保持为一个不透明的 128 KiB 实现 profile 后备存储，并提供原始容量和字访问钩子。可移植 ASL 不暴露有效性、形状、布局、数据类型、所有者、来源或活动元数据，容量不足时选择所需的显式 D 溢出。"
+      }
     }
   ]
 }

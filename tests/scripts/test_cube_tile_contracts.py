@@ -120,8 +120,13 @@ class CubeTileContractTest(unittest.TestCase):
                 self.assertEqual(
                     record["datr_contract"],
                     {
-                        "allowed_nonzero_fields": ["DataType", "RMode", "Sat"],
-                        "pad_union": "must-zero",
+                        "allowed_nonzero_fields": [
+                            "DataType",
+                            "RMode",
+                            "Sat",
+                            "PadValueOrByteId",
+                        ],
+                        "pad_union": "matrix-cctrl",
                     },
                 )
 
@@ -140,6 +145,27 @@ class CubeTileContractTest(unittest.TestCase):
                     ),
                     expected_roles,
                 )
+
+    def test_matrix_cctrl_contract_is_consistent_across_tile_and_start_owners(self) -> None:
+        for tile_name, start_name in CUBE_TILE_TO_START.items():
+            for mnemonic in (tile_name, start_name):
+                with self.subTest(mnemonic=mnemonic):
+                    contract = self.by_mnemonic[mnemonic].metadata["contract"]
+                    self.assertTrue(
+                        any("Omitted CCTRL selects 00" in row for row in contract["defaults"])
+                    )
+                    self.assertTrue(
+                        any(
+                            "Every successful form allocates and publishes D" in row
+                            for row in contract["legality"]
+                        )
+                    )
+                    self.assertTrue(
+                        any("Transparent-cache hints" in row for row in contract["ordering"])
+                    )
+                    self.assertTrue(
+                        any("Always publish D" in row for row in contract["state_effects"])
+                    )
 
 
 if __name__ == "__main__":

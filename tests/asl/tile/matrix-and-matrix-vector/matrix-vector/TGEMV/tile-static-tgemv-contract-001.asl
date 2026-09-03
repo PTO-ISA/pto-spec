@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-vector
-    // block: BSTART.TGEMV AType | B.DATR BType, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one) | B.DIM LB0 M (optional, default 1; TGEMV permits only M=1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary | B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
+    // block: BSTART.TGEMV AType | B.DATR BType, PadValueOrByteId/CCTRL, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one) | B.DIM LB0 M (optional, default 1; TGEMV permits only M=1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary | B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
     assert DecodeTileOperation(TileDecode_CUBE, '000000010000') == 97;
     assert TileOperationOfIndex(97) == TileOperation_TGEMV;
     assert TileHandlerOfIndex(97) == TileHandler_TGEMV;

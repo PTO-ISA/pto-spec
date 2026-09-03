@@ -87,6 +87,7 @@ TILE_DATR_PAD_UNION_ENUM = {
     "pad-value": "TileDATRPadUnion_PadValue",
     "histogram-byte-id": "TileDATRPadUnion_HistogramByteId",
     "must-zero": "TileDATRPadUnion_MustZero",
+    "matrix-cctrl": "TileDATRPadUnion_MatrixCCTRL",
 }
 TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "ExecuteTileBinary",
@@ -8898,6 +8899,7 @@ def _emit_monolithic() -> None:
             "TileDATRPadUnion_PadValue",
             "TileDATRPadUnion_HistogramByteId",
             "TileDATRPadUnion_MustZero",
+            "TileDATRPadUnion_MatrixCCTRL",
         ],
     )
     emit_enum(

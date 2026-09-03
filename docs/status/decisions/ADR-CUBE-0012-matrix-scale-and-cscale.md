@@ -50,6 +50,24 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0101"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-03",
+      "baseline": "2b7ed44063272ad6958546eb2121f8fc8fb48c4b",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/234",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-TILE-MODEL-EXECUTION-CUBE",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS"
+      ]
+    }
   ]
 }
 ---
