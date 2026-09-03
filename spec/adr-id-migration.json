@@ -533,6 +533,14 @@
       "old_body_sha256": "39b1622204ad8691a19bc5b5c9339dc46daf8d3620069f78e2b7e413f5c59f83"
     },
     {
+      "old_id": "ADR-0111",
+      "new_id": "ADR-TILE-0012",
+      "old_path": "docs/status/decisions/0111-cube-m16-m32-reduction-expansion-layout.md",
+      "new_path": "docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md",
+      "type": "TILE",
+      "old_body_sha256": "8df6c08736d57fd83a3a67e17b64da9fc5b7dbd74cd123e1691aedd4f6607c50"
+    },
+    {
       "old_id": "ADR-0041",
       "new_id": "ADR-CUBE-0001",
       "old_path": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",

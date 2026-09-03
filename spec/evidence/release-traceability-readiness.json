@@ -12820,7 +12820,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLARGMAX-STATIC-001",
         "PTO-AVS-TILE-TCOLARGMAX-TIE-001"
@@ -12832,7 +12834,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLARGMIN-STATIC-001",
         "PTO-AVS-TILE-TCOLARGMIN-TIE-001"
@@ -12844,7 +12848,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPAND-COPY-001",
         "PTO-AVS-TILE-TCOLEXPAND-STATIC-001"
@@ -12856,7 +12862,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDADD-STATIC-001",
         "PTO-AVS-TILE-TCOLEXPANDADD-TYPED-001"
@@ -12868,7 +12876,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDDIV-SIGNED-001",
         "PTO-AVS-TILE-TCOLEXPANDDIV-STATIC-001"
@@ -12880,7 +12890,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-EXPDIF-STAGE3-DECODED-001",
         "PTO-AVS-TILE-TCOLEXPANDEXPDIF-COMPOSE-001",
@@ -12893,7 +12905,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDMAX-STATIC-001",
         "PTO-AVS-TILE-TCOLEXPANDMAX-UNSIGNED-001"
@@ -12905,7 +12919,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDMIN-SIGNED-001",
         "PTO-AVS-TILE-TCOLEXPANDMIN-STATIC-001"
@@ -12917,7 +12933,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDMUL-STATIC-001",
         "PTO-AVS-TILE-TCOLEXPANDMUL-TYPED-001"
@@ -12929,7 +12947,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLEXPANDSUB-STATIC-001",
         "PTO-AVS-TILE-TCOLEXPANDSUB-TYPED-001"
@@ -12941,7 +12961,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLMAX-STATIC-001",
         "PTO-AVS-TILE-TCOLMAX-TYPE-DOMAIN-002",
@@ -12954,7 +12976,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLMIN-S8-001",
         "PTO-AVS-TILE-TCOLMIN-STATIC-001",
@@ -12967,7 +12991,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLPROD-COLUMNS-001",
         "PTO-AVS-TILE-TCOLPROD-STATIC-001",
@@ -12980,7 +13006,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCOLSUM-COLUMNS-001",
         "PTO-AVS-TILE-TCOLSUM-STATIC-001",
@@ -13101,7 +13129,9 @@
       "owners": [
         "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TEXPANDS-BUNDLE-001",
         "PTO-AVS-TILE-TEXPANDS-PADDING-001",
@@ -13757,7 +13787,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWARGMAX-STATIC-001",
         "PTO-AVS-TILE-TROWARGMAX-TIE-001"
@@ -13769,7 +13801,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWARGMIN-INDEX-DTYPE-DECODED-001",
         "PTO-AVS-TILE-TROWARGMIN-SHAPE-001",
@@ -13783,7 +13817,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPAND-COPY-001",
         "PTO-AVS-TILE-TROWEXPAND-STATIC-001"
@@ -13795,7 +13831,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDADD-STATIC-001",
         "PTO-AVS-TILE-TROWEXPANDADD-TYPED-001"
@@ -13807,7 +13845,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDDIV-SIGNED-001",
         "PTO-AVS-TILE-TROWEXPANDDIV-STATIC-001"
@@ -13819,7 +13859,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-EXPDIF-STAGE3-DECODED-001",
         "PTO-AVS-TILE-TROWEXPANDEXPDIF-COMPOSE-001",
@@ -13832,7 +13874,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDMAX-STATIC-001",
         "PTO-AVS-TILE-TROWEXPANDMAX-UNSIGNED-001"
@@ -13844,7 +13888,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDMIN-SIGNED-001",
         "PTO-AVS-TILE-TROWEXPANDMIN-STATIC-001"
@@ -13856,7 +13902,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDMUL-STATIC-001",
         "PTO-AVS-TILE-TROWEXPANDMUL-TYPED-001"
@@ -13868,7 +13916,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWEXPANDSUB-STATIC-001",
         "PTO-AVS-TILE-TROWEXPANDSUB-TYPED-001"
@@ -13880,7 +13930,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWMAX-STATIC-001",
         "PTO-AVS-TILE-TROWMAX-U16-001",
@@ -13893,7 +13945,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWMIN-S8-001",
         "PTO-AVS-TILE-TROWMIN-STATIC-001"
@@ -13905,7 +13959,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWPROD-ONE-001",
         "PTO-AVS-TILE-TROWPROD-STATIC-001"
@@ -13917,7 +13973,9 @@
       "owners": [
         "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-TILE-0012"
+      ],
       "tests": [
         "PTO-AVS-TILE-TROWSUM-STATIC-001",
         "PTO-AVS-TILE-TROWSUM-U8-WRAP-001"
@@ -18788,7 +18846,7 @@
     "asl/tile/model/legality/operand-schema.asl": "2cf35b8c683f8dcdd7f826e28fd8cac0db01815dad1920e2f95b73e86cb03dce",
     "asl/tile/model/legality/pe-mask.asl": "0725c4ce0deb99b2d0f870a94fb609288adf149dd33300a33e096046a90d54bb",
     "asl/tile/model/legality/predicate-carriers.asl": "e5566216efe63e6e9ee4ea34c770bc11252d6bb03e5e481853dcbfdfc718fe4b",
-    "asl/tile/model/legality/reduction-and-expansion.asl": "89bf2717caf2f72fc79c6427cc2cc100cfc59de4aedb017b8e7f88106bf84d18",
+    "asl/tile/model/legality/reduction-and-expansion.asl": "18f8c217756238fca83abaacdbce1effd0164e42df862a78dfaaa1d61da076fc",
     "asl/tile/model/legality/sorting.asl": "01fc46968d49c487acb39715dc5a8b971e3f19735037f3c3be869f34c47c0742",
     "asl/tile/model/memory/addressing.asl": "0f2e18b2ad192ae74fb9258bc8843d6ee99b88d2165f6d2351ca3691061da556",
     "asl/tile/model/memory/atomics.asl": "6bbf02618e08d269ffd2ecb63724705458f269c3c4645c6b7cb5d54c529a803e",
@@ -19686,7 +19744,7 @@
     "docs/tile/model/legality/operand-schema.md": "57593a2a443db3f3684669eb7fe53fa4e619f48c780504b6f0d5fd76f640eedb",
     "docs/tile/model/legality/pe-mask.md": "4367e7084d46af15df1ebd1749d038f63e349ea0995f74400d5ebf7d21ff3779",
     "docs/tile/model/legality/predicate-carriers.md": "b196db2b0f6b663879bcda93bf9cb741fb2ce429bafbacb4eeaa804605fd6e4f",
-    "docs/tile/model/legality/reduction-and-expansion.md": "7a37d1c127cb05fcb5e94ed78798be9998a519991476c1355be9300888c20b60",
+    "docs/tile/model/legality/reduction-and-expansion.md": "61bf8b856dbd2eee11536bc8e72feb1e41cb6a04669290e7309bb5a38d00a686",
     "docs/tile/model/legality/sorting.md": "3ba39fcb47508ae5f09aaad04d13dd2135fbbd1b5bc9343d864a3505d296679d",
     "docs/tile/model/memory/addressing.md": "61d901a0b051abc8d553cc63673bf722e0ab83f9e4da033af8a23a4be49c7f2e",
     "docs/tile/model/memory/atomics.md": "7221bb9240cf56735bb51a7629a3835fca2dc07d91fbca73d95e93db26b84ff6",
@@ -19753,7 +19811,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "ae2a1788d7cac1caae17c10b33e747e9ce8cf9723990eea39277c4afe5ef3314",
+    "spec/evidence/adr-index.json": "34ba0827308d1501d2be50bde3e349af898fcf0ba96d45ac8cf25f309115782a",
     "spec/evidence/instruction-contract-closure.json": "dc96c146cbfa890941dcda121721f6a1f8fe5146499a1f58df9d6a8f8586337e",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
