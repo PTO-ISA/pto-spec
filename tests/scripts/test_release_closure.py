@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 import subprocess
 import tempfile
 import unittest
@@ -16,6 +17,7 @@ MAKEFILE = ROOT / "Makefile"
 RELEASE_GATE = ROOT / "spec/evidence/release-gate-readiness.json"
 SPECIFICATION = ROOT / "specification.toml"
 RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
+MODEL_CLOSURE_RUNNER = ROOT / "scripts/run-model-closure"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 
 
@@ -30,6 +32,17 @@ def pending_release_decisions() -> tuple[str, ...]:
 
 
 class ReleaseClosureTest(unittest.TestCase):
+    def test_model_closure_runner_accepts_current_release_identity(self) -> None:
+        namespace = runpy.run_path(str(MODEL_CLOSURE_RUNNER))
+        identity = namespace["_identity"]()
+        manifest = json.loads(
+            (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            identity["encoding_projection_sha256"],
+            manifest["encoding_projection_sha256"],
+        )
+
     def test_release_identity_is_0585_and_owns_0585_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")

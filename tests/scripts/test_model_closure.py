@@ -15,7 +15,7 @@ EXPECTED = {
     "release": "0.58.5",
     "publication_version": "0.58.5.0",
     "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-    "encoding_projection_sha256": "d8deb7e99bae8dec66a624b36b93bb3f85bcf93dfa02d3ee07357d1efb1ede18",
+    "encoding_projection_sha256": "f1d274691e7eeebc8117e838a26b716cfb9b455d131ded03f951be04129b1a07",
     "pto_commit": "1" * 40,
     "pto_tree": "2" * 40,
     "llvm_repository": "https://github.com/LinxISA/llvm-project.git",
