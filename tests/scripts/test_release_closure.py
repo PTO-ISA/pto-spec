@@ -43,6 +43,21 @@ class ReleaseClosureTest(unittest.TestCase):
             manifest["encoding_projection_sha256"],
         )
 
+    def test_model_closure_canonicalizes_hosted_checkout_origins(self) -> None:
+        canonicalize = runpy.run_path(str(MODEL_CLOSURE_RUNNER))[
+            "_canonical_repository_url"
+        ]
+        self.assertEqual(
+            canonicalize("https://github.com/PTO-ISA/asl-model"),
+            "https://github.com/PTO-ISA/asl-model.git",
+        )
+        self.assertEqual(
+            canonicalize("https://github.com/PTO-ISA/asl-model.git"),
+            "https://github.com/PTO-ISA/asl-model.git",
+        )
+        with self.assertRaisesRegex(ValueError, "canonical GitHub HTTPS"):
+            canonicalize("git@github.com:PTO-ISA/asl-model.git")
+
     def test_release_identity_is_0585_and_owns_0585_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tomllib
@@ -21,6 +22,9 @@ EXPECTED_RELEASE = "0.58.5"
 EXPECTED_PUBLICATION = "0.58.5.1"
 EXPECTED_ABI = "pto-isa-0.58.5-mode-function-v1"
 EXPECTED_PROJECTION = "747c509525579dc84038738c9a3ba26ae6ed4ef29a1d302cefb2a7b07fc150a8"
+GITHUB_REPOSITORY = re.compile(
+    r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z"
+)
 
 
 def _git(root: Path, *arguments: str) -> str:
@@ -33,8 +37,16 @@ def _git(root: Path, *arguments: str) -> str:
     ).stdout.strip()
 
 
+def _canonical_repository_url(repository: str) -> str:
+    if GITHUB_REPOSITORY.fullmatch(repository) is None:
+        raise ValueError("repository origin is not a canonical GitHub HTTPS URL")
+    if repository.endswith(".git"):
+        return repository
+    return repository + ".git"
+
+
 def _repository(root: Path) -> str:
-    return _git(root, "remote", "get-url", "origin")
+    return _canonical_repository_url(_git(root, "remote", "get-url", "origin"))
 
 
 def _identity() -> dict[str, str]:
