@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 LAUNCHER = ROOT / "scripts" / "aslref"
 PREPARER = ROOT / "scripts" / "prepare-aslref"
-UPSTREAM = "https://github.com/herd/herdtools7.git"
+UPSTREAM = (ROOT / ".aslref-origin").read_text(encoding="utf-8").strip()
 PIN = (ROOT / ".aslref-version").read_text(encoding="utf-8").strip()
 
 
@@ -82,6 +82,30 @@ esac
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, "aslref:--type-check-strict fixture.asl\n")
 
+    def test_launcher_rejects_a_different_origin(self) -> None:
+        cache = self.temp / "wrong-origin-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(binary, "#!/usr/bin/env bash\nprintf 'must-not-run\\n'\n")
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env={
+                **self.env,
+                "PTO_ASLREF_ROOT": str(cache),
+                "PTO_TEST_UPSTREAM": "https://github.com/herd/herdtools7.git",
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("must-not-run", result.stdout)
+        self.assertIn("cached ASLRef origin", result.stderr)
+
     def test_prepared_launcher_raises_soft_stack_to_hard_limit(self) -> None:
         cache = self.temp / "stack-cache"
         (cache / ".git").mkdir(parents=True)
@@ -109,6 +133,56 @@ esac
             else str(hard_limit // 1024)
         )
         self.assertEqual(result.stdout, f"stack:{expected}\n")
+
+    def test_prepared_launcher_sets_gc_defaults(self) -> None:
+        cache = self.temp / "gc-default-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(
+            binary,
+            "#!/usr/bin/env bash\nprintf 'gc:%s\\n' \"${OCAMLRUNPARAM:-unset}\"\n",
+        )
+        env = {**self.env, "PTO_ASLREF_ROOT": str(cache)}
+        env.pop("OCAMLRUNPARAM", None)
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "gc:s=8M,o=200\n")
+
+    def test_prepared_launcher_preserves_gc_override(self) -> None:
+        cache = self.temp / "gc-override-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(
+            binary,
+            "#!/usr/bin/env bash\nprintf 'gc:%s\\n' \"${OCAMLRUNPARAM:-unset}\"\n",
+        )
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env={
+                **self.env,
+                "OCAMLRUNPARAM": "s=1M,o=100",
+                "PTO_ASLREF_ROOT": str(cache),
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "gc:s=1M,o=100\n")
 
     def test_launcher_rejects_a_dirty_pinned_checkout(self) -> None:
         cache = self.temp / "dirty-cache"

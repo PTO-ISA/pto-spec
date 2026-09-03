@@ -227,6 +227,7 @@ if set(EVIDENCE_FILES) != {
 }:
     raise SystemExit("release owned-output evidence registry drift")
 CANONICAL_STATIC_INPUTS = (
+    ".aslref-origin",
     ".aslref-version",
     "specification.toml",
     "spec/release-inputs.json",

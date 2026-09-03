@@ -778,6 +778,7 @@ class HostedFullValidationContractTest(unittest.TestCase):
         self.assert_full_rejected("      max-parallel: 8\n", "      max-parallel: 7\n")
 
     def test_shared_contract_binds_cache_to_all_toolchain_inputs(self) -> None:
+        self.assert_full_rejected(".aslref-origin", ".aslref-repository")
         self.assert_full_rejected("scripts/prepare-aslref", "scripts/prepare-toolchain")
 
     def test_shared_contract_uploads_only_per_id_results(self) -> None:

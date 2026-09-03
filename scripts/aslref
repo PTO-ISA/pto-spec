@@ -3,8 +3,8 @@ set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 pin=$(tr -d '[:space:]' < "$repo_root/.aslref-version")
+origin=$(tr -d '[:space:]' < "$repo_root/.aslref-origin")
 aslref_root=${PTO_ASLREF_ROOT:-"$repo_root/.cache/herdtools7"}
-upstream=https://github.com/herd/herdtools7.git
 
 if [[ ! $pin =~ ^[0-9a-f]{40}$ ]]; then
     echo "error: .aslref-version must contain one full Git commit SHA" >&2
@@ -21,8 +21,8 @@ if [[ ! -d "$aslref_root/.git" ]]; then
     exit 1
 fi
 
-if [[ $(git -C "$aslref_root" remote get-url origin) != "$upstream" ]]; then
-    echo "error: cached ASLRef origin is not $upstream" >&2
+if [[ $(git -C "$aslref_root" remote get-url origin) != "$origin" ]]; then
+    echo "error: cached ASLRef origin is not $origin" >&2
     exit 1
 fi
 
@@ -48,4 +48,10 @@ fi
 # shards and defeats `make test-parallel`.
 aslref_stack_limit=$(ulimit -Hs)
 ulimit -s "$aslref_stack_limit"
+if [[ -z ${OCAMLRUNPARAM:-} ]]; then
+    # Eight million words keeps short-lived interpreter values in the minor
+    # heap long enough to avoid repeated promotion and major-heap marking on
+    # reset-heavy points. Preserve an explicit caller override.
+    export OCAMLRUNPARAM=s=8M,o=200
+fi
 exec "$aslref_binary" "$@"

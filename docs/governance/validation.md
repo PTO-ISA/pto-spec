@@ -68,7 +68,8 @@ make release-verify
 make release-prepare
 ```
 
-`make setup` verifies and prepares the exact `.aslref-version` commit. The
+`make setup` verifies the `.aslref-origin` repository and prepares the exact
+`.aslref-version` commit. The
 release commands validate the strict assembled model, execute the complete test
 matrix, and reproduce registered evidence.
 
