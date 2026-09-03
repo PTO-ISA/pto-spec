@@ -2202,6 +2202,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2223,6 +2224,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2244,6 +2246,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2267,6 +2270,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2289,6 +2293,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2311,6 +2316,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2376,6 +2382,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2397,6 +2404,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2418,6 +2426,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2443,6 +2452,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2465,6 +2475,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -2487,6 +2498,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-TILE-0004",
@@ -4195,6 +4207,7 @@
         "asl/block/attributes/B.DATR.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -4232,7 +4245,9 @@
       "owners": [
         "asl/block/attributes/B.FPATR.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
         "PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007",
@@ -4864,7 +4879,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMV-DECODE-001",
         "PTO-AVS-BLOCK-TGEMV-EXEC-001"
@@ -4876,7 +4893,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMV.ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMV-ACC-DECODE-001",
         "PTO-AVS-BLOCK-TGEMV-ACC-EXEC-001"
@@ -4888,7 +4907,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMV.BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMV-BIAS-DECODE-001",
         "PTO-AVS-BLOCK-TGEMV-BIAS-EXEC-001"
@@ -4900,7 +4921,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMVMX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMVMX-DECODE-001",
         "PTO-AVS-BLOCK-TGEMVMX-EXEC-001"
@@ -4912,7 +4935,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMVMX.ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMVMX-ACC-DECODE-001",
         "PTO-AVS-BLOCK-TGEMVMX-ACC-EXEC-001"
@@ -4924,7 +4949,9 @@
       "owners": [
         "asl/block/execution/BSTART.TGEMVMX.BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0018"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TGEMVMX-BIAS-DECODE-001",
         "PTO-AVS-BLOCK-TGEMVMX-BIAS-EXEC-001"
@@ -4960,6 +4987,7 @@
         "asl/block/execution/BSTART.TMATMUL.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -4974,6 +5002,7 @@
         "asl/block/execution/BSTART.TMATMUL.ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -4988,6 +5017,7 @@
         "asl/block/execution/BSTART.TMATMUL.BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -5002,6 +5032,7 @@
         "asl/block/execution/BSTART.TMATMULMX.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -5016,6 +5047,7 @@
         "asl/block/execution/BSTART.TMATMULMX.ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -5030,6 +5062,7 @@
         "asl/block/execution/BSTART.TMATMULMX.BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13236,6 +13269,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13250,6 +13284,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13264,6 +13299,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13278,6 +13314,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13292,6 +13329,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13306,6 +13344,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13426,6 +13465,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13440,6 +13480,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13454,6 +13495,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13468,6 +13510,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13484,6 +13527,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -13498,6 +13542,7 @@
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0018",
         "ADR-GOV-0009"
       ],
       "tests": [
@@ -19877,7 +19922,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "54ec846b3ac2485a61ee092f773de2e2af633766eb91b11616956323b73dfc52",
+    "spec/evidence/adr-index.json": "8e5e1ddee249c2dc087f0cfd6f069d90506f8e2c4e323640a1f2eb921739281e",
     "spec/evidence/instruction-contract-closure.json": "1fc32b0b28b8fdba39885170927960a7f6548d1f59419e2df3d85ff9177458b7",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -68288,7 +68333,8 @@
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
         "ADR-TILE-0004",
-        "ADR-TILE-0008"
+        "ADR-TILE-0008",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-MATRIX-DEST-SHAPE-001",
@@ -68317,7 +68363,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
-        "ADR-TILE-0004"
+        "ADR-TILE-0004",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
@@ -68476,7 +68523,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
-        "ADR-TILE-0004"
+        "ADR-TILE-0004",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002",
@@ -68736,7 +68784,8 @@
         "ADR-BLOCK-0005",
         "ADR-GOV-0009",
         "ADR-TILE-0004",
-        "ADR-TILE-0008"
+        "ADR-TILE-0008",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/tile-scalar-schema.asl",
@@ -70153,7 +70202,8 @@
         "ADR-STATE-0002",
         "ADR-STATE-0003",
         "ADR-STATE-0011",
-        "ADR-TILE-0004"
+        "ADR-TILE-0004",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TESTBUNDLECONFIGURATIONSTATE-STATE-TRANSITION-001"
@@ -89823,7 +89873,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
-        "ADR-TILE-0008"
+        "ADR-TILE-0008",
+        "ADR-TILE-0012"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTDECODEDTILELEGALITYFAULTS-FAULT-001"

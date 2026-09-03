@@ -258,7 +258,8 @@ class AdrRecordTest(unittest.TestCase):
                         "ADR-0108",
                         "ADR-0110",
                     )
-                },
+                }
+                | {"ADR-CUBE-0018"},
             )
             self.assertTrue(
                 all(

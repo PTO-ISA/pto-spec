@@ -22,7 +22,7 @@ from scripts.release_selection import (  # noqa: E402
 )
 
 RELEASE = "0.58.5"
-PUBLICATION_VERSION = "0.58.5.0"
+PUBLICATION_VERSION = "0.58.5.1"
 ENCODING_ABI = "pto-isa-0.58.5-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
 TOTALITY_PATH = Path("spec/evidence/pto-isa-0585-encoding-totality.json")

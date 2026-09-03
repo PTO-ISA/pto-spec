@@ -19,7 +19,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-CUBE-0016](docs/status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 - [ADR-CUBE-0017](docs/status/decisions/ADR-CUBE-0017-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
 - [ADR-GOV-0005](docs/status/decisions/ADR-GOV-0005-mnemonic-field-encoding-closure.md): Mnemonic and Encoded-Field Contract Closure
-- [ADR-GOV-0009](docs/status/decisions/ADR-GOV-0009-0584-1-to-0585-compatibility.md): PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
 - [ADR-SCALAR-0004](docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
 - [ADR-SCALAR-0006](docs/status/decisions/ADR-SCALAR-0006-scalar-system-and-queue-operations.md): Scalar, system, and queue operations
@@ -32,6 +31,17 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Tile
 - [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
+
+## Release 0.58.5.1
+
+### Cross-cutting
+- [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
+- [ADR-TILE-0012](docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md): CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
+
+## Release 0.58.5.0
+
+### Cross-cutting
+- [ADR-GOV-0009](docs/status/decisions/ADR-GOV-0009-0584-1-to-0585-compatibility.md): PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary
 
 ## Release 0.58.4
 
@@ -138,7 +148,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): A2/A3 MX CUBE profile applicability
-- [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-MEM-0006](docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-MEM-0007](docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
@@ -163,7 +172,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-TILE-0004](docs/status/decisions/ADR-TILE-0004-bundle-command-totality-and-profile-boundaries.md): Bundle-command totality and PTO-v0 profile boundaries
 - [ADR-TILE-0005](docs/status/decisions/ADR-TILE-0005-cube-raw-carrier-totality.md): CUBE raw-carrier totality and composite preflight
 - [ADR-TILE-0006](docs/status/decisions/ADR-TILE-0006-vec-sfu-carrier-totality.md): VEC/SFU carrier totality and profile boundary
-- [ADR-TILE-0012](docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md): CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
 
 ### Scalar
 - [ADR-MEM-0003](docs/status/decisions/ADR-MEM-0003-pc-relative-and-unscaled-agu-addressing.md): PC-relative and unscaled AGU addressing

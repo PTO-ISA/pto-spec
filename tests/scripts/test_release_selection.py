@@ -202,6 +202,12 @@ class ReleaseSelectionTest(unittest.TestCase):
         selection = self.selection()
         selection["publication_version"] = "0.58.2.1"
         adrs, readiness, ndf = self.facts()
+        adrs = tuple(
+            {**row, "target_releases": ["0.58.2.1"]}
+            if row["id"] == "ADR-GOV-0001"
+            else row
+            for row in adrs
+        )
         previous = {
             "release": "0.58.2",
             "publication_version": "0.58.2.0",
@@ -219,6 +225,49 @@ class ReleaseSelectionTest(unittest.TestCase):
             previous_manifest=previous,
         )
         self.assertEqual(result.blockers, ())
+
+    def test_architecture_target_cannot_mask_later_publication_drift(self) -> None:
+        selection = self.selection()
+        selection["publication_version"] = "0.58.2.1"
+        adrs, readiness, ndf = self.facts()
+        adrs = (
+            *adrs,
+            {
+                "id": "ADR-GOV-0002",
+                "status": "accepted",
+                "target_releases": ["0.58.2.1"],
+                "affected_ndf": ["PTO-STABLE-001"],
+                "affected_units": [],
+                "release_boundary": True,
+            },
+        )
+        readiness = (
+            *readiness,
+            {"subject_id": "ADR-GOV-0002", "stage": "executable"},
+        )
+        ndf = (
+            *ndf,
+            {"id": "PTO-STABLE-001", "status": "accepted", "sha256": "3" * 64},
+        )
+        baseline = {
+            "publication_version": "0.58.2.0",
+            "release_selection": {
+                "expanded_ndf": [
+                    {"id": "PTO-EXAMPLE-001", "sha256": "0" * 64},
+                    {"id": "PTO-STABLE-001", "sha256": "3" * 64},
+                ]
+            },
+        }
+
+        result = self.validate(
+            selection,
+            adrs=adrs,
+            readiness=readiness,
+            ndf=ndf,
+            previous_manifest=baseline,
+        )
+
+        self.assertTrue(any("PTO-EXAMPLE-001" in row for row in result.blockers))
 
     def test_unresolvable_baseline_commit_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "cannot be resolved"):
@@ -313,7 +362,7 @@ class ReleaseSelectionTest(unittest.TestCase):
 
         self.assertEqual(result.blockers, ())
 
-    def test_repository_policy_reports_unassigned_architecture_drift(self) -> None:
+    def test_repository_policy_covers_targeted_architecture_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
@@ -333,17 +382,16 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
 
         self.assertEqual(policy["excluded_draft_adrs"], drafts)
-        self.assertEqual(len(result.blockers), 2)
-        self.assertTrue(result.blockers[0].startswith("release NDF drift"))
-        self.assertTrue(result.blockers[1].startswith("release ASL unit drift"))
+        self.assertEqual(result.blockers, ())
         self.assertIn("ADR-TILE-0012", result.selected_adr_ids)
+        self.assertIn("ADR-CUBE-0018", result.selected_adr_ids)
         self.assertGreater(len(result.selected_ndf_ids), 100)
         self.assertEqual(
             set(result.selected_adr_ids),
             {row["subject_id"] for row in readiness["rows"] if row["stage"] != "draft"},
         )
 
-    def test_repository_manifest_remains_the_frozen_release_selection(self) -> None:
+    def test_repository_manifest_matches_current_release_selection(self) -> None:
         manifest = json.loads(
             (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
         )
@@ -352,7 +400,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
         self.assertEqual(selection["architecture_version"], "0.58.5")
-        self.assertEqual(selection["publication_version"], "0.58.5.0")
+        self.assertEqual(selection["publication_version"], "0.58.5.1")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(manifest["release"], selection["architecture_version"])
         self.assertEqual(
@@ -360,16 +408,14 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
         self.assertEqual(selection["blockers"], [])
         self.assertEqual(policy["architecture_version"], "0.58.5")
-        self.assertEqual(policy["publication_version"], "0.58.5.0")
-        self.assertNotIn("ADR-TILE-0012", selection["selected_adr_ids"])
+        self.assertEqual(policy["publication_version"], "0.58.5.1")
+        self.assertIn("ADR-TILE-0012", selection["selected_adr_ids"])
+        self.assertIn("ADR-CUBE-0018", selection["selected_adr_ids"])
         self.assertIn("ADR-TILE-0012", result.selected_adr_ids)
         frozen_ndf = {row["id"]: row["sha256"] for row in selection["expanded_ndf"]}
         current_ndf = dict(result.ndf_digests)
-        self.assertNotEqual(
-            frozen_ndf["PTO-TROWSUM-CONTRACT-001"],
-            current_ndf["PTO-TROWSUM-CONTRACT-001"],
-        )
-        self.assertEqual(len(result.blockers), 2)
+        self.assertEqual(frozen_ndf, current_ndf)
+        self.assertEqual(result.blockers, ())
 
 
 if __name__ == "__main__":

@@ -48,7 +48,7 @@ class ReleaseClosureTest(unittest.TestCase):
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
         self.assertIn('architecture_version = "0.58.5"', specification)
-        self.assertIn('publication_version = "0.58.5.0"', specification)
+        self.assertIn('publication_version = "0.58.5.1"', specification)
         self.assertIn(
             'encoding_abi = "pto-isa-0.58.5-mode-function-v1"', specification
         )
