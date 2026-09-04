@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-LAYOUT-ALIAS-BOUND-003","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"VEC and SFU raw carriers enforce layout and alias rules","pass_condition":"carrier, layout, alias, and preserved-region assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-LAYOUT-ALIAS-BOUND-003","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"VEC and SFU raw carriers enforce layout rules","pass_condition":"carrier and layout assertions hold","related_sources":[]}
 func ConfigureTeplTile(index: TileIndex, rows: integer {1..256},
                        columns: integer {1..256}, data_type: TileDataType)
 begin
@@ -81,30 +81,9 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 91;
 end;
 
-func TestTeplAliasAndPreservedRegionPolicy()
-begin
-    ResetProfileState();
-    ConfigureTeplFilledTile(0, 2, 2, TileDataType_U64, 40);
-    ConfigureTeplFilledTile(1, 1, 1, TileDataType_U64, 10);
-    var insert = DefaultTileInstructionOperands();
-    insert.destination0 = 0;
-    insert.source0 = 0;
-    insert.source1 = 1;
-    insert.natural0 = 1;
-    insert.natural1 = 1;
-    ClearFault();
-    let (insert_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001100011', insert);
-    assert insert_status == TileExecution_Executed;
-    assert _LastFault == Fault_None;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 41;
-    assert ReadTileElement(0, 1, 1) == Zeros{PTO_XLEN} + 11;
-end;
-
 func main() => integer
 begin
     ResetProfileState();
     TestTeplRawCarrierAndLayoutPolicy();
-    TestTeplAliasAndPreservedRegionPolicy();
     return 0;
 end;

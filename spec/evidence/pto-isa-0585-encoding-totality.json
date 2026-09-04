@@ -1,6 +1,6 @@
 {
   "contract_status_counts": {
-    "reviewed-complete": 118
+    "reviewed-complete": 117
   },
   "cube": {
     "function_map": {
@@ -39,19 +39,28 @@
     "TSUBC",
     "TADDSC",
     "TSUBSC",
-    "TLRELU"
+    "TLRELU",
+    "TCONCAT",
+    "TDEQUANT",
+    "TEXTRACT",
+    "THISTOGRAM",
+    "TIMG2COL",
+    "TINSERT",
+    "TMRGSORT",
+    "TQUANT",
+    "TSORT"
   ],
   "dispatch_outcome_contract": {
     "recognized_operation_legality_or_handler_failure": "TileExecution_Rejected",
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "b365bb85c47dfaaeb6a3225bf60175694b3cdf5d887951ab43ee1e36a8c21e48",
+  "encoding_projection_sha256": "bc0718ee31162ba7f6ea04d2a5853c49fe30e7cb36b33c0704c58678710a0c87",
   "family_counts": {
     "CUBE": 12,
-    "TEPL": 78,
+    "TEPL": 77,
     "TLSU": 28,
-    "total": 118
+    "total": 117
   },
   "negative_raw_vectors": [
     {
@@ -391,7 +400,6 @@
         29
       ],
       "3": [
-        4,
         6,
         7,
         15,
@@ -447,16 +455,16 @@
       "0": 25,
       "1": 15,
       "2": 28,
-      "3": 10
+      "3": 9
     },
     "raw_space": {
-      "accepted": 1950,
-      "classification_sha256": "4f5edfb3ceb34a0ac5914d5b1855b034c2f082c2cd3ef17b5b7bca23db96d8d9",
+      "accepted": 1925,
+      "classification_sha256": "08ce5fb9f9158cc754e434cdb19a5aeff9918e1507d2c38f7e5c3cde2fd6daa5",
       "illegal": 128,
-      "reserved": 2018,
+      "reserved": 2043,
       "total": 4096
     },
-    "selector_count": 78
+    "selector_count": 77
   },
   "tlsu": {
     "function_map": {

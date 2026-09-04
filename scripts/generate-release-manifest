@@ -32,9 +32,9 @@ NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0585-hardware-numeric-vectors
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 NUMERIC_PROFILE_RELEASE = "0.58.5"
 
-FAMILY_COUNTS = {'TEPL': 78, 'TLSU': 28, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 94}
-COMMAND_FAMILY_COUNTS = {'CMD': 89, 'BBD': 5}
+FAMILY_COUNTS = {'TEPL': 77, 'TLSU': 28, 'CUBE': 12}
+FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 95}
+COMMAND_FAMILY_COUNTS = {'CMD': 90, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
 ILLEGAL_DATATYPES = (31,)
@@ -77,7 +77,7 @@ EXPECTED_TEPL_MAP_TEXT = """
 040:TROWSUM 041:TROWMAX 042:TROWMIN 043:TROWPROD 044:TROWEXPAND 045:TROWEXPANDADD 046:TROWEXPANDSUB 047:TROWEXPANDMUL
 048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN 04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM 051:TCOLMAX
 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
-05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 064:TIMG2COL
+05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN
 066:TCI 067:TTRI
 06F:TGATHER 070:TSCATTER 075:TPERMUTE 076:TSHUF 077:TPACK 078:TUNPACK 07E:TGPR2T
 """
@@ -193,6 +193,15 @@ DELETED_TEPL_NAMES = (
     'TADDSC',
     'TSUBSC',
     'TLRELU',
+    'TCONCAT',
+    'TDEQUANT',
+    'TEXTRACT',
+    'THISTOGRAM',
+    'TIMG2COL',
+    'TINSERT',
+    'TMRGSORT',
+    'TQUANT',
+    'TSORT',
 )
 
 GENERATED_DOCS = tuple(
@@ -380,7 +389,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     contract_status_counts = dict(Counter(row.get("contract_status") for row in operations))
     if contract_status_counts != {"reviewed-complete": sum(FAMILY_COUNTS.values())}:
         raise SystemExit(
-            "all 107 base ISA operations must have contract_status 'reviewed-complete'; "
+            "all 117 base ISA operations must have contract_status 'reviewed-complete'; "
             f"got {contract_status_counts}"
         )
     return catalog, by_family

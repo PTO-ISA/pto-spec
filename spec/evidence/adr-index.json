@@ -5729,7 +5729,9 @@
         "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
         "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA",
         "PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
         "PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
         "PTO-TILE-MODEL-EXECUTION-IMAGE-TO-COLUMN",
         "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
         "PTO-TILE-TIMG2COL"
@@ -5756,7 +5758,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.5.1"
       ],
       "title": "BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement",
       "title_zh": "BSTART.TIMG2COL \u7279\u5f81\u56fe IMG2COL \u4e0e\u65e7 Local-Tile \u9000\u5f79"

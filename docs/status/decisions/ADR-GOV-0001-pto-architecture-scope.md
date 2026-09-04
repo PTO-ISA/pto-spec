@@ -102,9 +102,9 @@ direct Tile operations, and 46 occupied extension reservations. Exact
 admission, selector allocation, reservation, and semantic coverage are machine
 checked.
 
-ADR-TILE-0013 updates the current projection to 466 Scalar forms, 94 active
-Block forms, 118 direct Tile operations, and 46 occupied extension
-reservations while preserving this acceptance-time inventory line.
+ADR-TILE-0013 and ADR-BLOCK-0018 update the current projection to 466 Scalar
+forms, 95 active Block forms, 117 direct Tile operations, and 46 occupied
+extension reservations while preserving this acceptance-time inventory line.
 
 ## Consequences
 
