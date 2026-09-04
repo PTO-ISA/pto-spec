@@ -93,7 +93,8 @@ end;
 
 ```asm
 BSTART.MSCATTER.POPC DataType
-B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.DIM LB0=ValidCol
+B.IOT IndexTile, mask=PE_MASK, <last>
 B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
@@ -120,10 +121,11 @@ end;
 ## Legality
 
 - GM-only; Shared, vector, packed, and U128 forms are rejected.
+- The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden.
 
 ## State effects
 
-- All valid requests take effect; atom forms publish observed old values.
+- Every valid index contributes one U32 increment; no ValueTile or destination is read or published.
 
 ## Memory effects and ordering
 

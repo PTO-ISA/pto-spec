@@ -4478,7 +4478,8 @@
       "target_releases": [
         "0.58.1",
         "0.58.2",
-        "0.58.5"
+        "0.58.5",
+        "0.58.5.1"
       ],
       "title": "TLSU and global-memory operations",
       "title_zh": "TLSU \u4e0e\u5168\u5c40\u5185\u5b58\u64cd\u4f5c"

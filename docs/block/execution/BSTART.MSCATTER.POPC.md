@@ -147,7 +147,7 @@ end;
 ```asm
 BSTART.MSCATTER.POPC DataType
 B.DIM LB0=ValidCol
-B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>
+B.IOT IndexTile, mask=PE_MASK, <last>
 B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
@@ -182,6 +182,7 @@ end;
 ## Legality
 
 - GM-only operation; Shared and vector forms are excluded.
+- The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden.
 
 ## State effects
 

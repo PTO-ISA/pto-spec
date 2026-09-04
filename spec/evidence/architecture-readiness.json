@@ -23534,15 +23534,15 @@
   "sources": {
     "adr_records": {
       "count": 106,
-      "sha256": "2d497c12ca138001770239be87e0a07f5b2594f339339d05141fd8143246c528"
+      "sha256": "645cfffcce1a92531e377d6d3f4548bd05353345bbcd68899ceed46c0f11da52"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "1fc32b0b28b8fdba39885170927960a7f6548d1f59419e2df3d85ff9177458b7"
+      "sha256": "31aa01bd4d1d5fd6609911486f882e8102d37d219c81fa59e346b2cebf9ff271"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f9b01721c578bfd1f71faf03598a8f2735e7e1ad0db7abc65ebc2d0fb8b29f71",
+      "sha256": "56b1dbbc1faa3aa2661315321be76f33d4e3d7585eb346b4ebd5caebce60a577",
       "test_count": 3946,
       "unit_count": 900
     }

@@ -20,7 +20,8 @@
   "target_releases": [
     "0.58.1",
     "0.58.2",
-    "0.58.5"
+    "0.58.5",
+    "0.58.5.1"
   ],
   "affected_ndf": [
     "PTO-ATOM-RED-BODY-SCHEMA-001",
@@ -654,6 +655,11 @@ Issue [#209](https://github.com/PTO-ISA/pto-spec/issues/209) records the row
 stride and logical-index interface closure plus compiler-generated golden
 evidence. Because indexed TLSU was already owned by this decision family, the
 accepted interface amendment is folded here rather than assigned a new ADR.
+
+Publication 0.58.5.1 corrects the `MSCATTER.POPC` instruction metadata and
+generated block recipe to match this record's already accepted index-only
+body schema: there is no ValueTile and no destination. This is a projection
+correction and does not introduce a new architectural decision.
 
 ## Bilingual decision detail / 双语决策详述
 

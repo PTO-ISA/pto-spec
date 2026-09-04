@@ -12398,7 +12398,7 @@
         "block_composition": [
           "BSTART.MSCATTER.POPC DataType",
           "B.DIM LB0=ValidCol",
-          "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
+          "B.IOT IndexTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
@@ -12578,7 +12578,8 @@
           }
         ],
         "legality": [
-          "GM-only operation; Shared and vector forms are excluded."
+          "GM-only operation; Shared and vector forms are excluded.",
+          "The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden."
         ],
         "memory_effects": [
           "Complete preflight precedes atomic effects."
@@ -125424,7 +125425,8 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.POPC DataType",
-          "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
+          "B.DIM LB0=ValidCol",
+          "B.IOT IndexTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
@@ -125444,7 +125446,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125464,7 +125467,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "All valid requests take effect; atom forms publish observed old values."
+          "Every valid index contributes one U32 increment; no ValueTile or destination is read or published."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MSCATTER_POPC.md",

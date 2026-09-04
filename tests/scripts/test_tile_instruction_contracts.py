@@ -58,6 +58,38 @@ class TileInstructionContractsTest(unittest.TestCase):
         self.assertEqual(tfma.metadata["engine"], "VEC")
         self.assertEqual(tfma.metadata["catalog_records"][0]["function"], 28)
 
+    def test_mscatter_popc_uses_the_index_only_body_schema(self) -> None:
+        by_mnemonic = {
+            unit.mnemonic: unit
+            for unit in load_units(ROOT / "asl")
+            if unit.mnemonic is not None
+        }
+        start = by_mnemonic["BSTART.MSCATTER.POPC"]
+        tile = by_mnemonic["MSCATTER_POPC"]
+        expected_body = (
+            "BSTART.MSCATTER.POPC DataType",
+            "B.DIM LB0=ValidCol",
+            "B.IOT IndexTile, mask=PE_MASK, <last>",
+            "B.IOR BaseGPR, zero, zero, ->zero",
+            "BSTOP",
+        )
+
+        self.assertEqual(tuple(start.metadata["block"]), expected_body)
+        self.assertEqual(
+            tuple(start.metadata["contract"]["block_composition"]), expected_body
+        )
+        self.assertEqual(tuple(tile.metadata["block"]), expected_body)
+        self.assertEqual(
+            tuple(tile.metadata["contract"]["block_composition"]), expected_body
+        )
+        self.assertEqual(
+            tile.metadata["operands"],
+            [
+                {"field": "address", "role": "base-address"},
+                {"field": "source0", "role": "indices"},
+            ],
+        )
+
     def test_assigned_tepl_selectors_do_not_overlap_reserved_ranges(self) -> None:
         units = load_units(ROOT / "asl")
         top_level = next(
