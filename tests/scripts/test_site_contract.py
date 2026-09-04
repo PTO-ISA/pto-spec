@@ -393,6 +393,9 @@ class SiteContractTests(unittest.TestCase):
 
     def test_site_workflow_is_read_only_and_commit_pinned(self) -> None:
         workflow = (ROOT / ".github/workflows/site.yml").read_text(encoding="utf-8")
+        self.assertIn("on:\n  workflow_dispatch:", workflow)
+        self.assertNotIn("pull_request:", workflow)
+        self.assertNotIn("push:", workflow)
         self.assertIn("permissions:\n  contents: read", workflow)
         self.assertIn(
             "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
