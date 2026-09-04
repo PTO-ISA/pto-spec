@@ -542,7 +542,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5.1"
       ],
       "title": "PTO v0 concrete reference profile",
       "title_zh": "PTO v0 \u5177\u4f53\u53c2\u8003 Profile"

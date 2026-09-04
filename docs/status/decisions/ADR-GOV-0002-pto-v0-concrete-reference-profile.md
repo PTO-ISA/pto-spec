@@ -16,7 +16,8 @@
   "superseded": null,
   "baseline": "b04318ee75b253157a792b9d08f75e9e95eacf0f",
   "target_releases": [
-    "unassigned"
+    "unassigned",
+    "0.58.5.1"
   ],
   "affected_ndf": [
     "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
@@ -120,6 +121,11 @@ PTO v0 defines:
 The profile does not remove the implementation interface. A future IEEE or
 hardware profile must use a distinct identity, implement the complete registry,
 and add its own conformance evidence.
+
+Publication 0.58.5.1 replaces the reference power-of-two helper's linear
+scaling loops with exact exponentiation by squaring. The complete
+`-1074..1023` domain and mathematical results are unchanged, while the
+execution bound falls to eleven iterations.
 
 ## Consequences
 

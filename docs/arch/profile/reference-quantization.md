@@ -57,14 +57,15 @@ Use this example block only as a reading aid: apply the rules above, then confir
 pure func ReferencePowerOfTwo(exponent: integer {-1074..1023}) => real
 begin
     var result: real = 1.0;
-    var step: integer {-1074..1023} = 0;
-    while step < exponent looplimit 1023 do
-        result = result * 2.0;
-        step = (step + 1) as integer {-1074..1023};
-    end;
-    while step > exponent looplimit 1074 do
-        result = result / 2.0;
-        step = (step - 1) as integer {-1074..1023};
+    let negative = exponent < 0;
+    var remaining: integer {0..1074} =
+        if negative then (-exponent) as integer {0..1074}
+        else exponent as integer {0..1074};
+    var factor: real = if negative then 0.5 else 2.0;
+    while remaining > 0 looplimit 11 do
+        if remaining MOD 2 == 1 then result = result * factor; end;
+        factor = factor * factor;
+        remaining = (remaining DIVRM 2) as integer {0..1074};
     end;
     return result;
 end;

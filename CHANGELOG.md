@@ -34,6 +34,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.58.5.1
 
+### Architecture
+- [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
+
 ### Cross-cutting
 - [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
