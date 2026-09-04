@@ -60,6 +60,14 @@ scripts/check-adrs
 scripts/check-adr-bilingual
 ```
 
+The `baseline` field records the immutable design or release state against
+which the decision was made. It must resolve to a commit and precede the ADR's
+first landing, but it is not the same datum as the direct parent of that
+landing commit. The checker therefore accepts an earlier ancestor. For a new
+ADR that has not entered Git history yet, it validates the baseline against
+the current branch head and leaves first-landing provenance pending until the
+file is committed.
+
 Explicit NDF clauses have non-normative bilingual supplements under
 `docs/ndf/supplements/`. Each supplement is keyed by the stable NDF ID and exact
 owning ASL path. The website may display the localized title and summary, but
