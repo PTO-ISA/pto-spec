@@ -65,6 +65,31 @@ def _git(root: Path, *arguments: str) -> str:
     return result.stdout
 
 
+def _commit_exists(root: Path, revision: str) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(root), "cat-file", "-e", f"{revision}^{{commit}}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def _is_ancestor(root: Path, ancestor: str, descendant: str) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(root), "merge-base", "--is-ancestor", ancestor, descendant],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode not in {0, 1}:
+        raise ValueError(
+            result.stderr.strip()
+            or f"git merge-base --is-ancestor {ancestor} {descendant} failed"
+        )
+    return result.returncode == 0
+
+
 def _baseline_impact_inventory(
     root: Path, revision: str
 ) -> tuple[set[str], dict[str, str]]:
@@ -168,7 +193,13 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
 
 def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
     errors: list[str] = []
+    current_head = _git(root, "rev-parse", "HEAD").strip()
     for record in records:
+        if not _commit_exists(root, record.baseline):
+            errors.append(
+                f"{record.adr_id} baseline {record.baseline} does not resolve to a commit"
+            )
+            continue
         try:
             relative = record.path.resolve().relative_to(root.resolve())
         except ValueError:
@@ -189,8 +220,8 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
             )
         candidates.append(relative)
 
-        parents: list[str] = []
-        diagnostic = "no first landing commit with a parent"
+        first_landing_commit: str | None = None
+        first_landing_parents: list[str] = []
         for candidate in candidates:
             result = subprocess.run(
                 [
@@ -199,7 +230,7 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
                     str(root),
                     "log",
                     "--follow",
-                    "--format=%P",
+                    "--format=%H %P",
                     "--",
                     candidate.as_posix(),
                 ],
@@ -207,18 +238,38 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
                 capture_output=True,
                 check=False,
             )
-            parents = result.stdout.splitlines()
-            if result.returncode == 0 and parents and parents[-1].split():
+            if result.returncode != 0:
+                raise ValueError(
+                    result.stderr.strip()
+                    or f"git log --follow failed for {candidate.as_posix()}"
+                )
+            history = result.stdout.splitlines()
+            if history:
+                landing = history[-1].split()
+                first_landing_commit = landing[0]
+                first_landing_parents = landing[1:]
                 break
-            diagnostic = result.stderr.strip() or diagnostic
-        else:
-            errors.append(f"{record.adr_id} baseline provenance unavailable: {diagnostic}")
+
+        if first_landing_commit is not None and len(first_landing_parents) != 1:
+            errors.append(
+                f"{record.adr_id} first landing commit {first_landing_commit} has "
+                f"{len(first_landing_parents)} parents; exactly one is required"
+            )
             continue
-        expected = parents[-1].split()[0]
-        if record.baseline != expected:
+
+        first_landing_parent = (
+            first_landing_parents[0] if first_landing_parents else None
+        )
+        comparison = first_landing_parent or current_head
+        if not _is_ancestor(root, record.baseline, comparison):
+            boundary = (
+                f"first-landing parent {first_landing_parent}"
+                if first_landing_parent is not None
+                else f"current HEAD {current_head} while first landing is pending"
+            )
             errors.append(
                 f"{record.adr_id} baseline {record.baseline} "
-                f"does not match first-landing parent {expected}"
+                f"is not an ancestor of {boundary}"
             )
     return errors
 

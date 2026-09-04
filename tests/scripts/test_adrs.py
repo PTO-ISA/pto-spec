@@ -111,6 +111,31 @@ class AdrRecordTest(unittest.TestCase):
         )
         subprocess.run(["git", "commit", "-q", "-m", "land ADR"], cwd=root, check=True)
 
+    def create_unrelated_commit(self, root: Path) -> str:
+        original_branch = subprocess.check_output(
+            ["git", "branch", "--show-current"], cwd=root, text=True
+        ).strip()
+        subprocess.run(
+            ["git", "checkout", "-q", "--orphan", "unrelated"],
+            cwd=root,
+            check=True,
+        )
+        marker = root / "unrelated.txt"
+        marker.write_text("unrelated history\n", encoding="utf-8")
+        subprocess.run(["git", "add", "unrelated.txt"], cwd=root, check=True)
+        subprocess.run(
+            ["git", "commit", "-q", "-m", "unrelated baseline"],
+            cwd=root,
+            check=True,
+        )
+        revision = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=root, text=True
+        ).strip()
+        subprocess.run(
+            ["git", "checkout", "-q", original_branch], cwd=root, check=True
+        )
+        return revision
+
     def write_instruction(
         self,
         root: Path,
@@ -507,10 +532,10 @@ class AdrRecordTest(unittest.TestCase):
                 result.stderr,
             )
 
-    def test_baseline_must_equal_parent_of_first_landing_commit(self) -> None:
+    def test_baseline_must_resolve_to_a_commit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            baseline = self.initialize_repository(root)
+            self.initialize_repository(root)
             path = self.write_metadata(
                 root / "docs/status/decisions", baseline="0" * 40
             )
@@ -520,7 +545,109 @@ class AdrRecordTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(
                 "baseline 0000000000000000000000000000000000000000 "
-                f"does not match first-landing parent {baseline}",
+                "does not resolve to a commit",
+                result.stderr,
+            )
+
+    def test_baseline_may_precede_first_landing_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            baseline = self.initialize_repository(root)
+            marker = root / "README.md"
+            marker.write_text("prepare ADR\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "commit", "-q", "-m", "prepare ADR"], cwd=root, check=True
+            )
+            path = self.write_metadata(
+                root / "docs/status/decisions", baseline=baseline
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_baseline_may_equal_first_landing_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            baseline = self.initialize_repository(root)
+            path = self.write_metadata(
+                root / "docs/status/decisions", baseline=baseline
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_baseline_must_be_ancestor_of_first_landing_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            landing_parent = self.initialize_repository(root)
+            invalid_baseline = self.create_unrelated_commit(root)
+            path = self.write_metadata(
+                root / "docs/status/decisions", baseline=invalid_baseline
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                f"baseline {invalid_baseline} is not an ancestor of "
+                f"first-landing parent {landing_parent}",
+                result.stderr,
+            )
+
+    def test_uncommitted_adr_validates_against_current_head(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            baseline = self.initialize_repository(root)
+            self.write_metadata(root / "docs/status/decisions", baseline=baseline)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_uncommitted_adr_rejects_unrelated_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            current_head = self.initialize_repository(root)
+            invalid_baseline = self.create_unrelated_commit(root)
+            self.write_metadata(
+                root / "docs/status/decisions", baseline=invalid_baseline
+            )
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                f"baseline {invalid_baseline} is not an ancestor of "
+                f"current HEAD {current_head} while first landing is pending",
+                result.stderr,
+            )
+
+    def test_root_commit_landing_is_not_treated_as_uncommitted(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = self.write_metadata(
+                root / "docs/status/decisions", baseline="0" * 40
+            )
+            first_landing = self.initialize_repository(root, path)
+            marker = root / "README.md"
+            marker.write_text("post-landing baseline\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "commit", "-q", "-m", "post landing"], cwd=root, check=True
+            )
+            post_landing = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=root, text=True
+            ).strip()
+            self.write_metadata(
+                root / "docs/status/decisions", baseline=post_landing
+            )
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                f"first landing commit {first_landing} has 0 parents; "
+                "exactly one is required",
                 result.stderr,
             )
 
@@ -541,6 +668,30 @@ class AdrRecordTest(unittest.TestCase):
 
             result = self.run_checker(root)
             self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_typed_rename_rejects_post_landing_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            landing_parent = self.initialize_repository(root)
+            old_path = root / "docs/status/decisions/0075-example.md"
+            old_path.parent.mkdir(parents=True, exist_ok=True)
+            old_path.write_text("historical ADR body\n", encoding="utf-8")
+            self.land_adr(root, old_path)
+            invalid_baseline = self.create_unrelated_commit(root)
+            old_path.unlink()
+            self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=invalid_baseline,
+                legacy_ids=["ADR-0075"],
+            )
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                f"baseline {invalid_baseline} is not an ancestor of "
+                f"first-landing parent {landing_parent}",
+                result.stderr,
+            )
 
     def test_missing_frontmatter_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
