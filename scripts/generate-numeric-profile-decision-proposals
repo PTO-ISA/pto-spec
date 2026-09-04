@@ -72,11 +72,11 @@ def generate() -> dict[str, Any]:
             "boundary_vector_count": 55,
             "configuration_vector_count": 8,
             "non_applicable_type_count": 14,
-            "affected_domain_count": 13,
-            "affected_operation_count": 89,
-            "operation_applicability_row_count": 89,
-            "conditional_operation_type_tuple_count": 979,
-            "affected_hook_count": 21,
+            "affected_domain_count": 11,
+            "affected_operation_count": 87,
+            "operation_applicability_row_count": 87,
+            "conditional_operation_type_tuple_count": 957,
+            "affected_hook_count": 19,
             "accepted_decision_count": 1,
             "accepted_complete_domain_rule_count": 0,
             "adr0049_complete": True,
@@ -119,7 +119,7 @@ def generate() -> dict[str, Any]:
     )
     decisions = inputs["decisions"]
     domains = inputs["domain_matrix"]
-    require(len(decisions) == 12, "numeric decision coverage drift")
+    require(len(decisions) == 11, "numeric decision coverage drift")
     require(identity_catalog["schema_version"] == 1, "identity catalog schema drift")
     require(
         identity_catalog["status"] == "identity-framework-closed-rules-open",
@@ -148,10 +148,10 @@ def generate() -> dict[str, Any]:
             "scalar_fixed_override_count": 5,
             "bundle_rmode_selector_count": 8,
             "external_selector_class_count": 4,
-            "affected_domain_count": 15,
-            "affected_operation_count": 96,
-            "affected_hook_count": 23,
-            "accepted_domain_rounding_rule_count": 15,
+            "affected_domain_count": 13,
+            "affected_operation_count": 94,
+            "affected_hook_count": 21,
+            "accepted_domain_rounding_rule_count": 13,
             "adr0047_complete": True,
         },
         "numeric rounding selector contract drift",
@@ -343,9 +343,9 @@ def generate() -> dict[str, Any]:
     profile_hooks = sorted(
         {hook for lane in readiness["lanes"] for hook in lane["hooks"]}
     )
-    require(len(domain_proposals) == 17, "numeric domain count drift")
-    require(operation_count == 100, "numeric operation count drift")
-    require(len(profile_hooks) == 28, "numeric hook count drift")
+    require(len(domain_proposals) == 14, "numeric domain count drift")
+    require(operation_count == 96, "numeric operation count drift")
+    require(len(profile_hooks) == 24, "numeric hook count drift")
     require(
         readiness["summary"]["operation_count"] == operation_count,
         "readiness operation count drift",
@@ -503,21 +503,21 @@ def generate() -> dict[str, Any]:
                 "id": "S5-T2-A2",
                 "target": "accept all numeric decision records",
                 "current": sum(row["accepted"] for row in decision_proposals),
-                "required": 12,
+                "required": 11,
                 "status": "open",
             },
             {
                 "id": "S5-T2-A3",
                 "target": "populate accepted rules for every numeric domain",
                 "current": 0,
-                "required": 18,
+                "required": 14,
                 "status": "open",
             },
             {
                 "id": "S5-T2-A4",
                 "target": "inventory and assign the current owner for every numeric variation point",
-                "current": 89,
-                "required": 89,
+                "current": 69,
+                "required": 69,
                 "status": "closed",
             },
             {
@@ -545,14 +545,14 @@ def generate() -> dict[str, Any]:
                 "id": "S5-T2-C",
                 "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
                 "current": 0,
-                "required": 18,
+                "required": 14,
                 "status": "open",
             },
             {
                 "id": "S5-T2-D",
                 "target": "record local CPU plus independent A2A3 and A5 target results",
                 "current": 0,
-                "required": 60,
+                "required": 42,
                 "status": "open",
             },
             {

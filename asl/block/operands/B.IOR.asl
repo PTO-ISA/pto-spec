@@ -28,7 +28,7 @@ end;
 // Canonical <gpr> spellings are zero, sp, a0..a7, ra, s0..s8, and x0..x3.
 // Relative T/U queue selectors are not legal in any B.IOR field.
 // B.IOR binds at most three dense input slots, RegSrc0..RegSrc2, in the
-// operation-independent logical order address, scalar0, scalar1, diagonal,
+// operation-independent logical order address, scalar0, diagonal,
 // flag0. Omission is distinct from an encoded zero selector. Consumers own
 // raw-value validation before constrained assignment; a second non-TGPR2T
 // B.IOR faults with Fault_BundleControl and preserves the first binding.

@@ -21,15 +21,11 @@
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",
     "PTO-TCI-CONTRACT-001",
-    "PTO-TMRGSORT-CONTRACT-001",
-    "PTO-TSORT-CONTRACT-001",
     "PTO-TTRI-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-IOR",
     "PTO-TILE-TCI",
-    "PTO-TILE-TMRGSORT",
-    "PTO-TILE-TSORT",
     "PTO-TILE-TTRI"
   ],
   "resolves": [],

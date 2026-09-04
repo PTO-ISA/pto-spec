@@ -74,15 +74,12 @@ end;
 pure func BundleOperationConsumesScalarSource1(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    return (TileOperandPresent(operation, TileOperand_address) &&
-            (TileOperandPresent(operation, TileOperand_scalar0) ||
-             TileOperandPresent(operation, TileOperand_scalar1))) ||
-           (TileOperandPresent(operation, TileOperand_scalar0) &&
-            TileOperandPresent(operation, TileOperand_scalar1));
+    return TileOperandPresent(operation, TileOperand_address) &&
+           TileOperandPresent(operation, TileOperand_scalar0);
 end;
 
 // Complete-bundle GPR inputs are packed in the architectural order
-// address, scalar0, scalar1, diagonal, flag0.  Tile operands that are not
+// address, scalar0, diagonal, flag0.  Tile operands that are not
 // present in the selected operation do not consume a B.IOR source slot.
 readonly func BundleOperationGPRInputCount(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..7}
@@ -92,9 +89,6 @@ begin
         count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_scalar0) then
-        count = (count + 1) as integer {0..7};
-    end;
-    if TileOperandPresent(operation, TileOperand_scalar1) then
         count = (count + 1) as integer {0..7};
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
@@ -129,10 +123,6 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_scalar0) then
         if field == TileOperand_scalar0 then return slot; end;
-        slot = (slot + 1) as integer {0..5};
-    end;
-    if TileOperandPresent(operation, TileOperand_scalar1) then
-        if field == TileOperand_scalar1 then return slot; end;
         slot = (slot + 1) as integer {0..5};
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
@@ -190,28 +180,6 @@ begin
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     let input_count = BundleOperationGPRInputCount(operation);
     if input_count > 3 then return FALSE; end;
-    if decoded == TileOperation_TQUANT ||
-       decoded == TileOperation_TDEQUANT then
-        let scale = ReadScalarRegisterOperand(
-            BundleOperationGPRInputSelector(0));
-        let zero_point = ReadScalarRegisterOperand(
-            BundleOperationGPRInputSelector(1));
-        if !TileQuantizationScaleLegal(scale) then return FALSE; end;
-        let zero_point_type = if decoded == TileOperation_TQUANT then
-            if _BundleDataAttributes.data_type_present &&
-               BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
-                BundleTileDataType(_BundleDataAttributes.data_type)
-            else TileDataType_FP64
-        else if _BundleOperation.data_type_valid &&
-                BundleDataTypeConcrete(_BundleOperation.data_type) then
-            BundleTileDataType(_BundleOperation.data_type)
-        else TileDataType_FP64;
-        if !TileQuantizationZeroPointLegal(
-               zero_point,
-               zero_point_type) then
-            return FALSE;
-        end;
-    end;
     if TileOperandPresent(operation, TileOperand_flag0) then
         let slot = BundleOperationGPRInputSlot(operation, TileOperand_flag0);
         let raw = ReadScalarRegisterOperand(
@@ -234,9 +202,6 @@ begin
             post_slot = (post_slot + 1) as integer {0..5};
         end;
         if TileOperandPresent(operation, TileOperand_scalar0) then
-            post_slot = (post_slot + 1) as integer {0..5};
-        end;
-        if TileOperandPresent(operation, TileOperand_scalar1) then
             post_slot = (post_slot + 1) as integer {0..5};
         end;
         if TileOperandPresent(operation, TileOperand_diagonal) then

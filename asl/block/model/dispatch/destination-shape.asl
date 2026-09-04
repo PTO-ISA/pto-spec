@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
                                          => integer {0..65535}
@@ -327,17 +327,6 @@ begin
         end;
         return resolved;
     end;
-    if TileOperationOfIndex(operation) == TileOperation_TCONCAT then
-        let (legal, valid_rows, valid_columns, physical_columns,
-             data_type) = BundleTCONCATDestinationShape();
-        if !legal then
-        SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
-        end;
-        return ResolveBundleTileDestinationsWithShapeAndType(
-            TRUE, valid_rows, valid_columns, physical_columns,
-            TRUE, data_type);
-    end;
     if TileOperationUsesSourceBackingDestination(decoded_operation) then
         let source = BundleTileSourceIndex(0, FALSE);
         return ResolveBundleTileDestinationsWithShapeAndType(FALSE, 0, 0, 0,
@@ -349,49 +338,6 @@ begin
            _Tiles[[source]].layout == TileLayout_CUBE_M32 then
             return ResolveBundleTCVTCubeDestination();
         end;
-    end;
-    if TileOperationUsesClosedSortingSchema(operation) then
-        let decoded = TileOperationOfIndex(operation);
-        let source_left = BundleSortingSourceAt(0);
-        if decoded == TileOperation_TSORT then
-            let source = _Tiles[[source_left]];
-            return ResolveBundleTileDestinationsWithShapeAndType(
-                TRUE,
-                source.valid_rows,
-                source.valid_columns,
-                source.columns,
-                TRUE,
-                source.data_type);
-        end;
-        let source_right = BundleSortingSourceAt(1);
-        let output_columns =
-            _Tiles[[source_left]].valid_columns +
-            _Tiles[[source_right]].valid_columns;
-        if output_columns < 1 || output_columns > 32768 then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
-        end;
-        let physical_columns = SmallestTilePhysicalColumns(
-            output_columns as integer {1..65535});
-        if physical_columns == 0 then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
-        end;
-        return ResolveBundleTileDestinationsWithShapeAndType(
-            TRUE,
-            1,
-            output_columns as integer {1..65535},
-            physical_columns,
-            TRUE,
-            _Tiles[[source_left]].data_type);
-    end;
-    if TileOperationUsesClosedHistogramSchema(operation) then
-        let source = _BundleTileBindings[[0]].source0;
-        return ResolveBundleTileDestinationsWithShape(
-            TRUE,
-            _Tiles[[source]].valid_rows,
-            256,
-            256);
     end;
     if TileOperationUsesClosedReductionSchema(operation) then
         let source = _BundleTileBindings[[0]].source0;
@@ -448,7 +394,6 @@ begin
     if !TileOperationUsesClosedBinarySchema(operation) &&
        !TileOperationUsesClosedUnarySchema(operation) &&
        !TileOperationUsesClosedTFMASchema(operation) &&
-       !TileOperationUsesClosedQuantizationSchema(operation) &&
        !TileOperationUsesClosedGenerationSchema(operation) &&
        !TileOperationUsesClosedExpansionSchema(operation) &&
        !TileOperationUsesClosedTCVTSchema(operation) &&

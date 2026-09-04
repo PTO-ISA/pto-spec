@@ -58,50 +58,6 @@ begin
     assert ReadTileElement(54, 0, 1) == Zeros{PTO_XLEN} + 4;
 
     ConfigureTwoByTwo(55);
-    ConfigureTile(56, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(57, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(58, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(59, 256, 1, 4, 1, 4, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(60, 256, 1, 4, 1, 4, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(61, 256, 1, 4, 1, 4, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTwoByTwo(62);
-    ExecuteTileFillScalar(55, Zeros{PTO_XLEN});
-    ExecuteTileFillScalar(61, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(58, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(58, 0, 1, Zeros{PTO_XLEN} + 8);
-    TINSERT(55, 55, 56, 1, 0);
-    assert ReadTileElement(55, 1, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(55, 1, 1) == Zeros{PTO_XLEN} + 8;
-
-    ConfigureTile(56, 256, 1, 2, 1, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(57, 256, 1, 2, 1, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(61, 256, 4, 2, 4, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(56, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(57, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(57, 0, 1, Zeros{PTO_XLEN} + 3);
-    TSCATTER(61, 56, 57);
-    assert ReadTileElement(61, 1, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(61, 3, 1) == Zeros{PTO_XLEN} + 8;
-
-    ConfigureTile(56, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(56, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
-    TCONCAT(59, 56, 58);
-    assert ReadTileElement(59, 0, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(59, 0, 3) == Zeros{PTO_XLEN} + 8;
     TMOV(62, 55);
     assert ReadTileElement(62, 1, 1) == Zeros{PTO_XLEN} + 8;
 

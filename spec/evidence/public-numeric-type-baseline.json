@@ -526,19 +526,19 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
+      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
+      "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
+      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
-      "sha256": "4fa14704464afe3ea85b98835f2f6e7d6fa832a1f297100f41414cd3faf66924"
+      "sha256": "22e6629b3fe5aa9f7518025e960f4b8a7bc7509ad06eb97866253b2484bd15fc"
     }
   ],
   "summary": {

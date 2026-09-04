@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/layout
     // block: BSTART.SFU TGATHER, ValueDataType | B.DATR Layout (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT ValueSrc, IndexSrc, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001101111') == 79;
-    assert TileOperationOfIndex(79) == TileOperation_TGATHER;
-    assert TileHandlerOfIndex(79) == TileHandler_TGATHER;
-    assert TileClassOfIndex(79) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(79) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001101111') == 71;
+    assert TileOperationOfIndex(71) == TileOperation_TGATHER;
+    assert TileHandlerOfIndex(71) == TileHandler_TGATHER;
+    assert TileClassOfIndex(71) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(71) == TileEngine_SFU;
     assert InstructionContractOperation_TGATHER() == TileOperation_TGATHER;
     assert InstructionContractHandler_TGATHER() == TileHandler_TGATHER;
     return 0;

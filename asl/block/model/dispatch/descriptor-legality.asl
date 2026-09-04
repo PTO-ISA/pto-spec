@@ -226,8 +226,6 @@ begin
     let expected_destinations =
         (if TileOperandPresent(operation, TileOperand_destination0)
          then 1 else 0) +
-        (if TileOperandPresent(operation, TileOperand_destination1)
-         then 1 else 0) +
         (if matrix && _BundleFixedPointAttributes.row_max_en
          then 1 else 0) +
         (if matrix && _BundleFixedPointAttributes.group_max_en

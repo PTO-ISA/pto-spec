@@ -241,10 +241,8 @@
         "scalar-unary",
         "tile-binary",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -261,10 +259,8 @@
         "scalar-unary",
         "tile-binary",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -284,11 +280,8 @@
         "tile-binary",
         "tile-compare",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-order",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -308,11 +301,8 @@
         "tile-binary",
         "tile-compare",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-order",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -331,11 +321,8 @@
         "tile-binary",
         "tile-compare",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-order",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -361,9 +348,7 @@
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-quantize"
+        "tile-convert"
       ],
       "acceptance_record": null
     },
@@ -384,17 +369,7 @@
       "status": "draft",
       "affected_domains": [
         "tile-compare",
-        "tile-order",
         "tile-reduction"
-      ],
-      "acceptance_record": null
-    },
-    {
-      "adr": "ADR-NUM-0020",
-      "status": "draft",
-      "affected_domains": [
-        "tile-dequantize",
-        "tile-quantize"
       ],
       "acceptance_record": null
     },
@@ -420,11 +395,8 @@
         "tile-binary",
         "tile-compare",
         "tile-convert",
-        "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-order",
-        "tile-quantize",
         "tile-reduction",
         "tile-unary"
       ],
@@ -884,95 +856,6 @@
       "selected_profile_rule": null
     },
     {
-      "domain": "tile-quantize",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TQUANT"
-      ],
-      "hooks": [
-        "TileProfileQuantize"
-      ],
-      "open_numeric_dimensions": [
-        "scale interpretation",
-        "zero-point interpretation",
-        "rounding",
-        "clamping",
-        "exception behavior"
-      ],
-      "decision_adr_ids": [
-        "ADR-NUM-0008",
-        "ADR-NUM-0010",
-        "ADR-NUM-0013",
-        "ADR-NUM-0014",
-        "ADR-NUM-0015",
-        "ADR-NUM-0017",
-        "ADR-NUM-0020",
-        "ADR-NUM-0022"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
-      "domain": "tile-dequantize",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TDEQUANT"
-      ],
-      "hooks": [
-        "TileProfileDequantize"
-      ],
-      "open_numeric_dimensions": [
-        "scale interpretation",
-        "zero-point interpretation",
-        "rounding",
-        "overflow and underflow",
-        "exception behavior"
-      ],
-      "decision_adr_ids": [
-        "ADR-NUM-0008",
-        "ADR-NUM-0010",
-        "ADR-NUM-0013",
-        "ADR-NUM-0014",
-        "ADR-NUM-0015",
-        "ADR-NUM-0017",
-        "ADR-NUM-0020",
-        "ADR-NUM-0022"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
-      "domain": "tile-order",
-      "lane": "N5",
-      "operation_count": 2,
-      "operation_keys": [
-        "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT"
-      ],
-      "hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "open_numeric_dimensions": [
-        "data-type ordering",
-        "NaN placement",
-        "signed zero",
-        "equal-value stability",
-        "ascending and descending tie behavior"
-      ],
-      "decision_adr_ids": [
-        "ADR-NUM-0013",
-        "ADR-NUM-0014",
-        "ADR-NUM-0015",
-        "ADR-NUM-0019",
-        "ADR-NUM-0022"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
       "domain": "cube-matrix",
       "lane": "N6",
       "operation_count": 12,
@@ -1021,10 +904,10 @@
     "source_count": 24,
     "public_contract_source_count": 3,
     "implementation_evidence_source_count": 21,
-    "decision_count": 12,
-    "draft_decision_count": 10,
-    "numeric_domain_count": 17,
-    "open_numeric_domain_count": 17,
+    "decision_count": 11,
+    "draft_decision_count": 9,
+    "numeric_domain_count": 14,
+    "open_numeric_domain_count": 14,
     "selected_profile_rule_count": 0,
     "profile_identity_count": 4
   }

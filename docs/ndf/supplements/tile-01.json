@@ -593,18 +593,6 @@
       }
     },
     {
-      "id": "PTO-TCONCAT-CONTRACT-001",
-      "source_path": "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl",
-      "title": {
-        "en": "TCONCAT horizontal Tile concatenation",
-        "zh-CN": "TCONCAT Tile 横向拼接"
-      },
-      "summary": {
-        "en": "TCONCAT joins exactly two persistent Local sources along the column dimension; it has no axis operand and no vertical form. Both sources are validated and snapshotted before the destination payload, definedness, Null padding, and descriptor become visible together.",
-        "zh-CN": "TCONCAT 沿列方向拼接恰好两个持久 Local 源，不提供轴操作数，也没有纵向形式。两个源完成校验和快照后，目标载荷、定义状态、Null 填充和描述符才一同可见。"
-      }
-    },
-    {
       "id": "PTO-TCVT-CONTRACT-001",
       "source_path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
       "title": {
@@ -614,18 +602,6 @@
       "summary": {
         "en": "TCVT resolves both a destination DataType and a layout transformation across the assigned Tile representations. It distinguishes an omitted or DTYPE_NONE destination from encoded FP64, preserves the matrix shape while recomputing CUBE storage for supported NORM conversions, and rejects incompatible private/public representations before allocation or payload effects.",
         "zh-CN": "TCVT 在已分配的 Tile 表示之间同时解析目标 DataType 与布局转换。它区分省略或 DTYPE_NONE 的目标类型与显式编码的 FP64；对受支持的 NORM 矩阵转换，在保持矩阵有效形状的同时重新计算 CUBE 存储，并在分配或载荷效果发生前拒绝不兼容的私有/公共表示。"
-      }
-    },
-    {
-      "id": "PTO-TDEQUANT-CONTRACT-001",
-      "source_path": "asl/tile/irregular-and-complex/format-conversion/TDEQUANT.asl",
-      "title": {
-        "en": "TDEQUANT affine dequantization",
-        "zh-CN": "TDEQUANT 仿射反量化"
-      },
-      "summary": {
-        "en": "TDEQUANT uses SFU Mode 3 Function 11 to convert a persistent Local S8 or U8 source into a newly allocated Local FP32 destination. Each valid result applies source minus zero point, followed by multiplication by a positive finite FP32 multiplier and one FP32 rounding; omitted B.IOR selects multiplier 1.0 and zero point zero.",
-        "zh-CN": "TDEQUANT 使用 SFU Mode 3 Function 11，将持久 Local S8 或 U8 源转换为新分配的 Local FP32 目标。每个有效结果先计算源值减零点，再乘以正有限 FP32 乘数并执行一次 FP32 舍入；省略 B.IOR 时乘数为 1.0、零点为零。"
       }
     },
     {
@@ -674,18 +650,6 @@
       "summary": {
         "en": "TEXPANDS fills the valid region of a renamed Local numeric destination with the low-width encoding of an optional private-GPR scalar. It has no Tile source, obtains the scalar from B.IOR.RegSrc0 when present, and publishes the value, padding, and descriptor together after legality and capacity preflight.",
         "zh-CN": "TEXPANDS 使用可选私有 GPR 标量的低位宽编码填充重命名 Local 数值目标的有效区域。操作没有 Tile 源；存在 B.IOR.RegSrc0 时从中取得标量，并在合法性与容量预检后一起发布数值、填充和描述符。"
-      }
-    },
-    {
-      "id": "PTO-TEXTRACT-CONTRACT-001",
-      "source_path": "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl",
-      "title": {
-        "en": "TEXTRACT rectangular Tile window",
-        "zh-CN": "TEXTRACT 矩形 Tile 窗口提取"
-      },
-      "summary": {
-        "en": "TEXTRACT copies an in-range rectangular window from one Local source into a renamed Local destination. Two optional private-GPR offsets choose the starting position and default to zero; preflight and a complete source snapshot precede result, padding, and descriptor publication.",
-        "zh-CN": "TEXTRACT 从一个 Local 源复制范围内的矩形窗口到重命名的 Local 目标。两个可选私有 GPR 偏移选择起始位置，省略时默认为零；预检和完整源快照先于结果、填充和描述符的发布。"
       }
     },
     {
@@ -794,18 +758,6 @@
       "summary": {
         "en": "TGPR2T transposes four complete 64-bit GPR predicate sub-planes into ordinary numeric CUBE U8 storage. Exact 32-by-4 or 16-by-8 dimensions select the destination layout, two adjacent source-only B.IOR records provide the GPRs in a 3+1 split, and the operation publishes one new B.IOT destination without changing GPR or numeric status.",
         "zh-CN": "TGPR2T 将四个完整的 64 位 GPR 谓词子平面转置到普通数值 CUBE U8 存储中。精确的 32×4 或 16×8 维度选择目标布局，两个相邻的纯源 B.IOR 记录按 3+1 分组提供 GPR；操作发布一个新的 B.IOT 目标，不改变 GPR 或数值状态。"
-      }
-    },
-    {
-      "id": "PTO-THISTOGRAM-CONTRACT-001",
-      "source_path": "asl/tile/irregular-and-complex/initialization/THISTOGRAM.asl",
-      "title": {
-        "en": "THISTOGRAM prefix histogram",
-        "zh-CN": "THISTOGRAM 前缀直方图"
-      },
-      "summary": {
-        "en": "THISTOGRAM uses SFU Mode 3 Function 8 to produce one inclusive 256-bin U32 prefix histogram for each row of a row-major Local U16 or U32 source. A structurally present Local U8 filter and a mandatory B.DATR define the operation boundary, and publication occurs only after full preflight and source and filter snapshots.",
-        "zh-CN": "THISTOGRAM 使用 SFU Mode 3 Function 8，为行优先 Local U16 或 U32 源的每一行生成一个包含当前桶的 256 桶 U32 前缀直方图。结构上存在的 Local U8 过滤器与必需的 B.DATR 界定操作边界；完整预检以及源和过滤器快照完成后才发布结果。"
       }
     }
   ]

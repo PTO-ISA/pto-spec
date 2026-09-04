@@ -71,28 +71,6 @@ begin
     end;
 end;
 
-pure func TileQuantizationScaleLegal(scale: Word) => boolean
-begin
-    if !TileNumericEncodingValid(TileDataType_FP32, scale) ||
-       scale[31] == '1' then
-        return FALSE;
-    end;
-    let value_class = TileNumericValueClass(TileDataType_FP32, scale);
-    return !NumericValueClassIsNaN(value_class) &&
-           !NumericValueClassIsInfinity(value_class) &&
-           !NumericValueClassIsZero(value_class);
-end;
-
-pure func TileQuantizationZeroPointLegal(
-    zero_point: Word,
-    data_type: TileDataType) => boolean
-begin
-    if data_type != TileDataType_S8 && data_type != TileDataType_U8 then
-        return FALSE;
-    end;
-    return NormalizeTileInteger(zero_point, data_type) == zero_point;
-end;
-
 pure func TileConvertIntegerSaturating(
     value: Word,
     source_type: TileDataType,
@@ -217,99 +195,6 @@ begin
     else
         result.location = TileLocation_Any;
     end;
-    TileCommitConversionResult(destination, result, conversion_flags);
-end;
-
-impdef func TileProfileQuantize(value: Word, scale: Word, zero_point: Word,
-                                source_type: TileDataType,
-                                destination_type: TileDataType,
-                                control: NumericExecutionControl)
-                                => (Word, bits(5))
-begin
-    assert !IsZero(scale);
-    return (
-        NormalizeTileInteger(value + zero_point, destination_type),
-        Zeros{5});
-end;
-
-impdef func TileProfileDequantize(value: Word, scale: Word, zero_point: Word,
-                                  source_type: TileDataType,
-                                  destination_type: TileDataType,
-                                  control: NumericExecutionControl)
-                                  => (Word, bits(5))
-begin
-    return (value - zero_point, Zeros{5});
-end;
-
-func TQUANT(destination: TileIndex, source: TileIndex, scale: Word,
-            zero_point: Word, control: NumericExecutionControl)
-begin
-    var result = _Tiles[[destination]];
-    let source_tile = _Tiles[[source]];
-    assert result.valid_rows == source_tile.valid_rows;
-    assert result.valid_columns == source_tile.valid_columns;
-    var conversion_flags = Zeros{5};
-    result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
-    result.contents_defined = FALSE;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLogicalLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLogicalLinearIndex(result,
-                row as integer {0..65535}, column as integer {0..65535});
-            let (converted, flags) = TileProfileQuantize(
-                TileReadLogicalElement(source_tile, source_element),
-                scale,
-                zero_point,
-                source_tile.data_type,
-                result.data_type,
-                control);
-            result = TileInfoWithLogicalElement(result, destination_element,
-                converted);
-            conversion_flags = conversion_flags OR flags;
-        end;
-    end;
-    result = TileWithValidRegionDefined(result);
-    result = TileWithPadding(result, TilePad_Null);
-    result.location = TileLocation_Any;
-    TileCommitConversionResult(destination, result, conversion_flags);
-end;
-
-func TDEQUANT(destination: TileIndex, source: TileIndex, scale: Word,
-              zero_point: Word, control: NumericExecutionControl)
-begin
-    var result = _Tiles[[destination]];
-    let source_tile = _Tiles[[source]];
-    assert result.valid_rows == source_tile.valid_rows;
-    assert result.valid_columns == source_tile.valid_columns;
-    var conversion_flags = Zeros{5};
-    result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
-    result.contents_defined = FALSE;
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLogicalLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLogicalLinearIndex(result,
-                row as integer {0..65535}, column as integer {0..65535});
-            let (converted, flags) = TileProfileDequantize(
-                TileReadLogicalElement(source_tile, source_element),
-                scale,
-                zero_point,
-                source_tile.data_type,
-                result.data_type,
-                control);
-            result = TileInfoWithLogicalElement(result, destination_element,
-                converted);
-            conversion_flags = conversion_flags OR flags;
-        end;
-    end;
-    result = TileWithValidRegionDefined(result);
-    result = TileWithPadding(result, TilePad_Null);
-    result.location = TileLocation_Any;
     TileCommitConversionResult(destination, result, conversion_flags);
 end;
 ```

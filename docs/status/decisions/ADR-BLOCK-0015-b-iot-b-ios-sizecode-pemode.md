@@ -84,7 +84,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0096"
-  ]
+  ],
+  "release_boundary": true
 }
 ---
 

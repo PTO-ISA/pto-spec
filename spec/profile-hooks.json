@@ -270,38 +270,6 @@
       ]
     },
     {
-      "domain": "tile-conversion",
-      "model": "asl/tile/model/numeric/formats.asl",
-      "name": "TileProfileQuantize",
-      "portable_default": "Apply unsigned bitvector division by scale, add zero point, and normalize to the destination integer width.",
-      "profile_obligations": [
-        "Consume NumericExecutionControl, round once after the affine quantization expression, then saturate; define scale and zero-point encodings, clamping values, per-type legality, and zero-scale behavior."
-      ],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
-      "domain": "tile-conversion",
-      "model": "asl/tile/model/numeric/formats.asl",
-      "name": "TileProfileDequantize",
-      "portable_default": "Subtract the zero point and multiply by scale as raw bitvectors.",
-      "profile_obligations": [
-        "Consume NumericExecutionControl, round once after the dequantization expression at the destination boundary, then saturate; define scale and zero-point encodings, intermediate precision, and per-type legality."
-      ],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
       "domain": "extension-first-use",
       "model": "asl/arch/profile/extension-first-use.asl",
       "name": "ExtensionFirstUseEnabled",
@@ -530,38 +498,6 @@
         "Use operation-fixed RNE once at each floating arithmetic destination and no rounding for broadcast or selection results; define exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
-      "domain": "tile-ordering",
-      "model": "asl/tile/model/execution/complex.asl",
-      "name": "TileProfileOrderLeft",
-      "portable_default": "Order raw payloads as signed words and prefer the left operand on ties.",
-      "profile_obligations": [
-        "Define per-type ordering, NaN behavior, signed-zero behavior, stability, and tie selection."
-      ],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
-      "domain": "tile-ordering",
-      "model": "asl/tile/model/execution/complex.asl",
-      "name": "TileProfileValueIsNaN",
-      "portable_default": "Classify no raw carrier as NaN in the deterministic PTO v0 reference profile.",
-      "profile_obligations": [
-        "Define NaN classification for every floating Tile data type used by stable TSORT ordering."
-      ],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",

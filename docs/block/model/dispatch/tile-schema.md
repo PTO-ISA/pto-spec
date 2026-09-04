@@ -114,9 +114,6 @@ begin
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_scalar0) as integer {0..2}));
-        elsif TileOperationOfIndex(operation) == TileOperation_TQUANT ||
-              TileOperationOfIndex(operation) == TileOperation_TDEQUANT then
-            operands.scalar0 = Zeros{PTO_XLEN} + 0x3f800000;
         elsif TileOperationOfIndex(operation) == TileOperation_TLOAD ||
               TileOperationOfIndex(operation) == TileOperation_TSTORE then
             // Regular TLSU omission derives a byte pitch from the resolved
@@ -134,13 +131,6 @@ begin
         elsif TileOperandPresent(operation, TileOperand_address) then
             operands.scalar0 = _BundleDimensions[[2]];
         end;
-    end;
-    if TileOperandPresent(operation, TileOperand_scalar1) &&
-       _BundleScalarBindings[[0]].valid then
-        operands.scalar1 = ReadScalarRegisterOperand(
-            BundleOperationGPRInputSelector(
-                BundleOperationGPRInputSlot(
-                    operation, TileOperand_scalar1) as integer {0..2}));
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
         if _BundleScalarBindings[[0]].valid then
@@ -166,7 +156,8 @@ begin
     end;
     // Matrix post-processing scalar descriptors consume the next dense B.IOR
     // slots after any mathematical scalar controls.  Matrix operations do not
-    // currently have scalar0/scalar1 controls, so these are RegSrc0/RegSrc1.
+    // currently have no mathematical scalar controls, so these are
+    // RegSrc0/RegSrc1.
     if _BundleOperation.valid &&
        _BundleOperation.operation_class == BundleOperation_TileMatrix &&
        _BundleFixedPointAttributes.valid &&

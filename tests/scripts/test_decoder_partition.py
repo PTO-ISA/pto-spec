@@ -36,7 +36,7 @@ class DecoderPartitionTest(unittest.TestCase):
     def test_decoder_only_output_preserves_complete_identity_counts(self) -> None:
         self.assertIn("constant PTO_SCALAR_FORM_COUNT = 466;", self.decoder)
         self.assertIn("constant PTO_COMMAND_FORM_COUNT = 94;", self.decoder)
-        self.assertIn("constant PTO_TILE_OPERATION_COUNT = 126;", self.decoder)
+        self.assertIn("constant PTO_TILE_OPERATION_COUNT = 118;", self.decoder)
         self.assertIn("pure func DecodeScalarForm", self.decoder)
         self.assertIn("pure func DecodeCommandForm", self.decoder)
         self.assertIn("pure func DecodeTileOperation", self.decoder)
@@ -166,23 +166,6 @@ end;
         self.assertIn(
             "_TrapContexts[[0]].barg.bpcn",
             shards["ValidateScalarBRUAlias_JR"],
-        )
-
-    def test_histogram_owns_consumed_filter_definedness(self) -> None:
-        case_start = self.decoder.index("when TileOperation_THISTOGRAM =>")
-        case_end = self.decoder.index(
-            "\n        when ",
-            case_start + len("when TileOperation_THISTOGRAM =>"),
-        )
-        histogram_case = self.decoder[case_start:case_end]
-
-        self.assertNotIn(
-            "TileSourceContentsDefined(operands.source1)",
-            histogram_case,
-        )
-        self.assertIn(
-            "TileOperandsLegal_THISTOGRAM(",
-            histogram_case,
         )
 
     def test_timg2col_owns_referenced_source_definedness(self) -> None:

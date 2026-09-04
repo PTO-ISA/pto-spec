@@ -1142,10 +1142,14 @@ def run_check(repo_root: pathlib.Path, archive: pathlib.Path | None, traceabilit
     }
     require(expected_paths <= found_paths,
             f"active unit shard bijection failed: missing={len(expected_paths-found_paths)}")
-    retired_ids = {
-        validate_retired_shard(read_json(path), path)
-        for path in sorted(found_paths - expected_paths)
-    }
+    retired_shards = {}
+    for path in sorted(found_paths - expected_paths):
+        shard = read_json(path)
+        retired_id = validate_retired_shard(shard, path)
+        require(retired_id not in retired_shards,
+                f"duplicate retired unit shard: {retired_id}")
+        retired_shards[retired_id] = shard
+    retired_ids = set(retired_shards)
     units = {}
     english_shards = {}
     all_blocks: set[str] = set()
@@ -1175,12 +1179,30 @@ def run_check(repo_root: pathlib.Path, archive: pathlib.Path | None, traceabilit
         (page["page_id"], unit_id)
         for page in inventory["pages"] for unit_id in page["mapped_unit_ids"]
     }
+    active_inventory_mappings = {
+        mapping for mapping in inventory_mappings if mapping[1] in units
+    }
+    historical_inventory_mappings = {
+        mapping for mapping in inventory_mappings if mapping[1] in retired_shards
+    }
+    unknown_inventory_mappings = inventory_mappings - (
+        active_inventory_mappings | historical_inventory_mappings
+    )
+    require(not unknown_inventory_mappings,
+            f"anonymous source inventory has unknown unit mappings: {sorted(unknown_inventory_mappings)}")
     shard_mappings = {
         (page_id, unit_id)
         for unit_id, unit in units.items() for page_id in unit["source_page_ids"]
     }
-    require(inventory_mappings == shard_mappings,
-            "anonymous source inventory and unit shard mappings disagree")
+    require(active_inventory_mappings == shard_mappings,
+            "anonymous source inventory and active unit shard mappings disagree")
+    retired_shard_mappings = {
+        (page_id, unit_id)
+        for unit_id, shard in retired_shards.items()
+        for page_id in shard["migration"].get("source_page_ids", [])
+    }
+    require(historical_inventory_mappings <= retired_shard_mappings,
+            "anonymous source inventory has unbacked retired provenance mappings")
     reviews = validate_reviews(evidence_root / "reviews", units, require_complete)
     translation_paths = {
         path for surface in SURFACES

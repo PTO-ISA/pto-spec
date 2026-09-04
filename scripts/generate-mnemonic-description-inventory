@@ -533,10 +533,10 @@ def validate_frozen_block_tile_mappings(evidence_root: pathlib.Path,
         "block": {"mapped_pages": 11, "mapped_units": 11,
                   "multiple_page_units": 0, "unmapped_current_units": 68},
         # TGPR2T is a newly registered current owner with no legacy source
-        # page mapping; the frozen archive therefore gains one pending
-        # current-owner-only tile unit without changing archived page counts.
-        "tile": {"mapped_pages": 86, "mapped_units": 86,
-                 "multiple_page_units": 0, "unmapped_current_units": 40},
+        # page mapping; retired PTO-TILE units are excluded from the active
+        # mapping baseline while their historical shards remain dispositioned.
+        "tile": {"mapped_pages": 84, "mapped_units": 84,
+                 "multiple_page_units": 0, "unmapped_current_units": 34},
         "terminal_pages": {"non_mnemonic": 15, "omit_old": 34, "pending": 0},
     }
     if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summaries != expected:

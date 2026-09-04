@@ -220,14 +220,6 @@ TILE_LAYER_RESOLUTIONS = {
         "explicit-layer-difference",
         "The typed intrinsic carries a destination-shaped lowering context; the direct architecture operation is a destination-free address hint and writes no tile state.",
     ),
-    "TDEQUANT": (
-        "explicit-layer-difference",
-        "The public typed API carries scale and offset tiles; the direct binary operation carries scalar scale and zero-point operands.",
-    ),
-    "TCONCAT": (
-        "explicit-layer-difference",
-        "The public typed API derives layout and offers index-tile overloads; the direct binary operation carries an explicit axis operand.",
-    ),
     "TDEINTERLEAVE": (
         "public-api-aligned",
         "A public intrinsic overload exposes two destinations and one source, matching the direct operation's core roles.",
@@ -235,14 +227,6 @@ TILE_LAYER_RESOLUTIONS = {
     "TINTERLEAVE": (
         "explicit-layer-difference",
         "The public typed API exposes two destination tiles; the direct binary operation has one architectural destination and two sources.",
-    ),
-    "TSORT": (
-        "explicit-layer-difference",
-        "The public source spelling is TSORT32 and carries index or temporary tiles; the direct binary operation is TSORT with explicit sort-width and descending operands.",
-    ),
-    "THISTOGRAM": (
-        "public-api-aligned",
-        "The public intrinsic exposes destination, source, index, and selected-byte roles corresponding to the direct operation.",
     ),
     "TPARTARGMAX": (
         "public-api-aligned",
@@ -296,12 +280,20 @@ EXCLUDED_PUBLIC_TILE_OPERATIONS = {
         "TPOP",
         "TPUSH",
         "TRESHAPE",
+        "TCONCAT",
+        "TDEQUANT",
+        "TEXTRACT",
+        "THISTOGRAM",
+        "TINSERT",
+        "TMRGSORT",
+        "TQUANT",
+        "TSORT",
     }
 }
 EXCLUDED_PUBLIC_TILE_OPERATIONS.update(
     {
         name: (
-            "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; "
+            "ADR-TILE-0013 retires this pinned public symbol from the active PTO ISA; "
             "its former selector is reserved-illegal and has no accepted alias "
             "or replacement."
         )
@@ -392,7 +384,7 @@ def excluded_public_tile_rows() -> list[dict]:
     return [
         {
             "name": name,
-            "public_symbol": name,
+            "public_symbol": "TSORT32" if name == "TSORT" else name,
             "disposition": (
                 "retired-from-active-release-reserved-illegal"
                 if name in RETIRED_PUBLIC_TILE_OPERATIONS

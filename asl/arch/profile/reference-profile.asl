@@ -386,21 +386,6 @@ begin
         left,
         broadcast);
 end;
-implementation func TileProfileOrderLeft(left: Word, right: Word,
-                                         descending: boolean,
-                                         data_type: TileDataType) => boolean
-begin
-    if descending then return SInt(left) >= SInt(right);
-    else return SInt(left) <= SInt(right);
-    end;
-end;
-
-implementation func TileProfileValueIsNaN(value: Word,
-                                           data_type: TileDataType) => boolean
-begin
-    // The deterministic raw-carrier reference profile has no NaN class.
-    return FALSE;
-end;
 implementation func TileProfileMatrixAccumulate(
     accumulator: Word, left: Word, right: Word,
     destination_type: TileDataType, left_type: TileDataType,

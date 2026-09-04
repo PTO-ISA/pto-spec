@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.SFU TSHUF, DataType | B.DATR Layout (optional) | B.DIM LB0 (optional) | B.IOT source, controls, ->destination | B.IOR shuffle_control | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001110110') == 104;
-    assert TileOperationOfIndex(104) == TileOperation_TSHUF;
-    assert TileHandlerOfIndex(104) == TileHandler_TSHUF;
-    assert TileClassOfIndex(104) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(104) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001110110') == 96;
+    assert TileOperationOfIndex(96) == TileOperation_TSHUF;
+    assert TileHandlerOfIndex(96) == TileHandler_TSHUF;
+    assert TileClassOfIndex(96) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(96) == TileEngine_SFU;
     assert InstructionContractOperation_TSHUF() == TileOperation_TSHUF;
     assert InstructionContractHandler_TSHUF() == TileHandler_TSHUF;
     return 0;

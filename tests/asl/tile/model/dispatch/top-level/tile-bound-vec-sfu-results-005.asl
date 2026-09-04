@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-RESULTS-BOUND-005","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"merge, TFMA, and TSORT produce exact ordered results","pass_condition":"duplicate ordering and exact result assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-RESULTS-BOUND-005","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"merge and TFMA produce exact ordered results","pass_condition":"duplicate ordering and exact result assertions hold","related_sources":[]}
 func ConfigureTeplTile(index: TileIndex, rows: integer {1..256},
                        columns: integer {1..256}, data_type: TileDataType)
 begin
@@ -69,32 +69,10 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 11;
 end;
 
-func TestTeplTsortExactPermutation()
-begin
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 4, TileDataType_FP32);
-    ConfigureTeplTile(1, 1, 4, TileDataType_U32);
-    ConfigureTeplTile(2, 1, 4, TileDataType_FP32);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x40800000);
-    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 0x3f800000);
-    WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 0x40400000);
-    WriteTileElement(2, 0, 3, Zeros{PTO_XLEN} + 0x40000000);
-    TSORT(0, 1, 2, 32, FALSE);
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x3f800000;
-    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 0x40000000;
-    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 0x40400000;
-    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 0x40800000;
-    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 3;
-    assert ReadTileElement(1, 0, 2) == Zeros{PTO_XLEN} + 2;
-    assert ReadTileElement(1, 0, 3) == Zeros{PTO_XLEN};
-end;
-
 func main() => integer
 begin
     ResetProfileState();
     TestTeplMergeDuplicateOrdering();
     TestTeplTfmaExactResult();
-    TestTeplTsortExactPermutation();
     return 0;
 end;

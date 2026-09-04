@@ -104,10 +104,6 @@ class BundleCommandTotalityTest(unittest.TestCase):
         self.assertEqual(
             rows["TTRI"]["gpr_input_slots"], {"diagonal": "RegSrc0", "flag0": "RegSrc1"}
         )
-        self.assertEqual(rows["TSORT"]["gpr_input_slots"], {"flag0": "RegSrc0"})
-        self.assertEqual(
-            rows["TMRGSORT"]["gpr_input_slots"], {"flag0": "RegSrc0"}
-        )
 
 
 if __name__ == "__main__":

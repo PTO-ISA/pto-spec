@@ -36,11 +36,8 @@ ALL_NUMERIC_DOMAINS = {
     "tile-binary",
     "tile-compare",
     "tile-convert",
-    "tile-dequantize",
     "tile-expand",
     "tile-fused",
-    "tile-order",
-    "tile-quantize",
     "tile-reduction",
     "tile-unary",
 }
@@ -69,8 +66,6 @@ EXPECTED_DOMAINS_BY_ADR = {
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
         "tile-convert",
-        "tile-dequantize",
-        "tile-quantize",
     },
     "ADR-NUM-0018": {
         "scalar-binary",
@@ -79,8 +74,7 @@ EXPECTED_DOMAINS_BY_ADR = {
         "tile-expand",
         "tile-unary",
     },
-    "ADR-NUM-0019": {"tile-compare", "tile-order", "tile-reduction"},
-    "ADR-NUM-0020": {"tile-dequantize", "tile-quantize"},
+    "ADR-NUM-0019": {"tile-compare", "tile-reduction"},
     "ADR-NUM-0021": {"cube-matrix"},
     "ADR-NUM-0022": ALL_NUMERIC_DOMAINS,
 }
@@ -114,9 +108,13 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             for legacy_id in record.legacy_ids
             if legacy_id in FORMER_PD_IDS
         }
-        self.assertEqual(draft_legacy, FORMER_PD_IDS - {"PD-03", "PD-04"})
+        self.assertEqual(
+            draft_legacy,
+            FORMER_PD_IDS - {"PD-03", "PD-04", "PD-10"},
+        )
         self.assertEqual(records["ADR-NUM-0008"].status, "accepted")
         self.assertEqual(records["ADR-NUM-0010"].status, "accepted")
+        self.assertEqual(records["ADR-NUM-0020"].status, "superseded")
 
     def test_numeric_evidence_uses_adr_ids_and_preserves_maturity(self) -> None:
         inputs = json.loads(
@@ -130,7 +128,10 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
         rows = inputs["decisions"]
-        self.assertEqual({row["adr"] for row in rows}, set(EXPECTED_MAPPING.values()))
+        self.assertEqual(
+            {row["adr"] for row in rows},
+            set(EXPECTED_MAPPING.values()) - {"ADR-NUM-0020"},
+        )
         self.assertEqual(sum(row["status"] == "accepted" for row in rows), 2)
         self.assertEqual(proposals["summary"]["accepted_decision_count"], 2)
         self.assertEqual(proposals["summary"]["accepted_domain_rule_count"], 0)
@@ -154,8 +155,9 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             )
 
     def test_accepted_adr_counts_match_generated_contracts(self) -> None:
-        retired_tpart_operation_count = 4
-        retired_tpart_subnormal_tuple_count = 44
+        retired_rounding_domain_count = 3
+        retired_numeric_operation_count = 6
+        retired_numeric_subnormal_tuple_count = 66
         rounding = json.loads(
             (ROOT / "spec/evidence/numeric-rounding-selector-contract.json").read_text(
                 encoding="utf-8"
@@ -174,18 +176,19 @@ class NumericDecisionMigrationTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn(
-            f"{rounding['affected_domain_count'] + 1} affected rounding domains and "
-            f"{rounding['affected_operation_count'] + retired_tpart_operation_count} "
+            f"{rounding['affected_domain_count'] + retired_rounding_domain_count} "
+            "affected rounding domains and "
+            f"{rounding['affected_operation_count'] + retired_numeric_operation_count} "
             "affected operations",
             rounding_body,
         )
         self.assertIn(
-            f"{subnormal['affected_operation_count'] + retired_tpart_operation_count} "
+            f"{subnormal['affected_operation_count'] + retired_numeric_operation_count} "
             "compressed operation rows",
             subnormal_body,
         )
         self.assertIn(
-            f"{subnormal['conditional_operation_type_tuple_count'] + retired_tpart_subnormal_tuple_count:,} "
+            f"{subnormal['conditional_operation_type_tuple_count'] + retired_numeric_subnormal_tuple_count:,} "
             "operation/type obligations",
             subnormal_body,
         )
@@ -232,7 +235,7 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             rendered = open_output.read_text(encoding="utf-8")
         self.assertTrue(rendered.startswith("<!-- GENERATED FILE"))
-        for adr_id in sorted(FORMER_PD_IDS - {"PD-03", "PD-04"}):
+        for adr_id in sorted(FORMER_PD_IDS - {"PD-03", "PD-04", "PD-10"}):
             mapped = EXPECTED_MAPPING[adr_id]
             self.assertIn(mapped, rendered)
         self.assertIn("Target release", rendered)

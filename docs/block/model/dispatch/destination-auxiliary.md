@@ -53,25 +53,6 @@ begin
     end;
 end;
 
-readonly func BundleTCONCATDestinationShape()
-    => (boolean, integer {0..65535}, integer {0..65535},
-        integer {0..65535}, TileDataType)
-begin
-    let source_left = BundleSortingSourceAt(0);
-    let source_right = BundleSortingSourceAt(1);
-    let valid_rows = _Tiles[[source_left]].valid_rows;
-    let output_columns = _Tiles[[source_left]].valid_columns +
-        _Tiles[[source_right]].valid_columns;
-    if output_columns < 1 || output_columns > 32768 ||
-       valid_rows != _Tiles[[source_right]].valid_rows then
-        return (FALSE, 0, 0, 0, _Tiles[[source_left]].data_type);
-    end;
-    let physical_columns = SmallestTilePhysicalColumns(
-        output_columns as integer {1..65535});
-    return (physical_columns != 0, valid_rows,
-        output_columns as integer {1..65535}, physical_columns,
-        _Tiles[[source_left]].data_type);
-end;
 func ConfigureBundleTileDestination(
     index: TileIndex, capacity_bytes: integer {0..262144},
     valid_rows: integer {0..65535}, columns: integer {0..65535},
