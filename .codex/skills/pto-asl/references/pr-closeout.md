@@ -7,10 +7,8 @@ to merge without performing a release.
 ## Resolve dependencies before editing
 
 - Recover the requested task before searching the repository broadly. Resolve
-  the exact task title to its pull request, writable source branch, isolated
-  worktree, current head, base branch, and dependency order. If several pull
-  requests are active, write down this mapping first and ignore unrelated
-  worktrees and pull requests.
+  the exact pull request, writable source branch, current head, base branch,
+  and only the dependencies that can affect its merge.
 - Inventory active pull requests that touch the same ASL owners, NDF clauses,
   generated projections, or evidence inputs. Treat shared ownership as a
   dependency decision, not as a conflict to discover at final merge time.
@@ -18,10 +16,8 @@ to merge without performing a release.
   head of its predecessor when it consumes that predecessor's semantics. After
   the predecessor lands, rebase once onto the new `main`, resolve the owning
   sources, and regenerate projections from the reconciled tree.
-- Keep one isolated worktree per pull request. Record the task title, pull
-  request number, source branch, worktree, base commit, and predecessor head in
-  the task update so a continuation can recover the exact lane without
-  searching unrelated sessions or worktrees.
+- Use an isolated worktree only when the pull request needs edits. A clean
+  review-and-merge request does not require a local checkout or local test run.
 - Never let two parallel pull requests create competing normative meanings for
   the same owner. The later pull request must consume or explicitly supersede
   the earlier accepted rule.
@@ -45,8 +41,8 @@ to merge without performing a release.
 
 - Prefer an accepted ADR/NDF decision record as the first change on the stable
   pre-change base, followed by ASL implementation and independent evidence.
-  When repository policy requires an ADR baseline to equal its first-landing
-  parent, this ordering keeps the baseline outside the mutable PR history.
+  The decision baseline must resolve and be an ancestor of the first-landing
+  parent; it is not required to equal that parent.
 - Do not point an ADR baseline at an earlier implementation commit in the same
   rewriteable pull request. Rebase, squash preparation, or commit signing would
   invalidate that self-reference.
@@ -55,32 +51,18 @@ to merge without performing a release.
   generation pass; if a rewrite is unavoidable, refresh the commit-sensitive
   projection once from the final history and rerun its owning check.
 
-## Iterate narrowly, close once
+## Keep merge closeout lightweight
 
-- During implementation, run exact mnemonic/family points and the smallest
-  owning generators that prove the current change. Do not repeatedly run full
-  PR gates while the candidate is still changing.
-- After the final rebase and reconciliation, regenerate ASL-derived docs,
-  catalogs, decoder witnesses, AVS points, traceability hashes, and other
-  checked-in projections consumed by the requested PR lane. Run `make
-  pr-check`, `make repo-check`, and `git diff --check` once on that stable
-  candidate.
-- A local gate and a hosted required check prove different things; keep both.
-  Improve caching or path selection rather than weakening either correctness
-  contract.
-
-## Keep elapsed time attributable
-
-- Record timestamps for task recovery, local reconciliation, final validation,
-  push, hosted-check wait, merge, and post-merge verification. This makes later
-  duration summaries evidence-based and separates active engineering time from
-  CI queue or execution time.
-- Report critical-path time separately from parallel or unrelated activity.
-  Do not charge time spent inspecting another pull request, the site lane, or a
-  release lane to the requested merge.
-- When a check is slow, wait on the exact current head and required-check set.
-  Avoid repeated broad status scans; poll compactly and act only when state
-  changes or a concrete failure appears.
+- A merge-only request normally needs only exact PR/head identity,
+  mergeability, commit-signature state when required, hosted branch-protection
+  checks, the merge result, and the resulting `main` commit.
+- Do not run `make pr-check`, `make repo-check`, site builds, ASL matrices,
+  model closure, or release preparation merely to merge an already validated
+  pull request.
+- If a required hosted check fails, inspect and reproduce only that failure.
+  Do not expand into unrelated advisory workflows.
+- Poll compactly and report state transitions. Do not narrate unchanged checks
+  or repeatedly fetch broad status.
 
 ## Merge only the requested lane
 
@@ -97,9 +79,8 @@ to merge without performing a release.
   do not confuse a locally fetched `pull/<n>/head` alias with the writable
   source branch.
 - After the exact head is pushed, enable the repository's normal auto-merge
-  path when available. Wait for fresh required checks for that head; never use
-  stale results from the pre-rebase commit. Poll required checks compactly and
-  intervene only on a concrete failure.
+  path when available. Wait only for checks required by branch protection for
+  that head; never wait for advisory work unless its failure is in scope.
 - Classify a hosted failure before changing code: distinguish a real in-scope
   regression from cancellation, stale-head results, infrastructure failure, or
   an advisory workflow outside the requested lane. Rerun or repair only the
@@ -110,14 +91,10 @@ to merge without performing a release.
 
 ## Efficient closeout sequence
 
-1. Resolve the task-to-PR/branch/worktree mapping and record the start time.
-2. Confirm scope exclusions, dependency order, exact base, exact head, and
-   required checks.
-3. Reconcile the requested branch once; finalize commit order and signatures.
-4. Regenerate only projections owned by the final tree and run the required
-   local gates once on that stable candidate.
-5. Push the writable source branch with an exact lease when history changed.
-6. Wait only for fresh required checks attached to that exact head, then merge
-   through the normal protected path.
-7. Verify the pull request is merged and `main` contains the expected merge or
-   squash commit; record the end time and leave unrelated lanes untouched.
+1. Resolve the exact pull request, head, base, mergeability, and required checks.
+2. If no edit is needed, merge through the normal protected path without local
+   checkout or validation.
+3. If an edit is needed, make the smallest change, run only its focused check,
+   sign and push the final head once.
+4. Wait only for fresh branch-protection checks, then merge.
+5. Verify the merged state and resulting `main` commit.
