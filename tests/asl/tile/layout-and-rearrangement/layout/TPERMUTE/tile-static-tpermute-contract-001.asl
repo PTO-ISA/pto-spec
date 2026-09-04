@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.SFU TPERMUTE, DataType | B.DATR Layout (optional) | B.DIM LB0 (optional) | B.IOT source0, source1 | B.IOT indices, ->destination | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001110101') == 95;
-    assert TileOperationOfIndex(95) == TileOperation_TPERMUTE;
-    assert TileHandlerOfIndex(95) == TileHandler_TPERMUTE;
-    assert TileClassOfIndex(95) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(95) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001110101') == 94;
+    assert TileOperationOfIndex(94) == TileOperation_TPERMUTE;
+    assert TileHandlerOfIndex(94) == TileHandler_TPERMUTE;
+    assert TileClassOfIndex(94) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(94) == TileEngine_SFU;
     assert InstructionContractOperation_TPERMUTE() == TileOperation_TPERMUTE;
     assert InstructionContractHandler_TPERMUTE() == TileHandler_TPERMUTE;
     return 0;

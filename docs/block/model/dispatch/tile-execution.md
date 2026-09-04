@@ -123,10 +123,12 @@ func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
 begin
     if _BundleZeroParticipationSeen && BundleTileBindingCount() == 0 &&
        BundleSharedBindingCount() == 0 then return TRUE; end;
+    let timg2col_selected =
+        BundleDescriptorSelectsTIMG2COL(_BundleOperation);
     // Effect eligibility is a generated handler-group contract and is
     // checked before descriptor preparation, specialized dispatch, body
     // execution, allocation, or auxiliary effects.
-    if _BundleOperation.valid then
+    if _BundleOperation.valid && !timg2col_selected then
         let effect_family = BundleTileDecodeFamily(
             _BundleOperation.operation_class);
         let effect_code = BundleOperationDecodeCode(_BundleOperation);
@@ -146,16 +148,18 @@ begin
     end;
     let matrix_selected = BundleCubeMatrixSelected();
     var stage2_prepared = TRUE;
-    if !matrix_selected then
+    if !matrix_selected && !timg2col_selected then
         stage2_prepared = PrepareSelectedBundleStage2();
     end;
-    if !matrix_selected && !stage2_prepared then
+    if !matrix_selected && !timg2col_selected && !stage2_prepared then
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
-    if matrix_selected then
+    if timg2col_selected then
+        specialized_completed = ExecuteBundleTIMG2COLOperation();
+    elsif matrix_selected then
         specialized_completed = ExecuteBundleTMATMULOperation();
     elsif BundleCubeTransportSelected() then
         if !ReuseBundleLocalGenerationDestination() then
@@ -196,6 +200,9 @@ begin
             if !matrix_selected || !BundleTMATMULCurrentPEInactive() then
                 CommitBundleLocalGeneration();
                 RetireBundleConsumerDependencies();
+                if timg2col_selected then
+                    FinalizeBundleTileAttempt(TileExecution_Executed);
+                end;
             end;
         else
             AbortBundleLocalGenerationsForBundle();

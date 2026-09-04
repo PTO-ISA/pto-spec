@@ -15735,6 +15735,318 @@
       "alias_of": null,
       "catalog_records": [
         {
+          "asm": "BSTART.TIMG2COL DataType",
+          "constraints": [
+            {
+              "field": "DataType",
+              "operator": "one-of",
+              "values": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                13,
+                17,
+                18,
+                19,
+                25,
+                26,
+                27
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x07ffffff",
+              "match": "0x01c11181",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "DataType",
+              "pieces": [
+                {
+                  "instruction_lsb": 27,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            }
+          ],
+          "form_id": "bstart_timg2col_32_7a0f8d6c3e21",
+          "length_bits": 32,
+          "mnemonic": "BSTART.TIMG2COL",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Split",
+          "semantic_handler": "ExecuteBundleStart",
+          "semantic_summary": "Begins the TLSU feature-map IMG2COL block and selects its element DataType.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "execution"
+      ],
+      "contract": {
+        "block_composition": [
+          "BSTART.TIMG2COL DataType; optional B.DATR; exactly one write-once binding for each of LB0/LB1/LB2; exactly two immediately contiguous source-only B.IOR records; Shared singleton uses one B.IOS; Shared multi-PE uses one B.IOS with PE_MASK=1111 followed by B.ASSEMBLE; Local direct output uses one B.IOT with PE_MASK=1111; BSTOP or the next BSTART completes the block."
+        ],
+        "canonical_assembly": [
+          "BSTART.TIMG2COL DataType"
+        ],
+        "defaults": [
+          "Omitted B.DATR is equivalent to NORM/ND2ND with DTYPE_NONE, Zero pad, and zero controls. Explicit B.DATR must use DTYPE_NONE and zero controls."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                1,
+                8
+              ],
+              [
+                13,
+                13
+              ],
+              [
+                17,
+                19
+              ],
+              [
+                25,
+                27
+              ]
+            ],
+            "field": "DataType",
+            "form_id": "bstart_timg2col_32_7a0f8d6c3e21",
+            "other_owner_values": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                0,
+                0
+              ],
+              [
+                9,
+                12
+              ],
+              [
+                14,
+                16
+              ],
+              [
+                20,
+                24
+              ],
+              [
+                28,
+                31
+              ]
+            ],
+            "role": "element DataType selector",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero selects FP64 and is inapplicable to TIMG2COL; explicit B.DATR DTYPE_NONE inherits the BSTART type."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "BSTART.TIMG2COL FP16; B.DIM LB0, ValidCol; B.DIM LB1, ValidRow; B.DIM LB2, TotalCol; B.IOR GMBase, zero, zero; B.IOR ParamGPR0, ParamGPR1, ParamGPR2; B.IOS PE_MASK, ->S0<SizeCode>; B.ASSEMBLE 1, 1, zero, 0, ParentSizeCode; BSTOP"
+        ],
+        "exceptions": [
+          "Reserved or unsupported DataType, malformed B.IOR sequence, wrong layout direction, invalid dimensions/crop/capacity, unsupported destination binding, address overflow, translation/permission, readiness, allocation, or PE consistency raises the applicable fault before GM access or visible target effects."
+        ],
+        "field_domains": [
+          {
+            "assigned": [
+              {
+                "meaning": "FP64",
+                "value": 0
+              },
+              {
+                "meaning": "FP32",
+                "value": 1
+              },
+              {
+                "meaning": "TF32",
+                "value": 2
+              },
+              {
+                "meaning": "HF32",
+                "value": 3
+              },
+              {
+                "meaning": "FP16",
+                "value": 4
+              },
+              {
+                "meaning": "BF16",
+                "value": 5
+              },
+              {
+                "meaning": "HiF8",
+                "value": 6
+              },
+              {
+                "meaning": "E4M3",
+                "value": 7
+              },
+              {
+                "meaning": "E5M2",
+                "value": 8
+              },
+              {
+                "meaning": "E3M2",
+                "value": 9
+              },
+              {
+                "meaning": "E2M3",
+                "value": 10
+              },
+              {
+                "meaning": "E2M1X2",
+                "value": 11
+              },
+              {
+                "meaning": "E1M2X2",
+                "value": 12
+              },
+              {
+                "meaning": "E8M0",
+                "value": 13
+              },
+              {
+                "meaning": "HiF4X2",
+                "value": 14
+              },
+              {
+                "meaning": "S64",
+                "value": 16
+              },
+              {
+                "meaning": "S32",
+                "value": 17
+              },
+              {
+                "meaning": "S16",
+                "value": 18
+              },
+              {
+                "meaning": "S8",
+                "value": 19
+              },
+              {
+                "meaning": "S4X2",
+                "value": 20
+              },
+              {
+                "meaning": "U64",
+                "value": 24
+              },
+              {
+                "meaning": "U32",
+                "value": 25
+              },
+              {
+                "meaning": "U16",
+                "value": 26
+              },
+              {
+                "meaning": "U8",
+                "value": 27
+              },
+              {
+                "meaning": "U4X2",
+                "value": 28
+              }
+            ],
+            "field": "DataType",
+            "id": "PTO-FIELD-BLOCK-DATATYPE",
+            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "reserved": [
+              15,
+              21,
+              22,
+              23,
+              29,
+              30,
+              31
+            ],
+            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
+            "source": "asl/arch/data-types/tile-data-types.asl",
+            "width": 5,
+            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+          }
+        ],
+        "legality": [
+          "TLSU Function=28 with mask 0x07ffffff and match 0x01c11181.",
+          "The operation accepts only FP32, TF32, HF32, FP16, BF16, HiF8, E4M3, E5M2, E8M0, S32, S16, S8, U32, U16, and U8.",
+          "B.DATR accepts exactly NORM/ND2ND, DN2ND, ND2M16, ND2M32, DN2M16, and DN2M32; Shared uses ND output and Local uses explicit CUBE M16/M32.",
+          "LB0, LB1, LB2 bind ValidCol, ValidRow, TotalCol exactly once each.",
+          "Exactly two contiguous source-only B.IOR records bind GMBase and ParamGPR0..2; no source or destination binding is accepted for GM.",
+          "The four-PE mask is 1111 for cooperative forms; zero-row PEs remain collective participants but perform no allocation or memory effect."
+        ],
+        "memory_effects": [
+          "Dense NCHW/DN and NHWC/ND source indices are computed with wide unsigned arithmetic; spatial OOB and Cin padding lanes produce defined raw zero without a GM access.",
+          "Physical storage tails are not written or marked defined."
+        ],
+        "operands": [
+          {
+            "field": "DataType",
+            "role": "element DataType selector"
+          },
+          {
+            "field": "B.DATR.Layout",
+            "role": "dense GM source view and output destination path"
+          },
+          {
+            "field": "B.DIM.LB0/LB1/LB2",
+            "role": "ValidCol, ValidRow, TotalCol"
+          },
+          {
+            "field": "B.IOR",
+            "role": "GMBase and packed parameter GPRs"
+          },
+          {
+            "field": "B.IOS/B.IOT",
+            "role": "Shared ND or Local CUBE destination"
+          },
+          {
+            "field": "B.ASSEMBLE",
+            "role": "Shared cooperative row-range coverage"
+          }
+        ],
+        "ordering": [
+          "All schema, dimensions, crop, distribution, address, capacity, translation, permission, readiness, allocation, alias, and PE consistency checks precede source reads, destination payload, definedness, or publication.",
+          "Shared output publishes a complete generation atomically; failure preserves the previous generation."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Writes the expanded-and-cropped logical rectangle with defined zeros for spatial OOB and Cin padding.",
+          "Direct Local CUBE materialization is equivalent to Shared ND followed by existing ND2CUBE for every valid element and definedness result."
+        ]
+      },
+      "documentation": "docs/block/execution/BSTART.TIMG2COL.md",
+      "engine": null,
+      "mnemonic": "BSTART.TIMG2COL",
+      "ndf_clause": "PTO-INST-BLOCK-BSTART-TIMG2COL",
+      "source": "asl/block/execution/BSTART.TIMG2COL.asl",
+      "summary": "Begins the TLSU feature-map IMG2COL block and selects its element DataType.",
+      "surface": "block"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
           "asm": "BSTART.TLOAD DataType",
           "constraints": [
             {
@@ -132381,386 +132693,6 @@
               "operand": "destination0"
             },
             {
-              "operand": "source0"
-            },
-            {
-              "operand": "natural0"
-            },
-            {
-              "operand": "natural1"
-            }
-          ],
-          "classification": "layout-and-rearrangement",
-          "command_mnemonic": "BSTART.TEPL",
-          "contract_status": "reviewed-complete",
-          "datr_contract": {
-            "allowed_nonzero_fields": [],
-            "pad_union": "must-zero"
-          },
-          "disposition": "accepted-direct-operation",
-          "effect_contract": "TIMG2COL",
-          "engine": "SFU",
-          "family": "TEPL",
-          "fault_contract": "ExecuteTileInstruction",
-          "function": 4,
-          "legality_handler": "TileOperandsLegal_TIMG2COL",
-          "mode": 3,
-          "name": "TIMG2COL",
-          "operands": [
-            {
-              "field": "destination0",
-              "role": "new Local Matrix destination"
-            },
-            {
-              "field": "source0",
-              "role": "persistent Local Matrix feature-map source"
-            },
-            {
-              "field": "natural0",
-              "role": "unsigned low-sixteen-bit posM"
-            },
-            {
-              "field": "natural1",
-              "role": "unsigned low-sixteen-bit posK"
-            }
-          ],
-          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x064",
-          "semantic_handler": "TIMG2COL",
-          "state_effects": [
-            "operand:destination0:new-local-matrix-destination",
-            "operand:source0:persistent-feature-map-source",
-            "operand:natural0:position-m",
-            "operand:natural1:position-k",
-            "state:source-feature-map-descriptor:read-only"
-          ]
-        }
-      ],
-      "classification": [
-        "layout-and-rearrangement",
-        "layout"
-      ],
-      "contract": {
-        "block_composition": [
-          "BSTART.SFU TIMG2COL, DataType",
-          "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional)",
-          "B.DIM LB2=Col (optional)",
-          "B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR PosMGPR, PosKGPR, zero, ->zero (optional)",
-          "BSTOP"
-        ],
-        "canonical_assembly": [
-          "TIMG2COL <bundle operands>"
-        ],
-        "defaults": [
-          "LB0 is required and supplies nonzero destination ValidCol. Omitted LB1 selects ValidRow=1 and omitted LB2 selects physical Col=ValidCol.",
-          "Omitted B.IOR selects posM=0 and posK=0. When present, RegSrc0 and RegSrc1 contribute their unsigned low sixteen bits; RegSrc2 and RegDst must be zero.",
-          "The source feature-map descriptor supplies layout, dimensions, filter, stride, dilation, four-sided padding, logical channel count, and the typed padding value."
-        ],
-        "encoded_fields": [],
-        "encoding_class": "selector-encoded-block-operation",
-        "examples": [
-          "BSTART.SFU TIMG2COL, FP16; B.DIM LB0=KWindow; B.DIM LB1=MWindow; B.IOT Src, mask=PE_MASK, <last>, ->Dst<TSize>; B.IOR PosM, PosK, zero, ->zero; BSTOP"
-        ],
-        "exceptions": [
-          "An absent or invalid feature-map descriptor, transposed request, unsupported DataType, malformed binding, invalid B.DATR contribution, out-of-range matrix window, undefined referenced source element or insufficient destination capacity raises the applicable Tile fault before effects.",
-          "PE_MASK=0000 is a strict no-op before descriptor or GPR reads, allocation, faults, or payload effects."
-        ],
-        "field_domains": [
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc0",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          },
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc1",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          }
-        ],
-        "legality": [
-          "TIMG2COL retains TEPL raw Mode 3 Function 4 and canonicalizes to the SFU engine without changing the carrier encoding.",
-          "Exactly one terminating Local B.IOT supplies one persistent Matrix-location source and one newly allocated Matrix-location destination; B.IOS is illegal.",
-          "The source descriptor layout is NC1HWC0 or NDC1HWC0; every dimension, filter, stride, and dilation is nonzero, padding is nonnegative, logical channels do not exceed C1*C0, and transposed mode is illegal.",
-          "B.DATR contributes no field. B.IOR is optional and only RegSrc0 and RegSrc1 may be nonzero.",
-          "The complete destination window at posM,posK fits N*D*outH*outW by C1*filterH*filterW*C0, and every actually referenced in-range source element is defined.",
-          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "destination0",
-            "role": "new Local Matrix destination"
-          },
-          {
-            "field": "source0",
-            "role": "persistent Local Matrix feature-map source"
-          },
-          {
-            "field": "natural0",
-            "role": "unsigned low-sixteen-bit posM"
-          },
-          {
-            "field": "natural1",
-            "role": "unsigned low-sixteen-bit posK"
-          }
-        ],
-        "ordering": [
-          "Complete schema, descriptor, range, type, capacity, referenced-definedness, and allocation preflight precedes source snapshot.",
-          "The source payload and feature-map descriptor are read-only; complete destination payload and definedness publish atomically."
-        ],
-        "standalone_opcode": false,
-        "state_effects": [
-          "For each destination row and column, add posM and posK, decompose the logical matrix coordinates, and copy the matching NC1HWC0 or NDC1HWC0 source element.",
-          "Out-of-range spatial coordinates and packed channels beyond logical_channels receive the descriptor typed padding value.",
-          "Publish the complete standard Left matrix result without modifying the source or its feature-map descriptor."
-        ]
-      },
-      "documentation": "docs/tile/layout-and-rearrangement/layout/TIMG2COL.md",
-      "engine": "SFU",
-      "mnemonic": "TIMG2COL",
-      "ndf_clause": "PTO-INST-TILE-TIMG2COL",
-      "source": "asl/tile/layout-and-rearrangement/layout/TIMG2COL.asl",
-      "summary": "Extract an offset window from one descriptor-defined feature map into standard Left matrix order.",
-      "surface": "tile"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "arguments": [
-            {
-              "operand": "destination0"
-            },
-            {
               "operand": "address"
             },
             {
@@ -143414,10 +143346,10 @@
   ],
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
-    "encoded_form_count": 560,
+    "encoded_form_count": 561,
     "mnemonic_count": 663,
     "placeholder_count": 0,
-    "selector_operation_count": 118,
+    "selector_operation_count": 117,
     "status": "closed",
     "unresolved_field_count": 0
   }

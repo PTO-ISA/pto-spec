@@ -930,6 +930,7 @@
       ],
       "path": "docs/status/decisions/ADR-GOV-0004-direct-tile-and-bundle-catalog-closure.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -1983,6 +1984,7 @@
       ],
       "path": "docs/status/decisions/ADR-GOV-0005-mnemonic-field-encoding-closure.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -4985,6 +4987,7 @@
       ],
       "path": "docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -5705,6 +5708,58 @@
       ],
       "title": "Local single-object cap versus aggregate Local pool",
       "title_zh": "Local \u5355\u5bf9\u8c61\u4e0a\u9650\u4e0e Local \u603b\u5bb9\u91cf\u6c60"
+    },
+    {
+      "accepted": "2026-09-02",
+      "affected_ndf": [
+        "PTO-BSTART-TIMG2COL-CONTRACT-001",
+        "PTO-BSTART-TIMG2COL-PARAMS-001",
+        "PTO-BSTART-TIMG2COL-COOPERATIVE-001",
+        "PTO-BSTART-TIMG2COL-CROP-001",
+        "PTO-BSTART-TIMG2COL-DEFINEDNESS-001",
+        "PTO-INST-BLOCK-B-DIM",
+        "PTO-INST-BLOCK-BSTART-TIMG2COL",
+        "PTO-INST-TILE-TIMG2COL",
+        "PTO-TIMG2COL-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-BLOCK-BSTART-TIMG2COL",
+        "PTO-BLOCK-B-DIM",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA",
+        "PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM",
+        "PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS",
+        "PTO-TILE-MODEL-EXECUTION-IMAGE-TO-COLUMN",
+        "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
+        "PTO-TILE-TIMG2COL"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "13d550f4f63c6321f94e5c6b09da4c3986081841",
+      "created": "2026-09-02",
+      "id": "ADR-BLOCK-0018",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/99",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement",
+      "title_zh": "BSTART.TIMG2COL \u7279\u5f81\u56fe IMG2COL \u4e0e\u65e7 Local-Tile \u9000\u5f79"
     },
     {
       "accepted": "2026-07-31",
@@ -7373,6 +7428,7 @@
       ],
       "path": "docs/status/decisions/ADR-TILE-0006-vec-sfu-carrier-totality.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -10504,9 +10560,9 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 107,
+    "record_count": 108,
     "type_counts": {
-      "BLOCK": 17,
+      "BLOCK": 18,
       "CUBE": 18,
       "GOV": 9,
       "MEM": 9,

@@ -1050,7 +1050,8 @@
         "PTO-SCALAR-MODEL-FSU-PROFILE"
       ]
     }
-  ]
+  ],
+  "release_boundary": true
 }
 ---
 # ADR-GOV-0005: Mnemonic and Encoded-Field Contract Closure

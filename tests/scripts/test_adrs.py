@@ -285,8 +285,13 @@ class AdrRecordTest(unittest.TestCase):
                     )
                 }
                 | {
+                    "ADR-BLOCK-0006",
                     "ADR-BLOCK-0015",
+                    "ADR-BLOCK-0018",
                     "ADR-CUBE-0018",
+                    "ADR-GOV-0004",
+                    "ADR-GOV-0005",
+                    "ADR-TILE-0006",
                     "ADR-TILE-0008",
                     "ADR-TILE-0013",
                 },

@@ -121,7 +121,7 @@ class ExecutableModelComparisonTest(unittest.TestCase):
             )
         self.assertEqual(
             evidence["summary"]["classification_counts"],
-            {"comparable-match": 517, "divergence": 113, "non-comparable": 37},
+            {"comparable-match": 517, "divergence": 114, "non-comparable": 37},
         )
 
     def test_published_missing_b_fpatr_is_an_explicit_divergence(self) -> None:

@@ -106,7 +106,6 @@ TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "TUNPACK",
     "TGATHER",
     "TGPR2T",
-    "TIMG2COL",
     "TGEMV",
     "TGEMV_ACC",
     "TGEMV_BIAS",
@@ -7650,7 +7649,16 @@ def command_bundle_kind(row: dict) -> str:
         return "System"
     if any(
         token in mnemonic
-        for token in (".MGATHER", ".MSCATTER", ".TLOAD", ".TSTORE", ".TPREFETCH", ".ATOM", ".RED")
+        for token in (
+            ".MGATHER",
+            ".MSCATTER",
+            ".TLOAD",
+            ".TSTORE",
+            ".TIMG2COL",
+            ".TPREFETCH",
+            ".ATOM",
+            ".RED",
+        )
     ):
         return "TileMemory"
     if any(token in mnemonic for token in (".CUBE", ".TGEMV", ".TMATMUL")):
@@ -7676,6 +7684,7 @@ def command_bundle_operation_class(row: dict) -> str:
             ".MGATHER",
             ".MSCATTER",
             ".TLOAD",
+            ".TIMG2COL",
             ".ATOM",
             ".RED",
             ".TSTORE",
@@ -7696,6 +7705,10 @@ def command_bundle_selector(row: dict, tile_selectors: dict[str, int]) -> int | 
     mnemonic = row["mnemonic"]
     if mnemonic in {"BSTART.TEPL", "BSTART.CUBE", "BSTART.FIXP"}:
         return None
+    # BSTART.TIMG2COL owns TLSU Function 28 directly.  The retired Local-Tile
+    # TIMG2COL operation must not be restored merely to provide this selector.
+    if mnemonic == "BSTART.TIMG2COL":
+        return 28
     if not mnemonic.startswith("BSTART."):
         return None
     operation = mnemonic.removeprefix("BSTART.")

@@ -32,6 +32,36 @@ begin
            zero_participation;
 end;
 
+readonly func BundleTIMG2COLIORSecondExpected() => boolean
+begin
+    return BundleDescriptorSelectsTIMG2COL(_BundleOperation) &&
+           _BundleScalarBindings[[0]].valid &&
+           !_BundleScalarBindings[[1]].valid;
+end;
+
+readonly func DecodedBundleCommandKeepsTIMG2COLStreamLegal(
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
+begin
+    return !BundleTIMG2COLIORSecondExpected() ||
+           CommandHandlerOfForm(form) == CommandHandler_BindBundleScalarIO;
+end;
+
+readonly func BundleTIMG2COLScalarCommandCanBePlaced(
+    binding_index: integer {0..1}, instruction: bits(64),
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
+begin
+    if !BundleDescriptorSelectsTIMG2COL(_BundleOperation) then return TRUE; end;
+    if BundleTileBindingCount() != 0 || BundleSharedBindingCount() != 0 ||
+       CommandDecodedReg5(instruction, form, CommandField_RegDst) != 0 then
+        return FALSE;
+    end;
+    if binding_index == 0 then
+        return CommandDecodedReg5(instruction, form, CommandField_RegSrc1) == 0 &&
+               CommandDecodedReg5(instruction, form, CommandField_RegSrc2) == 0;
+    end;
+    return TRUE;
+end;
+
 readonly func BundleTGPR2TScalarCommandCanBePlaced(
     binding_index: integer {0..1}, instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
@@ -62,6 +92,30 @@ begin
            TileOperationOfIndex(
                decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                TileOperation_TGPR2T;
+end;
+
+readonly func BundleMultiIORSelected() => boolean
+begin
+    return BundleTGPR2TSelected() ||
+           BundleDescriptorSelectsTIMG2COL(_BundleOperation);
+end;
+
+readonly func BundleMultiIORBindingIndex() => integer {0..1}
+begin
+    if BundleMultiIORSelected() && _BundleScalarBindings[[0]].valid then
+        return 1;
+    end;
+    return 0;
+end;
+
+readonly func BundleMultiIORScalarCommandCanBePlaced(
+    binding_index: integer {0..1}, instruction: bits(64),
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
+begin
+    return BundleTGPR2TScalarCommandCanBePlaced(
+               binding_index, instruction, form) &&
+           BundleTIMG2COLScalarCommandCanBePlaced(
+               binding_index, instruction, form);
 end;
 
 pure func BundleOperationConsumesScalarSource0(

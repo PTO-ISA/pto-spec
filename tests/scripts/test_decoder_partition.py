@@ -35,8 +35,8 @@ class DecoderPartitionTest(unittest.TestCase):
 
     def test_decoder_only_output_preserves_complete_identity_counts(self) -> None:
         self.assertIn("constant PTO_SCALAR_FORM_COUNT = 466;", self.decoder)
-        self.assertIn("constant PTO_COMMAND_FORM_COUNT = 94;", self.decoder)
-        self.assertIn("constant PTO_TILE_OPERATION_COUNT = 118;", self.decoder)
+        self.assertIn("constant PTO_COMMAND_FORM_COUNT = 95;", self.decoder)
+        self.assertIn("constant PTO_TILE_OPERATION_COUNT = 117;", self.decoder)
         self.assertIn("pure func DecodeScalarForm", self.decoder)
         self.assertIn("pure func DecodeCommandForm", self.decoder)
         self.assertIn("pure func DecodeTileOperation", self.decoder)
@@ -168,22 +168,21 @@ end;
             shards["ValidateScalarBRUAlias_JR"],
         )
 
-    def test_timg2col_owns_referenced_source_definedness(self) -> None:
-        case_start = self.decoder.index("when TileOperation_TIMG2COL =>")
-        case_end = self.decoder.index(
-            "\n        when ",
-            case_start + len("when TileOperation_TIMG2COL =>"),
-        )
-        image_to_column_case = self.decoder[case_start:case_end]
-
-        self.assertNotIn(
-            "TileSourceContentsDefined(operands.source0)",
-            image_to_column_case,
+    def test_timg2col_is_a_command_only_tlsu_descriptor(self) -> None:
+        self.assertIn(
+            "if form == 94 then return BundleKind_TileMemory; end;",
+            self.decoder,
         )
         self.assertIn(
-            "TileOperandsLegal_TIMG2COL(",
-            image_to_column_case,
+            "if form == 94 then return BundleOperation_TileMemory; end;",
+            self.decoder,
         )
+        self.assertIn(
+            "if form == 94 then return '0000011100'; end;",
+            self.decoder,
+        )
+        self.assertNotIn("TileOperation_TIMG2COL", self.decoder)
+        self.assertNotIn("TileHandler_TIMG2COL", self.decoder)
 
     def test_matrix_legality_owns_cube_source_definedness(self) -> None:
         operations = (

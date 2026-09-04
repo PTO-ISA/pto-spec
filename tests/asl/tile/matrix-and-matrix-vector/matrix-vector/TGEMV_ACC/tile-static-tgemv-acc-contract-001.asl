@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-vector
     // block: BSTART.TGEMV.ACC AType | B.DATR BType, PadValueOrByteId/CCTRL, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one) | B.DIM LB0 M (optional, default 1; TGEMV permits only M=1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, B CUBE_N8 primary | B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
-    assert DecodeTileOperation(TileDecode_CUBE, '000000010010') == 91;
-    assert TileOperationOfIndex(91) == TileOperation_TGEMV_ACC;
-    assert TileHandlerOfIndex(91) == TileHandler_TGEMV_ACC;
-    assert TileClassOfIndex(91) == TileClass_MatrixAndMatrixVector;
-    assert TileEngineOfIndex(91) == TileEngine_CUBE;
+    assert DecodeTileOperation(TileDecode_CUBE, '000000010010') == 90;
+    assert TileOperationOfIndex(90) == TileOperation_TGEMV_ACC;
+    assert TileHandlerOfIndex(90) == TileHandler_TGEMV_ACC;
+    assert TileClassOfIndex(90) == TileClass_MatrixAndMatrixVector;
+    assert TileEngineOfIndex(90) == TileEngine_CUBE;
     assert InstructionContractOperation_TGEMV_ACC() == TileOperation_TGEMV_ACC;
     assert InstructionContractHandler_TGEMV_ACC() == TileHandler_TGEMV_ACC;
     assert InstructionContractCubeFunction_TGEMV_ACC() == 18;

@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: memory-and-data-movement/regular
     // block: BSTART.TPREFETCH DataType | B.DATR Layout (optional) | B.DIM LB0/ValidCol, LB1/ValidRow, LB2/Col (optional) | B.IOR base,row_stride (optional) | BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000000011') == 76;
-    assert TileOperationOfIndex(76) == TileOperation_TPREFETCH;
-    assert TileHandlerOfIndex(76) == TileHandler_TPREFETCH;
-    assert TileClassOfIndex(76) == TileClass_MemoryAndDataMovement;
-    assert TileEngineOfIndex(76) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000000011') == 75;
+    assert TileOperationOfIndex(75) == TileOperation_TPREFETCH;
+    assert TileHandlerOfIndex(75) == TileHandler_TPREFETCH;
+    assert TileClassOfIndex(75) == TileClass_MemoryAndDataMovement;
+    assert TileEngineOfIndex(75) == TileEngine_TLSU;
     assert InstructionContractOperation_TPREFETCH() == TileOperation_TPREFETCH;
     assert InstructionContractHandler_TPREFETCH() == TileHandler_TPREFETCH;
     return 0;

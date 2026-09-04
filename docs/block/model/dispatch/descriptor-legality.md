@@ -149,9 +149,44 @@ begin
     return BundleSelectorCode(descriptor);
 end;
 
+pure func BundleDescriptorHasTIMG2COLFormIdentity(
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    // BSTART.TIMG2COL is the final command form in the current frozen catalog.
+    // Check its exact form as well as Function 28 so no other TLSU carrier can
+    // acquire the command-only semantics.
+    return descriptor.form_identity == Zeros{7} + 94;
+end;
+
+pure func BundleDescriptorSelectsTIMG2COL(
+    descriptor: BundleOperationDescriptor) => boolean
+begin
+    return descriptor.valid &&
+           BundleDescriptorHasTIMG2COLFormIdentity(descriptor) &&
+           descriptor.operation_class == BundleOperation_TileMemory &&
+           descriptor.selector_valid && descriptor.selector == Zeros{10} + 28 &&
+           descriptor.data_type_valid && !descriptor.mode_valid &&
+           !descriptor.branch_type_valid;
+end;
+
+pure func BundleDescriptorTIMG2COLDataTypeSupported(
+    data_type: bits(5)) => boolean
+begin
+    let code = UInt(data_type);
+    return code == 1 || code == 2 || code == 3 || code == 4 || code == 5 ||
+           code == 6 || code == 7 || code == 8 || code == 13 ||
+           code == 17 || code == 18 || code == 19 || code == 25 ||
+           code == 26 || code == 27;
+end;
+
 pure func BundleOperationDescriptorLegal(
     descriptor: BundleOperationDescriptor) => boolean
 begin
+    if BundleDescriptorHasTIMG2COLFormIdentity(descriptor) then
+        return BundleDescriptorSelectsTIMG2COL(descriptor) &&
+               BundleDescriptorTIMG2COLDataTypeSupported(
+                   descriptor.data_type);
+    end;
     if descriptor.branch_type_valid &&
        !BundleBranchTypeLegal(descriptor.branch_type) then
         return FALSE;

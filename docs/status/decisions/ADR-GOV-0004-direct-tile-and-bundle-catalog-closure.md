@@ -354,7 +354,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0052"
-  ]
+  ],
+  "release_boundary": true
 }
 ---
 # ADR-GOV-0004: Direct Tile and bundle catalog closure

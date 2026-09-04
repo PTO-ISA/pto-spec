@@ -557,6 +557,66 @@
       }
     },
     {
+      "id": "PTO-BSTART-TIMG2COL-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TIMG2COL.asl",
+      "title": {
+        "en": "Feature map extraction block contract",
+        "zh-CN": "特征图提取块契约"
+      },
+      "summary": {
+        "en": "BSTART.TIMG2COL selects the feature-map element type and expands Hout*Wout rows against kernel/channel columns in 32-byte C0 groups. Repeat, transpose, dual-source, and hidden descriptor state remain outside this per-bundle interface.",
+        "zh-CN": "BSTART.TIMG2COL 选择特征图元素类型，并以 32-byte C0 分组把 Hout*Wout 行展开为卷积核/通道列。repeat、transpose、dual-source 与隐藏描述符状态不属于这一逐 bundle 接口。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TIMG2COL-COOPERATIVE-001",
+      "source_path": "asl/block/model/dispatch/timg2col-schema.asl",
+      "title": {
+        "en": "Cooperative TIMG2COL row distribution",
+        "zh-CN": "协作式 TIMG2COL 行分配"
+      },
+      "summary": {
+        "en": "The four-PE TIMG2COL form assigns contiguous row quarters and keeps zero-row PEs as collective participants without allocation or memory effects.",
+        "zh-CN": "四 PE 的 TIMG2COL 形式分配连续的行分区；零行 PE 仍是集体参与者，但不产生分配或内存效果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TIMG2COL-CROP-001",
+      "source_path": "asl/block/model/dispatch/timg2col-schema.asl",
+      "title": {
+        "en": "TIMG2COL crop and dimension bindings",
+        "zh-CN": "TIMG2COL 裁剪与维度绑定"
+      },
+      "summary": {
+        "en": "LB0, LB1, and LB2 bind valid columns, valid rows, and the virtual ordinary-ND row pitch. Shared output persists that pitch; direct Local CUBE geometry is derived from ValidCol while retaining the same intermediate-ND composition result.",
+        "zh-CN": "LB0、LB1 和 LB2 绑定有效列、有效行和虚拟 ordinary-ND 行距。Shared 输出持久化该行距；直接 Local CUBE 几何由 ValidCol 推导，同时保持相同的中间 ND 组合结果。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TIMG2COL-DEFINEDNESS-001",
+      "source_path": "asl/block/model/memory/timg2col-gm.asl",
+      "title": {
+        "en": "Feature map source value definedness",
+        "zh-CN": "特征图源数据定义性"
+      },
+      "summary": {
+        "en": "Wide source-index arithmetic makes spatial out-of-bounds and channel-padding lanes defined raw zero without a GM access, while physical tails remain undefined.",
+        "zh-CN": "宽位宽源索引算术使空间越界和通道填充 lane 在不访问 GM 时得到定义的原始零值，而物理尾部保持未定义。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TIMG2COL-PARAMS-001",
+      "source_path": "asl/block/model/operands/timg2col-parameters.asl",
+      "title": {
+        "en": "Feature map parameter bindings",
+        "zh-CN": "特征图参数绑定"
+      },
+      "summary": {
+        "en": "Exactly two contiguous source-only B.IOR records carry GMBase and three packed parameter GPR values. The base form requires bit 54, ParamVersion, ExtensionClass, and bit 63 to be zero; malformed, surplus, or nonzero extension values reject before effects.",
+        "zh-CN": "恰好两个连续且仅含源的 B.IOR 记录承载 GMBase 和三个打包参数 GPR 值。基础形式要求 bit 54、ParamVersion、ExtensionClass 与 bit 63 为零；格式错误、多余记录或非零扩展值均在产生效果前被拒绝。"
+      }
+    },
+    {
       "id": "PTO-BSTART-TLOAD-CUBE-001",
       "source_path": "asl/block/execution/BSTART.TLOAD.asl",
       "title": {

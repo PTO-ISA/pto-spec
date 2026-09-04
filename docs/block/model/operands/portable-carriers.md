@@ -431,7 +431,6 @@ begin
              TileHandler_TCVT,
              TileHandler_TFMA,
              TileHandler_TGATHER,
-             TileHandler_TIMG2COL,
              TileHandler_TLOAD,
              TileHandler_TMOV,
              TileHandler_TPERMUTE,

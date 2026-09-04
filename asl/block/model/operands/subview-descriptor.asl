@@ -379,27 +379,12 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        let image_to_column = operation_kind == TileOperation_TIMG2COL;
         ConfigureTileForMask(materialized_index, descriptor.capacity_bytes,
             row_major_rows, row_major_columns, descriptor.valid_rows,
             descriptor.valid_columns, _Tiles[[parent]].data_type,
             TileLayout_RowMajor,
-            (if operation_is_cube || image_to_column then TileLocation_Matrix
+            (if operation_is_cube then TileLocation_Matrix
              else TileLocation_Any), mask);
-        if image_to_column && descriptor.offset_cells == 0 &&
-           TileFeatureMapDescriptorStructurallyValid(parent) then
-            let feature = ReadTileFeatureMapDescriptor(parent);
-            ConfigureTileFeatureMapDescriptor(materialized_index,
-                feature.layout, feature.batches, feature.depth,
-                feature.channel_groups, feature.height, feature.width,
-                feature.channels_per_group, feature.filter_height,
-                feature.filter_width, feature.stride_height,
-                feature.stride_width, feature.dilation_height,
-                feature.dilation_width, feature.pad_left, feature.pad_right,
-                feature.pad_top, feature.pad_bottom,
-                feature.logical_channels, feature.padding,
-                feature.transposed);
-        end;
     end;
     for row = 0 to descriptor.valid_rows - 1 looplimit 65536 do
         for column = 0 to descriptor.valid_columns - 1 looplimit 65536 do

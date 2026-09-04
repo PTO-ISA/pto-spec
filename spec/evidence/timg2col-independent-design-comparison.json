@@ -1,0 +1,28 @@
+{
+  "schema": "pto.independent-design-comparison.v1",
+  "subject": "PTO-BSTART-TIMG2COL-CONTRACT-001",
+  "source": {
+    "identity": "withheld",
+    "sha256": "670174008299a58c25b8fc365a079980b4bf663508812d23c11211ed3026055e"
+  },
+  "normative_owners": [
+    "asl/block/execution/BSTART.TIMG2COL.asl",
+    "asl/block/model/dispatch/timg2col-schema.asl",
+    "asl/block/model/dispatch/timg2col-execution.asl",
+    "asl/block/model/operands/timg2col-parameters.asl"
+  ],
+  "corroborated": [
+    "IMG2COL expands output spatial positions into matrix rows and kernel/channel positions into matrix columns.",
+    "The channel-block storage quantum is 32 bytes and incomplete logical channels use padding lanes.",
+    "Source M/K crop coordinates are distinct from destination placement.",
+    "Matrix output is consumed in fixed CUBE tiles while physical tails remain outside the valid logical rectangle."
+  ],
+  "excluded_target_specific": [
+    "persistent feature-map configuration registers",
+    "target-local buffer names and addresses",
+    "repeat, transpose, and dual-source controls",
+    "target-specific alignment, warning, and zero-extent NOP behavior",
+    "pipeline timing and performance multiples"
+  ],
+  "disposition": "current-owner-rewrite"
+}

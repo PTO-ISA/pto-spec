@@ -59,3 +59,31 @@ begin
     return TRUE;
 end;
 // DOC-END: operation
+
+// PTO-BSTART-TIMG2COL applicability is owned by the operation schema, while
+// this attribute owner supplies the closed layout set and field rule used by
+// decode preflight.  No numerical encoding is allocated by this predicate.
+pure func TileDataLayoutBSTARTTIMG2COLApplicable(
+    data_layout: TileDataLayout) => boolean
+begin
+    case data_layout of
+        when TileDataLayout_NORM,
+             TileDataLayout_DN2ND,
+             TileDataLayout_ND2M16,
+             TileDataLayout_ND2M32,
+             TileDataLayout_CUBE_M16,
+             TileDataLayout_CUBE_M32 => return TRUE;
+        otherwise => return FALSE;
+    end;
+end;
+
+pure func InstructionContractB_DATR_TIMG2COLFieldsLegal(
+    data_layout: TileDataLayout,
+    data_type: bits(5), pad: bits(2), cmode: bits(3), rmode: bits(3),
+    sat: boolean, canonicalize: boolean) => boolean
+begin
+    return TileDataLayoutBSTARTTIMG2COLApplicable(data_layout) &&
+           data_type == DTYPE_NONE && pad == Zeros{2} &&
+           cmode == Zeros{3} && rmode == Zeros{3} && !sat &&
+           !canonicalize;
+end;
