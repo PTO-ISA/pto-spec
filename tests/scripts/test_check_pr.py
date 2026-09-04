@@ -30,13 +30,13 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/check-release-event-schema",
                 "./scripts/check-model-closure-schema",
                 "./scripts/check-release-workflow",
-                "./scripts/generate-release-gate-readiness --check",
                 "./scripts/check-repository --structure-only",
                 "git diff --check",
-                "./scripts/run-python-tests",
+                "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection",
             ],
         )
         lowered = "\n".join(commands).lower()
+        self.assertNotIn("generate-release-gate-readiness", lowered)
         for forbidden in (
             "opam",
             "setup-aslref",
@@ -121,8 +121,22 @@ class PullRequestCheckTest(unittest.TestCase):
     def test_local_runner_executes_every_listed_source_command_once(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")
 
-        for index in range(8):
+        for index in range(7):
             self.assertEqual(checker.count(f"${{source_commands[{index}]}}"), 1)
+
+    def test_release_gate_projection_stays_in_release_lane(self) -> None:
+        checker = SCRIPT.read_text(encoding="utf-8")
+        makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
+
+        self.assertNotIn("generate-release-gate-readiness", checker)
+        self.assertIn(
+            "release-evidence-check:\n"
+            "\t./scripts/generate-instruction-contract-closure --check",
+            makefile,
+        )
+        self.assertIn(
+            "\t./scripts/generate-release-gate-readiness --check", makefile
+        )
 
     def test_local_runner_uses_professional_summary_output(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")
@@ -157,6 +171,7 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertIn("active Markdown is outside the ASL mirror", active_checker)
         self.assertIn("./scripts/check-active-paths", checker)
         self.assertNotIn("--four-surface", checker)
+        self.assertNotIn("--exclude-module", checker)
 
 
 if __name__ == "__main__":
