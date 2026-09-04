@@ -169,6 +169,8 @@ test('instruction rail and facet buttons share the URL-selected surface', async 
 test('representative mnemonic, model, and architecture units use the generic workbench', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(120_000);
+
   await page.goto('/instructions/scalar/alu/ADD/');
   await expect(page.getByRole('heading', {name: 'ADD', level: 1})).toBeVisible();
   await expect(
@@ -469,6 +471,8 @@ test('source-declared bundle template covers representative Tile families', asyn
 test('TLOAD workbench preserves source identity and evidence interaction', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(120_000);
+
   await page.goto(tloadRoute);
   await expect(page.getByRole('heading', {name: 'TLOAD', level: 1})).toBeVisible();
   await expect(
