@@ -21,7 +21,7 @@ from scripts.model_closure import invocation_path  # noqa: E402
 EXPECTED_RELEASE = "0.58.5"
 EXPECTED_PUBLICATION = "0.58.5.1"
 EXPECTED_ABI = "pto-isa-0.58.5-mode-function-v1"
-EXPECTED_PROJECTION = "747c509525579dc84038738c9a3ba26ae6ed4ef29a1d302cefb2a7b07fc150a8"
+EXPECTED_PROJECTION = "bc0718ee31162ba7f6ea04d2a5853c49fe30e7cb36b33c0704c58678710a0c87"
 GITHUB_REPOSITORY = re.compile(
     r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z"
 )
