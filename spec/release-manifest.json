@@ -446,7 +446,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.MSCATTER.POPC.asl",
-      "sha256": "322950ef61a411df633438f655b1301befec1453355ad0273c9e120c66c42758"
+      "sha256": "1d04e14824a2d87506f1043c8b637760f79d41e5bb38ab96dc9c03492128edf2"
     },
     {
       "path": "asl/block/execution/BSTART.MSCATTER.XOR.asl",
@@ -3130,7 +3130,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC.asl",
-      "sha256": "4414d64d180063e2b7749ba672a70675f9a7b23c3a750027099610418063acda"
+      "sha256": "29c26112a4f02a928995cba6b5b67f4375b2955ba47a860b62fc6cef5fc30143"
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR.asl",
@@ -3638,23 +3638,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "eaea7a184c0b339b84e197ec1a1f29591bcd6bfeec24cf8cd22b05518d0039e9"
+      "sha256": "03f0932b4147aa01e1d24c4a54495c94e7df09a01ee4b77652a775f0e0095f45"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "1fc32b0b28b8fdba39885170927960a7f6548d1f59419e2df3d85ff9177458b7"
+      "sha256": "31aa01bd4d1d5fd6609911486f882e8102d37d219c81fa59e346b2cebf9ff271"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "fe68303a172f1ac68dcb9a8f0a5ca4e9058843a34ddb89011876d46ede74be05"
+      "sha256": "091817fbd8ecb2f5b548c651c30799db680f47ab78cf365f42ed6a231cc9b802"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "d3e4c950431d6147840acd7dabd306bb36140799c4c2a9b5049c6cec746e63d9"
+      "sha256": "71a841ccd6c95f6cdd137c1a974ead06a70b7439eba37aa0673645d1921d62b0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f9b01721c578bfd1f71faf03598a8f2735e7e1ad0db7abc65ebc2d0fb8b29f71"
+      "sha256": "56b1dbbc1faa3aa2661315321be76f33d4e3d7585eb346b4ebd5caebce60a577"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3716,7 +3716,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "1a184e552cd2bdabb3db4ff51b1f9ec7980cd66f26025d7d57ce9642ce623742",
+  "content_sha256": "d73924e37c511fc77b688a4b63d253f91a81dc4cf3a0a588cfe05696ea2d7851",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4298,7 +4298,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.POPC.md",
-      "sha256": "1b6fe12d28462dc518db8bbb20019a020044646b435f1611cfa378c7d7d44a4d"
+      "sha256": "ad5212f1520e739458ad5cb7b4f22a5db8f15cc8e33760500490ea03cbf8e91d"
     },
     {
       "kind": "generated-documentation",
@@ -7653,7 +7653,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_POPC.md",
-      "sha256": "8838934c45038d3f210f8ab85ef9f65f1358968c025973c81ca613c869e5b9f6"
+      "sha256": "65ae1a76ebb2cb889e824268e112a84b3185ef7abc610981a5bd1be1f25faae5"
     },
     {
       "kind": "generated-documentation",
@@ -9183,7 +9183,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-MSCATTER-POPC",
-        "sha256": "36971773126f91856cef2fe56a0662a8e2fe27e57c48e2ce4eac26c04554ee49"
+        "sha256": "bf2987357fe5c61354126d48581acef63b7645bf6897da0ca881c9efe0b2c8fd"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-MSCATTER-XOR",
@@ -11307,7 +11307,7 @@
       },
       {
         "id": "PTO-INST-TILE-MSCATTER-POPC",
-        "sha256": "fba513f81cef2c7414d0391d30b2303a7b672044f64adcefb03449ae7b6a05ba"
+        "sha256": "b2eb0ee8e89b389f4f3e9be329cc644741160c364032b6f1c26b575602348024"
       },
       {
         "id": "PTO-INST-TILE-MSCATTER-XOR",
