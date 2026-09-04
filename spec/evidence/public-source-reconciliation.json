@@ -92,8 +92,8 @@
   ],
   "public_tile_symbol_inventory": {
     "count": 111,
-    "active_mapping_count": 86,
-    "excluded_disposition_count": 25,
+    "active_mapping_count": 85,
+    "excluded_disposition_count": 26,
     "partition_status": "closed-exact",
     "source_id": "public-intrinsic-api",
     "source_sha256": "d157d4c2b13c0928feb1ce775ba1fbcf49e4b3b207ee8460986ce4c2a2d57800",
@@ -310,18 +310,18 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 118,
-      "closed": 118,
+      "count": 117,
+      "closed": 117,
       "open": 0,
-      "public_exact_name": 86,
+      "public_exact_name": 85,
       "public_spelling_mapping": 0
     },
     "excluded_public_tile_operations": {
-      "count": 25,
-      "closed": 25
+      "count": 26,
+      "closed": 26
     },
     "closure_basis": {
-      "public_source_supported": 85,
+      "public_source_supported": 84,
       "catalog_defined_direct_binary": 32,
       "public_api_aligned": 0,
       "explicit_layer_difference": 1,
@@ -4274,16 +4274,6 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TIMG2COL",
-      "family": "TEPL",
-      "selector": "0x064",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TIMG2COL",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
       "name": "TCI",
       "family": "TEPL",
       "selector": "0x066",
@@ -4834,6 +4824,12 @@
       "public_symbol": "THISTOGRAM",
       "disposition": "source-api-only-not-a-direct-operation",
       "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TIMG2COL",
+      "public_symbol": "TIMG2COL",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-TILE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TINSERT",

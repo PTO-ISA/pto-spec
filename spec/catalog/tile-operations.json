@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 118,
+  "operation_count": 117,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [
@@ -3835,66 +3835,6 @@
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TIMG2COL",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 4,
-      "legality_handler": "TileOperandsLegal_TIMG2COL",
-      "mode": 3,
-      "name": "TIMG2COL",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new Local Matrix destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent Local Matrix feature-map source"
-        },
-        {
-          "field": "natural0",
-          "role": "unsigned low-sixteen-bit posM"
-        },
-        {
-          "field": "natural1",
-          "role": "unsigned low-sixteen-bit posK"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x064",
-      "semantic_handler": "TIMG2COL",
-      "state_effects": [
-        "operand:destination0:new-local-matrix-destination",
-        "operand:source0:persistent-feature-map-source",
-        "operand:natural0:position-m",
-        "operand:natural1:position-k",
-        "state:source-feature-map-descriptor:read-only"
-      ],
-      "classification": "layout-and-rearrangement",
       "engine": "SFU"
     },
     {

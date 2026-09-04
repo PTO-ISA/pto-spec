@@ -232,7 +232,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0057"
-  ]
+  ],
+  "release_boundary": true
 }
 ---
 # ADR-BLOCK-0006: Tile Classification and Execution-Engine Aliases

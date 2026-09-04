@@ -29,18 +29,6 @@
       }
     },
     {
-      "id": "PTO-TIMG2COL-CONTRACT-001",
-      "source_path": "asl/tile/layout-and-rearrangement/layout/TIMG2COL.asl",
-      "title": {
-        "en": "TIMG2COL feature-map image-to-column extraction",
-        "zh-CN": "TIMG2COL 图像到列矩阵提取"
-      },
-      "summary": {
-        "en": "TIMG2COL turns a descriptor-defined NC1HWC0 or NDC1HWC0 feature-map window into a standard Left matrix beginning at posM and posK. Spatial and logical-channel padding comes from the typed source descriptor, which remains unchanged. After layout, range, definedness, and same-width non-packed carrier checks succeed, the complete destination appears atomically with the source backing type preserved.",
-        "zh-CN": "TIMG2COL 从 posM、posK 指定的位置开始，把由描述符定义的 NC1HWC0 或 NDC1HWC0 特征图窗口转换为标准 Left 矩阵。空间与逻辑通道填充值来自带类型的源描述符，源描述符本身保持不变。布局、范围、定义性以及同位宽非打包载体检查通过后，完整目标会一次性发布，并保留源 backing type。"
-      }
-    },
-    {
       "id": "PTO-TLOAD-CUBE-001",
       "source_path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
       "title": {

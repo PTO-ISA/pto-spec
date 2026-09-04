@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: memory-and-data-movement/irregular
     // block: BSTART.MGATHER.CAS DataType | B.IOT IndexTile, ExpectedTile, mask=PE_MASK | B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize> | B.IOR BaseGPR, RowStrideGPR, zero, ->zero | BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000001000') == 81;
-    assert TileOperationOfIndex(81) == TileOperation_MGATHER_CAS;
-    assert TileHandlerOfIndex(81) == TileHandler_GM_ATOM_CAS;
-    assert TileClassOfIndex(81) == TileClass_MemoryAndDataMovement;
-    assert TileEngineOfIndex(81) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000001000') == 80;
+    assert TileOperationOfIndex(80) == TileOperation_MGATHER_CAS;
+    assert TileHandlerOfIndex(80) == TileHandler_GM_ATOM_CAS;
+    assert TileClassOfIndex(80) == TileClass_MemoryAndDataMovement;
+    assert TileEngineOfIndex(80) == TileEngine_TLSU;
     assert InstructionContractOperation_MGATHER_CAS() == TileOperation_MGATHER_CAS;
     assert InstructionContractHandler_MGATHER_CAS() == TileHandler_GM_ATOM_CAS;
     return 0;

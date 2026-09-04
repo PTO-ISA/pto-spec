@@ -762,9 +762,9 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         "scope": {
             "scalar_forms": 466,
             "command_forms": len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"]),
-            "direct_tile_operations": 108,
+            "direct_tile_operations": 107,
             "total_rows": len(rows),
-            "direct_tile_breakdown": {"TEPL": 86, "TLSU": 10, "CUBE": 12},
+            "direct_tile_breakdown": {"TEPL": 85, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
             {
@@ -785,7 +785,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "tepl-selector-boundary",
-                "disposition": "PTO defines 86 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
+                "disposition": "PTO defines 85 active TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
                 "id": "tlsu-and-cube-manifest-boundary",
@@ -913,13 +913,26 @@ def prune_existing_to_catalog() -> dict[str, Any]:
                 ),
             }
         )
-    command_index = 0
+    # Rebuild the canonical surface order after inserting synthetic rows.  The
+    # frozen evidence may have older rows in a different order, but command
+    # comparison indices must remain aligned with command-forms.json.
+    command_order = {
+        row["form_id"]: index for index, row in enumerate(command_catalog["forms"])
+    }
+    scalar_rows = [row for row in rows if row["surface"] == "scalar"]
+    command_rows = sorted(
+        (row for row in rows if row["surface"] == "command"),
+        key=lambda row: command_order[row["stable_id"]],
+    )
+    direct_tile_rows = [row for row in rows if row["surface"] == "direct-tile"]
+    rows = [*scalar_rows, *command_rows, *direct_tile_rows]
+    surface_indices = {"scalar": 0, "command": 0, "direct-tile": 0}
     for row in rows:
         row["evidence"] = normalize_pto_evidence_paths(row.get("evidence", []))
-        if row["surface"] == "command":
-            row["index"] = command_index
-            command_index += 1
-        if row["surface"] == "command" and row["stable_id"] == "b_ios_32_4ba5ef98fdaa":
+        surface = row["surface"]
+        row["index"] = surface_indices[surface]
+        surface_indices[surface] += 1
+        if surface == "command" and row["stable_id"] == "b_ios_32_4ba5ef98fdaa":
             row["classification"] = "divergence"
     data["rows"] = rows
     data["scope"]["command_forms"] = len(accepted_ids)

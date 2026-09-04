@@ -144,6 +144,7 @@ nav:
           - BSTART.TGEMVMX.ACC: block/execution/BSTART.TGEMVMX.ACC.md
           - BSTART.TGEMVMX.BIAS: block/execution/BSTART.TGEMVMX.BIAS.md
           - BSTART.TGEMVMX: block/execution/BSTART.TGEMVMX.md
+          - BSTART.TIMG2COL: block/execution/BSTART.TIMG2COL.md
           - BSTART.TLOAD: block/execution/BSTART.TLOAD.md
           - BSTART.TMATMUL.ACC: block/execution/BSTART.TMATMUL.ACC.md
           - BSTART.TMATMUL.BIAS: block/execution/BSTART.TMATMUL.BIAS.md
@@ -203,6 +204,8 @@ nav:
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
+              - Timg2col Execution: block/model/dispatch/timg2col-execution.md
+              - Timg2col Schema: block/model/dispatch/timg2col-schema.md
               - TLSU Gm Atom Red: block/model/dispatch/tlsu-gm-atom-red.md
               - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
               - TLSU Layout Conversion: block/model/dispatch/tlsu-layout-conversion.md
@@ -220,6 +223,8 @@ nav:
               - Enter Stop: block/model/lifecycle/enter-stop.md
               - Lifetime: block/model/lifecycle/lifetime.md
               - Reset: block/model/lifecycle/reset.md
+          - Memory:
+              - Timg2col Gm: block/model/memory/timg2col-gm.md
           - Operands:
               - Local Generation: block/model/operands/local-generation.md
               - Portable Carriers: block/model/operands/portable-carriers.md
@@ -229,6 +234,7 @@ nav:
               - Shared Generation: block/model/operands/shared-generation.md
               - Subview Descriptor: block/model/operands/subview-descriptor.md
               - Tile Bindings: block/model/operands/tile-bindings.md
+              - Timg2col Parameters: block/model/operands/timg2col-parameters.md
           - Schema:
               - Attributes: block/model/schema/attributes.md
               - Dimensions: block/model/schema/dimensions.md
@@ -789,7 +795,6 @@ nav:
       - Layout And Rearrangement:
           - Layout:
               - TGPR2T: tile/layout-and-rearrangement/layout/TGPR2T.md
-              - TIMG2COL: tile/layout-and-rearrangement/layout/TIMG2COL.md
               - TMOV: tile/layout-and-rearrangement/layout/TMOV.md
               - TPACK: tile/layout-and-rearrangement/layout/TPACK.md
               - TPERMUTE: tile/layout-and-rearrangement/layout/TPERMUTE.md
@@ -864,7 +869,6 @@ nav:
               - Expansion: tile/model/execution/expansion.md
               - Fused Multiply Add: tile/model/execution/fused-multiply-add.md
               - Generation: tile/model/execution/generation.md
-              - Image To Column: tile/model/execution/image-to-column.md
               - Indexed Rearrangement: tile/model/execution/indexed-rearrangement.md
               - Internal Accumulator: tile/model/execution/internal-accumulator.md
               - Matrix Scale: tile/model/execution/matrix-scale.md
@@ -878,7 +882,6 @@ nav:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
               - Data Type Layout: tile/model/legality/dtype-layout.md
-              - Image To Column: tile/model/legality/image-to-column.md
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
@@ -1026,6 +1029,7 @@ nav:
               - "ADR-BLOCK-0015: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/ADR-BLOCK-0015-b-iot-b-ios-sizecode-pemode.md
               - "ADR-BLOCK-0016: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/ADR-BLOCK-0016-b-range-modifiers.md
               - "ADR-BLOCK-0017: Local single-object cap versus aggregate Local pool": status/decisions/ADR-BLOCK-0017-local-single-object-cap.md
+              - "ADR-BLOCK-0018: BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement": status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md
           - SCALAR:
               - "ADR-SCALAR-0001: Scalar bitfield and byte-reversal bounds": status/decisions/ADR-SCALAR-0001-scalar-bitfield-and-reverse-bounds.md
               - "ADR-SCALAR-0002: Scalar ALU totality and alias order": status/decisions/ADR-SCALAR-0002-scalar-alu-totality-and-alias-order.md

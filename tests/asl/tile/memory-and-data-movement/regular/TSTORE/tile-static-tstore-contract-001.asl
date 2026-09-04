@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: memory-and-data-movement/regular
     // block: Local: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM; optional B.IOR; one source B.IOT; BSTOP | Shared: BSTART.TSTORE DataType; optional B.DATR/B.DIM/B.IOR; one source B.IOS with any nonzero consumer PE_MASK; optional B.SUBVIEW; BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000000001') == 74;
-    assert TileOperationOfIndex(74) == TileOperation_TSTORE;
-    assert TileHandlerOfIndex(74) == TileHandler_TSTORE;
-    assert TileClassOfIndex(74) == TileClass_MemoryAndDataMovement;
-    assert TileEngineOfIndex(74) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000000001') == 73;
+    assert TileOperationOfIndex(73) == TileOperation_TSTORE;
+    assert TileHandlerOfIndex(73) == TileHandler_TSTORE;
+    assert TileClassOfIndex(73) == TileClass_MemoryAndDataMovement;
+    assert TileEngineOfIndex(73) == TileEngine_TLSU;
     assert InstructionContractOperation_TSTORE() == TileOperation_TSTORE;
     assert InstructionContractHandler_TSTORE() == TileHandler_TSTORE;
     return 0;

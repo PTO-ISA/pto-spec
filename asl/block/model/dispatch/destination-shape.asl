@@ -318,15 +318,6 @@ begin
        decoded_operation == TileOperation_TUNPACK then
         return ResolveBundleCellRearrangementDestination();
     end;
-    if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
-        let source = BundleTileSourceIndex(0, FALSE);
-        let resolved = ResolveBundleTileDestinationsWithShapeAndType(
-            FALSE, 0, 0, 0, TRUE, _Tiles[[source]].data_type);
-        if resolved then
-            MarkBundleTIMG2COLDestinationsMatrix();
-        end;
-        return resolved;
-    end;
     if TileOperationUsesSourceBackingDestination(decoded_operation) then
         let source = BundleTileSourceIndex(0, FALSE);
         return ResolveBundleTileDestinationsWithShapeAndType(FALSE, 0, 0, 0,

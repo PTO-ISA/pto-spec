@@ -9,8 +9,15 @@ begin
     _SharedGenerations[[index]].participant_mask = Zeros{4};
     _SharedGenerations[[index]].parent_size_code = 0;
     _SharedGenerations[[index]].parent_cell_count = 0;
-    _SharedGenerations[[index]].covered_cells = Zeros{2048};
-    _SharedGenerations[[index]].ready_cells = Zeros{2048};
+    _SharedGenerations[[index]].covered_cells = Zeros{8192};
+    _SharedGenerations[[index]].ready_cells = Zeros{8192};
+    _SharedGenerations[[index]].arrived_participants = Zeros{4};
+    _SharedGenerations[[index]].specialized_inputs_valid = FALSE;
+    _SharedGenerations[[index]].specialized_input0 = Zeros{PTO_XLEN};
+    _SharedGenerations[[index]].specialized_input1 = Zeros{PTO_XLEN};
+    _SharedGenerations[[index]].specialized_input2 = Zeros{PTO_XLEN};
+    _SharedGenerations[[index]].specialized_input3 = Zeros{PTO_XLEN};
+    _SharedGenerations[[index]].specialized_metadata = Zeros{PTO_XLEN};
     _SharedGenerations[[index]].last_seen = FALSE;
     _SharedGenerations[[index]].working_valid = FALSE;
     _SharedGenerations[[index]].working_tile =

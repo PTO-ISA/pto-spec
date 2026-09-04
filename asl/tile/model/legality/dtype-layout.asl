@@ -55,8 +55,7 @@ end;
 pure func TileOperationUsesSourceBackingDestination(
     operation: TileOperation) => boolean
 begin
-    return operation == TileOperation_TMOV ||
-           operation == TileOperation_TIMG2COL;
+    return operation == TileOperation_TMOV;
 end;
 
 // Stage 4 carrier-only operations use the concrete dtype's physical byte

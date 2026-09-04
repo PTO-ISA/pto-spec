@@ -41,8 +41,8 @@ class InstructionContractClosureTest(unittest.TestCase):
 
         self.assertEqual(document["schema"], "pto.instruction-contract-closure.v1")
         self.assertEqual(document["summary"]["mnemonic_count"], 663)
-        self.assertEqual(document["summary"]["encoded_form_count"], 560)
-        self.assertEqual(document["summary"]["selector_operation_count"], 118)
+        self.assertEqual(document["summary"]["encoded_form_count"], 561)
+        self.assertEqual(document["summary"]["selector_operation_count"], 117)
         self.assertEqual(document["summary"]["unresolved_field_count"], 0)
         self.assertEqual(document["summary"]["placeholder_count"], 0)
 

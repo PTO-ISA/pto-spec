@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.SFU TUNPACK, U32 | B.DATR Layout (optional) | B.DIM LB0 (optional) | B.IOT source, ->destination | B.IOR unpack_control | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001111000') == 98;
-    assert TileOperationOfIndex(98) == TileOperation_TUNPACK;
-    assert TileHandlerOfIndex(98) == TileHandler_TUNPACK;
-    assert TileClassOfIndex(98) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(98) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001111000') == 97;
+    assert TileOperationOfIndex(97) == TileOperation_TUNPACK;
+    assert TileHandlerOfIndex(97) == TileHandler_TUNPACK;
+    assert TileClassOfIndex(97) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(97) == TileEngine_SFU;
     assert InstructionContractOperation_TUNPACK() == TileOperation_TUNPACK;
     assert InstructionContractHandler_TUNPACK() == TileHandler_TUNPACK;
     return 0;

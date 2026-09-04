@@ -23,7 +23,7 @@ function range(bits: string): {lsb: number; msb: number} {
 
 test('all released catalog encodings have exact exhaustive WaveDrom segments', () => {
   const forms = catalogForms();
-  assert.equal(forms.length, 560);
+  assert.equal(forms.length, 561);
   const lengthCounts = new Map<number, number>();
   let encodingWordCount = 0;
   let multiwordCount = 0;
@@ -77,9 +77,9 @@ test('all released catalog encodings have exact exhaustive WaveDrom segments', (
     }
   }
 
-  assert.equal(encodingWordCount, 561);
+  assert.equal(encodingWordCount, 562);
   assert.equal(multiwordCount, 1);
-  assert.deepEqual(Object.fromEntries(lengthCounts), {16: 34, 32: 335, 48: 190, 64: 1});
+  assert.deepEqual(Object.fromEntries(lengthCounts), {16: 34, 32: 336, 48: 190, 64: 1});
 });
 
 test('B.FPATR retains names for mask-fixed operand pieces', () => {

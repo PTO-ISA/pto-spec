@@ -42,7 +42,8 @@ begin
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
-    if !DecodedBundleCommandKeepsTGPR2TStreamLegal(instruction, form) then
+    if !DecodedBundleCommandKeepsTGPR2TStreamLegal(instruction, form) ||
+       !DecodedBundleCommandKeepsTIMG2COLStreamLegal(form) then
         SetFault(Fault_BundleControl, ReadTPC());
         return CommandExecution_Rejected;
     end;
@@ -205,14 +206,12 @@ begin
             end;
         when CommandHandler_BindBundleScalarIO =>
             let selected_tgpr2t = BundleTGPR2TSelected();
-            var binding_index: integer {0..1} = 0;
-            if selected_tgpr2t && _BundleScalarBindings[[0]].valid then
-                binding_index = 1;
-            end;
+            let selected_multi_ior = BundleMultiIORSelected();
+            let binding_index = BundleMultiIORBindingIndex();
             if !_BundleActive || _BundleBodyActive ||
                _BundleScalarBindings[[binding_index]].valid ||
-               (!selected_tgpr2t && _BundleScalarBindings[[0]].valid) ||
-               !BundleTGPR2TScalarCommandCanBePlaced(
+               (!selected_multi_ior && _BundleScalarBindings[[0]].valid) ||
+               !BundleMultiIORScalarCommandCanBePlaced(
                    binding_index, instruction, form) then
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;

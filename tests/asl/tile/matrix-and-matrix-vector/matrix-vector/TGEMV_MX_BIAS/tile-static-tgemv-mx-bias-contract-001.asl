@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-vector
     // block: BSTART.TGEMVMX.BIAS AType | B.DATR BType, PadValueOrByteId/CCTRL, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one) | B.DIM LB0 M (optional, default 1; TGEMV permits only M=1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias | B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
-    assert DecodeTileOperation(TileDecode_CUBE, '000000010101') == 93;
-    assert TileOperationOfIndex(93) == TileOperation_TGEMV_MX_BIAS;
-    assert TileHandlerOfIndex(93) == TileHandler_TGEMV_MX_BIAS;
-    assert TileClassOfIndex(93) == TileClass_MatrixAndMatrixVector;
-    assert TileEngineOfIndex(93) == TileEngine_CUBE;
+    assert DecodeTileOperation(TileDecode_CUBE, '000000010101') == 92;
+    assert TileOperationOfIndex(92) == TileOperation_TGEMV_MX_BIAS;
+    assert TileHandlerOfIndex(92) == TileHandler_TGEMV_MX_BIAS;
+    assert TileClassOfIndex(92) == TileClass_MatrixAndMatrixVector;
+    assert TileEngineOfIndex(92) == TileEngine_CUBE;
     assert InstructionContractOperation_TGEMV_MX_BIAS() == TileOperation_TGEMV_MX_BIAS;
     assert InstructionContractHandler_TGEMV_MX_BIAS() == TileHandler_TGEMV_MX_BIAS;
     assert InstructionContractCubeFunction_TGEMV_MX_BIAS() == 21;

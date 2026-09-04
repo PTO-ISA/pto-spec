@@ -531,12 +531,12 @@ def validate_frozen_block_tile_mappings(evidence_root: pathlib.Path,
         # CAS is a single canonical MGATHER owner; consolidating the former
         # duplicate ATOM_CAS owner reduces current block units by one.
         "block": {"mapped_pages": 11, "mapped_units": 11,
-                  "multiple_page_units": 0, "unmapped_current_units": 68},
+                  "multiple_page_units": 0, "unmapped_current_units": 69},
         # TGPR2T is a newly registered current owner with no legacy source
         # page mapping; retired PTO-TILE units are excluded from the active
         # mapping baseline while their historical shards remain dispositioned.
         "tile": {"mapped_pages": 84, "mapped_units": 84,
-                 "multiple_page_units": 0, "unmapped_current_units": 34},
+                 "multiple_page_units": 0, "unmapped_current_units": 33},
         "terminal_pages": {"non_mnemonic": 15, "omit_old": 34, "pending": 0},
     }
     if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summaries != expected:

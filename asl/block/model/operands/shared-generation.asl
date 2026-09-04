@@ -17,7 +17,6 @@
 // participating PE's private GPR context. The encoded size is common, but
 // selected PEs may materialize distinct ranges of one published parent.
 // NDF-END: PTO-B-SUBVIEW-SHARED-PER-PE-001
-
 func AbortBundleSharedGenerationsForBundle()
 begin
     for binding = 0 to 3 do
@@ -29,21 +28,107 @@ begin
     end;
 end;
 
+// Shared generation coverage is tracked internally in 32-byte units. Ordinary
+// B.ASSEMBLE offsets and SizeCodes remain 128-byte Tile CELL quantities and
+// the compatibility wrappers below expand each such CELL to four units. The
+// finer internal granularity lets specialized complete-row producers express
+// the frozen TIMG2COL row ranges without inventing partial generic CELL rules.
 readonly func BundleSharedGenerationCoverageWithCurrent(
     shared_tile_id: SharedTileID,
-    offset_cells: integer {0..2047},
-    writer_cells: integer {1..2048},
-    init: boolean) => bits(2048)
+    offset_cells: integer {0..8192},
+    coverage_cells: integer {0..8192},
+    init: boolean) => bits(8192)
 begin
     let index = SharedTileArrayIndex(shared_tile_id);
-    var covered = if init then Zeros{2048}
+    var covered = if init then Zeros{8192}
         else _SharedGenerations[[index]].covered_cells;
-    for cell = 0 to 2047 do
-        if cell < writer_cells then
+    for cell = 0 to 8191 do
+        if cell < coverage_cells then
             covered[offset_cells + cell] = '1';
         end;
     end;
     return covered;
+end;
+// A specialized collective may contribute fewer physical cells than the
+// size-coded carrier and may contribute no cells at all.  Participant arrival
+// remains independent of CELL coverage so a zero-row PE can complete the
+// collective without writing payload or definedness.
+readonly func ValidateBundleSharedGenerationRange(
+    binding: BundleSharedBindingIndex,
+    offset_cells: integer {0..8192},
+    coverage_cells: integer {0..8192},
+    participant_arrival: bits(4),
+    specialized_inputs_valid: boolean,
+    specialized_input0: Word, specialized_input1: Word, specialized_input2: Word,
+    specialized_input3: Word, specialized_metadata: Word) => boolean
+begin
+    if !_BundleSharedBindings[[binding]].valid ||
+       !_BundleSharedBindings[[binding]].destination_assemble.valid then
+        return FALSE;
+    end;
+    let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
+    let index = SharedTileArrayIndex(shared_tile_id);
+    let assemble = _BundleSharedBindings[[binding]].destination_assemble;
+    let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
+    if participant_arrival == Zeros{4} ||
+       (participant_arrival AND participant_mask) != participant_arrival then
+        return FALSE;
+    end;
+    if assemble.init && _SharedGenerations[[index]].open then
+        return FALSE;
+    end;
+    if !assemble.init &&
+       (!_SharedGenerations[[index]].open ||
+        _SharedGenerations[[index]].closed) then
+        return FALSE;
+    end;
+    if !assemble.init &&
+       _SharedGenerations[[index]].participant_mask != participant_mask then
+        return FALSE;
+    end;
+    if !assemble.init &&
+       (_SharedGenerations[[index]].specialized_inputs_valid !=
+            specialized_inputs_valid ||
+        (specialized_inputs_valid &&
+         (_SharedGenerations[[index]].specialized_input0 != specialized_input0 ||
+          _SharedGenerations[[index]].specialized_input1 != specialized_input1 ||
+          _SharedGenerations[[index]].specialized_input2 != specialized_input2 ||
+          _SharedGenerations[[index]].specialized_input3 != specialized_input3 ||
+          _SharedGenerations[[index]].specialized_metadata != specialized_metadata))) then
+        return FALSE;
+    end;
+    if assemble.init &&
+       (assemble.size_code < 1 || assemble.size_code > 12) then
+        return FALSE;
+    end;
+    let parent_cells = if assemble.init then
+        BundleLocalGenerationCellCount(
+            assemble.size_code as integer {1..12}) * 4
+        else _SharedGenerations[[index]].parent_cell_count;
+    if offset_cells + coverage_cells > parent_cells then return FALSE; end;
+    if !assemble.init then
+        for cell = 0 to 8191 do
+            if cell < coverage_cells &&
+               _SharedGenerations[[index]].covered_cells[
+                   offset_cells + cell] == '1' then
+                return FALSE;
+            end;
+        end;
+    end;
+    if assemble.last then
+        let covered = BundleSharedGenerationCoverageWithCurrent(
+            shared_tile_id, offset_cells, coverage_cells, assemble.init);
+        for cell = 0 to 8191 do
+            if cell < parent_cells && covered[cell] == '0' then
+                return FALSE;
+            end;
+        end;
+        let arrived = (if assemble.init then Zeros{4}
+            else _SharedGenerations[[index]].arrived_participants) OR
+            participant_arrival;
+        if arrived != participant_mask then return FALSE; end;
+    end;
+    return TRUE;
 end;
 
 readonly func ValidateBundleSharedGeneration() => boolean
@@ -74,41 +159,29 @@ begin
             end;
             let raw_offset = UInt(assemble.offset);
             if raw_offset > 2047 then return FALSE; end;
-            let offset_cells = raw_offset as integer {0..2047};
-            let writer_cells = BundleLocalGenerationCellCount(
-                writer_size as integer {1..12});
-            let parent_cells = if assemble.init then
-                BundleLocalGenerationCellCount(
-                    assemble.size_code as integer {1..12})
-                else _SharedGenerations[[index]].parent_cell_count;
-            if offset_cells + writer_cells > parent_cells then return FALSE; end;
-            if !assemble.init then
-                for cell = 0 to 2047 do
-                    if cell < writer_cells &&
-                       _SharedGenerations[[index]].covered_cells[
-                           offset_cells + cell] == '1' then
-                        return FALSE;
-                    end;
-                end;
-            end;
-            if assemble.last then
-                let covered = BundleSharedGenerationCoverageWithCurrent(
-                    shared_tile_id, offset_cells, writer_cells,
-                    assemble.init);
-                for cell = 0 to 2047 do
-                    if cell < parent_cells && covered[cell] == '0' then
-                        return FALSE;
-                    end;
-                end;
+            let offset_cells = (raw_offset * 4) as integer {0..8188};
+            let writer_cells = (BundleLocalGenerationCellCount(
+                writer_size as integer {1..12}) * 4) as integer {4..8192};
+            if !ValidateBundleSharedGenerationRange(binding, offset_cells,
+                   writer_cells, participant_mask, FALSE,
+                   Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+                   Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}) then
+                return FALSE;
             end;
         end;
     end;
     return TRUE;
 end;
 
-func CommitBundleSharedGenerationCandidate(
-    binding: BundleSharedBindingIndex,
-    candidate: SharedTileInfo) => boolean
+func CommitBundleSharedGenerationCandidateRange(
+    binding: BundleSharedBindingIndex, candidate: SharedTileInfo,
+    offset_cells: integer {0..8192},
+    coverage_cells: integer {0..8192},
+    payload_cells: integer {0..8192},
+    participant_arrival: bits(4),
+    specialized_inputs_valid: boolean,
+    specialized_input0: Word, specialized_input1: Word, specialized_input2: Word,
+    specialized_input3: Word, specialized_metadata: Word) => boolean
 begin
     assert _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].destination_assemble.valid;
@@ -116,12 +189,13 @@ begin
     let index = SharedTileArrayIndex(shared_tile_id);
     let assemble = _BundleSharedBindings[[binding]].destination_assemble;
     let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
-    let writer_size = _BundleSharedBindings[[binding]].size_code
-        as integer {1..12};
-    let offset_cells = UInt(assemble.offset) as integer {0..2047};
-    let writer_cells = BundleLocalGenerationCellCount(writer_size);
     if !candidate.descriptor_valid ||
-       candidate.allocation_mask != participant_mask then
+       candidate.allocation_mask != participant_mask ||
+       payload_cells > coverage_cells ||
+       !ValidateBundleSharedGenerationRange(binding, offset_cells,
+           coverage_cells, participant_arrival, specialized_inputs_valid,
+           specialized_input0, specialized_input1,
+           specialized_input2, specialized_input3, specialized_metadata) then
         return FALSE;
     end;
     if assemble.init then
@@ -137,9 +211,17 @@ begin
         _SharedGenerations[[index]].participant_mask = participant_mask;
         _SharedGenerations[[index]].parent_size_code = parent_size;
         _SharedGenerations[[index]].parent_cell_count =
-            BundleLocalGenerationCellCount(parent_size);
-        _SharedGenerations[[index]].covered_cells = Zeros{2048};
-        _SharedGenerations[[index]].ready_cells = Zeros{2048};
+            BundleLocalGenerationCellCount(parent_size) * 4;
+        _SharedGenerations[[index]].covered_cells = Zeros{8192};
+        _SharedGenerations[[index]].ready_cells = Zeros{8192};
+        _SharedGenerations[[index]].arrived_participants = Zeros{4};
+        _SharedGenerations[[index]].specialized_inputs_valid =
+            specialized_inputs_valid;
+        _SharedGenerations[[index]].specialized_input0 = specialized_input0;
+        _SharedGenerations[[index]].specialized_input1 = specialized_input1;
+        _SharedGenerations[[index]].specialized_input2 = specialized_input2;
+        _SharedGenerations[[index]].specialized_input3 = specialized_input3;
+        _SharedGenerations[[index]].specialized_metadata = specialized_metadata;
         _SharedGenerations[[index]].last_seen = FALSE;
         _SharedGenerations[[index]].working_valid = TRUE;
         _SharedGenerations[[index]].working_tile = candidate.tile;
@@ -163,60 +245,65 @@ begin
             return FALSE;
         end;
     end;
-    let element_bits = TileElementBits(candidate.tile.data_type);
-    let destination_offset =
-        ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM element_bits)
-        as integer {0..524287};
-    let source_elements =
-        ((candidate.tile.capacity_bytes * 8) DIVRM element_bits)
-        as integer {1..524288};
-    let parent_elements = TileLogicalElementCapacity(
-        _SharedGenerations[[index]].working_tile.capacity_bytes,
-        candidate.tile.data_type);
-    if destination_offset + source_elements > parent_elements then
-        return FALSE;
-    end;
-    if candidate.tile.valid_rows == 0 ||
-       candidate.tile.valid_columns == 0 then
-        return FALSE;
-    end;
-    var working = _SharedGenerations[[index]].working_tile;
-    for element = 0 to source_elements - 1 looplimit 524288 do
-        let source_index = element as PackedTileElementIndex;
-        let destination_index = (destination_offset + element)
-            as PackedTileElementIndex;
-        if TileLogicalElementDefined(candidate.tile, source_index) then
-            working = TileInfoWithLogicalElement(
-                working, destination_index,
-                TileReadLogicalElement(candidate.tile, source_index));
+    if payload_cells != 0 then
+        let element_bits = TileElementBits(candidate.tile.data_type);
+        let destination_offset =
+            ((offset_cells * 32 * 8) DIVRM element_bits)
+            as integer {0..524287};
+        let source_elements =
+            ((payload_cells * 32 * 8) DIVRM element_bits)
+            as integer {1..524288};
+        let parent_elements = TileLogicalElementCapacity(
+            _SharedGenerations[[index]].working_tile.capacity_bytes,
+            candidate.tile.data_type);
+        if destination_offset + source_elements > parent_elements then
+            return FALSE;
+        end;
+        if candidate.tile.valid_rows == 0 ||
+           candidate.tile.valid_columns == 0 then
+            return FALSE;
+        end;
+        var working = _SharedGenerations[[index]].working_tile;
+        for element = 0 to source_elements - 1 looplimit 524288 do
+            let source_index = element as PackedTileElementIndex;
+            let destination_index = (destination_offset + element)
+                as PackedTileElementIndex;
+            if TileLogicalElementDefined(candidate.tile, source_index) then
+                working = TileInfoWithLogicalElement(
+                    working, destination_index,
+                    TileReadLogicalElement(candidate.tile, source_index));
+            end;
+        end;
+        _SharedGenerations[[index]].working_tile = working;
+        let working_columns = working.columns as integer {1..65535};
+        let last_valid_row = (candidate.tile.valid_rows - 1)
+            as integer {0..65534};
+        let last_valid_column = (candidate.tile.valid_columns - 1)
+            as integer {0..65534};
+        let candidate_valid_extent =
+            (TileLogicalLinearIndex(candidate.tile, last_valid_row,
+                 last_valid_column) + 1) as integer {1..524288};
+        let required_end = destination_offset + candidate_valid_extent;
+        if required_end > parent_elements then return FALSE; end;
+        let required_rows = ((required_end +
+            (working_columns - 1)) DIVRM working_columns)
+            as integer {1..65535};
+        if _SharedGenerations[[index]].working_tile.valid_rows < required_rows then
+            _SharedGenerations[[index]].working_tile.valid_rows = required_rows;
+        end;
+        if _SharedGenerations[[index]].working_tile.valid_columns <
+           candidate.tile.valid_columns then
+            _SharedGenerations[[index]].working_tile.valid_columns =
+                candidate.tile.valid_columns;
         end;
     end;
-    _SharedGenerations[[index]].working_tile = working;
-    let working_columns = working.columns as integer {1..65535};
-    let last_valid_row = (candidate.tile.valid_rows - 1)
-        as integer {0..65534};
-    let last_valid_column = (candidate.tile.valid_columns - 1)
-        as integer {0..65534};
-    let candidate_valid_extent =
-        (TileLogicalLinearIndex(candidate.tile, last_valid_row,
-             last_valid_column) + 1) as integer {1..524288};
-    let required_end = destination_offset + candidate_valid_extent;
-    if required_end > parent_elements then return FALSE; end;
-    let required_rows = ((required_end +
-        (working_columns - 1)) DIVRM working_columns)
-        as integer {1..65535};
-    if _SharedGenerations[[index]].working_tile.valid_rows < required_rows then
-        _SharedGenerations[[index]].working_tile.valid_rows = required_rows;
-    end;
-    if _SharedGenerations[[index]].working_tile.valid_columns <
-       candidate.tile.valid_columns then
-        _SharedGenerations[[index]].working_tile.valid_columns =
-            candidate.tile.valid_columns;
-    end;
     let covered = BundleSharedGenerationCoverageWithCurrent(
-        shared_tile_id, offset_cells, writer_cells, assemble.init);
+        shared_tile_id, offset_cells, coverage_cells, assemble.init);
     _SharedGenerations[[index]].covered_cells = covered;
     _SharedGenerations[[index]].ready_cells = covered;
+    _SharedGenerations[[index]].arrived_participants =
+        _SharedGenerations[[index]].arrived_participants OR
+        participant_arrival;
     _SharedGenerations[[index]].working_initialized_mask =
         _SharedGenerations[[index]].working_initialized_mask OR
         candidate.initialized_mask;
@@ -236,7 +323,24 @@ begin
     end;
     return TRUE;
 end;
-
+// Ordinary B.ASSEMBLE retains its size-coded range and represents arrival of
+// the complete decoded PE mask.  Specialized collectives use the explicit
+// range entry point above.
+func CommitBundleSharedGenerationCandidate(
+    binding: BundleSharedBindingIndex,
+    candidate: SharedTileInfo) => boolean
+begin
+    let assemble = _BundleSharedBindings[[binding]].destination_assemble;
+    let offset_cells = (UInt(assemble.offset) * 4) as integer {0..8188};
+    let writer_cells = (BundleLocalGenerationCellCount(
+        _BundleSharedBindings[[binding]].size_code as integer {1..12}) * 4)
+        as integer {4..8192};
+    return CommitBundleSharedGenerationCandidateRange(binding, candidate,
+        offset_cells, writer_cells, writer_cells,
+        _BundleSharedBindings[[binding]].pe_mask, FALSE,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
+end;
 func BeginBundleSharedGenerationProbe(shared_tile_id: SharedTileID)
     => SharedTileInfo
 begin

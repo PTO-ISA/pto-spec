@@ -74,7 +74,7 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(69) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(70) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(71) == TRUE;
-    assert InstructionContractAcceptsTileOperation_BSTART_SFU(72) == TRUE;
+    assert InstructionContractAcceptsTileOperation_BSTART_SFU(72) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(73) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(74) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(75) == FALSE;
@@ -96,12 +96,12 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(91) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(92) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(93) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_SFU(94) == FALSE;
+    assert InstructionContractAcceptsTileOperation_BSTART_SFU(94) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(95) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(96) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(97) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(98) == TRUE;
-    assert InstructionContractAcceptsTileOperation_BSTART_SFU(99) == TRUE;
+    assert InstructionContractAcceptsTileOperation_BSTART_SFU(99) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(100) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(101) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(102) == FALSE;
@@ -119,6 +119,5 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(114) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(115) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(116) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_SFU(117) == FALSE;
     return 0;
 end;

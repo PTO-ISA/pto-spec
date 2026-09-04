@@ -221,6 +221,22 @@ def validate_migration(root: Path, mapping_path: Path) -> list[str]:
         for path in (root / "docs/status/decisions").glob("*.md")
         if path.name != "0000-template.md"
     }
+    # Typed ADRs created after the serial-to-typed migration may be first-class
+    # records without a legacy serial predecessor.  They intentionally do not
+    # enter the migration map; mapped historical records below still retain
+    # their exact path, body, and digest checks.
+    unmapped_typed = set()
+    for path in actual_decisions - old_paths - new_paths:
+        try:
+            metadata, _ = _front_matter_and_body(root / path)
+        except (OSError, ValueError):
+            continue
+        if (
+            isinstance(metadata, dict)
+            and NEW_ID_RE.fullmatch(str(metadata.get("id", "")))
+            and metadata.get("legacy_ids") == []
+        ):
+            unmapped_typed.add(path)
     old_exists = {path for path in old_paths if (root / path).is_file()}
     new_exists = {path for path in new_paths if (root / path).is_file()}
     for index, record in enumerate(records):
@@ -233,9 +249,10 @@ def validate_migration(root: Path, mapping_path: Path) -> list[str]:
     if old_exists and new_exists:
         errors.append("ADR tree must not mix pre- and post-migration paths")
     active_paths = old_paths if old_exists else new_paths
-    if actual_decisions != active_paths:
+    expected_decisions = active_paths | unmapped_typed
+    if actual_decisions != expected_decisions:
         missing = sorted(path.as_posix() for path in active_paths - actual_decisions)
-        extra = sorted(path.as_posix() for path in actual_decisions - active_paths)
+        extra = sorted(path.as_posix() for path in actual_decisions - expected_decisions)
         if missing:
             errors.append(f"ADR migration coverage is missing: {', '.join(missing)}")
         if extra:

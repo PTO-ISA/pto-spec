@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-FEATURE-MAP-STATE-001","source":"asl/tile/model/state/feature-map-descriptors.asl","requirements":["PTO-TIMG2COL-CONTRACT-001"],"kind":"state-transition","summary":"Feature-map descriptor configuration is core Tile state and reallocation invalidates it.","pass_condition":"The configured descriptor is readable until the Local Tile is configured again.","related_sources":["asl/tile/model/state/allocation.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-FEATURE-MAP-STATE-001","source":"asl/tile/model/state/feature-map-descriptors.asl","requirements":["PTO-BSTART-TIMG2COL-CONTRACT-001"],"kind":"state-transition","summary":"Feature-map descriptor configuration is core Tile state and reallocation invalidates it.","pass_condition":"The configured descriptor is readable until the Local Tile is configured again.","related_sources":["asl/tile/model/state/allocation.asl"]}
 func main() => integer
 begin
     ResetProfileState();
