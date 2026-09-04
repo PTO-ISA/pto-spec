@@ -104,6 +104,7 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
     parser.add_argument("--start-directory", type=Path, default=Path("tests/scripts"))
     parser.add_argument("--pattern", default="test_*.py")
     parser.add_argument("--module", action="append", default=[])
+    parser.add_argument("--exclude-module", action="append", default=[])
     parser.add_argument("-j", "--jobs", type=int)
     parser.add_argument("--slowest", type=int, default=0)
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -116,8 +117,12 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
         if arguments.slowest < 0:
             raise ValueError("slowest must be nonnegative")
         root = arguments.root.resolve()
-        modules = tuple(arguments.module) or discover_modules(
+        selected_modules = tuple(arguments.module) or discover_modules(
             root, arguments.start_directory, arguments.pattern
+        )
+        excluded_modules = frozenset(arguments.exclude_module)
+        modules = tuple(
+            module for module in selected_modules if module not in excluded_modules
         )
         if not modules:
             raise ValueError("no Python test modules discovered")

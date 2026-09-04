@@ -119,6 +119,40 @@ class PythonTestRunnerTest(unittest.TestCase):
         self.assertNotIn("tests.scripts.test_alpha", text)
         self.assertIn("Python tests: PASS · 2 modules · 5 tests", text)
 
+    def test_excludes_release_only_modules_from_a_discovered_lane(self) -> None:
+        results = (
+            ModuleResult("tests.scripts.test_alpha", 0, 0.25, 1, "", ""),
+        )
+
+        def fake_run_modules(root, modules, jobs):
+            self.assertEqual(modules, ("tests.scripts.test_alpha",))
+            return results
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "tests/scripts"
+            tests.mkdir(parents=True)
+            (tests / "test_alpha.py").write_text("", encoding="utf-8")
+            (tests / "test_release_only.py").write_text("", encoding="utf-8")
+            output = io.StringIO()
+            original = RUNNER["main"].__globals__["run_modules"]
+            RUNNER["main"].__globals__["run_modules"] = fake_run_modules
+            try:
+                returncode = RUNNER["main"](
+                    [
+                        "--root",
+                        str(root),
+                        "--exclude-module",
+                        "tests.scripts.test_release_only",
+                    ],
+                    output=output,
+                )
+            finally:
+                RUNNER["main"].__globals__["run_modules"] = original
+
+        self.assertEqual(returncode, 0)
+        self.assertIn("Python tests: PASS · 1 modules · 1 tests", output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
