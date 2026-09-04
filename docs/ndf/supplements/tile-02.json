@@ -41,18 +41,6 @@
       }
     },
     {
-      "id": "PTO-TINSERT-CONTRACT-001",
-      "source_path": "asl/tile/layout-and-rearrangement/layout/TINSERT.asl",
-      "title": {
-        "en": "TINSERT windowed Tile insertion",
-        "zh-CN": "TINSERT Tile 窗口插入"
-      },
-      "summary": {
-        "en": "TINSERT builds a renamed result from snapshots of the previous destination and an insertion source. Only the selected in-range window changes; payload and definedness outside that window remain identical to the old destination. Same-width non-packed carrier checks precede the operation, and the complete result becomes visible atomically without changing either source snapshot.",
-        "zh-CN": "TINSERT 对旧目标和插入源分别取快照，并据此生成重命名后的结果。只有选定且位于范围内的窗口发生变化，窗口外的载荷与定义性与旧目标完全一致。同位宽非打包载体检查先于操作完成，最终结果一次性可见，两个源快照均不被修改。"
-      }
-    },
-    {
       "id": "PTO-TLOAD-CUBE-001",
       "source_path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
       "title": {
@@ -221,18 +209,6 @@
       }
     },
     {
-      "id": "PTO-TMRGSORT-CONTRACT-001",
-      "source_path": "asl/tile/irregular-and-complex/sorting/TMRGSORT.asl",
-      "title": {
-        "en": "TMRGSORT stable merge of sorted Tiles",
-        "zh-CN": "TMRGSORT 有序 Tile 稳定归并"
-      },
-      "summary": {
-        "en": "TMRGSORT is SFU Mode 3 Function 13 for merging FP32 or FP16 sources that are already sorted in the selected direction. Equal values are taken from the left source first, numeric values precede NaNs in either direction, and a signaling NaN contributes numeric invalid status. An unsorted input is rejected before any result becomes visible.",
-        "zh-CN": "TMRGSORT 是 SFU Mode 3 Function 13，用于按所选方向归并已经有序的 FP32 或 FP16 源。相等值优先取自左源；无论升序还是降序，数值都排在 NaN 之前；遇到信号 NaN 会产生 numeric invalid 状态。任一输入未按要求排序时，在结果可见前即被拒绝。"
-      }
-    },
-    {
       "id": "PTO-TMUL-CONTRACT-001",
       "source_path": "asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl",
       "title": {
@@ -338,18 +314,6 @@
       "summary": {
         "en": "TPREFETCH covers the same typed address-generation pattern and memory events as TLOAD for all four PE-private base and stride inputs. Its purpose is to describe the memory footprint without creating a Tile result. Consequently, implementations observe prefetch accesses but no Tile allocation, descriptor update, payload write, or definedness change.",
         "zh-CN": "TPREFETCH 对四组 PE 私有基址和步长输入采用与 TLOAD 相同的带类型地址生成方式及内存事件。它用于描述内存访问范围，而不生成 Tile 结果。因此实现中可以观察到预取访问，但不会出现 Tile 分配、描述符更新、载荷写入或定义性变化。"
-      }
-    },
-    {
-      "id": "PTO-TQUANT-CONTRACT-001",
-      "source_path": "asl/tile/irregular-and-complex/format-conversion/TQUANT.asl",
-      "title": {
-        "en": "TQUANT FP32-to-8-bit quantization",
-        "zh-CN": "TQUANT FP32 到 8 位量化"
-      },
-      "summary": {
-        "en": "TQUANT is SFU Mode 3 Function 10 and converts one persistent Local FP32 source into a newly allocated Local S8 or U8 destination. Each valid element rounds source multiplied by a positive finite FP32 multiplier, then adds a zero point represented in the destination type. Omitting B.IOR selects multiplier 1.0 and zero point zero; an explicitly present zero multiplier is rejected before allocation or any visible effect.",
-        "zh-CN": "TQUANT 是 SFU Mode 3 Function 10，把一个持久化 Local FP32 源转换为新分配的 Local S8 或 U8 目标。每个有效元素先将源值乘以正有限 FP32 multiplier 并取整，再加上以目标类型表示的 zero point。省略 B.IOR 时选择 multiplier 1.0 和 zero point 0；显式提供零 multiplier 时会在分配或任何可见效果前被拒绝。"
       }
     },
     {
@@ -674,18 +638,6 @@
       "summary": {
         "en": "TSHUF selects raw 32-bit words independently within power-of-two segments of each row. Control mode, segment size, and boundary fields define where a source word comes from and are checked before any result becomes visible. SELF and ZERO provide the two out-of-segment behaviors without introducing a predicate source.",
         "zh-CN": "TSHUF 在每一行的独立 2 的幂分段内选择原始 32 位字。控制模式、分段大小和边界字段决定源字位置，并在任何结果可见前完成检查。SELF 与 ZERO 定义两种越出分段时的行为，无需引入谓词源。"
-      }
-    },
-    {
-      "id": "PTO-TSORT-CONTRACT-001",
-      "source_path": "asl/tile/irregular-and-complex/sorting/TSORT.asl",
-      "title": {
-        "en": "TSORT stable row-group sorting",
-        "zh-CN": "TSORT 行组稳定排序"
-      },
-      "summary": {
-        "en": "TSORT is SFU Mode 3 Function 12 and stably sorts independent valid-row groups of FP32, FP16, or BF16 values. It returns matching U32 indices from the original group, places numeric values before NaNs in either direction, and records invalid status when a signaling NaN is present. Omitted or zero LB0 selects a group width of 32.",
-        "zh-CN": "TSORT 是 SFU Mode 3 Function 12，对 FP32、FP16 或 BF16 的独立有效行组执行稳定排序。它返回与原组位置对应的 U32 索引，无论排序方向如何都把数值放在 NaN 前，并在出现信号 NaN 时记录 invalid 状态。LB0 省略或为零时，组宽度为 32。"
       }
     },
     {

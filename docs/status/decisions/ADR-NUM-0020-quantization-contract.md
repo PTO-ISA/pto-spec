@@ -3,7 +3,7 @@
   "id": "ADR-NUM-0020",
   "title": "Quantization contract",
   "title_zh": "量化契约",
-  "status": "draft",
+  "status": "superseded",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
   ],
@@ -11,7 +11,7 @@
   "created": "2026-08-21",
   "accepted": null,
   "rejected": null,
-  "superseded": null,
+  "superseded": "2026-09-04",
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "unassigned"
@@ -20,7 +20,9 @@
   "affected_units": [],
   "resolves": [],
   "supersedes": [],
-  "superseded_by": [],
+  "superseded_by": [
+    "ADR-TILE-0013"
+  ],
   "implementation_issue": null,
   "release_impact": "required",
   "legacy_ids": [

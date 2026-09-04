@@ -77,14 +77,7 @@ begin
         TileLayout_RowMajor, TileLocation_Vector);
     WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     WriteTileElement(40, 0, 1, Zeros{PTO_XLEN} + 0x40000000);
-    TQUANT(41, 40, Zeros{PTO_XLEN} + 0x3f800000, Zeros{PTO_XLEN},
-        DefaultNumericExecutionControl());
-    assert ReadTileElement(41, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 2;
-    TDEQUANT(42, 41, Zeros{PTO_XLEN} + 0x3f800000, Zeros{PTO_XLEN},
-        DefaultNumericExecutionControl());
-    assert ReadTileElement(42, 0, 0) ==
-        Zeros{PTO_XLEN} + 0x3f800000;
     assert ReadTileElement(42, 0, 1) ==
         Zeros{PTO_XLEN} + 0x40000000;
 end;

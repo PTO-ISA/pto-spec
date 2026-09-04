@@ -466,7 +466,8 @@
         "PTO-TILE-TGPR2T"
       ]
     }
-  ]
+  ],
+  "release_boundary": true
 }
 ---
 # ADR-TILE-0008: Tile elementwise and irregular operations

@@ -1,9 +1,18 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 126,
+  "operation_count": 118,
   "rejected_review_only_codes": {
     "CUBE": [],
-    "TEPL": [],
+    "TEPL": [
+      "0x060",
+      "0x062",
+      "0x063",
+      "0x068",
+      "0x06A",
+      "0x06B",
+      "0x06C",
+      "0x06D"
+    ],
     "TLSU": []
   },
   "operations": [
@@ -3837,189 +3846,6 @@
           "operand": "source0"
         },
         {
-          "operand": "source1"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TCONCAT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 0,
-      "legality_handler": "TileOperandsLegal_TCONCAT",
-      "mode": 3,
-      "name": "TCONCAT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source-left"
-        },
-        {
-          "field": "source1",
-          "role": "source-right"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x060",
-      "semantic_handler": "TCONCAT",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source-left",
-        "operand:source1:source-right"
-      ],
-      "classification": "layout-and-rearrangement",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TEXTRACT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 2,
-      "legality_handler": "TileOperandsLegal_TEXTRACT",
-      "mode": 3,
-      "name": "TEXTRACT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "source"
-        },
-        {
-          "field": "natural0",
-          "role": "row-offset"
-        },
-        {
-          "field": "natural1",
-          "role": "column-offset"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x062",
-      "semantic_handler": "TEXTRACT",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:source",
-        "operand:natural0:row-offset",
-        "operand:natural1:column-offset"
-      ],
-      "classification": "layout-and-rearrangement",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "natural0"
-        },
-        {
-          "operand": "natural1"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Layout"
-        ],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TINSERT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 3,
-      "legality_handler": "TileOperandsLegal_TINSERT",
-      "mode": 3,
-      "name": "TINSERT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent old destination"
-        },
-        {
-          "field": "source1",
-          "role": "persistent insertion source"
-        },
-        {
-          "field": "natural0",
-          "role": "row-offset"
-        },
-        {
-          "field": "natural1",
-          "role": "column-offset"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x063",
-      "semantic_handler": "TINSERT",
-      "state_effects": [
-        "operand:destination0:destination",
-        "operand:source0:persistent-old-destination",
-        "operand:source1:persistent-insertion-source",
-        "operand:natural0:row-offset",
-        "operand:natural1:column-offset"
-      ],
-      "classification": "layout-and-rearrangement",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
           "operand": "natural0"
         },
         {
@@ -4171,340 +3997,6 @@
         "operand:flag0:lower-or-upper-orientation",
         "operand:diagonal:signed-diagonal-displacement",
         "runtime:TilePad_Null:physical-padding"
-      ],
-      "classification": "irregular-and-complex",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "selected_byte"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "PadValueOrByteId",
-          "DataType"
-        ],
-        "pad_union": "histogram-byte-id"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "THISTOGRAM",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 8,
-      "legality_handler": "TileOperandsLegal_THISTOGRAM",
-      "mode": 3,
-      "name": "THISTOGRAM",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new Local U32 prefix-histogram destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent Local U16 or U32 source"
-        },
-        {
-          "field": "source1",
-          "role": "persistent Local U8 prefix filter"
-        },
-        {
-          "field": "selected_byte",
-          "role": "B.DATR ByteId zero through three"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x068",
-      "semantic_handler": "THISTOGRAM",
-      "state_effects": [
-        "operand:destination0:new-local-u32-prefix-histogram-destination",
-        "operand:source0:persistent-local-u16-or-u32-source",
-        "operand:source1:persistent-local-u8-prefix-filter",
-        "operand:selected_byte:histogram-byte-id",
-        "runtime:TilePad_Null:physical-padding"
-      ],
-      "classification": "irregular-and-complex",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        },
-        {
-          "operand": "scalar1"
-        },
-        {
-          "operand": "numeric_control"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "Sat",
-          "DataType",
-          "RMode"
-        ],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TQUANT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 10,
-      "legality_handler": "TileOperandsLegal_TQUANT",
-      "mode": 3,
-      "name": "TQUANT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new S8 or U8 destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent FP32 source"
-        },
-        {
-          "field": "scalar0",
-          "role": "positive finite FP32 multiplier"
-        },
-        {
-          "field": "scalar1",
-          "role": "destination-typed integer zero point"
-        },
-        {
-          "field": "numeric_control",
-          "role": "rounding and saturation"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x06A",
-      "semantic_handler": "TQUANT",
-      "state_effects": [
-        "operand:destination0:new-s8-or-u8-destination",
-        "operand:source0:persistent-fp32-source",
-        "operand:scalar0:positive-finite-fp32-multiplier",
-        "operand:scalar1:destination-typed-zero-point",
-        "operand:numeric_control:rounding-and-saturation",
-        "runtime:TilePad_Null:physical-padding"
-      ],
-      "classification": "irregular-and-complex",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "scalar0"
-        },
-        {
-          "operand": "scalar1"
-        },
-        {
-          "operand": "numeric_control"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [
-          "DataType",
-          "RMode"
-        ],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TDEQUANT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 11,
-      "legality_handler": "TileOperandsLegal_TDEQUANT",
-      "mode": 3,
-      "name": "TDEQUANT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new FP32 destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent S8 or U8 source"
-        },
-        {
-          "field": "scalar0",
-          "role": "positive finite FP32 multiplier"
-        },
-        {
-          "field": "scalar1",
-          "role": "source-typed integer zero point"
-        },
-        {
-          "field": "numeric_control",
-          "role": "rounding"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x06B",
-      "semantic_handler": "TDEQUANT",
-      "state_effects": [
-        "operand:destination0:new-fp32-destination",
-        "operand:source0:persistent-s8-or-u8-source",
-        "operand:scalar0:positive-finite-fp32-multiplier",
-        "operand:scalar1:source-typed-zero-point",
-        "operand:numeric_control:rounding",
-        "runtime:TilePad_Null:physical-padding"
-      ],
-      "classification": "irregular-and-complex",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "destination1"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "sort_width"
-        },
-        {
-          "operand": "flag0"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TSORT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 12,
-      "legality_handler": "TileOperandsLegal_TSORT",
-      "mode": 3,
-      "name": "TSORT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new Local sorted-value destination"
-        },
-        {
-          "field": "destination1",
-          "role": "new Local U32 original-index destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent Local source"
-        },
-        {
-          "field": "sort_width",
-          "role": "LB0 row-group width"
-        },
-        {
-          "field": "flag0",
-          "role": "ascending or descending selection"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x06C",
-      "semantic_handler": "TSORT",
-      "state_effects": [
-        "operand:destination0:new-local-sorted-value-destination",
-        "operand:destination1:new-local-u32-original-index-destination",
-        "operand:source0:persistent-local-source",
-        "operand:sort_width:row-group-width",
-        "operand:flag0:ascending-or-descending",
-        "runtime:NumericStatusFlags:signaling-nan-invalid-status"
-      ],
-      "classification": "irregular-and-complex",
-      "engine": "SFU"
-    },
-    {
-      "arguments": [
-        {
-          "operand": "destination0"
-        },
-        {
-          "operand": "source0"
-        },
-        {
-          "operand": "source1"
-        },
-        {
-          "operand": "flag0"
-        }
-      ],
-      "command_mnemonic": "BSTART.TEPL",
-      "contract_status": "reviewed-complete",
-      "datr_contract": {
-        "allowed_nonzero_fields": [],
-        "pad_union": "must-zero"
-      },
-      "disposition": "accepted-direct-operation",
-      "effect_contract": "TMRGSORT",
-      "family": "TEPL",
-      "fault_contract": "ExecuteTileInstruction",
-      "function": 13,
-      "legality_handler": "TileOperandsLegal_TMRGSORT",
-      "mode": 3,
-      "name": "TMRGSORT",
-      "operands": [
-        {
-          "field": "destination0",
-          "role": "new Local merged destination"
-        },
-        {
-          "field": "source0",
-          "role": "persistent sorted Local left source"
-        },
-        {
-          "field": "source1",
-          "role": "persistent sorted Local right source"
-        },
-        {
-          "field": "flag0",
-          "role": "ascending or descending selection"
-        }
-      ],
-      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-      "selector": "0x06D",
-      "semantic_handler": "TMRGSORT",
-      "state_effects": [
-        "operand:destination0:new-local-merged-destination",
-        "operand:source0:persistent-sorted-local-left-source",
-        "operand:source1:persistent-sorted-local-right-source",
-        "operand:flag0:ascending-or-descending",
-        "runtime:NumericStatusFlags:signaling-nan-invalid-status"
       ],
       "classification": "irregular-and-complex",
       "engine": "SFU"
@@ -5170,7 +4662,7 @@
         "operand:source2:replacement"
       ],
       "catalog_indices": [
-        89
+        81
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6416,7 +5908,7 @@
         "operand:source1:replacement"
       ],
       "catalog_indices": [
-        108
+        100
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6485,7 +5977,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        109
+        101
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6554,7 +6046,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        110
+        102
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6623,7 +6115,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        111
+        103
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6692,7 +6184,7 @@
         "operand:source1:limit"
       ],
       "catalog_indices": [
-        112
+        104
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6761,7 +6253,7 @@
         "operand:source1:limit"
       ],
       "catalog_indices": [
-        113
+        105
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6830,7 +6322,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        114
+        106
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6899,7 +6391,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        115
+        107
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -6968,7 +6460,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        116
+        108
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7029,7 +6521,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        117
+        109
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7090,7 +6582,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        118
+        110
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7151,7 +6643,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        119
+        111
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7212,7 +6704,7 @@
         "operand:source1:limit"
       ],
       "catalog_indices": [
-        120
+        112
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7273,7 +6765,7 @@
         "operand:source1:limit"
       ],
       "catalog_indices": [
-        121
+        113
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7334,7 +6826,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        122
+        114
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7395,7 +6887,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        123
+        115
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7456,7 +6948,7 @@
         "operand:source1:value"
       ],
       "catalog_indices": [
-        124
+        116
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7506,7 +6998,7 @@
         "operand:source0:indices"
       ],
       "catalog_indices": [
-        125
+        117
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -7607,12 +7099,17 @@
     "TADDSC",
     "TALLOC",
     "TAXPY",
+    "TCONCAT",
     "TDEINTERLEAVE",
+    "TDEQUANT",
     "TFILLPAD",
     "TFMOD",
     "TFMODS",
     "TFREE",
+    "TEXTRACT",
     "TGATHERB",
+    "THISTOGRAM",
+    "TINSERT",
     "TINTERLEAVE",
     "TLRELU",
     "TPARTADD",
@@ -7624,12 +7121,12 @@
     "TPOP",
     "TPRELU",
     "TPUSH",
+    "TQUANT",
     "TRESHAPE",
-    "TSUBC",
-    "TSUBSC",
-    "TRANDOM",
+    "TSORT",
     "TSORT32",
-    "TTRANS"
+    "TTRANS",
+    "TMRGSORT"
   ],
   "rejected_names": [
     "TEXRACT",

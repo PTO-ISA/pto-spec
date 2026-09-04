@@ -77,17 +77,6 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Define argument and equal-value ties.
   - Bound floating permutation sensitivity and partial merges.
 
-## [ADR-NUM-0020: Quantization contract](../decisions/ADR-NUM-0020-quantization-contract.md)
-
-- Target release: unassigned
-- Implementation issue: not assigned
-- Affected NDF clauses: not assigned
-- Blockers:
-  - Resolve whether the affine parameter is scale or inverse-scale/pre-quant multiplier.
-  - Freeze format-specific equations and stochastic-rounding state.
-  - Define group axes, sizes, and tails.
-  - Define sentinels, packing, round-trip tolerances, and whether `SET_QUANT` configuration is architectural state.
-
 ## [ADR-NUM-0021: Matrix numeric contract](../decisions/ADR-NUM-0021-matrix-numeric-contract.md)
 
 - Target release: unassigned

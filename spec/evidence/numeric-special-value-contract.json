@@ -583,7 +583,7 @@
   "sources": [
     {
       "path": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
-      "sha256": "08cfdeb16bf245980c9db849994e181e5079efc53475762cdad1df9f555993b5"
+      "sha256": "8e3812d4327727cfce74d0593740aaff714a848ab9d9eceeca9ca74cacb3f5c4"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -591,23 +591,23 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
+      "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
+      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
+      "sha256": "659feca66ad67db81726c8e0139e614b3ced2694e645f9e5dda534832920d2dd"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
+      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
+      "sha256": "498887f273c87b5a16fea498ee4faf08433ed5206d5d40afe1fb8aa0d1ec09cf"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -615,7 +615,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
+      "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
@@ -635,11 +635,11 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "212dce7a845a9477d78302be500e95a97cb3ceb037a1ac983a87145d334e520d"
+      "sha256": "e1fbb14635d7037fdf8f9ad53d59610dff23faf39ecd57e2dc619c9a9399a647"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3"
+      "sha256": "af92b1824af2047674748f967a2bc9695b5eaf7aaa35538d0e6fe5b6fa99837d"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
@@ -647,7 +647,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a"
+      "sha256": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f"
     },
     {
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
@@ -655,7 +655,7 @@
     },
     {
       "path": "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl",
-      "sha256": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5"
+      "sha256": "1d1e52a874584746a87a8c0232ddc3180fd27b0b1660403c5bcdb1b02aaac031"
     }
   ],
   "summary": {

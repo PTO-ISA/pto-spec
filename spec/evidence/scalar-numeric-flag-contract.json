@@ -520,7 +520,7 @@
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
+      "sha256": "659feca66ad67db81726c8e0139e614b3ced2694e645f9e5dda534832920d2dd"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -528,7 +528,7 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
+      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -536,7 +536,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
+      "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
@@ -556,11 +556,11 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "212dce7a845a9477d78302be500e95a97cb3ceb037a1ac983a87145d334e520d"
+      "sha256": "e1fbb14635d7037fdf8f9ad53d59610dff23faf39ecd57e2dc619c9a9399a647"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3"
+      "sha256": "af92b1824af2047674748f967a2bc9695b5eaf7aaa35538d0e6fe5b6fa99837d"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
@@ -568,7 +568,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a"
+      "sha256": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f"
     },
     {
       "path": "asl/arch/profile/applicability.asl",
@@ -576,7 +576,7 @@
     },
     {
       "path": "asl/arch/profile/e8m0-conversion.asl",
-      "sha256": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57"
+      "sha256": "7e94f1b7c5f3f0d76bf89cda5ece4e0aa363b1d699d01acf0b0f66c0d893199a"
     },
     {
       "path": "asl/arch/profile/extension-first-use.asl",
@@ -588,19 +588,27 @@
     },
     {
       "path": "asl/arch/profile/matrix-quantization.asl",
-      "sha256": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440"
+      "sha256": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373"
+    },
+    {
+      "path": "asl/arch/profile/reference-conversion.asl",
+      "sha256": "ed1e073ec50cdc8173641e6b5978fb635748cc8516e8185ac19ce43e68c14e68"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "35985186c37e602be42577c20249bc42984855d210d834347182b222022e2800"
+      "sha256": "f78e1009a4b8634f45efb5732d752cc68b6a46aa8a6351188697f12854e7c0f5"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
-      "sha256": "e82820dc13f89142aa0448c4435f6cbd53d4eb0b85c05e63a887452c186d9aef"
+      "sha256": "5edf34134b72d030c4281301dc9abf3aecb7b233f677e28db5e6f5829f22d5dd"
+    },
+    {
+      "path": "asl/arch/profile/reference-scalar-fp-specials.asl",
+      "sha256": "949721ddfb69b114010b6975241196412a8708900dbbbca0086adb2cdc790204"
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "370e7172d986737d0a77f7320d130c329c30d8a2a007502d2ad234b6e57a7f8a"
+      "sha256": "0138e72f6fdcac4a2f7c19c71b16c61dcf8bfb4fc5bb4b63c09e4a9f7ddff94d"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
@@ -608,7 +616,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
+      "sha256": "adb55aaa119e1bae5e10baa998697b524dcf36893795ca821783032138396e4f"
     }
   ],
   "summary": {

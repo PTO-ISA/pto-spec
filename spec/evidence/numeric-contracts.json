@@ -232,58 +232,6 @@
       "target_conformance_status": "open:S5-T2"
     },
     {
-      "id": "tile-quantize",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileQuantize"
-      ],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "scale interpretation",
-        "zero-point interpretation",
-        "rounding",
-        "clamping",
-        "exception behavior"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
-      "id": "tile-dequantize",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileDequantize"
-      ],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "scale interpretation",
-        "zero-point interpretation",
-        "rounding",
-        "overflow and underflow",
-        "exception behavior"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
-      "id": "tile-order",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "data-type ordering",
-        "NaN placement",
-        "signed zero",
-        "equal-value stability",
-        "ascending and descending tie behavior"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
       "id": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -468,16 +416,6 @@
       ]
     },
     {
-      "name": "TileProfileDequantize",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/model/numeric/formats.asl",
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TDEQUANT"
-      ]
-    },
-    {
       "name": "TileProfileExpand",
       "role": "portable-profile-boundary",
       "model": "asl/tile/model/execution/expansion.asl",
@@ -592,38 +530,6 @@
         "tile:CUBE:TMATMUL_MX",
         "tile:CUBE:TMATMUL_MX_ACC",
         "tile:CUBE:TMATMUL_MX_BIAS"
-      ]
-    },
-    {
-      "name": "TileProfileOrderLeft",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/model/execution/complex.asl",
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT"
-      ]
-    },
-    {
-      "name": "TileProfileValueIsNaN",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/model/execution/complex.asl",
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT"
-      ]
-    },
-    {
-      "name": "TileProfileQuantize",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/model/numeric/formats.asl",
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TQUANT"
       ]
     },
     {
@@ -1615,22 +1521,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TDEQUANT",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TDEQUANT",
-      "catalog_identity": "0x06B",
-      "numeric_contract": "tile-dequantize",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileDequantize"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:TEPL:TDIV",
       "surface": "direct-tile-operation",
       "family": "TEPL",
@@ -1763,23 +1653,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TMRGSORT",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TMRGSORT",
-      "catalog_identity": "0x06D",
-      "numeric_contract": "tile-order",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:TEPL:TMUL",
       "surface": "direct-tile-operation",
       "family": "TEPL",
@@ -1872,22 +1745,6 @@
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TQUANT",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TQUANT",
-      "catalog_identity": "0x06A",
-      "numeric_contract": "tile-quantize",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileQuantize"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-CONVERT-001",
       "stage4_target": "S4-T8",
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
@@ -2271,23 +2128,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TSORT",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TSORT",
-      "catalog_identity": "0x06C",
-      "numeric_contract": "tile-order",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfileOrderLeft",
-        "TileProfileValueIsNaN"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:TEPL:TSQRT",
       "surface": "direct-tile-operation",
       "family": "TEPL",
@@ -2371,11 +2211,11 @@
     }
   ],
   "summary": {
-    "numeric_hook_count": 28,
-    "decoded_operation_count": 100,
+    "numeric_hook_count": 24,
+    "decoded_operation_count": 96,
     "scalar_form_count": 19,
-    "direct_tile_operation_count": 81,
-    "primary_profile_boundary_hook_count": 22,
+    "direct_tile_operation_count": 77,
+    "primary_profile_boundary_hook_count": 18,
     "reference_helper_hook_count": 4,
     "library_only_hook_count": 2,
     "target_conformance_status": "open:S5-T2"

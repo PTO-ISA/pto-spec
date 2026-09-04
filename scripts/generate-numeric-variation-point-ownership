@@ -73,14 +73,6 @@ DIMENSION_IDS = {
     "accumulation width": "accumulation-width",
     "reduction order": "reduction-order",
     "arg tie-breaking": "arg-tie-breaking",
-    "scale interpretation": "scale-interpretation",
-    "zero-point interpretation": "zero-point-interpretation",
-    "clamping": "clamping",
-    "exception behavior": "exception-behavior",
-    "data-type ordering": "data-type-ordering",
-    "NaN placement": "nan-placement",
-    "equal-value stability": "equal-value-stability",
-    "ascending and descending tie behavior": "ascending-and-descending-tie-behavior",
     "input product precision": "input-product-precision",
 }
 
@@ -114,14 +106,6 @@ PRIMARY_DECISION_CANDIDATES = {
     "accumulation width": ("ADR-NUM-0021", "ADR-NUM-0019"),
     "reduction order": ("ADR-NUM-0019",),
     "arg tie-breaking": ("ADR-NUM-0019",),
-    "scale interpretation": ("ADR-NUM-0020",),
-    "zero-point interpretation": ("ADR-NUM-0020",),
-    "clamping": ("ADR-NUM-0020", "ADR-NUM-0017"),
-    "exception behavior": ("ADR-NUM-0020", "ADR-NUM-0015"),
-    "data-type ordering": ("ADR-NUM-0019",),
-    "NaN placement": ("ADR-NUM-0015",),
-    "equal-value stability": ("ADR-NUM-0019",),
-    "ascending and descending tie behavior": ("ADR-NUM-0019",),
     "input product precision": ("ADR-NUM-0021",),
 }
 
@@ -211,12 +195,12 @@ def generate() -> dict[str, Any]:
     integer_conversion = load(INTEGER_CONVERSION_CONTRACT)
     applicability = load(APPLICABILITY_CONTRACT)
 
-    require(inventory["summary"]["numeric_hook_count"] == 28, "hook count drift")
-    require(inventory["summary"]["decoded_operation_count"] == 100, "operation count drift")
-    require(len(inventory["contract_domains"]) == 17, "domain count drift")
+    require(inventory["summary"]["numeric_hook_count"] == 24, "hook count drift")
+    require(inventory["summary"]["decoded_operation_count"] == 96, "operation count drift")
+    require(len(inventory["contract_domains"]) == 14, "domain count drift")
     require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
     require(
-        rounding["summary"]["accepted_domain_rounding_rule_count"] == 15
+        rounding["summary"]["accepted_domain_rounding_rule_count"] == 13
         and rounding["summary"]["adr0047_complete"] is True,
         "accepted rounding result-rule set drift",
     )
@@ -411,17 +395,17 @@ def generate() -> dict[str, Any]:
             }
         )
 
-    require(len(variation_points) == 84, "variation-point count drift")
-    require(len({row["id"] for row in variation_points}) == 84, "duplicate variation point")
-    require(len(operation_rows) == 100, "operation ownership coverage drift")
-    require(len(hook_rows) == 28, "hook ownership coverage drift")
+    require(len(variation_points) == 69, "variation-point count drift")
+    require(len({row["id"] for row in variation_points}) == 69, "duplicate variation point")
+    require(len(operation_rows) == 96, "operation ownership coverage drift")
+    require(len(hook_rows) == 24, "hook ownership coverage drift")
     require(
         Counter(row["domain"] for row in operation_rows)
         == Counter(row["numeric_contract"] for row in operations.values()),
         "operation domain mapping drift",
     )
     require(
-        sum(len(row["primary_hooks"]) for row in operations.values()) == 148
+        sum(len(row["primary_hooks"]) for row in operations.values()) == 142
         and sum(len(row["reference_helpers"]) for row in operations.values()) == 6,
         "operation-to-hook edge count drift",
     )
@@ -429,7 +413,7 @@ def generate() -> dict[str, Any]:
         Counter(row["role"] for row in hook_rows)
         == Counter(
             {
-                "portable-profile-boundary": 22,
+                "portable-profile-boundary": 18,
                 "pto-v0-reference-helper": 4,
                 "numeric-library-helper-no-decoded-operation": 2,
             }
@@ -491,14 +475,14 @@ def generate() -> dict[str, Any]:
         ],
         "sources": [source(path) for path in SOURCE_PATHS],
         "summary": {
-            "variation_point_count": 84,
+            "variation_point_count": 69,
             "unique_dimension_count": len({row["dimension_id"] for row in variation_points}),
-            "domain_count": 17,
-            "operation_count": 100,
-            "hook_count": 28,
-            "primary_operation_hook_edge_count": 148,
+            "domain_count": 14,
+            "operation_count": 96,
+            "hook_count": 24,
+            "primary_operation_hook_edge_count": 142,
             "reference_helper_operation_edge_count": 6,
-            "portable_decision_owner_point_count": 84,
+            "portable_decision_owner_point_count": 69,
             "selected_route_count": sum(
                 row["selected_route"] is not None for row in variation_points
             ),

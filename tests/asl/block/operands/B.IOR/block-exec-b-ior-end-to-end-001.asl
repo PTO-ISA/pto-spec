@@ -118,22 +118,6 @@ begin
     assert extra_binding == CommandExecution_Executed;
     assert !BundleOperationBindingsComplete(tadds_operation);
 
-    // TQUANT consumes two scalar sources. Reusing one architectural GPR for
-    // both inputs is legal.
-    ResetProfileState();
-    let quant_start = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 0x6a, Zeros{5} + 24), 32);
-    AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
-    let quant_binding = ExecuteCommandInstruction(
-        BundleTestScalarBinding(
-            Zeros{5}, Zeros{5} + 5, Zeros{5} + 5, Zeros{5}), 32);
-    let quant_operation = DecodeTileOperation(
-        TileDecode_TEPL, Zeros{12} + 0x6a)
-        as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    assert quant_start == CommandExecution_Executed;
-    assert quant_binding == CommandExecution_Executed;
-    assert BundleOperationBindingsComplete(quant_operation);
-
     let tload_operation = DecodeTileOperation(
         TileDecode_TLSU, Zeros{12})
         as integer {0..PTO_TILE_OPERATION_COUNT-1};

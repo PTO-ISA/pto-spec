@@ -120,13 +120,5 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(115) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(116) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(117) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(118) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(119) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(120) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(121) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(122) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(123) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(124) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(125) == FALSE;
     return 0;
 end;

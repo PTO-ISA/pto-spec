@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.SFU TIMG2COL, DataType | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | B.IOR PosMGPR, PosKGPR, zero, ->zero (optional) | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001100100') == 71;
-    assert TileOperationOfIndex(71) == TileOperation_TIMG2COL;
-    assert TileHandlerOfIndex(71) == TileHandler_TIMG2COL;
-    assert TileClassOfIndex(71) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(71) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001100100') == 68;
+    assert TileOperationOfIndex(68) == TileOperation_TIMG2COL;
+    assert TileHandlerOfIndex(68) == TileHandler_TIMG2COL;
+    assert TileClassOfIndex(68) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(68) == TileEngine_SFU;
     assert InstructionContractOperation_TIMG2COL() == TileOperation_TIMG2COL;
     assert InstructionContractHandler_TIMG2COL() == TileHandler_TIMG2COL;
     return 0;

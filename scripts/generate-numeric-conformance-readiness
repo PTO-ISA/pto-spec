@@ -108,11 +108,7 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
     {
         "id": "N4",
         "title": "tile conversion",
-        "contract_domains": [
-            "tile-convert",
-            "tile-quantize",
-            "tile-dequantize",
-        ],
+        "contract_domains": ["tile-convert"],
         "unbound_hooks": [],
         "required_vector_classes": [
             "normal",
@@ -133,8 +129,8 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
     },
     {
         "id": "N5",
-        "title": "reductions and ordering",
-        "contract_domains": ["tile-reduction", "tile-order"],
+        "title": "tile reductions",
+        "contract_domains": ["tile-reduction"],
         "unbound_hooks": [],
         "required_vector_classes": [
             "normal",
@@ -148,10 +144,8 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
             "rounding-tie",
             "overflow",
             "accumulation-order",
-            "ascending-descending",
-            "stability",
         ],
-        "oracle_requirement": "Use an independent ordered reference that exposes accumulation order, width, ties, stability, and exceptional-value placement exactly as selected by the profile.",
+        "oracle_requirement": "Use an independent reduction reference that exposes accumulation order, width, ties, and exceptional-value selection exactly as selected by the profile.",
     },
     {
         "id": "N6",
@@ -179,10 +173,10 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
 )
 
 EXPECTED_COUNTS = {
-    "contract_domain_count": 17,
-    "hook_count": 28,
+    "contract_domain_count": 14,
+    "hook_count": 24,
     "lane_count": 6,
-    "operation_count": 100,
+    "operation_count": 96,
 }
 
 
@@ -226,10 +220,10 @@ def build_evidence() -> dict[str, Any]:
         variation_ownership.get("status")
         == "variation-point-discovery-and-ownership-closed-result-bounds-open"
         and variation_ownership.get("summary", {}).get("variation_point_count")
-        == 84
-        and variation_ownership.get("summary", {}).get("selected_route_count") == 15
+        == 69
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 13
         and variation_ownership.get("summary", {}).get("accepted_result_rule_count")
-        == 15,
+        == 13,
         "numeric variation-point ownership checkpoint drift",
     )
     require(
@@ -267,12 +261,12 @@ def build_evidence() -> dict[str, Any]:
         subnormal_contract.get("status")
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
         and subnormal_contract.get("summary", {}).get("adr0049_complete") is True
-        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 13
-        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 89
+        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 11
+        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 87
         and subnormal_contract.get("summary", {}).get(
             "conditional_operation_type_tuple_count"
         )
-        == 979,
+        == 957,
         "numeric subnormal contract drift",
     )
 
@@ -372,9 +366,9 @@ def build_evidence() -> dict[str, Any]:
             "path": "spec/evidence/numeric-variation-point-ownership.json",
             "status": variation_ownership["status"],
             "acceptance_record": variation_ownership["acceptance_record"],
-            "variation_point_count": 84,
-            "selected_route_count": 15,
-            "accepted_result_rule_count": 15,
+            "variation_point_count": 69,
+            "selected_route_count": 13,
+            "accepted_result_rule_count": 13,
         },
         "public_type_baseline": {
             "path": "spec/evidence/public-numeric-type-baseline.json",

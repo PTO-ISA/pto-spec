@@ -970,31 +970,31 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
+      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "43de5052f27109a972caf9f39bce6f50dbf924cc7ed29d0050677d08c7793d25"
+      "sha256": "4151ff2d8ce47fc7f0f5c4334c1eecd783ebdcc7a3f82935081023e67376fb5d"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
+      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
+      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
+      "sha256": "498887f273c87b5a16fea498ee4faf08433ed5206d5d40afe1fb8aa0d1ec09cf"
     },
     {
       "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
-      "sha256": "d6299c98117e52a2c845ca027c52b43feb47ea955b103291cefc1b10a9be03a6"
+      "sha256": "350d5252bed641b4a7448e995999b3104f0aa4e55ec6419e09f6c3bd7a04ee8e"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
-      "sha256": "81a87fb8cfde29d4ae61854109ab9fb737cac656e0d27cc6f53bb4585e81e080"
+      "sha256": "21d7d7e3e73d51249537871d33ac51401c49f9948b849b751c992993b85d950f"
     }
   ],
   "summary": {

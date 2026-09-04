@@ -73,9 +73,6 @@ pure func TileOperationUsesSourceBackingDestination(
     operation: TileOperation) => boolean
 begin
     return operation == TileOperation_TMOV ||
-           operation == TileOperation_TCONCAT ||
-           operation == TileOperation_TEXTRACT ||
-           operation == TileOperation_TINSERT ||
            operation == TileOperation_TIMG2COL;
 end;
 

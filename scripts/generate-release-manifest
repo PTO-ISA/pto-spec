@@ -32,7 +32,7 @@ NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0585-hardware-numeric-vectors
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 NUMERIC_PROFILE_RELEASE = "0.58.5"
 
-FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 28, 'CUBE': 12}
+FAMILY_COUNTS = {'TEPL': 78, 'TLSU': 28, 'CUBE': 12}
 FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 94}
 COMMAND_FAMILY_COUNTS = {'CMD': 89, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
@@ -77,8 +77,8 @@ EXPECTED_TEPL_MAP_TEXT = """
 040:TROWSUM 041:TROWMAX 042:TROWMIN 043:TROWPROD 044:TROWEXPAND 045:TROWEXPANDADD 046:TROWEXPANDSUB 047:TROWEXPANDMUL
 048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN 04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM 051:TCOLMAX
 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
-05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 060:TCONCAT 062:TEXTRACT 063:TINSERT 064:TIMG2COL
-066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT 06B:TDEQUANT 06C:TSORT 06D:TMRGSORT
+05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 064:TIMG2COL
+066:TCI 067:TTRI
 06F:TGATHER 070:TSCATTER 075:TPERMUTE 076:TSHUF 077:TPACK 078:TUNPACK 07E:TGPR2T
 """
 EXPECTED_TEPL_MAP = {
@@ -331,7 +331,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 126")
+        raise SystemExit("tile operation_count must match the retired-operation closure")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")
@@ -479,8 +479,6 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         'TADD',
         'TSEL',
         'TFMA',
-        'THISTOGRAM',
-        'TSORT',
     )
     positive_vectors = []
     inverse = {name: selector for selector, name in EXPECTED_TEPL_MAP.items()}
@@ -519,6 +517,16 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         'TSUBSC': (1, 24),
         'TLRELU': (1, 25),
     }
+    retired_selectors = {
+        'TCONCAT': (3, 0),
+        'TEXTRACT': (3, 2),
+        'TINSERT': (3, 3),
+        'THISTOGRAM': (3, 8),
+        'TQUANT': (3, 10),
+        'TDEQUANT': (3, 11),
+        'TSORT': (3, 12),
+        'TMRGSORT': (3, 13),
+    }
     negative_vectors = [
         {
             "former_name": name,
@@ -530,6 +538,17 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         }
         for name, (mode, function) in deleted_selectors.items()
     ]
+    negative_vectors.extend(
+        {
+            "former_name": name,
+            "datatype": "U64",
+            "mode": mode,
+            "function": function,
+            "raw": raw_tepl_word(24, mode, function),
+            "expected": "illegal-reject",
+        }
+        for name, (mode, function) in retired_selectors.items()
+    )
     negative_vectors.append(
         {
             "former_encoding": "pre-0.58.0-TADD",
@@ -834,10 +853,6 @@ def validate_numeric_profile() -> dict:
         for code, name in expected_round_names.items()
     ):
         raise SystemExit("B.DATR rounding-mode map drift")
-    if profile["sort"].get("group_size") != 32:
-        raise SystemExit("hardware TSORT group size must remain exactly 32")
-    if profile["sort"].get("output") != "value paired with U32 original index":
-        raise SystemExit("hardware TSORT output must retain U32 original indices")
     if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
     expected_mixed_expdif = {

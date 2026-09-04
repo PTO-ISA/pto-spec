@@ -327,21 +327,6 @@
       "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
-      "domain": "tile-dequantize",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TDEQUANT"
-      ],
-      "hooks": [
-        "TileProfileDequantize"
-      ],
-      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
-      "source_rule": "preserve-when-source-format-defines-subnormals",
-      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
       "domain": "tile-expand",
       "lane": "N3",
       "operation_count": 16,
@@ -380,21 +365,6 @@
       ],
       "hooks": [
         "TileProfileMatrixAccumulate"
-      ],
-      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
-      "source_rule": "preserve-when-source-format-defines-subnormals",
-      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
-      "domain": "tile-quantize",
-      "lane": "N4",
-      "operation_count": 1,
-      "operation_keys": [
-        "tile:TEPL:TQUANT"
-      ],
-      "hooks": [
-        "TileProfileQuantize"
       ],
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
@@ -1536,28 +1506,6 @@
       "support_status": "conditional-not-created-by-adr0049"
     },
     {
-      "operation_key": "tile:TEPL:TDEQUANT",
-      "domain": "tile-dequantize",
-      "lane": "N4",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
       "operation_key": "tile:TEPL:TCOLEXPAND",
       "domain": "tile-expand",
       "lane": "N3",
@@ -1913,28 +1861,6 @@
       "operation_key": "tile:TEPL:TFMA",
       "domain": "tile-fused",
       "lane": "N6",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
-      "operation_key": "tile:TEPL:TQUANT",
-      "domain": "tile-quantize",
-      "lane": "N4",
       "subnormal_type_names": [
         "FP64",
         "FP32",
@@ -2442,19 +2368,19 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
+      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
+      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
+      "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
+      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2506,7 +2432,7 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "5e501f8c7040c336e0102e24b702ba7769a4547e97213a8c42566fc677e60086"
+      "sha256": "51788d0f2d0b18c776c0d0f95bf002e9cd1b77f2940c4073c2606c14da53fd41"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
@@ -2514,7 +2440,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
+      "sha256": "498887f273c87b5a16fea498ee4faf08433ed5206d5d40afe1fb8aa0d1ec09cf"
     },
     {
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
@@ -2522,7 +2448,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
-      "sha256": "ac969b6247bbaa16e480ae96c9f227f68ffa859d06121df838c8d3b6f141ca3a"
+      "sha256": "f2307dd2ff75409284d1dbebe50a96e9903dba91fa510db37275025169117f0a"
     }
   ],
   "summary": {
@@ -2530,11 +2456,11 @@
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 13,
-    "affected_operation_count": 89,
-    "operation_applicability_row_count": 89,
-    "conditional_operation_type_tuple_count": 979,
-    "affected_hook_count": 21,
+    "affected_domain_count": 11,
+    "affected_operation_count": 87,
+    "operation_applicability_row_count": 87,
+    "conditional_operation_type_tuple_count": 957,
+    "affected_hook_count": 19,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "adr0049_complete": true,

@@ -131,12 +131,6 @@ def fixture_data_type(row: dict) -> int:
         return 27  # U8, accepted by the integer/logical schemas.
     if name in {"TCI", "TTRI"}:
         return 17  # S32, accepted generation type.
-    if name == "THISTOGRAM":
-        return 26  # U16 source; B.DATR supplies the U32 destination type.
-    if name == "TQUANT":
-        return 1  # FP32 source; B.DATR supplies the S8 destination type.
-    if name == "TDEQUANT":
-        return 19  # S8 source; B.DATR supplies the FP32 destination type.
     if row["family"] == "CUBE":
         if name in {
             "TMATMUL_MX", "TMATMUL_MX_BIAS", "TMATMUL_MX_ACC",
@@ -164,15 +158,6 @@ def datr_word(row: dict) -> int | None:
     # which operation-owned union fields are nonzero.
     word = 0x00001023
     encoded_dtype = dtype
-    if row["name"] == "TQUANT":
-        # Destination type S8, with the default non-saturating controls.
-        encoded_dtype = 19
-    elif row["name"] == "TDEQUANT":
-        # Destination type FP32, with the default non-saturating controls.
-        encoded_dtype = 1
-    elif row["name"] == "THISTOGRAM":
-        # Destination type U32 and selected-byte zero.
-        encoded_dtype = 25
     word |= encoded_dtype << 20
     return word
 
@@ -359,8 +344,6 @@ def binding_groups(row: dict, selected_role: str | None = None) -> list[list[str
     destinations = [field for field in fields if field.startswith("destination")]
     if row["name"] in {"TSEL", "TFMA"}:
         return [sources[:2], sources[2:] + destinations]
-    if row["name"] == "TSORT":
-        return [["source0"], ["destination0"], ["destination1"]]
     if len(sources) <= 2 and len(destinations) <= 1:
         return [sources + destinations]
     groups: list[list[str]] = []
@@ -374,10 +357,6 @@ def binding_groups(row: dict, selected_role: str | None = None) -> list[list[str
 
 def destination_fixture_size_code(row: dict, role: str) -> int:
     name = row.get("name", row.get("operation"))
-    if name == "THISTOGRAM" and role == "destination0":
-        return 4
-    if name == "TSORT" and role == "destination1":
-        return 2
     return CELL_SIZE_CODE
 
 
@@ -420,14 +399,6 @@ def dimension_words(row: dict) -> list[int]:
     if name == "TGPR2T":
         return [0x43 | (4 << 20), 0x1043 | (32 << 20)]
     if name in CELL_REARRANGEMENT_OPERATIONS:
-        return []
-    if name == "TSORT":
-        return [0x43 | (4 << 20)]
-    if name == "TMRGSORT":
-        return []
-    if name in {"TINSERT", "TIMG2COL", "TEXTRACT"}:
-        return [0x43, 0x1043]
-    if name == "THISTOGRAM":
         return []
     if name == "TTRANS":
         return [0x43 | (2 << 20),
@@ -565,12 +536,6 @@ def source_valid_columns(row: dict, source: str) -> int:
         "TROWEXPANDEXPDIF",
     }:
         return 1 if source == "source1" else 4
-    if name == "TCONCAT":
-        return 2
-    if name == "TINSERT":
-        return 1 if source == "source1" else 4
-    if name == "TMRGSORT":
-        return 2
     if name == "TTRANS":
         return 2
     return 4
@@ -587,8 +552,6 @@ def source_fixture_data_type(row: dict, source: str) -> int:
         return 27
     if name == "TSHUF" and source == "source1":
         return 25
-    if name == "THISTOGRAM" and source == "source1":
-        return 27
     if name in {"TGATHER", "TSCATTER"} and source == "source1":
         return 17
     return fixture_data_type(row)
@@ -604,8 +567,6 @@ def source_physical_columns(row: dict, source: str) -> int:
         "TROWEXPANDEXPDIF",
     } and source == "source1":
         return 1
-    if name == "TMRGSORT":
-        return 2
     return 4
 
 
@@ -634,10 +595,9 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                     f"else {local_dtype})"
                 )
     gpr2 = (
-        "0x3f800000" if operation_name in {"TQUANT", "TDEQUANT"}
-        else "0x00000101" if operation_name == "TPACK"
+        "0x00000101" if operation_name == "TPACK"
         else "0x00000100" if operation_name == "TUNPACK"
-        else "0" if operation_name in {"TINSERT", "TIMG2COL"}
+        else "0" if operation_name == "TIMG2COL"
         else "1"
     )
     lines = [

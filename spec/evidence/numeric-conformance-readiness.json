@@ -10,9 +10,9 @@
     "path": "spec/evidence/numeric-variation-point-ownership.json",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
-    "variation_point_count": 84,
-    "selected_route_count": 15,
-    "accepted_result_rule_count": 15
+    "variation_point_count": 69,
+    "selected_route_count": 13,
+    "accepted_result_rule_count": 13
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -40,11 +40,11 @@
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 13,
-    "affected_operation_count": 89,
-    "operation_applicability_row_count": 89,
-    "conditional_operation_type_tuple_count": 979,
-    "affected_hook_count": 21,
+    "affected_domain_count": 11,
+    "affected_operation_count": 87,
+    "operation_applicability_row_count": 87,
+    "conditional_operation_type_tuple_count": 957,
+    "affected_hook_count": 19,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "adr0049_complete": true,
@@ -411,35 +411,25 @@
       "parallel_shard": "numeric-tile-conversion",
       "status": "profile-and-oracle-required",
       "contract_domains": [
-        "tile-convert",
-        "tile-quantize",
-        "tile-dequantize"
+        "tile-convert"
       ],
       "operation_keys": [
-        "tile:TEPL:TCVT",
-        "tile:TEPL:TDEQUANT",
-        "tile:TEPL:TQUANT"
+        "tile:TEPL:TCVT"
       ],
       "hooks": [
-        "TileProfileConvert",
-        "TileProfileDequantize",
-        "TileProfileQuantize"
+        "TileProfileConvert"
       ],
       "counts": {
-        "contract_domains": 3,
-        "operations": 3,
-        "hooks": 3
+        "contract_domains": 1,
+        "operations": 1,
+        "hooks": 1
       },
       "open_numeric_dimensions": [
         "NaN payload",
-        "clamping",
-        "exception behavior",
         "overflow and underflow",
         "rounding",
         "saturation",
-        "scale interpretation",
-        "source and destination format mapping",
-        "zero-point interpretation"
+        "source and destination format mapping"
       ],
       "required_vector_classes": [
         "normal",
@@ -465,12 +455,11 @@
     },
     {
       "id": "N5",
-      "title": "reductions and ordering",
-      "parallel_shard": "numeric-reductions-and-ordering",
+      "title": "tile reductions",
+      "parallel_shard": "numeric-tile-reductions",
       "status": "profile-and-oracle-required",
       "contract_domains": [
-        "tile-reduction",
-        "tile-order"
+        "tile-reduction"
       ],
       "operation_keys": [
         "tile:TEPL:TCOLARGMAX",
@@ -479,37 +468,28 @@
         "tile:TEPL:TCOLMIN",
         "tile:TEPL:TCOLPROD",
         "tile:TEPL:TCOLSUM",
-        "tile:TEPL:TMRGSORT",
         "tile:TEPL:TROWARGMAX",
         "tile:TEPL:TROWARGMIN",
         "tile:TEPL:TROWMAX",
         "tile:TEPL:TROWMIN",
         "tile:TEPL:TROWPROD",
-        "tile:TEPL:TROWSUM",
-        "tile:TEPL:TSORT"
+        "tile:TEPL:TROWSUM"
       ],
       "hooks": [
-        "TileProfileOrderLeft",
         "TileProfileReductionInitial",
-        "TileProfileReductionStep",
-        "TileProfileValueIsNaN"
+        "TileProfileReductionStep"
       ],
       "counts": {
-        "contract_domains": 2,
-        "operations": 14,
-        "hooks": 4
+        "contract_domains": 1,
+        "operations": 12,
+        "hooks": 2
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
-        "NaN placement",
         "accumulation width",
         "arg tie-breaking",
-        "ascending and descending tie behavior",
-        "data-type ordering",
-        "equal-value stability",
         "reduction order",
-        "rounding",
-        "signed zero"
+        "rounding"
       ],
       "required_vector_classes": [
         "normal",
@@ -522,11 +502,9 @@
         "equal-value-tie",
         "rounding-tie",
         "overflow",
-        "accumulation-order",
-        "ascending-descending",
-        "stability"
+        "accumulation-order"
       ],
-      "oracle_requirement": "Use an independent ordered reference that exposes accumulation order, width, ties, stability, and exceptional-value placement exactly as selected by the profile.",
+      "oracle_requirement": "Use an independent reduction reference that exposes accumulation order, width, ties, and exceptional-value selection exactly as selected by the profile.",
       "profile_identity": null,
       "oracle_identity": null,
       "vector_manifest": null,
@@ -603,10 +581,10 @@
     }
   ],
   "summary": {
-    "contract_domain_count": 17,
-    "hook_count": 28,
+    "contract_domain_count": 14,
+    "hook_count": 24,
     "lane_count": 6,
-    "operation_count": 100,
+    "operation_count": 96,
     "accepted_configuration_identity_count": 4,
     "accepted_selection_framework_rule_count": 5,
     "accepted_public_type_binding_count": 16,

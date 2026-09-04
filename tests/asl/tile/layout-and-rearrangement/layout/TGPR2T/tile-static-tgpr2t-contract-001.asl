@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.SFU TGPR2T, U8 | B.DATR PadValueOrByteId, RMode (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow | B.IOR GPR0, GPR1, GPR2 | B.IOR GPR3 | B.IOT mask=PE_MASK, <last>, ->destination<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001111110') == 107;
-    assert TileOperationOfIndex(107) == TileOperation_TGPR2T;
-    assert TileHandlerOfIndex(107) == TileHandler_TGPR2T;
-    assert TileClassOfIndex(107) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(107) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001111110') == 99;
+    assert TileOperationOfIndex(99) == TileOperation_TGPR2T;
+    assert TileHandlerOfIndex(99) == TileHandler_TGPR2T;
+    assert TileClassOfIndex(99) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(99) == TileEngine_SFU;
     assert InstructionContractOperation_TGPR2T() == TileOperation_TGPR2T;
     assert InstructionContractHandler_TGPR2T() == TileHandler_TGPR2T;
     return 0;

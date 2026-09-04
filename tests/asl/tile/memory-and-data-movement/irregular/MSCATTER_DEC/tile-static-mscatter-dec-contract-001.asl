@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: memory-and-data-movement/irregular
     // block: BSTART.MSCATTER.DEC DataType | B.IOT IndexTile, ValueTile, mask=PE_MASK, <last> | B.IOR BaseGPR, zero, zero, ->zero | BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000010111') == 121;
-    assert TileOperationOfIndex(121) == TileOperation_MSCATTER_DEC;
-    assert TileHandlerOfIndex(121) == TileHandler_GM_RED_VALUE;
-    assert TileClassOfIndex(121) == TileClass_MemoryAndDataMovement;
-    assert TileEngineOfIndex(121) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000010111') == 113;
+    assert TileOperationOfIndex(113) == TileOperation_MSCATTER_DEC;
+    assert TileHandlerOfIndex(113) == TileHandler_GM_RED_VALUE;
+    assert TileClassOfIndex(113) == TileClass_MemoryAndDataMovement;
+    assert TileEngineOfIndex(113) == TileEngine_TLSU;
     assert InstructionContractOperation_MSCATTER_DEC() == TileOperation_MSCATTER_DEC;
     assert InstructionContractHandler_MSCATTER_DEC() == TileHandler_GM_RED_VALUE;
     return 0;

@@ -1,6 +1,6 @@
 {
   "contract_status_counts": {
-    "reviewed-complete": 126
+    "reviewed-complete": 118
   },
   "cube": {
     "function_map": {
@@ -46,12 +46,12 @@
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "747c509525579dc84038738c9a3ba26ae6ed4ef29a1d302cefb2a7b07fc150a8",
+  "encoding_projection_sha256": "b365bb85c47dfaaeb6a3225bf60175694b3cdf5d887951ab43ee1e36a8c21e48",
   "family_counts": {
     "CUBE": 12,
-    "TEPL": 86,
+    "TEPL": 78,
     "TLSU": 28,
-    "total": 126
+    "total": 118
   },
   "negative_raw_vectors": [
     {
@@ -215,6 +215,70 @@
       "raw": "0xC3919181"
     },
     {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TCONCAT",
+      "function": 0,
+      "mode": 3,
+      "raw": "0xC6019181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TEXTRACT",
+      "function": 2,
+      "mode": 3,
+      "raw": "0xC6219181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TINSERT",
+      "function": 3,
+      "mode": 3,
+      "raw": "0xC6319181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "THISTOGRAM",
+      "function": 8,
+      "mode": 3,
+      "raw": "0xC6819181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TQUANT",
+      "function": 10,
+      "mode": 3,
+      "raw": "0xC6A19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TDEQUANT",
+      "function": 11,
+      "mode": 3,
+      "raw": "0xC6B19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TSORT",
+      "function": 12,
+      "mode": 3,
+      "raw": "0xC6C19181"
+    },
+    {
+      "datatype": "U64",
+      "expected": "illegal-reject",
+      "former_name": "TMRGSORT",
+      "function": 13,
+      "mode": 3,
+      "raw": "0xC6D19181"
+    },
+    {
       "expected": "encoding-abi-reject",
       "former_encoding": "pre-0.58.0-TADD",
       "raw": "0xC2001181"
@@ -246,22 +310,6 @@
       "mode": 0,
       "name": "TFMA",
       "raw": "0xC1C19181"
-    },
-    {
-      "datatype": "U64",
-      "expected": "accepted",
-      "function": 8,
-      "mode": 3,
-      "name": "THISTOGRAM",
-      "raw": "0xC6819181"
-    },
-    {
-      "datatype": "U64",
-      "expected": "accepted",
-      "function": 12,
-      "mode": 3,
-      "name": "TSORT",
-      "raw": "0xC6C19181"
     }
   ],
   "release": "0.58.5",
@@ -343,17 +391,9 @@
         29
       ],
       "3": [
-        0,
-        2,
-        3,
         4,
         6,
         7,
-        8,
-        10,
-        11,
-        12,
-        13,
         15,
         16,
         21,
@@ -407,16 +447,16 @@
       "0": 25,
       "1": 15,
       "2": 28,
-      "3": 18
+      "3": 10
     },
     "raw_space": {
-      "accepted": 2150,
-      "classification_sha256": "2df1168a227e0e60961b8b424b066ab23b7cf1ec1ea80e1e8b381069c2fca188",
+      "accepted": 1950,
+      "classification_sha256": "4f5edfb3ceb34a0ac5914d5b1855b034c2f082c2cd3ef17b5b7bca23db96d8d9",
       "illegal": 128,
-      "reserved": 1818,
+      "reserved": 2018,
       "total": 4096
     },
-    "selector_count": 86
+    "selector_count": 78
   },
   "tlsu": {
     "function_map": {
