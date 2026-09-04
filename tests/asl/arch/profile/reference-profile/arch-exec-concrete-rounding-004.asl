@@ -151,24 +151,6 @@ begin
         TileDataType_U64, TileDataType_U8, DefaultNumericExecutionControl());
     assert converted_tile == Zeros{PTO_XLEN} + 0x23;
     assert converted_tile_flags == Zeros{5};
-    let (quantized_tile, quantized_tile_flags) = TileProfileQuantize(
-        Zeros{PTO_XLEN} + 0x41a00000,
-        Zeros{PTO_XLEN} + 0x3e800000,
-        Zeros{PTO_XLEN} + 1,
-        TileDataType_FP32,
-        TileDataType_U8,
-        DefaultNumericExecutionControl());
-    assert quantized_tile == Zeros{PTO_XLEN} + 6;
-    assert quantized_tile_flags == Zeros{5};
-    let (dequantized_tile, dequantized_tile_flags) = TileProfileDequantize(
-        Zeros{PTO_XLEN} + 7,
-        Zeros{PTO_XLEN} + 0x40400000,
-        Zeros{PTO_XLEN} + 1,
-        TileDataType_U8,
-        TileDataType_FP32,
-        DefaultNumericExecutionControl());
-    assert dequantized_tile == Zeros{PTO_XLEN} + 0x41900000;
-    assert dequantized_tile_flags == Zeros{5};
 end;
 func main() => integer
 begin

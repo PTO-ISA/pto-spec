@@ -16,7 +16,62 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-purpose role=purpose -->
+## What BSTART.TIMG2COL contributes
 
+`BSTART.TIMG2COL` opens a TLSU block that materializes sliding feature-map windows as a two-dimensional Tile. The start command selects the element type; the completed block supplies the source view, window parameters, destination, and publication boundary.
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-mechanism role=mechanism -->
+## Placement and mechanism
+
+Read the result as a matrix: each logical row identifies one output spatial position, while each logical column identifies one kernel-and-channel position. The source layout chooses dense NCHW or NHWC indexing, and the destination layout chooses a Shared ND result or direct Local CUBE materialization.
+
+```text
+Shared: BSTART.TIMG2COL; optional B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOS; optional B.ASSEMBLE for multiple PEs; BSTOP.
+Local CUBE: BSTART.TIMG2COL; explicit CUBE-producing B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOT; BSTOP.
+```
+
+The complete header is validated before any GM read. Spatial padding and channel-tail positions become defined zero elements without issuing a source access for those positions.
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DataType` selects the feature-map element representation; the exact accepted codes remain in the generated contract below.
+- `B.DATR.Layout` selects the dense source order and whether the result is Shared ND or Local CUBE.
+- `B.DIM.LB0`, `B.DIM.LB1`, and `B.DIM.LB2` describe the valid output columns, valid output rows, and total output columns.
+- The first `B.IOR` supplies `GMBase`; it is a source-only record.
+- The immediately following `B.IOR` supplies the three packed parameter GPRs used for feature-map, kernel, stride, dilation, crop, and channel-padding values.
+- `B.IOS` names the Shared destination, while `B.IOT` names the Local CUBE destination.
+- `B.ASSEMBLE` joins explicit row ranges when multiple PEs publish one Shared result.
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-effects role=effects -->
+## Result and publication
+
+Successful completion writes only the logical output rectangle and its definedness. A Shared result becomes visible as one complete generation; a Local CUBE result has the same logical values as the corresponding Shared ND result followed by the selected ND-to-CUBE layout conversion.
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-constraints role=constraints -->
+## Legality and fault boundary
+
+The block requires supported element and layout codes, one complete parameter set, the required four-PE mask, a compatible destination form, and dimensions that fit the selected capacity. Schema, arithmetic, access, allocation, readiness, alias, and PE-consistency failures are resolved before GM access or destination publication.
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-example role=example -->
+## Non-normative worked example
+
+This example sketches a cooperative Shared result; symbolic values stand for previously prepared GPRs or dimensions.
+
+```asm
+BSTART.TIMG2COL FP16
+B.DIM LB0, ValidCol
+B.DIM LB1, ValidRow
+B.DIM LB2, TotalCol
+B.IOR GMBase, zero, zero
+B.IOR ParamGPR0, ParamGPR1, ParamGPR2
+B.IOS PE_MASK, ->S0<SizeCode>
+B.ASSEMBLE 1, 1, zero, 0, ParentSizeCode
+BSTOP
+```
+
+The two `B.IOR` records stay adjacent. `BSTOP` validates the complete composition and publishes the result only after every participating range succeeds.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

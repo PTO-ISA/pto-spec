@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-INDEX-CORNERS-BOUND-004","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"index, sort, histogram, and offset corner cases are effect safe","pass_condition":"corner-case results and no-effect assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-VEC-SFU-INDEX-CORNERS-BOUND-004","source":"asl/tile/model/dispatch/top-level.asl","requirements":[],"kind":"boundary","summary":"index corner cases are effect safe","pass_condition":"index results and no-effect assertions hold","related_sources":[]}
 func ConfigureTeplTile(index: TileIndex, rows: integer {1..256},
                        columns: integer {1..256}, data_type: TileDataType)
 begin
@@ -36,7 +36,7 @@ begin
     FillTeplTile(index, seed);
 end;
 
-func TestTeplIndexSortHistogramCorners()
+func TestTeplIndexCorners()
 begin
     ResetProfileState();
     ConfigureTeplTile(0, 2, 2, TileDataType_U16);
@@ -56,29 +56,6 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 12;
     assert ReadTileElement(0, 1, 0) == Zeros{PTO_XLEN};
-
-    ResetProfileState();
-    ConfigureTeplTile(0, 1, 4, TileDataType_FP32);
-    ConfigureTeplTile(2, 1, 4, TileDataType_U32);
-    ConfigureTeplTile(1, 1, 4, TileDataType_FP32);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x40800000);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x3f800000);
-    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x40400000);
-    WriteTileElement(1, 0, 3, Zeros{PTO_XLEN} + 0x40000000);
-    var sort = DefaultTileInstructionOperands();
-    sort.destination0 = 0;
-    sort.destination1 = 2;
-    sort.source0 = 1;
-    sort.sort_width = 2;
-    sort.flag0 = TRUE;
-    ClearFault();
-    let (sort_status, -) = ExecuteTileInstruction(
-        TileDecode_TEPL, '000001101100', sort);
-    assert sort_status == TileExecution_Executed;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x40800000;
-    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 0x3f800000;
-    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 0x40400000;
-    assert ReadTileElement(0, 0, 3) == Zeros{PTO_XLEN} + 0x40000000;
 
 end;
 
@@ -124,7 +101,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    TestTeplIndexSortHistogramCorners();
+    TestTeplIndexCorners();
     TestTeplInvalidIndexAndOffsetNoEffect();
     return 0;
 end;

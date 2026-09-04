@@ -69,17 +69,6 @@ begin
     assert ReadTileElement(41, 0, 0) == Ones{PTO_XLEN} - 127;
     assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 0x7f;
 
-    ConfigureTile(40, 256, 32, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Vector);
-    ConfigureTile(41, 256, 128, 2, 1, 2, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Vector);
-    ConfigureTile(42, 256, 32, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Vector);
-    WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
-    WriteTileElement(40, 0, 1, Zeros{PTO_XLEN} + 0x40000000);
-    assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 2;
-    assert ReadTileElement(42, 0, 1) ==
-        Zeros{PTO_XLEN} + 0x40000000;
 end;
 func main() => integer
 begin

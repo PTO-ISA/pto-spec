@@ -58,6 +58,8 @@ begin
     assert ReadTileElement(54, 0, 1) == Zeros{PTO_XLEN} + 4;
 
     ConfigureTwoByTwo(55);
+    ConfigureTwoByTwo(62);
+    WriteTileElement(55, 1, 1, Zeros{PTO_XLEN} + 8);
     TMOV(62, 55);
     assert ReadTileElement(62, 1, 1) == Zeros{PTO_XLEN} + 8;
 

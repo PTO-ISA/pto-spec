@@ -16,7 +16,62 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-purpose role=purpose -->
+## BSTART.TIMG2COL 的作用
 
+`BSTART.TIMG2COL` 打开一个 TLSU Block，把滑动的特征图窗口物化为二维 Tile。起始命令选择元素类型；完整 Block 则提供源视图、窗口参数、目的位置和发布边界。
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-mechanism role=mechanism -->
+## 位置与机制
+
+可以把结果理解为矩阵：每个逻辑行对应一个输出空间位置，每个逻辑列对应一个卷积核与通道位置。源布局选择稠密 NCHW 或 NHWC 索引方式，目的布局选择 Shared ND 结果或直接的 Local CUBE 物化。
+
+```text
+Shared: BSTART.TIMG2COL; optional B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOS; optional B.ASSEMBLE for multiple PEs; BSTOP.
+Local CUBE: BSTART.TIMG2COL; explicit CUBE-producing B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOT; BSTOP.
+```
+
+任何 GM 读取之前都会先验证完整 header。空间填充位置和通道尾部位置直接成为已定义的零元素，这些位置不会发起源访问。
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-inputs role=inputs-outputs -->
+## 操作数与 header 角色
+
+- `DataType` 选择特征图元素表示；确切可接受编码以下方生成契约为准。
+- `B.DATR.Layout` 选择稠密源顺序，并决定结果是 Shared ND 还是 Local CUBE。
+- `B.DIM.LB0`、`B.DIM.LB1` 和 `B.DIM.LB2` 分别描述有效输出列数、有效输出行数和总输出列数。
+- 第一条 `B.IOR` 提供 `GMBase`，并且只能作为源记录。
+- 紧邻的下一条 `B.IOR` 提供三个参数 GPR，其中包含特征图、卷积核、步幅、膨胀、裁剪和通道填充值。
+- `B.IOS` 指定 Shared 目的位置，`B.IOT` 指定 Local CUBE 目的位置。
+- 多个 PE 发布同一个 Shared 结果时，`B.ASSEMBLE` 合并显式行范围。
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-effects role=effects -->
+## 结果与发布
+
+成功完成时只写入逻辑输出矩形及其已定义状态。Shared 结果作为一个完整 generation 可见；Local CUBE 结果的逻辑值等同于对应的 Shared ND 结果再执行所选 ND-to-CUBE 布局转换。
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-constraints role=constraints -->
+## 合法性与故障边界
+
+Block 要求受支持的元素和布局编码、一组完整参数、规定的四 PE mask、兼容的目的形式，以及能够容纳在所选容量内的维度。所有 schema、算术、访问、分配、就绪、别名和 PE 一致性失败，都在 GM 访问或目的发布之前处理。
+
+<!-- PTO-READER-BLOCK: block-bstart-timg2col-example role=example -->
+## 非规范示例
+
+以下示例勾勒一个协作式 Shared 结果；符号值代表事先准备好的 GPR 或维度。
+
+```asm
+BSTART.TIMG2COL FP16
+B.DIM LB0, ValidCol
+B.DIM LB1, ValidRow
+B.DIM LB2, TotalCol
+B.IOR GMBase, zero, zero
+B.IOR ParamGPR0, ParamGPR1, ParamGPR2
+B.IOS PE_MASK, ->S0<SizeCode>
+B.ASSEMBLE 1, 1, zero, 0, ParentSizeCode
+BSTOP
+```
+
+两条 `B.IOR` 必须保持相邻。只有所有参与范围都成功后，`BSTOP` 才会验证完整组成并发布结果。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

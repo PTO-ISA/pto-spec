@@ -29,7 +29,9 @@ begin
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);
 
-    let operation = 83 as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    let decoded = DecodeTileOperation(TileDecode_TLSU, '000000000010');
+    assert decoded != PTO_TILE_OPERATION_COUNT;
+    let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let resolved = ResolveBundleTileDestinationsForOperation(operation);
     assert resolved;
     let destination = _BundleTileBindings[[0]].destination;

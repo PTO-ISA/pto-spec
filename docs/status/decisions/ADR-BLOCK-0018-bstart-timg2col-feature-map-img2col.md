@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "13d550f4f63c6321f94e5c6b09da4c3986081841",
   "target_releases": [
-    "unassigned"
+    "0.58.5.1"
   ],
   "release_boundary": true,
   "interface_change": true,
@@ -37,7 +37,9 @@
     "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
     "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA",
     "PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
     "PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
     "PTO-TILE-MODEL-EXECUTION-IMAGE-TO-COLUMN",
     "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
     "PTO-TILE-TIMG2COL"
@@ -58,7 +60,7 @@
 Issue #99 replaces the retired Local-Tile `TIMG2COL` behavior with the frozen
 feature-map operation carried by `BSTART.TIMG2COL`. The current contract and
 its executable/catalog projections are the normative owners; this ADR records
-the accepted decision with an unassigned release target and its retirement scope.
+the accepted decision, its `0.58.5.1` publication target, and its retirement scope.
 
 ## Decision
 
@@ -92,12 +94,12 @@ owners remain authoritative.
 
 ## Release targeting / 发布目标
 
-This accepted ADR has target release `unassigned`. It is not a claim that
-Issue #99 is included in or published by PTO ISA `0.58.5`; no release assignment
-has been made. It records the Issue #99 NDF and ASL drift, including the retired
-`PTO-TILE-TIMG2COL` baseline scope. Current decode, legality, operation,
-state-transition, definedness, and fault behavior remain owned by the affected
-ASL/NDF clauses and their generated projections.
+This accepted ADR targets the PTO ISA `0.58.5.1` publication candidate. The
+assignment covers the Issue #99 NDF and ASL drift,
+including the retired `PTO-TILE-TIMG2COL` baseline scope. Publication still
+requires the exact candidate to pass the protected release workflow. Current
+decode, legality, operation, state-transition, definedness, and fault behavior
+remain owned by the affected ASL/NDF clauses and their generated projections.
 
 本 ADR 的目标版本为 `unassigned`。这不表示 Issue #99 已包含在或已发布于
 PTO ISA `0.58.5`；当前尚未进行版本分配。本 ADR 记录 Issue #99 的 NDF 与
