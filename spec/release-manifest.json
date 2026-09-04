@@ -222,7 +222,7 @@
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
-      "sha256": "caca6e962c25cc3edc44d44693bfd7e52f0d649a1855d56d3b31fcac9f3c6d92"
+      "sha256": "7ffee36c2e42504a76a1946f5e4b2866e8fe6340d442c826d0b0bb15037bf27d"
     },
     {
       "path": "asl/arch/profile/reference-scalar-fp-specials.asl",
@@ -3638,7 +3638,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "03f0932b4147aa01e1d24c4a54495c94e7df09a01ee4b77652a775f0e0095f45"
+      "sha256": "e240a7aa03e824393e6b1b427b86fc21574af17418b5a682a719a31ca671d61b"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3646,15 +3646,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "091817fbd8ecb2f5b548c651c30799db680f47ab78cf365f42ed6a231cc9b802"
+      "sha256": "0410a20cd9f8d705bc3d041af6c074ee158275bde314ad9f501e2fb3703ac5f5"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "71a841ccd6c95f6cdd137c1a974ead06a70b7439eba37aa0673645d1921d62b0"
+      "sha256": "e75ab60e9c47dfff3b596c3d7d3d81b1a325a17b1d345cf174c264b39d0b286f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "56b1dbbc1faa3aa2661315321be76f33d4e3d7585eb346b4ebd5caebce60a577"
+      "sha256": "15653ca4e908e455f317e327aa27ca9297ffc454337ab7953ffe8cfba2d2d436"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3716,7 +3716,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "d73924e37c511fc77b688a4b63d253f91a81dc4cf3a0a588cfe05696ea2d7851",
+  "content_sha256": "891acb949969e7c3ca15ccbf28487e583988583455797b740e30f4d2aa7d387e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4018,7 +4018,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-quantization.md",
-      "sha256": "00184066258b747b93050c9a9084c823f97078f7f125c6bcb72775d37e1df0dc"
+      "sha256": "7428b13ed0d97ca0579059b0f6576290b30ce4723aee318fafa94f0fd5ad0e24"
     },
     {
       "kind": "generated-documentation",
