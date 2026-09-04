@@ -184,7 +184,7 @@
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
-    "scripts/run-model-closure": "a9f1375a5223f04c98127fd3f46e43807d31fc9f540778ff44b18190906eb48e",
+    "scripts/run-model-closure": "095b429622e5c82ae68b84caf7e4e2e22afb82d9357613b9ec97281ea8124606",
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
