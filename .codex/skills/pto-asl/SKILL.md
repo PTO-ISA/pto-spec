@@ -27,6 +27,8 @@ matching lane:
   [source-map.md](references/source-map.md).
 - **Dependent PR, rebase, or merge closeout**: read
   [pr-closeout.md](references/pr-closeout.md).
+- **Release verification or publication**: read
+  [release-operations.md](references/release-operations.md).
 
 Read `GOVERNANCE.md`, `CONTRIBUTING.md`, status records, and release evidence
 only when the selected lane needs those contracts. A review may combine lanes;
@@ -89,10 +91,16 @@ implementation evidence.
   exact ASL IDs. Select focused ASL points with
   `scripts/print-asl-test-matrix --ids-file` and run the emitted page with
   `scripts/run-asl-page -j`.
-- Before handing off a stable pull-request candidate, run `make pr-check`,
-  `make repo-check`, and `git diff --check`.
-- Run `make setup`, exact-commit `make release-verify`, and
-  `make release-prepare` only for an explicitly requested release candidate.
+- For an existing pull request whose task is review-and-merge, use the hosted
+  required checks already attached to its exact head. Do not repeat local
+  repository, site, matrix, or release gates unless a concrete failure needs
+  reproduction or the user explicitly asks for additional validation.
+- For implementation work, finish with the smallest local check that proves
+  the changed contract. Avoid repeatedly running broad gates while the branch
+  is changing.
+- Release authority comes only from the operator-initiated exact-commit
+  GitHub Actions release workflow. Local release commands may diagnose a
+  failure but never authorize publication or trigger another release attempt.
 
 Report fresh evidence for the selected lane and any remaining architecture
 decision or validation gap. Do not claim release readiness from a partial,
