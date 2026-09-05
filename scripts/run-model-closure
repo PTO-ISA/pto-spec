@@ -9,7 +9,6 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,11 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.model_closure import invocation_path  # noqa: E402
-
-EXPECTED_RELEASE = "0.58.5"
-EXPECTED_PUBLICATION = "0.58.5.1"
-EXPECTED_ABI = "pto-isa-0.58.5-mode-function-v1"
-EXPECTED_PROJECTION = "bc0718ee31162ba7f6ea04d2a5853c49fe30e7cb36b33c0704c58678710a0c87"
+from scripts.release_preflight import affected_pto_ids, approved_release_identity  # noqa: E402
 GITHUB_REPOSITORY = re.compile(
     r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z"
 )
@@ -50,62 +45,11 @@ def _repository(root: Path) -> str:
 
 
 def _identity() -> dict[str, str]:
-    specification = tomllib.loads((ROOT / "specification.toml").read_text(encoding="utf-8"))
-    release = specification["release"]
-    manifest = json.loads((ROOT / "spec/release-manifest.json").read_text(encoding="utf-8"))
-    identity = {
-        "release": release["architecture_version"],
-        "publication_version": release["publication_version"],
-        "encoding_abi": release["encoding_abi"],
-        "encoding_projection_sha256": manifest["encoding_projection_sha256"],
-    }
-    expected = {
-        "release": EXPECTED_RELEASE,
-        "publication_version": EXPECTED_PUBLICATION,
-        "encoding_abi": EXPECTED_ABI,
-        "encoding_projection_sha256": EXPECTED_PROJECTION,
-    }
-    if identity != expected:
-        raise ValueError("PTO-SPEC release identity is not the approved 0.58.5 closure")
-    return identity
+    return approved_release_identity(ROOT)
 
 
 def _affected_pto_ids(document: object) -> list[str]:
-    if (
-        not isinstance(document, dict)
-        or document.get("schema_version") != "0.1"
-        or document.get("command") != "impact pto-release"
-        or document.get("ok") is not True
-        or document.get("diagnostics") != []
-        or not isinstance(document.get("data"), dict)
-    ):
-        raise ValueError("NDF impact command did not produce a clean v0.1 result")
-    report = document["data"]
-    if report.get("schema_version") != "1":
-        raise ValueError("NDF PTO release impact report schema mismatch")
-    changes = report.get("changes")
-    targets = report.get("conformance_targets")
-    if not isinstance(changes, list) or not isinstance(targets, list):
-        raise ValueError("NDF impact changes or conformance targets are missing")
-    conformance_targets = {
-        item.get("target_uri")
-        for item in targets
-        if isinstance(item, dict)
-        and isinstance(item.get("consumer_uri"), str)
-        and item["consumer_uri"].startswith("ndf://asl-model/")
-        and isinstance(item.get("target_uri"), str)
-    }
-    affected: set[str] = set()
-    for item in changes:
-        if not isinstance(item, dict) or not isinstance(item.get("uri"), str):
-            raise ValueError("NDF impact contains a malformed change")
-        uri = item["uri"]
-        if uri in conformance_targets or (
-            uri.startswith("ndf://pto-spec/PTO-INST-")
-            and item.get("kind") in {"added", "modified", "moved"}
-        ):
-            affected.add(uri.removeprefix("ndf://pto-spec/"))
-    return sorted(affected)
+    return affected_pto_ids(document)
 
 
 def main() -> int:
@@ -145,7 +89,7 @@ def main() -> int:
         selection = json.loads(arguments.selection.read_text(encoding="utf-8"))
         if (
             selection.get("schema") != "pto.model-closure-selection.v1"
-            or selection.get("release") != EXPECTED_RELEASE
+            or selection.get("release") != _identity()["release"]
         ):
             raise ValueError("model closure selection identity mismatch")
         selected_mandatory = selection.get("mandatory_case_ids")

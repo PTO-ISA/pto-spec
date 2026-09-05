@@ -44,9 +44,16 @@ architecture requirement.
 
 ## Verification
 
+For agent-operated PRs, use `scripts/prepare-pr --base origin/main --head HEAD`
+after finalizing commits. Follow its next action and the agent handoff in
+`CONTRIBUTING.md`. One independent reviewer agent reviews the exact input;
+changing that input invalidates its receipt. Reviewers may share the operator's
+GitHub account; local receipt fields do not establish authenticated approval.
+Keep ordinary PR checks lightweight and use hosted results once available.
+
 ```bash
 make pr-check                # lightweight PR lane; no opam or ASLRef
-make repo-check              # generated model and release-evidence closure
+make repo-check              # additional binary closure when affected
 git diff --check
 ```
 

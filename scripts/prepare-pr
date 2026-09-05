@@ -1,0 +1,485 @@
+#!/usr/bin/env python3
+"""Prepare a deterministic, read-only PR handoff for agent operators."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import shlex
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+CLASSIFICATION_ORDER = ("normative", "tooling", "governance", "site", "tests", "docs")
+IDENTITY_KEYS = {"base_tip", "merge_base", "head", "head_tree", "diff_sha256"}
+TEST_RECORD_PREFIX = "// PTO-TEST: "
+
+
+def git(root: Path, *arguments: str, check: bool = True) -> str:
+    result = subprocess.run(
+        ["git", *arguments], cwd=root, text=True, capture_output=True, check=False
+    )
+    if check and result.returncode != 0:
+        raise ValueError(result.stderr.strip() or f"git {' '.join(arguments)} failed")
+    return result.stdout
+
+
+def git_bytes(root: Path, *arguments: str) -> bytes:
+    result = subprocess.run(
+        ["git", *arguments], cwd=root, capture_output=True, check=False
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            result.stderr.decode(errors="replace").strip()
+            or f"git {' '.join(arguments)} failed"
+        )
+    return result.stdout
+
+
+def classify(path: str) -> str:
+    if path.startswith("tests/"):
+        return "tests"
+    if path.startswith(("asl/", "spec/catalog/")) or path in {
+        "specification.toml",
+        "ndf.lock",
+        "ndf.yaml",
+    }:
+        return "normative"
+    if path.startswith((".github/", "docs/governance/", "docs/status/decisions/")) or path in {
+        "AGENTS.md",
+        "CONTRIBUTING.md",
+        "GOVERNANCE.md",
+    }:
+        return "governance"
+    if path.startswith("docs/site/") or path in {"mkdocs.yml", "package.json", "package-lock.json"}:
+        return "site"
+    if path.startswith(("scripts/", "tools/", ".codex/")) or path == "Makefile":
+        return "tooling"
+    return "docs" if path.endswith((".md", ".rst", ".txt")) or path.startswith("docs/") else "tooling"
+
+
+def changed_paths(root: Path, base: str, head: str) -> list[str]:
+    return sorted(
+        path
+        for path in git(
+            root, "diff", "--name-only", "--diff-filter=ACDMRTUXB", base, head
+        ).splitlines()
+        if path
+    )
+
+
+def working_paths(root: Path) -> list[str]:
+    tracked = git(root, "diff", "--name-only", "HEAD").splitlines()
+    untracked = git(root, "ls-files", "--others", "--exclude-standard").splitlines()
+    return sorted({path for path in (*tracked, *untracked) if path})
+
+
+def path_at_head(root: Path, head: str, path: str) -> bool:
+    result = subprocess.run(
+        ["git", "cat-file", "-e", f"{head}:{path}"],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def focused_test_modules(root: Path, head: str, paths: list[str]) -> list[str]:
+    modules: set[str] = set()
+    for path in paths:
+        if (
+            path.startswith("tests/scripts/test_")
+            and path.endswith(".py")
+            and path_at_head(root, head, path)
+        ):
+            modules.add(path.removesuffix(".py").replace("/", "."))
+        if path.startswith("scripts/"):
+            name = Path(path).name.replace("-", "_")
+            candidate = f"tests/scripts/test_{name}.py"
+            if path_at_head(root, head, candidate):
+                modules.add(f"tests.scripts.test_{name}")
+    if any(path.startswith(".github/workflows/") for path in paths):
+        modules.add("tests.scripts.test_release_workflow")
+    return sorted(modules)
+
+
+def asl_test_ids(root: Path, head: str, paths: list[str]) -> list[str]:
+    identifiers: set[str] = set()
+    sources = sorted(
+        path for path in paths if path.startswith("asl/") and path.endswith(".asl")
+    )
+    for source in sources:
+        matches = git(
+            root, "grep", "-h", "-F", source, head, "--", "tests/asl", check=False
+        )
+        for line in matches.splitlines():
+            if not line.startswith(TEST_RECORD_PREFIX):
+                continue
+            try:
+                metadata = json.loads(line.removeprefix(TEST_RECORD_PREFIX))
+            except json.JSONDecodeError:
+                continue
+            identifier = metadata.get("id") if isinstance(metadata, dict) else None
+            if isinstance(identifier, str) and identifier:
+                identifiers.add(identifier)
+    return sorted(identifiers)
+
+
+def release_required(
+    root: Path, head: str, paths: list[str], classifications: list[str]
+) -> tuple[bool, str, str]:
+    if "normative" in classifications:
+        return (
+            True,
+            "candidate",
+            "normative source or canonical catalog changed; evaluate a release candidate after merge",
+        )
+    validation_script_prefixes = (
+        "scripts/asl_release",
+        "scripts/aslref",
+        "scripts/check-aslref",
+        "scripts/check-model-closure",
+        "scripts/check-release",
+        "scripts/generate-model-closure",
+        "scripts/generate-release",
+        "scripts/prepare-aslref",
+        "scripts/prepare-release",
+        "scripts/release_",
+        "scripts/run-asl-release",
+        "scripts/run-model-closure",
+        "scripts/setup-aslref",
+    )
+    if any(
+        path in {".aslref-origin", ".aslref-version"}
+        or path.startswith(".github/workflows/")
+        or path.startswith(validation_script_prefixes)
+        or path.startswith(("spec/release-", "spec/schemas/pto-spec-release"))
+        for path in paths
+    ):
+        return (
+            True,
+            "validation",
+            "release toolchain, pin, workflow, or evidence contract changed; require release-policy review",
+        )
+    decision_paths = [
+        path
+        for path in paths
+        if path.startswith("docs/status/decisions/") and path.endswith(".md")
+    ]
+    if decision_paths:
+        raw = git(root, "show", f"{head}:spec/evidence/adr-index.json", check=False)
+        try:
+            index = json.loads(raw) if raw else {}
+        except json.JSONDecodeError:
+            index = {}
+        required_ids = {
+            row.get("id")
+            for row in index.get("records", [])
+            if isinstance(row, dict) and row.get("release_impact") == "required"
+        }
+        if any(any(identifier in path for identifier in required_ids) for path in decision_paths):
+            return True, "candidate", "a changed ADR declares required release impact"
+    if "site" in classifications:
+        return False, "site", "site output changed; run bounded site gates before hosted review"
+    if "tooling" in classifications or "tests" in classifications:
+        return False, "tooling", "tooling or tests changed; release impact remains unspecified until review"
+    return False, "none", "no changed path requires a release; hosted policy may still advise one"
+
+
+def validate_review(path: Path, identity: dict[str, str]) -> dict[str, object]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"cannot read review file {path}: {error}") from error
+    required = {
+        "schema_version",
+        "author",
+        "reviewer",
+        "identity",
+        "verdict",
+        "findings",
+        "compatibility",
+    }
+    if not isinstance(value, dict) or set(value) != required:
+        raise ValueError(
+            "review must contain exactly schema_version, author, reviewer, identity, "
+            "verdict, findings, compatibility"
+        )
+    if value["schema_version"] != "1":
+        raise ValueError("review schema_version must be '1'")
+    for key, role in (("author", "change_author"), ("reviewer", "independent_reviewer")):
+        actor = value[key]
+        if not isinstance(actor, dict) or set(actor) != {"id", "role"}:
+            raise ValueError(f"review {key} must contain exactly id and role")
+        if not isinstance(actor["id"], str) or not actor["id"].strip() or actor["role"] != role:
+            raise ValueError(f"review {key} must have a nonempty operational id and role {role}")
+        if "<" in actor["id"] or ">" in actor["id"]:
+            raise ValueError(f"review {key} operational id must not be a placeholder")
+    if value["author"]["id"] == value["reviewer"]["id"]:
+        raise ValueError("review author and reviewer operational ids must be distinct")
+    review_identity = value["identity"]
+    if not isinstance(review_identity, dict) or set(review_identity) != IDENTITY_KEYS:
+        raise ValueError(
+            "review identity must contain exact base_tip, merge_base, head, head_tree, and diff_sha256"
+        )
+    if review_identity != identity:
+        raise ValueError("review identity does not match the current base/head/tree/diff")
+    if value["verdict"] != "approved":
+        raise ValueError("review verdict is not approved")
+    if not isinstance(value["findings"], list) or not all(
+        isinstance(item, str) for item in value["findings"]
+    ):
+        raise ValueError("review findings must be a list of strings")
+    if value["findings"]:
+        raise ValueError(
+            "approved review must have no findings; unresolved findings require changes_requested"
+        )
+    compatibility = value["compatibility"]
+    if (
+        not isinstance(compatibility, dict)
+        or set(compatibility) != {"classification", "reason"}
+        or compatibility.get("classification") not in {"compatible", "breaking", "unspecified"}
+        or not isinstance(compatibility.get("reason"), str)
+        or not compatibility["reason"].strip()
+    ):
+        raise ValueError(
+            "review compatibility requires classification compatible, breaking, or unspecified and a reason"
+        )
+    return value
+
+
+def prepare(
+    root: Path,
+    base_ref: str,
+    head_ref: str,
+    inspect_working_tree: bool,
+    review_path: Path | None,
+) -> dict[str, object]:
+    root = root.resolve()
+    base_tip = git(root, "rev-parse", f"{base_ref}^{{commit}}").strip()
+    merge_base = git(root, "merge-base", base_tip, head_ref).strip()
+    head = git(root, "rev-parse", f"{head_ref}^{{commit}}").strip()
+    head_tree = git(root, "rev-parse", f"{head}^{{tree}}").strip()
+    dirty = bool(git(root, "status", "--porcelain=v1", "--untracked-files=all"))
+    if dirty and not inspect_working_tree:
+        raise ValueError(
+            "working tree is dirty; commit the intended changes or use an isolated worktree before final handoff, "
+            "or use --inspect-working-tree for a non-handoff diagnostic"
+        )
+    current_head = git(root, "rev-parse", "HEAD^{commit}").strip()
+    if dirty and head != current_head:
+        raise ValueError("--inspect-working-tree requires --head to resolve to the checked-out HEAD")
+    if dirty and review_path is not None:
+        raise ValueError("a review file cannot be accepted while the working tree is dirty")
+
+    committed_diff = git_bytes(root, "diff", "--binary", "--full-index", merge_base, head)
+    identity = {
+        "base_tip": base_tip,
+        "merge_base": merge_base,
+        "head": head,
+        "head_tree": head_tree,
+        "diff_sha256": hashlib.sha256(committed_diff).hexdigest(),
+    }
+    committed_paths = changed_paths(root, merge_base, head)
+    work_paths = working_paths(root) if dirty else []
+    all_paths = sorted(set(committed_paths) | set(work_paths))
+    classifications = [
+        category for category in CLASSIFICATION_ORDER if any(classify(path) == category for path in all_paths)
+    ]
+
+    commands = [
+        "scripts/generate-review-summary --base "
+        + shlex.quote(base_tip)
+        + " --head "
+        + shlex.quote(head),
+        "git diff --check " + shlex.quote(merge_base) + " " + shlex.quote(head),
+    ]
+    if dirty:
+        commands.append("git diff --check HEAD")
+    modules = focused_test_modules(root, head, all_paths)
+    if modules:
+        commands.append("python3 -m unittest " + " ".join(shlex.quote(module) for module in modules))
+    if "site" in classifications:
+        commands.extend(
+            (
+                "pnpm --dir docs/site typecheck",
+                "pnpm --dir docs/site test:unit",
+                "PTO_SITE_REQUIRE_CLEAN=1 pnpm --dir docs/site build",
+            )
+        )
+    commands.append("make pr-check")
+
+    suggested_asl_ids = (
+        asl_test_ids(root, head, all_paths) if "normative" in classifications else []
+    )
+    requires_release, release_influence, release_reason = release_required(
+        root, head, all_paths, classifications
+    )
+    review: dict[str, object] = {
+        "status": "blocked" if dirty else "review-required",
+        "authority": "local review metadata is unauthenticated evidence; independent execution provenance is checked separately",
+    }
+    if review_path is not None:
+        accepted = validate_review(review_path, identity)
+        review = {
+            "status": "reviewed",
+            "author": accepted["author"],
+            "reviewer": accepted["reviewer"],
+            "compatibility": accepted["compatibility"],
+            "authority": "local review metadata is unauthenticated evidence; independent execution provenance is checked separately",
+        }
+
+    eligible = not dirty
+    next_action = (
+        "Commit the intended changes or use an isolated worktree, then rerun without --inspect-working-tree."
+        if dirty
+        else (
+            "Run listed checks that lack fresh passing results for these exact inputs, "
+            "then rerun with --json and give "
+            "review_handoff.template to a distinct review agent."
+            if review_path is None
+            else "Submit the exact head to hosted required checks; this local report does not attest merge approval."
+        )
+    )
+    return {
+        "schema_version": "1",
+        "identity": identity,
+        "working_tree": {"dirty": dirty, "paths": work_paths, "included_for_inspection": dirty},
+        "changes": {
+            "paths": all_paths,
+            "committed_paths": committed_paths,
+            "classifications": classifications,
+        },
+        "commands": commands,
+        "release": {
+            "required": requires_release,
+            "influence": release_influence,
+            "advisory": release_reason,
+        },
+        "compatibility": {
+            "classification": (
+                "compatible"
+                if classifications and set(classifications) == {"docs"}
+                else "unspecified"
+            ),
+            "reason": (
+                "only documentation paths are present in the inspected change"
+                if classifications and set(classifications) == {"docs"}
+                else "a review agent must classify compatibility for normative, "
+                "tooling, validation, or unknown impact"
+            ),
+        },
+        "asl_validation": {
+            "suggested_test_ids": suggested_asl_ids,
+            "next_action": (
+                "Write the suggested IDs to a file, run scripts/print-asl-test-matrix "
+                "--ids-file FILE, then run the emitted page with scripts/run-asl-page -j."
+                if suggested_asl_ids
+                else (
+                    "No directly owning AVS ID was found; review coverage before handoff "
+                    "without discovering the full matrix."
+                    if "normative" in classifications
+                    else "No ASL validation is required by the classified paths."
+                )
+            ),
+        },
+        "review_handoff": {
+            "eligible": eligible,
+            "template": {
+                "schema_version": "1",
+                "author": {"id": "<change-agent-operational-id>", "role": "change_author"},
+                "reviewer": {"id": "<review-agent-operational-id>", "role": "independent_reviewer"},
+                "identity": identity,
+                "verdict": "<approved-or-changes_requested>",
+                "findings": [],
+                "compatibility": {
+                    "classification": "<compatible-breaking-or-unspecified>",
+                    "reason": "<reviewed compatibility reason>",
+                },
+            },
+        },
+        "review": review,
+        "merge_readiness": {
+            "ready": False,
+            "authority": "none; this command never merges, approves a hosted PR, or authorizes publication",
+            "reason": (
+                "independent review is required"
+                if review_path is None
+                else "hosted required checks and repository policy remain authoritative"
+            ),
+        },
+        "next_action": next_action,
+    }
+
+
+def render_human(report: dict[str, object]) -> str:
+    identity = report["identity"]
+    changes = report["changes"]
+    release = report["release"]
+    review = report["review"]
+    lines = [
+        "PR preparation",
+        f"base tip: {identity['base_tip']}",
+        f"merge base: {identity['merge_base']}",
+        f"head: {identity['head']}",
+        f"head tree: {identity['head_tree']}",
+        f"diff sha256: {identity['diff_sha256']}",
+        "classes: " + (", ".join(changes["classifications"]) or "none"),
+        f"release required: {'yes' if release['required'] else 'no'} — {release['advisory']}",
+        f"review: {review['status']}",
+        "suggested ASL test IDs: "
+        + (", ".join(report["asl_validation"]["suggested_test_ids"]) or "none"),
+        "commands:",
+        *(f"  {command}" for command in report["commands"]),
+        f"next action: {report['next_action']}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base", default="origin/main")
+    parser.add_argument("--head", default="HEAD")
+    parser.add_argument("--json", action="store_true")
+    parser.add_argument("--inspect-working-tree", action="store_true")
+    parser.add_argument("--review", type=Path)
+    arguments = parser.parse_args()
+    try:
+        report = prepare(
+            ROOT,
+            arguments.base,
+            arguments.head,
+            arguments.inspect_working_tree,
+            arguments.review,
+        )
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        if arguments.json:
+            print(
+                json.dumps(
+                    {
+                        "schema_version": "1",
+                        "status": "blocked",
+                        "errors": [str(error)],
+                        "next_action": (
+                            "Correct the reported input or repository state, then rerun prepare-pr."
+                        ),
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        else:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    if arguments.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+    else:
+        sys.stdout.write(render_human(report))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

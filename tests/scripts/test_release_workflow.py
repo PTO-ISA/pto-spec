@@ -856,8 +856,67 @@ class HostedFullValidationContractTest(unittest.TestCase):
 
     def test_release_checks_llvm_identity_freshness_before_build(self) -> None:
         self.assert_release_rejected(
-            "          python3 build/closure/llvm-project/llvm/utils/pto/generate_pto_isa_identity.py \\\n",
+            "          ./scripts/check-release-preflight \\\n",
             "          true \\\n",
+        )
+
+    def test_release_preflight_gates_all_heavy_jobs_without_serializing_them(self) -> None:
+        for job in ("full-validation", "release-site", "model-closure"):
+            self.assertIn(f"  {job}:\n", self.release)
+        self.assertEqual(self.release.count("    needs: release-preflight\n"), 3)
+        self.assertNotIn("    needs: full-validation\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    outputs:", self.release)
+
+    def test_release_preflight_and_final_gate_are_fail_closed(self) -> None:
+        self.assert_release_rejected(
+            '          test "$RELEASE_PREFLIGHT_RESULT" = success\n',
+            '          test -n "$RELEASE_PREFLIGHT_RESULT"\n',
+        )
+        self.assert_release_rejected(
+            "            build/release-preflight/candidate.json\n",
+            "",
+        )
+
+    def test_every_release_worker_uploads_anchored_diagnostics(self) -> None:
+        for job in ("preflight", "evidence", "site", "model"):
+            self.assertIn(f"build/release-diagnostics/{job}.json", self.release)
+        self.assertIn("name: pto-site-diagnostics-", self.release)
+        self.assertIn("name: pto-model-diagnostics-", self.release)
+        self.assertIn("name: pto-evidence-diagnostics-", self.release)
+        self.assertEqual(self.release.count("        if: always()\n"), 8)
+        self.assertNotIn("continue-on-error: true", self.release)
+
+    def test_release_diagnostic_anchor_cannot_be_removed_or_optional(self) -> None:
+        self.assert_release_rejected(
+            "            build/release-diagnostics/preflight.json\n",
+            "",
+        )
+        self.assert_release_rejected(
+            "      - name: Synthesize model diagnostic status\n",
+            "      - name: Skip model diagnostic status\n",
+        )
+
+    def test_release_build_caches_follow_their_true_inputs(self) -> None:
+        self.assertIn(
+            "key: pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}",
+            self.release,
+        )
+        self.assertIn("cmake-release-clang-lld-linxisa-v1", self.release)
+        self.assertIn('["cc", "--version"]', self.release)
+        self.assertNotIn("pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.commit }}", self.release)
+        self.assertIn("key: pto-aslref-", self.release)
+        self.assertIn("hashFiles('.aslref-origin', '.aslref-version', 'scripts/prepare-aslref')", self.release)
+        self.assertIn("key: pto-ndf-", self.release)
+        self.assertIn("key: asl-model-ndf-", self.release)
+        self.assertNotIn("key: pto-closure-", self.release)
+
+    def test_llvm_cache_rejects_missing_environment_fingerprint_or_pto_coupling(self) -> None:
+        self.assert_release_rejected(
+            '          value += "\\n" + os.environ.get("ImageOS", "") + "\\n" + os.environ.get("ImageVersion", "")\n',
+            '          value += "\\nunknown-runner"\n',
+        )
+        self.assert_release_rejected(
+            "${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}\n",
+            "${{ inputs.llvm_commit }}-${{ inputs.commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}\n",
         )
 
     def test_nightly_requires_schedule_and_manual_dispatch(self) -> None:
