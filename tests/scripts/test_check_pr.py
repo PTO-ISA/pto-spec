@@ -31,6 +31,8 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/check-model-closure-schema",
                 "./scripts/check-release-workflow",
                 "./scripts/check-repository --structure-only",
+                "./scripts/generate-readme-inventory --check",
+                "python3 scripts/manual_semantic_audit.py",
                 "git diff --check",
                 "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection",
             ],
@@ -121,7 +123,7 @@ class PullRequestCheckTest(unittest.TestCase):
     def test_local_runner_executes_every_listed_source_command_once(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")
 
-        for index in range(7):
+        for index in range(9):
             self.assertEqual(checker.count(f"${{source_commands[{index}]}}"), 1)
 
     def test_release_gate_projection_stays_in_release_lane(self) -> None:

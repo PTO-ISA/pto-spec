@@ -12,7 +12,14 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
-ADR_ID = re.compile(r'"id"\s*:\s*"(ADR-[0-9]{4})"')
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.adr_records import _frontmatter  # noqa: E402
+
+
+TYPED_ADR_ID = re.compile(r"ADR-[A-Z]+-[0-9]{4}\Z")
+LEGACY_ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
 UNIT_RECORD = re.compile(r"^// PTO-(?:UNIT|INSTRUCTION): (\{.*\})$", re.MULTILINE)
 TEST_RECORD = re.compile(r"^// PTO-TEST: (\{.*\})$", re.MULTILINE)
 NDF_REGION = re.compile(
@@ -64,6 +71,21 @@ def metadata_id(text: str | None, pattern: re.Pattern[str]) -> str | None:
     return match.group(1)
 
 
+def adr_metadata_id(text: str | None, path: str) -> str | None:
+    if text is None:
+        return None
+    if not text.startswith("---\n") and not text.startswith("---\r\n"):
+        if Path(path).name.startswith("ADR-"):
+            raise ValueError(f"{path}: missing JSON frontmatter")
+        return None
+    identifier = _frontmatter(text, Path(path)).get("id")
+    if not isinstance(identifier, str):
+        return None
+    if TYPED_ADR_ID.fullmatch(identifier) or LEGACY_ADR_ID.fullmatch(identifier):
+        return identifier
+    return None
+
+
 def ndf_clauses(text: str | None) -> dict[str, str]:
     if text is None:
         return {}
@@ -89,6 +111,10 @@ def render(base_ref: str, head_ref: str) -> str:
     base = git("merge-base", base_ref, head_ref).strip()
     head = git("rev-parse", f"{head_ref}^{{commit}}").strip()
     paths = changed_paths(base, head)
+    index = json_at(head, "spec/evidence/adr-index.json")
+    legacy_map = index.get("legacy_map", {})
+    if not isinstance(legacy_map, dict):
+        legacy_map = {}
 
     adr_ids: set[str] = set()
     unit_ids: set[str] = set()
@@ -99,9 +125,10 @@ def render(base_ref: str, head_ref: str) -> str:
         new = content(head, path)
         if path.startswith("docs/status/decisions/") and path.endswith(".md"):
             for text in (old, new):
-                identifier = metadata_id(text, ADR_ID)
+                identifier = adr_metadata_id(text, path)
                 if identifier:
-                    adr_ids.add(identifier)
+                    canonical = legacy_map.get(identifier, identifier)
+                    adr_ids.add(canonical if isinstance(canonical, str) else identifier)
         if path.startswith("asl/") and path.endswith(".asl"):
             for text in (old, new):
                 identifier = metadata_id(text, UNIT_RECORD)
@@ -137,7 +164,6 @@ def render(base_ref: str, head_ref: str) -> str:
     )
     projections = [path for path in paths if path.startswith(projection_prefixes)]
 
-    index = json_at(head, "spec/evidence/adr-index.json")
     release_required = sorted(
         record["id"]
         for record in index.get("records", [])

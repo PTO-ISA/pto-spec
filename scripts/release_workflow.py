@@ -260,10 +260,173 @@ def validate_pr_workflow(workflow: str) -> list[str]:
     return errors
 
 
+def _diagnostic_status(name: str, run_sha256: str) -> dict[str, object]:
+    return {
+        "name": name,
+        "if": "always()",
+        "shell": "bash",
+        "env": {
+            "PTO_COMMIT": "${{ inputs.commit }}",
+            "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+            "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+            "RUN_ID": "${{ github.run_id }}",
+            "RUN_ATTEMPT": "${{ github.run_attempt }}",
+            "JOB_STATUS": "${{ job.status }}",
+            "STEPS_JSON": "${{ toJSON(steps) }}",
+        },
+        "run-sha256": run_sha256,
+    }
+
+
 def _release_jobs() -> dict[str, object]:
     return {
+        "release-preflight": {
+            "name": "Release / candidate preflight",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "30",
+            "outputs": {
+                "artifact-digest": "${{ steps.preflight-artifact.outputs.artifact-digest }}"
+            },
+            "steps": [
+                {
+                    "name": "Validate exact component inputs",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                    },
+                    "run-sha256": "5d3fe8e746e1e3c791cfb1cdf96d55544a2d33c6131a70e08b9687bfb861031c",
+                },
+                {
+                    "name": "Check out exact PTO-SPEC candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "ref": "${{ inputs.commit }}",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                        "submodules": "recursive",
+                    },
+                },
+                {
+                    "name": "Check out exact LLVM candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "LinxISA/llvm-project",
+                        "ref": "${{ inputs.llvm_commit }}",
+                        "path": "build/closure/llvm-project",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Check out exact ASL-MODEL candidate",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/asl-model",
+                        "ref": "${{ inputs.asl_model_commit }}",
+                        "path": "build/closure/asl-model",
+                        "fetch-depth": "0",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Record exact input tuple for diagnostics",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                    },
+                    "run-sha256": "653f4c368ac7db0a19392e2419d54d0ac6e7da22f897b384555959065911589c",
+                },
+                {
+                    "name": "Resolve ASL-MODEL dependency pins",
+                    "id": "model-pins",
+                    "shell": "bash",
+                    "run-sha256": "eeb99129d7758196e663d4ddbef70eda58d765e5f3321c8b403aef6ea23016f9",
+                },
+                {
+                    "name": "Check out ASL-MODEL pinned NDF",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/normative_language",
+                        "ref": "${{ steps.model-pins.outputs.ndf }}",
+                        "path": "build/closure/asl-model/tools/ndf",
+                        "fetch-depth": "1",
+                        "persist-credentials": "false",
+                    },
+                },
+                {
+                    "name": "Check out ASL-MODEL imported PTO graph baseline",
+                    "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+                    "with": {
+                        "repository": "PTO-ISA/pto-spec",
+                        "ref": "${{ steps.model-pins.outputs.pto }}",
+                        "path": "build/closure/asl-model/vendor/pto-spec",
+                        "fetch-depth": "1",
+                        "persist-credentials": "false",
+                        "submodules": "false",
+                    },
+                },
+                {
+                    "name": "Restore NDF preflight builds",
+                    "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+                    "with": {
+                        "path": "tools/ndf/target\nbuild/closure/asl-model/tools/ndf/target",
+                        "key": "pto-release-preflight-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.pto_ndf }}-${{ steps.model-pins.outputs.ndf }}-${{ hashFiles('tools/ndf/Cargo.lock', 'build/closure/asl-model/tools/ndf/Cargo.lock') }}",
+                    },
+                },
+                {
+                    "name": "Build exact NDF impact",
+                    "shell": "bash",
+                    "env": {"PTO_COMMIT": "${{ inputs.commit }}"},
+                    "run-sha256": "118b4bc9f6c35ad5156d3fd7fdbde48193432318e6d8789e0487bf591f4fdd2a",
+                },
+                {
+                    "name": "Validate identity, LLVM header, and affected AVS mapping",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                    },
+                    "run-sha256": "396fcd4359f3fdaf3ca0401776c75743fedb218001087f1e7ec81d72f8e3eb43",
+                },
+                {
+                    "name": "Upload immutable preflight tuple and impact",
+                    "id": "preflight-artifact",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-preflight/candidate.json\nbuild/release-preflight/ndf-impact.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "90",
+                    },
+                },
+                _diagnostic_status(
+                    "Synthesize preflight diagnostic status",
+                    "afc735b544903f5afb64e582a588ea534d6e03a51139f5a8843ef01cdf791e60",
+                ),
+                {
+                    "name": "Upload preflight diagnostics",
+                    "if": "always()",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-preflight-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-diagnostics/preflight.json\nbuild/release-preflight/input-tuple.json\nbuild/release-preflight/diagnostics.json\nbuild/release-preflight/ndf-impact.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "30",
+                    },
+                },
+            ],
+        },
         "full-validation": {
             "name": "Release / full validation",
+            "needs": "release-preflight",
             "uses": "./.github/workflows/full-validation.yml",
             "with": {"commit": "${{ inputs.commit }}", "authority": "release"},
             "permissions": {"contents": "read"},
@@ -311,11 +474,26 @@ def _release_jobs() -> dict[str, object]:
                         "retention-days": "90",
                     },
                 },
+                _diagnostic_status(
+                    "Synthesize evidence diagnostic status",
+                    "f61119f5fe399dd92ba3d2bcfd0c4baf10bb16a36b782bc146c50ec71ce80871",
+                ),
+                {
+                    "name": "Upload evidence diagnostics",
+                    "if": "always()",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-evidence-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-diagnostics/evidence.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "30",
+                    },
+                },
             ],
         },
         "release-site": {
             "name": "Release / static site validity",
-            "needs": "full-validation",
+            "needs": "release-preflight",
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "45",
             "outputs": {
@@ -368,11 +546,37 @@ def _release_jobs() -> dict[str, object]:
                         "retention-days": "90",
                     },
                 },
+                {
+                    "name": "Synthesize site diagnostic status",
+                    "if": "always()",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "RUN_ID": "${{ github.run_id }}",
+                        "RUN_ATTEMPT": "${{ github.run_attempt }}",
+                        "JOB_STATUS": "${{ job.status }}",
+                        "STEPS_JSON": "${{ toJSON(steps) }}",
+                    },
+                    "run-sha256": "48bb14cd4658dcb87c3cc8448c09a0518aa71a5f1e576b266491dc409abb89f6",
+                },
+                {
+                    "name": "Upload site diagnostics",
+                    "if": "always()",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-site-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-diagnostics/site.json\ndocs/site/playwright-report\ndocs/site/test-results\ndocs/site/.lighthouseci",
+                        "if-no-files-found": "error",
+                        "retention-days": "30",
+                    },
+                },
             ],
         },
         "model-closure": {
             "name": "Release / LLVM-to-ASL model closure",
-            "needs": "full-validation",
+            "needs": "release-preflight",
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "360",
             "outputs": {
@@ -424,10 +628,18 @@ def _release_jobs() -> dict[str, object]:
                     },
                 },
                 {
+                    "name": "Download exact release preflight",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-preflight",
+                    },
+                },
+                {
                     "name": "Resolve ASL-MODEL dependency pins",
                     "id": "model-pins",
                     "shell": "bash",
-                    "run-sha256": "8ab9953b7720e985fcc7f32c1cf1cddcb1b7fc25c8907ed9da2a9ffd24549f17",
+                    "run-sha256": "5e2549ac3ae71261e3ce4e0a773b3662291793da531be81461a800d92c3284d9",
                 },
                 {
                     "name": "Check out ASL-MODEL pinned NDF",
@@ -453,31 +665,63 @@ def _release_jobs() -> dict[str, object]:
                     },
                 },
                 {
+                    "name": "Revalidate downloaded tuple before expensive builds",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "WORKFLOW_COMMIT": "${{ github.workflow_sha }}",
+                    },
+                    "run-sha256": "440b3f4d56e9295062bc78961bc7b8fab50df4bc1e0709dd0eec50c45414f995",
+                },
+                {
                     "name": "Set up pinned OCaml",
                     "uses": "ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0",
                     "with": {"ocaml-compiler": "5.2.1", "dune-cache": "true"},
                 },
                 {
-                    "name": "Restore closure build caches",
+                    "name": "Fingerprint LLVM build environment",
+                    "id": "llvm-build-cache",
+                    "shell": "bash",
+                    "run-sha256": "8eb5ddfb7290618097a74f11b19394eee8e055285f2005786375a25d687a96af",
+                },
+                {
+                    "name": "Restore exact ASLRef build",
                     "uses": f"actions/cache@{CACHE_ACTION_SHA}",
                     "with": {
-                        "path": ".cache/herdtools7\n"
-                        "build/closure/llvm-build\n"
-                        "tools/ndf/target\n"
-                        "build/closure/asl-model/tools/ndf/target",
-                        "key": "pto-closure-${{ runner.os }}-${{ runner.arch }}-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": ".cache/herdtools7",
+                        "key": "pto-aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-origin', '.aslref-version', 'scripts/prepare-aslref') }}",
+                    },
+                },
+                {
+                    "name": "Restore exact LLVM build",
+                    "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+                    "with": {
+                        "path": "build/closure/llvm-build",
+                        "key": "pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}",
+                    },
+                },
+                {
+                    "name": "Restore PTO NDF build",
+                    "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+                    "with": {
+                        "path": "tools/ndf/target",
+                        "key": "pto-ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.pto_ndf }}-${{ hashFiles('tools/ndf/Cargo.lock') }}",
+                    },
+                },
+                {
+                    "name": "Restore ASL-MODEL NDF build",
+                    "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+                    "with": {
+                        "path": "build/closure/asl-model/tools/ndf/target",
+                        "key": "asl-model-ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.ndf }}-${{ hashFiles('build/closure/asl-model/tools/ndf/Cargo.lock') }}",
                     },
                 },
                 {
                     "name": "Prepare exact ASL and LLVM tools",
                     "shell": "bash",
-                    "run-sha256": "73efbb308d02af5936c45dd7bf371d4f70ebd7eb55440003101c173876292c54",
-                },
-                {
-                    "name": "Build exact NDF impact",
-                    "shell": "bash",
-                    "env": {"PTO_COMMIT": "${{ inputs.commit }}"},
-                    "run-sha256": "eec2b08005cc6eae7ba51a148d93f245abaf397354ce8801d44a985961ab3a04",
+                    "run-sha256": "51e9512bc9568b9e5a246b7c3efc0d18871a28e35c63c73d9fb47258bb89b1fe",
                 },
                 {
                     "name": "Run twice and validate exact closure",
@@ -491,7 +735,7 @@ def _release_jobs() -> dict[str, object]:
                         "RUN_ID": "${{ github.run_id }}",
                         "RUN_ATTEMPT": "${{ github.run_attempt }}",
                     },
-                    "run-sha256": "0ff603d871c6f37d3fe4a87635dee5cef9b50088d2eda715810f9906b7fbaa72",
+                    "run-sha256": "ddd52454d53a85fe99723cdec50b2f2a8f48f372e98fa8763fcf64ed75052def",
                 },
                 {
                     "name": "Upload immutable model closure evidence",
@@ -499,11 +743,38 @@ def _release_jobs() -> dict[str, object]:
                     "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
                     "with": {
                         "name": "pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
-                        "path": "build/closure/ndf-impact.json\n"
+                        "path": "build/release-preflight/candidate.json\n"
+                        "build/release-preflight/ndf-impact.json\n"
                         "build/model-closure-run-1/evidence\n"
                         "build/model-closure-run-2/evidence",
                         "if-no-files-found": "error",
                         "retention-days": "90",
+                    },
+                },
+                {
+                    "name": "Synthesize model diagnostic status",
+                    "if": "always()",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "RUN_ID": "${{ github.run_id }}",
+                        "RUN_ATTEMPT": "${{ github.run_attempt }}",
+                        "JOB_STATUS": "${{ job.status }}",
+                        "STEPS_JSON": "${{ toJSON(steps) }}",
+                    },
+                    "run-sha256": "85fe0e9863e17e43b209eb5b9c376eedb96b2316e0f9e116de31e0eed5f28ef5",
+                },
+                {
+                    "name": "Upload model diagnostics",
+                    "if": "always()",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-model-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-diagnostics/model.json\nbuild/release-preflight\nbuild/model-closure-run-1/evidence\nbuild/model-closure-run-2/evidence",
+                        "if-no-files-found": "error",
+                        "retention-days": "30",
                     },
                 },
             ],
@@ -511,7 +782,7 @@ def _release_jobs() -> dict[str, object]:
         "validate": {
             "name": "Release / validate",
             "if": "always()",
-            "needs": ["full-validation", "release-evidence", "release-site", "model-closure"],
+            "needs": ["release-preflight", "full-validation", "release-evidence", "release-site", "model-closure"],
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "10",
             "steps": [
@@ -520,6 +791,8 @@ def _release_jobs() -> dict[str, object]:
                     "shell": "bash",
                     "env": {
                         "FULL_VALIDATION_RESULT": "${{ needs.full-validation.result }}",
+                        "RELEASE_PREFLIGHT_RESULT": "${{ needs.release-preflight.result }}",
+                        "RELEASE_PREFLIGHT_ARTIFACT_DIGEST": "${{ needs.release-preflight.outputs.artifact-digest }}",
                         "RELEASE_EVIDENCE_RESULT": "${{ needs.release-evidence.result }}",
                         "RELEASE_SITE_RESULT": "${{ needs.release-site.result }}",
                         "MODEL_CLOSURE_RESULT": "${{ needs.model-closure.result }}",
@@ -527,7 +800,7 @@ def _release_jobs() -> dict[str, object]:
                         "MODEL_CLOSURE_ARTIFACT_DIGEST": "${{ needs.model-closure.outputs.artifact-digest }}",
                         "MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256": "${{ needs.model-closure.outputs.semantic-payload-sha256 }}",
                     },
-                    "run-sha256": "e58862eea94e3195693a4815b4a4b7b9a73d317c937148fa3b0080e514b99207",
+                    "run-sha256": "38227e4114a775327ff1e112c11a6bd11670d6b316cb9c33a65aed2d9fa7fbb5",
                 }
             ],
         },
