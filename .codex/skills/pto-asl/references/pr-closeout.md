@@ -53,6 +53,13 @@ to merge without performing a release.
 
 ## Keep merge closeout lightweight
 
+- For a new or edited change, use `scripts/prepare-pr --base origin/main --head HEAD`
+  after commits are final. `--json` provides the exact input and reviewer
+  template; `--inspect-working-tree` provides only a preliminary edit plan.
+- Hand the final input to one independent reviewer agent. Validate its returned
+  receipt with `--review FILE` and keep the execution record with PR evidence.
+  A different input requires fresh review. Agent executions may share a GitHub
+  account; local reviewer IDs are not authenticated identities or GitHub approvals.
 - A merge-only request normally needs only exact PR/head identity,
   mergeability, commit-signature state when required, hosted branch-protection
   checks, the merge result, and the resulting `main` commit.

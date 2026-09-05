@@ -12,9 +12,13 @@ pull-request merge work.
   candidate, an open fix branch, or a partially updated dependency graph.
 - Record the tuple once and use it consistently in the workflow dispatch,
   monitoring, failure report, evidence download, tag, and release.
+- Treat the ASL-MODEL imported PTO graph pin as its dependency baseline. It need
+  not equal the runtime PTO candidate; both identities must remain explicit.
 
 ## Dispatch manually and singly
 
+- The operator may be an agent. An already authorized release task does not
+  require a second human confirmation; it still requires a verified candidate.
 - Release verification runs in the protected GitHub Actions release workflow.
   Dispatch it manually for the frozen tuple.
 - Never dispatch a second release while any release for the active candidate is
@@ -32,6 +36,8 @@ pull-request merge work.
 - After completion, collect every failed job, failed step, log, annotation, and
   missing artifact. Separate specification defects, coverage gaps, test flakes,
   infrastructure failures, and stale or mismatched component inputs.
+- Start from the workflow's preflight and diagnostics artifacts. Diagnostic
+  uploads can be partial; their existence never establishes a passing gate.
 - Treat repeated failures from the same tuple as evidence that the retry policy
   is wrong, not as a reason for another blind run.
 
@@ -48,6 +54,13 @@ pull-request merge work.
 
 - Publication requires the final `Release / validate` job to succeed for the
   exact frozen tuple, with every required artifact present and verified.
+- Run `scripts/prepare-release-publication --run-id RUN_ID --output build/publication-RUN_ID`
+  to retrieve and verify the completed hosted run. Follow the JSON next action;
+  retain its handoff and checksums with the permanent release evidence. This is
+  read-only preparation and does not grant publication authority.
+- Revalidate the hosted run immediately before the authorized publication step.
+  Use actual published metadata to emit the stable event; never invent a release
+  ID/time for a candidate. Preserve existing release-event v1 consumers.
 - Create the signed immutable tag and GitHub Release only after that success.
   Never reuse a partial, stale, cancelled, skipped, failed, or different-commit
   result.

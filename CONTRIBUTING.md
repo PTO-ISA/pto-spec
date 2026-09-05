@@ -78,19 +78,48 @@ case before the exact-head release closure can pass.
 ## Develop and review
 
 Create the regression or contract test first and observe the intended failure.
-Make the smallest owner change, regenerate all affected projections, then run:
+During editing, make the smallest owner change, regenerate affected projections,
+and run the focused checks for that contract. After commits are final, use the
+agent handoff below to select and run the final commands once. The raw lightweight
+commands are equivalent diagnostics, not an additional pass:
 
 ```bash
 make pr-check
-make repo-check
 git diff --check
 ```
 
-Use `scripts/generate-review-summary --base REF --head REF` to prepare a
-merge-base semantic-delta aid. It does not replace source review. A pull request
-must link the governing issue or ADR, identify changed NDF clauses and ASL
-owners, describe compatibility and release impact, and explain any validation
-gap.
+Run `make repo-check` when the change owns binary closure or after a normative
+candidate's release identity is reconciled. Ordinary PRs do not need release
+projection freshness. A failure in the changed contract must be repaired;
+pending release obligations must be recorded explicitly.
+
+### Agent handoff
+
+1. Finish the focused edit and tests. Finalize the signed commits before review.
+2. Refresh the intended base once (`git fetch origin main` for the usual main
+   target), then run `./scripts/prepare-pr --base origin/main --head HEAD`. Its output names
+   the exact reviewed inputs, change classes, checks and next action. Use
+   `--json` for another agent. Use `--inspect-working-tree` for a preliminary
+   plan while editing; it cannot produce an eligible final handoff. Resolve missing
+   input or a dirty candidate before final handoff. Run each listed check once;
+   a fresh passing result for these exact inputs already satisfies that command.
+3. Give the handoff and the semantic summary command printed by the tool to one
+   independent reviewer agent. The reviewer reads
+   the actual diff and owners, records findings and compatibility, and returns
+   an explicit verdict. Keep the execution record with the PR evidence.
+4. Validate the returned receipt with
+   `./scripts/prepare-pr --base origin/main --head HEAD --review build/pr-review.json`.
+   The receipt is a freshness check,
+   not an authenticated approval or evidence that CI passed.
+5. Push the reviewed head and use its required hosted checks for merge. Do not
+   repeat successful hosted checks locally merely to close the PR. If the head
+   or base changes, refresh the handoff and review the new input.
+
+A pull request links the governing issue or ADR, identifies changed NDF clauses
+and ASL owners, states compatibility and release impact, and lists downstream
+PRs/cases and remaining gaps. `not-applicable` is valid for unrelated fields in
+maintenance changes. Missing downstream runtime coverage may remain a stated
+development obligation; it blocks release eligibility, not every maintenance PR.
 
 PTO-SPEC ADRs and ASL NDF regions contain only PTO-owned identities.
 ASL-Model and other downstream repositories own their own NDF numbering;

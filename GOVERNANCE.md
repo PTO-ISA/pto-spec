@@ -26,7 +26,7 @@ non-authoritative latest-`main` nightly health, and exact-commit release
 verification. Only a successful release run for the candidate commit can
 support release eligibility. No run creates a tag or publishes a release.
 
-The [validation guide](docs/governance/validation.md) is the canonical human
+The [validation guide](docs/governance/validation.md) is the canonical operator
 description of lane triggers, commands, authority, and failure handling. The
 workflows and validation scripts remain the executable contracts.
 
@@ -67,6 +67,53 @@ succeeds for the reviewed head and conversations are resolved. `main` rejects
 force pushes and deletion according to repository settings. `.github/CODEOWNERS`
 routes all paths to the repository owner; repository settings, required checks,
 and access remain auditable administrative controls.
+
+### Agent operation and review
+
+Implementers, reviewers, and release operators may all be agents. Review is a
+separate execution from implementation; it does not require a human reviewer,
+an additional GitHub account, or a queue of domain approvals. One independent
+reviewer covers the changed contracts. Escalate only unresolved architecture
+decisions or findings that exceed that reviewer's scope.
+
+The implementer supplies an exact base, head, diff identity, focused results,
+compatibility impact, and downstream obligations. The reviewer reads the owning
+sources and rejection tests, records findings, and approves or requests changes.
+Changed input invalidates the review. Preserve the independent execution's
+transcript or host record with the PR evidence: a reviewer name or local JSON
+receipt proves neither authentication nor independent execution.
+
+`scripts/prepare-pr` prepares the bounded handoff and checks receipt freshness.
+It never manufactures an approval or replaces hosted required checks. Agents
+using the same GitHub account must preserve the independent review record;
+they must not invent another account's approval. GitHub access controls remain
+the authorization boundary for merges and publication.
+
+## Compatibility and downstream consumption
+
+`main` is a moving normative draft. A candidate names frozen inputs awaiting
+verification. A published release binds an immutable commit and evidence; its
+publication status does not imply that every architectural area is complete.
+Consumers read the profile, maturity and known gaps in that exact release.
+
+Architecture version, publication revision, encoding ABI and content digests
+are distinct identities. In the current four-part version scheme, a publication
+revision is not a promise of patch compatibility. An unchanged ABI name or
+encoding digest alone does not prove unchanged execution semantics.
+
+Every interface change states `compatible`, `breaking`, or `unspecified` and
+names the affected consumer contract. Instruction removal, encoding changes,
+new legality restrictions and changed observable behavior require explicit
+compatibility review and migration obligations. `unspecified` cannot be
+advertised as compatible. Documentation or packaging corrections may claim
+compatibility only when the normative contract is unchanged. These declarations
+describe change impact; ASL/NDF remains the sole semantic authority.
+
+Production consumers pin the full release tag, commit, manifest digest and
+applicable profile. They verify the release evidence before updating that pin.
+Development consumers may track a commit but must not treat it as a published
+release. Downstream repositories keep their own identities and acceptance cases;
+PTO-SPEC links their obligations without copying their normative records.
 
 ## Release eligibility
 

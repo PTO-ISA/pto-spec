@@ -25,8 +25,10 @@ matching lane:
   [aslref.md](references/aslref.md).
 - **Migration or source reconciliation**: read
   [source-map.md](references/source-map.md).
-- **Dependent PR, rebase, or merge closeout**: read
-  [pr-closeout.md](references/pr-closeout.md).
+- **Agent PR preparation, dependent PR, rebase, or merge closeout**: read
+  [pr-closeout.md](references/pr-closeout.md). Use `scripts/prepare-pr` for the
+  final commit handoff; one independent agent reviews the exact inputs. Reuse
+  fresh checks and reject stale receipts instead of repeating whole gates.
 - **Release verification or publication**: read
   [release-operations.md](references/release-operations.md).
 

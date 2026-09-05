@@ -18,7 +18,8 @@ git submodule update --init --recursive
 ```
 
 The pull-request lane does not need opam or a prepared ASLRef checkout.
-It runs source-contract checks and isolated Python test modules concurrently,
+Hosted CI runs source-contract and tooling workers concurrently. The local
+command sequences these workers and runs isolated Python test modules in parallel,
 reports command durations, and lists the slowest Python modules. Set
 `PTO_PYTHON_TEST_JOBS=1` when debugging order-dependent behavior, or choose a
 larger bounded value for a host with more cores.
@@ -45,8 +46,11 @@ validation use the same credential-free HTTPS fetch path.
 2. Add a failing focused test for changed behavior.
 3. Make the smallest owner change.
 4. Run the owner’s generator rather than editing derived output.
-5. Run `make pr-check`, `make repo-check`, and `git diff --check`.
-6. Inspect `scripts/generate-review-summary --base REF --head REF` before review.
+5. Run the focused checks for the changed contract while editing.
+6. Finalize commits, then run `scripts/prepare-pr --base origin/main --head HEAD`.
+   Execute its listed checks once and hand off to an independent reviewer agent.
+   Include `make repo-check` when the change owns binary closure. The [contribution guide](../../CONTRIBUTING.md#agent-handoff)
+   owns the complete sequence.
 
 Architecture changes also follow the [ADR process](../governance/adr-process.md).
 

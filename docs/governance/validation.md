@@ -1,13 +1,13 @@
 # Validation
 
-This page owns the human description of repository validation. Executable
+This page owns the operator guide to repository validation. Executable
 authority remains in the Make targets, scripts, and pinned workflows.
 
 ## Lane meanings
 
 | Lane | Trigger and commit binding | Contract |
 | --- | --- | --- |
-| Pull request | Push or pull request head | `PR / validate` requires both lightweight correctness workers; it checks source structure, projections, script tests, documentation, workflow policy, and diff hygiene without claiming full-model or release readiness |
+| Pull request | Push or pull request head | `PR / validate` requires both lightweight correctness workers; it checks source structure, projections, formal review field completeness, live README inventory, script tests, workflow policy, and diff hygiene without claiming full-model or release readiness |
 | Nightly | Schedule or dispatch, after proving the workflow commit equals latest `origin/main` | Reuses full validation as non-authoritative health; `Nightly / health` requires exact latest-`main` identity and the complete model |
 | Release | Dispatch with full lowercase PTO-SPEC, LLVM, and ASL-MODEL commit SHAs | Reuses full validation with release authority, aggregates the exact ASL AVS result set, builds NDF release impact, compiles the ASL-MODEL corpus with the exact LLVM candidate, runs every selected ELF twice through the exact ASLRef model, and requires `Release / validate` for the complete version tuple |
 
@@ -15,18 +15,40 @@ Nightly results are diagnostic. Pull-request results establish merge readiness
 only. Release results can support release eligibility but do not create a tag,
 release, or publication.
 
+## Release execution order
+
+The release workflow starts with candidate preflight: exact clean checkouts,
+manifest freshness, LLVM identity, pinned dependencies and downstream AVS
+obligations must agree before LLVM or ASLRef builds start. The imported
+ASL-MODEL PTO graph remains an explicit baseline, distinct from the runtime
+candidate.
+
+After preflight succeeds, full ASL validation, LLVM-to-ASL closure and site
+validation run in parallel. Release evidence aggregation waits for the complete
+ASL result set; the final gate requires all workers and artifact digests.
+LLVM build caches follow the LLVM commit and host tool/configuration fingerprint;
+the other build caches follow their own dependency pins. Validation results are
+produced afresh for each candidate.
+
+Each release worker writes a diagnostic status summary even after an earlier
+step fails, while the runner is still available. Read those summaries and the
+complete terminal failure set before preparing a repair. Diagnostic artifacts
+cannot substitute for passing evidence. The [release guide](../releases/index.md)
+owns the read-only `scripts/prepare-release-publication` handoff after hosted
+verification succeeds.
+
 ## Local commands
 
 Fast pull-request feedback needs Git, GNU Make, and Python 3.11+:
 
 ```bash
 make pr-check
-make repo-check
 git diff --check
 ```
 
-`make pr-check` runs two fail-closed lanes concurrently: source/projection
-contracts and isolated Python test modules. Each command reports elapsed time,
+Hosted PR validation runs two fail-closed workers concurrently. Locally,
+`make pr-check` runs source/projection contracts followed by isolated Python
+test modules, which run in bounded parallelism. Each command reports elapsed time,
 and the Python runner prints the slowest modules. Use
 `PTO_PYTHON_TEST_JOBS=<N>` to set its bounded module-level parallelism. The
 default is at most four workers. To diagnose one lane independently, run:
@@ -35,6 +57,19 @@ default is at most four workers. To diagnose one lane independently, run:
 ./scripts/check-pr --source
 ./scripts/check-pr --tooling
 ```
+
+Use `scripts/prepare-pr --base origin/main --head HEAD` to prepare the agent
+review handoff and impact-specific checks. This is an alternative entry to the
+raw commands above: execute each check once per candidate, reusing a fresh passing
+result for the exact same inputs. Formal review metadata is checked
+without ASLRef; it does not prove that an independent reviewer executed. The
+[contribution guide](../../CONTRIBUTING.md#agent-handoff) owns that operation.
+`make repo-check` additionally checks binary closure and is appropriate when
+that contract changes. Release-only projection tests stay in the release lane.
+
+README inventory is generated from live catalogs and ASL owners by
+`scripts/generate-readme-inventory`. Regenerate it when those inputs change.
+Its check performs no network access or exhaustive AVS matrix discovery.
 
 For a focused ASL rerun, list exact stable IDs and execute the resulting page
 with host-sized parallelism:

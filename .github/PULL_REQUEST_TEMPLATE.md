@@ -1,5 +1,6 @@
 ## Change contract
 
+- Change classes / reviewed head: <!-- from scripts/prepare-pr; final full SHA -->
 - Linked NDF architecture issue: <!-- issue URL, or N/A for non-normative maintenance -->
 - Baseline commit: <!-- full 40-character SHA -->
 - Changed NDF clause IDs: <!-- PTO-* IDs, or N/A -->
@@ -10,6 +11,15 @@
 Describe architecture-visible behavior, defaults, intentionally unspecified
 behavior, compatibility, and toolchain impact. Do not restate executable ASL in
 prose.
+
+- Compatibility: <!-- compatible | breaking | unspecified; name the consumer contract, or not-applicable -->
+- Downstream obligations: <!-- repository PR/case URLs and landing order, or not-applicable -->
+
+## Agent review
+
+- Independent reviewer execution: <!-- transcript/host record; agents may share a GitHub account -->
+- Review verdict / findings: <!-- explicit verdict bound to final prepare-pr identity; unresolved findings -->
+- Receipt check: <!-- prepare-pr --review result; this does not replace required hosted checks -->
 
 ## Projections and focused evidence
 
