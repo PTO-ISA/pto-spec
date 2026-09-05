@@ -3566,7 +3566,7 @@
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
-      "sha256": "6ed4b51e3918baa83a03972a13c85ea6a4ae72041a1be37b32a752e690ef8c42"
+      "sha256": "3daf7bf384dc0ff64bd8374634a8b6a057eea6ca76b67b67ab0d9496471110ae"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -3590,7 +3590,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "9f4ddebc8cb89c7e1dfc9313f111e7f179fb48a7675c49e7f99bf4d6848def8f"
+      "sha256": "134017d5b0d704f7ef55fee83d88abb734b4a22b9592efc9ae7c6aaa265c1f63"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3598,31 +3598,31 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "63931a8a91dd3c47f95c80590a41a998692382e4cfdd0a622119407053993251"
+      "sha256": "3b1602c96811a7da79f1dafec36d289bdf1d95f66624f995099d1c810379dd88"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "89c177686d6d9442595d05880f17e7cd8766f46a93ff4a2805daa9ce0061fd51"
+      "sha256": "b8a7640446b22ad46340ae6db704170d3854bede039f8cbfb341bc8c3a229999"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "cc19b6478e4cc70fc7e5e8f72296289ae5e23e13c5a05d8d726fd04c53fbe9bc"
+      "sha256": "ec58dbaa4e83a37f19766d560548fdf753487f5cde8335787b0a8e650585b7be"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
+      "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
     },
     {
       "path": "spec/model-closure-selection.json",
-      "sha256": "4242c734e22cbfe91a801dfe8633548d2ac3dce1df2c326914529f0fe712a222"
+      "sha256": "2bfb6f1386e1b9a28197c9fbcd01d8953979392a890c16bf7faee80cdfe502ba"
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "4a23a1cfef93245c1ceeb4a88f1f73f321d402e2812613d6a371c3152ef9411e"
+      "sha256": "c739ae0180d9435a2fe112f77dc9c65c35a9602789b9ecc3d610adfbcec10294"
     },
     {
       "path": "spec/release-selection.json",
-      "sha256": "4168ecae419ce904f04102531d6988285b86a55c80c795d69d206351d309f30c"
+      "sha256": "d335cdbb83291cf5a80ed97452268b0f82b9c6a8b40179ad01ad4692f4c5261c"
     },
     {
       "path": "spec/schemas/pto-closure-run-envelope-v1.schema.json",
@@ -3634,7 +3634,7 @@
     },
     {
       "path": "spec/schemas/pto-model-closure-selection-v1.schema.json",
-      "sha256": "f2d9cbfdc8e1d4053c155ef7ba0690cdbbb935118c31418e8912a9d83e64e5ae"
+      "sha256": "1bba589d53dd88f22ad08a9257f21c2868ec53bfe9b3a92c3ecbed164223812e"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3646,7 +3646,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "3165ca23d4c7ae2c02fb5682509dd1aa8b4eb9175f1ce974e9b47c06c1530939"
+      "sha256": "11671ef61202715d93d0f406bd8e0f589730d0506507fad9583f72f4f26da13d"
     }
   ],
   "catalog_counts": {
@@ -3668,7 +3668,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "442b5612153ea8ed26901d23e6b93ed57179369bebdbc0e0168df2cc571b0e1a",
+  "content_sha256": "f2f5935b4f1c872c11e824ff05d093703f381b129279320a5d9d4ab9c450d734",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3686,14 +3686,14 @@
     "note_type_value": 1,
     "section": ".note.pto.isa"
   },
-  "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "bc0718ee31162ba7f6ea04d2a5853c49fe30e7cb36b33c0704c58678710a0c87",
+  "encoding_abi": "pto-isa-0.58.6-mode-function-v1",
+  "encoding_projection_sha256": "a757f2e50ec8050d2131b6b9ad38657511df80cf3f9424d5f009ea6e0cc35839",
   "hardware_conformance_profile": {
-    "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
+    "evidence": "spec/evidence/pto-isa-0586-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
-    "profile_id": "pto-hardware-numeric-0.58.5-ieee-v1",
+    "profile_id": "pto-hardware-numeric-0.58.6-ieee-v1",
     "repository_implementation_conformance": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
-    "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
+    "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -8144,24 +8144,24 @@
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "461c9498a08b006c8d8c6267e2fcdc557bbcdd3d4a873e2709efbac703303b03"
+      "path": "spec/evidence/pto-isa-0586-abi-vectors.json",
+      "sha256": "71ffd59e1e2bd57a60cdf721f4931f545103a00fac40fcdc677af99e67e22673"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "a8a8e3ddb087de5198429f019337f0c5171fe9c77e057304ea66693c758f1642"
+      "path": "spec/evidence/pto-isa-0586-encoding-totality.json",
+      "sha256": "8e07612d8b3bc8c9e997c3fc9083cd3f7ec09d0a6193bfbf805280cd36dde950"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
-      "sha256": "9890ed88a95307c020d1bcbcb7b947f1da79c948ddcbd9c914c1a8b7afbfb0af"
+      "path": "spec/evidence/pto-isa-0586-hardware-numeric-vectors.json",
+      "sha256": "955881745fba90d7b98f804f115167c127975c2cc6c10d7b4bc4fbaf32400b3e"
     }
   ],
-  "publication_version": "0.58.5.1",
-  "release": "0.58.5",
+  "publication_version": "0.58.6.0",
+  "release": "0.58.6",
   "release_selection": {
-    "architecture_version": "0.58.5",
+    "architecture_version": "0.58.6",
     "baseline_commit": "ae04395a024046e2b77395ffc2e732804181c22f",
     "blockers": [],
     "excluded_draft_adrs": [
@@ -12444,8 +12444,8 @@
     "included_ndf_statuses": [
       "accepted"
     ],
-    "policy_sha256": "8314fc7b27361dd8316e526b9a9d097d8efa074f63736257e81b6c0c3609cbef",
-    "publication_version": "0.58.5.1",
+    "policy_sha256": "ea1176784dfb29442a5669fb252cb8831ea9b08fa250d4157faf3b7bfbd7aba0",
+    "publication_version": "0.58.6.0",
     "required_readiness_floor": "executable",
     "selected_adr_ids": [
       "ADR-GOV-0001",
@@ -12456,6 +12456,7 @@
       "ADR-GOV-0007",
       "ADR-GOV-0008",
       "ADR-GOV-0009",
+      "ADR-GOV-0010",
       "ADR-STATE-0001",
       "ADR-STATE-0002",
       "ADR-STATE-0003",

@@ -399,16 +399,16 @@ class ReleaseSelectionTest(unittest.TestCase):
         result = evaluate_release_selection(ROOT)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
-        self.assertEqual(selection["architecture_version"], "0.58.5")
-        self.assertEqual(selection["publication_version"], "0.58.5.1")
+        self.assertEqual(selection["architecture_version"], "0.58.6")
+        self.assertEqual(selection["publication_version"], "0.58.6.0")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(manifest["release"], selection["architecture_version"])
         self.assertEqual(
             manifest["publication_version"], selection["publication_version"]
         )
         self.assertEqual(selection["blockers"], [])
-        self.assertEqual(policy["architecture_version"], "0.58.5")
-        self.assertEqual(policy["publication_version"], "0.58.5.1")
+        self.assertEqual(policy["architecture_version"], "0.58.6")
+        self.assertEqual(policy["publication_version"], "0.58.6.0")
         self.assertIn("ADR-TILE-0012", selection["selected_adr_ids"])
         self.assertIn("ADR-CUBE-0018", selection["selected_adr_ids"])
         self.assertIn("ADR-TILE-0012", result.selected_adr_ids)

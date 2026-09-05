@@ -89,9 +89,9 @@ required_files=(
     spec/catalog/tile-operations.json
     spec/hardware-conformance-profile.json
     spec/release-manifest.json
-    spec/evidence/pto-isa-0585-abi-vectors.json
-    spec/evidence/pto-isa-0585-encoding-totality.json
-    spec/evidence/pto-isa-0585-hardware-numeric-vectors.json
+    spec/evidence/pto-isa-0586-abi-vectors.json
+    spec/evidence/pto-isa-0586-encoding-totality.json
+    spec/evidence/pto-isa-0586-hardware-numeric-vectors.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
     spec/evidence/mnemonic-descriptions/schema.json
@@ -116,6 +116,7 @@ required_files=(
     scripts/check-asl-tests
     scripts/check-ndf
     scripts/check-release-closure
+    scripts/check-release-artifacts
     scripts/check-model-closure
     scripts/check-model-closure-schema
     scripts/generate-model-closure-impact
@@ -129,6 +130,7 @@ required_files=(
     scripts/run-python-tests
     scripts/check-release-manifest
     scripts/check-script-entrypoints
+    scripts/release_artifacts.py
     scripts/encoding_witness.py
     scripts/generate-bundle-operation-matrix.py
     spec/evidence/bundle-operation-fixture-matrix.json

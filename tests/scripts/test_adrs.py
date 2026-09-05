@@ -291,6 +291,7 @@ class AdrRecordTest(unittest.TestCase):
                     "ADR-CUBE-0018",
                     "ADR-GOV-0004",
                     "ADR-GOV-0005",
+                    "ADR-GOV-0010",
                     "ADR-TILE-0006",
                     "ADR-TILE-0008",
                     "ADR-TILE-0013",

@@ -20,9 +20,9 @@ from scripts.release_preflight import (
 ROOT = Path(__file__).resolve().parents[2]
 COMMITS = {"pto": "a" * 40, "llvm": "b" * 40, "asl_model": "c" * 40, "workflow": "a" * 40}
 IDENTITY = {
-    "release": "0.58.5",
-    "publication_version": "0.58.5.1",
-    "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+    "release": "0.58.6",
+    "publication_version": "0.58.6.0",
+    "encoding_abi": "pto-isa-0.58.6-mode-function-v1",
     "encoding_projection_sha256": "d" * 64,
 }
 MANDATORY = ["mandatory_case"]
@@ -83,8 +83,8 @@ class Fixture:
                      self.model / "avs/cases/mapped_case", self.model / "avs/cases/mandatory_case"):
             path.mkdir(parents=True)
         (self.pto / "specification.toml").write_text(
-            "[release]\narchitecture_version='0.58.5'\npublication_version='0.58.5.1'\n"
-            "encoding_abi='pto-isa-0.58.5-mode-function-v1'\n", encoding="utf-8")
+            "[release]\narchitecture_version='0.58.6'\npublication_version='0.58.6.0'\n"
+            "encoding_abi='pto-isa-0.58.6-mode-function-v1'\n", encoding="utf-8")
         (self.pto / "spec/release-manifest.json").write_text(json.dumps({
             "release": IDENTITY["release"], "publication_version": IDENTITY["publication_version"],
             "encoding_abi": IDENTITY["encoding_abi"],

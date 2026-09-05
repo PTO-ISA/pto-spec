@@ -1,7 +1,7 @@
 {
   "$schema": "spec/schemas/pto-model-closure-selection-v1.schema.json",
   "schema": "pto.model-closure-selection.v1",
-  "release": "0.58.5",
+  "release": "0.58.6",
   "adoption_baseline_commit": "33637171b96b402a14319561662cb741e9cc6f87",
   "mandatory_case_ids": [
     "block_64_stop_pc",

@@ -3,6 +3,19 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.58.6.0
+
+### Architecture
+- [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
+- [ADR-GOV-0010](docs/status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md): PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity
+
+### Cross-cutting
+- [ADR-BLOCK-0018](docs/status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md): BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement
+- [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
+- [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
+- [ADR-TILE-0012](docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md): CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
+- [ADR-TILE-0013](docs/status/decisions/ADR-TILE-0013-tile-operation-retirement.md): Retire software-replaceable tile operations
+
 ## Release 0.58.5
 
 ### Architecture
@@ -31,18 +44,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Tile
 - [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
-
-## Release 0.58.5.1
-
-### Architecture
-- [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
-
-### Cross-cutting
-- [ADR-BLOCK-0018](docs/status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md): BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement
-- [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
-- [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
-- [ADR-TILE-0012](docs/status/decisions/ADR-TILE-0012-cube-m16-m32-reduction-expansion-layout.md): CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion
-- [ADR-TILE-0013](docs/status/decisions/ADR-TILE-0013-tile-operation-retirement.md): Retire software-replaceable tile operations
 
 ## Release 0.58.5.0
 

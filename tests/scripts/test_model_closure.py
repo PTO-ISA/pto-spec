@@ -12,9 +12,9 @@ from scripts.model_closure import (
 
 
 EXPECTED = {
-    "release": "0.58.5",
-    "publication_version": "0.58.5.1",
-    "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+    "release": "0.58.6",
+    "publication_version": "0.58.6.0",
+    "encoding_abi": "pto-isa-0.58.6-mode-function-v1",
     "encoding_projection_sha256": "bc0718ee31162ba7f6ea04d2a5853c49fe30e7cb36b33c0704c58678710a0c87",
     "pto_commit": "1" * 40,
     "pto_tree": "2" * 40,
