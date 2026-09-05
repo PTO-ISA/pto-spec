@@ -16,7 +16,7 @@
   "superseded": null,
   "baseline": "97f61030f08c8435275125d7797a0be438a18dd9",
   "target_releases": [
-    "0.58.5.1"
+    "0.58.6.0"
   ],
   "release_boundary": true,
   "affected_ndf": [

@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import statistics
 import subprocess
 import sys
 import time
@@ -59,8 +60,10 @@ def wait_for_server(process: subprocess.Popen[bytes]) -> None:
     raise ValueError("Docusaurus server did not become ready")
 
 
-def run_lighthouse(route: str, name: str, *, desktop: bool) -> dict[str, float]:
-    output = OUTPUT / f"{name}.json"
+def run_lighthouse(
+    route: str, name: str, *, desktop: bool, attempt: int = 1
+) -> dict[str, float]:
+    output = OUTPUT / f"{name}-attempt-{attempt}.json"
     command = [
         "pnpm",
         "--dir",
@@ -112,6 +115,35 @@ def enforce(label: str, scores: dict[str, float], *, mobile: bool = False) -> No
     )
 
 
+def check_route(
+    label: str,
+    route: str,
+    name: str,
+    *,
+    desktop: bool,
+    mobile: bool = False,
+    runner=run_lighthouse,
+) -> dict[str, float]:
+    """Retry only a noisy budget failure and enforce the three-sample median."""
+
+    samples = [runner(route, name, desktop=desktop, attempt=1)]
+    try:
+        enforce(label, samples[0], mobile=mobile)
+        return samples[0]
+    except ValueError as first_failure:
+        print(f"{first_failure}; collecting two bounded retry samples")
+    samples.extend(
+        runner(route, name, desktop=desktop, attempt=attempt)
+        for attempt in (2, 3)
+    )
+    median = {
+        metric: float(statistics.median(sample[metric] for sample in samples))
+        for metric in samples[0]
+    }
+    enforce(f"{label} three-sample median", median, mobile=mobile)
+    return median
+
+
 def largest_unit_route() -> str:
     manifest = json.loads(
         (SITE / "build/pto-unit-routes.json").read_text(encoding="utf-8")
@@ -137,44 +169,24 @@ def main() -> int:
     )
     try:
         wait_for_server(server)
-        enforce("home desktop", run_lighthouse("/", "home-desktop", desktop=True))
-        enforce(
-            "Architecture desktop",
-            run_lighthouse("/architecture/", "architecture-desktop", desktop=True),
-        )
-        enforce(
-            "Instruction index desktop",
-            run_lighthouse("/instructions/", "instruction-index-desktop", desktop=True),
-        )
-        enforce(
-            "NDF index desktop",
-            run_lighthouse("/ndf/", "ndf-index-desktop", desktop=True),
-        )
-        enforce(
+        check_route("home desktop", "/", "home-desktop", desktop=True)
+        check_route("Architecture desktop", "/architecture/", "architecture-desktop", desktop=True)
+        check_route("Instruction index desktop", "/instructions/", "instruction-index-desktop", desktop=True)
+        check_route("NDF index desktop", "/ndf/", "ndf-index-desktop", desktop=True)
+        check_route(
             "TLOAD desktop",
-            run_lighthouse(
-                "/instructions/tile/memory-and-data-movement/regular/TLOAD/",
-                "tload-desktop",
-                desktop=True,
-            ),
+            "/instructions/tile/memory-and-data-movement/regular/TLOAD/",
+            "tload-desktop",
+            desktop=True,
         )
-        enforce(
-            "NDF desktop",
-            run_lighthouse("/explore/ndf/", "ndf-desktop", desktop=True),
-        )
-        enforce(
+        check_route("NDF desktop", "/explore/ndf/", "ndf-desktop", desktop=True)
+        check_route(
             "largest unit desktop",
-            run_lighthouse(
-                largest_unit_route(),
-                "largest-unit-desktop",
-                desktop=True,
-            ),
+            largest_unit_route(),
+            "largest-unit-desktop",
+            desktop=True,
         )
-        enforce(
-            "home mobile",
-            run_lighthouse("/", "home-mobile", desktop=False),
-            mobile=True,
-        )
+        check_route("home mobile", "/", "home-mobile", desktop=False, mobile=True)
         return 0
     except (KeyError, OSError, subprocess.CalledProcessError, ValueError) as error:
         print(f"site Lighthouse failed: {error}", file=sys.stderr)

@@ -142,7 +142,7 @@ def _full_jobs() -> dict[str, object]:
             "timeout-minutes": "360",
             "strategy": {
                 "fail-fast": "false",
-                "max-parallel": "8",
+                "max-parallel": "16",
                 "matrix": {
                     "page": "${{ fromJSON(needs.matrix-plan.outputs.pages) }}"
                 },
@@ -323,7 +323,9 @@ def validate_full_validation_workflow(workflow: str) -> list[str]:
                 }
             },
             "permissions": {"contents": "read"},
-            "env": {"ASL_TEST_PAGE_COUNT": "8"},
+            "env": {
+                "ASL_TEST_PAGE_COUNT": "${{ inputs.authority == 'release' && '16' || '8' }}"
+            },
         },
         expected_jobs=_full_jobs(),
     )

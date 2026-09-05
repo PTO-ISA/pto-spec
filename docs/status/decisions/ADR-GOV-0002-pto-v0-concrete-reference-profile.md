@@ -17,7 +17,7 @@
   "baseline": "b04318ee75b253157a792b9d08f75e9e95eacf0f",
   "target_releases": [
     "unassigned",
-    "0.58.5.1"
+    "0.58.6.0"
   ],
   "affected_ndf": [
     "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",

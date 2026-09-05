@@ -16,7 +16,7 @@
   "properties": {
     "$schema": {"const": "spec/schemas/pto-model-closure-selection-v1.schema.json"},
     "schema": {"const": "pto.model-closure-selection.v1"},
-    "release": {"const": "0.58.5"},
+    "release": {"const": "0.58.6"},
     "adoption_baseline_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "mandatory_case_ids": {
       "type": "array",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate PTO 0.58.5 compiler-to-ASL model closure evidence."""
+"""Validate PTO 0.58.6 compiler-to-ASL model closure evidence."""
 
 from __future__ import annotations
 

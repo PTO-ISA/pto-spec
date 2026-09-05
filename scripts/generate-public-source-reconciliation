@@ -266,7 +266,7 @@ RETIRED_PUBLIC_TILE_OPERATIONS = {
 
 EXCLUDED_PUBLIC_TILE_OPERATIONS = {
     name: (
-        "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 "
+        "The symbol remains in the pinned public source API, but PTO ISA 0.58.6 "
         "does not accept it as a direct DavinciOO Tile operation."
     )
     for name in {
@@ -399,29 +399,29 @@ def excluded_public_tile_rows() -> list[dict]:
 
 def predicate_version_boundary() -> dict:
     return {
-        "active_release": "PTO ISA 0.58.5",
+        "active_release": "PTO ISA 0.58.6",
         "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-        "disposition": "outside-active-0.58.5-release-line",
+        "disposition": "outside-active-0.58.6-release-line",
         "accepted_mapping": None,
         "mapping_rule": (
-            "No public v0.6 typed mask is mapped to a PTO ISA 0.58.5 "
+            "No public v0.6 typed mask is mapped to a PTO ISA 0.58.6 "
             "architectural register, selector, encoding, producer, or consumer."
         ),
         "concepts": [
             {
                 "id": "pto-isa-0580-warp-predicate-registers",
-                "source_class": "active-0.58.5-architectural-state",
+                "source_class": "active-0.58.6-architectural-state",
                 "representation": "P0-P7",
                 "width_bits": 32,
                 "count": 8,
                 "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
                 "accepted_producers": [],
                 "accepted_consumers": [],
-                "mapping_status": "closed-no-accepted-0.58.5-instruction-mapping",
+                "mapping_status": "closed-no-accepted-0.58.6-instruction-mapping",
             },
             {
                 "id": "pto-isa-0580-machine-execution-mask",
-                "source_class": "active-0.58.5-architectural-state",
+                "source_class": "active-0.58.6-architectural-state",
                 "representation": "MPAR/MSEQ execution mask",
                 "width_bits": 64,
                 "count": 1,
@@ -445,7 +445,7 @@ def predicate_version_boundary() -> dict:
                     "pto.pld*",
                 ],
                 "accepted_consumers": ["pto.v*", "pto.p* algebra", "pto.pst*"],
-                "mapping_status": "outside-active-0.58.5-release-line",
+                "mapping_status": "outside-active-0.58.6-release-line",
             },
             {
                 "id": "future-encoded-physical-predicate-register-mapping",

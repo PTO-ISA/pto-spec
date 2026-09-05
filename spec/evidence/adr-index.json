@@ -544,7 +544,7 @@
       "supersedes": [],
       "target_releases": [
         "unassigned",
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "PTO v0 concrete reference profile",
       "title_zh": "PTO v0 \u5177\u4f53\u53c2\u8003 Profile"
@@ -2313,6 +2313,41 @@
       ],
       "title": "PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary",
       "title_zh": "PTO ISA 0.58.4.1 \u81f3 0.58.5 \u517c\u5bb9\u6027\u8fb9\u754c"
+    },
+    {
+      "accepted": "2026-09-05",
+      "affected_ndf": [
+        "PTO-ARCH-ENCODING-OWNERSHIP-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "ae04395a024046e2b77395ffc2e732804181c22f",
+      "created": "2026-09-05",
+      "id": "ADR-GOV-0010",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/251",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.6.0"
+      ],
+      "title": "PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity",
+      "title_zh": "PTO ISA 0.58.5.0 \u81f3 0.58.6 \u7684\u517c\u5bb9\u6027\u4e0e\u53d1\u5e03\u8eab\u4efd"
     },
     {
       "accepted": "2026-07-28",
@@ -4451,7 +4486,7 @@
         "0.58.1",
         "0.58.2",
         "0.58.5",
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "TLSU and global-memory operations",
       "title_zh": "TLSU \u4e0e\u5168\u5c40\u5185\u5b58\u64cd\u4f5c"
@@ -5758,7 +5793,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement",
       "title_zh": "BSTART.TIMG2COL \u7279\u5f81\u56fe IMG2COL \u4e0e\u65e7 Local-Tile \u9000\u5f79"
@@ -8381,7 +8416,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "CUBE_M16/CUBE_M32 layout closure for tile reduction and expansion",
       "title_zh": "Tile \u5f52\u7ea6\u4e0e\u6269\u5c55\u7684 CUBE_M16/CUBE_M32 \u5e03\u5c40\u95ed\u5408"
@@ -8498,7 +8533,7 @@
         "ADR-NUM-0020"
       ],
       "target_releases": [
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "Retire software-replaceable tile operations",
       "title_zh": "\u9000\u5f79\u53ef\u7531\u8f6f\u4ef6\u66ff\u4ee3\u7684 Tile \u64cd\u4f5c"
@@ -9665,7 +9700,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.5.1"
+        "0.58.6.0"
       ],
       "title": "InternalAcc partial-sum routing for CUBE matrix operations",
       "title_zh": "CUBE \u77e9\u9635\u64cd\u4f5c\u7684 InternalAcc \u90e8\u5206\u548c\u8def\u7531"
@@ -10562,11 +10597,11 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 108,
+    "record_count": 109,
     "type_counts": {
       "BLOCK": 18,
       "CUBE": 18,
-      "GOV": 9,
+      "GOV": 10,
       "MEM": 9,
       "NUM": 22,
       "SCALAR": 6,

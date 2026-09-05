@@ -94,19 +94,19 @@ class HardwareNumericProfileTest(unittest.TestCase):
         self.assertNotIn("return (value, Zeros{5});", body)
 
     def test_current_release_owns_the_current_numeric_profile(self) -> None:
-        self.assertEqual(self.profile["isa_release"], "0.58.5")
+        self.assertEqual(self.profile["isa_release"], "0.58.6")
         self.assertEqual(
             self.profile["profile_id"],
-            "pto-hardware-numeric-0.58.5-ieee-v1",
+            "pto-hardware-numeric-0.58.6-ieee-v1",
         )
         generator = (ROOT / "scripts/generate-release-manifest").read_text(
             encoding="utf-8"
         )
         self.assertIn(
-            'NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"',
+            'NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.6-ieee-v1"',
             generator,
         )
-        self.assertIn('NUMERIC_PROFILE_RELEASE = "0.58.5"', generator)
+        self.assertIn('NUMERIC_PROFILE_RELEASE = "0.58.6"', generator)
 
     def test_tcvt_e8m0_profile_is_closed_and_bit_exact(self) -> None:
         self.assertEqual(

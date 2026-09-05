@@ -997,6 +997,7 @@ nav:
               - "ADR-GOV-0007: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/ADR-GOV-0007-0583-to-0584-compatibility.md
               - "ADR-GOV-0008: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/ADR-GOV-0008-0584-1-publication-contract-corrections.md
               - "ADR-GOV-0009: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/ADR-GOV-0009-0584-1-to-0585-compatibility.md
+              - "ADR-GOV-0010: PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity": status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md
           - STATE:
               - "ADR-STATE-0001: Use PTO-owned system-register names": status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md
               - "ADR-STATE-0002: Define the PTO architectural state contract": status/decisions/ADR-STATE-0002-architectural-state-contract.md

@@ -11363,6 +11363,39 @@
     },
     {
       "adr_ids": [
+        "ADR-GOV-0010"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-ARCH-ENCODING-OWNERSHIP-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-GOV-0010",
+      "test_ids": [
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-EQ-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-GE-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-GEU-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-LT-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-LTU-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-NE-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-NZ-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-TEXT-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-Z-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-FIXUP-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-LONG-BSTART-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-MACHINE-BLOCK-001",
+        "PTO-AVS-ARCH-ENCODING-OWNERSHIP-VECTOR-ROOT-001",
+        "PTO-AVS-ARCH-OVERVIEW-ENCODING-OWNERSHIP-STATIC-001",
+        "PTO-AVS-TILE-RETIRED-ENCODINGS-FAULT-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP"
+      ],
+      "validated_commit": null
+    },
+    {
+      "adr_ids": [
         "ADR-MEM-0001"
       ],
       "blockers": [],
@@ -23314,8 +23347,8 @@
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 108,
-      "sha256": "ea0e84c17ae59b77704ac0c49b5b6f273f27daba49371136ac01db43d413e767"
+      "count": 109,
+      "sha256": "113ddaba0c135ec318a2aedff2abdb492074d7fcd38495888667091c14c96038"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -23323,7 +23356,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "cc19b6478e4cc70fc7e5e8f72296289ae5e23e13c5a05d8d726fd04c53fbe9bc",
+      "sha256": "ec58dbaa4e83a37f19766d560548fdf753487f5cde8335787b0a8e650585b7be",
       "test_count": 3884,
       "unit_count": 888
     }
@@ -23343,13 +23376,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 9,
-      "executable": 94,
+      "executable": 95,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 103,
+    "subject_count": 104,
     "validated_count": 0
   }
 }

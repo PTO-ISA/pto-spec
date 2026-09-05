@@ -316,8 +316,13 @@ def _release_jobs() -> dict[str, object]:
                         "repository": "LinxISA/llvm-project",
                         "ref": "${{ inputs.llvm_commit }}",
                         "path": "build/closure/llvm-project",
-                        "fetch-depth": "0",
+                        "fetch-depth": "1",
                         "persist-credentials": "false",
+                        "sparse-checkout": (
+                            "llvm/include/llvm/BinaryFormat/PTOISA.h\n"
+                            "llvm/utils/pto/generate_pto_isa_identity.py"
+                        ),
+                        "sparse-checkout-cone-mode": "false",
                     },
                 },
                 {
@@ -542,6 +547,7 @@ def _release_jobs() -> dict[str, object]:
                     "with": {
                         "name": "pto-site-preview-${{ inputs.commit }}",
                         "path": "docs/site/build",
+                        "include-hidden-files": "true",
                         "if-no-files-found": "error",
                         "retention-days": "90",
                     },
@@ -779,10 +785,105 @@ def _release_jobs() -> dict[str, object]:
                 },
             ],
         },
+        "certify-artifacts": {
+            "name": "Release / uploaded artifact certification",
+            "needs": ["release-preflight", "release-evidence", "release-site", "model-closure"],
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "20",
+            "outputs": {
+                "report-sha256": "${{ steps.certify.outputs.report-sha256 }}",
+                "artifact-digest": "${{ steps.certification-artifact.outputs.artifact-digest }}",
+            },
+            "steps": [
+                checkout_step("${{ inputs.commit }}"),
+                {
+                    "name": "Download exact release evidence artifact",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-evidence-${{ inputs.commit }}",
+                        "path": "build/release-artifacts/release-evidence",
+                    },
+                },
+                {
+                    "name": "Download exact preflight artifact",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-artifacts/preflight",
+                    },
+                },
+                {
+                    "name": "Download exact site artifact",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-site-preview-${{ inputs.commit }}",
+                        "path": "build/release-artifacts/site",
+                    },
+                },
+                {
+                    "name": "Download exact model artifact",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+                        "path": "build/release-artifacts/model",
+                    },
+                },
+                {
+                    "name": "Certify downloaded artifacts offline",
+                    "id": "certify",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "RUN_ID": "${{ github.run_id }}",
+                        "RUN_ATTEMPT": "${{ github.run_attempt }}",
+                    },
+                    "run-sha256": "ec387a868a775ad58be94e0b12acf8c0d5f0aeca6637aea84d9a079e90b93570",
+                },
+                {
+                    "name": "Upload release artifact certification",
+                    "id": "certification-artifact",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-artifact-certification-${{ inputs.commit }}-${{ github.run_id }}-${{ github.run_attempt }}",
+                        "path": "build/release-artifact-certification/report.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "90",
+                    },
+                },
+                {
+                    "name": "Synthesize artifact certification diagnostic status",
+                    "if": "always()",
+                    "shell": "bash",
+                    "env": {
+                        "PTO_COMMIT": "${{ inputs.commit }}",
+                        "LLVM_COMMIT": "${{ inputs.llvm_commit }}",
+                        "ASL_MODEL_COMMIT": "${{ inputs.asl_model_commit }}",
+                        "RUN_ID": "${{ github.run_id }}",
+                        "RUN_ATTEMPT": "${{ github.run_attempt }}",
+                        "JOB_STATUS": "${{ job.status }}",
+                        "STEPS_JSON": "${{ toJSON(steps) }}",
+                    },
+                    "run-sha256": "aacc3161fa272c2f5f76e64ee0391d7f4701bc3dbbe0c9a4eba06ac8466515ad",
+                },
+                {
+                    "name": "Upload artifact certification diagnostics",
+                    "if": "always()",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-artifact-certification-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}-${{ github.run_id }}-${{ github.run_attempt }}",
+                        "path": "build/release-diagnostics/artifact-certification.json\nbuild/release-artifact-certification/validator-diagnostics.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "30",
+                    },
+                },
+            ],
+        },
         "validate": {
             "name": "Release / validate",
             "if": "always()",
-            "needs": ["release-preflight", "full-validation", "release-evidence", "release-site", "model-closure"],
+            "needs": ["release-preflight", "full-validation", "release-evidence", "release-site", "model-closure", "certify-artifacts"],
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "10",
             "steps": [
@@ -799,8 +900,11 @@ def _release_jobs() -> dict[str, object]:
                         "SITE_ARTIFACT_DIGEST": "${{ needs.release-site.outputs.artifact-digest }}",
                         "MODEL_CLOSURE_ARTIFACT_DIGEST": "${{ needs.model-closure.outputs.artifact-digest }}",
                         "MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256": "${{ needs.model-closure.outputs.semantic-payload-sha256 }}",
+                        "ARTIFACT_CERTIFICATION_RESULT": "${{ needs.certify-artifacts.result }}",
+                        "ARTIFACT_CERTIFICATION_REPORT_SHA256": "${{ needs.certify-artifacts.outputs.report-sha256 }}",
+                        "ARTIFACT_CERTIFICATION_ARTIFACT_DIGEST": "${{ needs.certify-artifacts.outputs.artifact-digest }}",
                     },
-                    "run-sha256": "38227e4114a775327ff1e112c11a6bd11670d6b316cb9c33a65aed2d9fa7fbb5",
+                    "run-sha256": "503cf39cd65297795f4eb13eea5fe524fa489e2b0a585974f743832d50f09312",
                 }
             ],
         },
@@ -824,7 +928,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
                             "type": "string",
                         },
                         "llvm_commit": {
-                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.5",
+                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.6",
                             "required": "true",
                             "type": "string",
                         },

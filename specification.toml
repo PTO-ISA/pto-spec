@@ -8,9 +8,9 @@ source_roots = ["asl/arch", "asl/block", "asl/scalar", "asl/tile"]
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 
 [release]
-architecture_version = "0.58.5"
-publication_version = "0.58.5.1"
-encoding_abi = "pto-isa-0.58.5-mode-function-v1"
+architecture_version = "0.58.6"
+publication_version = "0.58.6.0"
+encoding_abi = "pto-isa-0.58.6-mode-function-v1"
 manifest = "spec/release-manifest.json"
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/18"
 

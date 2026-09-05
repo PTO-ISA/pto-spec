@@ -56,7 +56,7 @@ def validate() -> list[str]:
         errors.append("model closure selection field set mismatch")
     if selection.get("schema") != "pto.model-closure-selection.v1":
         errors.append("model closure selection schema mismatch")
-    if selection.get("release") != "0.58.5":
+    if selection.get("release") != "0.58.6":
         errors.append("model closure selection release mismatch")
     baseline = selection.get("adoption_baseline_commit")
     if not isinstance(baseline, str) or len(baseline) != 40 or any(

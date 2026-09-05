@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "13d550f4f63c6321f94e5c6b09da4c3986081841",
   "target_releases": [
-    "0.58.5.1"
+    "0.58.6.0"
   ],
   "release_boundary": true,
   "interface_change": true,

@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       llvm_commit:
-        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5
+        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.6
         required: true
         type: string
       asl_model_commit:
@@ -58,8 +58,12 @@ jobs:
           repository: LinxISA/llvm-project
           ref: ${{ inputs.llvm_commit }}
           path: build/closure/llvm-project
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
+          sparse-checkout: |
+            llvm/include/llvm/BinaryFormat/PTOISA.h
+            llvm/utils/pto/generate_pto_isa_identity.py
+          sparse-checkout-cone-mode: false
 
       - name: Check out exact ASL-MODEL candidate
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -392,6 +396,7 @@ jobs:
         with:
           name: pto-site-preview-${{ inputs.commit }}
           path: docs/site/build
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 90
 
@@ -717,10 +722,126 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  certify-artifacts:
+    name: Release / uploaded artifact certification
+    needs: [release-preflight, release-evidence, release-site, model-closure]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      report-sha256: ${{ steps.certify.outputs.report-sha256 }}
+      artifact-digest: ${{ steps.certification-artifact.outputs.artifact-digest }}
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Download exact release evidence artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pto-release-evidence-${{ inputs.commit }}
+          path: build/release-artifacts/release-evidence
+
+      - name: Download exact preflight artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
+          path: build/release-artifacts/preflight
+
+      - name: Download exact site artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pto-site-preview-${{ inputs.commit }}
+          path: build/release-artifacts/site
+
+      - name: Download exact model artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
+          path: build/release-artifacts/model
+
+      - name: Certify downloaded artifacts offline
+        id: certify
+        shell: bash
+        env:
+          PTO_COMMIT: ${{ inputs.commit }}
+          LLVM_COMMIT: ${{ inputs.llvm_commit }}
+          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          ./scripts/check-release-artifacts \
+            --pto-root . \
+            --release-evidence-root build/release-artifacts/release-evidence \
+            --preflight-root build/release-artifacts/preflight \
+            --site-root build/release-artifacts/site \
+            --model-root build/release-artifacts/model \
+            --pto-commit "$PTO_COMMIT" \
+            --llvm-commit "$LLVM_COMMIT" \
+            --asl-model-commit "$ASL_MODEL_COMMIT" \
+            --run-id "$RUN_ID" \
+            --run-attempt "$RUN_ATTEMPT" \
+            --output build/release-artifact-certification/report.json \
+            --diagnostics build/release-artifact-certification/validator-diagnostics.json
+          REPORT_SHA256="$(sha256sum build/release-artifact-certification/report.json | cut -d' ' -f1)"
+          [[ "$REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          echo "report-sha256=$REPORT_SHA256" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release artifact certification
+        id: certification-artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pto-release-artifact-certification-${{ inputs.commit }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/release-artifact-certification/report.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Synthesize artifact certification diagnostic status
+        if: always()
+        shell: bash
+        env:
+          PTO_COMMIT: ${{ inputs.commit }}
+          LLVM_COMMIT: ${{ inputs.llvm_commit }}
+          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          JOB_STATUS: ${{ job.status }}
+          STEPS_JSON: ${{ toJSON(steps) }}
+        run: |
+          mkdir -p build/release-diagnostics
+          python3 - <<'PY'
+          import json, os, pathlib
+          report = {
+              "schema": "pto.release-job-diagnostic.v1", "job": "certify-artifacts",
+              "status": os.environ["JOB_STATUS"],
+              "tuple": {name: os.environ[name] for name in (
+                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
+              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
+              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
+          }
+          pathlib.Path("build/release-diagnostics/artifact-certification.json").write_text(
+              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          PY
+
+      - name: Upload artifact certification diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pto-release-artifact-certification-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/release-diagnostics/artifact-certification.json
+            build/release-artifact-certification/validator-diagnostics.json
+          if-no-files-found: error
+          retention-days: 30
+
   validate:
     name: Release / validate
     if: always()
-    needs: [release-preflight, full-validation, release-evidence, release-site, model-closure]
+    needs: [release-preflight, full-validation, release-evidence, release-site, model-closure, certify-artifacts]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -736,6 +857,9 @@ jobs:
           SITE_ARTIFACT_DIGEST: ${{ needs.release-site.outputs.artifact-digest }}
           MODEL_CLOSURE_ARTIFACT_DIGEST: ${{ needs.model-closure.outputs.artifact-digest }}
           MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256: ${{ needs.model-closure.outputs.semantic-payload-sha256 }}
+          ARTIFACT_CERTIFICATION_RESULT: ${{ needs.certify-artifacts.result }}
+          ARTIFACT_CERTIFICATION_REPORT_SHA256: ${{ needs.certify-artifacts.outputs.report-sha256 }}
+          ARTIFACT_CERTIFICATION_ARTIFACT_DIGEST: ${{ needs.certify-artifacts.outputs.artifact-digest }}
         run: |
           test "$RELEASE_PREFLIGHT_RESULT" = success
           test "$FULL_VALIDATION_RESULT" = success
@@ -746,3 +870,6 @@ jobs:
           [[ "$SITE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
           [[ "$MODEL_CLOSURE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
           [[ "$MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          test "$ARTIFACT_CERTIFICATION_RESULT" = success
+          [[ "$ARTIFACT_CERTIFICATION_REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$ARTIFACT_CERTIFICATION_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]

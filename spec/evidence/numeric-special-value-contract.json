@@ -6,7 +6,7 @@
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.5-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.6-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -587,7 +587,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
+      "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -603,7 +603,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
+      "sha256": "06ef4f7bbfff92f8f8a890a62652b71624f70917cd0db8d8ab0b8e22acd9a497"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
