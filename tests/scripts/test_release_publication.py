@@ -25,7 +25,17 @@ ASLREF = "5" * 40
 RUN_ID = "12345"
 ATTEMPT = 2
 ENCODING = "a" * 64
-IMPACT_BYTES = b'{"impact":"fixture"}\n'
+IMPACT_DOCUMENT = {
+    "schema_version": "0.1",
+    "command": "impact pto-release",
+    "ok": True,
+    "diagnostics": [],
+    "data": {"schema_version": "1", "changes": [], "conformance_targets": []},
+}
+IMPACT_BYTES = (
+    json.dumps(IMPACT_DOCUMENT, sort_keys=True, separators=(",", ":")) + "\n"
+).encode()
+IMPACT_DATA_SHA256 = canonical_sha256(IMPACT_DOCUMENT["data"])
 
 
 def write_zip(path: Path, files: dict[str, bytes]) -> str:
@@ -128,7 +138,7 @@ def semantic_payload() -> dict[str, object]:
         "schema": "pto-closure-semantic-payload-v1",
         "closure_lock": lock,
         "closure_lock_sha256": canonical_sha256(lock),
-        "ndf_impact": {"sha256": hashlib.sha256(IMPACT_BYTES).hexdigest(), "affected_pto_ids": ["PTO-INST-ADD"]},
+        "ndf_impact": {"sha256": IMPACT_DATA_SHA256, "affected_pto_ids": ["PTO-INST-ADD"]},
         "obligations": {"selected": obligations, "completed": obligations, "passed": obligations, "failed": []},
         "cases": {"selected": cases, "completed": cases, "passed": cases, "failed": [], "skipped": [], "timeout": [], "unknown": []},
         "case_manifests": [{"case_id": cases[0], "sha256": "0" * 64}],
