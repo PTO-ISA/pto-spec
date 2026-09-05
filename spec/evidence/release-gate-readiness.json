@@ -221,7 +221,7 @@
     "scripts/release_artifacts.py": "2398b0655843c58fed8118975fa6012f68c365271003d880894a78426a5a77af",
     "scripts/release_event.py": "6e3a42ec9fccd172985206384b0d671817fa90bfce21e0671a8a51471eb6a990",
     "scripts/release_preflight.py": "d0c7bcbf0677c66c30623210cadc180261581bf4403c256445a0af206d48d8fb",
-    "scripts/release_publication.py": "e296b8c3532c091745a4b2505602b0613efa4d603e2c07ed5d096a45eac87f26",
+    "scripts/release_publication.py": "bc641bd33c4d50aa3b1787b2905b1ff33caa1ef6708f07e46b08b54230f7bf65",
     "scripts/release_selection.py": "b09950702be1ddb20e8cab0ffccb4962c7bfdcf12ed298faaf913bf2e53e8dfd",
     "scripts/release_workflow.py": "d541cd8b3c11ee2a2505514854db2babc8592ae7cd9adfca8446504bf45ce739",
     "scripts/report-asl-page-results": "2dde0acdd94de060dc56c409e5d232f2252a2fa605512fe4461c360ffdda3cae",

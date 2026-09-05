@@ -563,7 +563,20 @@ def validate_model(
         raise Blocked("model closure dependencies differ from release preflight")
     preflight_impact_row = exact_dict(preflight.get("impact"), "preflight impact")
     payload_impact = exact_dict(payload.get("ndf_impact"), "model NDF impact")
-    if payload_impact.get("sha256") != preflight_impact_row.get("sha256") or payload_impact.get("affected_pto_ids") != preflight_impact_row.get("affected_pto_ids"):
+    try:
+        impact_document = exact_dict(
+            json.loads(preflight_impact.decode("utf-8")), "preflight NDF impact"
+        )
+        semantic_impact = exact_dict(
+            impact_document.get("data"), "preflight NDF impact data"
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise Blocked("preflight NDF impact is not valid UTF-8 JSON") from error
+    if (
+        payload_impact.get("sha256") != canonical_sha256(semantic_impact)
+        or payload_impact.get("affected_pto_ids")
+        != preflight_impact_row.get("affected_pto_ids")
+    ):
         raise Blocked("model closure NDF impact differs from release preflight")
     errors = validate_semantic_payload(payload, expected)
     for index, envelope_path in enumerate(envelope_paths, 1):
