@@ -414,6 +414,7 @@ class SiteContractTests(unittest.TestCase):
         )
         self.assertIn("release-site:", workflow)
         self.assertIn("name: pto-site-preview-${{ inputs.commit }}", workflow)
+        self.assertIn("include-hidden-files: true", workflow)
         self.assertIn("artifact-digest: ${{ steps.site-preview.outputs.artifact-digest }}", workflow)
         self.assertIn("SITE_ARTIFACT_DIGEST", workflow)
         self.assertIn("RELEASE_SITE_RESULT", workflow)

@@ -38,6 +38,7 @@ FINAL_JOB_SUFFIXES = (
     "Release / fail-closed evidence aggregation",
     "Release / static site validity",
     "Release / LLVM-to-ASL model closure",
+    "Release / uploaded artifact certification",
     "Release / validate",
 )
 MAX_ARCHIVE_FILES = 20_000
@@ -222,12 +223,15 @@ def validate_jobs(jobs: list[dict[str, Any]]) -> list[dict[str, object]]:
     ]
 
 
-def select_artifacts(rows: list[dict[str, Any]], commit: str) -> dict[str, dict[str, Any]]:
+def select_artifacts(
+    rows: list[dict[str, Any]], commit: str, run_id: str, attempt: int
+) -> dict[str, dict[str, Any]]:
     prefixes = {
         "preflight": f"pto-release-preflight-{commit}-",
         "release_evidence": f"pto-release-evidence-{commit}",
         "site": f"pto-site-preview-{commit}",
         "model": f"pto-model-closure-{commit}-",
+        "certification": f"pto-release-artifact-certification-{commit}-{run_id}-{attempt}",
     }
     selected: dict[str, dict[str, Any]] = {}
     for role, prefix in prefixes.items():
@@ -257,7 +261,8 @@ def select_artifacts(rows: list[dict[str, Any]], commit: str) -> dict[str, dict[
         r"(?:pto-release-evidence-[0-9a-f]{40}|"
         r"pto-site-preview-[0-9a-f]{40}|"
         r"pto-model-closure-[0-9a-f]{40}-[0-9a-f]{40}-[0-9a-f]{40}|"
-        r"pto-release-preflight-[0-9a-f]{40}-[0-9a-f]{40}-[0-9a-f]{40})"
+        r"pto-release-preflight-[0-9a-f]{40}-[0-9a-f]{40}-[0-9a-f]{40}|"
+        r"pto-release-artifact-certification-[0-9a-f]{40}-[1-9][0-9]*-[1-9][0-9]*)"
     )
     unknown = sorted(
         str(row.get("name", ""))
@@ -578,6 +583,45 @@ def validate_model(
     return tuple_, {path.relative_to(root).as_posix(): sha256_file(path) for path in files}, canonical_sha256(payload)
 
 
+def validate_certification(
+    root: Path,
+    *,
+    manifest: dict[str, Any],
+    tuple_: dict[str, str],
+    site: dict[str, Any],
+    semantic_digest: str,
+    evidence: dict[str, str],
+    selected: dict[str, dict[str, Any]],
+    run_id: str,
+    attempt: int,
+) -> tuple[dict[str, Any], dict[str, str]]:
+    report_path = unique_suffix(root, "report.json")
+    report = exact_dict(json_file(report_path, "artifact certification report"), "artifact certification report")
+    if report_path.read_bytes() != canonical_json(report, pretty=True).encode("utf-8"):
+        raise Blocked("artifact certification report is not canonical JSON")
+    expected = {
+        "schema": "pto.release-artifact-certification.v1",
+        "run": {"id": run_id, "attempt": attempt},
+        "candidate": {
+            "architecture_version": manifest["release"],
+            "publication_version": manifest["publication_version"],
+            "encoding_abi": manifest["encoding_abi"],
+            "encoding_projection_sha256": manifest["encoding_projection_sha256"],
+            "components": tuple_,
+        },
+        "artifacts": {
+            role: selected[role]["name"]
+            for role in ("preflight", "release_evidence", "site", "model")
+        },
+        "evidence_sha256": dict(sorted(evidence.items())),
+        "model_closure_semantic_payload_sha256": semantic_digest,
+        "site_tree_sha256": site["site_tree_sha256"],
+    }
+    if report != expected:
+        raise Blocked("artifact certification report differs from independently revalidated artifacts")
+    return report, {report_path.relative_to(root).as_posix(): sha256_file(report_path)}
+
+
 def release_metadata(arguments: argparse.Namespace, github: GitHub, tag: str, commit: str) -> dict[str, Any] | None:
     if arguments.release_metadata is None and arguments.release_tag is None:
         return None
@@ -619,7 +663,9 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
     first_run = github.run(arguments.run_id)
     commit, attempt = validate_run(first_run, arguments.run_id, arguments.repository)
     jobs = validate_jobs(github.jobs(arguments.run_id, attempt))
-    selected = select_artifacts(github.artifacts(arguments.run_id), commit)
+    selected = select_artifacts(
+        github.artifacts(arguments.run_id), commit, arguments.run_id, attempt
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     temp = Path(tempfile.mkdtemp(prefix=f".{output.name}-", dir=output.parent))
     try:
@@ -662,6 +708,23 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
             roots["model"], manifest, preflight, preflight_impact, commit,
             arguments.run_id, attempt, str(selected["model"]["name"])
         )
+        evidence_files = {
+            **{f"preflight/{key}": value for key, value in preflight_files.items()},
+            **{f"release_evidence/{key}": value for key, value in release_files.items()},
+            **{f"site/{key}": value for key, value in site_files.items()},
+            **{f"model/{key}": value for key, value in model_files.items()},
+        }
+        certification, certification_files = validate_certification(
+            roots["certification"],
+            manifest=manifest,
+            tuple_=tuple_,
+            site=site,
+            semantic_digest=semantic_digest,
+            evidence=evidence_files,
+            selected=selected,
+            run_id=arguments.run_id,
+            attempt=attempt,
+        )
         tag = f"v{manifest['publication_version']}"
         published = release_metadata(arguments, github, tag, commit)
         second_run = github.run(arguments.run_id)
@@ -678,7 +741,11 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
             "candidate": {"architecture_version": manifest["release"], "publication_version": manifest["publication_version"], "tag": tag, "encoding_abi": manifest["encoding_abi"], "encoding_projection_sha256": manifest["encoding_projection_sha256"], "components": tuple_},
             "required_jobs": jobs,
             "artifacts": artifact_rows,
-            "evidence_sha256": {**{f"preflight/{k}": v for k, v in preflight_files.items()}, **{f"release_evidence/{k}": v for k, v in release_files.items()}, **{f"site/{k}": v for k, v in site_files.items()}, **{f"model/{k}": v for k, v in model_files.items()}},
+            "evidence_sha256": {
+                **evidence_files,
+                **{f"certification/{key}": value for key, value in certification_files.items()},
+            },
+            "artifact_certification": certification,
             "model_closure_semantic_payload_sha256": semantic_digest,
             "site_tree_sha256": site["site_tree_sha256"],
             "release_event": None,

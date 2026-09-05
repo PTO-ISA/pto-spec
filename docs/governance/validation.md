@@ -24,8 +24,17 @@ ASL-MODEL PTO graph remains an explicit baseline, distinct from the runtime
 candidate.
 
 After preflight succeeds, full ASL validation, LLVM-to-ASL closure and site
-validation run in parallel. Release evidence aggregation waits for the complete
-ASL result set; the final gate requires all workers and artifact digests.
+validation run in parallel. Release authority uses 16 balanced ASL pages to
+reduce wall time; nightly health retains 8 pages to avoid doubling routine
+runner overhead. Release evidence aggregation waits for the complete ASL result
+set.
+
+The workflow then downloads the uploaded preflight, ASL, site and model
+artifacts and certifies their exact tuple, complete result sets, tree hashes and
+cross-artifact identity. `Release / validate` requires that certification and
+its digest. A green workflow is therefore expected to be directly consumable by
+`scripts/prepare-release-publication`, rather than discovering packaging drift
+after the expensive run has completed.
 LLVM build caches follow the LLVM commit and host tool/configuration fingerprint;
 the other build caches follow their own dependency pins. Validation results are
 produced afresh for each candidate.
@@ -36,6 +45,20 @@ complete terminal failure set before preparing a repair. Diagnostic artifacts
 cannot substitute for passing evidence. The [release guide](../releases/index.md)
 owns the read-only `scripts/prepare-release-publication` handoff after hosted
 verification succeeds.
+
+Lighthouse keeps the same release budgets. A route that fails its first sample
+collects exactly two additional samples and applies the same budgets to the
+three-sample median, retaining every raw report. This filters transient shared
+runner load while persistent performance, accessibility, best-practice, SEO or
+layout-shift failures remain release-blocking.
+
+The 0.58.6 performance baseline is release run `33946824280`: 73.7 minutes
+overall, including 8.7 minutes of preflight, a 64.8-minute model job with 55.0
+minutes of LLVM/tool preparation, and a 51.3-minute longest ASL page. The
+0.58.6 evaluation records the same step timings plus artifact-certification
+success. Sparse LLVM preflight checkout and 16 release pages must improve the
+relevant stages without changing test inventory; LLVM cold-build time remains
+an explicit measurement rather than an assumed cache hit.
 
 ## Local commands
 
@@ -112,7 +135,7 @@ needs the exact LLVM and ASL-MODEL candidates. It rejects mismatched ELF
 payload digests, and failed, skipped, timed-out, stale, or unknown cases.
 
 [`spec/model-closure-selection.json`](../../spec/model-closure-selection.json)
-fixes the 0.58.5 compiler/model adoption baseline and mandatory family
+fixes the 0.58.6 compiler/model adoption baseline and mandatory family
 canaries. Pre-adoption changes remain historical backlog rather than being
 misrepresented as per-instruction runtime coverage. Every instruction identity
 added, changed, or moved after that immutable baseline is selected by NDF impact

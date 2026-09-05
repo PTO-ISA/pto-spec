@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  ASL_TEST_PAGE_COUNT: "8"
+  ASL_TEST_PAGE_COUNT: ${{ inputs.authority == 'release' && '16' || '8' }}
 
 jobs:
   identity:
@@ -172,7 +172,7 @@ jobs:
     timeout-minutes: 360
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: 16
       matrix:
         page: ${{ fromJSON(needs.matrix-plan.outputs.pages) }}
     steps:

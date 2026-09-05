@@ -773,9 +773,12 @@ class HostedFullValidationContractTest(unittest.TestCase):
     def test_shared_contract_binds_every_checkout_to_the_exact_commit(self) -> None:
         self.assert_full_rejected("          ref: ${{ inputs.commit }}\n", "          ref: ${{ github.sha }}\n")
 
-    def test_shared_contract_freezes_eight_page_matrix_and_parallelism(self) -> None:
-        self.assert_full_rejected('  ASL_TEST_PAGE_COUNT: "8"\n', '  ASL_TEST_PAGE_COUNT: "7"\n')
-        self.assert_full_rejected("      max-parallel: 8\n", "      max-parallel: 7\n")
+    def test_shared_contract_freezes_sixteen_page_matrix_and_parallelism(self) -> None:
+        self.assert_full_rejected(
+            "  ASL_TEST_PAGE_COUNT: ${{ inputs.authority == 'release' && '16' || '8' }}\n",
+            "  ASL_TEST_PAGE_COUNT: ${{ inputs.authority == 'release' && '15' || '8' }}\n",
+        )
+        self.assert_full_rejected("      max-parallel: 16\n", "      max-parallel: 15\n")
 
     def test_shared_contract_binds_cache_to_all_toolchain_inputs(self) -> None:
         self.assert_full_rejected(".aslref-origin", ".aslref-repository")
@@ -826,13 +829,49 @@ class HostedFullValidationContractTest(unittest.TestCase):
             '          test -n "$FULL_VALIDATION_RESULT"\n',
         )
 
+    def test_release_final_gate_requires_uploaded_artifact_certification(self) -> None:
+        self.assert_release_rejected(
+            '          test "$ARTIFACT_CERTIFICATION_RESULT" = success\n',
+            '          test -n "$ARTIFACT_CERTIFICATION_RESULT"\n',
+        )
+        self.assert_release_rejected(
+            '          [[ "$ARTIFACT_CERTIFICATION_REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]\n',
+            "",
+        )
+        self.assert_release_rejected(
+            "  certify-artifacts:\n",
+            "  optional-certify-artifacts:\n",
+        )
+
+    def test_artifact_certification_downloads_every_exact_same_run_artifact(self) -> None:
+        for name in (
+            "pto-release-evidence-${{ inputs.commit }}",
+            "pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+            "pto-site-preview-${{ inputs.commit }}",
+            "pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
+        ):
+            self.assertIn(f"          name: {name}\n", self.release)
+        self.assertIn("          ./scripts/check-release-artifacts \\\n", self.release)
+        self.assertNotIn("gh api", self.release)
+        self.assertReleaseCertificationActionPins()
+
+    def assertReleaseCertificationActionPins(self) -> None:
+        certification = self.release.split("  certify-artifacts:\n", 1)[1].split("\n  validate:\n", 1)[0]
+        self.assertEqual(
+            certification.count(
+                "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+            ),
+            4,
+        )
+        self.assertNotIn("actions/download-artifact@v", certification)
+
     def test_release_requires_exact_llvm_and_asl_model_candidates(self) -> None:
         self.assert_release_rejected(
             "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.6\n"
             "        required: true\n",
             "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.6\n"
             "        required: false\n",
         )
         self.assert_release_rejected(
@@ -882,7 +921,7 @@ class HostedFullValidationContractTest(unittest.TestCase):
         self.assertIn("name: pto-site-diagnostics-", self.release)
         self.assertIn("name: pto-model-diagnostics-", self.release)
         self.assertIn("name: pto-evidence-diagnostics-", self.release)
-        self.assertEqual(self.release.count("        if: always()\n"), 8)
+        self.assertEqual(self.release.count("        if: always()\n"), 10)
         self.assertNotIn("continue-on-error: true", self.release)
 
     def test_release_diagnostic_anchor_cannot_be_removed_or_optional(self) -> None:

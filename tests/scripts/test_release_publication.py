@@ -12,6 +12,8 @@ from unittest import mock
 import zipfile
 
 from scripts.model_closure import canonical_sha256
+from scripts.release_artifacts import certify
+from scripts.release_publication import Blocked
 from scripts.release_publication import main
 
 
@@ -75,7 +77,7 @@ def release_archive(path: Path, *, matrix_commit: str = PTO, stale: bool = False
 
 
 def site_archive(path: Path) -> str:
-    files = {"index.html": b"<html>PTO</html>\n"}
+    files = {".nojekyll": b"", "index.html": b"<html>PTO</html>\n"}
     tree = hashlib.sha256()
     for name, data in sorted(files.items()):
         tree.update(name.encode())
@@ -90,7 +92,7 @@ def site_archive(path: Path) -> str:
         "source_commit": PTO,
         "release_eligible": True,
         "publication_state": "release",
-        "file_count": 1,
+        "file_count": len(files),
         "content_bytes": len(files["index.html"]),
         "site_tree_sha256": tree.hexdigest(),
     }
@@ -178,6 +180,46 @@ def model_archive(path: Path) -> str:
     return write_zip(path, files)
 
 
+def certification_archive(path: Path, archives: dict[str, Path]) -> str:
+    root = path.parent / "certification-fixture"
+    roots: dict[str, Path] = {}
+    for role, archive in archives.items():
+        destination = root / role
+        destination.mkdir(parents=True)
+        with zipfile.ZipFile(archive) as zipped:
+            zipped.extractall(destination)
+        roots[role] = destination
+    pto = root / "pto"
+    (pto / "spec").mkdir(parents=True)
+    (pto / "tools/ndf").mkdir(parents=True)
+    (pto / ".aslref-version").write_text(ASLREF + "\n")
+    manifest = next(roots["release_evidence"].rglob("release-manifest.json"))
+    (pto / "spec/release-manifest.json").write_bytes(manifest.read_bytes())
+
+    def git_head(command: list[str], **_: object) -> str:
+        return (NDF if command[2].endswith("tools/ndf") else PTO) + "\n"
+
+    with mock.patch(
+        "scripts.release_artifacts.subprocess.check_output", side_effect=git_head
+    ):
+        report = certify(
+            pto_root=pto,
+            release_evidence_root=roots["release_evidence"],
+            preflight_root=roots["preflight"],
+            site_root=roots["site"],
+            model_root=roots["model"],
+            pto_commit=PTO,
+            llvm_commit=LLVM,
+            asl_model_commit=MODEL,
+            run_id=RUN_ID,
+            run_attempt=ATTEMPT,
+        )
+    return write_zip(
+        path,
+        {"report.json": (json.dumps(report, indent=2, sort_keys=True) + "\n").encode()},
+    )
+
+
 def run_payload(*, attempt: int = ATTEMPT) -> dict[str, object]:
     return {
         "id": int(RUN_ID),
@@ -199,10 +241,11 @@ def jobs_payload(*, skipped: bool = False) -> dict[str, object]:
         "Release / fail-closed evidence aggregation",
         "Release / static site validity",
         "Release / LLVM-to-ASL model closure",
+        "Release / uploaded artifact certification",
         "Release / validate",
     )
     jobs = [
-        {"id": index, "name": f"Release verification / {name}", "status": "completed", "conclusion": "skipped" if skipped and index == 5 else "success"}
+        {"id": index, "name": f"Release verification / {name}", "status": "completed", "conclusion": "skipped" if skipped and index == len(suffixes) else "success"}
         for index, name in enumerate(suffixes, 1)
     ]
     return {"total_count": len(jobs), "jobs": jobs}
@@ -218,21 +261,29 @@ class ReleasePublicationTest(unittest.TestCase):
         site = self.api / "2.zip"
         model = self.api / "3.zip"
         preflight = self.api / "4.zip"
+        certification = self.api / "5.zip"
         digests = {
             1: release_archive(release),
             2: site_archive(site),
             3: model_archive(model),
             4: preflight_archive(preflight),
         }
+        digests[5] = certification_archive(certification, {
+            "release_evidence": release,
+            "site": site,
+            "model": model,
+            "preflight": preflight,
+        })
         artifacts = [
             {"id": 1, "name": f"pto-release-evidence-{PTO}", "expired": False, "digest": f"sha256:{digests[1]}", "size_in_bytes": release.stat().st_size},
             {"id": 2, "name": f"pto-site-preview-{PTO}", "expired": False, "digest": f"sha256:{digests[2]}", "size_in_bytes": site.stat().st_size},
             {"id": 3, "name": f"pto-model-closure-{PTO}-{LLVM}-{MODEL}", "expired": False, "digest": f"sha256:{digests[3]}", "size_in_bytes": model.stat().st_size},
             {"id": 4, "name": f"pto-release-preflight-{PTO}-{LLVM}-{MODEL}", "expired": False, "digest": f"sha256:{digests[4]}", "size_in_bytes": preflight.stat().st_size},
+            {"id": 5, "name": f"pto-release-artifact-certification-{PTO}-{RUN_ID}-{ATTEMPT}", "expired": False, "digest": f"sha256:{digests[5]}", "size_in_bytes": certification.stat().st_size},
         ]
         (self.api / "run.json").write_text(json.dumps(run_payload()))
         (self.api / "jobs.json").write_text(json.dumps(jobs_payload()))
-        (self.api / "artifacts.json").write_text(json.dumps({"total_count": 4, "artifacts": artifacts}))
+        (self.api / "artifacts.json").write_text(json.dumps({"total_count": 5, "artifacts": artifacts}))
         with zipfile.ZipFile(release) as archive:
             manifest_bytes = archive.read("spec/release-manifest.json")
         (self.api / "contents.json").write_text(json.dumps({"encoding": "base64", "content": base64.b64encode(manifest_bytes).decode()}))
@@ -286,6 +337,15 @@ class ReleasePublicationTest(unittest.TestCase):
         self.assertIsNone(handoff["release_event"])
         self.assertFalse((output / "pto-spec-release-event-v1.json").exists())
         self.assertIn("publication-handoff.json", (output / "SHA256SUMS").read_text())
+        self.assertEqual(
+            handoff["artifacts"]["certification"]["name"],
+            f"pto-release-artifact-certification-{PTO}-{RUN_ID}-{ATTEMPT}",
+        )
+        self.assertIn("certification/report.json", handoff["evidence_sha256"])
+        self.assertEqual(
+            handoff["artifact_certification"]["run"],
+            {"id": RUN_ID, "attempt": ATTEMPT},
+        )
 
     def test_published_metadata_produces_existing_stable_event_v1(self) -> None:
         metadata = self.root / "published.json"
@@ -369,6 +429,135 @@ class ReleasePublicationTest(unittest.TestCase):
         self.assertEqual(result, 1)
         self.assertFalse(output.exists())
         self.assertFalse((self.root / "escape").exists())
+
+    def test_missing_certification_artifact_is_rejected(self) -> None:
+        artifacts = json.loads((self.api / "artifacts.json").read_text())
+        artifacts["artifacts"] = [
+            row for row in artifacts["artifacts"]
+            if not row["name"].startswith("pto-release-artifact-certification-")
+        ]
+        artifacts["total_count"] = len(artifacts["artifacts"])
+        (self.api / "artifacts.json").write_text(json.dumps(artifacts))
+        result, output = self.invoke()
+        self.assertEqual(result, 1)
+        self.assertFalse(output.exists())
+
+    def test_forged_certification_report_is_rejected(self) -> None:
+        archive = self.api / "5.zip"
+        with zipfile.ZipFile(archive) as zipped:
+            report = json.loads(zipped.read("report.json"))
+        report["site_tree_sha256"] = "f" * 64
+        digest = write_zip(
+            archive,
+            {"report.json": (json.dumps(report, indent=2, sort_keys=True) + "\n").encode()},
+        )
+        artifacts = json.loads((self.api / "artifacts.json").read_text())
+        artifacts["artifacts"][4]["digest"] = f"sha256:{digest}"
+        artifacts["artifacts"][4]["size_in_bytes"] = archive.stat().st_size
+        (self.api / "artifacts.json").write_text(json.dumps(artifacts))
+        result, output = self.invoke()
+        self.assertEqual(result, 1)
+        self.assertFalse(output.exists())
+
+    def test_different_run_certification_artifact_is_rejected(self) -> None:
+        artifacts = json.loads((self.api / "artifacts.json").read_text())
+        forged = dict(artifacts["artifacts"][4])
+        forged["id"] = 6
+        forged["name"] = f"pto-release-artifact-certification-{PTO}-99999-{ATTEMPT}"
+        artifacts["artifacts"].append(forged)
+        artifacts["total_count"] += 1
+        (self.api / "artifacts.json").write_text(json.dumps(artifacts))
+        (self.api / "6.zip").write_bytes((self.api / "5.zip").read_bytes())
+        result, output = self.invoke()
+        self.assertEqual(result, 1)
+        self.assertFalse(output.exists())
+
+
+class ReleaseArtifactCertificationTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(dir=Path.cwd() / "build")
+        self.root = Path(self.temporary.name)
+        self.pto = self.root / "pto"
+        (self.pto / "spec").mkdir(parents=True)
+        (self.pto / "tools/ndf").mkdir(parents=True)
+        (self.pto / ".aslref-version").write_text(ASLREF + "\n")
+        builders = {
+            "release_evidence": release_archive,
+            "preflight": preflight_archive,
+            "site": site_archive,
+            "model": model_archive,
+        }
+        self.roots: dict[str, Path] = {}
+        for role, builder in builders.items():
+            archive = self.root / f"{role}.zip"
+            builder(archive)
+            destination = self.root / role
+            destination.mkdir()
+            with zipfile.ZipFile(archive) as zipped:
+                zipped.extractall(destination)
+            self.roots[role] = destination
+        manifest = next(self.roots["release_evidence"].rglob("release-manifest.json"))
+        (self.pto / "spec/release-manifest.json").write_bytes(manifest.read_bytes())
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def certify(self, **overrides: object) -> dict[str, object]:
+        arguments: dict[str, object] = {
+            "pto_root": self.pto,
+            "release_evidence_root": self.roots["release_evidence"],
+            "preflight_root": self.roots["preflight"],
+            "site_root": self.roots["site"],
+            "model_root": self.roots["model"],
+            "pto_commit": PTO,
+            "llvm_commit": LLVM,
+            "asl_model_commit": MODEL,
+            "run_id": RUN_ID,
+            "run_attempt": ATTEMPT,
+        }
+        arguments.update(overrides)
+        def git_head(command: list[str], **_: object) -> str:
+            return (NDF if command[2].endswith("tools/ndf") else PTO) + "\n"
+
+        with mock.patch(
+            "scripts.release_artifacts.subprocess.check_output",
+            side_effect=git_head,
+        ):
+            return certify(**arguments)  # type: ignore[arg-type]
+
+    def test_same_run_downloaded_artifacts_are_certified_offline(self) -> None:
+        report = self.certify()
+        self.assertEqual(report["schema"], "pto.release-artifact-certification.v1")
+        self.assertEqual(report["run"], {"id": RUN_ID, "attempt": ATTEMPT})
+        self.assertEqual(
+            report["candidate"]["components"]["llvm"],  # type: ignore[index]
+            LLVM,
+        )
+
+    def test_omitted_hidden_site_file_is_rejected(self) -> None:
+        (self.roots["site"] / ".nojekyll").unlink()
+        with self.assertRaisesRegex(Blocked, "site artifact tree is incomplete"):
+            self.certify()
+
+    def test_different_component_tuple_is_rejected(self) -> None:
+        with self.assertRaisesRegex(Blocked, "preflight commits"):
+            self.certify(llvm_commit="f" * 40)
+
+    def test_incomplete_asl_results_are_rejected(self) -> None:
+        coverage = next(self.roots["release_evidence"].rglob("asl-test-coverage.json"))
+        payload = json.loads(coverage.read_text())
+        payload["results"] = []
+        coverage.write_text(json.dumps(payload))
+        with self.assertRaisesRegex(Blocked, "ASL release evidence is incomplete"):
+            self.certify()
+
+    def test_model_copy_of_preflight_must_match_standalone_artifact(self) -> None:
+        candidate = next(self.roots["model"].rglob("candidate.json"))
+        payload = json.loads(candidate.read_text())
+        payload["selection"]["mandatory_case_ids"].append("forged")
+        candidate.write_bytes(canonical_bytes(payload))
+        with self.assertRaisesRegex(Blocked, "model artifact preflight evidence differs"):
+            self.certify()
 
 
 if __name__ == "__main__":
