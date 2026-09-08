@@ -10,6 +10,18 @@
 // implementation.
 // NDF-END: PTO-REQ-PHYSICAL-MEMORY-BINDING-001
 
+// Hosted profiles bind these primitives to sparse host storage.  The portable
+// profile keeps the bounded in-ASL byte array below and never calls them.
+readonly impdef func HostReadMemoryByte(address: Word) => Byte
+begin
+    return Zeros{8};
+end;
+
+impdef func HostWriteMemoryByte(address: Word, value: Byte)
+begin
+    pass;
+end;
+
 readonly impdef func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
     return Zeros{8};
