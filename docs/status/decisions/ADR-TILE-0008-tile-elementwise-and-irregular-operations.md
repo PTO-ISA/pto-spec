@@ -465,6 +465,33 @@
         "PTO-TILE-TSELS",
         "PTO-TILE-TGPR2T"
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/256",
+      "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-TSEL-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-TILE-TCMP",
+        "PTO-TILE-TSEL"
+      ]
     }
   ],
   "release_boundary": true
@@ -473,6 +500,27 @@
 # ADR-TILE-0008: Tile elementwise and irregular operations
 
 ## Context
+
+## Amendment: operation-type carrier reinterpretation for compare/select (2026-09-08)
+
+Issue [#256](https://github.com/PTO-ISA/pto-spec/issues/256) closes the
+operation-type interpretation of `TCMP` and `TSEL` without changing their
+public handler signatures or adding an ADR. The selected `BSTART.VEC`
+operation `DataType` is the semantic operation type: compare operands are
+validated and interpreted under it, `PredicateCell` basis is it, and a select
+destination is configured with it. Each source retains its actual descriptor
+and backing `DataType`; source backings remain distinct, non-four-bit, and
+same-width compatible with the operation type. No source retagging or new
+alias is introduced.
+
+`TCMP` validates payload encodings under the operation type and derives CUBE
+GPR field geometry and U8 Low/High selection from it. `TSEL` is a raw carrier:
+it copies selected source bits without numeric payload validation or status
+updates. CUBE_M16/M32 physical geometry remains invariant for allowed
+same-width pairs. Source addresses are read through their actual descriptors,
+and complete preflight, source snapshots, and the existing `PE_MASK=0000`
+strict no-op ordering remain unchanged. `TCMPS` and `TSELS` are amended in
+ADR-TILE-0009 under the same shared carrier clause.
 
 ADR 0062 recorded a single repository-wide mnemonic audit. This record preserves the accepted decisions for this family as one decision-scoped owner. The former identifiers remain only in `legacy_ids` and the generated ADR index; current normative meaning is owned by the affected ASL/NDF clauses.
 

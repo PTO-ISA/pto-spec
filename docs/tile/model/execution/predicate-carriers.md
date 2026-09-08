@@ -29,29 +29,97 @@ begin
     return high[packed_index - 64] == '1';
 end;
 
+readonly func TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
+    source: TileIndex, scalar: Word, operation_type: TileDataType) => boolean
+begin
+    let tile = _Tiles[[source]];
+    if !TileCubePredicateGPRDataTypeSupported(operation_type) ||
+       !TileCubePredicateGPRShapeLegalAs(source, operation_type) ||
+       !TileCarrierWidthCompatible(tile.data_type, operation_type) then
+        return FALSE;
+    end;
+    return TileCubeNumericSourceLegalAs(source, operation_type) &&
+           TileNumericEncodingValid(
+               operation_type, TileRawElementValue(scalar, operation_type));
+end;
 readonly func TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(
     source: TileIndex, scalar: Word) => boolean
 begin
-    let tile = _Tiles[[source]];
-    if !TileCubeNumericSourceLegal(source) ||
-       !TileCubePredicateGPRDataTypeSupported(tile.data_type) ||
-       !TileCubePredicateGPRShapeLegal(source) then
-        return FALSE;
-    end;
-    return TileNumericEncodingValid(
-        tile.data_type, TileRawElementValue(scalar, tile.data_type));
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[source]].data_type);
+    return operation_type_valid &&
+           TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
+               source, scalar, operation_type);
 end;
 
-func TileCompareCUBEScalarToGPR(source: TileIndex, scalar: Word,
-                                comparison: TileComparison,
-                                high: boolean) => Word
+readonly func TileOperandsLegal_ExecuteTileSelectCUBEGPRAs(
+    destination: TileIndex, source_true: TileIndex, source_false: TileIndex,
+    operation_type: TileDataType) => boolean
 begin
-    assert TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(source, scalar);
+    return TileSelectDataTypeSupported(operation_type) &&
+           TileCubePredicateGPRShapeLegalAs(source_true, operation_type) &&
+           TileCubeNumericShapeMatch(source_true, source_false) &&
+           TileCubeNumericContentsDefined(source_true) &&
+           TileCubeNumericContentsDefined(source_false) &&
+           TileCarrierWidthCompatible(
+               _Tiles[[source_true]].data_type, operation_type) &&
+           TileCarrierWidthCompatible(
+               _Tiles[[source_false]].data_type, operation_type) &&
+           TileCubeDescriptorLegal(_Tiles[[destination]]) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[destination]].data_type == operation_type &&
+           TileCubeNumericShapeMatch(destination, source_true);
+end;
+
+readonly func TileOperandsLegal_ExecuteTileSelectCUBEGPR(
+    destination: TileIndex, source_true: TileIndex, source_false: TileIndex)
+    => boolean
+begin
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[destination]].data_type);
+    return operation_type_valid &&
+           TileOperandsLegal_ExecuteTileSelectCUBEGPRAs(
+               destination, source_true, source_false, operation_type);
+end;
+
+readonly func TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs(
+    destination: TileIndex, source_true: TileIndex, scalar_false: Word,
+    operation_type: TileDataType) => boolean
+begin
+    return TileSelectDataTypeSupported(operation_type) &&
+           TileCubePredicateGPRShapeLegalAs(source_true, operation_type) &&
+           TileCubeNumericContentsDefined(source_true) &&
+           TileCarrierWidthCompatible(
+               _Tiles[[source_true]].data_type, operation_type) &&
+           TileCubeDescriptorLegal(_Tiles[[destination]]) &&
+           _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[destination]].data_type == operation_type &&
+           TileCubeNumericShapeMatch(destination, source_true);
+end;
+
+readonly func TileOperandsLegal_ExecuteTileSelectScalarCUBEGPR(
+    destination: TileIndex, source_true: TileIndex, scalar_false: Word)
+    => boolean
+begin
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[destination]].data_type);
+    return operation_type_valid &&
+           TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs(
+               destination, source_true, scalar_false, operation_type);
+end;
+
+func TileCompareCUBEScalarToGPRAs(source: TileIndex, scalar: Word,
+                                  comparison: TileComparison,
+                                  high: boolean,
+                                  operation_type: TileDataType) => Word
+begin
+    assert TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
+        source, scalar, operation_type);
     let tile = _Tiles[[source]];
-    let normalized_scalar = TileRawElementValue(scalar, tile.data_type);
+    let normalized_scalar = TileRawElementValue(scalar, operation_type);
     let rows = TileCubePredicateRowBits(tile.layout);
-    let fields = TileCubePredicateFieldCount(tile.data_type, tile.layout);
-    let base = TileCubePredicateColumnBase(tile.data_type, tile.layout, high);
+    let fields = TileCubePredicateFieldCount(operation_type, tile.layout);
+    let base = TileCubePredicateColumnBase(operation_type, tile.layout, high);
     var result = TilePredicateGPRPaddingValue();
     var flags = Zeros{5};
     for field = 0 to fields - 1 looplimit 8 do
@@ -63,7 +131,7 @@ begin
                         row as integer {0..65535},
                         column as integer {0..65535});
                     let (predicate, element_flags) = TileCompareElement(
-                        comparison, tile.data_type,
+                        comparison, operation_type,
                         TileReadLogicalElement(tile, element),
                         normalized_scalar);
                     flags = flags OR element_flags;
@@ -75,12 +143,26 @@ begin
     RecordNumericStatusFlags(flags);
     return result;
 end;
-
-func ExecuteTileSelectCUBEGPR(destination: TileIndex, mask_low: Word,
-                              mask_high: Word, source_true: TileIndex,
-                              source_false: TileIndex)
+func TileCompareCUBEScalarToGPR(source: TileIndex, scalar: Word,
+                                comparison: TileComparison,
+                                high: boolean) => Word
 begin
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[source]].data_type);
+    assert operation_type_valid;
+    return TileCompareCUBEScalarToGPRAs(
+        source, scalar, comparison, high, operation_type);
+end;
+
+func ExecuteTileSelectCUBEGPRAs(destination: TileIndex, mask_low: Word,
+                                mask_high: Word, source_true: TileIndex,
+                                source_false: TileIndex,
+                                operation_type: TileDataType)
+begin
+    assert TileOperandsLegal_ExecuteTileSelectCUBEGPRAs(
+        destination, source_true, source_false, operation_type);
     let true_tile = _Tiles[[source_true]];
+    let false_tile = _Tiles[[source_false]];
     var result = _Tiles[[destination]];
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
@@ -91,21 +173,35 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             result = TileInfoWithLogicalElement(result, element,
                 if selected then TileReadLogicalElement(true_tile, element)
-                else TileReadLogicalElement(_Tiles[[source_false]], element));
+                else TileReadLogicalElement(false_tile, element));
         end;
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
     _Tiles[[destination]] = result;
 end;
-
-func ExecuteTileSelectScalarCUBEGPR(destination: TileIndex, mask_low: Word,
-                                    mask_high: Word, source_true: TileIndex,
-                                    scalar_false: Word)
+func ExecuteTileSelectCUBEGPR(destination: TileIndex, mask_low: Word,
+                              mask_high: Word, source_true: TileIndex,
+                              source_false: TileIndex)
 begin
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[destination]].data_type);
+    assert operation_type_valid;
+    ExecuteTileSelectCUBEGPRAs(
+        destination, mask_low, mask_high, source_true, source_false,
+        operation_type);
+end;
+
+func ExecuteTileSelectScalarCUBEGPRAs(
+    destination: TileIndex, mask_low: Word, mask_high: Word,
+    source_true: TileIndex, scalar_false: Word,
+    operation_type: TileDataType)
+begin
+    assert TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs(
+        destination, source_true, scalar_false, operation_type);
     let true_tile = _Tiles[[source_true]];
     let normalized_scalar = TileRawElementValue(scalar_false,
-        true_tile.data_type);
+        operation_type);
     var result = _Tiles[[destination]];
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
@@ -122,6 +218,17 @@ begin
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
     _Tiles[[destination]] = result;
+end;
+func ExecuteTileSelectScalarCUBEGPR(destination: TileIndex, mask_low: Word,
+                                    mask_high: Word, source_true: TileIndex,
+                                    scalar_false: Word)
+begin
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[destination]].data_type);
+    assert operation_type_valid;
+    ExecuteTileSelectScalarCUBEGPRAs(
+        destination, mask_low, mask_high, source_true, scalar_false,
+        operation_type);
 end;
 
 

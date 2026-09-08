@@ -101,6 +101,51 @@ begin
     return TRUE;
 end;
 
+readonly func TileCubeNumericShapeMatch(
+    left: TileIndex, right: TileIndex) => boolean
+begin
+    let left_tile = _Tiles[[left]];
+    let right_tile = _Tiles[[right]];
+    return TileCubeDescriptorLegal(left_tile) &&
+           TileCubeDescriptorLegal(right_tile) &&
+           left_tile.storage_kind == TileStorage_Numeric &&
+           right_tile.storage_kind == TileStorage_Numeric &&
+           left_tile.rows == right_tile.rows &&
+           left_tile.columns == right_tile.columns &&
+           left_tile.valid_rows == right_tile.valid_rows &&
+           left_tile.valid_columns == right_tile.valid_columns &&
+           left_tile.layout == right_tile.layout;
+end;
+
+readonly func TileCubeNumericSourceEncodingsValidAs(
+    index: TileIndex, operation_type: TileDataType) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TileCubeNumericContentsDefined(index) ||
+       !TileCarrierWidthCompatible(tile.data_type, operation_type) then
+        return FALSE;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
+                column as integer {0..65535});
+            if !TileNumericEncodingValid(
+                   operation_type,
+                   TileReadLogicalElement(tile, element)) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func TileCubeNumericSourceLegalAs(
+    index: TileIndex, operation_type: TileDataType) => boolean
+begin
+    return TileCubeNumericSourceEncodingsValidAs(index, operation_type);
+end;
+
 readonly func TileCubeNumericShapeAndTypeMatch(
     left: TileIndex, right: TileIndex) => boolean
 begin
@@ -116,6 +161,21 @@ begin
            left_tile.valid_columns == right_tile.valid_columns &&
            left_tile.data_type == right_tile.data_type &&
            left_tile.layout == right_tile.layout;
+end;
+
+readonly func TileCubePredicateGPRShapeLegalAs(
+    index: TileIndex, operation_type: TileDataType) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TileCubeDescriptorLegal(tile) ||
+       !TileCubePredicateGPRDataTypeSupported(operation_type) ||
+       !TileCarrierWidthCompatible(tile.data_type, operation_type) then
+        return FALSE;
+    end;
+    let words = if operation_type == TileDataType_U8 then 2 else 1;
+    return tile.valid_rows <= TileCubePredicateRowBits(tile.layout) &&
+           tile.valid_columns <=
+               TileCubePredicateFieldCount(operation_type, tile.layout) * words;
 end;
 
 readonly func TilePredicateCellDescriptorLegal(index: TileIndex) => boolean
@@ -156,6 +216,21 @@ begin
     return TilePredicateCellDescriptorLegal(predicate) &&
            TileCubeDescriptorLegal(source) &&
            mask.predicate_basis_type == source.data_type &&
+           mask.valid_rows == source.valid_rows &&
+           mask.valid_columns == source.valid_columns &&
+           mask.layout == source.layout;
+end;
+
+readonly func TilePredicateCellShapeMatchesNumericAs(
+    predicate: TileIndex, numeric: TileIndex,
+    operation_type: TileDataType) => boolean
+begin
+    let mask = _Tiles[[predicate]];
+    let source = _Tiles[[numeric]];
+    return TilePredicateCellDescriptorLegal(predicate) &&
+           TileCubeDescriptorLegal(source) &&
+           TileCarrierWidthCompatible(source.data_type, operation_type) &&
+           mask.predicate_basis_type == operation_type &&
            mask.valid_rows == source.valid_rows &&
            mask.valid_columns == source.valid_columns &&
            mask.layout == source.layout;

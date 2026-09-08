@@ -7936,6 +7936,33 @@
           "baseline": "e811355419182144784af802ff4c86d6a7014c70",
           "date": "2026-08-31",
           "issue": "https://github.com/PTO-ISA/pto-spec/pull/172"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-TCMP-CONTRACT-001",
+            "PTO-TSEL-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+            "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-TILE-TCMP",
+            "PTO-TILE-TSEL"
+          ],
+          "approvers": [
+            "PTO ISA maintainers"
+          ],
+          "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+          "date": "2026-09-08",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/256"
         }
       ],
       "approvers": [
@@ -8005,6 +8032,7 @@
     {
       "accepted": "2026-08-21",
       "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -8031,6 +8059,16 @@
         "PTO-BLOCK-B-IOR",
         "PTO-BLOCK-B-IOS",
         "PTO-BLOCK-B-IOT",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
         "PTO-TILE-TADDS",
         "PTO-TILE-TANDS",
         "PTO-TILE-TCMPS",
@@ -8046,6 +8084,35 @@
         "PTO-TILE-TSHRS",
         "PTO-TILE-TSUBS",
         "PTO-TILE-TXORS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-TCMPS-CONTRACT-001",
+            "PTO-TSELS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+            "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-TILE-TCMPS",
+            "PTO-TILE-TSELS"
+          ],
+          "approvers": [
+            "PTO ISA maintainers"
+          ],
+          "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+          "date": "2026-09-08",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/256"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"

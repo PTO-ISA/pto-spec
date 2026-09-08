@@ -184,15 +184,15 @@ end;
 ## Legality
 
 - TCMP selects VEC Mode 0 Function 13. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, GPR, status, or payload checks.
-- Legacy RowMajor form uses one terminating B.IOT with two numeric sources and one new packed Predicate destination; B.IOR is absent and the existing sixteen-type domain remains unchanged.
-- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with two numeric sources and one new U8 PredicateCell destination tagged with the source basis DataType; B.IOR is absent and the source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
-- CUBE_M16/M32 GPR form uses one terminating source-only B.IOT plus one destination-only B.IOR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; one 64-bit GPR is written atomically, and U8 Sat selects Low or High predicate columns.
+- Legacy RowMajor form uses one terminating B.IOT with two numeric sources and one new packed Predicate destination; B.IOR is absent, the existing sixteen-type operation domain remains unchanged, and each source backing DataType is independently width-compatible with that operation type.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with two numeric sources and one new U8 PredicateCell destination tagged with the operation DataType; B.IOR is absent, each source backing DataType remains distinct and width-compatible, and the operation type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one terminating source-only B.IOT plus one destination-only B.IOR. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; each source backing DataType is independently width-compatible, one 64-bit GPR is written atomically, and U8 Sat selects Low or High predicate columns derived from the operation type.
 - Legacy, PredicateCell, and GPR carriers are complete and mutually exclusive. CMode and PadValue apply to every form; Sat is nonzero only for U8 GPR selection; Canonicalize, secondary DataType, RMode, and Layout remain zero.
 - Predicate padding is Zero/Min=0, Max=1, and Null unspecified or undefined according to the selected GPR/PredicateCell carrier.
 
 ## State effects
 
-- Compare corresponding valid source elements under the selected signed, unsigned, or floating relation.
+- Compare corresponding valid source elements under the selected operation type's signed, unsigned, or floating relation.
 - Publish exactly one selected predicate carrier: legacy packed bits, canonical PredicateCell bytes 0x00/0x01 with basis tag, or one 64-bit GPR predicate word.
 - Payload, predicate padding, numeric status, descriptor/GPR result, and definedness publish atomically; rejection leaves all architectural state unchanged.
 
@@ -209,7 +209,7 @@ end;
 
 ## Exceptions
 
-- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, mismatched CUBE shape/layout, undefined or invalid source data, insufficient destination capacity, or allocation failure rejects before source reads or effects.
+- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, mismatched CUBE physical shape/layout or incompatible source width, undefined or invalid source data, insufficient destination capacity, or allocation failure rejects before source reads or effects.
 - A signaling floating NaN records invalid status only with the atomically published GPR or PredicateCell result.
 
 ## Examples

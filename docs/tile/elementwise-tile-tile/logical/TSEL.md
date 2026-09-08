@@ -181,14 +181,14 @@ end;
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every present dimension must be nonzero.
 - Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
-- A zero predicate bit selects SrcFalse and a one predicate bit selects SrcTrue. TSEL is a raw-carrier operation: it copies the chosen source carrier bits, preserves the concrete DataType, does not require TileNumericEncodingValid for selected payloads, and performs no conversion or numeric-status update.
+- A zero predicate bit selects SrcFalse and a one predicate bit selects SrcTrue. TSEL is a raw-carrier operation: it copies the chosen source backing bits, publishes the destination with the selected operation DataType, does not require TileNumericEncodingValid for selected payloads, and performs no conversion or numeric-status update.
 
 ## Legality
 
 - TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
-- Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent.
-- CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis DataType, valid shape, and layout match the numeric sources. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8; B.IOR is absent.
-- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 consumes two mask GPRs and other accepted types consume one.
+- Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, source backings remain independently width-compatible with the operation type, and selected bits are copied raw.
+- CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis equals the operation DataType, while valid shape/layout and physical geometry match the numeric sources. Source backings remain distinct, non-four-bit, same-width compatible; B.IOR is absent.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; source backings remain independently width-compatible, U8 consumes two mask GPRs and other accepted types consume one.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
 ## State effects
@@ -210,7 +210,7 @@ end;
 
 ## Exceptions
 
-- Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
+- Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
 - TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN.
 
 ## Examples

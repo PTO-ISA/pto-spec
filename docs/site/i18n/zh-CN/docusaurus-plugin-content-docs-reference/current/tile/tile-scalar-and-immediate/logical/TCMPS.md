@@ -258,19 +258,19 @@ end;
 
 - CMode codes 0, 1, 2, 3, 4, and 5 select EQ, NE, LT, GT, LE, and GE; codes 6 and 7 are reserved. Omitted B.DATR selects EQ.
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every present dimension must be nonzero.
-- Omitted B.IOR supplies the selected source DataType all-zero scalar encoding. Omitted PadValue selects Null predicate padding.
+- Omitted B.IOR supplies the selected operation DataType all-zero scalar encoding. Omitted PadValue selects Null predicate padding.
 
 ## Legality
 
 - TCMPS selects TEPL Mode 1 Function 13 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
-- Legacy RowMajor form uses one terminating B.IOT with source and new packed Predicate destination; one optional B.IOR supplies the compare scalar.
-- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new basis-tagged U8 PredicateCell destination plus an optional scalar-source B.IOR; omission selects zero. The source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
-- CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 Sat selects Low or High columns.
+- Legacy RowMajor form uses one terminating B.IOT with source and new packed Predicate destination; one optional B.IOR supplies the compare scalar, and the source backing DataType remains independently width-compatible with the operation type.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new U8 PredicateCell destination whose basis is the operation DataType plus an optional scalar-source B.IOR; omission selects the operation-type zero. The source backing DataType remains distinct and width-compatible, and the operation type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; the source backing DataType is independently width-compatible and U8 Sat selects Low or High columns derived from the operation type.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. CMode and PadValue apply to all; Sat is nonzero only for U8 GPR selection; Canonicalize remains zero.
 
 ## State effects
 
-- Each valid comparison publishes through the selected carrier: legacy low-first packed bit, canonical PredicateCell byte, or GPR predicate bit.
+- Each valid comparison publishes through the selected carrier under the operation type: legacy low-first packed bit, canonical PredicateCell byte, or GPR predicate bit.
 - Zero and Min padding write zero predicate bits, Max writes one bits, and Null leaves padding undefined.
 - Selected carrier payload, padding, numeric status, and descriptor or GPR result publish atomically; rejection has no architectural effect.
 
@@ -287,7 +287,7 @@ end;
 
 ## Exceptions
 
-- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, undefined or invalid source/scalar data, insufficient PredicateCell capacity, or allocation failure rejects before effects.
+- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, undefined or operation-type-invalid source/scalar data, insufficient PredicateCell capacity, or allocation failure rejects before effects.
 - Signaling floating NaN status publishes atomically with the selected GPR or PredicateCell result.
 
 ## Examples

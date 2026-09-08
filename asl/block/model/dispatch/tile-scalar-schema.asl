@@ -167,20 +167,24 @@ begin
     if !binding.source0_valid || binding.source1_valid || !binding.last ||
        UInt(_BundleDataAttributes.comparison_mode) > 5 then return FALSE; end;
     let source = BundleTileSourceIndex(0, FALSE);
-    let data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    let (operation_type_valid, data_type) = ResolveBundleEffectiveDataType();
     let scalar_present = _BundleScalarBindings[[0]].valid;
     let cube = SelectedBundleComparisonCUBE(source);
-    if !TileCompareDataTypeSupported(data_type) ||
+    if !operation_type_valid ||
+       !TileCompareDataTypeSupported(data_type) ||
        _Tiles[[source]].storage_kind != TileStorage_Numeric ||
-       _Tiles[[source]].data_type != data_type ||
+       !TileRowMajorOrCUBENumericCarrierLegal(source, data_type) ||
        !SelectedBundleComparisonSourceContentsDefined(source) ||
-       (!cube && !TileSourceEncodingsValid(source)) ||
        !SelectedBundleComparisonShapeMatches(source) then return FALSE; end;
     if cube && !TileCubePredicateDataTypeSupported(data_type) then
         return FALSE;
     end;
-    if cube && !TileCubeNumericSourceLegal(source) then return FALSE; end;
+    if cube && !TileCubeNumericSourceLegalAs(source, data_type) then
+        return FALSE;
+    end;
+    if !cube && !TileElementwiseSourceEncodingsValidAs(source, data_type) then
+        return FALSE;
+    end;
     if !cube then
         return binding.destination_valid &&
                !binding.destination_allocated_by_bundle &&
@@ -215,8 +219,8 @@ begin
                _BundleScalarBindings[[0]].destination) &&
            !_BundleDataAttributes.canonicalize &&
            (data_type == TileDataType_U8 || !_BundleDataAttributes.saturating) &&
-           TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(
-               source, SelectedBundleTileScalarRawValue()) &&
+           TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
+               source, SelectedBundleTileScalarRawValue(), data_type) &&
            !_BundleScalarBindings[[1]].valid;
 end;
 
@@ -227,9 +231,10 @@ begin
     if BundleSharedBindingCount() != 0 || !SelectedBundleComparisonDimensionsLegal() then
         return FALSE;
     end;
-    let data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if !TileSelectDataTypeSupported(data_type) then return FALSE; end;
+    let (operation_type_valid, data_type) = ResolveBundleEffectiveDataType();
+    if !operation_type_valid || !TileSelectDataTypeSupported(data_type) then
+        return FALSE;
+    end;
     if BundleTileBindingCount() != 1 then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
     if !binding.destination_valid || binding.destination_allocated_by_bundle ||
@@ -249,7 +254,8 @@ begin
                      _BundleScalarBindings[[0]]))) &&
                TileSelectDataTypeSupported(data_type) &&
                TilePredicateValuesLegal(first) &&
-               SelectedBundleTileScalarSourceLegal(source_true, data_type) &&
+               TileRowMajorNumericCarrierLegal(source_true, data_type) &&
+               TileElementwiseSourceContentsDefined(source_true) &&
                TileLogicalShapeMatch(first, source_true);
     end;
     if binding.source1_valid then
@@ -262,9 +268,10 @@ begin
                      _BundleScalarBindings[[0]]))) &&
                !_BundleScalarBindings[[1]].valid &&
                TilePredicateCellValuesLegal(first) &&
-               TilePredicateCellShapeMatchesNumeric(first, source_true) &&
+               TilePredicateCellShapeMatchesNumericAs(
+                   first, source_true, data_type) &&
                _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
-               _Tiles[[source_true]].data_type == data_type &&
+               TileRowMajorOrCUBENumericCarrierLegal(source_true, data_type) &&
                SelectedBundleComparisonSourceContentsDefined(source_true) &&
                TileCubeDescriptorShapeLegal(
                    capacity_bytes, _Tiles[[source_true]].valid_rows,
@@ -275,7 +282,7 @@ begin
     // carry the independent scalar-false source in slot one.
     let mask_words = if cube &&
         TileCubePredicateGPRDataTypeSupported(data_type) then
-            SelectedBundleComparisonGPRMaskWordCount(first) else 1;
+            SelectedBundleComparisonGPRMaskWordCount(data_type) else 1;
     return cube && TileCubePredicateGPRDataTypeSupported(data_type) &&
            _BundleScalarBindings[[0]].valid &&
            _BundleScalarBindings[[0]].destination == 0 &&
@@ -286,8 +293,8 @@ begin
                 BundleComparisonBindingUsesTwoSources(
                     _BundleScalarBindings[[0]])) &&
            _Tiles[[first]].storage_kind == TileStorage_Numeric &&
-           _Tiles[[first]].data_type == data_type &&
-           TileCubePredicateGPRShapeLegal(first) &&
+           TileRowMajorOrCUBENumericCarrierLegal(first, data_type) &&
+           TileCubePredicateGPRShapeLegalAs(first, data_type) &&
            SelectedBundleComparisonSourceContentsDefined(first) &&
            TileCubeDescriptorShapeLegal(
                capacity_bytes, _Tiles[[first]].valid_rows,

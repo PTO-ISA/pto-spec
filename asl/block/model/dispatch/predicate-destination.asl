@@ -25,7 +25,7 @@ begin
     return (FALSE, 0);
 end;
 
-func ResolveBundlePredicateDestination() => boolean
+func ResolveBundlePredicateDestination(operation_type: TileDataType) => boolean
 begin
     let (destination_seen, destination_binding) =
         BundleFirstDestinationBinding();
@@ -45,7 +45,7 @@ begin
         let destination_tile = _Tiles[[destination]];
         let descriptor_legal = if cube then
             TilePredicateCellDescriptorLegal(destination) &&
-            destination_tile.predicate_basis_type == source_tile.data_type &&
+            destination_tile.predicate_basis_type == operation_type &&
             destination_tile.valid_rows == source_tile.valid_rows &&
             destination_tile.valid_columns == source_tile.valid_columns &&
             destination_tile.layout == source_tile.layout
@@ -65,7 +65,9 @@ begin
         return TRUE;
     end;
     if cube then
-        if !TileCubePredicateDataTypeSupported(source_tile.data_type) ||
+        if !TileCubePredicateDataTypeSupported(operation_type) ||
+           !TileCarrierWidthCompatible(
+               source_tile.data_type, operation_type) ||
            !TileCubeDescriptorShapeLegal(
                capacity_bytes, source_tile.valid_rows,
                source_tile.valid_columns, TileDataType_U8,
@@ -94,7 +96,7 @@ begin
     if cube then
         if !ConfigurePredicateCellForMask(
                resolved, capacity_bytes, source_tile.valid_rows,
-               source_tile.valid_columns, source_tile.data_type,
+               source_tile.valid_columns, operation_type,
                source_tile.layout, binding.pe_mask) then
             SetFault(Fault_TileAllocation, ReadTPC());
             return FALSE;
@@ -139,6 +141,12 @@ begin
     let binding = _BundleTileBindings[[destination_binding]];
     let capacity_bytes = BundleLocalDestinationAllocationBytes(
         destination_binding);
+    let (operation_type_valid, operation_type) =
+        ResolveBundleEffectiveDataType();
+    if !operation_type_valid then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !TileCubeDescriptorLegal(source_tile) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
@@ -149,7 +157,7 @@ begin
            destination_tile.storage_kind != TileStorage_Numeric ||
            destination_tile.valid_rows != source_tile.valid_rows ||
            destination_tile.valid_columns != source_tile.valid_columns ||
-           destination_tile.data_type != source_tile.data_type ||
+           destination_tile.data_type != operation_type ||
            destination_tile.layout != source_tile.layout ||
            _TileAllocationMasks[[binding.destination]] != binding.pe_mask then
             SetFault(Fault_TileLegality, ReadTPC());
@@ -159,7 +167,7 @@ begin
     end;
     if !TileCubeDescriptorShapeLegal(
            capacity_bytes, source_tile.valid_rows,
-           source_tile.valid_columns, source_tile.data_type,
+           source_tile.valid_columns, operation_type,
            source_tile.layout) ||
        !LocalTileAllocationFits(binding.pe_mask, capacity_bytes) then
         SetFault(Fault_TileAllocation, ReadTPC());
@@ -168,7 +176,7 @@ begin
     let (found, resolved) = BundleFreeDestinationIndex(destination_binding);
     if !found || !ConfigureCubeTileForMask(
            resolved, capacity_bytes, source_tile.valid_rows,
-           source_tile.valid_columns, source_tile.data_type,
+           source_tile.valid_columns, operation_type,
            source_tile.layout, TileLocation_Matrix,
            binding.pe_mask) then
         SetFault(Fault_TileAllocation, ReadTPC());
