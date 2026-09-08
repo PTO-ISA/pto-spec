@@ -2,11 +2,11 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(10, 512, 4, 32, 4, 32, TileDataType_E4M3,
+    ConfigureTile(10, 512, 4, 32, 1, 32, TileDataType_E4M3,
         TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(11, 128, 4, 1, 4, 1, TileDataType_E8M0,
+    ConfigureTile(11, 128, 4, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(12, 512, 32, 1, 32, 1, TileDataType_E5M2,
+    ConfigureTile(12, 512, 1, 32, 1, 32, TileDataType_E5M2,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(13, 128, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Matrix);
@@ -17,7 +17,7 @@ begin
         WriteTileElement(11, row, 0, Zeros{PTO_XLEN} + 1);
     end;
     for inner = 0 to 31 looplimit 32 do
-        WriteTileElement(12, inner, 0, Zeros{PTO_XLEN} + 3);
+        WriteTileElement(12, 0, inner, Zeros{PTO_XLEN} + 3);
     end;
     WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 1);
     InstallSharedTile((Zeros{6} + 44) as SharedTileID, _Tiles[[10]], '1111');

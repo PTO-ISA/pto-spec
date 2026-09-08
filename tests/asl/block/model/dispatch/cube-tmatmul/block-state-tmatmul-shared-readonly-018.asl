@@ -2,7 +2,7 @@
 func PrepareReadonlyShared(index: TileIndex, shared_tile_id: bits(6),
                            value: integer, left: boolean)
 begin
-    let valid_rows = if left then 4 else 1;
+    let valid_rows = 1;
     ConfigureTileForMask(index, 128, 64, 1, valid_rows, 1,
         TileDataType_U16, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');

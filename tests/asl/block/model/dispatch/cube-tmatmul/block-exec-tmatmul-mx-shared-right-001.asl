@@ -10,13 +10,13 @@ begin
         TileDataType_E8M0, TileLayout_CUBE_M32,
         TileLocation_Matrix, '1111');
     assert left_scale_ready;
-    ConfigureTile(10, 512, 32, 1, 32, 1, TileDataType_E5M2,
+    ConfigureTile(10, 512, 16, 32, 1, 32, TileDataType_E5M2,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(11, 128, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Matrix);
     for inner = 0 to 31 looplimit 32 do
         WriteTileElement(0, 0, inner, Zeros{PTO_XLEN} + 2);
-        WriteTileElement(10, inner, 0, Zeros{PTO_XLEN} + 3);
+        WriteTileElement(10, 0, inner, Zeros{PTO_XLEN} + 3);
     end;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     MarkTileValidRegionDefined(1);

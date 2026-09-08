@@ -216,8 +216,8 @@
         "zh-CN": "Shared 子视图的逐 PE 偏移"
       },
       "summary": {
-        "en": "This clause evaluates a Shared B.SUBVIEW offset in each participating PE's private GPR context while keeping one common encoded size. Different selected PEs can therefore materialize distinct ranges from the same published Shared parent.",
-        "zh-CN": "本条款在每个参与 PE 的私有 GPR 上下文中计算 Shared B.SUBVIEW 偏移，同时保留共同的编码大小。因此，不同选中 PE 可以从同一个已发布 Shared 父对象形成不同范围。"
+        "en": "This clause evaluates a Shared B.SUBVIEW offset in each participating PE's private GPR context while keeping one common encoded size. Different selected PEs can therefore materialize distinct ranges from the same published Shared parent. Matrix consumers derive and validate each selected view's descriptor metadata before payload snapshot or destination allocation, and one invalid participating view rejects the complete cooperative operation.",
+        "zh-CN": "本条款在每个参与 PE 的私有 GPR 上下文中计算 Shared B.SUBVIEW 偏移，同时保留共同的编码大小。因此，不同选中 PE 可以从同一个已发布 Shared 父对象形成不同范围。矩阵消费者在 payload snapshot 或 destination allocation 前派生并校验每个选中 view 的 descriptor metadata，任一参与 view 非法都会拒绝整个协作操作。"
       }
     },
     {
@@ -648,8 +648,8 @@
         "zh-CN": "带显式累加器的 TMATMUL"
       },
       "summary": {
-        "en": "This clause defines TMATMUL.ACC with explicit C input and newly published D, Local per-PE dimensions or cooperative Core-total M, and compatible matrix types. Shared primaries can replace defined matrix groups, but C and outputs remain Local; complete preflight preserves C and enables atomic publication of D and post-processing results.",
-        "zh-CN": "本条款定义 TMATMUL.ACC：显式读取 C 并新发布 D，维度可为每 PE 的 Local 值或协作执行的 Core 总 M，矩阵类型需兼容。Shared 主输入可替换指定矩阵组，但 C 与输出保持 Local；完整预检后 C 不变，D 与后处理结果原子发布。"
+        "en": "This clause defines TMATMUL.ACC with explicit C input and newly published D, Local per-PE dimensions or cooperative Core-total group_M, and compatible matrix types. Shared primaries use the frozen side-specific physical valid shape with legal padded pitch; complete all-PE metadata preflight precedes payload snapshots, allocation, and atomic D/post-processing publication while preserving C.",
+        "zh-CN": "本条款定义 TMATMUL.ACC：显式读取 C 并新发布 D，维度可为每 PE 的 Local 值或协作执行的 Core 总 group_M，矩阵类型需兼容。Shared 主输入使用冻结的同侧 physical valid shape 与合法 padded pitch；所有 PE 的 metadata 完整预检先于 payload snapshot、allocation 和 D/后处理原子发布，并保持 C 不变。"
       }
     },
     {
@@ -660,8 +660,8 @@
         "zh-CN": "带行偏置的 TMATMUL"
       },
       "summary": {
-        "en": "This clause defines TMATMUL.BIAS with a Local row-major 1xN bias, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use the complete PE group and Core-total M; successful outputs publish atomically after Shared readiness and full legality preflight.",
-        "zh-CN": "本条款定义 TMATMUL.BIAS：使用 Local 行主序 1×N 偏置、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用完整 PE 组和 Core 总 M；Shared 就绪及全部合法性预检完成后，成功结果原子发布。"
+        "en": "This clause defines TMATMUL.BIAS with a Local row-major 1xN bias, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use group_M with the complete PE group; Shared physical valid shape, legal padded pitch, parent readiness, and all-PE metadata preflight precede payload and atomic output publication.",
+        "zh-CN": "本条款定义 TMATMUL.BIAS：使用 Local 行主序 1×N 偏置、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用 group_M 与完整 PE 组；Shared physical valid shape、合法 padded pitch、父对象就绪及所有 PE metadata 预检先于 payload 与输出原子发布。"
       }
     },
     {
@@ -672,8 +672,8 @@
         "zh-CN": "基础 TMATMUL 契约"
       },
       "summary": {
-        "en": "This clause defines the base matrix-multiply form across Local operands and supported cooperative Shared-primary combinations. It distinguishes per-PE dimensions from Core-total cooperative M, requires complete Shared publication and preflight, and publishes outputs atomically while preserving sources.",
-        "zh-CN": "本条款定义基础矩阵乘形式，覆盖 Local 操作数及受支持的协作 Shared 主输入组合。它区分每 PE 维度与协作执行的 Core 总 M，要求 Shared 完整发布并完成预检，随后原子发布输出且保留源对象。"
+        "en": "This clause defines the base matrix-multiply form across Local operands and supported cooperative Shared-primary combinations. It uses Core-total group_M, maps Shared A [M,K] as [M,K]/[K,M] and B [K,N] as [N,K]/[K,N] for transpose zero/one, permits legal padded pitch, and completes parent-readiness and all-PE metadata preflight before payload, allocation, or atomic output effects.",
+        "zh-CN": "本条款定义基础矩阵乘形式，覆盖 Local 操作数及受支持的协作 Shared 主输入组合。它使用 Core 总 group_M；Shared A [M,K] 在转置 0/1 时为 [M,K]/[K,M]，B [K,N] 为 [N,K]/[K,N]，允许合法 padded pitch，并在 payload、allocation 或输出原子效果前完成父对象就绪与所有 PE metadata 预检。"
       }
     },
     {
@@ -684,8 +684,8 @@
         "zh-CN": "带显式累加器的 MX TMATMUL"
       },
       "summary": {
-        "en": "This clause adds independently required E8M0 scales to TMATMUL.ACC while retaining explicit, distinct C and D operands. Local and cooperative Shared-primary forms share complete readiness and legality preflight; C persists and all destination, reduction, and numeric-status results publish atomically.",
-        "zh-CN": "本条款在 TMATMUL.ACC 上增加矩阵两侧按需独立使用的 E8M0 缩放源，同时保留显式且相互区分的 C、D 操作数。Local 与协作 Shared 主输入形式共用完整就绪与合法性预检；C 保持不变，目标、归约和数值状态结果原子发布。"
+        "en": "This clause adds independently required E8M0 scales to TMATMUL.ACC while retaining explicit, distinct C and D operands. Shared A/B primaries and scales use their side-specific physical valid shapes and legal padded pitches; parent readiness and complete all-PE metadata preflight precede payload snapshots and atomic destination, reduction, and numeric-status publication.",
+        "zh-CN": "本条款在 TMATMUL.ACC 上增加矩阵两侧按需独立使用的 E8M0 缩放源，同时保留显式且相互区分的 C、D 操作数。Shared A/B 主输入与 scale 使用各自同侧 physical valid shape 和合法 padded pitch；父对象就绪及所有 PE metadata 完整预检先于 payload snapshot 与目标、归约和数值状态原子发布。"
       }
     },
     {
@@ -696,8 +696,8 @@
         "zh-CN": "带行偏置的 MX TMATMUL"
       },
       "summary": {
-        "en": "This clause combines MX matrix scaling with a Local 1xN bias and supported Local or cooperative Shared-primary operands. Each matrix side contributes an E8M0 scale only when its type requires one, and successful post-processed outputs publish atomically after full preflight.",
-        "zh-CN": "本条款将 MX 矩阵缩放、Local 1×N 偏置以及受支持的 Local 或协作 Shared 主输入组合起来。每个矩阵侧仅在其类型需要时提供 E8M0 缩放源，完整预检后后处理结果原子发布。"
+        "en": "This clause combines MX matrix scaling with a Local 1xN bias and supported Local or cooperative Shared-primary operands. Each matrix side contributes an E8M0 scale only when its type requires one; Shared primary/scale physical shapes, legal padded pitches, parent readiness, and complete all-PE metadata preflight precede payload and atomic post-processed output publication.",
+        "zh-CN": "本条款将 MX 矩阵缩放、Local 1×N 偏置以及受支持的 Local 或协作 Shared 主输入组合起来。每个矩阵侧仅在其类型需要时提供 E8M0 缩放源；Shared 主输入/scale 的 physical shape、合法 padded pitch、父对象就绪及所有 PE metadata 完整预检先于 payload 与后处理输出原子发布。"
       }
     },
     {
@@ -708,8 +708,8 @@
         "zh-CN": "基础 MX TMATMUL 契约"
       },
       "summary": {
-        "en": "This clause defines the base MX matrix multiply with independently required E8M0 scales and supported Local or cooperative Shared-primary operands. Cooperative execution uses Core-total M and all PEs; complete source, shape, capacity, and readiness checks precede atomic output publication.",
-        "zh-CN": "本条款定义基础 MX 矩阵乘，包含矩阵两侧按需独立使用的 E8M0 缩放源，以及受支持的 Local 或协作 Shared 主输入。协作执行使用 Core 总 M 与全部 PE；完整的源、形状、容量和就绪检查先于结果原子发布。"
+        "en": "This clause defines the base MX matrix multiply with independently required E8M0 scales and supported Local or cooperative Shared-primary operands. Cooperative execution uses Core-total group_M and all PEs; side-specific primary/scale physical shapes, legal padded pitches, capacity, parent readiness, and metadata checks precede payload snapshots and atomic output publication.",
+        "zh-CN": "本条款定义基础 MX 矩阵乘，包含矩阵两侧按需独立使用的 E8M0 缩放源，以及受支持的 Local 或协作 Shared 主输入。协作执行使用 Core 总 group_M 与全部 PE；各侧主输入/scale physical shape、合法 padded pitch、capacity、父对象就绪和 metadata 检查先于 payload snapshot 与结果原子发布。"
       }
     },
     {
@@ -900,8 +900,8 @@
         "zh-CN": "Shared 矩阵输入的逻辑转置"
       },
       "summary": {
-        "en": "This clause gives Shared A and B independent logical-transpose controls that also apply to their separately bound scales. Local-side transpose remains outside the contract, and neither Shared source is physically mutated.",
-        "zh-CN": "本条款为 Shared A、B 提供相互独立的逻辑转置控制，并同步作用于各自单独绑定的缩放源。Local 侧转置不在该契约内，两个 Shared 源也不会被物理修改。"
+        "en": "This clause gives Shared A and B independent logical-transpose controls that also apply to their separately bound scales. A [M,K] is physically [M,K]/[K,M] and B [K,N] is [N,K]/[K,N] for control zero/one; exact valid shapes with legal padded major pitch are required. Matrix view metadata is preflighted for every participating PE before payload or allocation, while Local-side transpose remains outside the contract and neither Shared source is mutated.",
+        "zh-CN": "本条款为 Shared A、B 提供相互独立的逻辑转置控制，并同步作用于各自单独绑定的缩放源。A [M,K] 在控制 0/1 时物理为 [M,K]/[K,M]，B [K,N] 为 [N,K]/[K,N]；必须满足精确 valid shape 与合法 padded major pitch。矩阵 view metadata 在 payload 或 allocation 前为每个参与 PE 预检，Local 侧转置仍不在契约内，Shared 源不被物理修改。"
       }
     },
     {

@@ -30,16 +30,87 @@ begin
         return FALSE;
     end;
     if _BundleSharedBindings[[ordinal]].source0_subview.valid then
-        if !BundleSharedSubviewLegal(ordinal) then return FALSE; end;
-        let view = MaterializeBundleSharedSubview(ordinal);
-        return view.valid_rows == valid_rows &&
-               view.valid_columns == valid_columns &&
-               view.columns == columns && view.data_type == data_type &&
-               view.layout == TileLayout_RowMajor;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 looplimit 4 do
+            let pe_identity = pe as MemoryAgentId;
+            if _BundleSharedBindings[[ordinal]].pe_mask[
+                   PTOPEMaskBitOfPEIdentity(pe_identity)] == '1' &&
+               !BundleSharedSubviewMatrixMetadataLegalForPE(
+                   ordinal, pe_identity, valid_rows, valid_columns,
+                   columns, data_type) then
+                return FALSE;
+            end;
+        end;
+        return TRUE;
     end;
-    return SharedTileReadSchemaLegal(shared_tile_id,
-        valid_rows, valid_columns, columns,
-        data_type, TileLayout_RowMajor);
+    let shared = SharedTileRecord(shared_tile_id);
+    return SharedTileDescriptorLegal(shared_tile_id) &&
+           shared.tile.valid_rows == valid_rows &&
+           shared.tile.valid_columns == valid_columns &&
+           shared.tile.columns >= columns &&
+           shared.tile.data_type == data_type &&
+           shared.tile.layout == TileLayout_RowMajor;
+end;
+
+// Matrix schema preflight derives Shared CELL views without reading payload.
+readonly func BundleSharedSubviewMatrixMetadataLegalForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId,
+    valid_rows: integer {1..65535}, valid_columns: integer {1..65535},
+    minimum_columns: integer {1..65535}, data_type: TileDataType) => boolean
+begin
+    if !_BundleSharedBindings[[binding]].valid ||
+       !_BundleSharedBindings[[binding]].source0_subview.valid ||
+       _BundleSharedBindings[[binding]].size_code != 0 then return FALSE; end;
+    let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
+    if !SharedTileDescriptorLegal(shared_tile_id) ||
+       !SharedTilePublished(shared_tile_id) then return FALSE; end;
+    let parent = SharedTileRecord(shared_tile_id).tile;
+    if parent.layout != TileLayout_RowMajor || parent.columns == 0 ||
+       parent.data_type != data_type then return FALSE; end;
+    let modifier = _BundleSharedBindings[[binding]].source0_subview;
+    if modifier.size_code == 0 then return FALSE; end;
+    let selected_bytes = TileSizeCodeBytes(
+        modifier.size_code as integer {1..12});
+    let element_bits = TileElementBits(parent.data_type);
+    let bounded_columns = parent.columns as integer {1..65535};
+    let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
+        binding, pe_identity));
+    if raw_offset > 2047 then return FALSE; end;
+    let offset_cells = raw_offset as integer {0..2047};
+    if offset_cells * PTO_TILE_CELL_BYTES + selected_bytes >
+           parent.capacity_bytes then return FALSE; end;
+    let offset_elements = ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM
+        element_bits) as integer {0..524287};
+    let selected_elements = ((selected_bytes * 8) DIVRM element_bits)
+        as integer {1..524288};
+    let origin_row = (offset_elements DIVRM bounded_columns)
+        as integer {0..65535};
+    let origin_column = (offset_elements MOD bounded_columns)
+        as integer {0..65535};
+    if selected_elements > bounded_columns - origin_column &&
+       (origin_column != 0 || selected_elements MOD bounded_columns != 0) then
+        return FALSE;
+    end;
+    if selected_elements > bounded_columns - origin_column &&
+       selected_elements DIVRM bounded_columns > 65535 then return FALSE; end;
+    let selected_columns = (if selected_elements <=
+        bounded_columns - origin_column then selected_elements
+        else bounded_columns) as integer {1..65535};
+    let selected_rows = (if selected_elements <=
+        bounded_columns - origin_column then 1
+        else selected_elements DIVRM bounded_columns) as integer {1..65535};
+    let clipped_rows = if origin_row + selected_rows > parent.valid_rows then
+        if origin_row < parent.valid_rows then
+            (parent.valid_rows - origin_row) as integer {0..65535}
+        else 0
+    else selected_rows;
+    let clipped_columns = if origin_column + selected_columns >
+        parent.valid_columns then
+        if origin_column < parent.valid_columns then
+            (parent.valid_columns - origin_column) as integer {0..65535}
+        else 0
+    else selected_columns;
+    return clipped_rows == valid_rows && clipped_columns == valid_columns &&
+           selected_columns >= minimum_columns;
 end;
 
 readonly func BundleMatrixSharedSourcesReady(
@@ -66,6 +137,22 @@ readonly func BundleMatrixSharedPrimarySchemaLegal(
 begin
     let stored_rows = if transpose then logical_columns else logical_rows;
     let stored_columns = if transpose then logical_rows else logical_columns;
+    return BundleMatrixSharedSourceSchemaLegal(
+        ordinal, stored_rows, stored_columns,
+        stored_columns, data_type);
+end;
+
+readonly func BundleMatrixSharedBPrimarySchemaLegal(
+    ordinal: integer {0..3},
+    logical_rows: integer {1..65535},
+    logical_columns: integer {1..65535},
+    data_type: TileDataType,
+    transpose: boolean) => boolean
+begin
+    // B's stored major order is [N,K] without TransB and [K,N] with it;
+    // unlike A, the non-transposed physical rows are the logical columns.
+    let stored_rows = if transpose then logical_rows else logical_columns;
+    let stored_columns = if transpose then logical_columns else logical_rows;
     return BundleMatrixSharedSourceSchemaLegal(
         ordinal, stored_rows, stored_columns,
         stored_columns, data_type);
@@ -165,7 +252,7 @@ begin
         end;
     end;
 
-    if !BundleMatrixSharedPrimarySchemaLegal(
+    if !BundleMatrixSharedBPrimarySchemaLegal(
            ordinal as integer {0..3},
            k, n, right_type,
            _BundleFixedPointAttributes.trans_b) then
@@ -173,7 +260,7 @@ begin
     end;
     ordinal = (ordinal + 1) as integer {0..4};
     if right_scale_present then
-        if !BundleMatrixSharedPrimarySchemaLegal(
+        if !BundleMatrixSharedBPrimarySchemaLegal(
                ordinal as integer {0..3},
                right_scale_groups, n,
                TileMXScaleCarrierType(right_type),
@@ -340,7 +427,7 @@ readonly func MaterializeBundleSharedMatrixPrimary(
     transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
-    assert BundleMatrixSharedPrimarySchemaLegal(
+    assert BundleMatrixSharedBPrimarySchemaLegal(
         ordinal, logical_rows, logical_columns, data_type, transpose);
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
@@ -367,8 +454,8 @@ begin
     tile.cube_storage_bytes = 0;
     for row = 0 to logical_rows - 1 looplimit 65536 do
         for column = 0 to logical_columns - 1 looplimit 65536 do
-            let source_row = if transpose then column else row;
-            let source_column = if transpose then row else column;
+            let source_row = if transpose then row else column;
+            let source_column = if transpose then column else row;
             let source_element = TileLogicalLinearIndex(
                 source,
                 source_row as integer {0..65535},

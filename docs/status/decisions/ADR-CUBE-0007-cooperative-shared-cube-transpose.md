@@ -20,6 +20,8 @@
   ],
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+    "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+    "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
     "PTO-CUBE-SHARED-TRANSPOSE-001",
     "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
     "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
@@ -65,6 +67,7 @@
     "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
     "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
     "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
     "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
     "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
     "PTO-BLOCK-MODEL-STATE-TYPES",
@@ -92,6 +95,41 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0072"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-08",
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/255",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+        "PTO-BSTART-TMATMUL-CONTRACT-001",
+        "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-BSTART-TMATMUL",
+        "PTO-BLOCK-BSTART-TMATMUL-ACC",
+        "PTO-BLOCK-BSTART-TMATMUL-BIAS",
+        "PTO-BLOCK-BSTART-TMATMULMX",
+        "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+        "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+      ]
+    }
   ]
 }
 ---
@@ -244,3 +282,46 @@ rendezvous、就绪、选中 PE 副作用与回滚作为一个协作预检处理
 hidden orientation, or memory fence is introduced.
 
 **中文。** 不引入持久 Shared CUBE 布局、Shared TGEMV、GM 转换、隐藏方向或内存栅栏。
+
+## 2026-09-08 amendment: Issue #255 current Shared TMATMUL semantics
+
+This amendment is evaluated from baseline `dea0b75e803cffa873982c90f9aa0cd17c6d243b`.
+It preserves the accepted decision and history above while fixing the current
+physical schema used by Shared TMATMUL-family consumers. For logical A `[M,K]`,
+`TransA=0` maps to physical `[M,K]` and `TransA=1` maps to `[K,M]`. For logical
+B `[K,N]`, `TransB=0` maps to physical `[N,K]` and `TransB=1` maps to `[K,N]`.
+The same side-specific major mapping applies to an independently bound MX
+scale: A scale is `[M,G_A]` or `[G_A,M]`, and B scale is `[N,G_B]` or
+`[G_B,N]` for control zero or one respectively. Every source exposes its exact
+physical valid shape with a legal padded major pitch.
+
+The Shared-A source remains split by `group_M`; active PE `i` reads rows from
+`m_global = i*M_per_PE + local_row`, while zero-row PEs produce no compute
+effects. Existing CELL `B.SUBVIEW` offset/size geometry is retained. A matrix
+consumer derives each participating PE's view metadata before payload
+snapshot or destination allocation and preflights all four PEs under the
+current cooperative nonzero mask `1111`; one invalid view raises
+`Fault_TileLegality` atomically. Shared readiness remains parent-level
+`whole_parent_ready && published`. TLOAD, Shared descriptor/state/payload/
+lifetime, Local-A transpose rejection, and all post-processing, numeric,
+readiness, and atomic-output behavior remain unchanged. No legacy selector,
+arbitrary nonzero mask, Shared TGEMV, or new descriptor is introduced.
+Square matrices can remain shape-legal under either control, so an old layout
+may be numerically reinterpreted without a fault; migration must explicitly
+arrange the physical payload or select the matching control, and this
+amendment does not promise detection of that case.
+
+中文：本修订基于 `dea0b75e803cffa873982c90f9aa0cd17c6d243b`，保留上述已接受决定及其
+历史，仅修正 Shared TMATMUL 当前使用的物理 schema。逻辑 A `[M,K]` 在 `TransA=0`
+时为物理 `[M,K]`、在 `TransA=1` 时为 `[K,M]`；逻辑 B `[K,N]` 在 `TransB=0`
+时为物理 `[N,K]`、在 `TransB=1` 时为 `[K,N]`。独立绑定的 MX scale 采用同侧
+major 映射：A 为 `[M,G_A]`/`[G_A,M]`，B 为 `[N,G_B]`/`[G_B,N]`。所有来源
+必须提供精确 physical valid shape，并允许合法 padded major pitch。Shared-A 仍按
+`group_M` 分片并以 `m_global` 取数；零行 PE 不产生计算副作用。既有 CELL
+`B.SUBVIEW` 几何保持不变，矩阵消费者先完成所有参与 PE 的 view metadata 预检，
+当前协作非零 mask 固定为 `1111`；任一非法 view 都以 `Fault_TileLegality` 原子拒绝。
+Shared 就绪仍为 parent-level `whole_parent_ready && published`。TLOAD、Shared
+descriptor/state/payload/lifetime、Local-A 转置拒绝及后处理、数值、就绪和原子输出
+语义保持不变；不引入 legacy selector、任意非零 mask、Shared TGEMV 或新 descriptor。
+方阵在任一控制下都可能满足 shape 合法性，因此旧布局可能无 fault 而发生数值重解释；
+迁移时必须明确安排 physical payload 或选择匹配控制，本修订不承诺检测此情形。

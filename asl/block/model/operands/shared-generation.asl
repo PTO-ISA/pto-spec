@@ -1,5 +1,4 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","surface":"block","classification":["model","operands","shared-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
-
 // NDF-BEGIN: PTO-B-ASSEMBLE-SHARED-GENERATION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A Shared B.ASSEMBLE generation MUST retain the previously published Sx
@@ -10,12 +9,13 @@
 // descriptor and payload atomically; every rejection MUST preserve the prior
 // published generation.
 // NDF-END: PTO-B-ASSEMBLE-SHARED-GENERATION-001
-
 // NDF-BEGIN: PTO-B-SUBVIEW-SHARED-PER-PE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A Shared B.SUBVIEW source MUST evaluate GPR[RegSrc]+uimm11 in each
 // participating PE's private GPR context. The encoded size is common, but
 // selected PEs may materialize distinct ranges of one published parent.
+// Matrix consumers derive/validate each selected view's metadata before any
+// payload snapshot or destination allocation; one bad view rejects the whole operation.
 // NDF-END: PTO-B-SUBVIEW-SHARED-PER-PE-001
 func AbortBundleSharedGenerationsForBundle()
 begin
