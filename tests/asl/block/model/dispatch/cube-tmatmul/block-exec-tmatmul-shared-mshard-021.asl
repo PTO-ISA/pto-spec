@@ -1,23 +1,38 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-GROUP-M-DISTRIBUTION-001"],"kind":"execution","summary":"Cooperative TMATMUL distributes Core-total group M into exact current-PE fragments.","pass_condition":"Boundary group sizes 1, 17, 64, 65, and 128 derive the frozen M16/M32 valid-row distribution; active PEs consume their exact Shared-A slice and inactive PEs publish no Local state.","related_sources":["asl/block/model/dispatch/shared-cube-matrix.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-GROUP-M-DISTRIBUTION-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Cooperative TMATMUL distributes Core-total group M into exact current-PE fragments for both A physical majors.","pass_condition":"Boundary group sizes 1, 17, 64, 65, and 128 derive the frozen M16/M32 valid-row distribution; active PEs consume their exact Shared-A slice and inactive PEs publish no Local state for TransA=0 and TransA=1.","related_sources":["asl/block/model/dispatch/shared-cube-matrix.asl"]}
 
 func ExecuteSharedGroupMForPE(group_m: integer {1..128},
                               pe: MemoryAgentId,
                               expected_valid_m: integer {0..32},
-                              expected_first: integer)
+                              expected_first: integer,
+                              transpose: boolean)
 begin
     ResetProfileState();
     SelectMemoryEventAgent(pe);
 
     let source_capacity = if group_m <= 64 then 128 else 256;
-    let source_rows = if group_m <= 64 then 64 else 128;
-    ConfigureTileForMask(10, source_capacity, source_rows, 1,
-        group_m, 1, TileDataType_U16, TileLayout_RowMajor,
+    let source_columns = if !transpose then 1
+        else if group_m <= 16 then 16
+        else if group_m <= 32 then 32
+        else if group_m <= 64 then 64
+        else 128;
+    let source_rows = if transpose then
+        DerivedTileRows(source_capacity, source_columns, TileDataType_U16)
+        else if group_m <= 64 then 64 else 128;
+    let source_valid_rows = if transpose then 1 else group_m;
+    let source_valid_columns = if transpose then group_m else 1;
+    ConfigureTileForMask(10, source_capacity, source_rows, source_columns,
+        source_valid_rows, source_valid_columns, TileDataType_U16,
+        TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
     ConfigureTileForMask(11, 128, 128, 1, 1, 1,
         TileDataType_U8, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
-    for row = 0 to group_m - 1 looplimit 128 do
-        WriteTileElement(10, row, 0, Zeros{PTO_XLEN} + row + 2);
+    for row = 0 to source_valid_rows - 1 looplimit 128 do
+        for column = 0 to source_valid_columns - 1 looplimit 128 do
+            let logical_row = if transpose then column else row;
+            WriteTileElement(10, row, column,
+                Zeros{PTO_XLEN} + logical_row + 2);
+        end;
     end;
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 10);
     InstallSharedTile((Zeros{6} + 40) as SharedTileID,
@@ -35,7 +50,8 @@ begin
         FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
     SetBundleFixedPointAttributeState(
-        Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
+        Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE,
+        transpose, FALSE);
     SetBundleDimension(0, Zeros{PTO_XLEN} + group_m);
     BindBundleSharedIO((Zeros{6} + 40) as SharedTileID, 0, '1111');
     BindBundleSharedIO((Zeros{6} + 41) as SharedTileID, 0, '1111');
@@ -74,13 +90,25 @@ begin
     assert BundleMatrixCooperativeValidM(65, 3) == 0;
     assert BundleMatrixCooperativeValidM(128, 3) == 32;
 
-    ExecuteSharedGroupMForPE(1, 0, 1, 20);
-    ExecuteSharedGroupMForPE(1, 1, 0, 0);
-    ExecuteSharedGroupMForPE(17, 1, 1, 180);
-    ExecuteSharedGroupMForPE(17, 2, 0, 0);
-    ExecuteSharedGroupMForPE(64, 3, 16, 500);
-    ExecuteSharedGroupMForPE(65, 2, 1, 660);
-    ExecuteSharedGroupMForPE(65, 3, 0, 0);
-    ExecuteSharedGroupMForPE(128, 3, 32, 980);
+    ExecuteSharedGroupMForPE(1, 0, 1, 20, FALSE);
+    ExecuteSharedGroupMForPE(1, 1, 0, 0, FALSE);
+    ExecuteSharedGroupMForPE(17, 1, 1, 180, FALSE);
+    ExecuteSharedGroupMForPE(17, 2, 0, 0, FALSE);
+    ExecuteSharedGroupMForPE(64, 3, 16, 500, FALSE);
+    ExecuteSharedGroupMForPE(65, 2, 1, 660, FALSE);
+    ExecuteSharedGroupMForPE(65, 3, 0, 0, FALSE);
+    ExecuteSharedGroupMForPE(128, 3, 32, 980, FALSE);
+
+    // Re-run tail and zero-row boundaries through the TransA=1 [K,M]
+    // physical schema; the same logical m_global fragments must result.
+    ExecuteSharedGroupMForPE(1, 0, 1, 20, TRUE);
+    ExecuteSharedGroupMForPE(1, 1, 0, 0, TRUE);
+    ExecuteSharedGroupMForPE(17, 0, 16, 20, TRUE);
+    ExecuteSharedGroupMForPE(17, 1, 1, 180, TRUE);
+    ExecuteSharedGroupMForPE(17, 2, 0, 0, TRUE);
+    ExecuteSharedGroupMForPE(17, 3, 0, 0, TRUE);
+    ExecuteSharedGroupMForPE(65, 2, 1, 660, TRUE);
+    ExecuteSharedGroupMForPE(65, 3, 0, 0, TRUE);
+    ExecuteSharedGroupMForPE(128, 3, 32, 980, TRUE);
     return 0;
 end;
