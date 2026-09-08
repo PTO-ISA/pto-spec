@@ -1,10 +1,10 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-CROSS-CARRIER-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"TCMP uses U8 operation semantics with distinct E3M2 RowMajor source backings","pass_condition":"same-width E3M2 sources are accepted under U8 and publish the expected packed equality bits","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/comparison.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-CROSS-CARRIER-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"TCMP uses U8 operation semantics with distinct E3M2 and E2M3 RowMajor source backings","pass_condition":"independently compatible same-width source backings are accepted under U8 and publish the expected packed equality bits","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/comparison.asl"]}
 func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 8, 2, 1, 2, TileDataType_E3M2,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 8, 2, 1, 2, TileDataType_E3M2,
+    ConfigureTile(2, 128, 8, 2, 1, 2, TileDataType_E2M3,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x80);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x01);
@@ -21,6 +21,6 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     assert ReadTilePredicateByte(destination, 0) == '00000001';
     assert _Tiles[[1]].data_type == TileDataType_E3M2;
-    assert _Tiles[[2]].data_type == TileDataType_E3M2;
+    assert _Tiles[[2]].data_type == TileDataType_E2M3;
     return 0;
 end;

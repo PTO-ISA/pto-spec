@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-CUBE-GPR-003","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001"],"kind":"execution","summary":"Decoded CUBE TCMP publishes one complete GPR predicate carrier","pass_condition":"FP32 CUBE_M32 equality writes valid predicate bits and predicate Max tail bits atomically to the selected 64-bit GPR","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/block/model/dispatch/tile-execution.asl","asl/tile/model/execution/comparison.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-CUBE-GPR-003","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"Decoded CUBE TCMP publishes one complete GPR predicate carrier from distinct 32-bit backings","pass_condition":"S32 and U32 CUBE_M32 sources compare under FP32 and write valid predicate bits and predicate Max tail bits atomically to the selected 64-bit GPR","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/block/model/dispatch/tile-execution.asl","asl/tile/model/execution/comparison.asl"]}
 pure func TCMPGPRStart() => bits(64)
 begin
     var instruction = Zeros{64} + 0x00019181;
@@ -29,10 +29,10 @@ func main() => integer
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(
-        10, 256, 1, 2, TileDataType_FP32,
+        10, 256, 1, 2, TileDataType_S32,
         TileLayout_CUBE_M32, TileLocation_Matrix);
     let right_ready = ConfigureCubeTile(
-        11, 256, 1, 2, TileDataType_FP32,
+        11, 256, 1, 2, TileDataType_U32,
         TileLayout_CUBE_M32, TileLocation_Matrix);
     assert left_ready && right_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);

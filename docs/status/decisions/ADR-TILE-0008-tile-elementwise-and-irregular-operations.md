@@ -509,9 +509,17 @@ public handler signatures or adding an ADR. The selected `BSTART.VEC`
 operation `DataType` is the semantic operation type: compare operands are
 validated and interpreted under it, `PredicateCell` basis is it, and a select
 destination is configured with it. Each source retains its actual descriptor
-and backing `DataType`; source backings remain distinct, non-four-bit, and
-same-width compatible with the operation type. No source retagging or new
+and backing `DataType`; each source backing is checked independently. Exact
+backing/operation type identity remains legal; a cross-type source/backing pair
+requires equal width and non-four-bit carriers. No source retagging or new
 alias is introduced.
+
+For issue #256, only the exact-type/source-basis/source-destination behavior
+in historical Decision 069 (`TCMP`) and historical Decision 079 (`TSEL`) is
+superseded: operation-type interpretation, PredicateCell basis, and numeric
+destination typing now follow this amendment. Those historical decisions are
+not otherwise superseded; their remaining encoding, geometry, ordering, fault,
+and publication rules remain accepted.
 
 `TCMP` validates payload encodings under the operation type and derives CUBE
 GPR field geometry and U8 Low/High selection from it. `TSEL` is a raw carrier:

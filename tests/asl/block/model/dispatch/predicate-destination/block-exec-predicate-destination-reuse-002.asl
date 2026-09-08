@@ -23,9 +23,12 @@ begin
     _BundleTileBindings[[0]].destination_reused_by_generation = TRUE;
     _BundleTileBindings[[0]].destination_assemble.valid = TRUE;
     let predicate_count = AllocatedTileCountForPredicateReuse();
-    let predicate_resolved = ResolveBundlePredicateDestination();
+    let predicate_resolved = ResolveBundlePredicateDestination(TileDataType_FP32);
     assert predicate_resolved && _LastFault == Fault_None;
     assert _BundleTileBindings[[0]].destination == 0;
+    assert AllocatedTileCountForPredicateReuse() == predicate_count;
+    let wrong_basis = ResolveBundlePredicateDestination(TileDataType_U8);
+    assert !wrong_basis && _LastFault == Fault_TileLegality;
     assert AllocatedTileCountForPredicateReuse() == predicate_count;
 
     ResetProfileState();
@@ -39,6 +42,8 @@ begin
         11, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M32, TileLocation_Matrix);
     assert select_destination && source_true && source_false;
+    _BundleOperation.data_type_valid = TRUE;
+    _BundleOperation.data_type = Zeros{5} + 1;
     SetBundleTileBinding(
         0, TRUE, 0, 1, '0001', TRUE, TRUE, 10, 11, TRUE);
     _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
@@ -48,6 +53,10 @@ begin
     let select_resolved = ResolveBundleCUBESelectDestination(22);
     assert select_resolved && _LastFault == Fault_None;
     assert _BundleTileBindings[[0]].destination == 0;
+    assert AllocatedTileCountForPredicateReuse() == select_count;
+    _Tiles[[0]].data_type = TileDataType_U8;
+    let reused_wrong_type = ResolveBundleCUBESelectDestination(22);
+    assert !reused_wrong_type && _LastFault == Fault_TileLegality;
     assert AllocatedTileCountForPredicateReuse() == select_count;
     return 0;
 end;

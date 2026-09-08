@@ -186,9 +186,9 @@ end;
 ## Legality
 
 - TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
-- Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, source backings remain independently width-compatible with the operation type, and selected bits are copied raw.
-- CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis equals the operation DataType, while valid shape/layout and physical geometry match the numeric sources. Source backings remain distinct, non-four-bit, same-width compatible; B.IOR is absent.
-- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; source backings remain independently width-compatible, U8 consumes two mask GPRs and other accepted types consume one.
+- Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.
+- CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis equals the operation DataType, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
 ## State effects
@@ -215,4 +215,4 @@ end;
 
 ## Examples
 
-- BSTART.VEC TSEL, E3M2; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.VEC TSEL, U8; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP

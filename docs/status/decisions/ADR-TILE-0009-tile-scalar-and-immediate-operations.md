@@ -138,8 +138,16 @@ operation-type interpretation of `TCMPS` and `TSELS` under this existing ADR.
 The selected `BSTART.VEC` operation `DataType` governs scalar normalization,
 comparison, mask interpretation, `PredicateCell` basis, CUBE GPR geometry,
 and destination `DataType`. A source keeps its actual descriptor and backing
-`DataType`, which remains distinct, non-four-bit, and same-width compatible;
-no retagging or new alias is introduced.
+`DataType`, which is checked independently. Exact backing/operation type
+identity remains legal; a cross-type source/backing pair requires equal width
+and a non-four-bit carrier. No retagging or new alias is introduced.
+
+For issue #256, only the exact-type/source-basis/source-destination behavior
+in historical Decision 094 (`TCMPS`) and historical Decision 095 (`TSELS`) is
+superseded: operation-type scalar interpretation, PredicateCell basis, CUBE
+GPR geometry, and numeric destination typing now follow this amendment. Those
+historical decisions are not otherwise superseded; their remaining encoding,
+geometry, ordering, fault, and publication rules remain accepted.
 
 `TCMPS` validates the source and scalar under the operation type and derives
 CUBE GPR field geometry and U8 Low/High selection from it. `TSELS` copies the
