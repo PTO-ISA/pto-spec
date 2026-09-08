@@ -257,15 +257,18 @@ begin
         return;
     end;
 
-    // The fixed storage size is a bounded-reference-model parameter.  A
-    // portable MSET has no corresponding architectural length ceiling.
-    if UInt(length) > PTO_MODEL_MEMORY_BYTES then
+    // The reference profile is additionally bounded by its fixed in-ASL byte
+    // array.  A hosted runtime profile owns a sparse address space and applies
+    // only the explicit MSET transfer ceiling.
+    if UInt(length) > PTO_MODEL_MSET_MAX_BYTES ||
+       (!PTO_MODEL_HOST_MEMORY &&
+        UInt(length) > PTO_MODEL_MEMORY_BYTES) then
         SetFault(Fault_DataPage, destination);
         return;
     end;
 
     let byte_count = UInt(length)
-        as integer {0..PTO_MODEL_MEMORY_BYTES};
+        as integer {0..PTO_MODEL_MSET_MAX_BYTES};
     if byte_count != 0 then
         let access_size = byte_count as integer {1..262144};
         let write_probe = ProbeDataAccess(destination, access_size, 1, TRUE);
@@ -275,7 +278,7 @@ begin
             StoreTranslatedFillModelBounded(
                 destination,
                 write_probe.translated_address,
-                byte_count as integer {1..PTO_MODEL_MEMORY_BYTES},
+                byte_count as integer {1..PTO_MODEL_MSET_MAX_BYTES},
                 value[7:0]);
         end;
     end;

@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/commit/validation.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-COMMIT-VALIDATION","surface":"block","classification":["model","commit","validation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-COMMIT-VALIDATION","surface":"block","classification":["model","commit","validation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DECODE","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
 func CompleteBundleAtWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet, continuation: Word) => boolean
 begin
@@ -59,6 +59,32 @@ func CompleteBundleAt(continuation: Word) => boolean
 begin
     return CompleteBundleAtWithAcceptedApplicabilityRules(
         NumericApplicabilityRules_None, continuation);
+end;
+
+// A TRACE hint selects the active direct block boundary. The Linx runtime
+// compatibility profile completes that block at the following PC without
+// opening a replacement bundle; the portable profile keeps the ordinary
+// TRACE boundary lifecycle owned by the dispatch command handler.
+readonly func LinxTraceBoundaryHintApplies(
+    hint_trace: boolean, instruction: bits(64),
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
+begin
+    return hint_trace &&
+           CommandDecodedBool(instruction, form, CommandField_B_E) &&
+           _BundleActive &&
+           PTOModelLinxTraceBoundaryCompatibilityEnabled();
+end;
+
+func ExecuteLinxTraceBoundaryHint(
+    instruction: bits(64),
+    length_bits: integer {16,32,48,64}) => CommandExecutionStatus
+begin
+    if !CompleteBundleAt(
+        ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8))) then
+        return CommandExecution_Rejected;
+    end;
+    _LastBundleHintPayload = instruction;
+    return CommandExecution_Executed;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

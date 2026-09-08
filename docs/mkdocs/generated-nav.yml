@@ -64,6 +64,7 @@ nav:
           - Applicability: arch/profile/applicability.md
           - E8m0 Conversion: arch/profile/e8m0-conversion.md
           - Extension First Use: arch/profile/extension-first-use.md
+          - Linx Runtime Compat: arch/profile/linx-runtime-compat.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Conversion: arch/profile/reference-conversion.md

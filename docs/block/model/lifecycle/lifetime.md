@@ -39,8 +39,17 @@ begin
     end;
 end;
 
-constant PTO_FRAME_SP_INDEX = 1;
+// The stack-pointer ABI is profile-owned state, while save/restore semantics
+// remain entirely ASL-defined and shared by every frame instruction.
 constant PTO_FRAME_RA_INDEX = 10;
+
+// The frame stack register is an explicit model-profile choice.  Keep the
+// accessor in ASL (rather than baking an ABI index into the host runner) so
+// FENTRY/FEXIT/FRET all consume the same architectural state definition.
+readonly func PTOFrameStackPointerIndex() => GPRIndex
+begin
+    return PTO_MODEL_FRAME_SP_INDEX as GPRIndex;
+end;
 
 pure func FrameRegisterEndpointLegal(selector: Reg5Selector) => boolean
 begin
@@ -104,7 +113,7 @@ begin
     end;
 
     let count = FrameRegisterRangeCount(begin_reg, end_reg);
-    let current_sp = ReadGPR(PTO_FRAME_SP_INDEX);
+    let current_sp = ReadGPR(PTOFrameStackPointerIndex());
     _FrameTemplate.active = TRUE;
     _FrameTemplate.kind = kind;
     _FrameTemplate.instruction_pc = ReadTPC();
@@ -151,10 +160,10 @@ func AdjustFrameStackPointer()
 begin
     if _FrameTemplate.kind == FrameTemplate_Entry then
         WriteGPR(
-            PTO_FRAME_SP_INDEX,
+            PTOFrameStackPointerIndex(),
             _FrameTemplate.caller_sp - _FrameTemplate.frame_size);
     else
-        WriteGPR(PTO_FRAME_SP_INDEX, _FrameTemplate.caller_sp);
+        WriteGPR(PTOFrameStackPointerIndex(), _FrameTemplate.caller_sp);
     end;
     _FrameTemplate.stack_adjusted = TRUE;
 end;
