@@ -14,8 +14,8 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    PrepareRollbackShared(10, Zeros{6} + 62, 64, 1);
-    PrepareRollbackShared(11, Zeros{6} + 63, 1, 16);
+    PrepareRollbackShared(10, Zeros{6} + 62, 16, 1);
+    PrepareRollbackShared(11, Zeros{6} + 63, 16, 1);
     let left_before = SharedTileRecord((Zeros{6} + 62) as SharedTileID);
     let right_before = SharedTileRecord((Zeros{6} + 63) as SharedTileID);
     let capacity_before = CoreTileCapacityInUse();

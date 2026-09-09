@@ -9,6 +9,9 @@
 // be accepted only by Matrix-MX input roles; ordinary Matrix MUST not gain it.
 // Each Local scale MUST use CUBE_M32 and each Shared scale MUST remain an
 // independently bound ordinary Tile with the corresponding primary location.
+// For Shared Matrix-MX, A scale valid shape is [M,G_A] or [G_A,M] and B
+// scale valid shape is [N,G_B] or [G_B,N] for transpose control zero or one;
+// each shape is exact while physical columns MAY use legal capacity padding.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-001
 
 pure func TileMXInputTypeSupported(data_type: TileDataType) => boolean

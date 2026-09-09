@@ -20,19 +20,28 @@
   ],
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+    "PTO-B-SUBVIEW-SHARED-PER-PE-001",
     "PTO-CUBE-CSCALE-001",
+    "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
     "PTO-CUBE-HIF4-SCALE-001",
     "PTO-CUBE-MATRIX-SCALE-001",
     "PTO-CUBE-MATRIX-SCALE-CELL-001",
-    "PTO-CUBE-SHARED-TRANSPOSE-001"
+    "PTO-CUBE-SHARED-TRANSPOSE-001",
+    "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
     "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
     "PTO-BLOCK-B-FPATR",
+    "PTO-BLOCK-BSTART-TMATMULMX",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
     "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
     "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
     "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
     "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
     "PTO-BLOCK-MODEL-STATE-TYPES",
     "PTO-TILE-MODEL-EXECUTION-CUBE",
@@ -41,7 +50,8 @@
     "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
     "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
     "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
-    "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -66,6 +76,37 @@
         "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
         "PTO-TILE-MODEL-EXECUTION-CUBE",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS"
+      ]
+    },
+    {
+      "date": "2026-09-08",
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/255",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+        "PTO-BSTART-TMATMULMX-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-BSTART-TMATMULMX",
+        "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+        "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-TILE-MODEL-EXECUTION-CUBE",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
       ]
     }
   ]
@@ -172,3 +213,34 @@ FP32 ACC 形式的 CScaleEn。CScale 是最后一个 Local 源，作用于后续
 publication remain unchanged except where this ADR explicitly states otherwise.
 
 **中文。** 除明确说明外，普通矩阵/GEMV 类型集、group-M 行为与原子发布保持不变。
+
+## 2026-09-08 amendment: Issue #255 Shared scale physical schema
+
+This amendment is evaluated from baseline `dea0b75e803cffa873982c90f9aa0cd17c6d243b`.
+The existing scale carriers, groups, and numerical interpretation remain
+unchanged. For a logical Shared-A scale `[M,G_A]`, TransA control zero stores
+physical `[M,G_A]` and control one stores `[G_A,M]`. For a logical Shared-B
+scale `[G_B,N]`, TransB control zero stores physical `[N,G_B]` and control one
+stores `[G_B,N]`. Each source has the exact physical valid shape and may use a
+legal padded major pitch. The corresponding primary and scale are mapped
+independently by the same side control.
+
+Existing CELL subview geometry is preserved. Matrix schema validation derives
+view metadata before payload access and validates every participating PE under
+the current cooperative mask `1111`; any descriptor, dtype, shape, pitch,
+capacity, or view mismatch raises `Fault_TileLegality` before allocation or
+effects. Parent-level `whole_parent_ready && published` remains the readiness
+gate. No change is made to Local scale CELL layout, HiF4 words, CScale, MX
+group/carrier rules, or ADR-CUBE-0015.
+
+中文：本修订基于 `dea0b75e803cffa873982c90f9aa0cd17c6d243b`。既有 scale carrier、分组和
+数值解释保持不变。逻辑 Shared-A scale `[M,G_A]` 在 TransA=0 时物理存储为
+`[M,G_A]`、TransA=1 时为 `[G_A,M]`；逻辑 Shared-B scale `[G_B,N]` 在 TransB=0
+时为 `[N,G_B]`、TransB=1 时为 `[G_B,N]`。每个来源具有精确 physical valid
+shape，并允许合法 padded major pitch；primary 与 scale 按同侧控制独立映射。
+
+既有 CELL subview 几何保持不变。矩阵 schema 在 payload 访问前派生 view metadata，
+并在当前协作 mask `1111` 下校验所有参与 PE；descriptor、dtype、shape、pitch、
+capacity 或 view 任一不符，都在 allocation/effects 前以 `Fault_TileLegality` 拒绝。
+parent-level `whole_parent_ready && published` 仍是就绪门槛。Local scale CELL、
+HiF4 scale word、CScale、MX 分组/carrier 规则及 ADR-CUBE-0015 均不变。

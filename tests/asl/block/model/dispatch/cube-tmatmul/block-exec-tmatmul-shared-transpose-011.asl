@@ -24,9 +24,9 @@ begin
     else
         WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 5);
         WriteTileElement(index, 0, 1,
-            Zeros{PTO_XLEN} + (if transpose then 7 else 6));
-        WriteTileElement(index, 1, 0,
             Zeros{PTO_XLEN} + (if transpose then 6 else 7));
+        WriteTileElement(index, 1, 0,
+            Zeros{PTO_XLEN} + (if transpose then 7 else 6));
         WriteTileElement(index, 1, 1, Zeros{PTO_XLEN} + 8);
     end;
     InstallSharedTile(shared_tile_id as SharedTileID, _Tiles[[index]], '1111');

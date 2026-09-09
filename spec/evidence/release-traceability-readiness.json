@@ -1369,11 +1369,16 @@
         "asl/block/model/operands/shared-generation.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0007",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0015",
         "ADR-GOV-0009"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-033",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-PREFLIGHT-032",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-SINGLE-ROW-037"
       ]
     },
     {
@@ -2410,7 +2415,8 @@
         "ADR-TILE-0005"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-TMATMUL-ACC-EXEC-001"
+        "PTO-AVS-BLOCK-TMATMUL-ACC-EXEC-001",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036"
       ]
     },
     {
@@ -2432,7 +2438,8 @@
         "ADR-TILE-0005"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001"
+        "PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036"
       ]
     },
     {
@@ -2456,6 +2463,7 @@
       "tests": [
         "PTO-AVS-BLOCK-TMATMUL-DEFAULT-001",
         "PTO-AVS-BLOCK-TMATMUL-EXEC-001",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMUL-TYPES-001"
       ]
     },
@@ -2473,6 +2481,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -2480,6 +2489,7 @@
         "ADR-TILE-0005"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMULMX-ACC-EXEC-001"
       ]
     },
@@ -2496,6 +2506,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -2503,6 +2514,7 @@
         "ADR-TILE-0005"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMULMX-BIAS-EXEC-001"
       ]
     },
@@ -2519,6 +2531,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -2526,6 +2539,7 @@
         "ADR-TILE-0005"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMULMX-EXEC-001"
       ]
     },
@@ -3065,8 +3079,10 @@
         "asl/block/model/dispatch/cube-tmatmul.asl"
       ],
       "readiness_subjects": [
+        "ADR-CUBE-0007",
         "ADR-CUBE-0010",
-        "ADR-CUBE-0011"
+        "ADR-CUBE-0011",
+        "ADR-CUBE-0012"
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-STATIC-001",
@@ -3075,7 +3091,8 @@
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-SHARED-029",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-STRUCTURAL-028",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-MASK-015",
-        "PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021"
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-030"
       ]
     },
     {
@@ -3148,6 +3165,8 @@
         "ADR-CUBE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-TMATMUL-HIF4-FAULT-002",
         "PTO-AVS-BLOCK-TMATMULMX-BIAS-EXEC-001",
@@ -3186,16 +3205,25 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-FPATR-TRANSPOSE-011",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-TGEMV-SHARED-001",
         "PTO-AVS-BLOCK-TMATMUL-CUBE-MASK-010",
         "PTO-AVS-BLOCK-TMATMUL-LOCAL-TRANSPOSE-013",
         "PTO-AVS-BLOCK-TMATMUL-MASK-001",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-B-PHYSICAL-SHAPE-031",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-LAYOUT-014",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READONLY-018",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ROLLBACK-019",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-033",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-PREFLIGHT-032",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-SINGLE-ROW-037",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-011",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-030",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ZERO-016"
       ]
@@ -17942,7 +17970,7 @@
     "asl/block/attributes/B.CATR.asl": "dadac9c8a269fbd616524ddebb5597cb4d7493f67205cde42314d101e55d8a72",
     "asl/block/attributes/B.DATR.asl": "a3c5d1ef07edf9552ef18b4ddf41bce0c2a0ca08340819fa79ad472357946add",
     "asl/block/attributes/B.DIM.asl": "be7b6d35546379394673d5c6ab3acbf4b357f7d26c12e8e0e68a448674c85800",
-    "asl/block/attributes/B.FPATR.asl": "fef92a91e79bc0d4e5927c9b8267f479e2ccf298fcd25651bd9d8a8e8390b2b9",
+    "asl/block/attributes/B.FPATR.asl": "58ec651374f3aa0fe2b90960b3d7dd7080283549a31c6012b45276f5e19c7460",
     "asl/block/attributes/C.B.DIMI.asl": "e1c951c4e7f90f6fb1f7f23959decaac35a40ad39ad397342914672ebb16cd2f",
     "asl/block/encoding/C.BSTART.FP.asl": "a8c99fdf61be0addbcd7ee8d9bc51ce5957632ca91a963b48d97de68956ff7c3",
     "asl/block/encoding/C.BSTART.STD.asl": "21814c16dcc571941e75971b177bd85309a4f233f71b29e36be3e4899fca6d4c",
@@ -17988,12 +18016,12 @@
     "asl/block/execution/BSTART.TGEMVMX.asl": "2c64ef06decd63e1329d73819273079d6612b0f1077823d9e19daf373338a36c",
     "asl/block/execution/BSTART.TIMG2COL.asl": "604593ffb1f98092c5984ea80f168d1edc207f38085c5ba7ad92ce5752aaa532",
     "asl/block/execution/BSTART.TLOAD.asl": "010608593e81d20903837f51a8701f2e4555246b66a4adfe97fc3c850d7e2774",
-    "asl/block/execution/BSTART.TMATMUL.ACC.asl": "c8d19bbfb6f083ff6132574c5d16a211be34fa3040184b7c45264a4437ab844d",
-    "asl/block/execution/BSTART.TMATMUL.BIAS.asl": "e613a8c9bdd87c7c2d26563166acd63b8d349969ecea8b423f710601d4f01c50",
-    "asl/block/execution/BSTART.TMATMUL.asl": "e1ff4ca09b65e6b65b4e69ab211f590a2f0528d74092e626a603b834b0e03697",
-    "asl/block/execution/BSTART.TMATMULMX.ACC.asl": "890f7f9195dc12f4f684fc146f8c46941fc850a178c661678c399215b81965d7",
-    "asl/block/execution/BSTART.TMATMULMX.BIAS.asl": "078e95a9b188f4cb98d3020e07fac7fe486df3088bbbbe7e3057293c5112c4ed",
-    "asl/block/execution/BSTART.TMATMULMX.asl": "353f91a735459043b366d483e140dcbbd56998b60af6087e96981a8f0e97e31f",
+    "asl/block/execution/BSTART.TMATMUL.ACC.asl": "4c0ae6d34038a0d627e89def8b9bad7ecea02e2d56643b01e01240d06ef50a9a",
+    "asl/block/execution/BSTART.TMATMUL.BIAS.asl": "ecf98b8a300179c35118819c45a7425fcdfff9cf06b5a316ee8fe650494397ac",
+    "asl/block/execution/BSTART.TMATMUL.asl": "14fea064ae376c35af1a8c84311316f1a5bd40f43ac6dbcd38239d96da486124",
+    "asl/block/execution/BSTART.TMATMULMX.ACC.asl": "0a83df23e09003fe6157ac56974ff9306169a30b35f2e5cfb2bfac73c3c7a595",
+    "asl/block/execution/BSTART.TMATMULMX.BIAS.asl": "663d930a27484808c04e9426236dda7c2b5fd016437292c65516ac8e4faf4497",
+    "asl/block/execution/BSTART.TMATMULMX.asl": "9a4a57e277b2e12db17ebede5d88debf77aee52195c7dbd1f0a9abe8f43a9626",
     "asl/block/execution/BSTART.TMOV.asl": "aae2f1fe95c3294d91ad82416118d9a129a16ccf69d68970eca66b064cff1ceb",
     "asl/block/execution/BSTART.TPREFETCH.asl": "c8c57ca48a101a23ed51a8c22d9b126690814b0f95096c4aa5519bb1439f74a9",
     "asl/block/execution/BSTART.TSTORE.asl": "9fc0e2f03e0933d547cc5a9e8bac3762eb6a17f3465d7b2797cb3b7b9a6024bb",
@@ -18033,7 +18061,7 @@
     "asl/block/model/dispatch/predicate-destination.asl": "59d86f2f69f7e85993c21e03d99f9dbc696ae7d652a0912eb0b853c80a1692a9",
     "asl/block/model/dispatch/reduction-schema.asl": "b6641ea1899a45c2afc612befe15e01268bba38d3e8065d7a8825cd8cfc41957",
     "asl/block/model/dispatch/scalar-schema.asl": "56085c623398d18ab1c36b21567679d530d20f57fba9d75161aa85d6aa749645",
-    "asl/block/model/dispatch/shared-cube-matrix.asl": "f295fd84f83a482fa8f5a659cb74cd4919fb6b85d8d5b7d8a173756ac6e48ec7",
+    "asl/block/model/dispatch/shared-cube-matrix.asl": "0a07c1d0a294d85b0404c455c530ce41503dfd502445212927bdf598e85c0824",
     "asl/block/model/dispatch/shared-tlsu.asl": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf",
     "asl/block/model/dispatch/start.asl": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9",
     "asl/block/model/dispatch/tcvt-destination.asl": "f235ce4c705079d980a130437813c66d36c7d327ede0cc80535ad5fdf59783d6",
@@ -18065,7 +18093,7 @@
     "asl/block/model/operands/range-modifiers.asl": "04e3867552330753766ec53d2e75eecb0e9c56fc9a41973877a8083cfbdc554d",
     "asl/block/model/operands/scalar-bindings.asl": "a5b468e7912a7a5513eabbad1024ae41e5a7b553e59fae1d02ed1f9cc5a08c7a",
     "asl/block/model/operands/shared-bindings.asl": "e8b086dc35c630bc7c53ffde8b01b1445849af4a07cf805ed1f448f22f330559",
-    "asl/block/model/operands/shared-generation.asl": "154820d5db9a976e65294d73bc26fccbfd4447a7d3658ac920795ba543541740",
+    "asl/block/model/operands/shared-generation.asl": "c165a54c20db18018cdefdd54680f42c03f3371791fba1daf058cf1a559daf5d",
     "asl/block/model/operands/subview-descriptor.asl": "b6d819af792c77d577ebd358376ef569231a3bd4ca418bd017bc76a1f260b83f",
     "asl/block/model/operands/tile-bindings.asl": "bb24c7bdb5f697bb7753d42630446b4ca045583646c56d15e6748d895025abf5",
     "asl/block/model/operands/timg2col-parameters.asl": "cc2d3bd4c59aa87dc618b5eef32ec8606ee886d0be3eec5d0090903a9e605ea2",
@@ -18604,12 +18632,12 @@
     "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl": "732a3b48e649046d3ab760fa0e4797ca4518e2656992cee6109f6ed919f8643b",
     "asl/tile/layout-and-rearrangement/layout/TSHUF.asl": "43742d4b1ad5928cc6498c404c58c87e4dd7ee5aeea9360a850b86443aee6a90",
     "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl": "7187a0b4345473b760951a959ce4130b5d312130de173d6676d512a41afc64f9",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl": "c7e24ed14efa3de41ace3eda19d430c067c1b765277ff6978c1be32f05dd4348",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl": "d7d458c9dd0146bdd4776c1a0314e01b8c0e4a4cf88b2a127dc38d1775157c98",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl": "6f7df7ed0e662a7750e239ff64ca4c18919824c159144ec3d0c7e9b26c3859f1",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl": "f848f8bc31e4571c8e5683bc4ace463a53dc7c8f46625f0d31b7270e87ff6dc8",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl": "f09a4d47e02362fddc71adcc09a321aafbcf57e3890ddd81eed4fd6e8cc265df",
-    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl": "e49c66ad530d1975e1c10d9bb12332aef40446f7c5011ff1e3e0b06ec470df15",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl": "651778bb1ef5a69d5c0a1e87f38741cd78136230757ae36e6a1c2b95a24b0606",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl": "ed6cd6194ff5aa3b290a1246df624bfe27d8dee59afdb2820e139050747bcf05",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl": "b60bc67e0d61411c014326046bec9d8efbbace98e381555b12663e4701dce6ab",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl": "c5d0dbe7ad5b5a98381b76c381655faad346992f7a36bc55639d78559e63021e",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl": "c6d97d0e3e306206e3f79c349a8ba886dbca7390eec5c7d9b70bdc2d42a3b0c5",
+    "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl": "11c0147c2278d2402461c139a000a5ef21698113241c74c3a604487a59ccf252",
     "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl": "26fc21b0d23aad11a26f4f15046a41a5bd0809375a1c70ad05f4cf7e9e1642c9",
     "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl": "f2d584fd00153499faab3bb900611c21f9bf199bf333eb7e505f4da31cade2f6",
     "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl": "9da23de100709217cd467dac4e3077d5eddd61148aa39fd1a1c554f1018b42cc",
@@ -18677,7 +18705,7 @@
     "asl/tile/model/legality/indexed-rearrangement.asl": "63ebfe99202fd4ab8a72d3bc289c3ef0ef7e2f06b982c82be3dc24d6bb53b83e",
     "asl/tile/model/legality/layout-rearrangement.asl": "648130bdb4c98446cdfb9ecf36bc4ebb11a4430d7bf639c197f72551edbcc5a6",
     "asl/tile/model/legality/matrix-cube-primary.asl": "a74cec09ffd03e8a4e9f0eebcfdaef70400984ef2de10df6bbfccdd87644f138",
-    "asl/tile/model/legality/matrix-functions.asl": "2033750845ed44cc9b38e395c62399c66b1c4bd5ab8ba1b97153beafd992ef53",
+    "asl/tile/model/legality/matrix-functions.asl": "f8e90faedd642b11efc9ae3885d5f39fc886c30a5cd81f40bc56e40307e3312d",
     "asl/tile/model/legality/matrix-info-descriptor.asl": "09b45317b8a49ea7fe229463a18ac82deddf2bb3fe1a085bf6d3fc5150af65ff",
     "asl/tile/model/legality/matrix-operands.asl": "146adbf68a1a5d08588cb7534720641ea89007896f1e5122e7b716c952c65abe",
     "asl/tile/model/legality/matrix-postprocess.asl": "67a3e10ff840fe720de99090384cd5da1c7e2a1d8cdbc5ea2a1b6ff07bbee9ee",
@@ -18876,12 +18904,12 @@
     "docs/block/execution/BSTART.TGEMVMX.md": "b929ad7a547ffbe6c06f2e2d38937662dc665fe73c6fb2bd3623f6bd1bfa6f96",
     "docs/block/execution/BSTART.TIMG2COL.md": "839348782e3647b0fb40f5d1caf1be106642bc33da1c80483e27f92e5f5e332a",
     "docs/block/execution/BSTART.TLOAD.md": "663346d5d88755e63d80d3a6b6cf3df41716b8edfc02c952ab1d5ca59fc7a14d",
-    "docs/block/execution/BSTART.TMATMUL.ACC.md": "26dfe8c21920f4be85db7ec0ca1f8a768daa42d263e3f21dae690a3efb78c244",
-    "docs/block/execution/BSTART.TMATMUL.BIAS.md": "a8bb45e0cf7f9f5185d47df826666677fb3cce61b4828d3f4549f46864417043",
-    "docs/block/execution/BSTART.TMATMUL.md": "92f9338dd3928b3a3cf94e3a995d1c44b7bcd6e465b7ca120b9c30c2934065f2",
-    "docs/block/execution/BSTART.TMATMULMX.ACC.md": "78ca269015c18902593cd8c62d02b20067c67589d4e09feafdb95153cdbd464f",
-    "docs/block/execution/BSTART.TMATMULMX.BIAS.md": "2ebe8c48d56eaf2a2d5eae35b135c77251b1746a4610c29e00ca11b0b87e0815",
-    "docs/block/execution/BSTART.TMATMULMX.md": "685cfd3ec2239c56d0dd411dabf32f9fc2e20cdcf59724ef6a1dc913bc14ddab",
+    "docs/block/execution/BSTART.TMATMUL.ACC.md": "b840f30e8a4cdc929dbd0dc6cf56e31698b6c2dc703497d30ff1a948647f9310",
+    "docs/block/execution/BSTART.TMATMUL.BIAS.md": "a373f28409e99aabccd504dbe7c755c1b2f35cfa427c2d52f803c6b4e1670aa3",
+    "docs/block/execution/BSTART.TMATMUL.md": "fa309b11a4b322e3e077de521f63fc981f642d13fd6489d24f7508d64e27926d",
+    "docs/block/execution/BSTART.TMATMULMX.ACC.md": "61f0184ae5b31018ecf465e77dac4e0a9f0dd9859d5ad34fc0b53cf665e4aec9",
+    "docs/block/execution/BSTART.TMATMULMX.BIAS.md": "ed90335d222ee349e4fd948a125d95256e25f1630569a160b57e2da1c3c23008",
+    "docs/block/execution/BSTART.TMATMULMX.md": "0c6050b18773bf310f07ef45d98e80bed375b6e024d8c5754734d41340de233a",
     "docs/block/execution/BSTART.TMOV.md": "27a00e2fc5f9fb4c14c96898fbba9d5c24b073b55dd1f9a3df8117ebfb826f4d",
     "docs/block/execution/BSTART.TPREFETCH.md": "7a97f4b6682d401153c3a24f14a0c5c7e56c96703fed2d346172fd616a67ad54",
     "docs/block/execution/BSTART.TSTORE.md": "1dc9f163db115d896304016db17adb0d6ccea6f080de62ecfac4753467cc08c9",
@@ -18921,7 +18949,7 @@
     "docs/block/model/dispatch/predicate-destination.md": "6bb0915d5bec7333ad82cf848b5996009ccceda2ec9f4da5c785bf469e3b654e",
     "docs/block/model/dispatch/reduction-schema.md": "880ff2c9fb5ddf3db95956d05c6da3f4f52852d2643e36e60592430f979745d0",
     "docs/block/model/dispatch/scalar-schema.md": "de1b9c046954e76445eca4e3c548afc874f489b2adbec4dcd62fdadc4c776946",
-    "docs/block/model/dispatch/shared-cube-matrix.md": "fede7ca740906f80cbfa6368af7af31e82040283968310ba79a9ec647330ef0b",
+    "docs/block/model/dispatch/shared-cube-matrix.md": "1075b2b1fee0eead7adaba1894774c0b173a116dc8ae943f9a5c12c7b4a58d09",
     "docs/block/model/dispatch/shared-tlsu.md": "57bf4fe5f7727b449c45b6ba9eb1bcf38036c52eea7011e8786f5d389947366d",
     "docs/block/model/dispatch/start.md": "1e117eaf3e954b6937d7426979e8072d22b2cd0160c6a8ad34fa558e98ad8504",
     "docs/block/model/dispatch/tcvt-destination.md": "2f00d47f6ef245910eb514f451d2153ecc8928fd15a2299104bb45253cf4e88c",
@@ -18953,7 +18981,7 @@
     "docs/block/model/operands/range-modifiers.md": "bd358320abf68407ce69db57161d5fadb020e72616fbfdcd1746635a2f44779a",
     "docs/block/model/operands/scalar-bindings.md": "452cfc149578ccd0fb97de9afcc726d4de0884d23a7585d92a032361716cb590",
     "docs/block/model/operands/shared-bindings.md": "33658cb694efa1166b016a68ecac4ed6193a4541f8bad14ba4c362026eb616aa",
-    "docs/block/model/operands/shared-generation.md": "0bc7af88bf76aaddf60ad00c2249fb34002da6fcbf4714774b2ff8c51461cd96",
+    "docs/block/model/operands/shared-generation.md": "03e297e3ffee83c1b39b9d50ce098142f63efe58e372d1db86e66851d92235c2",
     "docs/block/model/operands/subview-descriptor.md": "b6cff973ece3b4c22e5ffc3cbfe744698b4decbd714871cd80493b8cc82ea2bf",
     "docs/block/model/operands/tile-bindings.md": "52387e50f9a4197e9f80eeaec4c1aedee7e884ce44d6f4a43cb44308cfc25ec4",
     "docs/block/model/operands/timg2col-parameters.md": "35bbefcf34db2c4ca1370d62fcf1abbacf4c62bb2814bbedebf91cdfe7c7b0ba",
@@ -19492,12 +19520,12 @@
     "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md": "7a0f646fdbbf4a67b40097e733050d1d0d85e187e93f98ac6d09870204c73a31",
     "docs/tile/layout-and-rearrangement/layout/TSHUF.md": "65b8360bcc35b692142dc17a5f5320aed09a1656340efed0f0634970e3fcbf98",
     "docs/tile/layout-and-rearrangement/layout/TUNPACK.md": "5327175d8538a93f08b18189e4d347ec8b8a81e7ba197a8c6cb907c850b0ecd2",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md": "b8ddfa4e16ac7eda6c8d55fc534a3a615fd89c540ca9430ca6bd4e70a1d82482",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md": "548a55d288af8b3e6fc588ec31881ed6253f31c8bdeba510e0b0953f106c78f4",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md": "9fc662e2c44e399fe1cafb4c2689191526bc8ca4b8a2f0c963691b339c159552",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md": "88d7b7ee0a16e52a857af0d9aa190cdb147df0b32bb852964b4126582b4cae83",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md": "a7fb3d6a3d555571f7f20381fccd7ec44f90ee745d951fc1ae04dfec3a428d0c",
-    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md": "08483c3d40622e7d9d5b9d17b661976d0f2f40298237efb52401f1a5dac46590",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md": "cc026003b681e4159a75517b2079a9017fe31cfeecae341e207c6b44deb396c4",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md": "1e3e77120c26ba0687c3e61ce4cf37edc3cf0dc85ff38f31615c125ca6ec18b5",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md": "c1015036aaa443baa15e4aa7dd25d662ff376dc241c324587248ef108ceae5a6",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md": "b39aa267840577899ba37acccbce6b7d7cd63b693372edd9293fa8b45075a7fb",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md": "d5eb325e1f917322b132eba863f827b1cdf514858985f0b4c79c956daaaffa47",
+    "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md": "726a63253c4a6b4f12eed97006bbd68f4a92516f1a44a16124bf68881b9b5d24",
     "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.md": "6197794b93cef7b065eabc28f0fc13e04b4468b70087acf770ec20bb1c13ad2c",
     "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.md": "66e5370564b1aac9e40fb159182924fb2da50d63f5f397614731b13090c8410c",
     "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.md": "f13212b837ed94787ab97713924c36eea9ee37affd448ac2ba8d733bf588744d",
@@ -19565,7 +19593,7 @@
     "docs/tile/model/legality/indexed-rearrangement.md": "06d2e2649e5933910503c8fedf3a11ac3c279150606fbe9732a8ce83356b1755",
     "docs/tile/model/legality/layout-rearrangement.md": "5612bc3525c246fe39e50a3ff9008ede85597cbf0c5b7a3534d56761d4250008",
     "docs/tile/model/legality/matrix-cube-primary.md": "d2b8e571ec7a35fc5785db704d22a0482d9ba8dfcb1e3a7ee487d79a5bda6f14",
-    "docs/tile/model/legality/matrix-functions.md": "187d6974a07cff7f1f99f186c7c0b515b8bd80700cf9bed9d2cd141cc9cd6aac",
+    "docs/tile/model/legality/matrix-functions.md": "62458e3d10586c2b1a9072c885d4cc02f6b12f5a6da90c3c7e6b5f2d479df9f7",
     "docs/tile/model/legality/matrix-info-descriptor.md": "b03af86870df2e89d8285f8976c160ff74b919d6f58a117623da0a4911d01271",
     "docs/tile/model/legality/matrix-operands.md": "38b38d66e61fe83acb06eebc7039ad3f850b06ca6942afa48b44c8b12a1345f6",
     "docs/tile/model/legality/matrix-postprocess.md": "f64d9b1d82d960adb4145443898213e5555427d435fc00e15cd66ce5823c0520",
@@ -19640,8 +19668,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "756bf1e394a16b329677b41fdf9730c7d50569111e2e40f46d8c8ea2735f1835",
-    "spec/evidence/instruction-contract-closure.json": "a13ba144c2805d35b2080476b289b1c46dd02e116c0102beb8cef8c9964b9103",
+    "spec/evidence/adr-index.json": "0af350f15a5a321737b46851467a9bd0dca9c2580f79c8a2b1f4bf46fb3e382d",
+    "spec/evidence/instruction-contract-closure.json": "e51dd74bad0505aea4c8cca512792caee6f3845582a7936b70d9efcdd4a7a233",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -20175,6 +20203,7 @@
     "tests/asl/block/model/dispatch/cube-accumulator-routing/block-fault-cube-raw-partial-postprocess-003.asl": "67511ccba55147d759a6917629806d3a096d952ffc5ddfcb3b4a72e0c075d25d",
     "tests/asl/block/model/dispatch/cube-accumulator-routing/block-static-cube-accumulator-routing-contract-001.asl": "e8b210ec05877165064b66762aed72ba5fc3e8196cab69993c20dcdd0cb3efd9",
     "tests/asl/block/model/dispatch/cube-destination/block-static-cube-destination-contract-001.asl": "22441e66fded03666f57d37aade6d83299d52d97269427606a36ebd28deffcce",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-atomic-tmatmul-shared-subview-preflight-032.asl": "6fc5c3fc1a797ac6964682dc89187bc61a42085120e8c7f52bbe3a0e5b34b19e",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-bound-tmatmul-cube-dimensions-003.asl": "b6925dac4754b8b946a9ff91f1dc0272c5de436b50243a20d9c4d33a7965e29d",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-bound-tmatmul-cube-layout-002.asl": "f5ede1e65bcee06df25bd1bd28d0bf8b4cd58045ddcb52464bda550467007158",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-bound-tmatmul-inactive-shared-029.asl": "98a15edc160c0d28e47779f5a01c36f212a01257a39b1d1e25a9bf5392069ef4",
@@ -20189,12 +20218,16 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-inactive-local-027.asl": "af576d3c0e6deabce478ad9a4b67708389c4e7837a6cf31fa06d9ea299f0300b",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-noscale-001.asl": "151e56b439c52587c9ac828d13b5a7ab4cba8c7a189c52e60b2c8fead5ed6275",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-rowmax-001.asl": "fd63594f311dd28115a11a048451881a470191d1d08c49eba066802f67a8c4fa",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-both-001.asl": "fb0d4026d0dd71892aa1d06781a35db6c596bb9ab0953aa12bc879e69f734f2f",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-right-001.asl": "bb8e14d544f9cb45e086531d7c35277b7adff5acd249f073f3e0a89ff230540a",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-both-001.asl": "4fb9506f5b34308ca55999f9ef9c6faae82f97ae3cf22e6f1070d143b875225b",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-right-001.asl": "50db40ef3f448b53d0e5aba5c8e3b9652358fd46361f1a57fd60407bdd20572c",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-bstart-family-036.asl": "bd6eff071e97b8487582c0e0b7aaa5f935f3fe6c89bf6da9d28306f2bc108e72",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mask-015.asl": "8b0c783fa66657c93897b0de78cae1c0d7dea867fc2e31ee5ad0a28a24438749",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mshard-021.asl": "3b5c9f34f63f620e5fe2ffbc7e1ec83f6e7a15b969377e5e2a99588c17bb834b",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mshard-021.asl": "215e075cfe0d8e40f24ba5debc6c844b3ec7c9164f7e30ba92ec38d051630087",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-pair-001.asl": "39777a15262370e3507f5b9abf94a6bbb099eb4fd03dd5cd354d4ab76378cb02",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-transpose-011.asl": "bd3a645c49a4e3fe7685b2fbf8f018dc4b0e3b940ed274863ae909a3d0e22b59",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-subview-033.asl": "63aa1ba83637003593ba81637aa60ce587838cc9d5338a292db1236a14210db1",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-subview-single-row-037.asl": "cb36f12fb5d7d2890882ba19fc19eca44dbf1849c327d31fff3b95b2029f810e",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-transpose-011.asl": "d3a15efbaa924ad209fc822607edf9485e5d6dd1fe212e1c76441be016d4eb81",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-transpose-030.asl": "37e661a1b03fc3af61ab76eb2fbb2e546fc7bb37acb1f6fda398c427ce609283",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-zero-016.asl": "af47d1a95cafaba909d6a2f403a6dc13ecfd50108b2fc1d21d08ec53dd0ceb26",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-acc-atomic-026.asl": "b9e39b2be88eaee5ae74733c9b28dc54549bd5dfd97eac1f3df2688264486404",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-acc-capacity-001.asl": "4e63b28e6d7c115bf64f32ab6f4fd0e1712c73a4ddaf1c18dc7b497794117682",
@@ -20207,7 +20240,8 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-missing-fpatr-001.asl": "5404b91f6114c76974bd28da047a9793439bbef9b7d5d1fa8187cf931ed29787",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-mx-shared-group-001.asl": "44a4ef8058f08c22c4158207881831e78ba515040daf6fc3d8cfd10863b39256",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-ordinary-primary-004.asl": "829f58670835c6d51d30e2eb42653711635844ba76c8adebd5bc74f42f018fef",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-shared-rollback-019.asl": "979efc05a67a6d36fc547e33e7715ccad3727930b97f3d72f978c6deae3f3e3b",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-shared-b-physical-shape-031.asl": "ccb39bcfca6cadf738ff83ea2de9f176afaabc33bb06ce6d60e43daca7f3966e",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-shared-rollback-019.asl": "b2b37a2cbca48bb42d60e1d2e3663f2273f7a8c4f442d2658beed2d5f06efe3b",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-slrelu-bits-001.asl": "caaa92cd9df24e6f3643c6b86d1f1fe9943510260e5e4dd5937580fb94ec54d2",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-squant-bits-001.asl": "f6bc5ed56b11f477daefbd979992365ac993231823e5b93cdf8b001cfcfdf15a",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-unused-ior-001.asl": "3ff49c16393602df4d489590fda8d019c943531bae8d6d0d6aab6bee9b1eb7d7",
@@ -20216,7 +20250,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-cube-destination-005.asl": "501b33539a6aa610b12b3107b51779c265c3f33be6494cfc6ccdaaa5cb0ed755",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-cube-postprocess-006.asl": "aec7e6880b387bc83f58636ae7dacf2fc531962d470c1e3c509158771d1d85db",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-layout-014.asl": "81f7fb6d6b6c5e7a0f5c2b1a7bd6387f846ff91ce0dcfdf61b1bd33928e18926",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-readonly-018.asl": "928a4964b044d4f3424dc3fe3af0fb19fcb3882ec9433f6786222f7b0895c338",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-readonly-018.asl": "1152100fe23a3e401aca681d72ae0a6c1c7d47669115111230ce9704e05c8fc0",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-static-cube-tmatmul-contract-001.asl": "45dce0bd4f7e68978b491c70631580891c1bc1a65490fc7966fbb6186a80ac5f",
     "tests/asl/block/model/dispatch/decode/block-exec-decoded-start-and-stop-001.asl": "6f9220d1e9ade9730c4bf07cb984a739492bc55bef32f148d949b9a69b0275f5",
     "tests/asl/block/model/dispatch/decode/block-static-decode-contract-001.asl": "378ed1194c042a7d965504ede70407bd9c2f969d4f9db5eff21418a26f7bf8d0",
@@ -20246,7 +20280,9 @@
     "tests/asl/block/model/dispatch/scalar-schema/block-bound-scalar-schema-tgpr2t-class-001.asl": "6b7660c4c9a23467ccdfa0c5107c9845f1ece50abdfb9c16579425c987dd5099",
     "tests/asl/block/model/dispatch/scalar-schema/block-exec-timg2col-ior-stream-001.asl": "b1ccbedc3180601336b0ac8ea230be9db49eb53afdf68c1ce8a412f03a305929",
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
-    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "fc9538d3ba766ac00a59249f5626bd7419cf9983f1a52abd70e68531bbd3c00e",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-control-zero-004.asl": "3741bb20d0974650292132164aefca517444164661303dc06087ca9368f5d180",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-heterogeneous-003.asl": "5e29a4e8fabd50ba0307d5ed2cde4794ac33e5289f34ae86ce53b5cb760e0fdf",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "1b392f540516599d4ad49bcbc15140bf5715fe8f0020e7a3d976838525e35ded",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-static-shared-cube-matrix-contract-001.asl": "9a87138fcf0fe7bba46f6d3447358753f3997f7110d0b9785d0858890355faf7",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "b398421107121b5551c5e9cc77949c2ceed6275f03543a55a422925c0d6801aa",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "cdcaba84f1436e4fdae6b5d2a8bd1c455aacc499ad0ce04870f19ce2d15ce95e",
@@ -23535,7 +23571,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1066,
     "status": "closed",
-    "test_count": 3884,
+    "test_count": 3892,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -40265,6 +40301,28 @@
       "source": "asl/block/model/operands/range-modifiers.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-control-zero-004.asl",
+      "requirements": [
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
+      ],
+      "sha256": "3741bb20d0974650292132164aefca517444164661303dc06087ca9368f5d180",
+      "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-heterogeneous-003.asl",
+      "requirements": [
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
+      ],
+      "sha256": "5e29a4e8fabd50ba0307d5ed2cde4794ac33e5289f34ae86ce53b5cb760e0fdf",
+      "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl",
@@ -40272,7 +40330,7 @@
         "PTO-CUBE-MATRIX-SCALE-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "fc9538d3ba766ac00a59249f5626bd7419cf9983f1a52abd70e68531bbd3c00e",
+      "sha256": "1b392f540516599d4ad49bcbc15140bf5715fe8f0020e7a3d976838525e35ded",
       "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
     },
     {
@@ -41320,7 +41378,7 @@
       "requirements": [
         "PTO-TMATMUL-MX-CONTRACT-001"
       ],
-      "sha256": "fb0d4026d0dd71892aa1d06781a35db6c596bb9ab0953aa12bc879e69f734f2f",
+      "sha256": "4fb9506f5b34308ca55999f9ef9c6faae82f97ae3cf22e6f1070d143b875225b",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -41340,7 +41398,7 @@
       "requirements": [
         "PTO-TMATMUL-MX-CONTRACT-001"
       ],
-      "sha256": "bb8e14d544f9cb45e086531d7c35277b7adff5acd249f073f3e0a89ff230540a",
+      "sha256": "50db40ef3f448b53d0e5aba5c8e3b9652358fd46361f1a57fd60407bdd20572c",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -41374,6 +41432,32 @@
       "source": "asl/block/execution/BSTART.TMATMUL.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-B-PHYSICAL-SHAPE-031",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-fault-tmatmul-shared-b-physical-shape-031.asl",
+      "requirements": [
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
+      ],
+      "sha256": "ccb39bcfca6cadf738ff83ea2de9f176afaabc33bb06ce6d60e43daca7f3966e",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-bstart-family-036.asl",
+      "requirements": [
+        "PTO-BSTART-TMATMUL-CONTRACT-001",
+        "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
+      ],
+      "sha256": "bd6eff071e97b8487582c0e0b7aaa5f935f3fe6c89bf6da9d28306f2bc108e72",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-LAYOUT-014",
       "kind": "state-transition",
       "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-layout-014.asl",
@@ -41398,9 +41482,10 @@
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mshard-021.asl",
       "requirements": [
-        "PTO-CUBE-GROUP-M-DISTRIBUTION-001"
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "3b5c9f34f63f620e5fe2ffbc7e1ec83f6e7a15b969377e5e2a99588c17bb834b",
+      "sha256": "215e075cfe0d8e40f24ba5debc6c844b3ec7c9164f7e30ba92ec38d051630087",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -41431,7 +41516,7 @@
       "requirements": [
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "928a4964b044d4f3424dc3fe3af0fb19fcb3882ec9433f6786222f7b0895c338",
+      "sha256": "1152100fe23a3e401aca681d72ae0a6c1c7d47669115111230ce9704e05c8fc0",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -41441,7 +41526,40 @@
       "requirements": [
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "979efc05a67a6d36fc547e33e7715ccad3727930b97f3d72f978c6deae3f3e3b",
+      "sha256": "b2b37a2cbca48bb42d60e1d2e3663f2273f7a8c4f442d2658beed2d5f06efe3b",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-033",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-subview-033.asl",
+      "requirements": [
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001"
+      ],
+      "sha256": "63aa1ba83637003593ba81637aa60ce587838cc9d5338a292db1236a14210db1",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-PREFLIGHT-032",
+      "kind": "atomicity",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-atomic-tmatmul-shared-subview-preflight-032.asl",
+      "requirements": [
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001"
+      ],
+      "sha256": "6fc5c3fc1a797ac6964682dc89187bc61a42085120e8c7f52bbe3a0e5b34b19e",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-SINGLE-ROW-037",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-subview-single-row-037.asl",
+      "requirements": [
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001"
+      ],
+      "sha256": "cb36f12fb5d7d2890882ba19fc19eca44dbf1849c327d31fff3b95b2029f810e",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -41451,7 +41569,18 @@
       "requirements": [
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "bd3a645c49a4e3fe7685b2fbf8f018dc4b0e3b940ed274863ae909a3d0e22b59",
+      "sha256": "d3a15efbaa924ad209fc822607edf9485e5d6dd1fe212e1c76441be016d4eb81",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-030",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-transpose-030.asl",
+      "requirements": [
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001"
+      ],
+      "sha256": "37e661a1b03fc3af61ab76eb2fbb2e546fc7bb37acb1f6fda398c427ce609283",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -66229,6 +66358,7 @@
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -66265,6 +66395,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -66301,6 +66432,7 @@
         "ADR-CUBE-0006",
         "ADR-CUBE-0007",
         "ADR-CUBE-0009",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
@@ -67235,6 +67367,8 @@
         "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-GROUP-001",
         "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-RIGHT-001",
         "PTO-AVS-BLOCK-TMATMUL-ORDINARY-PRIMARY-004",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-B-PHYSICAL-SHAPE-031",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-LAYOUT-014",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-MASK-015",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021",
@@ -67242,7 +67376,11 @@
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READONLY-018",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ROLLBACK-019",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-033",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-PREFLIGHT-032",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-SINGLE-ROW-037",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-011",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-030",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ZERO-016",
         "PTO-AVS-BLOCK-TMATMUL-SLRELU-BITS-001",
@@ -67282,6 +67420,8 @@
         "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-GROUP-001",
         "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-RIGHT-001",
         "PTO-AVS-BLOCK-TMATMUL-ORDINARY-PRIMARY-004",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-B-PHYSICAL-SHAPE-031",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-BSTART-FAMILY-036",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-LAYOUT-014",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-MASK-015",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-MSHARD-021",
@@ -67289,7 +67429,11 @@
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-READONLY-018",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ROLLBACK-019",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-033",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-PREFLIGHT-032",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-SUBVIEW-SINGLE-ROW-037",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-011",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-030",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-ZERO-016",
         "PTO-AVS-BLOCK-TMATMUL-SLRELU-BITS-001",
@@ -67593,12 +67737,16 @@
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002"
       ],
       "source": "asl/block/model/dispatch/shared-cube-matrix.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002"
       ]
     },
@@ -68366,6 +68514,8 @@
       "readiness_subjects": [
         "ADR-BLOCK-0016",
         "ADR-BLOCK-0018",
+        "ADR-CUBE-0007",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0014",
         "ADR-CUBE-0015",
         "ADR-GOV-0009"
@@ -89062,6 +89212,7 @@
         "ADR-BLOCK-0015",
         "ADR-CUBE-0007",
         "ADR-CUBE-0010",
+        "ADR-CUBE-0012",
         "ADR-CUBE-0014",
         "ADR-GOV-0009",
         "ADR-TILE-0003",

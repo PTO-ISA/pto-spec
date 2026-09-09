@@ -72,8 +72,8 @@
         "zh-CN": "TMATMUL_ACC 带累加源的矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL_ACC is the CUBE Function 2 matrix product that adds an explicit Local MxN accumulator C and publishes a new destination D. AType, BType, M, N, and K come from the block fields and defaults; cooperative Shared inputs use Core-total group_M and fully published parent Tiles. All type, shape, readiness, alias, definedness, and allocation checks precede snapshots, so C and the matrix sources remain unchanged and D appears atomically.",
-        "zh-CN": "TMATMUL_ACC 是 CUBE Function 2，对矩阵乘积加入显式 Local M×N 累加源 C，并发布新目标 D。AType、BType、M、N、K 来自 block 字段及其默认值；协作式 Shared 输入使用 Core-total group_M 和已完整发布的 parent Tile。类型、形状、就绪性、别名、定义性和分配检查均先于快照，因此 C 与矩阵源保持不变，D 一次性可见。"
+        "en": "TMATMUL_ACC is the CUBE Function 2 matrix product that adds an explicit Local MxN accumulator C and publishes a new destination D. Cooperative Shared A [M,K] uses physical valid [M,K] or [K,M], and Shared B [K,N] uses [N,K] or [K,N] for transpose control zero or one; legal padded physical columns are allowed. All type, shape, readiness, alias, definedness, and allocation checks precede snapshots, so C and the matrix sources remain unchanged and D appears atomically.",
+        "zh-CN": "TMATMUL_ACC 是 CUBE Function 2，对矩阵乘积加入显式 Local M×N 累加源 C，并发布新目标 D。协作式 Shared A [M,K] 在转置控制 0/1 时物理 valid 为 [M,K]/[K,M]，Shared B [K,N] 为 [N,K]/[K,N]，允许合法的物理列 padding。类型、形状、就绪性、别名、定义性和分配检查均先于快照，因此 C 与矩阵源保持不变，D 一次性可见。"
       }
     },
     {
@@ -84,8 +84,8 @@
         "zh-CN": "TMATMUL_BIAS 带行偏置的矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL_BIAS is the CUBE Function 1 matrix product with one Local row-major 1xN bias source in the accumulator type. The block supplies AType, an optional BType, and local or Core-total cooperative dimensions; Shared primaries are read only after whole-parent readiness. Once schema, postprocess, type, shape, definedness, alias, and capacity checks succeed, the sources persist and the complete biased result appears atomically.",
-        "zh-CN": "TMATMUL_BIAS 是 CUBE Function 1，在矩阵乘积上加入一个 accumulator 类型的 Local row-major 1×N 偏置源。block 提供 AType、可选 BType，以及本地维度或 Core-total 协作维度；Shared 主输入只在整个 parent 就绪后读取。schema、后处理、类型、形状、定义性、别名和容量检查通过后，所有源保持不变，完整的偏置结果一次性可见。"
+        "en": "TMATMUL_BIAS is the CUBE Function 1 matrix product with one Local row-major 1xN bias source in the accumulator type. Cooperative Shared A [M,K] uses physical valid [M,K] or [K,M], and Shared B [K,N] uses [N,K] or [K,N] for transpose control zero or one; all-PE metadata preflight and legal padded physical columns precede payload access. Once schema, postprocess, type, shape, definedness, alias, and capacity checks succeed, the sources persist and the complete biased result appears atomically.",
+        "zh-CN": "TMATMUL_BIAS 是 CUBE Function 1，在矩阵乘积上加入一个 accumulator 类型的 Local row-major 1×N 偏置源。协作式 Shared A [M,K] 在转置控制 0/1 时物理 valid 为 [M,K]/[K,M]，Shared B [K,N] 为 [N,K]/[K,N]；所有 PE 的 metadata 预检与合法物理列 padding 先于 payload 访问。schema、后处理、类型、形状、定义性、别名和容量检查通过后，所有源保持不变，完整的偏置结果一次性可见。"
       }
     },
     {
@@ -96,8 +96,8 @@
         "zh-CN": "TMATMUL 矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL is the base CUBE Function 0 matrix product. The block fields and defaults establish AType, BType, M, N, and K; cooperative Shared inputs use Core-total group_M and complete Shared parent shapes, while supplementary operands and the destination stay Local. Schema, postprocess, type, shape, readiness, definedness, alias, and allocation checks finish before source snapshots, leaving sources unchanged and publishing the result atomically.",
-        "zh-CN": "TMATMUL 是基础的 CUBE Function 0 矩阵乘法。block 字段及默认值确定 AType、BType、M、N、K；协作式 Shared 输入使用 Core-total group_M 和完整 Shared parent 形状，补充操作数与目标仍位于 Local。schema、后处理、类型、形状、就绪性、定义性、别名和分配检查在源快照前完成，源保持不变，结果一次性发布。"
+        "en": "TMATMUL is the base CUBE Function 0 matrix product. The block fields and defaults establish AType, BType, M, N, and K; cooperative Shared A [M,K] uses physical valid [M,K] or [K,M], and Shared B [K,N] uses [N,K] or [K,N] for transpose control zero or one. Shared parent readiness, all-PE metadata, exact valid shape, and legal padded physical columns precede payload snapshots, leaving sources unchanged and publishing the result atomically.",
+        "zh-CN": "TMATMUL 是基础的 CUBE Function 0 矩阵乘法。block 字段及默认值确定 AType、BType、M、N、K；协作式 Shared A [M,K] 在转置控制 0/1 时物理 valid 为 [M,K]/[K,M]，Shared B [K,N] 为 [N,K]/[K,N]。Shared 父对象就绪、所有 PE metadata、精确 valid shape 与合法物理列 padding 均先于 payload 快照，源保持不变，结果一次性发布。"
       }
     },
     {
@@ -108,8 +108,8 @@
         "zh-CN": "TMATMUL_MX_ACC 带尺度与累加源的矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL_MX_ACC is CUBE Function 6, combining MX-scaled matrix multiplication with an explicit Local MxN accumulator C. Each matrix side supplies an E8M0 scale when its MX input is neither FP16 nor BF16, and C remains distinct from the newly published D even when register renaming is involved. Cooperative Shared inputs follow whole-parent readiness and Core-total group_M; complete preflight leaves every source unchanged and exposes D atomically.",
-        "zh-CN": "TMATMUL_MX_ACC 是 CUBE Function 6，把带 MX 尺度的矩阵乘法与显式 Local M×N 累加源 C 结合。某一侧 MX 输入不是 FP16 或 BF16 时，该侧提供 E8M0 scale；即使涉及寄存器重命名，C 也与新发布的 D 保持不同。协作式 Shared 输入遵循 whole-parent 就绪性和 Core-total group_M；完整预检后所有源保持不变，D 一次性可见。"
+        "en": "TMATMUL_MX_ACC is CUBE Function 6, combining MX-scaled matrix multiplication with an explicit Local MxN accumulator C. Each matrix side supplies its existing scale carrier and group count when required; Shared A and B primary/scale pairs use their side-specific [M,G_A]/[G_A,M] and [N,G_B]/[G_B,N] physical valid shapes for transpose control zero or one, with legal padded columns. Cooperative Shared inputs require parent readiness and all-PE metadata preflight before payload or allocation; C remains distinct from D and every source persists.",
+        "zh-CN": "TMATMUL_MX_ACC 是 CUBE Function 6，把带 MX 尺度的矩阵乘法与显式 Local M×N 累加源 C 结合。各矩阵侧按既有规则使用所需 scale carrier 与 group count；Shared A/scale 和 B/scale 在转置控制 0/1 时分别使用同侧 [M,G_A]/[G_A,M] 与 [N,G_B]/[G_B,N] 的 physical valid shape，并允许合法列 padding。协作式 Shared 在 payload 或 allocation 前完成父对象就绪与所有 PE metadata 预检；C 与 D 保持不同且所有源持久不变。"
       }
     },
     {
@@ -120,8 +120,8 @@
         "zh-CN": "TMATMUL_MX_BIAS 带尺度与行偏置的矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL_MX_BIAS is CUBE Function 5, combining MX-scaled matrix multiplication with a Local row-major 1xN bias in the accumulator type. Each non-FP16/BF16 MX input side has its own E8M0 scale, while cooperative Shared primaries observe whole-parent readiness and Core-total group_M. After the full schema, postprocess, type, shape, scale, definedness, alias, and capacity preflight, sources persist and the biased destination appears atomically.",
-        "zh-CN": "TMATMUL_MX_BIAS 是 CUBE Function 5，把带 MX 尺度的矩阵乘法与 accumulator 类型的 Local row-major 1×N 偏置结合。每个非 FP16/BF16 的 MX 输入侧各自使用 E8M0 scale，协作式 Shared 主输入遵循 whole-parent 就绪性和 Core-total group_M。schema、后处理、类型、形状、尺度、定义性、别名和容量完成完整预检后，源保持不变，带偏置的目标一次性可见。"
+        "en": "TMATMUL_MX_BIAS is CUBE Function 5, combining MX-scaled matrix multiplication with a Local row-major 1xN bias in the accumulator type. Each non-FP16/BF16 MX input side retains its existing scale group and carrier; Shared A/B primary and scale pairs use [M,G_A]/[G_A,M] and [N,G_B]/[G_B,N] physical valid shapes for transpose control zero or one, with parent readiness and all-PE metadata preflight before payload and allocation. Sources persist and the biased destination appears atomically.",
+        "zh-CN": "TMATMUL_MX_BIAS 是 CUBE Function 5，把带 MX 尺度的矩阵乘法与 accumulator 类型的 Local row-major 1×N 偏置结合。每个非 FP16/BF16 的 MX 输入侧保留既有 scale group 与 carrier；Shared A/B 主输入与 scale 在转置控制 0/1 时分别使用 [M,G_A]/[G_A,M] 与 [N,G_B]/[G_B,N] 的 physical valid shape，并在 payload 与 allocation 前完成父对象就绪及所有 PE metadata 预检。源保持不变，带偏置的目标一次性可见。"
       }
     },
     {
@@ -132,8 +132,8 @@
         "zh-CN": "TMATMUL_MX 带尺度的矩阵乘法"
       },
       "summary": {
-        "en": "TMATMUL_MX is CUBE Function 4 for matrix multiplication with independently scaled MX input sides. A side carries an E8M0 scale when its MX input type is neither FP16 nor BF16; Shared primaries may replace the right group or both matrix groups under whole-parent readiness and Core-total group_M. Full preflight precedes snapshots, so every source persists and the complete destination appears atomically.",
-        "zh-CN": "TMATMUL_MX 是 CUBE Function 4，用于两个 MX 输入侧可独立缩放的矩阵乘法。某一侧 MX 输入类型不是 FP16 或 BF16 时，该侧携带 E8M0 scale；在 whole-parent 就绪性和 Core-total group_M 条件下，Shared 主输入可以替代右侧矩阵组或两个矩阵组。完整预检先于快照，所有源保持不变，完整目标一次性可见。"
+        "en": "TMATMUL_MX is CUBE Function 4 for matrix multiplication with independently scaled MX input sides. Each side retains its existing scale group and carrier; Shared A/B primary and scale pairs use [M,G_A]/[G_A,M] and [N,G_B]/[G_B,N] physical valid shapes for transpose control zero or one, with legal padded columns. Cooperative execution uses Core-total group_M and complete parent/all-PE metadata preflight before snapshots, so every source persists and the complete destination appears atomically.",
+        "zh-CN": "TMATMUL_MX 是 CUBE Function 4，用于两个 MX 输入侧可独立缩放的矩阵乘法。各侧保留既有 scale group 与 carrier；Shared A/B 主输入与 scale 在转置控制 0/1 时分别使用 [M,G_A]/[G_A,M] 与 [N,G_B]/[G_B,N] 的 physical valid shape，并允许合法列 padding。协作执行使用 Core-total group_M，在快照前完成父对象及所有 PE metadata 预检，所有源保持不变，完整目标一次性可见。"
       }
     },
     {

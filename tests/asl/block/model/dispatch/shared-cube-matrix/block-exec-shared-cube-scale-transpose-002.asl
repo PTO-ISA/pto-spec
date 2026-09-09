@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Shared Matrix transpose normalizes each independently bound primary and scale.","pass_condition":"Stored transposed A, AScale, B, and BScale shapes normalize to group_MxK, group_MxG, KxN, and GxN and produce the exact current-PE result without mutating Shared state.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Shared Matrix transpose normalizes each independently bound primary and non-uniform scale.","pass_condition":"Stored transposed A, AScale, B, and BScale shapes normalize to group_MxK, group_MxG, KxN, and GxN; distinct scale values produce the exact 2x2 result [[224,320],[480,704]] without mutating Shared state.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
 
 func main() => integer
 begin
@@ -9,7 +9,7 @@ begin
     ConfigureTileForMask(11, 128, 64, 2, 2, 2,
         TileDataType_E8M0, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
-    ConfigureTileForMask(12, 128, 2, 64, 2, 64,
+    ConfigureTileForMask(12, 128, 64, 2, 64, 2,
         TileDataType_E5M2, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
     ConfigureTileForMask(13, 128, 64, 2, 2, 2,
@@ -22,10 +22,22 @@ begin
     end;
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 1 looplimit 2 do
-            WriteTileElement(11, row, column, Zeros{PTO_XLEN} + 1);
-            WriteTileElement(13, row, column, Zeros{PTO_XLEN} + 1);
+            // A TransA=1 is physically [G,M], so write the transpose of the
+            // normalized logical [M,G] scale matrix.
+            let left_scale = if row == 0 then
+                (if column == 0 then 1 else 3)
+                else (if column == 0 then 2 else 4);
+            let right_scale = if row == 0 then
+                (if column == 0 then 1 else 2)
+                else (if column == 0 then 3 else 4);
+            WriteTileElement(11, row, column,
+                Zeros{PTO_XLEN} + left_scale);
+            WriteTileElement(13, row, column,
+                Zeros{PTO_XLEN} + right_scale);
         end;
-        for column = 0 to 63 looplimit 64 do
+    end;
+    for row = 0 to 63 looplimit 64 do
+        for column = 0 to 1 looplimit 2 do
             WriteTileElement(12, row, column, Zeros{PTO_XLEN} + 1);
         end;
     end;
@@ -60,7 +72,10 @@ begin
     let destination = BundleMatrixDestinationAt(0);
     assert _Tiles[[destination]].valid_rows == 2;
     assert _Tiles[[destination]].valid_columns == 2;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 64;
+    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 224;
+    assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 320;
+    assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 480;
+    assert ReadTileElement(destination, 1, 1) == Zeros{PTO_XLEN} + 704;
     assert SharedTileRecord((Zeros{6} + 44) as SharedTileID).published;
     assert SharedTileRecord((Zeros{6} + 45) as SharedTileID).published;
     return 0;

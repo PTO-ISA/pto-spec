@@ -8892,6 +8892,8 @@
       "accepted": "2026-08-20",
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001",
         "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
         "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
@@ -8937,6 +8939,7 @@
         "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
         "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
         "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
         "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-BLOCK-MODEL-STATE-TYPES",
@@ -8956,6 +8959,41 @@
         "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
         "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+            "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+            "PTO-CUBE-SHARED-TRANSPOSE-001",
+            "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+            "PTO-BSTART-TMATMUL-CONTRACT-001",
+            "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+            "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-FPATR",
+            "PTO-BLOCK-BSTART-TMATMUL",
+            "PTO-BLOCK-BSTART-TMATMUL-ACC",
+            "PTO-BLOCK-BSTART-TMATMUL-BIAS",
+            "PTO-BLOCK-BSTART-TMATMULMX",
+            "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+            "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+          "date": "2026-09-08",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/255"
+        }
       ],
       "approvers": [
         "zhoubot"
@@ -9290,19 +9328,28 @@
       "accepted": "2026-08-24",
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
         "PTO-CUBE-CSCALE-001",
+        "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
         "PTO-CUBE-HIF4-SCALE-001",
         "PTO-CUBE-MATRIX-SCALE-001",
         "PTO-CUBE-MATRIX-SCALE-CELL-001",
-        "PTO-CUBE-SHARED-TRANSPOSE-001"
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-BSTART-TMATMULMX-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
         "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
         "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-BSTART-TMATMULMX",
+        "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+        "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
         "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
         "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
         "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
         "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
         "PTO-BLOCK-MODEL-STATE-TYPES",
         "PTO-TILE-MODEL-EXECUTION-CUBE",
@@ -9311,7 +9358,8 @@
         "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
-        "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
       ],
       "amendments": [
         {
@@ -9329,6 +9377,37 @@
           "baseline": "2b7ed44063272ad6958546eb2121f8fc8fb48c4b",
           "date": "2026-09-03",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/234"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+            "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+            "PTO-CUBE-MATRIX-SCALE-001",
+            "PTO-CUBE-SHARED-TRANSPOSE-001",
+            "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
+            "PTO-BSTART-TMATMULMX-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-FPATR",
+            "PTO-BLOCK-BSTART-TMATMULMX",
+            "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+            "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+            "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-TILE-MODEL-EXECUTION-CUBE",
+            "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
+            "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+          "date": "2026-09-08",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/255"
         }
       ],
       "approvers": [
