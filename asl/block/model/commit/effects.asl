@@ -243,8 +243,8 @@ begin
     // The reference profile is additionally bounded by its fixed in-ASL byte
     // array.  A hosted runtime profile owns a sparse address space and applies
     // only the explicit MSET transfer ceiling.
-    if UInt(length) > PTO_MODEL_MSET_MAX_BYTES ||
-       (!PTO_MODEL_HOST_MEMORY &&
+    if UInt(length) > PTOModelEffectiveMSETMaxBytes() ||
+       (!PTOModelHostMemoryEnabled() &&
         UInt(length) > PTO_MODEL_MEMORY_BYTES) then
         SetFault(Fault_DataPage, destination);
         return;

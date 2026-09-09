@@ -48,7 +48,7 @@ constant PTO_FRAME_RA_INDEX = 10;
 // FENTRY/FEXIT/FRET all consume the same architectural state definition.
 readonly func PTOFrameStackPointerIndex() => GPRIndex
 begin
-    return PTO_MODEL_FRAME_SP_INDEX as GPRIndex;
+    return PTOModelConfiguredFrameStackPointerIndex();
 end;
 
 pure func FrameRegisterEndpointLegal(selector: Reg5Selector) => boolean

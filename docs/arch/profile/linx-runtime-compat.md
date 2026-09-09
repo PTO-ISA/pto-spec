@@ -32,14 +32,14 @@ This page is a generated reference view of the normative ASL unit.
 // rules exactly.
 
 // NDF-BEGIN: PTO-PROFILE-LINX-RUNTIME-COMPAT-001
-// ndf: kind=contract level=L1 layer=architecture status=open
+// ndf: kind=contract level=L1 layer=architecture status=accepted
 // The Linx runtime compatibility surface MUST be explicitly selected by a
 // named model profile.  Its switches MUST default to FALSE, and no portable
 // PTO legality, state, or numeric rule may depend on an opt-in switch.
 // NDF-END: PTO-PROFILE-LINX-RUNTIME-COMPAT-001
 
 // NDF-BEGIN: PTO-PROFILE-LINX-PEID-SSR-001
-// ndf: kind=contract level=L1 layer=state status=open
+// ndf: kind=contract level=L1 layer=state status=accepted
 // When the named Linx runtime profile is selected, read-only SSR address
 // 0x0802 supplies the current PE/thread identity.  The alias is unavailable
 // in the portable profile and MUST NOT create a writable or persistent
@@ -47,7 +47,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-PROFILE-LINX-PEID-SSR-001
 
 // NDF-BEGIN: PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001
-// ndf: kind=contract level=L1 layer=architecture status=open
+// ndf: kind=contract level=L1 layer=architecture status=accepted
 // When both Linx compatibility switches are selected, system operations may
 // execute in the runtime's non-SYS startup block.  The portable profile MUST
 // continue to require an active SYS block with body placement.  This profile
@@ -56,7 +56,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001
 
 // NDF-BEGIN: PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001
-// ndf: kind=contract level=L1 layer=concurrency status=open
+// ndf: kind=contract level=L1 layer=concurrency status=accepted
 // ACRC MUST first execute its ASL-defined request/terminal semantics.  A
 // runtime may observe the resulting ACRC event and terminate a direct-boot
 // process according to its host ABI, but it MUST NOT skip ACRC based only on
@@ -64,7 +64,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001
 
 // NDF-BEGIN: PTO-PROFILE-HOST-MEMORY-001
-// ndf: kind=contract level=L1 layer=memory status=open
+// ndf: kind=contract level=L1 layer=memory status=accepted
 // A named runtime profile may provide sparse host-backed data memory for
 // addresses outside the bounded reference byte array.  The portable profile
 // MUST keep the bounded in-ASL array and its existing permission/fault rules;
@@ -75,6 +75,12 @@ This page is a generated reference view of the normative ASL unit.
 readonly func PTOModelLinxRuntimeCompatibilityEnabled() => boolean
 begin
     return PTO_MODEL_LINX_RUNTIME_COMPAT;
+end;
+
+pure func PTOModelLinxRuntimeSubfeatureSelected(
+    master_selected: boolean, subfeature_selected: boolean) => boolean
+begin
+    return master_selected && subfeature_selected;
 end;
 
 readonly func PTOModelLinxRuntimePEIDAddress() => SystemRegisterAddress
@@ -96,8 +102,9 @@ end;
 
 readonly func PTOModelLinxRuntimeAllowsNonSystemOperation() => boolean
 begin
-    return PTOModelLinxRuntimeCompatibilityEnabled() &&
-           PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK;
+    return PTOModelLinxRuntimeSubfeatureSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(),
+        PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK);
 end;
 
 readonly func PTOModelLinxRuntimeSystemOperationApplicable(
@@ -109,8 +116,9 @@ begin
     return body_active && block_type == BundleKind_System;
 end;
 
-readonly func PTOModelLinxRuntimeACRCExitMarkerApplicable(
-    bundle_active: boolean, block_type: BundleKind, body_active: boolean,
+pure func PTOModelLinxRuntimeACRCExitMarkerSelected(
+    master_selected: boolean, bundle_active: boolean,
+    block_type: BundleKind, body_active: boolean,
     request_type: bits(4)) => boolean
 begin
     // Direct-boot Linx kernels use ACRC 1 as a process completion marker in
@@ -123,8 +131,20 @@ begin
     // The explicit profile therefore keys this compatibility marker on the
     // request type and profile selection; decode, operand checks, ASL handler
     // execution, and terminal-state publication remain unchanged.
-    return PTOModelLinxRuntimeCompatibilityEnabled() &&
+    // body_active is intentionally not part of the result: the direct-boot
+    // marker may occur immediately after bundle start, before body entry.
+    return master_selected && bundle_active &&
+           block_type == BundleKind_Standard &&
            request_type == '0001';
+end;
+
+readonly func PTOModelLinxRuntimeACRCExitMarkerApplicable(
+    bundle_active: boolean, block_type: BundleKind, body_active: boolean,
+    request_type: bits(4)) => boolean
+begin
+    return PTOModelLinxRuntimeACRCExitMarkerSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(), bundle_active,
+        block_type, body_active, request_type);
 end;
 
 readonly func PTOModelLinxRuntimeACRCRequiresASLExecution() => boolean
@@ -134,19 +154,52 @@ end;
 
 readonly func PTOModelHostMemoryEnabled() => boolean
 begin
-    return PTO_MODEL_HOST_MEMORY;
+    return PTOModelLinxRuntimeSubfeatureSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(), PTO_MODEL_HOST_MEMORY);
+end;
+
+pure func PTOModelFrameStackPointerIndexSelected(
+    master_selected: boolean,
+    configured_index: integer {0..31}) => GPRIndex
+begin
+    if master_selected then return configured_index as GPRIndex;
+    else return 1;
+    end;
+end;
+
+readonly func PTOModelConfiguredFrameStackPointerIndex() => GPRIndex
+begin
+    return PTOModelFrameStackPointerIndexSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(), PTO_MODEL_FRAME_SP_INDEX);
+end;
+
+pure func PTOModelMSETMaxBytesSelected(
+    master_selected: boolean,
+    configured_limit: integer {63..262144}) => integer {63..262144}
+begin
+    if master_selected then return configured_limit;
+    else return 262144;
+    end;
+end;
+
+readonly func PTOModelEffectiveMSETMaxBytes() => integer {63..262144}
+begin
+    return PTOModelMSETMaxBytesSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(), PTO_MODEL_MSET_MAX_BYTES);
 end;
 
 readonly func PTOModelLinxTraceBoundaryCompatibilityEnabled() => boolean
 begin
-    return PTO_MODEL_LINX_RUNTIME_COMPAT &&
-           PTO_MODEL_LINX_TRACE_BOUNDARY_COMPAT;
+    return PTOModelLinxRuntimeSubfeatureSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(),
+        PTO_MODEL_LINX_TRACE_BOUNDARY_COMPAT);
 end;
 
 readonly func PTOModelLinxLegacyCompressedStopEnabled() => boolean
 begin
-    return PTOModelLinxRuntimeCompatibilityEnabled() &&
-           PTO_MODEL_LINX_LEGACY_C_BSTOP;
+    return PTOModelLinxRuntimeSubfeatureSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(),
+        PTO_MODEL_LINX_LEGACY_C_BSTOP);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

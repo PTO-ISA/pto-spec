@@ -35,7 +35,7 @@ begin
     // A hosted runtime profile delegates concrete guest mapping and
     // permissions to its host bridge. Keep this policy in the impdef itself so
     // every ASL memory operation observes the same explicit profile gate.
-    if PTO_MODEL_HOST_MEMORY then return TRUE; end;
+    if PTOModelHostMemoryEnabled() then return TRUE; end;
     return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
 end;
 

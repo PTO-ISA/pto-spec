@@ -59,6 +59,16 @@ class CommonV058ContractTest(unittest.TestCase):
         for path in paths:
             text = path.read_text(encoding="utf-8").lower()
             for token in forbidden:
+                if (
+                    token == "linx"
+                    and path.name
+                    == "ADR-GOV-0011-runtime-compatibility-profile.md"
+                ):
+                    # ADR-GOV-0011 is the accepted owner for the explicitly
+                    # named target-runtime profile.  The exception is confined
+                    # to that governance record; portable ASL and every other
+                    # decision remain independent of external ISA identity.
+                    continue
                 with self.subTest(path=path, token=token):
                     self.assertNotIn(token, path.as_posix().lower())
                     self.assertNotIn(token, text)

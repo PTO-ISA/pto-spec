@@ -66,11 +66,13 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // profile keeps the bounded in-ASL byte array below and never calls them.
 readonly impdef func HostReadMemoryByte(address: Word) => Byte
 begin
+    assert FALSE;
     return Zeros{8};
 end;
 
 impdef func HostWriteMemoryByte(address: Word, value: Byte)
 begin
+    assert FALSE;
     pass;
 end;
 

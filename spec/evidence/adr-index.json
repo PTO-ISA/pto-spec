@@ -2350,6 +2350,55 @@
       "title_zh": "PTO ISA 0.58.5.0 \u81f3 0.58.6 \u7684\u517c\u5bb9\u6027\u4e0e\u53d1\u5e03\u8eab\u4efd"
     },
     {
+      "accepted": "2026-09-09",
+      "affected_ndf": [
+        "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
+        "PTO-PROFILE-LINX-PEID-SSR-001",
+        "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
+        "PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001",
+        "PTO-PROFILE-HOST-MEMORY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+        "PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+        "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
+        "PTO-SCALAR-MODEL-AGU-MEMORY",
+        "PTO-SCALAR-MODEL-SYS-REGISTERS",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "jiale-wangOwO"
+      ],
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "created": "2026-09-09",
+      "id": "ADR-GOV-0011",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/258",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-GOV-0011-runtime-compatibility-profile.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "Opt-in Linx runtime compatibility profile",
+      "title_zh": "\u53ef\u9009\u542f\u7528\u7684 Linx \u8fd0\u884c\u65f6\u517c\u5bb9\u914d\u7f6e"
+    },
+    {
       "accepted": "2026-07-28",
       "affected_ndf": [
         "PTO-C-SSRGET-DIRECT-IDS-001",
@@ -10743,11 +10792,11 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 109,
+    "record_count": 110,
     "type_counts": {
       "BLOCK": 18,
       "CUBE": 18,
-      "GOV": 10,
+      "GOV": 11,
       "MEM": 9,
       "NUM": 22,
       "SCALAR": 6,

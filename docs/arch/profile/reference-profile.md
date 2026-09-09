@@ -70,7 +70,7 @@ For an access beginning at `3000` with size `72`, the exclusive end address is `
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
-    if PTO_MODEL_HOST_MEMORY then
+    if PTOModelHostMemoryEnabled() then
         return HostReadMemoryByte(address);
     end;
     assert IsModelAddress(address);
@@ -80,7 +80,7 @@ end;
 
 implementation func WritePhysicalMemoryByte(address: Word, value: Byte)
 begin
-    if PTO_MODEL_HOST_MEMORY then
+    if PTOModelHostMemoryEnabled() then
         HostWriteMemoryByte(address, value);
         return;
     end;
@@ -103,7 +103,7 @@ begin
     // Instruction fetch has its own profile hook.  The reference profile
     // keeps the bounded byte-array limit, while a hosted profile delegates
     // the concrete mapping and permission decision to its host bridge.
-    if !PTO_MODEL_HOST_MEMORY && end_address > PTO_MODEL_MEMORY_BYTES then
+    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
         return FALSE;
     end;
     return TRUE;
@@ -252,7 +252,7 @@ begin
     // runtime bridge.  Keep the bounded byte-array check for the portable
     // profile, but do not reject guest virtual addresses before the host
     // primitive is reached.
-    if !PTO_MODEL_HOST_MEMORY && end_address > PTO_MODEL_MEMORY_BYTES then
+    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
         return FALSE;
     end;
     // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
