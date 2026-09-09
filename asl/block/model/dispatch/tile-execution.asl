@@ -48,41 +48,45 @@ func ExecuteBundleComparisonGPRCarrier(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     if !SelectedBundleComparisonUsesGPRCarrier(operation) then return FALSE; end;
+    let (operation_type_valid, operation_type) =
+        ResolveBundleEffectiveDataType();
+    if !operation_type_valid then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
     let selected_high = _BundleDataAttributes.saturating;
     case TileOperationOfIndex(operation) of
         when TileOperation_TCMP =>
             let left = BundleTileSourceIndex(0, FALSE);
             let right = BundleTileSourceIndex(0, TRUE);
-            let value = TileCompareCUBEToGPR(
-                left, right,
-                BundleComparisonCodeAsTileComparison(), selected_high);
+            let value = TileCompareCUBEToGPRAs(
+                left, right, BundleComparisonCodeAsTileComparison(),
+                selected_high, operation_type);
             WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
         when TileOperation_TCMPS =>
             let source = BundleTileSourceIndex(0, FALSE);
             let scalar = ReadScalarRegisterOperand(
                 _BundleScalarBindings[[0]].source0);
-            let value = TileCompareCUBEScalarToGPR(
+            let value = TileCompareCUBEScalarToGPRAs(
                 source, scalar,
-                BundleComparisonCodeAsTileComparison(), selected_high);
+                BundleComparisonCodeAsTileComparison(), selected_high,
+                operation_type);
             WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
         when TileOperation_TSEL =>
             let source_true = BundleTileSourceIndex(0, FALSE);
             let mask_words = SelectedBundleComparisonGPRMaskWordCount(
-                source_true);
+                operation_type);
             let low = ReadScalarRegisterOperand(
                 _BundleScalarBindings[[0]].source0);
             let high = if mask_words == 2 then
                 ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
                 else Zeros{PTO_XLEN};
-            ExecuteTileSelectCUBEGPR(
+            ExecuteTileSelectCUBEGPRAs(
                 binding.destination, low, high,
                 source_true,
-                BundleTileSourceIndex(0, TRUE));
+                BundleTileSourceIndex(0, TRUE), operation_type);
         when TileOperation_TSELS =>
             let source_true = BundleTileSourceIndex(0, FALSE);
             let mask_words = SelectedBundleComparisonGPRMaskWordCount(
-                source_true);
+                operation_type);
             let low = ReadScalarRegisterOperand(
                 _BundleScalarBindings[[0]].source0);
             let mask_high = if mask_words == 2 then
@@ -92,9 +96,9 @@ begin
                 _BundleScalarBindings[[0]].source2
                 else _BundleScalarBindings[[0]].source1;
             let scalar_false = ReadScalarRegisterOperand(scalar_selector);
-            ExecuteTileSelectScalarCUBEGPR(
+            ExecuteTileSelectScalarCUBEGPRAs(
                 binding.destination, low, mask_high,
-                source_true, scalar_false);
+                source_true, scalar_false, operation_type);
         otherwise => return FALSE;
     end;
     return TRUE;

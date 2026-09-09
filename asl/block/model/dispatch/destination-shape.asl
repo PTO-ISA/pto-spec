@@ -356,7 +356,13 @@ begin
     end;
     if TileOperationUsesClosedTCMPSchema(operation) ||
        TileOperationUsesClosedTCMPSSchema(operation) then
-        return ResolveBundlePredicateDestination();
+        let (operation_type_valid, operation_type) =
+            ResolveBundleEffectiveDataType();
+        if !operation_type_valid then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return ResolveBundlePredicateDestination(operation_type);
     end;
     if (TileOperationUsesClosedTSELSchema(operation) ||
         TileOperationUsesClosedTSELSSchema(operation)) &&

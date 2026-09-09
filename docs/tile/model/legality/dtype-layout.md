@@ -43,9 +43,14 @@ end;
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Cross-type source interpretation MUST require equal element width and MUST
 // exclude packed types. Exact backing/operation type identity MUST remain legal.
+// Comparison/select sources participate in this equal-width reinterpretation:
+// source backing DataType and operation type remain distinct. Compare payload
+// validation and interpretation use the operation type; select copies raw
+// carrier data while its architectural destination type is the operation type.
 // An active bundle with no resolvable operation type MUST reject rather than
-// substituting the source backing type. A direct semantic call with no active
-// bundle MAY use the source backing type as its explicit interpretation.
+// substituting the source backing type. Direct semantic wrappers use
+// deterministic operation-specific fallbacks: TCMP left backing, TCMPS source
+// backing, and TSEL/TSELS destination backing.
 // NDF-END: PTO-TILE-CARRIER-REINTERPRETATION-001
 pure func TileCarrierWidthCompatible(
     stored_type: TileDataType, operation_type: TileDataType) => boolean

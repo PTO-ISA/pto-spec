@@ -239,20 +239,20 @@ end;
 ## Defaults and encoded zero
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol.
-- Omitted B.IOR supplies the selected DataType all-zero false scalar; explicit all-zero is distinct but supplies the same value. TSELS is a raw-carrier operation: predicate-one copies SrcTrue carrier bits, predicate-zero copies the scalar's low physical carrier bits, preserves the concrete DataType, does not require TileNumericEncodingValid for selected source or scalar payloads, and performs no conversion or numeric-status update.
+- Omitted B.IOR supplies the selected operation DataType all-zero false scalar; explicit all-zero is distinct but supplies the same value. TSELS is a raw-carrier operation: predicate-one copies SrcTrue backing bits, predicate-zero copies the scalar's normalized low physical bits, publishes the destination with the operation DataType, does not require TileNumericEncodingValid for selected source or scalar payloads, and performs no conversion or numeric-status update.
 - Omitted B.DATR selects PadValue=Null. Explicit 00, 01, 10, and 11 select Zero, Max, Min, and Null.
 
 ## Legality
 
 - TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
-- Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects zero.
-- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with basis-matched PredicateCell, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects zero. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
-- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8.
+- Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a PredicateCell whose basis equals the operation DataType, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
 ## State effects
 
-- Predicate bit one copies the exact SrcTrue element encoding and bit zero copies the normalized low-width scalar encoding.
+- Predicate bit one copies the exact SrcTrue backing encoding and bit zero copies the normalized operation-type scalar encoding.
 - Selection performs no rounding, saturation, canonicalization, or numeric-status update.
 - Selected payload, padding definedness, and destination descriptor publish atomically; rejection has no architectural effect.
 
@@ -269,7 +269,7 @@ end;
 
 ## Exceptions
 
-- Malformed or mixed carrier schemas, unsupported type, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
+- Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
 - TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload.
 
 ## Examples

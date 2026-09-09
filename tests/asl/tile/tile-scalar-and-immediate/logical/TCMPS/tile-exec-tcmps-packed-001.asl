@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMPS-PACKED-001","source":"asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl","requirements":["PTO-INST-TILE-TCMPS"],"kind":"execution","summary":"TCMPS packs scalar-comparison predicates from low logical indices into low byte bits","pass_condition":"ten GE comparisons occupy bits zero through seven of byte zero and bits zero through one of byte one","related_sources":["asl/tile/model/execution/comparison.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMPS-PACKED-001","source":"asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl","requirements":["PTO-INST-TILE-TCMPS","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"Direct TCMPS fallback uses the source backing for scalar comparison","pass_condition":"an S8 source and scalar compare through the direct-call source-backing fallback and pack ten GE results","related_sources":["asl/tile/model/execution/comparison.asl","asl/tile/model/definedness/elements.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
         16,
         1,
         10,
-        TileDataType_U8,
+        TileDataType_S8,
         TileLayout_RowMajor,
         TileLocation_Any);
     ConfigurePredicateTile(1, 128, 8, 16, 1, 10);

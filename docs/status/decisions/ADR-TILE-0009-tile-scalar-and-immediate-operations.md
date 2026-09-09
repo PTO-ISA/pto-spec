@@ -20,6 +20,7 @@
     "0.58.2"
   ],
   "affected_ndf": [
+    "PTO-TILE-CARRIER-REINTERPRETATION-001",
     "PTO-B-DATR-FIELDS-001",
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
@@ -46,6 +47,16 @@
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
     "PTO-BLOCK-B-IOT",
+    "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+    "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+    "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+    "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+    "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
     "PTO-TILE-TADDS",
     "PTO-TILE-TANDS",
     "PTO-TILE-TCMPS",
@@ -86,10 +97,66 @@
     "PRD-095",
     "PRD-096",
     "ADR-0081"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-08",
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/256",
+      "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TCMPS-CONTRACT-001",
+        "PTO-TSELS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-TILE-TCMPS",
+        "PTO-TILE-TSELS"
+      ]
+    }
   ]
 }
 ---
 # ADR-TILE-0009: Tile scalar and immediate operations
+
+## Amendment: operation-type carrier reinterpretation for scalar compare/select (2026-09-08)
+
+Issue [#256](https://github.com/PTO-ISA/pto-spec/issues/256) closes the
+operation-type interpretation of `TCMPS` and `TSELS` under this existing ADR.
+The selected `BSTART.VEC` operation `DataType` governs scalar normalization,
+comparison, mask interpretation, `PredicateCell` basis, CUBE GPR geometry,
+and destination `DataType`. A source keeps its actual descriptor and backing
+`DataType`, which is checked independently. Exact backing/operation type
+identity remains legal; a cross-type source/backing pair requires equal width
+and a non-four-bit carrier. No retagging or new alias is introduced.
+
+For issue #256, only the exact-type/source-basis/source-destination behavior
+in historical Decision 094 (`TCMPS`) and historical Decision 095 (`TSELS`) is
+superseded: operation-type scalar interpretation, PredicateCell basis, CUBE
+GPR geometry, and numeric destination typing now follow this amendment. Those
+historical decisions are not otherwise superseded; their remaining encoding,
+geometry, ordering, fault, and publication rules remain accepted.
+
+`TCMPS` validates the source and scalar under the operation type and derives
+CUBE GPR field geometry and U8 Low/High selection from it. `TSELS` copies the
+selected true-source or scalar encoding as a raw carrier, with no numeric
+payload validation or status update. CUBE_M16/M32 physical geometry remains
+invariant for allowed same-width pairs. Actual source descriptors supply
+payload reads, and complete preflight, snapshots, and `PE_MASK=0000` strict
+no-op ordering remain unchanged. The shared carrier rule is recorded in
+ADR-TILE-0008 and `PTO-TILE-CARRIER-REINTERPRETATION-001`.
 
 ## Context
 
