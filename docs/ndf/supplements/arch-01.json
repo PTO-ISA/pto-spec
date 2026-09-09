@@ -303,6 +303,66 @@
         "en": "This clause separates per-PE Local allocation from Core-wide Shared allocation, each with its own 256 KiB pool. B.IOT charges the selected Local capacity independently to each PE, while B.IOS describes one complete Shared allocation, so the two spaces never consume a combined budget.",
         "zh-CN": "本条款将每个 PE 的 Local 分配与整个 Core 的 Shared 分配分开，两者各自拥有独立的 256 KiB 空间。B.IOT 对每个选中 PE 单独计入 Local 容量，B.IOS 描述一个完整 Shared 分配，因此两类空间不会共用预算。"
       }
+    },
+    {
+      "id": "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
+      "source_path": "asl/arch/profile/linx-runtime-compat.asl",
+      "title": {
+        "en": "Explicit selection of the Linx runtime compatibility surface",
+        "zh-CN": "Linx 运行时兼容面的显式选择"
+      },
+      "summary": {
+        "en": "The Linx runtime compatibility surface is opt-in through a named model profile whose switches default to false. Portable PTO legality, state, and numeric rules must not depend on any compatibility switch.",
+        "zh-CN": "Linx 运行时兼容面只能通过具名模型配置显式开启，其开关默认均为关闭。可移植 PTO 的合法性、状态与数值规则不得依赖任何兼容开关。"
+      }
+    },
+    {
+      "id": "PTO-PROFILE-LINX-PEID-SSR-001",
+      "source_path": "asl/arch/profile/linx-runtime-compat.asl",
+      "title": {
+        "en": "Read-only PE identity alias at system-register address 0x0802",
+        "zh-CN": "系统寄存器地址 0x0802 上的只读 PE 标识别名"
+      },
+      "summary": {
+        "en": "When the named Linx runtime profile is selected, read-only system-register address 0x0802 returns the current PE or thread identity. The alias does not exist in the portable profile and must not introduce writable or persistent system-register state distinct from the selected PE context.",
+        "zh-CN": "选定 Linx 运行时配置后，只读系统寄存器地址 0x0802 返回当前 PE 或线程标识。该别名在可移植配置中不存在，且不得引入独立于所选 PE 上下文的可写或持久系统寄存器状态。"
+      }
+    },
+    {
+      "id": "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
+      "source_path": "asl/arch/profile/linx-runtime-compat.asl",
+      "title": {
+        "en": "System operations in the runtime non-SYS startup block",
+        "zh-CN": "运行时非 SYS 启动块中的系统操作"
+      },
+      "summary": {
+        "en": "When both Linx compatibility switches are selected, system operations may execute in the runtime's non-SYS startup block. The portable profile continues to require an active SYS block with body placement; the exception changes applicability only and leaves decode, operand legality, operation, fault, and state effects with the instruction's ASL handler.",
+        "zh-CN": "同时选定两个 Linx 兼容开关后，系统操作可以在运行时的非 SYS 启动块中执行。可移植配置仍要求处于具有体布局的活动 SYS 块中；该例外仅改变适用性，译码、操作数合法性、操作、故障与状态效果仍由指令的 ASL 处理程序负责。"
+      }
+    },
+    {
+      "id": "PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001",
+      "source_path": "asl/arch/profile/linx-runtime-compat.asl",
+      "title": {
+        "en": "ACRC terminal observation without a host-side replacement",
+        "zh-CN": "不替换主机侧实现的 ACRC 终止观测"
+      },
+      "summary": {
+        "en": "ACRC must first execute its ASL-defined request and terminal semantics. A runtime may observe the resulting event and terminate a direct-boot process under its host ABI, but it must not skip ACRC from its encoding alone or replace the ASL state transition with a host-side finisher.",
+        "zh-CN": "ACRC 必须首先执行 ASL 定义的请求与终止语义。运行时可以观测由此产生的事件，并按其主机 ABI 结束直接启动进程；但不得仅依据编码跳过 ACRC，也不得用主机侧结束器替换 ASL 状态转换。"
+      }
+    },
+    {
+      "id": "PTO-PROFILE-HOST-MEMORY-001",
+      "source_path": "asl/arch/profile/linx-runtime-compat.asl",
+      "title": {
+        "en": "Sparse host-backed data memory for named runtime profiles",
+        "zh-CN": "具名运行时配置的稀疏主机后备数据内存"
+      },
+      "summary": {
+        "en": "A named runtime profile may provide sparse host-backed data memory for addresses outside the bounded reference byte array. The portable profile keeps the bounded in-ASL array and its existing permission and fault rules; enabling host-backed memory must not alter decode, Tile legality, ordering, or definedness semantics.",
+        "zh-CN": "具名运行时配置可以为有界参考字节数组之外的地址提供稀疏的主机后备数据内存。可移植配置保留 ASL 内的有界数组及其现有权限与故障规则；启用主机后备内存不得改变译码、Tile 合法性、顺序或定义性语义。"
+      }
     }
   ]
 }

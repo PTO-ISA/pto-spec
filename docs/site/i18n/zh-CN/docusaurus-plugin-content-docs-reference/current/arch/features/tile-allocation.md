@@ -74,5 +74,31 @@ constant PTO_TILE_BASE_COUNT = 6;
 // elements.
 config PTO_MODEL_TILE_ELEMENTS : integer {1..32768} = 32768;
 config PTO_MODEL_MEMORY_BYTES : integer {256..65536} = 4096;
+// Target-runtime compatibility is opt-in in generated model profiles. The
+// portable PTO contract keeps system operations restricted to SYS blocks.
+config PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK : boolean = FALSE;
+config PTO_MODEL_LINX_RUNTIME_COMPAT : boolean = FALSE;
+// The reference profile uses its bounded in-ASL byte array.  A named runtime
+// profile may opt into the worker-backed sparse address space; the portable
+// default remains entirely local and deterministic.
+config PTO_MODEL_HOST_MEMORY : boolean = FALSE;
+// The frame instructions use an explicit ABI-selected stack-pointer GPR.
+// Portable PTO retains the architectural R1 stack pointer; a named runtime
+// profile may select a different ABI register without changing instruction
+// handlers.
+config PTO_MODEL_FRAME_SP_INDEX : integer {0..31} = 1;
+// A legacy compressed stop shares the low halfword with C.BSTART.STD FALL.
+// The compatibility decoder may disambiguate it only at a selecting bundle
+// boundary; ordinary fallthrough C.BSTART remains distinct.
+config PTO_MODEL_LINX_LEGACY_C_BSTOP : boolean = FALSE;
+// A hosted Linx trace-end marker may terminate the active direct block and
+// select its BARG continuation. Portable PTO retains the ordinary TRACE
+// boundary lifecycle.
+config PTO_MODEL_LINX_TRACE_BOUNDARY_COMPAT : boolean = FALSE;
+// Maximum MSET transfer size. The portable reference profile is additionally
+// bounded by its fixed in-ASL byte array; a hosted runtime profile applies
+// this explicit ceiling while retaining full-range preflight and byte-atomic
+// ordering.
+config PTO_MODEL_MSET_MAX_BYTES : integer {63..262144} = 262144;
 ```
 <!-- GENERATED-ASL-END: unit -->

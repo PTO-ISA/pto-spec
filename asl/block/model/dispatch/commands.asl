@@ -342,6 +342,7 @@ begin
             let completed = CompleteBundleAt(ReadTPC() +
                 (Zeros{PTO_XLEN} + (length_bits DIV 8)));
         when CommandHandler_SetBundleHint =>
+            if LinxTraceBoundaryHintApplies(hint_trace, instruction, form) then return ExecuteLinxTraceBoundaryHint(instruction, length_bits); end;
             if hint_trace then
                 let instruction_pc = ReadTPC();
                 if _BundleActive then

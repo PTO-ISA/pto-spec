@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/registers.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
 // PTO-REQ-SCALAR-SSR-001, PTO-REQ-PROFILE-001: canonical 24-bit
 // system-register addressing with explicit Access Control Ring checks.
 
@@ -76,6 +76,12 @@ end;
 
 func ReadSystemRegisterAddress(address: SystemRegisterAddress) => Word
 begin
+    if PTOModelLinxRuntimePEIDEnabled(address) then
+        // The runtime selects the executing PE explicitly before dispatch.
+        // PEID is a read-only view of that execution context, not a second
+        // writable system-register bank.
+        return NaturalToWord(_CurrentMemoryAgent as integer {0..262144});
+    end;
     if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};

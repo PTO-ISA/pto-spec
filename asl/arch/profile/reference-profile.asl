@@ -2,6 +2,9 @@
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
+    if PTOModelHostMemoryEnabled() then
+        return HostReadMemoryByte(address);
+    end;
     assert IsModelAddress(address);
     let index = UInt(address) as ModelAddress;
     return _Memory[[index]];
@@ -9,6 +12,10 @@ end;
 
 implementation func WritePhysicalMemoryByte(address: Word, value: Byte)
 begin
+    if PTOModelHostMemoryEnabled() then
+        HostWriteMemoryByte(address, value);
+        return;
+    end;
     assert IsModelAddress(address);
     let index = UInt(address) as ModelAddress;
     _Memory[[index]] = value;
@@ -24,9 +31,16 @@ readonly implementation func InstructionAccessPermitted(
     physical_address: Word,
     size_bytes: integer {2,4,6,8}) => boolean
 begin
-    let start_address = UInt(physical_address);
-    if start_address >= PTO_MODEL_MEMORY_BYTES then return FALSE; end;
-    return size_bytes <= PTO_MODEL_MEMORY_BYTES - start_address;
+    let end_address = UInt(physical_address) + size_bytes;
+    // Instruction fetch has its own profile hook.  The reference profile
+    // keeps the bounded byte-array limit, while a hosted profile delegates
+    // the concrete mapping and permission decision to its host bridge.
+    if PTOModelHostMemoryEnabled() then return
+        HostInstructionAccessPermitted(physical_address, size_bytes); end;
+    if end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
+    return TRUE;
 end;
 
 implementation func ReadMonotonicTime() => Word
@@ -168,7 +182,15 @@ readonly implementation func DataAccessPermitted(address: Word,
                                                  write: boolean) => boolean
 begin
     let end_address = UInt(address) + size_bytes;
-    if end_address > PTO_MODEL_MEMORY_BYTES then return FALSE; end;
+    // Hosted profiles delegate address-space bounds and permissions to the
+    // runtime bridge.  Keep the bounded byte-array check for the portable
+    // profile, but do not reject guest virtual addresses before the host
+    // primitive is reached.
+    if PTOModelHostMemoryEnabled() &&
+       !HostDataAccessPermitted(address, size_bytes, write) then return FALSE; end;
+    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
     // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
     // ACR15 use the bounded 3072-byte application region.
     if CurrentACR() >= 2 then return end_address <= 3072;

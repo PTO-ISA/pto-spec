@@ -62,6 +62,33 @@ This page is a generated reference view of the normative ASL unit.
 // implementation.
 // NDF-END: PTO-REQ-PHYSICAL-MEMORY-BINDING-001
 
+// Hosted profiles bind these primitives to sparse host storage.  The portable
+// profile keeps the bounded in-ASL byte array below and never calls them.
+readonly impdef func HostInstructionAccessPermitted(
+    address: Word, size_bytes: integer {2,4,6,8}) => boolean
+begin
+    return FALSE;
+end;
+
+readonly impdef func HostDataAccessPermitted(
+    address: Word, size_bytes: integer {1..262144},
+    write: boolean) => boolean
+begin
+    return FALSE;
+end;
+
+readonly impdef func HostReadMemoryByte(address: Word) => Byte
+begin
+    assert FALSE;
+    return Zeros{8};
+end;
+
+impdef func HostWriteMemoryByte(address: Word, value: Byte)
+begin
+    assert FALSE;
+    pass;
+end;
+
 readonly impdef func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
     return Zeros{8};

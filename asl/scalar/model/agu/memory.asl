@@ -32,6 +32,10 @@ readonly impdef func DataAccessPermitted(address: Word,
                                          write: boolean) => boolean
 begin
     // The portable model exposes one bounded, readable, writable address space.
+    // A hosted runtime profile delegates concrete guest mapping and
+    // permissions to its host bridge. Keep this policy in the impdef itself so
+    // every ASL memory operation observes the same explicit profile gate.
+    if PTOModelHostMemoryEnabled() then return TRUE; end;
     return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
 end;
 
@@ -49,8 +53,8 @@ begin
     let translated_address = TranslateDataAddress(address, size_bytes, write);
     // The active profile owns the physical address-space limit.  The
     // reference profile still applies PTO_MODEL_MEMORY_BYTES in its
-    // DataAccessPermitted implementation, while an external-memory profile
-    // may authorize addresses outside the reference array.
+    // DataAccessPermitted implementation, while a hosted profile may
+    // authorize addresses outside the reference array.
     if !DataAccessPermitted(translated_address, size_bytes, write) then
         return DataAccessProbe {
             fault = Fault_DataPage,
@@ -184,11 +188,11 @@ end;
 func StoreTranslatedFillModelBounded(
     original_address: Word,
     translated_address: Word,
-    byte_count: integer {1..PTO_MODEL_MEMORY_BYTES},
+    byte_count: integer {1..262144},
     value: Byte)
 begin
     for byte_index = 0 to byte_count - 1
-        looplimit PTO_MODEL_MEMORY_BYTES do
+        looplimit 262144 do
         let byte_address = translated_address +
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value);
