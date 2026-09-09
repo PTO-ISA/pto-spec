@@ -23676,7 +23676,7 @@
   "sources": {
     "adr_records": {
       "count": 110,
-      "sha256": "58b9c93e75211e075e832750a1ba5088516be43bc003c78b058ba1835a232b7a"
+      "sha256": "649161ab7387ce41d2bf72d4d9716881ead58bb3041a424a7e1213e141718534"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -23684,8 +23684,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "dd447dc235977c82954d20789b4d78318435ec205736ff1e02d946513eb10df1",
-      "test_count": 3888,
+      "sha256": "1174b3026964de8d4e9508bf08339a0e5072a2716c2062da6c58e8b42be62cfb",
+      "test_count": 3910,
       "unit_count": 889
     }
   },
