@@ -333,12 +333,12 @@ begin
     end;
     case operation of
         when ScalarOperation_ACRC =>
-            return PTOModelLinxRuntimeACRCExitMarkerApplicable(
-                       _BundleActive, _BARG.block_type,
-                       _BundleBodyActive, '0001') ||
-                   (_BundleActive &&
-                    PTOModelLinxRuntimeSystemOperationApplicable(
-                        _BARG.block_type, _BundleBodyActive));
+            // Operation-level applicability cannot inspect RST_Type.  Require
+            // the selected block-placement policy here; the decoded handler
+            // applies the request-1 Standard-bundle marker exception.
+            return _BundleActive &&
+                   PTOModelLinxRuntimeSystemOperationApplicable(
+                       _BARG.block_type, _BundleBodyActive);
         when ScalarOperation_C_SETC_TGT =>
             return BundleCommitTargetWritable() &&
                    !_BundleCommitTargetSet;

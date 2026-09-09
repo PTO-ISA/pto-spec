@@ -83,8 +83,10 @@ latch is set. ACRC in a SYS bundle remains on the ordinary ASL service-request
 path, and no-bundle or other request types do not acquire marker behavior.
 
 Host-backed memory remains an implementation binding. If selected, the host
-must implement byte reads and writes; the default impdef bodies fail closed so
-an omitted bridge cannot fabricate zero reads or silently discard writes.
+must implement instruction/data access probes plus byte reads and writes. The
+default probes deny access before payload reads, and the default byte callbacks
+fail closed, so an omitted bridge cannot fabricate zero reads or silently
+discard writes while preserving ASL-owned precise-fault preflight.
 
 ## Normative delta
 
@@ -149,6 +151,8 @@ checks prevent ownership and projection drift.
 - Route memory, frame-SP, MSET, TRACE, and legacy-stop callers through the
   profile-owned helpers.
 - Require a selected host-memory profile to provide functional byte callbacks.
+- Require host instruction/data probes to reject unmapped accesses before any
+  host byte callback.
 - Preserve portable-negative AVS points and add explicit enabled-policy cases.
 
 ## Verification obligations
@@ -212,7 +216,7 @@ Bundle 已激活时，ACRC 请求 1 才可作为退出标记被观察，包括 B
 ### Scope and boundaries / 范围与边界
 
 **English.** This ADR owns only profile selection, compatibility applicability,
-and host-binding requirements. It does not change instruction encodings,
+and fail-closed host-binding requirements. It does not change instruction encodings,
 general ACRC service semantics, memory ordering, precise faults, Tile behavior,
 or portable defaults. Host process termination and concrete sparse-memory
 layout remain runtime responsibilities.

@@ -35,7 +35,9 @@ begin
     // Instruction fetch has its own profile hook.  The reference profile
     // keeps the bounded byte-array limit, while a hosted profile delegates
     // the concrete mapping and permission decision to its host bridge.
-    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
+    if PTOModelHostMemoryEnabled() then return
+        HostInstructionAccessPermitted(physical_address, size_bytes); end;
+    if end_address > PTO_MODEL_MEMORY_BYTES then
         return FALSE;
     end;
     return TRUE;
@@ -184,6 +186,8 @@ begin
     // runtime bridge.  Keep the bounded byte-array check for the portable
     // profile, but do not reject guest virtual addresses before the host
     // primitive is reached.
+    if PTOModelHostMemoryEnabled() &&
+       !HostDataAccessPermitted(address, size_bytes, write) then return FALSE; end;
     if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
         return FALSE;
     end;

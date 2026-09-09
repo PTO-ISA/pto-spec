@@ -17,9 +17,25 @@ begin
     assert PTOModelLinxRuntimeSubfeatureSelected(TRUE, TRUE);
     assert !PTOModelLinxRuntimeSubfeatureSelected(FALSE, TRUE);
     assert !PTOModelLinxRuntimeSubfeatureSelected(TRUE, FALSE);
+    assert PTOModelLinxRuntimePEIDSelected(
+        TRUE, PTOModelLinxRuntimePEIDAddress());
+    assert !PTOModelLinxRuntimePEIDSelected(
+        FALSE, PTOModelLinxRuntimePEIDAddress());
+    assert PTOModelLinxRuntimeSystemOperationSelected(
+        TRUE, TRUE, BundleKind_Standard, FALSE);
+    assert !PTOModelLinxRuntimeSystemOperationSelected(
+        TRUE, FALSE, BundleKind_Standard, FALSE);
+    assert PTOModelHostMemorySelected(TRUE, TRUE);
+    assert !PTOModelHostMemorySelected(FALSE, TRUE);
+    assert PTOModelLinxTraceBoundarySelected(TRUE, TRUE);
+    assert !PTOModelLinxTraceBoundarySelected(FALSE, TRUE);
+    assert PTOModelLinxLegacyCompressedStopSelected(TRUE, TRUE);
+    assert !PTOModelLinxLegacyCompressedStopSelected(FALSE, TRUE);
     assert PTOModelFrameStackPointerIndexSelected(TRUE, 3) == 3;
     assert PTOModelFrameStackPointerIndexSelected(FALSE, 3) == 1;
     assert PTOModelMSETMaxBytesSelected(TRUE, 63) == 63;
     assert PTOModelMSETMaxBytesSelected(FALSE, 63) == 262144;
+    assert !HostInstructionAccessPermitted(Zeros{PTO_XLEN}, 4);
+    assert !HostDataAccessPermitted(Zeros{PTO_XLEN}, 1, FALSE);
     return 0;
 end;

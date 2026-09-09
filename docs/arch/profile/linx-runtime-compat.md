@@ -83,16 +83,23 @@ begin
     return master_selected && subfeature_selected;
 end;
 
-readonly func PTOModelLinxRuntimePEIDAddress() => SystemRegisterAddress
+pure func PTOModelLinxRuntimePEIDAddress() => SystemRegisterAddress
 begin
     return Zeros{24} + 0x0802;
+end;
+
+pure func PTOModelLinxRuntimePEIDSelected(
+    master_selected: boolean,
+    address: SystemRegisterAddress) => boolean
+begin
+    return master_selected && address == PTOModelLinxRuntimePEIDAddress();
 end;
 
 readonly func PTOModelLinxRuntimePEIDEnabled(
     address: SystemRegisterAddress) => boolean
 begin
-    return PTOModelLinxRuntimeCompatibilityEnabled() &&
-           address == PTOModelLinxRuntimePEIDAddress();
+    return PTOModelLinxRuntimePEIDSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(), address);
 end;
 
 readonly func PTOModelLinxRuntimeAllowsPreBodyControlSetter() => boolean
@@ -107,13 +114,24 @@ begin
         PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK);
 end;
 
-readonly func PTOModelLinxRuntimeSystemOperationApplicable(
+pure func PTOModelLinxRuntimeSystemOperationSelected(
+    master_selected: boolean, non_system_selected: boolean,
     block_type: BundleKind, body_active: boolean) => boolean
 begin
-    if PTOModelLinxRuntimeAllowsNonSystemOperation() then
+    if PTOModelLinxRuntimeSubfeatureSelected(
+        master_selected, non_system_selected) then
         return TRUE;
     end;
     return body_active && block_type == BundleKind_System;
+end;
+
+readonly func PTOModelLinxRuntimeSystemOperationApplicable(
+    block_type: BundleKind, body_active: boolean) => boolean
+begin
+    return PTOModelLinxRuntimeSystemOperationSelected(
+        PTOModelLinxRuntimeCompatibilityEnabled(),
+        PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK,
+        block_type, body_active);
 end;
 
 pure func PTOModelLinxRuntimeACRCExitMarkerSelected(
@@ -152,9 +170,16 @@ begin
     return TRUE;
 end;
 
-readonly func PTOModelHostMemoryEnabled() => boolean
+pure func PTOModelHostMemorySelected(
+    master_selected: boolean, host_memory_selected: boolean) => boolean
 begin
     return PTOModelLinxRuntimeSubfeatureSelected(
+        master_selected, host_memory_selected);
+end;
+
+readonly func PTOModelHostMemoryEnabled() => boolean
+begin
+    return PTOModelHostMemorySelected(
         PTOModelLinxRuntimeCompatibilityEnabled(), PTO_MODEL_HOST_MEMORY);
 end;
 
@@ -188,16 +213,30 @@ begin
         PTOModelLinxRuntimeCompatibilityEnabled(), PTO_MODEL_MSET_MAX_BYTES);
 end;
 
-readonly func PTOModelLinxTraceBoundaryCompatibilityEnabled() => boolean
+pure func PTOModelLinxTraceBoundarySelected(
+    master_selected: boolean, trace_selected: boolean) => boolean
 begin
     return PTOModelLinxRuntimeSubfeatureSelected(
+        master_selected, trace_selected);
+end;
+
+readonly func PTOModelLinxTraceBoundaryCompatibilityEnabled() => boolean
+begin
+    return PTOModelLinxTraceBoundarySelected(
         PTOModelLinxRuntimeCompatibilityEnabled(),
         PTO_MODEL_LINX_TRACE_BOUNDARY_COMPAT);
 end;
 
-readonly func PTOModelLinxLegacyCompressedStopEnabled() => boolean
+pure func PTOModelLinxLegacyCompressedStopSelected(
+    master_selected: boolean, legacy_stop_selected: boolean) => boolean
 begin
     return PTOModelLinxRuntimeSubfeatureSelected(
+        master_selected, legacy_stop_selected);
+end;
+
+readonly func PTOModelLinxLegacyCompressedStopEnabled() => boolean
+begin
+    return PTOModelLinxLegacyCompressedStopSelected(
         PTOModelLinxRuntimeCompatibilityEnabled(),
         PTO_MODEL_LINX_LEGACY_C_BSTOP);
 end;
