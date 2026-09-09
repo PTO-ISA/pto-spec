@@ -23594,16 +23594,16 @@
   "sources": {
     "adr_records": {
       "count": 109,
-      "sha256": "fce3a953431452568191cc036464644662066cfdc6626e7d99ca71251cf234cc"
+      "sha256": "ca4733083e13afb4e7b06c828acfff4c92df020750563bd3ce5ece40f56b9f89"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "cf05a098cdb40c1c11bf01b028d6f0bfde0d89c060f437224a31c51d1b9b225f"
+      "sha256": "4df1ffd17d639e918c4b3c1bbeba692e8bf6f1000b31c5c77433baaf675151bf"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "33b7e72a9ca48fccd9a8aa42f337545e2093d330dc71473c52784c1d4d9e7673",
-      "test_count": 3898,
+      "sha256": "f23b8c7baa91b3e0ef1fa99acbdd8216deb9adfd6f166ba770fc91937891cf9a",
+      "test_count": 3906,
       "unit_count": 888
     }
   },
