@@ -205,11 +205,11 @@ end;
 func StoreTranslatedFillModelBounded(
     original_address: Word,
     translated_address: Word,
-    byte_count: integer {1..PTO_MODEL_MSET_MAX_BYTES},
+    byte_count: integer {1..262144},
     value: Byte)
 begin
     for byte_index = 0 to byte_count - 1
-        looplimit PTO_MODEL_MSET_MAX_BYTES do
+        looplimit 262144 do
         let byte_address = translated_address +
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value);

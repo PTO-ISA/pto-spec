@@ -14819,6 +14819,7 @@
         "ADR-GOV-0011"
       ],
       "tests": [
+        "PTO-AVS-ARCH-PROFILE-LINX-RUNTIME-COMPAT-POLICY-004",
         "PTO-AVS-ARCH-PROFILE-LINX-RUNTIME-COMPAT-STATIC-001"
       ]
     },
@@ -18148,7 +18149,7 @@
     "asl/block/lifecycle/L.BSTOP.asl": "4af30b944982bc856a07a69a5f7c8484b57b158b1e62532486a3e5a73d419e9a",
     "asl/block/lifecycle/MCOPY.asl": "db49373a481ffb30922c7a852a3f01e4bdb0442c39292fe8d48375f55cb520b9",
     "asl/block/lifecycle/MSET.asl": "94242606a278bdfa0ebc148e452dc2b5bc5fe2591b1964c8c37ed510dec7ac62",
-    "asl/block/model/commit/effects.asl": "963bd8ed66902caaec6fe8005b954597fca3a5d0a79251dfab0f62b6cf30b997",
+    "asl/block/model/commit/effects.asl": "82d2d3a6d38bbdaec075181aae86cbffb5f9bc2c3852d764bad7f0497d40d7a5",
     "asl/block/model/commit/validation.asl": "f86d9d1b211af16f485c07ddce90087119bea7292562ae9f2e85e5461616f8cb",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2",
     "asl/block/model/dispatch/commands.asl": "4c855019c0d79011b9a3bf7e21c61876287b9ad78da1f9087175b000cc81c8b3",
@@ -18650,7 +18651,7 @@
     "asl/scalar/fsu/SCVTF.asl": "83f6d74151446d168b34cceac551bc446cfb035a20b0e96f0c3a72ef62b6c732",
     "asl/scalar/fsu/UCVTF.asl": "9879d0bdca06916ae217e5c72fab36ff8f5f1b838365f2d8309c1060c0e366f3",
     "asl/scalar/model/agu/addressing.asl": "2b99385665915f8f3ef589e60f4654296b8ba1f0fc64db9896909c8cea6884ed",
-    "asl/scalar/model/agu/memory.asl": "0601cae24153e4cd73fce3cd0a938324c43376cad09a82118f15cb160c397e9b",
+    "asl/scalar/model/agu/memory.asl": "d138cdd9ff3dccf102f39243ab320aefd138bc0ecd4b538a7c493a12f490c7d4",
     "asl/scalar/model/alu/semantics.asl": "3ea286b50965fd9a218d6a5ef9a1f8f230638d0163a734d536b3b6158039ca47",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
     "asl/scalar/model/bru/semantics.asl": "3b5af1348da6e2027354beb3557a0631f9217af450482432faa77cec67d699a8",
@@ -19037,7 +19038,7 @@
     "docs/block/lifecycle/L.BSTOP.md": "d206f8e041bf181ed81be8c01879d6f89964b05cb3c8eb04397c04817a16359e",
     "docs/block/lifecycle/MCOPY.md": "04780dd1cb12e9df66f9496e39eaafeb53b55b9520485731cfcdba95d50c8dda",
     "docs/block/lifecycle/MSET.md": "f719c51552a8c1616e4f909dfca16da56282b5932642441bdfaa48d0b629d185",
-    "docs/block/model/commit/effects.md": "4c43915ce6703c6fa4a4cd9e2d316fc0d9d198fd47b31dd8f878ab060d604da7",
+    "docs/block/model/commit/effects.md": "219534b49b786dc883ae1cb37bcbaf18a6fbe39b2f7cad1229b72a9e4267dda4",
     "docs/block/model/commit/validation.md": "8e951e77d2e0cb6f4de00e67cde54a6408fe47e5c98335b5167b4dce1886db6a",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "910f3a6b49bf2097ab4e14a2d7a581b4834c19f4d88d6e1326fed1c4c3915991",
     "docs/block/model/dispatch/commands.md": "3a603e66182c4137493b91bb312620db8bb5c295a3455823dfda324745d5e837",
@@ -19539,7 +19540,7 @@
     "docs/scalar/fsu/SCVTF.md": "29433236c53c2db36b89061bdee6f140d3f6ee6f1889f5351bc18a93dd4ed71b",
     "docs/scalar/fsu/UCVTF.md": "60cc1f3e58dff2ba9e12b5afaf5cdde2bdefbb9ac73252e56fd713ef8096f518",
     "docs/scalar/model/agu/addressing.md": "915e21e8abe9381fc7950bb8b0e521f86bf1e5837665e03507aa1f0f665f25cb",
-    "docs/scalar/model/agu/memory.md": "bf825ab17f6f33ee6d81f8b8e398f97dce77bca2fe10b11a4c8a1aa076ec008a",
+    "docs/scalar/model/agu/memory.md": "12e60ba5035bed3973f8f598dae8b384a539de0095ca4dc4da0f44511e2562c6",
     "docs/scalar/model/alu/semantics.md": "8cb1eabc757c3ff2d1572a665fcafb85e06dd08136f2156f04959cb9140c8a2f",
     "docs/scalar/model/amo/semantics.md": "10b8d163b0ce595751b228841c17a1d799e02979408b6c8853576d54acd62d54",
     "docs/scalar/model/bru/semantics.md": "b914238beabfd0e0b9090ca7027dc73993ce1c8246504dfb66ea2e8d525a1deb",
@@ -19897,7 +19898,7 @@
     "tests/asl/arch/profile/e8m0-conversion/arch-static-e8m0-conversion-contract-001.asl": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
     "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
     "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl": "6255e5a5376b484598806d2d6ec01085ebd04110b5f65571c74860c9bca3b489",
-    "tests/asl/arch/profile/linx-runtime-compat/arch-exec-linx-runtime-compat-policy-004.asl": "07dd804e3fbe6006db4a978a39fe3783e03f37be2618da8534b79d3e7ee9491b",
+    "tests/asl/arch/profile/linx-runtime-compat/arch-exec-linx-runtime-compat-policy-004.asl": "6d502ae74348b2ece275fce1135a912f302e50ede1ec65cffaa22079f09f4d84",
     "tests/asl/arch/profile/linx-runtime-compat/arch-fault-linx-runtime-compat-acrc-003.asl": "41647a55d73b3926f6bde39cec8e9134477f5a1b17dd5f94b7b3fc9cffa7879e",
     "tests/asl/arch/profile/linx-runtime-compat/arch-fault-linx-runtime-compat-ssr-002.asl": "7e1c291abdf50a5513a8e18b4b86c396330fd5895ffc1e021b5261fff244c3f1",
     "tests/asl/arch/profile/linx-runtime-compat/arch-static-linx-runtime-compat-contract-001.asl": "4bd5a182b41994bec258346bbfb3f7656f267b5e95c7f7486edfeac5f1a1d693",
@@ -32209,11 +32210,12 @@
       "path": "tests/asl/arch/profile/linx-runtime-compat/arch-exec-linx-runtime-compat-policy-004.asl",
       "requirements": [
         "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
+        "PTO-PROFILE-LINX-PEID-SSR-001",
         "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
         "PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001",
         "PTO-PROFILE-HOST-MEMORY-001"
       ],
-      "sha256": "07dd804e3fbe6006db4a978a39fe3783e03f37be2618da8534b79d3e7ee9491b",
+      "sha256": "6d502ae74348b2ece275fce1135a912f302e50ede1ec65cffaa22079f09f4d84",
       "source": "asl/arch/profile/linx-runtime-compat.asl"
     },
     {

@@ -87,6 +87,28 @@ class CommonV058ContractTest(unittest.TestCase):
                     self.assertNotIn(token, path.as_posix().lower())
                     self.assertNotIn(token, text)
 
+    def test_linx_runtime_subfeature_reads_stay_profile_owned(self) -> None:
+        allowed = {
+            Path("asl/arch/features/tile-allocation.asl"),
+            Path("asl/arch/profile/linx-runtime-compat.asl"),
+        }
+        tokens = (
+            "PTO_MODEL_ALLOW_SYSTEM_OPS_IN_NON_SYS_BLOCK",
+            "PTO_MODEL_HOST_MEMORY",
+            "PTO_MODEL_FRAME_SP_INDEX",
+            "PTO_MODEL_LINX_LEGACY_C_BSTOP",
+            "PTO_MODEL_LINX_TRACE_BOUNDARY_COMPAT",
+            "PTO_MODEL_MSET_MAX_BYTES",
+        )
+        for path in sorted((ROOT / "asl").rglob("*.asl")):
+            relative = path.relative_to(ROOT)
+            if relative in allowed:
+                continue
+            text = path.read_text(encoding="utf-8")
+            for token in tokens:
+                with self.subTest(path=relative, token=token):
+                    self.assertNotIn(token, text)
+
     def test_deleted_names_are_not_active_or_reserved(self) -> None:
         active_names = {form["mnemonic"] for form in self.command["forms"]}
         reserved_names = {

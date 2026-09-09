@@ -250,8 +250,7 @@ begin
         return;
     end;
 
-    let byte_count = UInt(length)
-        as integer {0..PTO_MODEL_MSET_MAX_BYTES};
+    let byte_count = UInt(length) as integer {0..262144};
     if byte_count != 0 then
         let access_size = byte_count as integer {1..262144};
         let write_probe = ProbeDataAccess(destination, access_size, 1, TRUE);
@@ -261,7 +260,7 @@ begin
             StoreTranslatedFillModelBounded(
                 destination,
                 write_probe.translated_address,
-                byte_count as integer {1..PTO_MODEL_MSET_MAX_BYTES},
+                byte_count as integer {1..262144},
                 value[7:0]);
         end;
     end;
