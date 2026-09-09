@@ -15992,6 +15992,7 @@
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
         "PTO-AVS-TILE-PREDICATE-CARRIERS-GPR-SHAPE-002",
         "PTO-AVS-TILE-TCMP-CAPACITY-001",
+        "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
         "PTO-AVS-TILE-TCMP-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMP-CUBE-CELL-002",
         "PTO-AVS-TILE-TCMP-CUBE-CROSS-CARRIER-001",
@@ -16000,6 +16001,7 @@
         "PTO-AVS-TILE-TCMP-CUBE-M16-GPR-006",
         "PTO-AVS-TILE-TCMP-CUBE-U8-GPR-CROSS-001",
         "PTO-AVS-TILE-TCMP-DATR-001",
+        "PTO-AVS-TILE-TCMP-FP32-S32-GT-002",
         "PTO-AVS-TILE-TCMP-MODES-001",
         "PTO-AVS-TILE-TCMP-TYPES-001",
         "PTO-AVS-TILE-TSEL-CUBE-M32-CHAIN-001"
@@ -16020,6 +16022,7 @@
         "ADR-TILE-0009"
       ],
       "tests": [
+        "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-CUBE-CELL-002",
         "PTO-AVS-TILE-TCMPS-CUBE-CROSS-CARRIER-001",
@@ -16626,11 +16629,14 @@
       "tests": [
         "PTO-AVS-TILE-CARRIER-REINTERPRET-BOUND-002",
         "PTO-AVS-TILE-MODEL-LEGALITY-DTYPE-LAYOUT-STATIC-001",
+        "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
         "PTO-AVS-TILE-TCMP-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMP-CUBE-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMP-CUBE-GPR-003",
         "PTO-AVS-TILE-TCMP-CUBE-U8-GPR-CROSS-001",
+        "PTO-AVS-TILE-TCMP-FP32-S32-GT-002",
         "PTO-AVS-TILE-TCMP-PACKED-001",
+        "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-CUBE-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-PACKED-001",
@@ -23091,9 +23097,11 @@
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-cube-m16-cell-005.asl": "89711cb10f1b50b46eb0167de5a110bfb2b996b91f46b6da0d2f1b0bb3158a8d",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-cube-m16-gpr-006.asl": "3ea72fbf8146a0a759957aa5df47bff44c0329925e9e64efb3c7f0c0cf1132ea",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-cube-u8-gpr-cross-001.asl": "1181b24c37a629d0dd59f6ff01a691b576bf495764f6458208a389b42e3a643a",
+    "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-fp32-s32-gt-002.asl": "4eddd6c5ad36c83f795458232c871edf148f46d8fe706d6855d9137a117ee2af",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-order-001.asl": "de114085f747a57790a0a6b8e511c35f9214681b8e34b2fcb0454e0f24ae5bb4",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-packed-001.asl": "8f10ddc4db8610bd4212e78a6d7d9f63820199aa8a561f419ab38b02bc09ac14",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-fault-tcmp-capacity-001.asl": "eb6107b2c9b62caf96274a2bccd366c450d401ac18f0876b3ed6aa3dc509d543",
+    "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-fault-tcmp-carrier-002.asl": "c2fcaae76ba6480022024f0e1abf5d462a17b6e20068b78dd53fd49cbb7e99d7",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-fault-tcmp-schema-001.asl": "b916614c90a2deee1f5e3be6307fe4af6ed4f13a837b0f10faf40688937199a7",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-state-tcmp-padding-001.asl": "cc5964e1ca1bfa73c25b77b5584146be6145089619c19792d6be637132f51940",
     "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-static-tcmp-contract-001.asl": "9230fe61aaacf9a23e9c87f5c49b6d029280c7cf8bdab521f2f5fd3d0b514a68",
@@ -23580,6 +23588,7 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-exec-tcmps-cube-scalar-width-004.asl": "89589a727f30477a6e81a44c753913053a6af4519ab6ff2be3b3e4d98ca94567",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-exec-tcmps-omitted-scalar-003.asl": "69ee1be9b97c62415f6eb0a516e9fcff913abafad778e42c50407b8807ae2fee",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-exec-tcmps-packed-001.asl": "dc31010f66b7c79d4bbe5af308ef94c47d9e6592adb25421f6de44078ac4dfdd",
+    "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-fault-tcmps-carrier-005.asl": "a530649912d40fd46a774beab1436841765756ea0e981b6dbacc8c0d0cb40f50",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-fault-tcmps-cellreg-schema-001.asl": "b6db741b42ffea81adc7b4ab1a247205bb74e48156808385809ed8090efaedac",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-static-tcmps-contract-001.asl": "aa21da4de6f5bbc518813c8dd87f7f7348da38a6d6ce77f2bfe3814608a0bf2c",
     "tests/asl/tile/tile-scalar-and-immediate/logical/TORS/tile-bound-tors-types-001.asl": "69f32fe22c2063d4050571bce148c1692b8607b897f18f9d145a00003673a7a1",
@@ -23612,7 +23621,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1066,
     "status": "closed",
-    "test_count": 3895,
+    "test_count": 3898,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -58696,6 +58705,17 @@
       "source": "asl/tile/elementwise-tile-tile/logical/TCMP.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
+      "kind": "fault",
+      "path": "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-fault-tcmp-carrier-002.asl",
+      "requirements": [
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "c2fcaae76ba6480022024f0e1abf5d462a17b6e20068b78dd53fd49cbb7e99d7",
+      "source": "asl/tile/elementwise-tile-tile/logical/TCMP.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TCMP-CROSS-CARRIER-001",
       "kind": "execution",
       "path": "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-cross-carrier-001.asl",
@@ -58780,6 +58800,17 @@
       "source": "asl/tile/elementwise-tile-tile/logical/TCMP.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TCMP-FP32-S32-GT-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-fp32-s32-gt-002.asl",
+      "requirements": [
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "4eddd6c5ad36c83f795458232c871edf148f46d8fe706d6855d9137a117ee2af",
+      "source": "asl/tile/elementwise-tile-tile/logical/TCMP.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TCMP-MODES-001",
       "kind": "boundary",
       "path": "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-bound-tcmp-modes-001.asl",
@@ -58858,6 +58889,17 @@
         "PTO-INST-TILE-TCMPS"
       ],
       "sha256": "f4fff7720add00bb554cbf328859fc4a11d149ec02d3c3d793c4a004f0f38c21",
+      "source": "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
+      "kind": "fault",
+      "path": "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-fault-tcmps-carrier-005.asl",
+      "requirements": [
+        "PTO-TCMPS-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "a530649912d40fd46a774beab1436841765756ea0e981b6dbacc8c0d0cb40f50",
       "source": "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl"
     },
     {
@@ -85719,6 +85761,7 @@
       "semantic_tests": [
         "PTO-AVS-TILE-TCMP-BUNDLE-001",
         "PTO-AVS-TILE-TCMP-CAPACITY-001",
+        "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
         "PTO-AVS-TILE-TCMP-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMP-CUBE-CELL-002",
         "PTO-AVS-TILE-TCMP-CUBE-CROSS-CARRIER-001",
@@ -85727,6 +85770,7 @@
         "PTO-AVS-TILE-TCMP-CUBE-M16-GPR-006",
         "PTO-AVS-TILE-TCMP-CUBE-U8-GPR-CROSS-001",
         "PTO-AVS-TILE-TCMP-DATR-001",
+        "PTO-AVS-TILE-TCMP-FP32-S32-GT-002",
         "PTO-AVS-TILE-TCMP-MODES-001",
         "PTO-AVS-TILE-TCMP-ORDER-001",
         "PTO-AVS-TILE-TCMP-PACKED-001",
@@ -85739,6 +85783,7 @@
       "tests": [
         "PTO-AVS-TILE-TCMP-BUNDLE-001",
         "PTO-AVS-TILE-TCMP-CAPACITY-001",
+        "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
         "PTO-AVS-TILE-TCMP-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMP-CUBE-CELL-002",
         "PTO-AVS-TILE-TCMP-CUBE-CROSS-CARRIER-001",
@@ -85747,6 +85792,7 @@
         "PTO-AVS-TILE-TCMP-CUBE-M16-GPR-006",
         "PTO-AVS-TILE-TCMP-CUBE-U8-GPR-CROSS-001",
         "PTO-AVS-TILE-TCMP-DATR-001",
+        "PTO-AVS-TILE-TCMP-FP32-S32-GT-002",
         "PTO-AVS-TILE-TCMP-MODES-001",
         "PTO-AVS-TILE-TCMP-ORDER-001",
         "PTO-AVS-TILE-TCMP-PACKED-001",
@@ -90665,6 +90711,7 @@
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TCMPS-BUNDLE-001",
+        "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
         "PTO-AVS-TILE-TCMPS-CELLREG-SCHEMA-001",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-CUBE-CELL-002",
@@ -90679,6 +90726,7 @@
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-TCMPS-BUNDLE-001",
+        "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
         "PTO-AVS-TILE-TCMPS-CELLREG-SCHEMA-001",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-CUBE-CELL-002",
