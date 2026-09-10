@@ -23,6 +23,7 @@
     "PTO-ARCH-TEPL-ALIAS-001",
     "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
     "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
+    "PTO-AS-TILEOP-MACRO-001",
     "PTO-B-CATR-CONTROL-001",
     "PTO-B-DATR-FIELDS-001",
     "PTO-B-DIM-WRITE-001",
@@ -355,7 +356,23 @@
   "legacy_ids": [
     "ADR-0052"
   ],
-  "release_boundary": true
+  "release_boundary": true,
+  "amendments": [
+    {
+      "date": "2026-09-09",
+      "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/261",
+      "affected_ndf": [
+        "PTO-AS-TILEOP-MACRO-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+      ]
+    }
+  ]
 }
 ---
 # ADR-GOV-0004: Direct Tile and bundle catalog closure
@@ -435,6 +452,37 @@ singleton.
 ASL is the sole semantic owner. Catalogs, generated pages, decoder witnesses,
 requirements, and AVS points are projections or evidence and must regenerate
 together from the current ASL owners.
+
+## TileOp macro-assembly amendment for PTO 0.58.6
+
+PTO 0.58.6 defines one generated macro-assembly surface for the current direct
+Tile operation inventory. Each macro expression contains one TileOp mnemonic,
+ordered bundle configuration, ordered sources, and ordered destinations on
+exactly one source line. A newline terminates the instruction; continuation
+syntax and canonical disassembly wrapping are not accepted.
+
+One macro expression expands to exactly one existing physical Block bundle and
+inherits its complete legality, fault, effect, ordering, restart, and
+publication behavior. It introduces no opcode, hidden state, or multi-operation
+atomicity. The boundary is explicit `BSTOP` or the following `BSTART`; the
+following header commits the prior bundle but is outside its half-open command
+range.
+
+The generated schema consumes owning `PTO-INSTRUCTION` metadata under
+`asl/tile/` and is cross-checked against `spec/catalog/tile-operations.json`.
+Folding is fail-closed: a disassembler prints a macro only for one unique exact
+schema match and otherwise retains physical assembly. Bare attribute values may
+be omitted only under one owner-defined default or unambiguous typed inference.
+The historical Consequences count of 109 records the original decision
+baseline; this amendment supersedes that count with the current 117-operation
+PTO 0.58.6 inventory.
+
+PTO 0.58.6 为当前 Direct Tile 操作清单定义一套生成式宏汇编表面。每条宏指令在
+同一源码行内包含一个 TileOp 助记符、有序 Bundle 配置、有序源和有序目的；换行
+结束该指令，不允许续行，规范反汇编也不得自动折行。每条宏指令只展开为一个现有
+物理 Block Bundle，并完整继承其合法性、异常、效果、顺序、重启和发布语义，不
+新增 opcode、隐藏状态或多操作原子性。反汇编只有在 schema 唯一精确匹配时才折叠，
+否则保留物理汇编。
 
 ## Consequences
 

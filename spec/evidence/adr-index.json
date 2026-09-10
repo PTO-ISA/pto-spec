@@ -591,6 +591,7 @@
         "PTO-ARCH-TEPL-ALIAS-001",
         "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
         "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
+        "PTO-AS-TILEOP-MACRO-001",
         "PTO-B-CATR-CONTROL-001",
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-DIM-WRITE-001",
@@ -914,6 +915,22 @@
         "PTO-TILE-TTRI",
         "PTO-TILE-TXOR",
         "PTO-TILE-TXORS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-AS-TILEOP-MACRO-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+          ],
+          "approvers": [
+            "Kevin Zhou <zhoubot@gmail.com>"
+          ],
+          "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
+          "date": "2026-09-09",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/261"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"

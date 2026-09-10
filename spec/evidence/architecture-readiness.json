@@ -5783,6 +5783,7 @@
         "PTO-ARCH-TEPL-ALIAS-001",
         "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
         "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
+        "PTO-AS-TILEOP-MACRO-001",
         "PTO-B-CATR-CONTROL-001",
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-DIM-WRITE-001",
@@ -23676,7 +23677,7 @@
   "sources": {
     "adr_records": {
       "count": 110,
-      "sha256": "649161ab7387ce41d2bf72d4d9716881ead58bb3041a424a7e1213e141718534"
+      "sha256": "44abbd6f05d2962366485f39994f44e188d1b9f8b8555e8aac00320610105fae"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -23684,7 +23685,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "98488c13a098494e21352e8b52d289e57065abb012adb012162b91dce64badd1",
+      "sha256": "4426d746b7f150140b54d1f59f3307bc21f14e8fd53c21295ac3d8665338d2e2",
       "test_count": 3910,
       "unit_count": 889
     }

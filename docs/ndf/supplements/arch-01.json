@@ -113,6 +113,18 @@
       }
     },
     {
+      "id": "PTO-AS-TILEOP-MACRO-001",
+      "source_path": "asl/arch/overview/instruction-classification.asl",
+      "title": {
+        "en": "Single-line TileOp macro assembly",
+        "zh-CN": "单行 TileOp 宏汇编"
+      },
+      "summary": {
+        "en": "This clause defines one canonical source line for each current direct Tile operation and maps it to exactly one existing physical Block bundle. Expansion inherits the complete owning contract, while disassembly folds only one unique exact schema match and otherwise keeps the physical form.",
+        "zh-CN": "本条款为每个当前 Direct Tile 操作定义一条规范源码行，并将其映射到恰好一个现有物理 Block Bundle。展开完整继承 owner 契约；反汇编只有在 schema 唯一精确匹配时才折叠，否则保留物理形式。"
+      }
+    },
+    {
       "id": "PTO-COMMON-CONVERSION-PROFILE-001",
       "source_path": "asl/arch/profile/reference-conversion.asl",
       "title": {

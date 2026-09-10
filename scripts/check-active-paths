@@ -33,6 +33,7 @@ MARKDOWN_ROOTS = frozenset(
         "governance",
         "development",
         "releases",
+        "virtual-isa",
         "site",
     }
 )
