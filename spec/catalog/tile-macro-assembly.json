@@ -21,13 +21,16 @@
   "attribute_syntax": "attributes are positional self-describing values; a defaulted or inferable attribute is omitted without a placeholder",
   "destination_forms": [
     {
-      "concrete_example": "->T#3<2KB>",
+      "concrete_example": "->T<2KB>",
       "kind": "tile",
+      "physical_binding": "B.IOT.DstTile",
+      "resulting_generation": "T#1",
       "syntax": "->DstTile<Size>"
     },
     {
-      "concrete_example": "->S#3<2KB>",
+      "concrete_example": "->S3<2KB>",
       "kind": "shared-tile",
+      "physical_binding": "B.IOS.SharedTileID",
       "syntax": "->DstShared<Size>"
     },
     {
@@ -37,13 +40,17 @@
       "syntax": "->ScalarDst"
     },
     {
-      "concrete_example": "->T#4<512B>",
+      "concrete_example": "->U<512B>",
       "kind": "predicate-tile",
+      "physical_binding": "B.IOT.DstTile",
+      "resulting_generation": "U#1",
       "syntax": "->PredicateTile<Size>"
     },
     {
-      "concrete_example": "->T#4<512B>",
+      "concrete_example": "->M<512B>",
       "kind": "predicate-cell",
+      "physical_binding": "B.IOT.DstTile",
+      "resulting_generation": "M#1",
       "syntax": "->PredicateCell<Size>"
     },
     {

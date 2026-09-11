@@ -4,6 +4,7 @@ from collections import Counter
 import copy
 import json
 from pathlib import Path
+import re
 import runpy
 import subprocess
 import sys
@@ -285,6 +286,9 @@ class TileMacroAssemblyTest(unittest.TestCase):
         )
         tadd = ("operations", tadd_index, "forms", 0, "expansion")
         invalid_catalogs = {
+            "unencodable destination generation": mutation(
+                ("destination_forms", 0, "concrete_example"), "->T#3<2KB>"
+            ),
             "line break": mutation(
                 ("operations", tadd_index, "forms", 0, "macro_format"),
                 self.by_name["TADD"]["macro_format"] + "\nBSTOP",
@@ -451,10 +455,37 @@ class TileMacroAssemblyTest(unittest.TestCase):
 
     def test_destination_grammar_matches_current_carriers(self) -> None:
         forms = {entry["kind"]: entry for entry in self.catalog["destination_forms"]}
+        self.assertEqual(
+            set(forms),
+            {
+                "tile",
+                "shared-tile",
+                "scalar",
+                "predicate-tile",
+                "predicate-cell",
+                "predicate-gpr",
+            },
+        )
+        for kind in ("tile", "predicate-tile", "predicate-cell"):
+            form = forms[kind]
+            match = re.fullmatch(r"->([TUMN])<[^<>]+>", form["concrete_example"])
+            self.assertIsNotNone(match, kind)
+            self.assertEqual(form["physical_binding"], "B.IOT.DstTile")
+            self.assertEqual(form["resulting_generation"], f"{match.group(1)}#1")
+        shared_match = re.fullmatch(
+            r"->S([0-9]|[1-5][0-9]|6[0-3])<[^<>]+>",
+            forms["shared-tile"]["concrete_example"],
+        )
+        self.assertIsNotNone(shared_match)
+        self.assertEqual(
+            forms["shared-tile"]["physical_binding"], "B.IOS.SharedTileID"
+        )
+        self.assertEqual(forms["scalar"]["concrete_example"], "->a0")
         self.assertEqual(forms["scalar"]["physical_binding"], "B.IOR.RegDst")
         self.assertEqual(forms["predicate-tile"]["syntax"], "->PredicateTile<Size>")
         self.assertEqual(forms["predicate-cell"]["syntax"], "->PredicateCell<Size>")
         self.assertEqual(forms["predicate-gpr"]["syntax"], "->PredicateGPR")
+        self.assertEqual(forms["predicate-gpr"]["concrete_example"], "->a0")
         self.assertEqual(forms["predicate-gpr"]["physical_binding"], "B.IOR.RegDst")
         self.assertNotIn("predicate-register", forms)
 

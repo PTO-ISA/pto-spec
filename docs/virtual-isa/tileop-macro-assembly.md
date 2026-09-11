@@ -32,7 +32,7 @@ A concrete macro is always written on one line:
 TADD <LB0:100, LB1:a0, LB2:a1+10, FP32, Null, 1111>, T#1, T#2, ->T<2KB>
 ```
 
-Destination metavariables likewise become physical binding operands. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`; `->T#4<512B>` may be a legacy packed predicate Tile or a CUBE PredicateCell according to the selected TCMP/TCMPS form. PTO 0.58.6 defines no architectural predicate-register destination for these TileOps.
+Destination metavariables likewise become physical binding operands. A Local destination names only its encoded `B.IOT.DstTile` hand: for example, `->T<2KB>` publishes a new `T#1`, while `->U<512B>` may publish a legacy packed predicate Tile or a CUBE PredicateCell as the new `U#1` according to the selected TCMP/TCMPS form. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`. PTO 0.58.6 defines no architectural predicate-register destination for these TileOps.
 
 ## Complete format inventory
 
