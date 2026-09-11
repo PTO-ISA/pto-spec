@@ -22,6 +22,7 @@ func TGATHER(
     source: TileIndex,
     indices: TileIndex)
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert TileOperandsLegal_TGATHER(destination, source, indices);
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
@@ -29,7 +30,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
             let index_element = TileLogicalLinearIndex(
@@ -64,6 +65,7 @@ func TSCATTER(
     source: TileIndex,
     indices: TileIndex)
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert TileOperandsLegal_TSCATTER(destination, source, indices);
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
@@ -71,7 +73,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     for row = 0 to result.rows - 1 looplimit 65536 do
         for column = 0 to result.columns - 1 looplimit 65536 do
             let destination_element = TileLogicalLinearIndex(

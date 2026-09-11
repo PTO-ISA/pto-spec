@@ -252,6 +252,7 @@ end;
 
 func BundleTIMG2COLBuildAndPublish() => boolean
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let output = BundleTIMG2COLStateOutput();
     let data_type = TileDataTypeFromEncoding(
         _BundleOperation.data_type as TileDataTypeEncoding);
@@ -328,7 +329,7 @@ begin
     candidate.storage_kind = TileStorage_Numeric;
     candidate.contents_defined = FALSE;
     candidate.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    candidate.packed_defined_elements = ZeroPackedTileDefinedElements();
+    candidate.packed_defined_elements = zero_packed_tile_elements;
     candidate.defined_valid_elements = 0;
     if output == BundleTIMG2COLOutput_SharedND then
         candidate.capacity_bytes = capacity;

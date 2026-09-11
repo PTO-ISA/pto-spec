@@ -23,6 +23,7 @@ func ConfigureTileForMask(index: TileIndex,
                    data_type: TileDataType, layout: TileLayout,
                    location: TileLocation, allocation_mask: bits(4))
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert TileCapacityIsLegal(capacity_bytes);
     assert allocation_mask != Zeros{4};
     assert rows > 0;
@@ -45,7 +46,7 @@ begin
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].packed_defined_elements =
-        ZeroPackedTileDefinedElements();
+        zero_packed_tile_elements;
     _Tiles[[index]].capacity_bytes = capacity_bytes;
     _Tiles[[index]].rows = derived_rows;
     _Tiles[[index]].columns = columns;
@@ -77,6 +78,7 @@ func ConfigurePredicateTileForMask(
     valid_columns: integer {0..65535},
     allocation_mask: bits(4))
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert TileCapacityIsLegal(capacity_bytes);
     assert allocation_mask != Zeros{4};
     assert rows > 0 && columns > 0;
@@ -93,7 +95,7 @@ begin
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].packed_defined_elements =
-        ZeroPackedTileDefinedElements();
+        zero_packed_tile_elements;
     _Tiles[[index]].capacity_bytes = capacity_bytes;
     _Tiles[[index]].rows = rows;
     _Tiles[[index]].columns = columns;
@@ -211,6 +213,7 @@ end;
 
 func ReleaseTile(index: TileIndex)
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     RemoveRelativeTileMapping(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = Zeros{4};
@@ -220,7 +223,7 @@ begin
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
     _Tiles[[index]].packed_defined_elements =
-        ZeroPackedTileDefinedElements();
+        zero_packed_tile_elements;
     _Tiles[[index]].capacity_bytes = 0;
     _Tiles[[index]].rows = 0;
     _Tiles[[index]].columns = 0;

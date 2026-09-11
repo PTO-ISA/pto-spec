@@ -263,6 +263,7 @@ readonly func MaterializeBundleSharedMatrixLeftPrimary(
     transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert BundleMatrixSharedLeftPrimarySchemaLegal(
         ordinal, group_m, k, data_type, transpose);
     let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
@@ -277,7 +278,7 @@ begin
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
     tile.rows = DerivedTileRows(tile.capacity_bytes, k, data_type);
     tile.columns = k;
@@ -322,6 +323,7 @@ readonly func MaterializeBundleSharedMatrixLeftScale(
     transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
     let valid_m = BundleMatrixCooperativeValidM(group_m, pe_identity);
     assert m_per_pe != 0 && valid_m != 0;
@@ -338,7 +340,7 @@ begin
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
     tile.rows = DerivedTileRows(
         tile.capacity_bytes, scale_groups, scale_type);
@@ -410,6 +412,7 @@ readonly func MaterializeBundleSharedMatrixPrimary(
     transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert BundleMatrixSharedBPrimarySchemaLegal(
         ordinal, logical_rows, logical_columns, data_type, transpose);
     let shared_tile_id = BundleSharedBindingId(ordinal);
@@ -420,7 +423,7 @@ begin
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
     tile.rows = DerivedTileRows(
         tile.capacity_bytes, logical_columns, data_type);

@@ -57,6 +57,8 @@ This page is a generated reference view of the normative ASL unit.
 
 implementation func ResetProfileState()
 begin
+    let zero_tile_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
             _PEGPRs[[pe]][[index]] = Zeros{PTO_XLEN};
@@ -93,10 +95,10 @@ begin
         _TileAllocationMasks[[index]] = Zeros{4};
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
-        _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+        _Tiles[[index]].defined_elements = zero_tile_elements;
         _Tiles[[index]].defined_valid_elements = 0;
         _Tiles[[index]].packed_defined_elements =
-            ZeroPackedTileDefinedElements();
+            zero_packed_tile_elements;
         _Tiles[[index]].capacity_bytes = 0;
         _Tiles[[index]].rows = 0;
         _Tiles[[index]].columns = 0;
@@ -125,10 +127,10 @@ begin
         _SharedTiles[[index]].tile.allocated = FALSE;
         _SharedTiles[[index]].tile.contents_defined = FALSE;
         _SharedTiles[[index]].tile.defined_elements =
-            Zeros{PTO_MODEL_TILE_ELEMENTS};
+            zero_tile_elements;
         _SharedTiles[[index]].tile.defined_valid_elements = 0;
         _SharedTiles[[index]].tile.packed_defined_elements =
-            ZeroPackedTileDefinedElements();
+            zero_packed_tile_elements;
         _SharedTiles[[index]].tile.cube_k_repeat = 0;
         _SharedTiles[[index]].tile.cube_n_repeat = 0;
         _SharedTiles[[index]].tile.cube_cell_count = 0;

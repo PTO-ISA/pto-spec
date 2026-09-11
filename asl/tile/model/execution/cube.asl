@@ -39,9 +39,10 @@ begin
 end;
 func MarkLocalTileValidRegionDefined(tile: TileInfo) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     var result = tile;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
             let element = TileStorageIndex(result,
@@ -63,6 +64,7 @@ func MatrixProductResultFromTiles(destination: TileIndex,
                                   c_scale: TileIndex,
                                   c_scale_present: boolean) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
@@ -102,7 +104,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     result.location = TileLocation_Matrix;
     var result_payload: TilePayload = destination_tile.payload;
     let control = NumericExecutionControl {
@@ -180,6 +182,7 @@ func MatrixMXProductResultFromTiles(destination: TileIndex,
                                     c_scale: TileIndex,
                                     c_scale_present: boolean) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let accumulator_tile = _Tiles[[accumulator]];
     let selected_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
@@ -225,7 +228,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     result.location = TileLocation_Matrix;
     var result_payload = destination_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do

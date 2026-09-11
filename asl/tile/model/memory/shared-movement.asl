@@ -83,6 +83,7 @@ func TLOADShared(shared_tile_id: SharedTileID, base_addresses: CorePEWords,
                  data_type: TileDataType, layout: TileLayout,
                  pe_mask: bits(4))
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     if pe_mask == Zeros{4} then return; end;
     let capacity_bytes = TileSizeCodeBytes(size_code);
     if rows < valid_rows || rows >
@@ -103,7 +104,7 @@ begin
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.capacity_bytes = capacity_bytes;
     tile.rows = derived_rows;
     tile.columns = columns;
