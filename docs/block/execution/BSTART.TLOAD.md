@@ -151,11 +151,12 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | DataType | destination element data type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
-| B.IOR.RegSrc1 | per-PE private-GPR byte row stride |
+| B.IOR.RegSrc1 | ordinary per-PE private-GPR byte row stride; weight-mode ShapeGPR packing Cin, Cout, KernelH, and KernelW |
 | B.DIM.LB0 | ordinary ValidCol or CUBE valid columns |
 | B.DIM.LB1 | ordinary ValidRow or CUBE valid rows |
 | B.DIM.LB2 | ordinary physical Col; forbidden for CUBE conversion |
 | B.IOT/B.IOS | Local or Shared destination, per-PE TSize, and participation mask |
+| B.IOR.RegSrc2 | weight-mode StartGPR packing NStart and KStart |
 
 ## Decode
 
@@ -174,6 +175,7 @@ end;
 Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
 Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, SizeCode, and PE_MASK. One participating issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges.
 Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT.
+Weight-mode Shared destination: explicit B.DATR OHWI2NK or OIHW2NK; LB0=ValidK, LB1=ValidN, LB2=TotalK; exactly one three-source B.IOR binds GMBase, ShapeGPR, StartGPR -> zero; singleton publication omits B.ASSEMBLE and multi-participant publication uses contiguous N-row B.ASSEMBLE ranges.
 ```
 
 ## Operation
@@ -210,6 +212,7 @@ end;
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape contract; omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must be at least ValidRow.
 - Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
+- Weight mode uses DTYPE_NONE and zero B.DATR controls; ShapeGPR packs Cin/Cout/KernelH/KernelW, StartGPR packs NStart/KStart, and the physical Shared descriptor is row-major [N][K] with K contiguous.
 
 ## Legality
 
@@ -218,12 +221,14 @@ end;
 - ValidCol and ValidRow must be nonzero and no greater than derived physical Col and Rows; Col and Rows are powers of two under the common Tile descriptor contract.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, or descriptor changes.
 - CUBE conversion accepts only Layout codes 21 through 23, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one Local destination B.IOT, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS.
+- Weight mode accepts only OHWI2NK code 10 and OIHW2NK code 11, requires the exact fixed B.DATR fields, exactly one three-source B.IOR, equal participating-PE GMBase/ShapeGPR/StartGPR values, wide-checked Cin/Cout/kernel bounds, and aligned ValidK/KStart windows; codes 12 and 13 remain reserved for future KN forms.
 
 ## State effects
 
 - Allocates/renames one Local destination or reallocates the named Shared destination with Rows derived from SizeCode, Col, and DataType, then fills the valid region.
 - A singleton Shared issuer loads and publishes the complete logical parent. Multiple Shared issuers require B.ASSEMBLE with explicit ranges and atomic LAST publication.
 - A successful CUBE form installs a persistent Matrix-location descriptor with CELL geometry derived from Layout, BSTART DataType, LB1 valid rows, and LB0 valid columns; TSize remains capacity only.
+- A successful weight-mode Shared form atomically publishes the existing row-major NK descriptor; ordinary TLOAD and all non-weight layouts retain their existing behavior.
 
 ## Memory effects and ordering
 
@@ -231,6 +236,7 @@ end;
 
 - For every selected PE and every element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
 - All accesses participate in PTO-TSO with the block's aq/rl attributes and are precise and restartable.
+- Weight mode maps OHWI/OIHW GM weights into canonical [kh][kw][c1][c0] order, defines Cin padding lanes as raw zero without GM access, and writes a row-major Shared [N][K] window without touching physical tails.
 
 ### Ordering
 
@@ -247,3 +253,4 @@ end;
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0001, ->S7<1>; BSTOP
 - BSTART.TLOAD FP16; B.DATR {ND2M16, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=K; B.DIM LB1=M; B.IOT mask=1111, <last>, ->M<1>; BSTOP
+- BSTART.TLOAD FP16; B.DATR {OHWI2NK, DTYPE_NONE, Zero, EQ, Default, 0, 0}; B.DIM LB0=ValidK; B.DIM LB1=ValidN; B.DIM LB2=TotalK; B.IOR GMBase, ShapeGPR, StartGPR, ->zero; B.IOS mask, ->S0<SizeCode>; BSTOP

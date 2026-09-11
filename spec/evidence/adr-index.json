@@ -5865,6 +5865,55 @@
       "title_zh": "BSTART.TIMG2COL \u7279\u5f81\u56fe IMG2COL \u4e0e\u65e7 Local-Tile \u9000\u5f79"
     },
     {
+      "accepted": "2026-09-11",
+      "affected_ndf": [
+        "PTO-BSTART-TLOAD-WEIGHT-NK-CONTRACT-001",
+        "PTO-BSTART-TLOAD-WEIGHT-SOURCE-001",
+        "PTO-BSTART-TLOAD-WEIGHT-KORDER-001",
+        "PTO-BSTART-TLOAD-WEIGHT-DEFINEDNESS-001",
+        "PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-BSTART-TLOAD",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC",
+        "PTO-BLOCK-MODEL-MEMORY-WEIGHT-TO-SHARED-GM",
+        "PTO-BLOCK-MODEL-OPERANDS-WEIGHT-PARAMETERS",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-TLOAD"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "226b5806d8ed8d03c38ee6ec6ff3f880b381ddaf",
+      "created": "2026-09-09",
+      "id": "ADR-BLOCK-0019",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/99",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "BSTART.TLOAD convolution weights to Shared NK",
+      "title_zh": "BSTART.TLOAD \u5377\u79ef\u6743\u91cd\u5230 Shared NK"
+    },
+    {
       "accepted": "2026-07-31",
       "affected_ndf": [
         "PTO-BCNT-DECISION-BINDING-001",
@@ -10809,9 +10858,9 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 110,
+    "record_count": 111,
     "type_counts": {
-      "BLOCK": 18,
+      "BLOCK": 19,
       "CUBE": 18,
       "GOV": 11,
       "MEM": 9,

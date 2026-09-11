@@ -43671,7 +43671,8 @@
       "defaults": [
         "DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects ordinary NORM layout. Explicit CUBE Layout 21 through 23 requires DTYPE_NONE and consumes PadValue for physical CELL tails.",
         "LB0/ValidCol and LB1/ValidRow default through the common destination-shape rules. Omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must contain ValidRow.",
-        "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default."
+        "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.",
+        "Weight mode is explicit-only and uses DTYPE_NONE with Zero/EQ/Default/0/0 controls; the destination view is row-major NK with K contiguous."
       ],
       "destinations": [
         {
@@ -44050,7 +44051,7 @@
               "field": "macro_source0",
               "optional": false,
               "ordinal": 0,
-              "role": "per-PE private-GPR GM base address; per-PE private-GPR byte row stride",
+              "role": "per-PE private-GPR GM base address; ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR; weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms",
               "size": null,
               "syntax": "[BaseGPR=zero, RowStrideGPR?]",
               "value_style": null
@@ -44412,7 +44413,7 @@
               "field": "macro_source0",
               "optional": false,
               "ordinal": 0,
-              "role": "per-PE private-GPR GM base address; per-PE private-GPR byte row stride",
+              "role": "per-PE private-GPR GM base address; ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR; weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms",
               "size": null,
               "syntax": "[BaseGPR=zero, RowStrideGPR?]",
               "value_style": null
@@ -44774,20 +44775,401 @@
               "field": "macro_source0",
               "optional": false,
               "ordinal": 0,
-              "role": "per-PE private-GPR GM base address; per-PE private-GPR byte row stride",
+              "role": "per-PE private-GPR GM base address; ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR; weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms",
               "size": null,
               "syntax": "[BaseGPR=zero, RowStrideGPR?]",
               "value_style": null
             }
           ],
           "spelling": "TLOAD.CUBE"
+        },
+        {
+          "configuration": [
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": null,
+              "field": "LB0",
+              "optional": false,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "LB0:ValidK",
+              "value_style": "named-role"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": null,
+              "field": "LB1",
+              "optional": false,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "LB1:ValidN",
+              "value_style": "named-role"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": null,
+              "field": "LB2",
+              "optional": false,
+              "ordinal": 2,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "LB2:TotalK",
+              "value_style": "named-role"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "DataType",
+              "optional": false,
+              "ordinal": 3,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "DataType",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": "OHWI2NK or OIHW2NK",
+              "default": null,
+              "field": "WeightLayout",
+              "optional": false,
+              "ordinal": 4,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "WeightLayout{must be OHWI2NK or OIHW2NK}",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "PEMask",
+              "optional": false,
+              "ordinal": 5,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "PEMask",
+              "value_style": "bare-value"
+            }
+          ],
+          "destinations": [
+            {
+              "binding_kind": "shared-tile-binding",
+              "condition": null,
+              "configuration_kind": null,
+              "constraint": null,
+              "default": null,
+              "field": "DstShared",
+              "optional": false,
+              "ordinal": 0,
+              "role": "new Local destination or absolute Shared destination",
+              "size": "Size",
+              "syntax": "->DstShared<Size>",
+              "value_style": null
+            }
+          ],
+          "expansion": {
+            "argument_bindings": [
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOS",
+                    "command_group": 0,
+                    "field": "DstShared",
+                    "slot": "Role0"
+                  }
+                ],
+                "physical_role": "destination0"
+              },
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOR",
+                    "command_group": 0,
+                    "field": "macro_source0",
+                    "slot": "RegSrc0"
+                  }
+                ],
+                "physical_role": "address"
+              },
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOR",
+                    "command_group": 0,
+                    "field": "macro_source0",
+                    "slot": "RegSrc1"
+                  }
+                ],
+                "physical_role": "scalar0"
+              }
+            ],
+            "boundary": {
+              "accepted": [
+                "explicit BSTOP",
+                "next BSTART"
+              ],
+              "command_range": "half-open; a following BSTART commits the prior bundle but belongs to the next form"
+            },
+            "command_order": [
+              "header",
+              "B.DATR",
+              "B.FPATR",
+              "B.DIM",
+              "B.IOR/B.IOT/B.IOS",
+              "boundary"
+            ],
+            "configuration_bindings": [
+              {
+                "field": "LB0",
+                "syntax": "LB0:ValidK",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  }
+                ]
+              },
+              {
+                "field": "LB1",
+                "syntax": "LB1:ValidN",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "LB2",
+                "syntax": "LB2:TotalK",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
+                "field": "DataType",
+                "syntax": "DataType",
+                "targets": [
+                  {
+                    "command": "BSTART.TLOAD",
+                    "group": null,
+                    "slot": "DataType"
+                  }
+                ]
+              },
+              {
+                "field": "WeightLayout",
+                "syntax": "WeightLayout{must be OHWI2NK or OIHW2NK}",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "Layout"
+                  }
+                ]
+              },
+              {
+                "field": "PEMask",
+                "syntax": "PEMask",
+                "targets": [
+                  {
+                    "command": "B.IOS",
+                    "group": 0,
+                    "slot": "PE_MASK"
+                  }
+                ]
+              }
+            ],
+            "fold": {
+              "policy": "unique-exact-match-or-physical",
+              "requires_complete_boundary": true,
+              "unique_without_runtime_state": true
+            },
+            "fold_signature_sha256": "481706dad3424d14fc71ba0f53984fa79498eff8f854ca78a66a6e3d59bb2beb",
+            "form_id": "pto0586-tload-daaad92274c38cea",
+            "header": {
+              "command": "BSTART.TLOAD",
+              "family": "TLSU",
+              "function": 0,
+              "mode": null,
+              "selector": null
+            },
+            "modifier_bindings": [
+              {
+                "command_group": 0,
+                "evidence_case": "RANGE-MATRIX-CASE-0176",
+                "field": "DstShared",
+                "modifier": "B.ASSEMBLE INIT_LAST",
+                "physical_role": "destination0",
+                "slot": "Role0"
+              }
+            ],
+            "operand_bindings": [
+              {
+                "binding_kind": "scalar-binding",
+                "command": "B.IOR",
+                "field": "macro_source0",
+                "members": [
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [],
+                    "optional": false,
+                    "physical_role": "address",
+                    "slot": "RegSrc0",
+                    "syntax": "GMBaseGPR"
+                  },
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [],
+                    "optional": false,
+                    "physical_role": "scalar0",
+                    "slot": "RegSrc1",
+                    "syntax": "ShapeGPR"
+                  },
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [],
+                    "optional": false,
+                    "physical_role": "scalar1",
+                    "slot": "RegSrc2",
+                    "syntax": "StartGPR"
+                  }
+                ],
+                "role_kind": "source",
+                "syntax": "[GMBaseGPR, ShapeGPR, StartGPR]"
+              },
+              {
+                "binding_kind": "shared-tile-binding",
+                "command": "B.IOS",
+                "field": "DstShared",
+                "members": [
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [
+                      {
+                        "evidence_case": "RANGE-MATRIX-CASE-0176",
+                        "modifier": "B.ASSEMBLE INIT_LAST"
+                      }
+                    ],
+                    "optional": false,
+                    "physical_role": "destination0",
+                    "slot": "Role0",
+                    "syntax": "->DstShared<Size>"
+                  }
+                ],
+                "role_kind": "destination",
+                "syntax": "->DstShared<Size>"
+              }
+            ],
+            "operand_commands": [
+              {
+                "command": "B.IOR",
+                "group": 0,
+                "members": [
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "macro_source0",
+                    "optional": false,
+                    "physical_role": "address",
+                    "slot": "RegSrc0"
+                  },
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "macro_source0",
+                    "optional": false,
+                    "physical_role": "scalar0",
+                    "slot": "RegSrc1"
+                  },
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "macro_source0",
+                    "optional": false,
+                    "physical_role": "scalar1",
+                    "slot": "RegSrc2"
+                  }
+                ]
+              },
+              {
+                "command": "B.IOS",
+                "group": 0,
+                "members": [
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "DstShared",
+                    "optional": false,
+                    "physical_role": "destination0",
+                    "slot": "Role0"
+                  }
+                ]
+              }
+            ]
+          },
+          "macro_format": "TLOAD.WEIGHT <LB0:ValidK, LB1:ValidN, LB2:TotalK, DataType, WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask>, [GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>",
+          "sources": [
+            {
+              "binding_kind": "scalar-binding",
+              "condition": null,
+              "configuration_kind": null,
+              "constraint": null,
+              "default": null,
+              "field": "macro_source0",
+              "optional": false,
+              "ordinal": 0,
+              "role": "per-PE private-GPR GM base address; ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR; weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms",
+              "size": null,
+              "syntax": "[GMBaseGPR, ShapeGPR, StartGPR]",
+              "value_style": null
+            }
+          ],
+          "spelling": "TLOAD.WEIGHT"
         }
       ],
       "macro_format": "TLOAD <LB0:ValidCol?, LB1:ValidRow?, LB2:Col=ValidCol, DataType, Layout?, PEMask>, [BaseGPR=zero, RowStrideGPR?], ->DstTile<Size>",
       "mnemonic": "TLOAD",
       "physical_bundle": [
         "Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.",
-        "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, SizeCode, and PE_MASK. One issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges."
+        "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, SizeCode, and PE_MASK. One issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges.",
+        "Weight Shared: B.DATR OHWI2NK/OIHW2NK selects the convolution-weight transformation; LB0/LB1/LB2 are ValidK/ValidN/TotalK and one B.IOR carries GMBase, ShapeGPR, StartGPR."
       ],
       "physical_schema": {
         "arguments": [
@@ -44846,7 +45228,11 @@
         },
         {
           "field": "scalar0",
-          "role": "per-PE private-GPR byte row stride"
+          "role": "ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR"
+        },
+        {
+          "field": "scalar1",
+          "role": "weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
@@ -44860,7 +45246,7 @@
           "field": "macro_source0",
           "optional": false,
           "ordinal": 0,
-          "role": "per-PE private-GPR GM base address; per-PE private-GPR byte row stride",
+          "role": "per-PE private-GPR GM base address; ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR; weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms",
           "size": null,
           "syntax": "[BaseGPR=zero, RowStrideGPR?]",
           "value_style": null
@@ -98481,7 +98867,7 @@
   "source_of_truth": "PTO-TILEOP-MACRO records in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
   "status": "accepted-0.58.6",
   "summary": {
-    "form_count": 141,
+    "form_count": 142,
     "operation_count": 117
   },
   "syntax_shape": "TileOp <bundle configuration>, ordered sources, ->ordered destinations"

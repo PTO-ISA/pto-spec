@@ -154,6 +154,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Cross-cutting
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
+- [ADR-BLOCK-0019](docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md): BSTART.TLOAD convolution weights to Shared NK
 - [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): A2/A3 MX CUBE profile applicability
 - [ADR-GOV-0011](docs/status/decisions/ADR-GOV-0011-runtime-compatibility-profile.md): Opt-in Linx runtime compatibility profile
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners

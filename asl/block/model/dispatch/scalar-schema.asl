@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA"]}
 readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
     instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
     => boolean
@@ -276,6 +276,11 @@ readonly func BundleOperationScalarBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
+    if BundleWeightTLOADSelected() then
+        return !_BundleScalarBindings[[1]].valid &&
+               _BundleScalarBindings[[0]].source_count == 3 &&
+               _BundleScalarBindings[[0]].destination == 0;
+    end;
     let input_count = BundleOperationGPRInputCount(operation);
     if input_count < 3 && _BundleScalarBindings[[0]].source2 != 0 then
         return FALSE;

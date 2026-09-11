@@ -240,10 +240,14 @@ def physical_roles_for_binding(
         return [f"destination{match.group(1)}" if match else "destination0"]
     if field.startswith("macro_source"):
         roles = []
-        if "BaseGPR" in syntax:
+        if "BaseGPR" in syntax or "GMBaseGPR" in syntax:
             roles.append("address")
         if "RowStrideGPR" in syntax:
             roles.append("scalar0")
+        if "ShapeGPR" in syntax:
+            roles.append("scalar0")
+        if "StartGPR" in syntax:
+            roles.append("scalar1")
         return roles
     if field in {"RowStrideGPR", "PeerTid", "Start"}:
         return ["scalar0"]
@@ -382,11 +386,19 @@ def expected_operand_bindings(
                 optional = bool(binding.get("optional"))
                 if field.startswith("macro_source"):
                     if role == "address":
-                        member_syntax = "BaseGPR"
+                        member_syntax = (
+                            "GMBaseGPR" if "GMBaseGPR" in syntax else "BaseGPR"
+                        )
                         default = "zero" if "=zero" in syntax else None
                         optional = "=zero" in syntax
                     elif role == "scalar0":
-                        member_syntax = "RowStrideGPR"
+                        member_syntax = (
+                            "ShapeGPR" if "ShapeGPR" in syntax else "RowStrideGPR"
+                        )
+                        default = None
+                        optional = "?" in syntax
+                    elif role == "scalar1":
+                        member_syntax = "StartGPR"
                         default = None
                         optional = "?" in syntax
                 members.append(
@@ -459,6 +471,7 @@ DATR_PHYSICAL_SLOTS = {
     "CubeLayout": "Layout",
     "DstDataType": "DataType",
     "Layout": "Layout",
+    "WeightLayout": "Layout",
     "PadValue": "PadValueOrByteId",
     "PadValueOrByteId": "PadValueOrByteId",
     "RMode": "RMode",
