@@ -229,6 +229,8 @@ nav:
               - TLSU Mscatter: block/model/dispatch/tlsu-mscatter.md
               - TLSU Prefetch: block/model/dispatch/tlsu-prefetch.md
               - Top Level: block/model/dispatch/top-level.md
+              - Weight To Shared Execution: block/model/dispatch/weight-to-shared-execution.md
+              - Weight To Shared Schema: block/model/dispatch/weight-to-shared-schema.md
           - Faults:
               - Rollback: block/model/faults/rollback.md
           - Lifecycle:
@@ -238,6 +240,7 @@ nav:
               - Reset: block/model/lifecycle/reset.md
           - Memory:
               - Timg2col Gm: block/model/memory/timg2col-gm.md
+              - Weight To Shared Gm: block/model/memory/weight-to-shared-gm.md
           - Operands:
               - Local Generation: block/model/operands/local-generation.md
               - Portable Carriers: block/model/operands/portable-carriers.md
@@ -248,6 +251,7 @@ nav:
               - Subview Descriptor: block/model/operands/subview-descriptor.md
               - Tile Bindings: block/model/operands/tile-bindings.md
               - Timg2col Parameters: block/model/operands/timg2col-parameters.md
+              - Weight To Shared Parameters: block/model/operands/weight-to-shared-parameters.md
           - Schema:
               - Attributes: block/model/schema/attributes.md
               - Dimensions: block/model/schema/dimensions.md
@@ -1045,6 +1049,7 @@ nav:
               - "ADR-BLOCK-0016: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/ADR-BLOCK-0016-b-range-modifiers.md
               - "ADR-BLOCK-0017: Local single-object cap versus aggregate Local pool": status/decisions/ADR-BLOCK-0017-local-single-object-cap.md
               - "ADR-BLOCK-0018: BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement": status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md
+              - "ADR-BLOCK-0019: BSTART.TLOAD convolution weights to Shared NK": status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md
           - SCALAR:
               - "ADR-SCALAR-0001: Scalar bitfield and byte-reversal bounds": status/decisions/ADR-SCALAR-0001-scalar-bitfield-and-reverse-bounds.md
               - "ADR-SCALAR-0002: Scalar ALU totality and alias order": status/decisions/ADR-SCALAR-0002-scalar-alu-totality-and-alias-order.md

@@ -132,6 +132,7 @@ pure func TileDataLayoutCodeAccepted(data_layout: bits(5)) => boolean
 begin
     let code = UInt(data_layout);
     return code == 0 || code == 1 || code == 3 || code == 4 ||
+           code == 10 || code == 11 ||
            code == 6 || code == 8 || code == 9 || code == 17 ||
            code == 18 || code == 20 || (21 <= code && code <= 29) ||
            code == 30 || code == 31;
@@ -141,7 +142,9 @@ pure func TileDataLayoutOfCode(data_layout: bits(5)) => TileDataLayout
 begin
     assert TileDataLayoutCodeAccepted(data_layout);
     let code = UInt(data_layout);
-    if code == 1 then return TileDataLayout_ND2DN;
+    if code == 10 then return TileDataLayout_OHWI2NK;
+    elsif code == 11 then return TileDataLayout_OIHW2NK;
+    elsif code == 1 then return TileDataLayout_ND2DN;
     elsif code == 3 then return TileDataLayout_ND2ZN;
     elsif code == 4 then return TileDataLayout_ND2NZ;
     elsif code == 6 then return TileDataLayout_DN2ND;
@@ -169,6 +172,8 @@ pure func TileDataLayoutCodeOf(data_layout: TileDataLayout) => bits(5)
 begin
     case data_layout of
         when TileDataLayout_NORM => return Zeros{5};
+        when TileDataLayout_OHWI2NK => return Zeros{5} + 10;
+        when TileDataLayout_OIHW2NK => return Zeros{5} + 11;
         when TileDataLayout_ND2DN => return Zeros{5} + 1;
         when TileDataLayout_ND2ZN => return Zeros{5} + 3;
         when TileDataLayout_ND2NZ => return Zeros{5} + 4;
@@ -238,8 +243,10 @@ end;
 pure func TileDataLayoutSourceLayout(data_layout: TileDataLayout) => TileLayout
 begin
     case data_layout of
-        when TileDataLayout_NORM,
-             TileDataLayout_ND2DN,
+        when TileDataLayout_NORM => return TileLayout_RowMajor;
+        when TileDataLayout_OHWI2NK,
+             TileDataLayout_OIHW2NK => return TileLayout_ImplementationDefined;
+        when TileDataLayout_ND2DN,
              TileDataLayout_ND2ZN,
              TileDataLayout_ND2NZ => return TileLayout_RowMajor;
         when TileDataLayout_DN2ND,
@@ -266,8 +273,10 @@ pure func TileDataLayoutDestinationLayout(
     data_layout: TileDataLayout) => TileLayout
 begin
     case data_layout of
-        when TileDataLayout_NORM,
-             TileDataLayout_DN2ND,
+        when TileDataLayout_NORM => return TileLayout_RowMajor;
+        when TileDataLayout_OHWI2NK,
+             TileDataLayout_OIHW2NK => return TileLayout_ImplementationDefined;
+        when TileDataLayout_DN2ND,
              TileDataLayout_ZN2ND,
              TileDataLayout_NZ2ND => return TileLayout_RowMajor;
         when TileDataLayout_ND2DN,

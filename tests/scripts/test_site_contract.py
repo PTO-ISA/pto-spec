@@ -197,6 +197,9 @@ class SiteContractTests(unittest.TestCase):
             "Ordinary Local destination",
             "Local CUBE conversion",
             "Ordinary Shared destination",
+            "Weight Shared destination",
+            "ShapeGPR",
+            "StartGPR",
         ):
             self.assertIn(term, json.dumps(projection))
         self.assertEqual(projection["schema"], "pto.site-instruction-projection.v1")

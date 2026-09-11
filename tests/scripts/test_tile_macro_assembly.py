@@ -53,7 +53,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             {"VEC": 31, "SFU": 46, "TLSU": 28, "CUBE": 12},
         )
         self.assertEqual(
-            self.catalog["summary"], {"operation_count": 117, "form_count": 141}
+            self.catalog["summary"], {"operation_count": 117, "form_count": 142}
         )
 
     def test_every_macro_instruction_is_exactly_one_line(self) -> None:
@@ -176,6 +176,28 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 ("scalar0", "RegSrc1", True, None),
             ],
         )
+        weight = next(
+            form
+            for form in self.by_name["TLOAD"]["forms"]
+            if form["spelling"] == "TLOAD.WEIGHT"
+        )
+        weight_group = next(
+            binding
+            for binding in weight["expansion"]["operand_bindings"]
+            if binding["field"] == "macro_source0"
+        )
+        self.assertEqual(weight_group["command"], "B.IOR")
+        self.assertEqual(
+            [
+                (member["physical_role"], member["slot"], member["syntax"])
+                for member in weight_group["members"]
+            ],
+            [
+                ("address", "RegSrc0", "GMBaseGPR"),
+                ("scalar0", "RegSrc1", "ShapeGPR"),
+                ("scalar1", "RegSrc2", "StartGPR"),
+            ],
+        )
         shared_right = next(
             form
             for form in self.by_name["TMATMUL_MX"]["forms"]
@@ -232,7 +254,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.assertEqual(member["eligible_modifiers"][0]["modifier"], "B.SUBVIEW")
 
     def test_range_modifiers_are_attached_to_exact_bindings(self) -> None:
-        local_load, shared_load, cube_load = self.by_name["TLOAD"]["forms"]
+        local_load, shared_load, cube_load, _ = self.by_name["TLOAD"]["forms"]
 
         def member(form: dict[str, object], role: str) -> tuple[dict, dict]:
             for binding in form["expansion"]["operand_bindings"]:
@@ -403,8 +425,25 @@ class TileMacroAssemblyTest(unittest.TestCase):
     def test_transport_and_cube_variants_follow_current_0586_contract(self) -> None:
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TLOAD"]["forms"]],
-            ["TLOAD", "TLOAD.SHARED", "TLOAD.CUBE"],
+            ["TLOAD", "TLOAD.SHARED", "TLOAD.CUBE", "TLOAD.WEIGHT"],
         )
+        weight = self.by_name["TLOAD"]["forms"][3]
+        self.assertEqual(
+            weight["macro_format"],
+            "TLOAD.WEIGHT <LB0:ValidK, LB1:ValidN, LB2:TotalK, DataType, "
+            "WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask>, "
+            "[GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>",
+        )
+        weight_config = {
+            item["field"]: item["targets"]
+            for item in weight["expansion"]["configuration_bindings"]
+        }
+        self.assertEqual(weight_config["DataType"][0]["command"], "BSTART.TLOAD")
+        self.assertEqual(
+            weight_config["WeightLayout"][0],
+            {"command": "B.DATR", "group": None, "slot": "Layout"},
+        )
+        self.assertEqual(weight_config["PEMask"][0]["command"], "B.IOS")
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TSTORE"]["forms"]],
             ["TSTORE", "TSTORE.SHARED", "TSTORE.CUBE"],

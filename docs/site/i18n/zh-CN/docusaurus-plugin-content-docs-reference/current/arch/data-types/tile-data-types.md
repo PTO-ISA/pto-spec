@@ -176,6 +176,8 @@ constant DTYPE_NONE = '11111';
 
 type TileDataLayout of enumeration {
     TileDataLayout_NORM,
+    TileDataLayout_OHWI2NK,
+    TileDataLayout_OIHW2NK,
     TileDataLayout_ND2DN,
     TileDataLayout_ND2ZN,
     TileDataLayout_ND2NZ,

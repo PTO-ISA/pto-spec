@@ -87,7 +87,8 @@ This operation has no standalone opcode.
 | --- | --- |
 | destination0 | new Local destination or absolute Shared destination |
 | address | per-PE private-GPR GM base address |
-| scalar0 | per-PE private-GPR byte row stride |
+| scalar0 | ordinary per-PE private-GPR byte row stride or weight-mode packed ShapeGPR |
+| scalar1 | weight-mode packed StartGPR; inapplicable to ordinary and CUBE forms |
 
 ## Decode
 
@@ -105,6 +106,7 @@ end;
 ```asm
 Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.
 Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, SizeCode, and PE_MASK. One issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges.
+Weight Shared: B.DATR OHWI2NK/OIHW2NK selects the convolution-weight transformation; LB0/LB1/LB2 are ValidK/ValidN/TotalK and one B.IOR carries GMBase, ShapeGPR, StartGPR.
 ```
 
 ## Operation
@@ -172,6 +174,7 @@ end;
 - DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects ordinary NORM layout. Explicit CUBE Layout 21 through 23 requires DTYPE_NONE and consumes PadValue for physical CELL tails.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape rules. Omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must contain ValidRow.
 - Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.
+- Weight mode is explicit-only and uses DTYPE_NONE with Zero/EQ/Default/0/0 controls; the destination view is row-major NK with K contiguous.
 
 ## Legality
 
@@ -181,12 +184,14 @@ end;
 - ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the derived Rows and Col are powers of two large enough for the valid rectangle.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, load events, descriptor changes, or payload changes.
 - Ordinary forms require nonzero ValidCol and ValidRow, ValidCol not greater than physical Col, and power-of-two physical Rows and Col. CUBE forms require explicit nonzero LB0/LB1, absent LB2, and derive CELL geometry from Layout, dtype, and valid shape.
+- Weight layouts 10 and 11 are accepted only by the specialized BSTART.TLOAD weight Shared schema; reserved KN codes 12 and 13 are not implemented. The exact three-source B.IOR, packed-field reservations, K/C0 alignment, row-major NK shape, and selected-PE equality checks are mandatory.
 
 ## State effects
 
 - A successful Local form allocates or renames exactly one destination Tile, installs the derived descriptor, loads every selected valid element, and marks the valid region defined.
 - A successful singleton Shared form loads and publishes the complete parent from that issuer PE. A multi-PE Shared form uses B.ASSEMBLE explicit ranges; TLOAD never modifies source GPRs or GM.
 - A successful CUBE form writes raw valid values through CUBE storage indices and applies Zero, Max, Min, or undefined Null to physical tail positions without counting tails as valid elements.
+- Weight mode reuses the existing Shared row-major descriptor and B.ASSEMBLE generation protocol; ordinary TLOAD semantics are unchanged.
 
 ## Memory effects and ordering
 
@@ -194,6 +199,7 @@ end;
 
 - For each selected PE and each element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size. Packed four-bit types add floor(column / 2) to each byte-strided row base and select the nibble from column parity.
 - The accesses participate in PTO-TSO using the block aq/rl attributes and are precise and restartable.
+- Weight mode reads dense OHWI/OIHW source elements in canonical [kh][kw][c1][c0] order, supplies defined raw-zero Cin padding, and atomically publishes the Shared generation after complete preflight.
 
 ### Ordering
 
@@ -210,3 +216,4 @@ end;
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0001, ->S7<1>; BSTOP
 - BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP
+- BSTART.TLOAD FP16; B.DATR {OIHW2NK, DTYPE_NONE, Zero, EQ, Default, 0, 0}; B.DIM LB0=ValidK; B.DIM LB1=ValidN; B.DIM LB2=TotalK; B.IOR GMBase, ShapeGPR, StartGPR, ->zero; B.IOS mask, ->S0<SizeCode>; BSTOP

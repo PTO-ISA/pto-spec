@@ -187,7 +187,7 @@
     "scripts/check-active-paths": "81cb71759976e6cdd9c337ed2640cf388391d825e6f64de82dcc831b5752666b",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "4e4af379ac0c2e3803d665d821075c2be922e8dec2d902789e2967546832d312",
+    "scripts/check-binary-closure": "59b85097d803d95ac786cf7ad93dc08469edad911feb9a6bc27c8daf6797bcc3",
     "scripts/check-model-closure": "533556e31ca3fae808684d36ca8dfcd28a9f759dc6f2cfc44b7834669efd6d13",
     "scripts/check-model-closure-schema": "2edfcc32cad7860c632b2646791b6f50ad43437b3a8f09e7569a3e711c3a1e75",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
@@ -232,8 +232,8 @@
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
-    "spec/evidence/architecture-readiness.json": "31d72a948b9bb52a8a4eaa81c211f45be0d56fb6c8ee1acdd0a633e377bea663",
-    "spec/evidence/release-traceability-readiness.json": "4426d746b7f150140b54d1f59f3307bc21f14e8fd53c21295ac3d8665338d2e2",
+    "spec/evidence/architecture-readiness.json": "19dc7e858b810e8bef1b2997eb3802382bb02a15af19d9b7051b308a5677dfee",
+    "spec/evidence/release-traceability-readiness.json": "2fec0c8dcde61c8797e3045de21f838eb1db2f49e0bacb6281ef8d552d6cbc59",
     "spec/model-closure-selection.json": "2bfb6f1386e1b9a28197c9fbcd01d8953979392a890c16bf7faee80cdfe502ba",
     "spec/release-inputs.json": "c739ae0180d9435a2fe112f77dc9c65c35a9602789b9ecc3d610adfbcec10294",
     "spec/release-selection.json": "d335cdbb83291cf5a80ed97452268b0f82b9c6a8b40179ad01ad4692f4c5261c",
@@ -244,16 +244,16 @@
     "spec/schemas/pto-spec-release-event-v1.schema.json": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
   },
   "summary": {
-    "documentation_page_count": 889,
+    "documentation_page_count": 893,
     "executable_requirement_count": 667,
     "gate_count": 14,
     "mnemonic_count": 663,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3910,
+    "test_count": 3920,
     "test_page_count": 40,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 889
+    "unit_count": 893
   }
 }

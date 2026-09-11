@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "71852ac429474118e643ec836784b84b281ec221cf5756179d9b29dc4a547336",
+  "ownerSourceSha256": "e0659557ce18754fb1e43de3e6382bdd6f87a9eb98d330439d0308c5243f7ba9",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -705,6 +705,260 @@
             "role": {
               "en": "Local and Shared destination domains cannot be mixed.",
               "zh-CN": "Local 与 Shared 目标域不能混用。"
+            },
+            "parameters": []
+          }
+        ]
+      },
+      {
+        "id": "weight-shared",
+        "label": {
+          "en": "Weight Shared destination",
+          "zh-CN": "权重 Shared 目标"
+        },
+        "summary": {
+          "en": "Transform a dense OHWI or OIHW convolution-weight source into one row-major Shared [N][K] destination.",
+          "zh-CN": "把紧密 OHWI 或 OIHW 卷积权重源转换为一个行主序 Shared [N][K] 目标。"
+        },
+        "canonicalCommandCount": {
+          "en": "8-command singleton form; one additional B.ASSEMBLE command for cooperative publication",
+          "zh-CN": "单 issuer 形态为 8 条命令；协作式发布另需一条 B.ASSEMBLE 命令"
+        },
+        "canonicalMinCommands": 8,
+        "canonicalMaxCommands": 9,
+        "minimumSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DATR {OHWI2NK, DTYPE_NONE, Zero, EQ, Default, 0, 0}",
+          "B.DIM zero, ValidK, ->LB0",
+          "B.DIM zero, ValidN, ->LB1",
+          "B.DIM zero, TotalK, ->LB2",
+          "B.IOR GMBase, ShapeGPR, StartGPR, ->zero",
+          "B.IOS mask=0001, ->S0<SizeCode>",
+          "BSTOP"
+        ],
+        "completeSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DATR {OIHW2NK, DTYPE_NONE, Zero, EQ, Default, 0, 0}",
+          "B.DIM zero, ValidK, ->LB0",
+          "B.DIM zero, ValidN, ->LB1",
+          "B.DIM zero, TotalK, ->LB2",
+          "B.IOR GMBase, ShapeGPR, StartGPR, ->zero",
+          "B.IOS mask=1111, ->S0<SizeCode>",
+          "B.ASSEMBLE <init,last>, RangeGPR",
+          "BSTOP"
+        ],
+        "relationships": [
+          {
+            "en": "OHWI2NK and OIHW2NK are the only implemented weight layouts; OHWI2KN and OIHW2KN remain reserved.",
+            "zh-CN": "OHWI2NK 与 OIHW2NK 是仅有的已实现权重布局；OHWI2KN 与 OIHW2KN 仍为保留。"
+          },
+          {
+            "en": "ShapeGPR packs Cin, Cout, KernelH, and KernelW; StartGPR packs NStart and KStart.",
+            "zh-CN": "ShapeGPR 打包 Cin、Cout、KernelH 与 KernelW；StartGPR 打包 NStart 与 KStart。"
+          },
+          {
+            "en": "A singleton issuer omits B.ASSEMBLE; multiple participants use contiguous N-row B.ASSEMBLE ranges and publish only at LAST.",
+            "zh-CN": "单 issuer 省略 B.ASSEMBLE；多个参与者使用连续 N 行 B.ASSEMBLE 范围并仅在 LAST 时发布。"
+          }
+        ],
+        "commands": [
+          {
+            "mnemonic": "BSTART.TLOAD",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Open weight TLOAD and supply the concrete destination element type.",
+              "zh-CN": "打开权重 TLOAD 并提供具体目标元素类型。"
+            },
+            "parameters": [
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "Supported non-packed element type inherited through B.DATR DTYPE_NONE.",
+                  "zh-CN": "通过 B.DATR DTYPE_NONE 继承的受支持非打包元素类型。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DATR",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Select OHWI2NK or OIHW2NK and the fixed weight controls.",
+              "zh-CN": "选择 OHWI2NK 或 OIHW2NK 以及固定权重控制。"
+            },
+            "parameters": [
+              {
+                "name": "Layout",
+                "meaning": {
+                  "en": "OHWI2NK or OIHW2NK.",
+                  "zh-CN": "OHWI2NK 或 OIHW2NK。"
+                }
+              },
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "DTYPE_NONE; inherit BSTART DataType.",
+                  "zh-CN": "DTYPE_NONE；继承 BSTART DataType。"
+                }
+              },
+              {
+                "name": "Remaining controls",
+                "meaning": {
+                  "en": "Zero padding, EQ, Default rounding, Sat=0, Canonicalize=0.",
+                  "zh-CN": "Zero padding、EQ、Default rounding、Sat=0、Canonicalize=0。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DIM",
+            "minOccurrences": 3,
+            "maxOccurrences": 3,
+            "repeatable": true,
+            "requirement": "required",
+            "role": {
+              "en": "Write ValidK, ValidN, and TotalK exactly once.",
+              "zh-CN": "分别且仅一次写入 ValidK、ValidN 与 TotalK。"
+            },
+            "parameters": [
+              {
+                "name": "LB0 / ValidK",
+                "meaning": {
+                  "en": "C0-aligned valid K-window width.",
+                  "zh-CN": "按 C0 对齐的有效 K 窗口宽度。"
+                }
+              },
+              {
+                "name": "LB1 / ValidN",
+                "meaning": {
+                  "en": "Valid output-channel row count.",
+                  "zh-CN": "有效输出通道行数。"
+                }
+              },
+              {
+                "name": "LB2 / TotalK",
+                "meaning": {
+                  "en": "Power-of-two physical Shared K stride.",
+                  "zh-CN": "Shared 的二次幂物理 K 跨度。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOR",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Bind the exact three-source weight parameter record and zero destination.",
+              "zh-CN": "绑定恰好三个源的权重参数记录及 zero 目标。"
+            },
+            "parameters": [
+              {
+                "name": "RegSrc0 / GMBase",
+                "meaning": {
+                  "en": "Dense source base byte address.",
+                  "zh-CN": "紧密源基字节地址。"
+                }
+              },
+              {
+                "name": "RegSrc1 / ShapeGPR",
+                "meaning": {
+                  "en": "Packed Cin, Cout, KernelH, and KernelW.",
+                  "zh-CN": "打包的 Cin、Cout、KernelH 与 KernelW。"
+                }
+              },
+              {
+                "name": "RegSrc2 / StartGPR",
+                "meaning": {
+                  "en": "Packed NStart and KStart.",
+                  "zh-CN": "打包的 NStart 与 KStart。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOS",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Name the absolute Shared destination, capacity, and participating PE mask.",
+              "zh-CN": "指定绝对 Shared 目标、容量与参与 PE mask。"
+            },
+            "parameters": [
+              {
+                "name": "SharedTileID",
+                "meaning": {
+                  "en": "Destination S0..S63.",
+                  "zh-CN": "目标 S0..S63。"
+                }
+              },
+              {
+                "name": "SizeCode",
+                "meaning": {
+                  "en": "Destination capacity or cooperative writer capacity as required by the selected phase.",
+                  "zh-CN": "目标容量，或所选阶段要求的协作 writer 容量。"
+                }
+              },
+              {
+                "name": "PEMode",
+                "meaning": {
+                  "en": "Singleton or cooperative participant mask.",
+                  "zh-CN": "单 issuer 或协作参与 mask。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.ASSEMBLE",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "conditional",
+            "role": {
+              "en": "Required for a multi-participant mask to bind the contiguous N-row writer range and INIT/LAST phase.",
+              "zh-CN": "多参与者 mask 条件必选，用于绑定连续 N 行 writer 范围及 INIT/LAST 阶段。"
+            },
+            "parameters": [
+              {
+                "name": "RangeGPR",
+                "meaning": {
+                  "en": "Encoded range matching the selected PE rank.",
+                  "zh-CN": "与所选 PE rank 匹配的编码范围。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "BSTOP",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Close the block; publish only after complete selected-PE footprint preflight.",
+              "zh-CN": "关闭 block；仅在全部所选 PE footprint 预检查完成后发布。"
+            },
+            "parameters": []
+          },
+          {
+            "mnemonic": "B.IOT",
+            "minOccurrences": 0,
+            "maxOccurrences": 0,
+            "repeatable": false,
+            "requirement": "forbidden",
+            "role": {
+              "en": "Weight mode has only a Shared destination.",
+              "zh-CN": "权重模式仅有 Shared 目标。"
             },
             "parameters": []
           }

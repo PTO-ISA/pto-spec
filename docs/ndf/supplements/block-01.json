@@ -1059,6 +1059,66 @@
         "en": "This clause selects PadValueOrByteId as matrix-only CCTRL while preserving non-matrix padding and byte-identifier meanings. Omission selects zero, AccOutMode is bit zero, AccInMode is bit one, and inapplicable or reserved combinations reject before effects.",
         "zh-CN": "本条款仅在矩阵操作中将 PadValueOrByteId 选作 CCTRL，同时保留非矩阵填充和字节标识含义。省略选择零，AccOutMode 为第零位，AccInMode 为第一位，不适用或保留组合在产生效果前拒绝。"
       }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-WEIGHT-NK-CONTRACT-001",
+      "source_path": "asl/block/execution/BSTART.TLOAD.asl",
+      "title": {
+        "en": "Convolution-weight TLOAD NK contract",
+        "zh-CN": "卷积权重 TLOAD NK 契约"
+      },
+      "summary": {
+        "en": "Explicit OHWI2NK or OIHW2NK B.DATR selects weight-mode TLOAD, which preserves generic B.DIM names and publishes an existing row-major Shared [N][K] descriptor with K contiguous; ordinary TLOAD and reserved KN forms remain outside this contract.",
+        "zh-CN": "显式 OHWI2NK 或 OIHW2NK B.DATR 选择权重模式 TLOAD，保留通用 B.DIM 名称，并发布 K 连续的现有行主序 Shared [N][K] 描述符；普通 TLOAD 与保留的 KN 形式不属于本契约。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-WEIGHT-SOURCE-001",
+      "source_path": "asl/block/model/operands/weight-to-shared-parameters.asl",
+      "title": {
+        "en": "Weight TLOAD source parameter carrier",
+        "zh-CN": "权重 TLOAD 源参数载体"
+      },
+      "summary": {
+        "en": "One three-source B.IOR carries GMBase, ShapeGPR, and StartGPR with a zero destination selector; packed shape/start fields and selected-PE equality are mandatory.",
+        "zh-CN": "一个三源 B.IOR 携带 GMBase、ShapeGPR 和 StartGPR，并使用零目的选择器；形状与起始字段的打包方式以及参与 PE 相等性是强制要求。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-WEIGHT-KORDER-001",
+      "source_path": "asl/block/model/memory/weight-to-shared-gm.asl",
+      "title": {
+        "en": "Weight TLOAD canonical K order",
+        "zh-CN": "权重 TLOAD 规范 K 顺序"
+      },
+      "summary": {
+        "en": "OHWI and OIHW source layouts map to the same canonical [kh][kw][c1][c0] order with c0 fastest and spatial coordinates before channel blocks.",
+        "zh-CN": "OHWI 与 OIHW 源布局映射到相同的 [kh][kw][c1][c0] 规范顺序，其中 c0 最快变化且空间坐标位于通道块之前。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-WEIGHT-DEFINEDNESS-001",
+      "source_path": "asl/block/model/memory/weight-to-shared-gm.asl",
+      "title": {
+        "en": "Weight TLOAD padding and tail definedness",
+        "zh-CN": "权重 TLOAD 填充与尾部定义性"
+      },
+      "summary": {
+        "en": "Cin padding lanes are defined raw zero without GM access, while only the valid destination rectangle is written or marked defined and physical tails remain untouched.",
+        "zh-CN": "Cin 填充 lane 在不访问 GM 的情况下定义为原始零值；仅写入并标记有效目标矩形，物理尾部保持不变且未定义。"
+      }
+    },
+    {
+      "id": "PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001",
+      "source_path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
+      "title": {
+        "en": "Cooperative weight TLOAD publication",
+        "zh-CN": "协作式权重 TLOAD 发布"
+      },
+      "summary": {
+        "en": "Singleton Shared publication omits B.ASSEMBLE; multi-participant publication assigns contiguous N-row ranges and uses the existing complete Shared generation protocol.",
+        "zh-CN": "单参与者 Shared 发布省略 B.ASSEMBLE；多参与者发布分配连续的 N 行范围，并使用现有的完整 Shared 代次协议。"
+      }
     }
   ]
 }

@@ -220,6 +220,12 @@ begin
         _BundleDataAttributes.rounding_mode else Zeros{3};
     let explicit_layout = if _BundleDataAttributesPresent then
         _BundleDataAttributes.data_layout else Zeros{5};
+    if _BundleDataAttributesPresent &&
+       TileDataLayoutIsWeightTLOAD(TileDataLayoutOfCode(explicit_layout)) &&
+       !BundleWeightTLOADSelected() then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !TileOperationDATRFieldsLegal(
         operation, explicit_c_mode, explicit_pad, explicit_saturating,
         explicit_canonicalize, explicit_data_type, explicit_rounding,
