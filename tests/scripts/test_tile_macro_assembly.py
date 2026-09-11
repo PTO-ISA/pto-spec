@@ -72,6 +72,48 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 self.assertNotIn("\n", macro, operation["mnemonic"])
                 self.assertNotIn("\r", macro, operation["mnemonic"])
                 self.assertTrue(macro.startswith(form["spelling"]), macro)
+                self.assertIsNone(re.search(r"\bLB[012]\b", macro), macro)
+
+    def test_programmer_shape_names_defaults_and_symbolic_values(self) -> None:
+        tadd = self.by_name["TADD"]["forms"][0]
+        fields = {field["field"]: field for field in tadd["configuration"]}
+        self.assertEqual(
+            [field["field"] for field in tadd["configuration"][:4]],
+            ["Row", "Col", "ValidRow", "ValidCol"],
+        )
+        self.assertEqual(fields["Row"]["default"], "Derived")
+        self.assertEqual(fields["ValidRow"]["default"], "Row")
+        self.assertEqual(fields["ValidCol"]["default"], "Col")
+        self.assertEqual(fields["PEMask"]["default"], "AllPE")
+        bindings = {
+            field["field"]: field
+            for field in tadd["expansion"]["configuration_bindings"]
+        }
+        self.assertEqual(bindings["Row"]["targets"], [])
+        self.assertEqual(
+            bindings["Row"]["resolution"]["expression"],
+            "DstTile.TSize/Col/DataType",
+        )
+        self.assertEqual(bindings["Col"]["targets"][0]["slot"], "LB2")
+        self.assertEqual(bindings["ValidRow"]["targets"][0]["slot"], "LB1")
+        self.assertEqual(bindings["ValidCol"]["targets"][0]["slot"], "LB0")
+        self.assertEqual(
+            self.catalog["symbolic_values"]["PEMask"],
+            {
+                "default": "AllPE",
+                "numeric_encodings_allowed": False,
+                "values": {
+                    "NoPE": "0000",
+                    "PE0": "1000",
+                    "PE1": "0100",
+                    "PE2": "0010",
+                    "PE3": "0001",
+                    "PE0_1": "1100",
+                    "PE0_1_2": "1110",
+                    "AllPE": "1111",
+                },
+            },
+        )
 
     def test_macro_formats_do_not_leak_physical_bundle_commands(self) -> None:
         forbidden = ("BSTART", "BSTOP", "B.I", ".reuse", "completion boundary")
@@ -320,7 +362,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 tadd + ("configuration_bindings", 0, "field"), "LB9"
             ),
             "configuration command": mutation(
-                tadd + ("configuration_bindings", 0, "targets", 0, "command"),
+                tadd + ("configuration_bindings", 1, "targets", 0, "command"),
                 "BSTART.VEC",
             ),
             "header command": mutation(
@@ -373,8 +415,8 @@ class TileMacroAssemblyTest(unittest.TestCase):
     def test_representative_current_formats(self) -> None:
         self.assertEqual(
             self.by_name["TADD"]["macro_format"],
-            "TADD <LB0:ValidCol, LB1:ValidRow?, LB2:Col?, DataType, "
-            "PadValue?, PEMask>, SrcTile0, SrcTile1, ->DstTile<Size>",
+            "TADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, "
+            "PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
         )
         self.assertIn("[BaseGPR=zero, RowStrideGPR?]", self.by_name["TLOAD"]["macro_format"])
         self.assertIn("FPAttrs", self.by_name["TMATMUL"]["macro_format"])
@@ -400,7 +442,10 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 self.assertEqual(
                     expansion["fold"]["on_ambiguity"], "retain physical assembly"
                 )
-            self.assertTrue(gpr["fold"]["unique_without_runtime_state"])
+            self.assertEqual(
+                gpr["fold"]["unique_without_runtime_state"],
+                mnemonic in {"TSEL", "TSELS"},
+            )
 
         tcmp_kinds = [
             form["destinations"][0]["binding_kind"]
@@ -413,6 +458,83 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 "predicate-cell-destination",
                 "predicate-gpr-destination",
             ],
+        )
+
+    def test_row_resolution_and_valid_defaults_are_form_specific(self) -> None:
+        runtime_forms = []
+        input_only_forms = []
+        for operation in self.catalog["operations"]:
+            for form in operation["forms"]:
+                row = next(
+                    (
+                        item
+                        for item in form["expansion"]["configuration_bindings"]
+                        if item["field"] == "Row"
+                    ),
+                    None,
+                )
+                if row is None:
+                    continue
+                resolution = row["resolution"]
+                operands = {
+                    item["field"] for item in form["sources"] + form["destinations"]
+                }
+                configuration = {item["field"] for item in form["configuration"]}
+                expression = resolution["expression"]
+                if expression != "ExplicitRowOnly":
+                    descriptor, _, denominator = expression.partition(".TSize/")
+                    self.assertIn(descriptor, operands, form["expansion"]["form_id"])
+                    self.assertTrue(denominator.startswith("Col/") or ".LayoutCol/" in expression)
+                    element_type = expression.rsplit("/", 1)[1]
+                    self.assertTrue(
+                        element_type in configuration
+                        or element_type == "CubeLayoutElementType",
+                        form["expansion"]["form_id"],
+                    )
+                if resolution["requires_runtime_state"]:
+                    self.assertFalse(
+                        form["expansion"]["fold"]["unique_without_runtime_state"],
+                        form["expansion"]["form_id"],
+                    )
+                if resolution["kind"] == "runtime-derived-check":
+                    runtime_forms.append((operation["mnemonic"], form["spelling"], expression))
+                elif resolution["kind"] == "input-only-check":
+                    input_only_forms.append((operation["mnemonic"], form["spelling"], expression))
+
+        self.assertEqual(
+            input_only_forms,
+            [("TPREFETCH", "TPREFETCH", "ExplicitRowOnly")],
+        )
+        self.assertEqual(len(runtime_forms), 8)
+        self.assertIn(("TCMP", "TCMP", "SrcTile0.TSize/Col/DataType"), runtime_forms)
+        self.assertIn(("TCVT", "TCVT", "DstTile.TSize/Col/DstDataType"), [
+            (
+                operation["mnemonic"],
+                form["spelling"],
+                next(
+                    item["resolution"]["expression"]
+                    for item in form["expansion"]["configuration_bindings"]
+                    if item["field"] == "Row"
+                ),
+            )
+            for operation in self.catalog["operations"]
+            for form in operation["forms"]
+            if any(item["field"] == "Row" for item in form["configuration"])
+        ])
+        self.assertIn(("TSTORE", "TSTORE.SHARED", "SrcShared.TSize/Col/DataType"), runtime_forms)
+
+        tcmp = self.by_name["TCMP"]["forms"][0]
+        tcmp_defaults = {item["field"]: item["default"] for item in tcmp["configuration"]}
+        self.assertEqual(tcmp_defaults["ValidRow"], "1")
+        tprefetch = self.by_name["TPREFETCH"]["forms"][0]
+        prefetch_defaults = {
+            item["field"]: item["default"] for item in tprefetch["configuration"]
+        }
+        self.assertEqual(prefetch_defaults["ValidRow"], "1")
+        self.assertEqual(prefetch_defaults["ValidCol"], "1")
+        self.assertEqual(
+            self.catalog["shape_resolution"]["valid_defaults"]["rule"],
+            "the selected form's declared default is authoritative",
         )
         tsel_gpr = self.by_name["TSEL"]["forms"][2]
         predicate_sources = [
@@ -430,8 +552,8 @@ class TileMacroAssemblyTest(unittest.TestCase):
         weight = self.by_name["TLOAD"]["forms"][3]
         self.assertEqual(
             weight["macro_format"],
-            "TLOAD.WEIGHT <LB0:ValidK, LB1:ValidN, LB2:TotalK, DataType, "
-            "WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask>, "
+            "TLOAD.WEIGHT <ValidK, ValidN, TotalK, DataType, "
+            "WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask=AllPE>, "
             "[GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>",
         )
         weight_config = {
@@ -439,6 +561,9 @@ class TileMacroAssemblyTest(unittest.TestCase):
             for item in weight["expansion"]["configuration_bindings"]
         }
         self.assertEqual(weight_config["DataType"][0]["command"], "BSTART.TLOAD")
+        self.assertEqual(weight_config["ValidK"][0]["slot"], "LB0")
+        self.assertEqual(weight_config["ValidN"][0]["slot"], "LB1")
+        self.assertEqual(weight_config["TotalK"][0]["slot"], "LB2")
         self.assertEqual(
             weight_config["WeightLayout"][0],
             {"command": "B.DATR", "group": None, "slot": "Layout"},
@@ -461,7 +586,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             field for field in self.by_name["TMATMUL"]["forms"][1]["configuration"]
             if field["field"] == "PEMask"
         )
-        self.assertEqual(shared_matmul_mask["constraint"], "1111")
+        self.assertEqual(shared_matmul_mask["constraint"], "AllPE")
 
     def test_structured_fields_are_complete(self) -> None:
         keys = {
@@ -532,11 +657,17 @@ class TileMacroAssemblyTest(unittest.TestCase):
         reference = REFERENCE.read_text(encoding="utf-8")
         self.assertIn("all 117 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
-        self.assertIn("`FP32`, not `DataType:FP32`", reference)
+        self.assertIn("source-only forms require source descriptor state", reference)
+        self.assertIn("selected form's declared default is authoritative", reference)
+        self.assertIn("`FP32`, `Null`, and `AllPE`", reference)
         self.assertIn("`->PredicateCell<Size>`", reference)
         self.assertIn("`->PredicateGPR`", reference)
         self.assertIn(
-            "TADD <LB0:100, LB1:a0, LB2:a1+10, FP32, Null, 1111>, T#1, T#2, ->T<2KB>",
+            "TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>",
+            reference,
+        )
+        self.assertIn(
+            "TADD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero, PE0_1>, T#1, T#2, ->T<2KB>",
             reference,
         )
         self.assertNotIn("canonical 0.59", reference)

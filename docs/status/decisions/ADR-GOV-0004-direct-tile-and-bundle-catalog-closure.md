@@ -477,6 +477,19 @@ The historical Consequences count of 109 records the original decision
 baseline; this amendment supersedes that count with the current 117-operation
 PTO 0.58.6 inventory.
 
+Rectangular macro source uses `Row`, `Col`, `ValidRow`, and `ValidCol`, while
+matrix forms use `M`, `N`, and `K`; physical `LB0`/`LB1`/`LB2` names are not
+part of the macro language. `Row` is a derived readability value checked from
+the selected form's resolution record. A sized destination supplies its
+`TSize`, `Col`, and form-specific element type; source-only forms require source
+descriptor state, and a form without a recoverable descriptor remains physical
+in stateless disassembly. The selected form's own `ValidRow` and `ValidCol`
+defaults are authoritative; `ValidRow=Row` and `ValidCol=Col` are only the
+common rectangular defaults. `PEMask=AllPE` remains the PE-mask default.
+Canonical output suppresses a Valid field only when it equals the selected-form
+default and uses symbolic enum or string values rather than raw carrier
+numbers.
+
 PTO 0.58.6 为当前 Direct Tile 操作清单定义一套生成式宏汇编表面。每条宏指令在
 同一源码行内包含一个 TileOp 助记符、有序 Bundle 配置、有序源和有序目的；换行
 结束该指令，不允许续行，规范反汇编也不得自动折行。每条宏指令只展开为一个现有
