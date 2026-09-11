@@ -18,8 +18,8 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 - The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.
 - `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.
 - `.reuse` is not canonical: current `B.IOT` never releases a source.
-- A source may carry `[subview=<range>]` and a destination may carry `[assemble=<range>]` when the owning operation accepts the corresponding range modifier.
-- One macro instruction maps to one physical bundle. Its boundary is an explicit `BSTOP` or the next `BSTART`.
+- Source range syntax: `Source[base=GPR, offset=uimm11]`. Destination range syntax: `->Destination<Size>[base=GPR, offset=uimm11]`. immediately after the owning B.IOT or B.IOS group in source0, source1, destination role order.
+- One macro instruction is one Block instruction and maps to one physical BSTART bundle. The next non-modifier Block instruction or end of section closes its command range; source does not add `BSTOP`, `BSTART`, or `C.BSTART`.
 - `PEMask` is PE participation and is distinct from an element predicate carrier. It defaults to `AllPE`; other accepted names are `NoPE`, `PE0`, `PE1`, `PE2`, `PE3`, `PE0_1`, and `PE0_1_2`.
 - Destinations may be Tile (`->DstTile<Size>`), Shared Tile (`->DstShared<Size>`), scalar through `B.IOR.RegDst` (`->ScalarDst`), legacy predicate Tile (`->PredicateTile<Size>`), CUBE PredicateCell (`->PredicateCell<Size>`), or predicate-mask GPR (`->PredicateGPR`).
 - `X?` is optional; `X=value` states the virtual default; `X{if Condition}` is present only when that configuration condition holds.
@@ -174,9 +174,9 @@ Destination metavariables likewise become physical binding operands. A Local des
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `TLOAD` | `TLSU` | `TLOAD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstTile<Size>`<br>`TLOAD.SHARED <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstShared<Size>`<br>`TLOAD.CUBE <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, CubeLayout, DTYPE_NONE, PadValue, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstTile<Size>`<br>`TLOAD.WEIGHT <ValidK, ValidN, TotalK, DataType, WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask=AllPE>, [GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>` |
+| `TLOAD` | `TLSU` | `TLOAD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstTile<Size>`<br>`TLOAD.SHARED <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstShared<Size>`<br>`TLOAD.CUBE <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, DataType, CubeLayout, DTYPE_NONE, PadValue, PEMask=AllPE>, [BaseGPR=zero, RowStrideGPR?], ->DstTile<Size>`<br>`TLOAD.WEIGHT <ValidK, ValidN, TotalK, DataType, WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask=AllPE>, [GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>` |
 | `TPREFETCH` | `TLSU` | `TPREFETCH <Row=Derived, Col, ValidRow=1, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]` |
-| `TSTORE` | `TLSU` | `TSTORE <Row=Derived, Col=SourceDescriptor, ValidRow=SourceDescriptor, ValidCol=SourceDescriptor, DataType, Layout?, PEMask=AllPE>, SrcTile, [BaseGPR=zero, RowStrideGPR?]`<br>`TSTORE.SHARED <Row=Derived, Col=SourceOrValidCol, ValidRow=SourceOr1, ValidCol=SourceOr1, DataType, Layout?, PEMask=AllPE>, SrcShared, [BaseGPR=zero, RowStrideGPR?]`<br>`TSTORE.CUBE <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, CubeLayout, DTYPE_NONE, PadValue, PEMask=AllPE>, SrcTile, [BaseGPR=zero, RowStrideGPR?]` |
+| `TSTORE` | `TLSU` | `TSTORE <Row=Derived, Col=SourceDescriptor, ValidRow=SourceDescriptor, ValidCol=SourceDescriptor, DataType, Layout?, PEMask=AllPE>, SrcTile, [BaseGPR=zero, RowStrideGPR?]`<br>`TSTORE.SHARED <Row=Derived, Col=SourceOrValidCol, ValidRow=SourceOr1, ValidCol=SourceOr1, DataType, Layout?, PEMask=AllPE>, SrcShared, [BaseGPR=zero, RowStrideGPR?]`<br>`TSTORE.CUBE <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, DataType, CubeLayout, DTYPE_NONE, PadValue, PEMask=AllPE>, SrcTile, [BaseGPR=zero, RowStrideGPR?]` |
 
 ### reduce-and-expand/column-expansion
 
@@ -264,4 +264,4 @@ A TileOp assembler expands through that generated schema. A bundle-aware disasse
 ## Tool integration boundary
 
 This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.
-Every folded instruction remains one output line. A missing boundary, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.
+Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.

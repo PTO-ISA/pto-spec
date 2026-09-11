@@ -131,7 +131,11 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.assertEqual(operation["format_source"], expected_source)
             self.assertEqual(
                 operation["commit_boundaries"],
-                ["explicit BSTOP", "next BSTART"],
+                [
+                    "next non-modifier Block instruction",
+                    "end of section",
+                    "explicit BSTOP compatibility boundary",
+                ],
             )
             bundle = " ".join(operation["physical_bundle"])
             if "B.IOT" in bundle or "B.IOS" in bundle:
@@ -270,7 +274,14 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 item["field"]: item["targets"]
                 for item in cube["expansion"]["configuration_bindings"]
             }
-            self.assertEqual(targets["DTYPE_NONE"][0]["command"], f"BSTART.{mnemonic}")
+            self.assertEqual(
+                targets["DataType"][0],
+                {"command": f"BSTART.{mnemonic}", "group": None, "slot": "DataType"},
+            )
+            self.assertEqual(
+                targets["DTYPE_NONE"][0],
+                {"command": "B.DATR", "group": None, "slot": "DataType"},
+            )
             self.assertEqual(
                 (targets["CubeLayout"][0]["command"], targets["CubeLayout"][0]["slot"]),
                 ("B.DATR", "Layout"),
@@ -383,7 +394,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             "command order": mutation(tadd + ("command_order",), ["header", "boundary"]),
             "incomplete mapping": mutation(tadd + ("operand_bindings",), []),
             "missing boundary": mutation(
-                tadd + ("boundary",), {"accepted": ["explicit BSTOP"]}
+                tadd + ("boundary",), {"accepted": ["end of section"]}
             ),
             "fold policy": mutation(
                 tadd + ("fold",),
@@ -538,7 +549,8 @@ class TileMacroAssemblyTest(unittest.TestCase):
         )
         tsel_gpr = self.by_name["TSEL"]["forms"][2]
         predicate_sources = [
-            source for source in tsel_gpr["sources"]
+            source
+            for source in tsel_gpr["sources"]
             if source["binding_kind"] == "predicate-gpr-source"
         ]
         self.assertEqual(len(predicate_sources), 2)
@@ -587,6 +599,29 @@ class TileMacroAssemblyTest(unittest.TestCase):
             if field["field"] == "PEMask"
         )
         self.assertEqual(shared_matmul_mask["constraint"], "AllPE")
+
+    def test_range_modifier_grammar_is_concrete_and_role_derived(self) -> None:
+        grammar = self.catalog["range_modifier_grammar"]
+        self.assertEqual(
+            grammar["source"],
+            "Source[base=GPR, offset=uimm11]",
+        )
+        self.assertEqual(
+            grammar["destination"],
+            "->Destination<Size>[base=GPR, offset=uimm11]",
+        )
+        self.assertEqual(
+            grammar["derived_fields"],
+            {
+                "input.modifier": "B.SUBVIEW",
+                "B.SUBVIEW.SrcSelect": "owning source role",
+                "B.SUBVIEW.SubviewSizeCode": 1,
+                "output.modifier": "B.ASSEMBLE INIT_LAST",
+                "B.ASSEMBLE.INIT": 1,
+                "B.ASSEMBLE.LAST": 1,
+                "B.ASSEMBLE.ParentSizeCode": 1,
+            },
+        )
 
     def test_structured_fields_are_complete(self) -> None:
         keys = {

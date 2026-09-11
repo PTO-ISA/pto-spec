@@ -464,9 +464,9 @@ syntax and canonical disassembly wrapping are not accepted.
 One macro expression expands to exactly one existing physical Block bundle and
 inherits its complete legality, fault, effect, ordering, restart, and
 publication behavior. It introduces no opcode, hidden state, or multi-operation
-atomicity. The boundary is explicit `BSTOP` or the following `BSTART`; the
-following header commits the prior bundle but is outside its half-open command
-range.
+atomicity. The macro is one Block instruction. Its expansion begins with the
+owning physical BSTART and ends before the next non-modifier Block instruction
+or at end of section; source does not add a BSTOP, BSTART, or C.BSTART.
 
 The generated schema consumes owning `PTO-INSTRUCTION` metadata under
 `asl/tile/` and is cross-checked against `spec/catalog/tile-operations.json`.

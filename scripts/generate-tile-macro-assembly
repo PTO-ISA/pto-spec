@@ -461,7 +461,6 @@ HEADER_CONFIGURATION_FIELDS = {
     "AType",
     "U8",
     "U32",
-    "DTYPE_NONE",
 }
 
 DIMENSION_PHYSICAL_SLOTS = {
@@ -483,6 +482,7 @@ DATR_PHYSICAL_SLOTS = {
     "Canonicalize": "Canonicalize",
     "CubeLayout": "Layout",
     "DstDataType": "DataType",
+    "DTYPE_NONE": "DataType",
     "Layout": "Layout",
     "WeightLayout": "Layout",
     "PadValue": "PadValueOrByteId",
@@ -673,7 +673,8 @@ def expansion_plan(
     owner_configuration = owner_form["configuration_bindings"]
     if owner_configuration != expected_configuration:
         raise ValueError(
-            f"TileOp macro configuration mapping drift: {mnemonic} {form['spelling']}"
+            f"TileOp macro configuration mapping drift: {mnemonic} {form['spelling']}; "
+            f"expected={expected_configuration!r}; owner={owner_configuration!r}"
         )
 
     operand_bindings = copy.deepcopy(expected_operands)
@@ -801,8 +802,12 @@ def expansion_plan(
         ],
         "modifier_bindings": modifier_bindings,
         "boundary": {
-            "accepted": ["explicit BSTOP", "next BSTART"],
-            "command_range": "half-open; a following BSTART commits the prior bundle but belongs to the next form",
+            "accepted": [
+                "next non-modifier Block instruction",
+                "end of section",
+                "explicit BSTOP compatibility boundary",
+            ],
+            "command_range": "half-open; the following non-modifier instruction closes the macro bundle but belongs to the next Block instruction",
         },
         "fold": {
             "policy": "unique-exact-match-or-physical",
@@ -1187,7 +1192,11 @@ def build_operation(
         "destinations": primary["destinations"],
         "forms": forms,
         "semantic_operands": contract.get("operands", []),
-        "commit_boundaries": ["explicit BSTOP", "next BSTART"],
+        "commit_boundaries": [
+            "next non-modifier Block instruction",
+            "end of section",
+            "explicit BSTOP compatibility boundary",
+        ],
         "physical_schema": {
             "command_mnemonic": catalog_record["command_mnemonic"],
             "family": catalog_record["family"],
@@ -1277,6 +1286,20 @@ def build_catalog() -> dict[str, object]:
             "newline_terminates_instruction": True,
             "continuations_allowed": False,
             "canonical_output_wraps": False,
+        },
+        "range_modifier_grammar": {
+            "source": "Source[base=GPR, offset=uimm11]",
+            "destination": "->Destination<Size>[base=GPR, offset=uimm11]",
+            "derived_fields": {
+                "input.modifier": "B.SUBVIEW",
+                "B.SUBVIEW.SrcSelect": "owning source role",
+                "B.SUBVIEW.SubviewSizeCode": 1,
+                "output.modifier": "B.ASSEMBLE INIT_LAST",
+                "B.ASSEMBLE.INIT": 1,
+                "B.ASSEMBLE.LAST": 1,
+                "B.ASSEMBLE.ParentSizeCode": 1,
+            },
+            "placement": "immediately after the owning B.IOT or B.IOS group in source0, source1, destination role order",
         },
         "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
         "dimension_syntax": "dimensions use programmer-facing named assignments such as Row=8, Col=64, or M=32; physical LB0/LB1/LB2 names are forbidden in TileOp assembly",
@@ -1390,8 +1413,8 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
         "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
         "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
-        "- A source may carry `[subview=<range>]` and a destination may carry `[assemble=<range>]` when the owning operation accepts the corresponding range modifier.",
-        "- One macro instruction maps to one physical bundle. Its boundary is an explicit `BSTOP` or the next `BSTART`.",
+        f"- Source range syntax: `{catalog['range_modifier_grammar']['source']}`. Destination range syntax: `{catalog['range_modifier_grammar']['destination']}`. {catalog['range_modifier_grammar']['placement']}.",
+        "- One macro instruction is one Block instruction and maps to one physical BSTART bundle. The next non-modifier Block instruction or end of section closes its command range; source does not add `BSTOP`, `BSTART`, or `C.BSTART`.",
         "- `PEMask` is PE participation and is distinct from an element predicate carrier. It defaults to `AllPE`; other accepted names are `NoPE`, `PE0`, `PE1`, `PE2`, `PE3`, `PE0_1`, and `PE0_1_2`.",
         "- Destinations may be Tile (`->DstTile<Size>`), Shared Tile (`->DstShared<Size>`), scalar through `B.IOR.RegDst` (`->ScalarDst`), legacy predicate Tile (`->PredicateTile<Size>`), CUBE PredicateCell (`->PredicateCell<Size>`), or predicate-mask GPR (`->PredicateGPR`).",
         "- `X?` is optional; `X=value` states the virtual default; `X{if Condition}` is present only when that configuration condition holds.",
@@ -1449,7 +1472,7 @@ def build_markdown(catalog: dict[str, object]) -> str:
             "## Tool integration boundary",
             "",
             "This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.",
-            "Every folded instruction remains one output line. A missing boundary, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.",
+            "Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.",
             "",
         ]
     )

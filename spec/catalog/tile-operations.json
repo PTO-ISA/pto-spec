@@ -4066,7 +4066,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "PadValueOrByteId",
-          "Layout"
+          "Layout",
+          "DataType"
         ],
         "pad_union": "pad-value"
       },
@@ -4118,7 +4119,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "PadValueOrByteId",
-          "Layout"
+          "Layout",
+          "DataType"
         ],
         "pad_union": "pad-value"
       },
