@@ -225,7 +225,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         weight = next(
             form
             for form in self.by_name["TLOAD"]["forms"]
-            if form["spelling"] == "TLOAD.WEIGHT"
+            if any(item["field"] == "WeightLayout" for item in form["configuration"])
         )
         weight_group = next(
             binding
@@ -247,7 +247,8 @@ class TileMacroAssemblyTest(unittest.TestCase):
         shared_right = next(
             form
             for form in self.by_name["TMATMUL_MX"]["forms"]
-            if form["spelling"] == "TMATMUL_MX.SHARED_RIGHT"
+            if any(source["field"] == "SharedRightGroup" for source in form["sources"])
+            and not any(source["field"] == "SharedLeftGroup" for source in form["sources"])
         )
         right_group = next(
             binding
@@ -268,7 +269,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             cube = next(
                 form
                 for form in self.by_name[mnemonic]["forms"]
-                if form["spelling"].endswith(".CUBE")
+                if any(item["field"] == "CubeLayout" for item in form["configuration"])
             )
             targets = {
                 item["field"]: item["targets"]
@@ -429,8 +430,31 @@ class TileMacroAssemblyTest(unittest.TestCase):
             "TADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, "
             "PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
         )
-        self.assertIn("[BaseGPR=zero, RowStrideGPR?]", self.by_name["TLOAD"]["macro_format"])
-        self.assertIn("FPAttrs", self.by_name["TMATMUL"]["macro_format"])
+        self.assertIn(
+            "[base=BaseGPR, stride=RowStrideGPR]",
+            self.by_name["TLOAD"]["macro_format"],
+        )
+        self.assertNotIn("FPAttrs", self.by_name["TMATMUL"]["macro_format"])
+        for form in self.by_name["TMATMUL"]["forms"]:
+            fp_attrs = {
+                item["field"]: item
+                for item in form["configuration"]
+                if item["field"] in {
+                    "PreMode", "PostMode", "PostScale", "RowMax", "GroupMax",
+                    "RowMaxInit", "FlushToZero", "TransposeA", "TransposeB", "CScale",
+                }
+            }
+            self.assertEqual(len(fp_attrs), 10)
+            self.assertTrue(all(item["default"] == "0" for item in fp_attrs.values()))
+            self.assertTrue(all(item["optional"] for item in fp_attrs.values()))
+        for mnemonic in ("TLOAD", "TSTORE"):
+            form = next(
+                form for form in self.by_name[mnemonic]["forms"]
+                if any(item["field"] == "CubeLayout" for item in form["configuration"])
+            )
+            defaults = {item["field"]: item["default"] for item in form["configuration"]}
+            self.assertEqual(defaults["DTYPE_NONE"], "DTYPE_NONE")
+            self.assertEqual(defaults["PadValue"], "Null")
         self.assertIn("->DstTile<Size>", self.by_name["MGATHER_ADD"]["macro_format"])
         self.assertNotIn("->", self.by_name["MSCATTER_ADD"]["macro_format"])
         self.assertIn("ScalarGPR0", self.by_name["TPACK"]["macro_format"])
@@ -453,10 +477,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 self.assertEqual(
                     expansion["fold"]["on_ambiguity"], "retain physical assembly"
                 )
-            self.assertEqual(
-                gpr["fold"]["unique_without_runtime_state"],
-                mnemonic in {"TSEL", "TSELS"},
-            )
+            self.assertFalse(gpr["fold"]["unique_without_runtime_state"])
 
         tcmp_kinds = [
             form["destinations"][0]["binding_kind"]
@@ -474,6 +495,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
     def test_row_resolution_and_valid_defaults_are_form_specific(self) -> None:
         runtime_forms = []
         input_only_forms = []
+        layout_dependent_forms = []
         for operation in self.catalog["operations"]:
             for form in operation["forms"]:
                 row = next(
@@ -493,15 +515,49 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 configuration = {item["field"] for item in form["configuration"]}
                 expression = resolution["expression"]
                 if expression != "ExplicitRowOnly":
-                    descriptor, _, denominator = expression.partition(".TSize/")
-                    self.assertIn(descriptor, operands, form["expansion"]["form_id"])
-                    self.assertTrue(denominator.startswith("Col/") or ".LayoutCol/" in expression)
-                    element_type = expression.rsplit("/", 1)[1]
-                    self.assertTrue(
-                        element_type in configuration
-                        or element_type == "CubeLayoutElementType",
-                        form["expansion"]["form_id"],
-                    )
+                    if expression.endswith(".Descriptor.Row"):
+                        descriptor = expression.removesuffix(".Descriptor.Row")
+                        self.assertIn(
+                            descriptor, operands, form["expansion"]["form_id"]
+                        )
+                    elif expression == "ValidRow":
+                        self.assertIn("ValidRow", configuration)
+                    elif resolution["kind"] == "layout-dependent-check":
+                        match = re.fullmatch(
+                            r"Layout=RowMajor\?([A-Za-z0-9]+)\.TSize/Col/"
+                            r"([A-Za-z0-9]+):ValidRow",
+                            expression,
+                        )
+                        self.assertIsNotNone(match, form["expansion"]["form_id"])
+                        self.assertIn(
+                            match.group(1), operands, form["expansion"]["form_id"]
+                        )
+                        self.assertIn(
+                            match.group(2), configuration, form["expansion"]["form_id"]
+                        )
+                        self.assertIn("Layout", configuration)
+                        self.assertIn("ValidRow", configuration)
+                        layout_dependent_forms.append(
+                            (operation["mnemonic"], form["spelling"])
+                        )
+                    else:
+                        descriptor, separator, denominator = expression.partition(
+                            ".TSize/"
+                        )
+                        self.assertTrue(separator, form["expansion"]["form_id"])
+                        self.assertIn(
+                            descriptor, operands, form["expansion"]["form_id"]
+                        )
+                        self.assertTrue(
+                            denominator.startswith("Col/")
+                            or ".LayoutCol/" in expression
+                        )
+                        element_type = expression.rsplit("/", 1)[1]
+                        self.assertTrue(
+                            element_type in configuration
+                            or element_type == "CubeLayoutElementType",
+                            form["expansion"]["form_id"],
+                        )
                 if resolution["requires_runtime_state"]:
                     self.assertFalse(
                         form["expansion"]["fold"]["unique_without_runtime_state"],
@@ -516,23 +572,55 @@ class TileMacroAssemblyTest(unittest.TestCase):
             input_only_forms,
             [("TPREFETCH", "TPREFETCH", "ExplicitRowOnly")],
         )
-        self.assertEqual(len(runtime_forms), 8)
-        self.assertIn(("TCMP", "TCMP", "SrcTile0.TSize/Col/DataType"), runtime_forms)
-        self.assertIn(("TCVT", "TCVT", "DstTile.TSize/Col/DstDataType"), [
-            (
-                operation["mnemonic"],
-                form["spelling"],
-                next(
-                    item["resolution"]["expression"]
-                    for item in form["expansion"]["configuration_bindings"]
-                    if item["field"] == "Row"
-                ),
+        expected_layout_dependent = set()
+        for operation in self.catalog["operations"]:
+            owner = (ROOT / operation["source"]).read_text(encoding="utf-8")
+            instruction = json.loads(
+                owner.splitlines()[0].removeprefix("// PTO-INSTRUCTION: ")
             )
-            for operation in self.catalog["operations"]
-            for form in operation["forms"]
-            if any(item["field"] == "Row" for item in form["configuration"])
-        ])
-        self.assertIn(("TSTORE", "TSTORE.SHARED", "SrcShared.TSize/Col/DataType"), runtime_forms)
+            contract = json.dumps(instruction["contract"], sort_keys=True)
+            if "CUBE_M16" not in contract or "CUBE_M32" not in contract:
+                continue
+            if operation["mnemonic"] == "TCVT":
+                continue
+            for form in operation["forms"]:
+                fields = {item["field"] for item in form["configuration"]}
+                if "Row" in fields and "Layout" in fields:
+                    expected_layout_dependent.add(
+                        (operation["mnemonic"], form["spelling"])
+                    )
+        self.assertEqual(set(layout_dependent_forms), expected_layout_dependent)
+        self.assertEqual(len(layout_dependent_forms), 29)
+        self.assertEqual(len(runtime_forms), 15)
+        self.assertEqual(
+            sum(
+                mnemonic == "TCMP" and expression == "SrcTile0.Descriptor.Row"
+                for mnemonic, _, expression in runtime_forms
+            ),
+            3,
+        )
+        self.assertIn(
+            ("TCVT", "TCVT", "SrcTile0.Descriptor.Row"), runtime_forms
+        )
+        self.assertIn(
+            ("TSTORE", "TSTORE", "SrcShared.Descriptor.Row"),
+            runtime_forms,
+        )
+
+        for mnemonic in ("TLOAD", "TSTORE", "TGPR2T"):
+            form = next(
+                form
+                for form in self.by_name[mnemonic]["forms"]
+                if mnemonic == "TGPR2T"
+                or any(item["field"] == "CubeLayout" for item in form["configuration"])
+            )
+            row = next(
+                item
+                for item in form["expansion"]["configuration_bindings"]
+                if item["field"] == "Row"
+            )
+            self.assertEqual(row["resolution"]["expression"], "ValidRow")
+            self.assertFalse(row["resolution"]["requires_runtime_state"])
 
         tcmp = self.by_name["TCMP"]["forms"][0]
         tcmp_defaults = {item["field"]: item["default"] for item in tcmp["configuration"]}
@@ -559,12 +647,12 @@ class TileMacroAssemblyTest(unittest.TestCase):
     def test_transport_and_cube_variants_follow_current_0586_contract(self) -> None:
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TLOAD"]["forms"]],
-            ["TLOAD", "TLOAD.SHARED", "TLOAD.CUBE", "TLOAD.WEIGHT"],
+            ["TLOAD", "TLOAD", "TLOAD", "TLOAD"],
         )
         weight = self.by_name["TLOAD"]["forms"][3]
         self.assertEqual(
             weight["macro_format"],
-            "TLOAD.WEIGHT <ValidK, ValidN, TotalK, DataType, "
+            "TLOAD <ValidK, ValidN, TotalK, DataType, "
             "WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask=AllPE>, "
             "[GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>",
         )
@@ -583,7 +671,14 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(weight_config["PEMask"][0]["command"], "B.IOS")
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TSTORE"]["forms"]],
-            ["TSTORE", "TSTORE.SHARED", "TSTORE.CUBE"],
+            ["TSTORE", "TSTORE", "TSTORE"],
+        )
+        self.assertFalse(
+            any(
+                "." in form["spelling"]
+                for operation in self.operations
+                for form in operation["forms"]
+            )
         )
         shared_store_mask = next(
             field for field in self.by_name["TSTORE"]["forms"][1]["configuration"]
@@ -592,7 +687,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertIsNone(shared_store_mask["constraint"])
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TMATMUL"]["forms"]],
-            ["TMATMUL", "TMATMUL.SHARED_RIGHT", "TMATMUL.SHARED_BOTH"],
+            ["TMATMUL", "TMATMUL", "TMATMUL"],
         )
         shared_matmul_mask = next(
             field for field in self.by_name["TMATMUL"]["forms"][1]["configuration"]
@@ -650,7 +745,41 @@ class TileMacroAssemblyTest(unittest.TestCase):
             destination for destination in self.by_name["TMATMUL"]["forms"][0]["destinations"]
             if destination["field"] == "RowMaxOut"
         )
-        self.assertEqual((row_max["condition"], row_max["size"]), ("RowMaxEn", "Size"))
+        self.assertEqual((row_max["condition"], row_max["size"]), ("RowMax", "Size"))
+
+    def test_fpatr_targets_and_conditions_close_against_owners(self) -> None:
+        expected_slots = {
+            "PreMode": "PreQuantMode",
+            "PostMode": "ReluMode",
+            "PostScale": "GroupNCode",
+            "RowMax": "RowMaxEn",
+            "GroupMax": "GroupMaxEn",
+            "RowMaxInit": "RowMaxInit",
+            "FlushToZero": "MaxAbsEn",
+            "TransposeA": "TransA",
+            "TransposeB": "TransB",
+            "CScale": "CScaleEn",
+        }
+        for operation in self.operations:
+            for form in operation["forms"]:
+                configuration = {item["field"] for item in form["configuration"]}
+                for binding in form["expansion"]["configuration_bindings"]:
+                    field = binding["field"]
+                    if field in expected_slots:
+                        self.assertEqual(
+                            binding["targets"],
+                            [{"command": "B.FPATR", "group": None,
+                              "slot": expected_slots[field]}],
+                        )
+                for operand in form["sources"] + form["destinations"]:
+                    condition = operand["condition"]
+                    if condition is None:
+                        continue
+                    references = {
+                        term.strip().split("=", 1)[0].split(" ", 1)[0]
+                        for term in condition.split("&&")
+                    }
+                    self.assertLessEqual(references, configuration)
 
     def test_destination_grammar_matches_current_carriers(self) -> None:
         forms = {entry["kind"]: entry for entry in self.catalog["destination_forms"]}
@@ -692,8 +821,13 @@ class TileMacroAssemblyTest(unittest.TestCase):
         reference = REFERENCE.read_text(encoding="utf-8")
         self.assertIn("all 117 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
-        self.assertIn("source-only forms require source descriptor state", reference)
+        self.assertIn(
+            "predicate and descriptor-preserving forms require source descriptor state",
+            reference,
+        )
         self.assertIn("selected form's declared default is authoritative", reference)
+        self.assertIn("there is no `FPAttrs(...)` wrapper", reference)
+        self.assertIn("assignments such as `PreMode=2`", reference)
         self.assertIn("`FP32`, `Null`, and `AllPE`", reference)
         self.assertIn("`->PredicateCell<Size>`", reference)
         self.assertIn("`->PredicateGPR`", reference)

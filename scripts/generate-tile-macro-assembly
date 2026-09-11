@@ -389,14 +389,15 @@ def expected_operand_bindings(
                         member_syntax = (
                             "GMBaseGPR" if "GMBaseGPR" in syntax else "BaseGPR"
                         )
-                        default = "zero" if "=zero" in syntax else None
-                        optional = "=zero" in syntax
+                        named_base = "base=" in syntax
+                        default = "zero" if "=zero" in syntax or named_base else None
+                        optional = "=zero" in syntax or named_base
                     elif role == "scalar0":
                         member_syntax = (
                             "ShapeGPR" if "ShapeGPR" in syntax else "RowStrideGPR"
                         )
                         default = None
-                        optional = "?" in syntax
+                        optional = "?" in syntax or "stride=" in syntax
                     elif role == "scalar1":
                         member_syntax = "StartGPR"
                         default = None
@@ -492,8 +493,31 @@ DATR_PHYSICAL_SLOTS = {
     "SatMode": "Sat",
 }
 
+FPATR_PHYSICAL_SLOTS = {
+    "PreMode": "PreQuantMode",
+    "PostMode": "ReluMode",
+    "PostScale": "GroupNCode",
+    "RowMax": "RowMaxEn",
+    "GroupMax": "GroupMaxEn",
+    "RowMaxInit": "RowMaxInit",
+    "FlushToZero": "MaxAbsEn",
+    "TransposeA": "TransA",
+    "TransposeB": "TransB",
+    "CScale": "CScaleEn",
+}
 
-def row_resolution(form: dict[str, object]) -> dict[str, object]:
+
+def physical_fpatr_slots(record: dict[str, object]) -> set[str]:
+    lines = [line for line in physical_bundle(record) if line.startswith("B.FPATR ")]
+    if len(lines) != 1:
+        raise ValueError(f"TileOp must have exactly one B.FPATR owner: {record['mnemonic']}")
+    fields = lines[0].removeprefix("B.FPATR ").split(" (", 1)[0]
+    return {field.strip() for field in fields.split(",")}
+
+
+def row_resolution(
+    form: dict[str, object], record: dict[str, object]
+) -> dict[str, object]:
     configuration = form["configuration"]
     destinations = form["destinations"]
     sources = form["sources"]
@@ -501,6 +525,7 @@ def row_resolution(form: dict[str, object]) -> dict[str, object]:
     assert isinstance(destinations, list)
     assert isinstance(sources, list)
     fields = {str(item["field"]) for item in configuration}
+    spelling = str(form.get("spelling", ""))
     element_type = next(
         (
             field
@@ -509,6 +534,57 @@ def row_resolution(form: dict[str, object]) -> dict[str, object]:
         ),
         "CubeLayoutElementType" if "CubeLayout" in fields else None,
     )
+    descriptor_source = next(
+        (
+            str(item["field"])
+            for item in sources
+            if item.get("binding_kind")
+            in {"tile-source-binding", "shared-tile-binding"}
+        ),
+        None,
+    )
+
+    def runtime_descriptor_row() -> dict[str, object]:
+        if descriptor_source is None:
+            return {
+                "kind": "input-only-check",
+                "expression": "ExplicitRowOnly",
+                "canonical_output": "retain physical assembly because Row is not recoverable",
+                "requires_runtime_state": True,
+            }
+        return {
+            "kind": "runtime-derived-check",
+            "expression": f"{descriptor_source}.Descriptor.Row",
+            "canonical_output": "retain physical assembly without source descriptor state",
+            "requires_runtime_state": True,
+        }
+
+    # These CUBE-producing forms carry their logical Row through ValidRow.
+    # Destination TSize is only an allocation-capacity bound.
+    if "CubeLayout" in fields or spelling == "TGPR2T":
+        return {
+            "kind": "derived-check",
+            "expression": "ValidRow",
+            "canonical_output": "print concrete Row from the encoded ValidRow",
+            "requires_runtime_state": False,
+        }
+
+    # Predicate destinations inherit their numeric source shape; their TSize
+    # is packed-predicate capacity.  TCVT and CUBE-select forms likewise
+    # preserve descriptor geometry that destination capacity cannot recover.
+    predicate_destination = any(
+        item.get("binding_kind")
+        in {"predicate-tile-destination", "predicate-cell-destination"}
+        for item in destinations
+    )
+    descriptor_dependent_select = spelling in {"TSEL", "TSELS"} and any(
+        item.get("binding_kind")
+        in {"predicate-cell-source", "predicate-gpr-source"}
+        for item in sources
+    )
+    if spelling == "TCVT" or predicate_destination or descriptor_dependent_select:
+        return runtime_descriptor_row()
+
     sized_destination = next(
         (
             str(item["field"])
@@ -517,6 +593,30 @@ def row_resolution(form: dict[str, object]) -> dict[str, object]:
         ),
         None,
     )
+    owner_contract = json.dumps(record["contract"], sort_keys=True)
+    cube_capable_destination = (
+        "Layout" in fields
+        and "CUBE_M16" in owner_contract
+        and "CUBE_M32" in owner_contract
+    )
+    if (
+        cube_capable_destination
+        and sized_destination is not None
+        and element_type is not None
+    ):
+        return {
+            "kind": "layout-dependent-check",
+            "expression": (
+                f"Layout=RowMajor?{sized_destination}.TSize/Col/"
+                f"{element_type}:ValidRow"
+            ),
+            "canonical_output": (
+                "derive Row from destination TSize for RowMajor or from "
+                "encoded ValidRow for CUBE; an omitted Layout with no integral "
+                "RowMajor capacity solution is necessarily CUBE"
+            ),
+            "requires_runtime_state": False,
+        }
     col = next(
         (item for item in configuration if item["field"] == "Col"),
         None,
@@ -540,32 +640,12 @@ def row_resolution(form: dict[str, object]) -> dict[str, object]:
             "canonical_output": "print concrete Row when statically resolved",
             "requires_runtime_state": False,
         }
-    descriptor_source = next(
-        (
-            str(item["field"])
-            for item in sources
-            if item.get("binding_kind")
-            in {"tile-source-binding", "shared-tile-binding"}
-        ),
-        None,
-    )
-    if descriptor_source is not None and element_type is not None:
-        return {
-            "kind": "runtime-derived-check",
-            "expression": f"{descriptor_source}.TSize/Col/{element_type}",
-            "canonical_output": "retain physical assembly without source descriptor state",
-            "requires_runtime_state": True,
-        }
-    return {
-        "kind": "input-only-check",
-        "expression": "ExplicitRowOnly",
-        "canonical_output": "retain physical assembly because Row is not recoverable",
-        "requires_runtime_state": True,
-    }
+    return runtime_descriptor_row()
 
 
 def expected_configuration_bindings(
     form: dict[str, object],
+    record: dict[str, object],
     header_command: str,
     operand_bindings: list[dict[str, object]],
     datr_contract: dict[str, object],
@@ -591,7 +671,7 @@ def expected_configuration_bindings(
         name = str(field["field"])
         if name == "Row":
             targets = []
-            resolution = row_resolution(form)
+            resolution = row_resolution(form, record)
         elif name == "Col" and not has_physical_col:
             targets = []
             resolution = {
@@ -618,8 +698,19 @@ def expected_configuration_bindings(
                 for command, group in carriers
             ]
             resolution = None
-        elif name == "FPAttrs":
-            targets = [{"command": "B.FPATR", "group": None, "slot": "attributes"}]
+        elif name in FPATR_PHYSICAL_SLOTS:
+            physical_slot = FPATR_PHYSICAL_SLOTS[name]
+            if physical_slot not in physical_fpatr_slots(record):
+                raise ValueError(
+                    f"TileOp macro B.FPATR slot is not owned: {name}->{physical_slot}"
+                )
+            targets = [
+                {
+                    "command": "B.FPATR",
+                    "group": None,
+                    "slot": physical_slot,
+                }
+            ]
             resolution = None
         elif name in HEADER_CONFIGURATION_FIELDS:
             targets = [{"command": header_command, "group": None, "slot": "DataType"}]
@@ -662,6 +753,7 @@ def expansion_plan(
         raise ValueError(f"TileOp macro operand mapping drift: {mnemonic} {form['spelling']}")
     expected_configuration = expected_configuration_bindings(
         form,
+        record,
         header_command,
         expected_operands,
         catalog_record.get("datr_contract", {}),
@@ -1105,6 +1197,29 @@ def physical_fold_signature(expansion: dict[str, object]) -> str:
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
+def validate_condition_fields(
+    mnemonic: str,
+    configuration: list[dict[str, object]],
+    operands: list[dict[str, object]],
+) -> None:
+    fields = {str(item["field"]) for item in configuration}
+    for operand in operands:
+        condition = operand.get("condition")
+        if condition is None:
+            continue
+        references = {
+            match.group(0)
+            for term in str(condition).split("&&")
+            if (match := re.match(r"[A-Za-z][A-Za-z0-9_]*", term.strip()))
+        }
+        unresolved = references - fields
+        if unresolved:
+            raise ValueError(
+                f"TileOp macro condition has unresolved configuration fields: "
+                f"{mnemonic} condition={condition!r} unresolved={sorted(unresolved)}"
+            )
+
+
 def build_operation(
     path: Path,
     record: dict[str, object],
@@ -1132,6 +1247,9 @@ def build_operation(
         variant_spelling = str(owner_form["spelling"])
         macro_config, macro_sources, macro_destinations = parse_macro_structure(
             variant_format, variant_spelling, sources, destinations
+        )
+        validate_condition_fields(
+            mnemonic, macro_config, macro_sources + macro_destinations
         )
         form = {
             "spelling": variant_spelling,
@@ -1304,7 +1422,7 @@ def build_catalog() -> dict[str, object]:
         "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
         "dimension_syntax": "dimensions use programmer-facing named assignments such as Row=8, Col=64, or M=32; physical LB0/LB1/LB2 names are forbidden in TileOp assembly",
         "shape_resolution": {
-            "row": "Row has no independent physical encoding and uses the selected form's resolution record: a sized destination is statically checked from its TSize, Col, and element type; source-only forms require source descriptor state; an unrecoverable Row prevents stateless folding",
+            "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
             "valid_defaults": {
                 "rule": "the selected form's declared default is authoritative",
                 "common_rectangular": {"ValidRow": "Row", "ValidCol": "Col"},
@@ -1409,7 +1527,7 @@ def build_markdown(catalog: dict[str, object]) -> str:
         f"- `Row` resolution: {shape_resolution['row']}.",
         f"- Valid-dimension defaults: {valid_defaults['rule']}. The common rectangular defaults are `ValidRow={valid_defaults['common_rectangular']['ValidRow']}` and `ValidCol={valid_defaults['common_rectangular']['ValidCol']}`. {shape_resolution['canonical_omission']}.",
         "- Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.",
-        "- An attribute may be removed from the angle-bracket list entirely when the selected TileOp schema supplies an exact default or a unique inference from typed operands; omission leaves no empty slot or placeholder.",
+        "- Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.",
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
         "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
         "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
@@ -1420,8 +1538,8 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- `X?` is optional; `X=value` states the virtual default; `X{if Condition}` is present only when that configuration condition holds.",
         "- `X{must be Value}` is a legality constraint, not an omission default.",
         "- `SourceOr1` and `SourceOrValidCol` mean an allocated Shared source contributes its descriptor value; an unallocated Shared source uses 1 or ValidCol as specified by TSTORE.",
-        "- `FPAttrs` expands to `PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn`.",
-        "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling FPAttrs condition.",
+        "- B.FPATR fields are direct entries in the bundle attribute list: enabled booleans use bare names such as `TransposeB`, and valued fields use assignments such as `PreMode=2`; there is no `FPAttrs(...)` wrapper.",
+        "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling B.FPATR fields.",
         "",
         "A concrete macro is always written on one line:",
         "",

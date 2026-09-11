@@ -480,10 +480,15 @@ PTO 0.58.6 inventory.
 Rectangular macro source uses `Row`, `Col`, `ValidRow`, and `ValidCol`, while
 matrix forms use `M`, `N`, and `K`; physical `LB0`/`LB1`/`LB2` names are not
 part of the macro language. `Row` is a derived readability value checked from
-the selected form's resolution record. A sized destination supplies its
-`TSize`, `Col`, and form-specific element type; source-only forms require source
-descriptor state, and a form without a recoverable descriptor remains physical
-in stateless disassembly. The selected form's own `ValidRow` and `ValidCol`
+the selected form's resolution record. An ordinary row-major numeric
+destination may supply `TSize`, `Col`, and form-specific element type.
+For mixed RowMajor/CUBE forms that size rule applies only to RowMajor; CUBE
+forms use encoded ValidRow because destination size is capacity. Predicate and
+descriptor-preserving forms instead require source descriptor state for the
+same reason; TLOAD.CUBE and TGPR2T also recover Row from encoded ValidRow. A
+form without a recoverable descriptor or encoded
+Row source remains physical in stateless disassembly. The selected form's own
+`ValidRow` and `ValidCol`
 defaults are authoritative; `ValidRow=Row` and `ValidCol=Col` are only the
 common rectangular defaults. `PEMask=AllPE` remains the PE-mask default.
 Canonical output suppresses a Valid field only when it equals the selected-form
