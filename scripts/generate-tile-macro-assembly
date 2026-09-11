@@ -1,0 +1,1330 @@
+#!/usr/bin/env python3
+"""Generate the PTO TileOp macro-assembly catalog and reference page."""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import json
+from pathlib import Path
+import re
+
+
+ROOT = Path(__file__).resolve().parent.parent
+JSON_OUTPUT = ROOT / "spec/catalog/tile-macro-assembly.json"
+MARKDOWN_OUTPUT = ROOT / "docs/virtual-isa/tileop-macro-assembly.md"
+
+
+MACRO_OWNER = ROOT / "asl/arch/overview/instruction-classification.asl"
+MACRO_RECORD_PREFIX = "// PTO-TILEOP-MACRO: "
+
+
+def load_macro_form_definitions() -> dict[str, dict[str, object]]:
+    definitions: dict[str, dict[str, object]] = {}
+    for line in MACRO_OWNER.read_text(encoding="utf-8").splitlines():
+        if not line.startswith(MACRO_RECORD_PREFIX):
+            continue
+        record = json.loads(line[len(MACRO_RECORD_PREFIX) :])
+        mnemonic = str(record["mnemonic"])
+        if mnemonic in definitions:
+            raise ValueError(f"duplicate TileOp macro owner record: {mnemonic}")
+        forms = record.get("forms")
+        if not isinstance(forms, list) or not forms:
+            raise ValueError(f"TileOp macro owner has no forms: {mnemonic}")
+        for form in forms:
+            if set(form) != {
+                "spelling",
+                "macro_format",
+                "configuration_bindings",
+                "operand_bindings",
+            }:
+                raise ValueError(f"invalid TileOp macro owner form: {mnemonic}")
+            macro_format = str(form["macro_format"])
+            spelling = str(form["spelling"])
+            if "\n" in macro_format or "\r" in macro_format:
+                raise ValueError(f"TileOp macro owner form must occupy one line: {mnemonic}")
+            if not macro_format.startswith(spelling + " "):
+                raise ValueError(f"TileOp macro owner spelling mismatch: {mnemonic}")
+            if not isinstance(form["configuration_bindings"], list):
+                raise ValueError(f"TileOp macro owner lacks configuration mapping: {mnemonic}")
+            if not isinstance(form["operand_bindings"], list):
+                raise ValueError(f"TileOp macro owner lacks operand mapping: {mnemonic}")
+        definitions[mnemonic] = record
+    return definitions
+
+
+def load_tile_instructions() -> list[tuple[Path, dict[str, object]]]:
+    rows: list[tuple[Path, dict[str, object]]] = []
+    for path in sorted((ROOT / "asl/tile").rglob("*.asl")):
+        first = path.read_text(encoding="utf-8").splitlines()[0]
+        if not first.startswith("// PTO-INSTRUCTION: "):
+            continue
+        record = json.loads(first.split(": ", 1)[1])
+        if record.get("surface") != "tile" or "mnemonic" not in record:
+            continue
+        rows.append((path.relative_to(ROOT), record))
+    return rows
+
+
+def macro_mnemonic(record: dict[str, object]) -> str:
+    assembly = record["assembly"]
+    assert isinstance(assembly, list) and assembly
+    return str(assembly[0]).split()[0]
+
+
+def split_fields(text: str) -> list[str]:
+    fields: list[str] = []
+    depth = 0
+    start = 0
+    for index, char in enumerate(text):
+        if char in "<([":
+            depth += 1
+        elif char in ">)]":
+            depth = max(0, depth - 1)
+        elif char == "," and depth == 0:
+            fields.append(text[start:index].strip())
+            start = index + 1
+    fields.append(text[start:].strip())
+    return [field for field in fields if field]
+
+
+def scalar_name(field: str, role: str) -> str:
+    if "peer_tid" in role:
+        return "PeerTid"
+    if "row stride" in role:
+        return "RowStrideGPR"
+    if "multiplier" in role:
+        return "MultiplierFP32"
+    if "zero point" in role:
+        return "ZeroPoint"
+    if "sequence start" in role:
+        return "Start"
+    if "padding" in role:
+        return "PadScalar"
+    if "selected by zero" in role:
+        return "ScalarFalseGPR"
+    suffix = field.removeprefix("scalar")
+    return f"ScalarGPR{suffix}"
+
+
+def semantic_operands(record: dict[str, object]) -> tuple[list[dict[str, str]], list[dict[str, str]], list[str]]:
+    contract = record["contract"]
+    assert isinstance(contract, dict)
+    operands = contract.get("operands", [])
+    assert isinstance(operands, list)
+    sources: list[dict[str, str]] = []
+    destinations: list[dict[str, str]] = []
+    config_additions: list[str] = []
+    destination_count = sum(
+        1 for operand in operands if str(operand.get("field", "")).startswith("destination")
+    )
+
+    for operand in operands:
+        field = str(operand["field"])
+        role = str(operand["role"])
+        if field.startswith("source"):
+            suffix = field.removeprefix("source")
+            if "gpr" in role.lower():
+                syntax = f"ScalarGPR{suffix}"
+            elif "predicate" in role.lower():
+                syntax = "PredicateTile" if suffix == "0" else f"PredicateTile{suffix}"
+            else:
+                syntax = f"SrcTile{suffix}"
+            sources.append({"field": field, "syntax": syntax, "role": role})
+        elif field.startswith("destination"):
+            suffix = field.removeprefix("destination")
+            base = "DstTile" if destination_count == 1 else f"DstTile{suffix}"
+            if "predicate" in role:
+                base = (
+                    "PredicateTile"
+                    if destination_count == 1
+                    else f"PredicateTile{suffix}"
+                )
+                syntax = f"->{base}<Size>"
+            elif "scalar" in role.lower() or "GPR" in role:
+                base = "ScalarDst" if destination_count == 1 else f"ScalarDst{suffix}"
+                syntax = f"->{base}"
+            else:
+                syntax = f"->{base}<Size>"
+            destinations.append({"field": field, "syntax": syntax, "role": role})
+        elif field == "address":
+            sources.append({"field": field, "syntax": "[BaseGPR]", "role": role})
+        elif field.startswith("scalar"):
+            sources.append(
+                {"field": field, "syntax": scalar_name(field, role), "role": role}
+            )
+        elif field == "diagonal":
+            sources.append({"field": field, "syntax": "Diagonal", "role": role})
+        elif field == "flag0":
+            sources.append({"field": field, "syntax": "Direction", "role": role})
+        elif field == "natural0":
+            sources.append({"field": field, "syntax": "Natural0", "role": role})
+        elif field == "natural1":
+            sources.append({"field": field, "syntax": "Natural1", "role": role})
+        elif field == "comparison":
+            config_additions.append("CMode")
+        elif field == "selected_byte":
+            config_additions.append("ByteId")
+        elif field in {"numeric_control", "positive0", "positive1", "positive2", "sort_width"}:
+            continue
+        else:
+            sources.append({"field": field, "syntax": field, "role": role})
+    return sources, destinations, config_additions
+
+
+def load_operation_role_evidence() -> dict[str, list[dict[str, object]]]:
+    path = ROOT / "spec/evidence/bundle-operation-fixture-matrix.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    rows: dict[str, list[dict[str, object]]] = {}
+    for item in payload["operation_role_matrix"]:
+        rows.setdefault(str(item["operation"]), []).append(item)
+    if payload["accepted_operation_count"] != len(rows):
+        raise ValueError("bundle-operation fixture matrix does not cover every TileOp")
+    return rows
+
+
+def binding_command(binding_kind: str) -> str:
+    if binding_kind in {"scalar-binding", "scalar-destination", "predicate-gpr-source", "predicate-gpr-destination"}:
+        return "B.IOR"
+    if binding_kind == "shared-tile-binding":
+        return "B.IOS"
+    return "B.IOT"
+
+
+def form_id(mnemonic: str, macro_format: str) -> str:
+    digest = hashlib.sha256(
+        f"pto-0.58.6\0{mnemonic}\0{macro_format}".encode("utf-8")
+    ).hexdigest()[:16]
+    return f"pto0586-{mnemonic.lower().replace('_', '-')}-{digest}"
+
+
+def _contract_role_field(record: dict[str, object], fragments: set[str]) -> str:
+    contract = record["contract"]
+    assert isinstance(contract, dict)
+    operands = contract["operands"]
+    assert isinstance(operands, list)
+    matches = [
+        str(item["field"])
+        for item in operands
+        if str(item["role"]).lower() in fragments
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"cannot resolve TileOp physical role for {record['mnemonic']}: "
+            f"fragments={sorted(fragments)} matches={matches}"
+        )
+    return matches[0]
+
+
+def physical_roles_for_binding(
+    record: dict[str, object],
+    field: str,
+    syntax: str,
+    role_kind: str,
+) -> list[str]:
+    mnemonic = str(record["mnemonic"])
+    engine = str(record["engine"])
+    contract = record["contract"]
+    assert isinstance(contract, dict)
+    operands = contract["operands"]
+    assert isinstance(operands, list)
+    operand_fields = {str(item["field"]) for item in operands}
+
+    if role_kind == "destination":
+        if field == "RowMaxOut":
+            return ["aux-row-max-out"]
+        if field == "GroupMaxOut":
+            return ["aux-group-max-out"]
+        match = re.search(r"(?:DstTile|DstShared)(\d+)$", field)
+        return [f"destination{match.group(1)}" if match else "destination0"]
+    if field.startswith("macro_source"):
+        roles = []
+        if "BaseGPR" in syntax:
+            roles.append("address")
+        if "RowStrideGPR" in syntax:
+            roles.append("scalar0")
+        return roles
+    if field in {"RowStrideGPR", "PeerTid", "Start"}:
+        return ["scalar0"]
+    if field in {"Direction", "Orientation"}:
+        return ["flag0"]
+    if field == "Diagonal":
+        return ["diagonal"]
+    if field.startswith("PredicateGPR"):
+        return ["source0"]
+    if field.startswith("Predicate"):
+        match = re.search(r"(\d+)$", field)
+        return [f"source{match.group(1)}" if match else "source0"]
+    if field == "ScalarFalseGPR":
+        return ["scalar0"]
+    if field.startswith("ScalarGPR"):
+        match = re.search(r"(\d+)$", field)
+        if not match:
+            raise ValueError(f"TileOp scalar binding lacks an ordinal: {mnemonic} {field}")
+        ordinal = match.group(1)
+        if f"scalar{ordinal}" in operand_fields:
+            return [f"scalar{ordinal}"]
+        if f"source{ordinal}" in operand_fields:
+            return [f"source{ordinal}"]
+        raise ValueError(f"TileOp scalar binding has no physical role: {mnemonic} {field}")
+    if field in {"SrcTile", "SrcShared"}:
+        return ["source0"]
+    if field == "AccTile":
+        return [_contract_role_field(record, {"accumulator"})]
+    if field == "BiasTile":
+        return [_contract_role_field(record, {"bias"})]
+    if field == "RowScaleTile":
+        return [_contract_role_field(record, {"row-scale"})]
+    if field == "ColumnScaleTile":
+        return [_contract_role_field(record, {"column-scale"})]
+    if field == "SrcVector":
+        return [_contract_role_field(record, {"left", "left-vector"})]
+    if field == "SrcMatrix":
+        return [_contract_role_field(record, {"right", "right-matrix"})]
+    if field in {"LocalLeftGroup", "SharedLeftGroup"}:
+        return [
+            str(item["field"])
+            for item in operands
+            if str(item["role"]).lower() in {"left", "left-vector", "row-scale"}
+        ]
+    if field == "SharedRightGroup":
+        return [
+            str(item["field"])
+            for item in operands
+            if str(item["role"]).lower() in {"right", "right-matrix", "column-scale"}
+        ]
+    if field in {
+        "CScaleTile",
+        "RowMaxIn",
+        "QuantParamTile",
+        "ReluParamTile",
+        "QuantParamGPR",
+        "ReluParamGPR",
+    }:
+        slug = re.sub(r"(?<!^)(?=[A-Z])", "-", field).lower()
+        return [f"aux-{slug}"]
+    if field.startswith("SrcTile"):
+        match = re.search(r"(\d+)$", field)
+        if not match:
+            raise ValueError(f"TileOp Tile binding lacks an ordinal: {mnemonic} {field}")
+        ordinal = match.group(1)
+        if engine != "CUBE":
+            return [f"source{ordinal}"]
+        role_fragments = {"left", "left-vector"} if ordinal == "0" else {"right", "right-matrix"}
+        try:
+            return [_contract_role_field(record, role_fragments)]
+        except ValueError:
+            if f"source{ordinal}" in operand_fields:
+                return [f"source{ordinal}"]
+            raise
+    raise ValueError(f"TileOp macro binding has no physical mapping: {mnemonic} {field}")
+
+
+def operation_binding_groups(evidence_rows: list[dict[str, object]]) -> list[list[str]]:
+    groups: list[list[str]] = []
+    for row in evidence_rows:
+        row_groups = row["binding_groups"]
+        assert isinstance(row_groups, list)
+        for group in row_groups:
+            normalized = [str(role) for role in group]
+            if normalized not in groups:
+                groups.append(normalized)
+    return groups
+
+
+def expected_operand_bindings(
+    record: dict[str, object],
+    form: dict[str, object],
+    evidence_rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    sources = form["sources"]
+    destinations = form["destinations"]
+    assert isinstance(sources, list)
+    assert isinstance(destinations, list)
+    groups = operation_binding_groups(evidence_rows)
+    group_lookup = {
+        role: (group_index, slot_index)
+        for group_index, group in enumerate(groups)
+        for slot_index, role in enumerate(group)
+    }
+    ior_source_slot = 0
+    next_auxiliary_group = len(groups)
+    result: list[dict[str, object]] = []
+    for role_kind, bindings in (("source", sources), ("destination", destinations)):
+        for binding in bindings:
+            assert isinstance(binding, dict)
+            field = str(binding["field"])
+            syntax = str(binding["syntax"])
+            command = binding_command(str(binding["binding_kind"]))
+            roles = physical_roles_for_binding(record, field, syntax, role_kind)
+            members = []
+            auxiliary_group: int | None = None
+            for role in roles:
+                if command == "B.IOR":
+                    if role_kind == "destination":
+                        slot = "RegDst"
+                    else:
+                        slot = f"RegSrc{ior_source_slot}"
+                        ior_source_slot += 1
+                    group_index = 0
+                elif role in group_lookup:
+                    group_index, slot_index = group_lookup[role]
+                    slot = f"Role{slot_index}"
+                else:
+                    if auxiliary_group is None:
+                        auxiliary_group = next_auxiliary_group
+                        next_auxiliary_group += 1
+                    group_index = auxiliary_group
+                    slot = f"Role{len(members)}"
+                member_syntax = syntax
+                default = binding.get("default")
+                optional = bool(binding.get("optional"))
+                if field.startswith("macro_source"):
+                    if role == "address":
+                        member_syntax = "BaseGPR"
+                        default = "zero" if "=zero" in syntax else None
+                        optional = "=zero" in syntax
+                    elif role == "scalar0":
+                        member_syntax = "RowStrideGPR"
+                        default = None
+                        optional = "?" in syntax
+                members.append(
+                    {
+                        "physical_role": role,
+                        "command_group": group_index,
+                        "slot": slot,
+                        "syntax": member_syntax,
+                        "condition": binding.get("condition"),
+                        "default": default,
+                        "optional": optional,
+                    }
+                )
+            result.append(
+                {
+                    "field": field,
+                    "syntax": syntax,
+                    "role_kind": role_kind,
+                    "binding_kind": binding["binding_kind"],
+                    "command": command,
+                    "members": members,
+                }
+            )
+    evidence_by_role: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in evidence_rows:
+        modifier = row.get("modifier")
+        if modifier:
+            evidence_by_role.setdefault(
+                (str(row["role_kind"]), str(row["role"])), []
+            ).append(
+                {
+                    "modifier": str(modifier),
+                    "evidence_case": str(row["case_id"]),
+                }
+            )
+    bundle_contract = " ".join(physical_bundle(record))
+    for binding in result:
+        role_kind = str(binding["role_kind"])
+        for member in binding["members"]:
+            modifiers = evidence_by_role.get(
+                (role_kind, str(member["physical_role"])), []
+            )
+            if binding["command"] == "B.IOT":
+                member["eligible_modifiers"] = modifiers
+            elif binding["command"] == "B.IOS":
+                member["eligible_modifiers"] = [
+                    modifier
+                    for modifier in modifiers
+                    if str(modifier["modifier"]).split()[0] in bundle_contract
+                ]
+            else:
+                member["eligible_modifiers"] = []
+    return result
+
+
+HEADER_CONFIGURATION_FIELDS = {
+    "DataType",
+    "SrcDataType",
+    "ValueDataType",
+    "AType",
+    "U8",
+    "U32",
+    "DTYPE_NONE",
+}
+
+DATR_PHYSICAL_SLOTS = {
+    "BType": "DataType",
+    "CMode": "CMode",
+    "Canonicalize": "Canonicalize",
+    "CubeLayout": "Layout",
+    "DstDataType": "DataType",
+    "Layout": "Layout",
+    "PadValue": "PadValueOrByteId",
+    "PadValueOrByteId": "PadValueOrByteId",
+    "RMode": "RMode",
+    "Sat": "Sat",
+    "SatMode": "Sat",
+}
+
+
+def expected_configuration_bindings(
+    form: dict[str, object],
+    header_command: str,
+    operand_bindings: list[dict[str, object]],
+    datr_contract: dict[str, object],
+) -> list[dict[str, object]]:
+    carriers: list[tuple[str, int]] = []
+    for binding in operand_bindings:
+        command = str(binding["command"])
+        if command not in {"B.IOT", "B.IOS"}:
+            continue
+        members = binding["members"]
+        assert isinstance(members, list)
+        for member in members:
+            key = (command, int(member["command_group"]))
+            if key not in carriers:
+                carriers.append(key)
+
+    configuration = form["configuration"]
+    assert isinstance(configuration, list)
+    result = []
+    for field in configuration:
+        assert isinstance(field, dict)
+        name = str(field["field"])
+        if name.startswith("LB"):
+            targets = [{"command": "B.DIM", "group": None, "slot": name}]
+        elif name == "PEMask":
+            targets = [
+                {"command": command, "group": group, "slot": "PE_MASK"}
+                for command, group in carriers
+            ]
+        elif name == "FPAttrs":
+            targets = [{"command": "B.FPATR", "group": None, "slot": "attributes"}]
+        elif name in HEADER_CONFIGURATION_FIELDS:
+            targets = [{"command": header_command, "group": None, "slot": "DataType"}]
+        else:
+            physical_slot = DATR_PHYSICAL_SLOTS.get(name)
+            if physical_slot is None:
+                raise ValueError(f"TileOp macro has no physical B.DATR slot for {name}")
+            allowed_fields = datr_contract.get("allowed_nonzero_fields", [])
+            if physical_slot not in allowed_fields:
+                raise ValueError(
+                    f"TileOp macro B.DATR slot is not accepted: {name}->{physical_slot}"
+                )
+            targets = [
+                {"command": "B.DATR", "group": None, "slot": physical_slot}
+            ]
+        result.append({"field": name, "syntax": field["syntax"], "targets": targets})
+    return result
+
+
+def expansion_plan(
+    mnemonic: str,
+    form: dict[str, object],
+    owner_form: dict[str, object],
+    record: dict[str, object],
+    catalog_record: dict[str, object],
+    evidence_rows: list[dict[str, object]],
+) -> dict[str, object]:
+    header_command = str(catalog_record["command_mnemonic"])
+    if catalog_record.get("family") == "TEPL":
+        header_command = f"BSTART.{catalog_record['engine']}"
+
+    expected_operands = expected_operand_bindings(record, form, evidence_rows)
+    owner_operands = owner_form["operand_bindings"]
+    if owner_operands != expected_operands:
+        raise ValueError(f"TileOp macro operand mapping drift: {mnemonic} {form['spelling']}")
+    expected_configuration = expected_configuration_bindings(
+        form,
+        header_command,
+        expected_operands,
+        catalog_record.get("datr_contract", {}),
+    )
+    owner_configuration = owner_form["configuration_bindings"]
+    if owner_configuration != expected_configuration:
+        raise ValueError(
+            f"TileOp macro configuration mapping drift: {mnemonic} {form['spelling']}"
+        )
+
+    operand_bindings = copy.deepcopy(expected_operands)
+    modifier_bindings = []
+    for binding in operand_bindings:
+        for member in binding["members"]:
+            for modifier in member["eligible_modifiers"]:
+                modifier_bindings.append(
+                    {
+                        "field": binding["field"],
+                        "physical_role": member["physical_role"],
+                        "command_group": member["command_group"],
+                        "slot": member["slot"],
+                        "modifier": modifier["modifier"],
+                        "evidence_case": modifier["evidence_case"],
+                    }
+                )
+
+    command_groups: dict[tuple[str, int], list[dict[str, object]]] = {}
+    for binding in operand_bindings:
+        for member in binding["members"]:
+            key = (str(binding["command"]), int(member["command_group"]))
+            command_groups.setdefault(key, []).append(
+                {
+                    "field": binding["field"],
+                    "physical_role": member["physical_role"],
+                    "slot": member["slot"],
+                    "condition": member["condition"],
+                    "default": member["default"],
+                    "optional": member["optional"],
+                }
+            )
+
+    argument_bindings = []
+    for argument in catalog_record.get("arguments", []):
+        if "constant" in argument:
+            argument_bindings.append(
+                {"kind": "constant", "value": argument["constant"]}
+            )
+            continue
+        if "runtime" in argument:
+            argument_bindings.append(
+                {"kind": "runtime", "value": argument["runtime"]}
+            )
+            continue
+        physical_role = str(argument["operand"])
+        member_matches = [
+            {
+                "field": binding["field"],
+                "command": binding["command"],
+                "command_group": member["command_group"],
+                "slot": member["slot"],
+            }
+            for binding in operand_bindings
+            for member in binding["members"]
+            if member["physical_role"] == physical_role
+        ]
+        if member_matches:
+            argument_bindings.append(
+                {
+                    "kind": "operand-member",
+                    "physical_role": physical_role,
+                    "members": member_matches,
+                }
+            )
+            continue
+        configuration_fields = []
+        if physical_role == "comparison":
+            configuration_fields = ["CMode"]
+        elif physical_role == "numeric_control":
+            configuration_fields = [
+                name
+                for name in ("DstDataType", "RMode", "Sat", "Canonicalize")
+                if any(
+                    item["field"] == name
+                    for item in expected_configuration
+                )
+            ]
+        elif physical_role.startswith("positive"):
+            configuration_fields = [f"LB{physical_role.removeprefix('positive')}"]
+        if not configuration_fields or any(
+            not any(item["field"] == name for item in expected_configuration)
+            for name in configuration_fields
+        ):
+            raise ValueError(
+                f"TileOp physical argument is not covered by its macro: "
+                f"{mnemonic} {physical_role}"
+            )
+        argument_bindings.append(
+            {
+                "kind": "configuration",
+                "physical_role": physical_role,
+                "fields": configuration_fields,
+            }
+        )
+
+    return {
+        "form_id": form_id(mnemonic, str(form["macro_format"])),
+        "command_order": [
+            "header",
+            "B.DATR",
+            "B.FPATR",
+            "B.DIM",
+            "B.IOR/B.IOT/B.IOS",
+            "boundary",
+        ],
+        "header": {
+            "command": header_command,
+            "family": catalog_record["family"],
+            "mode": catalog_record.get("mode"),
+            "function": catalog_record.get("function"),
+            "selector": catalog_record.get("selector"),
+        },
+        "configuration_bindings": copy.deepcopy(expected_configuration),
+        "argument_bindings": argument_bindings,
+        "operand_bindings": operand_bindings,
+        "operand_commands": [
+            {"command": command, "group": group, "members": members}
+            for (command, group), members in command_groups.items()
+        ],
+        "modifier_bindings": modifier_bindings,
+        "boundary": {
+            "accepted": ["explicit BSTOP", "next BSTART"],
+            "command_range": "half-open; a following BSTART commits the prior bundle but belongs to the next form",
+        },
+        "fold": {
+            "policy": "unique-exact-match-or-physical",
+            "requires_complete_boundary": True,
+        },
+    }
+
+
+def physical_bundle(record: dict[str, object]) -> list[str]:
+    contract = record["contract"]
+    assert isinstance(contract, dict)
+    block = contract["block_composition"]
+    assert isinstance(block, list)
+    return [str(line) for line in block]
+
+
+def parse_macro_structure(
+    macro_format: str,
+    spelling: str,
+    semantic_sources: list[dict[str, str]],
+    semantic_destinations: list[dict[str, str]],
+) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
+    config_text = ""
+    operand_text = macro_format[len(spelling) :].strip()
+    if operand_text.startswith("<"):
+        depth = 0
+        end = None
+        for index, char in enumerate(operand_text):
+            if char == "<":
+                depth += 1
+            elif char == ">":
+                depth -= 1
+                if depth == 0:
+                    end = index
+                    break
+        if end is None:
+            raise ValueError(f"unterminated macro configuration: {macro_format}")
+        config_text = operand_text[1:end]
+        operand_text = operand_text[end + 1 :].lstrip(" ,")
+
+    def token_parts(token: str) -> tuple[str, str | None, str | None]:
+        condition_match = re.search(r"\{if ([^}]+)\}", token)
+        constraint_match = re.search(r"\{must be ([^}]+)\}", token)
+        condition = condition_match.group(1) if condition_match else None
+        constraint = constraint_match.group(1) if constraint_match else None
+        base = re.sub(r"\{(?:if|must be) [^}]+\}", "", token)
+        return base, condition, constraint
+
+    def field_name(token: str, fallback: str) -> str:
+        base, _, _ = token_parts(token)
+        base = base.removeprefix("->").rstrip("?")
+        if base.startswith("["):
+            return fallback
+        base = re.sub(r"<[^>]+>", "", base)
+        base = base.split("=", 1)[0].split(":", 1)[0]
+        value = re.sub(r"[^A-Za-z0-9_]+", "_", base).strip("_")
+        return value or fallback
+
+    def binding_kind(token: str, destination: bool) -> str:
+        base, _, _ = token_parts(token)
+        if destination and "PredicateCell" in base:
+            return "predicate-cell-destination"
+        if destination and "PredicateTile" in base:
+            return "predicate-tile-destination"
+        if destination and "PredicateGPR" in base:
+            return "predicate-gpr-destination"
+        if destination and ("ScalarDst" in base or "GPR" in base):
+            return "scalar-destination"
+        if not destination and "PredicateCell" in base:
+            return "predicate-cell-source"
+        if not destination and "PredicateTile" in base:
+            return "predicate-tile-source"
+        if not destination and "PredicateGPR" in base:
+            return "predicate-gpr-source"
+        if base.startswith("[") or any(
+            marker in base
+            for marker in (
+                "GPR",
+                "Direction",
+                "Orientation",
+                "Diagonal",
+                "Offset",
+                "Natural",
+                "PeerTid",
+                "Start",
+            )
+        ):
+            return "scalar-binding"
+        if "Shared" in base:
+            return "shared-tile-binding"
+        if destination:
+            return "tile-destination-binding"
+        return "tile-source-binding"
+
+    role_overrides = {
+        "CScaleTile": "optional C scale source",
+        "RowMaxIn": "optional row-maximum initialization source",
+        "QuantParamTile": "vector quantization parameter source",
+        "ReluParamTile": "vector ReLU parameter source",
+        "QuantParamGPR": "scalar quantization parameter source",
+        "ReluParamGPR": "scalar ReLU parameter source",
+        "RowMaxOut": "row-maximum auxiliary destination",
+        "GroupMaxOut": "group-maximum auxiliary destination",
+        "LocalLeftGroup": "Local left matrix operand group including any required left scale",
+        "SharedLeftGroup": "Shared left matrix operand group including any required left scale",
+        "SharedRightGroup": "Shared right matrix operand group including any required right scale",
+        "PredicateTile0": "legacy packed predicate source",
+        "PredicateCell0": "CUBE PredicateCell source",
+        "PredicateGPR0": "first predicate-mask GPR source",
+        "PredicateGPR1": "second predicate-mask GPR source for U8",
+        "PredicateTile": "legacy packed predicate destination",
+        "PredicateCell": "CUBE PredicateCell destination",
+        "PredicateGPR": "predicate-mask GPR destination",
+    }
+
+    def semantic_role(token: str, semantic: list[dict[str, str]]) -> str:
+        base, _, _ = token_parts(token)
+        key = field_name(base, "")
+        if key in role_overrides:
+            return role_overrides[key]
+        if base.startswith("["):
+            scalar_roles = [
+                item["role"]
+                for item in semantic
+                if item["field"] == "address" or item["field"].startswith("scalar")
+            ]
+            if scalar_roles:
+                return "; ".join(scalar_roles)
+        keyword_matches = (
+            ("AccTile", "accumulator"),
+            ("BiasTile", "bias"),
+            ("RowScaleTile", "row-scale"),
+            ("ColumnScaleTile", "column-scale"),
+            ("SrcVector", "left-vector"),
+            ("SrcMatrix", "right-matrix"),
+        )
+        for marker, role_fragment in keyword_matches:
+            if marker in base:
+                for item in semantic:
+                    if role_fragment in item["role"]:
+                        return item["role"]
+        if re.search(r"\bSrc(?:Tile|Shared)\b", base):
+            for item in semantic:
+                if item["field"] == "source0":
+                    return item["role"]
+        if "SrcTile0" in base:
+            for item in semantic:
+                if "left" in item["role"] and "scale" not in item["role"]:
+                    return item["role"]
+        if "SrcTile1" in base:
+            for item in semantic:
+                if "right" in item["role"] and "scale" not in item["role"]:
+                    return item["role"]
+        index_match = re.search(r"SrcTile(\d+)", base)
+        if index_match:
+            index = int(index_match.group(1))
+            if index < len(semantic):
+                return semantic[index]["role"]
+        if semantic:
+            return "; ".join(item["role"] for item in semantic)
+        return "operation-specific macro operand"
+
+    def structured_token(
+        token: str,
+        *,
+        ordinal: int,
+        kind: str,
+        role: str,
+        fallback: str,
+    ) -> dict[str, object]:
+        base, condition, constraint = token_parts(token)
+        size_match = re.search(r"<([^>]+)>", base)
+        default = None
+        if "=" in base and not base.startswith("["):
+            default = base.rsplit("=", 1)[1].rstrip("?")
+        return {
+            "field": field_name(token, fallback),
+            "syntax": token,
+            "role": role,
+            "binding_kind": kind,
+            "ordinal": ordinal,
+            "optional": token.endswith("?") or condition is not None or default is not None,
+            "default": default,
+            "condition": condition,
+            "constraint": constraint,
+            "size": size_match.group(1) if size_match else None,
+            "configuration_kind": (
+                "dimension"
+                if kind == "bundle-configuration" and base.startswith("LB")
+                else "attribute"
+                if kind == "bundle-configuration"
+                else None
+            ),
+            "value_style": (
+                "named-role"
+                if kind == "bundle-configuration" and base.startswith("LB")
+                else "bare-value"
+                if kind == "bundle-configuration"
+                else None
+            ),
+        }
+
+    configuration: list[dict[str, object]] = [
+        structured_token(
+            token,
+            ordinal=index,
+            kind="bundle-configuration",
+            role="bundle configuration field",
+            fallback=f"config{index}",
+        )
+        for index, token in enumerate(split_fields(config_text))
+    ]
+
+    tokens = split_fields(operand_text) if operand_text else []
+    source_tokens = [token for token in tokens if not token.startswith("->")]
+    destination_tokens = [token for token in tokens if token.startswith("->")]
+
+    def attach_roles(
+        syntax_tokens: list[str],
+        semantic: list[dict[str, str]],
+        prefix: str,
+        destination: bool,
+    ) -> list[dict[str, object]]:
+        return [
+            structured_token(
+                syntax,
+                ordinal=index,
+                kind=binding_kind(syntax, destination),
+                role=(
+                    semantic[index]["role"]
+                    if len(syntax_tokens) == len(semantic)
+                    else semantic_role(syntax, semantic)
+                ),
+                fallback=f"{prefix}{index}",
+            )
+            for index, syntax in enumerate(syntax_tokens)
+        ]
+
+    return (
+        configuration,
+        attach_roles(source_tokens, semantic_sources, "macro_source", False),
+        attach_roles(
+            destination_tokens, semantic_destinations, "macro_destination", True
+        ),
+    )
+
+
+def physical_fold_signature(expansion: dict[str, object]) -> str:
+    configuration = [
+        {"targets": item["targets"]}
+        for item in expansion["configuration_bindings"]
+    ]
+    operand_commands = [
+        {
+            "command": command["command"],
+            "group": command["group"],
+            "members": [
+                {
+                    key: member[key]
+                    for key in (
+                        "physical_role",
+                        "slot",
+                        "condition",
+                        "default",
+                        "optional",
+                    )
+                }
+                for member in command["members"]
+            ],
+        }
+        for command in expansion["operand_commands"]
+    ]
+    modifier_bindings = [
+        {
+            key: item[key]
+            for key in (
+                "physical_role",
+                "command_group",
+                "slot",
+                "modifier",
+            )
+        }
+        for item in expansion["modifier_bindings"]
+    ]
+    payload = {
+        "header": expansion["header"],
+        "configuration": configuration,
+        "operand_commands": operand_commands,
+        "modifier_bindings": modifier_bindings,
+        "boundary": expansion["boundary"],
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def build_operation(
+    path: Path,
+    record: dict[str, object],
+    macro_definition: dict[str, object],
+    evidence_rows: list[dict[str, object]],
+) -> dict[str, object]:
+    mnemonic = str(record["mnemonic"])
+    spelling = macro_mnemonic(record)
+    bundle = physical_bundle(record)
+    sources, destinations, _ = semantic_operands(record)
+    catalog_records = record.get("catalog_records")
+    if not isinstance(catalog_records, list) or len(catalog_records) != 1:
+        raise ValueError(f"TileOp must have one direct catalog record: {mnemonic}")
+    catalog_record = catalog_records[0]
+    assert isinstance(catalog_record, dict)
+    catalog_record = dict(catalog_record)
+    catalog_record["engine"] = record["engine"]
+
+    owner_forms = macro_definition["forms"]
+    assert isinstance(owner_forms, list)
+    forms: list[dict[str, object]] = []
+    for owner_form in owner_forms:
+        assert isinstance(owner_form, dict)
+        variant_format = str(owner_form["macro_format"])
+        variant_spelling = str(owner_form["spelling"])
+        macro_config, macro_sources, macro_destinations = parse_macro_structure(
+            variant_format, variant_spelling, sources, destinations
+        )
+        form = {
+            "spelling": variant_spelling,
+            "macro_format": variant_format,
+            "configuration": macro_config,
+            "sources": macro_sources,
+            "destinations": macro_destinations,
+        }
+        form["expansion"] = expansion_plan(
+            mnemonic, form, owner_form, record, catalog_record, evidence_rows
+        )
+        forms.append(form)
+
+    signature_counts: dict[str, int] = {}
+    for form in forms:
+        expansion = form["expansion"]
+        assert isinstance(expansion, dict)
+        signature = physical_fold_signature(expansion)
+        expansion["fold_signature_sha256"] = signature
+        signature_counts[signature] = signature_counts.get(signature, 0) + 1
+    for form in forms:
+        expansion = form["expansion"]
+        assert isinstance(expansion, dict)
+        signature = physical_fold_signature(expansion)
+        fold = expansion["fold"]
+        assert isinstance(fold, dict)
+        fold["unique_without_runtime_state"] = signature_counts[signature] == 1
+        if signature_counts[signature] != 1:
+            fold["on_ambiguity"] = "retain physical assembly"
+    primary = forms[0]
+
+    contract = record["contract"]
+    assert isinstance(contract, dict)
+    return {
+        "mnemonic": mnemonic,
+        "spelling": spelling,
+        "engine": record.get("engine"),
+        "classification": record.get("classification", []),
+        "source": path.as_posix(),
+        "macro_format": primary["macro_format"],
+        "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+        "configuration": primary["configuration"],
+        "sources": primary["sources"],
+        "destinations": primary["destinations"],
+        "forms": forms,
+        "semantic_operands": contract.get("operands", []),
+        "commit_boundaries": ["explicit BSTOP", "next BSTART"],
+        "physical_schema": {
+            "command_mnemonic": catalog_record["command_mnemonic"],
+            "family": catalog_record["family"],
+            "engine": catalog_record["engine"],
+            "mode": catalog_record.get("mode"),
+            "function": catalog_record.get("function"),
+            "selector": catalog_record.get("selector"),
+            "arguments": catalog_record.get("arguments", []),
+            "datr_contract": catalog_record.get("datr_contract", {}),
+            "operands": catalog_record.get("operands", []),
+            "semantic_handler": catalog_record["semantic_handler"],
+            "legality_handler": catalog_record["legality_handler"],
+            "restart_contract": catalog_record["restart_contract"],
+            "fixture_case_ids": [str(row["case_id"]) for row in evidence_rows],
+        },
+        "physical_bundle": bundle,
+        "defaults": contract.get("defaults", []),
+        "exceptions": contract.get("exceptions", []),
+    }
+
+
+def validate_current_inventory(operations: list[dict[str, object]]) -> None:
+    inventory_path = ROOT / "spec/catalog/tile-operations.json"
+    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+    expected = {
+        str(operation["name"]): str(operation["engine"])
+        for operation in inventory["operations"]
+    }
+    actual = {
+        str(operation["mnemonic"]): str(operation["engine"])
+        for operation in operations
+    }
+    if inventory["operation_count"] != len(expected) or actual != expected:
+        missing = sorted(set(expected) - set(actual))
+        extra = sorted(set(actual) - set(expected))
+        mismatched = sorted(
+            name for name in expected.keys() & actual.keys()
+            if expected[name] != actual[name]
+        )
+        raise ValueError(
+            "TileOp macro inventory drift: "
+            f"expected={len(expected)} actual={len(actual)} "
+            f"missing={missing} extra={extra} engine_mismatch={mismatched}"
+        )
+
+
+def build_catalog() -> dict[str, object]:
+    tile_records = load_tile_instructions()
+    definitions = load_macro_form_definitions()
+    role_evidence = load_operation_role_evidence()
+    operation_names = {str(record["mnemonic"]) for _, record in tile_records}
+    if set(definitions) != operation_names:
+        raise ValueError(
+            "TileOp macro owner inventory drift: "
+            f"missing={sorted(operation_names - set(definitions))} "
+            f"extra={sorted(set(definitions) - operation_names)}"
+        )
+    if set(role_evidence) != operation_names:
+        raise ValueError(
+            "TileOp bundle-operation evidence drift: "
+            f"missing={sorted(operation_names - set(role_evidence))} "
+            f"extra={sorted(set(role_evidence) - operation_names)}"
+        )
+    operations = [
+        build_operation(
+            path,
+            record,
+            definitions[str(record["mnemonic"])],
+            role_evidence[str(record["mnemonic"])],
+        )
+        for path, record in tile_records
+    ]
+    operations.sort(key=lambda operation: str(operation["mnemonic"]))
+    validate_current_inventory(operations)
+    return {
+        "schema_version": 2,
+        "status": "accepted-0.58.6",
+        "summary": {
+            "operation_count": len(operations),
+            "form_count": sum(len(operation["forms"]) for operation in operations),
+        },
+        "architecture_identity": "0.58.6",
+        "source_of_truth": "PTO-TILEOP-MACRO records in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
+        "syntax_shape": "TileOp <bundle configuration>, ordered sources, ->ordered destinations",
+        "line_grammar": {
+            "instruction_lines": 1,
+            "newline_terminates_instruction": True,
+            "continuations_allowed": False,
+            "canonical_output_wraps": False,
+        },
+        "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
+        "attribute_syntax": "attributes are positional self-describing values; a defaulted or inferable attribute is omitted without a placeholder",
+        "attribute_resolution": [
+            {
+                "rule": "metavariable",
+                "description": "A format name such as DataType identifies an attribute role; it is not part of concrete assembly.",
+            },
+            {
+                "rule": "bare-value",
+                "description": "A concrete token such as FP32 binds through the selected TileOp schema value domain; DataType:FP32 is non-canonical.",
+            },
+            {
+                "rule": "omission",
+                "description": "An attribute may be omitted only when the selected TileOp schema supplies an exact default or a unique inference from typed operands.",
+            },
+            {
+                "rule": "diagnostic",
+                "description": "An unresolved or multiply matching bare attribute token is rejected instead of being assigned by guesswork.",
+            },
+        ],
+        "destination_forms": [
+            {"kind": "tile", "syntax": "->DstTile<Size>", "concrete_example": "->T<2KB>", "physical_binding": "B.IOT.DstTile", "resulting_generation": "T#1"},
+            {"kind": "shared-tile", "syntax": "->DstShared<Size>", "concrete_example": "->S3<2KB>", "physical_binding": "B.IOS.SharedTileID"},
+            {"kind": "scalar", "syntax": "->ScalarDst", "concrete_example": "->a0", "physical_binding": "B.IOR.RegDst"},
+            {"kind": "predicate-tile", "syntax": "->PredicateTile<Size>", "concrete_example": "->U<512B>", "physical_binding": "B.IOT.DstTile", "resulting_generation": "U#1"},
+            {"kind": "predicate-cell", "syntax": "->PredicateCell<Size>", "concrete_example": "->M<512B>", "physical_binding": "B.IOT.DstTile", "resulting_generation": "M#1"},
+            {"kind": "predicate-gpr", "syntax": "->PredicateGPR", "concrete_example": "->a0", "physical_binding": "B.IOR.RegDst"},
+        ],
+        "operations": operations,
+    }
+
+
+def escape_cell(text: str) -> str:
+    if "\n" in text or "\r" in text:
+        raise ValueError("canonical TileOp assembly must not contain a line break")
+    return text.replace("|", "\\|")
+
+
+def build_markdown(catalog: dict[str, object]) -> str:
+    operations = catalog["operations"]
+    assert isinstance(operations, list)
+    groups: dict[str, list[dict[str, object]]] = {}
+    for operation in operations:
+        classification = operation["classification"]
+        if isinstance(classification, list):
+            group = "/".join(str(item) for item in classification)
+        else:
+            group = str(classification)
+        groups.setdefault(group, []).append(operation)
+
+    operation_count = int(catalog["summary"]["operation_count"])
+    lines = [
+        "# PTO TileOp macro assembly",
+        "",
+        f"This reference defines the canonical PTO 0.58.6 macro-assembly format for all {operation_count} current direct Tile operations.",
+        "It is generated from the `PTO-TILEOP-MACRO` owners in `asl/arch/overview/instruction-classification.asl`; each physical mapping is cross-checked against the operation's owning `PTO-INSTRUCTION` metadata and `spec/catalog/tile-operations.json`.",
+        "",
+        "## Syntax model",
+        "",
+        "```text",
+        "TileOp <bundle configuration>, ordered sources, ->ordered destinations",
+        "```",
+        "",
+        "- One TileOp macro instruction MUST occupy exactly one source line. A newline terminates the instruction; continuation syntax is not accepted and canonical disassembly never wraps the instruction.",
+        "- Configuration fields follow LB index order, then type/attribute fields, then `PEMask` when the physical bindings carry a PE mask.",
+        "- LB dimensions retain named roles such as `LB0:ValidCol`; attributes are positional self-describing values, so concrete assembly writes `FP32`, not `DataType:FP32`.",
+        "- An attribute may be removed from the angle-bracket list entirely when the selected TileOp schema supplies an exact default or a unique inference from typed operands; omission leaves no empty slot or placeholder.",
+        "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
+        "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
+        "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
+        "- A source may carry `[subview=<range>]` and a destination may carry `[assemble=<range>]` when the owning operation accepts the corresponding range modifier.",
+        "- One macro instruction maps to one physical bundle. Its boundary is an explicit `BSTOP` or the next `BSTART`.",
+        "- `PEMask` is PE participation and is distinct from an element predicate carrier.",
+        "- Destinations may be Tile (`->DstTile<Size>`), Shared Tile (`->DstShared<Size>`), scalar through `B.IOR.RegDst` (`->ScalarDst`), legacy predicate Tile (`->PredicateTile<Size>`), CUBE PredicateCell (`->PredicateCell<Size>`), or predicate-mask GPR (`->PredicateGPR`).",
+        "- `X?` is optional; `X=value` states the virtual default; `X{if Condition}` is present only when that configuration condition holds.",
+        "- `X{must be Value}` is a legality constraint, not an omission default.",
+        "- `SourceOr1` and `SourceOrValidCol` mean an allocated Shared source contributes its descriptor value; an unallocated Shared source uses 1 or ValidCol as specified by TSTORE.",
+        "- `FPAttrs` expands to `PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn`.",
+        "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling FPAttrs condition.",
+        "",
+        "A concrete macro is always written on one line:",
+        "",
+        "```text",
+        "TADD <LB0:100, LB1:a0, LB2:a1+10, FP32, Null, 1111>, T#1, T#2, ->T<2KB>",
+        "```",
+        "",
+        "Destination metavariables likewise become physical binding operands. A Local destination names only its encoded `B.IOT.DstTile` hand: for example, `->T<2KB>` publishes a new `T#1`, while `->U<512B>` may publish a legacy packed predicate Tile or a CUBE PredicateCell as the new `U#1` according to the selected TCMP/TCMPS form. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`. PTO 0.58.6 defines no architectural predicate-register destination for these TileOps.",
+        "",
+        "## Complete format inventory",
+        "",
+    ]
+    for group in sorted(groups):
+        lines.extend(
+            [
+                f"### {group}",
+                "",
+                "| TileOp | Engine | Canonical macro format |",
+                "| --- | --- | --- |",
+            ]
+        )
+        for operation in sorted(groups[group], key=lambda item: str(item["mnemonic"])):
+            lines.append(
+                "| `{}` | `{}` | {} |".format(
+                    escape_cell(str(operation["spelling"])),
+                    escape_cell(str(operation["engine"])),
+                    "<br>".join(
+                        f"`{escape_cell(str(form['macro_format']))}`"
+                        for form in operation["forms"]
+                    ),
+                )
+            )
+        lines.append("")
+
+    lines.extend(
+        [
+            "## Physical expansion and disassembly",
+            "",
+            "The JSON catalog records the complete physical `block_composition`, defaults, exceptions, semantic source roles, and destination roles for every row above.",
+            "A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds only a unique exact schema match and otherwise prints physical bundle assembly.",
+            "",
+            "## Tool integration boundary",
+            "",
+            "This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.",
+            "Every folded instruction remains one output line. A missing boundary, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def first_catalog_difference(expected: object, actual: object, path: str = "$" ) -> str | None:
+    if type(expected) is not type(actual):
+        return f"{path}: expected {type(expected).__name__}, got {type(actual).__name__}"
+    if isinstance(expected, dict):
+        expected_keys = set(expected)
+        actual_keys = set(actual)
+        if expected_keys != actual_keys:
+            return (
+                f"{path}: key mismatch missing={sorted(expected_keys - actual_keys)} "
+                f"extra={sorted(actual_keys - expected_keys)}"
+            )
+        for key in sorted(expected):
+            difference = first_catalog_difference(expected[key], actual[key], f"{path}.{key}")
+            if difference:
+                return difference
+        return None
+    if isinstance(expected, list):
+        if len(expected) != len(actual):
+            return f"{path}: expected {len(expected)} entries, got {len(actual)}"
+        for index, (expected_item, actual_item) in enumerate(zip(expected, actual, strict=True)):
+            difference = first_catalog_difference(
+                expected_item, actual_item, f"{path}[{index}]"
+            )
+            if difference:
+                return difference
+        return None
+    if expected != actual:
+        return f"{path}: expected {expected!r}, got {actual!r}"
+    return None
+
+
+def validate_catalog(catalog: dict[str, object]) -> None:
+    expected = build_catalog()
+    difference = first_catalog_difference(expected, catalog)
+    if difference:
+        raise ValueError(f"TileOp macro catalog differs from owning inputs: {difference}")
+def render_json(catalog: dict[str, object]) -> str:
+    return json.dumps(catalog, indent=2, sort_keys=True) + "\n"
+
+
+def check_file(path: Path, expected: str) -> bool:
+    if not path.is_file() or path.read_text(encoding="utf-8") != expected:
+        print(f"error: {path} is out of date")
+        return False
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    catalog = build_catalog()
+    validate_catalog(catalog)
+    json_text = render_json(catalog)
+    markdown_text = build_markdown(catalog)
+    if args.check:
+        ok = check_file(JSON_OUTPUT, json_text)
+        ok = check_file(MARKDOWN_OUTPUT, markdown_text) and ok
+        if ok:
+            print(f"TileOp macro assembly is current: {len(catalog['operations'])} operations")
+        return 0 if ok else 1
+    JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    MARKDOWN_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    JSON_OUTPUT.write_text(json_text, encoding="utf-8")
+    MARKDOWN_OUTPUT.write_text(markdown_text, encoding="utf-8")
+    print(f"Generated {len(catalog['operations'])} TileOp macro formats")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

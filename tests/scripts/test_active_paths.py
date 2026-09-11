@@ -83,6 +83,7 @@ class ActivePathCheckTest(unittest.TestCase):
                 "docs/governance/adr-process.md",
                 "docs/development/getting-started.md",
                 "docs/releases/index.md",
+                "docs/virtual-isa/tileop-macro-assembly.md",
                 "docs/site/README.md",
             ]
             for value in paths:

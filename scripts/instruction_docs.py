@@ -952,6 +952,8 @@ def render_nav(
                 "      - Validation: governance/validation.md",
                 "  - Releases:",
                 "      - Release index: releases/index.md",
+                "  - Virtual ISA:",
+                "      - TileOp macro assembly: virtual-isa/tileop-macro-assembly.md",
             ]
         )
     for surface in SURFACE_ORDER:

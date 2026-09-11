@@ -258,6 +258,19 @@
     },
     {
       "executable": false,
+      "id": "PTO-AS-TILEOP-MACRO-001",
+      "owners": [
+        "asl/arch/overview/instruction-classification.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-GOV-0004"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-ATOM-RED-BODY-SCHEMA-001",
       "owners": [
         "asl/tile/model/memory/gm-atom-red.asl"
@@ -18043,7 +18056,7 @@
     "asl/arch/memory-model/ordering.asl": "1f157179434fe7c704a35b7b0d8a086d2ade9280c4f678b3586fc29142844898",
     "asl/arch/overview/architecture.asl": "31d8f914357d332bfdb9af50e831727c516861a8a4d5a128bf4a86b8600e24c8",
     "asl/arch/overview/encoding-ownership.asl": "c966dc5c893b35cf6ce25ec303839f60c68f52d90bf2f5bdd74b5de115ea9083",
-    "asl/arch/overview/instruction-classification.asl": "9306ccb6a080dbbe8069a998c8a88e7db48c1c45d0613407b59d2892405f0958",
+    "asl/arch/overview/instruction-classification.asl": "57bee74918531f47def7e86a232480c7966a261d8dfd7175a759d763b7dabd97",
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
     "asl/arch/profile/e8m0-conversion.asl": "7e94f1b7c5f3f0d76bf89cda5ece4e0aa363b1d699d01acf0b0f66c0d893199a",
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
@@ -18932,7 +18945,7 @@
     "docs/arch/memory-model/ordering.md": "dd69a837c3abfa89efb46b08c811fe5624f10f896539b72110099f8c0aca88df",
     "docs/arch/overview/architecture.md": "da241b587e29bb555c828bb81f7605414bf850cc1880259aa1c608fa225b7428",
     "docs/arch/overview/encoding-ownership.md": "3165aff5966c7232d47ec71045fa6d488616f56a20c132e001f6cc7cd07d8084",
-    "docs/arch/overview/instruction-classification.md": "3808b2079e0f194e993e31f5f5de9f927e11b413fd6694ba69f1907054c89892",
+    "docs/arch/overview/instruction-classification.md": "ae701a95aa4734cf64fdd08ee73f8abde50637810640a3ce282e06e9c4e2d634",
     "docs/arch/profile/applicability.md": "b9bb5e1a0402d73367969fa54b60bd8f85a8d30a77d3f4b494b8915c28beea3f",
     "docs/arch/profile/e8m0-conversion.md": "d37b356b3f853454189d23a09346db5ce5c78d6f036fef3b75963cc49f9bbf37",
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
@@ -19776,7 +19789,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "5b723276ec1e3d81e64e7ceeabbad5f5e1349a1a6ad4649d4c417e05e6b07e0c",
+    "spec/evidence/adr-index.json": "fc58fca8436097705f44b9a19e7b7827dec9a7b8352431868745853d6d0efce1",
     "spec/evidence/instruction-contract-closure.json": "4df1ffd17d639e918c4b3c1bbeba692e8bf6f1000b31c5c77433baaf675151bf",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -19893,7 +19906,7 @@
     "tests/asl/arch/overview/encoding-ownership/arch-fault-long-bstart-001.asl": "ade055c8411fe1c06fcc5464c6c1ed6bc217111655a3a77ed59c4261b83fc898",
     "tests/asl/arch/overview/encoding-ownership/arch-fault-machine-block-001.asl": "06b94224aacf6a335a9e7ea0274d4c126b2a5e8348db8581ace441cece05ded2",
     "tests/asl/arch/overview/encoding-ownership/arch-static-encoding-ownership-contract-001.asl": "a60389f5f46e1c386db5773eb46647e480424124eea56a1d88090765ba0b7d1f",
-    "tests/asl/arch/overview/instruction-classification/arch-static-instruction-classification-contract-001.asl": "3c8f5053d2772e838c1ae9725d855c471c5e42723d3da0507987ce5c2325555b",
+    "tests/asl/arch/overview/instruction-classification/arch-static-instruction-classification-contract-001.asl": "9cca9c791721123798dc2620b634b53bbe28e44942d11c5e2975218461784727",
     "tests/asl/arch/profile/applicability/arch-static-applicability-contract-001.asl": "72e3606eddaf180815dfda25f6e262401c3e8d840afe5b2e43f4087568c8a87d",
     "tests/asl/arch/profile/e8m0-conversion/arch-static-e8m0-conversion-contract-001.asl": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
     "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
@@ -23695,7 +23708,7 @@
     "mnemonic_count": 663,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1071,
+    "requirement_count": 1072,
     "status": "closed",
     "test_count": 3910,
     "uncovered_executable_requirement_count": 0,
@@ -32145,9 +32158,10 @@
       "requirements": [
         "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
         "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
-        "PTO-ARCH-TEPL-ALIAS-001"
+        "PTO-ARCH-TEPL-ALIAS-001",
+        "PTO-AS-TILEOP-MACRO-001"
       ],
-      "sha256": "3c8f5053d2772e838c1ae9725d855c471c5e42723d3da0507987ce5c2325555b",
+      "sha256": "9cca9c791721123798dc2620b634b53bbe28e44942d11c5e2975218461784727",
       "source": "asl/arch/overview/instruction-classification.asl"
     },
     {
