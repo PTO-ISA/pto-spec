@@ -3,9 +3,9 @@
 // ndf: kind=contract level=L1 layer=block status=accepted
 // TGPR2T MUST consume exactly two contiguous source-only B.IOR records (3+1),
 // one terminating destination B.IOT, and one exact shape pair: LB1/LB0 is
-// 32/4 for CUBE_M32 or 16/8 for CUBE_M16. LB2 MUST be absent. Missing,
-// reordered, wrong-split, surplus, or destination-bearing forms reject before
-// allocation, source reads, or publication.
+// 32/4 for CUBE_M32 or 16/8 for CUBE_M16. LB2 MUST have its default value one.
+// Wrong-split, surplus, or destination-bearing forms reject before allocation,
+// source reads, or publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001
 
 readonly func SelectedBundleClosedTGPR2TSchemaLegal(
@@ -16,9 +16,7 @@ begin
     end;
     if BundleTileBindingCount() != 1 ||
        BundleSharedBindingCount() != 0 ||
-       !_BundleDimensionPresent[[0]] ||
-       !_BundleDimensionPresent[[1]] ||
-       _BundleDimensionPresent[[2]] then
+       UInt(_BundleDimensions[[2]]) != 1 then
         return FALSE;
     end;
     let binding = _BundleTileBindings[[0]];

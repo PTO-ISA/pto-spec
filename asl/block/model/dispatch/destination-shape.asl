@@ -4,51 +4,30 @@ readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB1);
-    if UInt(_BundleDimensions[[index]]) >= 1 &&
-       UInt(_BundleDimensions[[index]]) <= 65535 then
-        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
-    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
-        return _Tiles[[shape_source]].valid_rows;
-    elsif BundleSharedBindingCount() == 1 &&
-          SharedTileDescriptorLegal(BundleSharedBindingId(0)) then
-        return SharedTileRecord(BundleSharedBindingId(0)).tile.valid_rows;
-    else
-        return 1;
+    if UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {0..65535};
     end;
+    return 0;
 end;
 readonly func BundleDestinationValidColumns(shape_source_valid: boolean,
                                             shape_source: TileIndex)
                                             => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB0);
-    if UInt(_BundleDimensions[[index]]) >= 1 &&
-       UInt(_BundleDimensions[[index]]) <= 65535 then
-        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
-    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
-        return _Tiles[[shape_source]].valid_columns;
-    elsif BundleSharedBindingCount() == 1 &&
-          SharedTileDescriptorLegal(BundleSharedBindingId(0)) then
-        return SharedTileRecord(BundleSharedBindingId(0)).tile.valid_columns;
-    else
-        return 1;
+    if UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {0..65535};
     end;
+    return 0;
 end;
 readonly func BundleDestinationPhysicalColumns(shape_source_valid: boolean,
                                                shape_source: TileIndex)
                                                => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB2);
-    if UInt(_BundleDimensions[[index]]) >= 1 &&
-       UInt(_BundleDimensions[[index]]) <= 65535 then
-        return UInt(_BundleDimensions[[index]]) as integer {1..65535};
-    elsif shape_source_valid && TileDescriptorConfigured(shape_source) then
-        return _Tiles[[shape_source]].columns;
-    elsif BundleSharedBindingCount() == 1 &&
-          SharedTileDescriptorLegal(BundleSharedBindingId(0)) then
-        return SharedTileRecord(BundleSharedBindingId(0)).tile.columns;
-    else
-        return BundleDestinationValidColumns(FALSE, 0);
+    if UInt(_BundleDimensions[[index]]) <= 65535 then
+        return UInt(_BundleDimensions[[index]]) as integer {0..65535};
     end;
+    return 0;
 end;
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
 begin
@@ -379,11 +358,8 @@ begin
         end;
         let valid_columns = UInt(_BundleDimensions[[0]])
             as integer {1..65535};
-        let valid_rows = if _BundleDimensionPresent[[1]] then
-            UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-        let columns = if _BundleDimensionPresent[[2]] then
-            UInt(_BundleDimensions[[2]]) as integer {1..65535}
-            else valid_columns;
+        let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+        let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
         return ResolveBundleTileDestinationsWithShapeAndType(
             TRUE, valid_rows, valid_columns, columns,
             TRUE, destination_type);
@@ -399,7 +375,7 @@ begin
         return ResolveBundleTileDestinations();
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-    let columns = if _BundleDimensionPresent[[2]] then UInt(_BundleDimensions[[2]]) as integer {1..65535} else valid_columns;
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     return ResolveBundleTileDestinationsWithShape(TRUE, valid_rows, valid_columns, columns);
 end;

@@ -82,8 +82,7 @@ readonly func SelectedBundleExpansionBroadcastShapeMatches(
     broadcast: TileIndex) => boolean
 begin
     let valid_columns = UInt(_BundleDimensions[[0]]);
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) else 1;
+    let valid_rows = UInt(_BundleDimensions[[1]]);
     if TileOperationUsesClosedRowExpansionSchema(operation) then
         return _Tiles[[broadcast]].valid_rows == valid_rows &&
                _Tiles[[broadcast]].valid_columns == 1;

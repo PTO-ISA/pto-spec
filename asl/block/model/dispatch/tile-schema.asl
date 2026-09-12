@@ -342,13 +342,11 @@ begin
        !_BundleTileBindings[[0]].source0_valid ||
        !_BundleTileBindings[[0]].source1_valid ||
        !_BundleTileBindings[[0]].last then return FALSE; end;
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then return FALSE; end;
     for dimension = 1 to 2 looplimit 2 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) < 1 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) < 1 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;
@@ -379,15 +377,13 @@ begin
        !binding.source0_valid || binding.source1_valid || !binding.last then
         return FALSE;
     end;
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then
         return FALSE;
     end;
     for dimension = 1 to 2 looplimit 2 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) < 1 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) < 1 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;
@@ -431,15 +427,13 @@ begin
        !result.last then
         return FALSE;
     end;
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then
         return FALSE;
     end;
     for dimension = 1 to 2 looplimit 2 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) < 1 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) < 1 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;

@@ -10,13 +10,11 @@ end;
 
 readonly func BundleTPREFETCHDimensionsLegal() => boolean
 begin
-    // Omitted dimensions use the destination-free TLOAD defaults.  An
-    // explicitly encoded zero or out-of-range value remains a value and is
-    // therefore illegal rather than being reinterpreted as omission.
+    // Omitted dimensions have effective value one. An explicitly encoded
+    // zero or out-of-range value remains a value and is therefore illegal.
     for dimension = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) == 0 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) == 0 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;

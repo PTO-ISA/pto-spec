@@ -70,10 +70,7 @@ begin
     end;
     let data_type = TileDataTypeFromEncoding(
         _BundleOperation.data_type as TileDataTypeEncoding);
-    if !BundleTIMG2COLDataTypeSupported(data_type) ||
-       !BundleTIMG2COLDimensionRolesComplete(
-           _BundleDimensionPresent[[0]], _BundleDimensionPresent[[1]],
-           _BundleDimensionPresent[[2]]) then
+    if !BundleTIMG2COLDataTypeSupported(data_type) then
         return FALSE;
     end;
     if _BundleDataAttributesPresent &&

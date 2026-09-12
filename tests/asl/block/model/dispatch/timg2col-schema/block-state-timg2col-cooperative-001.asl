@@ -19,8 +19,6 @@ begin
         BundleTIMG2COLOutput_LocalM32, 65, 2) == 1;
     assert BundleTIMG2COLRowStartForOutput(
         BundleTIMG2COLOutput_LocalM32, 65, 7, 2) == 71;
-    assert BundleTIMG2COLDimensionRolesComplete(TRUE, TRUE, TRUE);
-    assert !BundleTIMG2COLDimensionRolesComplete(TRUE, FALSE, TRUE);
     let (pe0_offset, pe0_bytes) = BundleTIMG2COLWriterRange(65, 7, 0, 64);
     let (pe2_offset, pe2_bytes) = BundleTIMG2COLWriterRange(65, 7, 2, 64);
     let (pe3_offset, pe3_bytes) = BundleTIMG2COLWriterRange(65, 7, 3, 64);

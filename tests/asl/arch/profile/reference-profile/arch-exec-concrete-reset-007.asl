@@ -67,8 +67,8 @@ begin
     assert _SystemRegisters.global_ptr == Zeros{PTO_XLEN};
     assert _SystemRegisters.core_feature_enable == Zeros{PTO_XLEN};
     assert !_BundleActive && !_BundleBodyActive;
-    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN};
-    assert _BundleDimensions[[2]] == Zeros{PTO_XLEN};
+    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN} + 1;
+    assert _BundleDimensions[[2]] == Zeros{PTO_XLEN} + 1;
     assert !_BundleScalarBindings[[31]].valid;
     assert !_BundleTileBindings[[15]].valid;
     assert !_BundleControlAttributes.trap_enabled;

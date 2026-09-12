@@ -183,13 +183,6 @@ type BundleTIMG2COLOutputKind of enumeration {
     BundleTIMG2COLOutput_LocalM32
 };
 
-pure func BundleTIMG2COLDimensionRolesComplete(
-    valid_col_present: boolean, valid_row_present: boolean,
-    total_col_present: boolean) => boolean
-begin
-    return valid_col_present && valid_row_present && total_col_present;
-end;
-
 pure func BundleTIMG2COLMPerPEForOutput(
     output: BundleTIMG2COLOutputKind, valid_row: integer {1..128})
     => integer {16,32}

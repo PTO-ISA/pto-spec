@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-CUBE-LB2-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"fault","summary":"CUBE TCVT rejects an explicit LB2 physical-column request","pass_condition":"present LB2 raises Fault_TileLegality before destination allocation because CUBE physical columns are derived from DataType and TSize","related_sources":["asl/block/model/dispatch/tcvt-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-CUBE-LB2-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001","PTO-BUNDLE-DIMENSION-DEFAULT-001"],"kind":"fault","summary":"CUBE TCVT accepts only the value-one LB2 default","pass_condition":"an explicit nondefault LB2 raises Fault_TileLegality before destination allocation because CUBE physical columns are derived from DataType and TSize","related_sources":["asl/block/model/dispatch/tcvt-schema.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -16,7 +16,7 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 16);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);
     let completed = ExecuteBundleTileOperation();
     assert !completed;

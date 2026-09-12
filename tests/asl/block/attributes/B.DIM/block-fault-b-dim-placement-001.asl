@@ -8,7 +8,7 @@ begin
     let standalone = ExecuteCommandInstruction(instruction, 32);
     assert standalone == CommandExecution_Rejected;
     assert _LastFault == Fault_BundleControl;
-    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN};
+    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN} + 1;
 
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
@@ -20,6 +20,6 @@ begin
     let body = ExecuteCommandInstruction(instruction, 32);
     assert body == CommandExecution_Rejected;
     assert _LastFault == Fault_BundleControl;
-    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN};
+    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

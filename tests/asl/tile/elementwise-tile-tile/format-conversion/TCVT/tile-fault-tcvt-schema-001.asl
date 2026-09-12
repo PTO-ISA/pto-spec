@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-SCHEMA-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"fault","summary":"TCVT accepts exactly one typed Local source and one new terminating Local destination","pass_condition":"the canonical schema passes while B.IOR, a second source, a source-type mismatch, or missing LB0 rejects before allocation","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tile-execution.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-SCHEMA-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"fault","summary":"TCVT accepts exactly one typed Local source and one new terminating Local destination","pass_condition":"the canonical schema passes while B.IOR, a second source, a source-type mismatch, or explicit zero LB0 rejects before allocation","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tile-execution.asl"]}
 func ConfigureTCVTSchema()
 begin
     ResetProfileState();
@@ -19,6 +19,7 @@ begin
         32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE,
         0,
@@ -48,7 +49,7 @@ begin
     assert !SelectedBundleClosedTCVTSchemaLegal(23);
 
     ConfigureTCVTSchema();
-    _BundleDimensionPresent[[0]] = FALSE;
+    _BundleDimensions[[0]] = Zeros{PTO_XLEN};
     assert !SelectedBundleClosedTCVTSchemaLegal(23);
     return 0;
 end;

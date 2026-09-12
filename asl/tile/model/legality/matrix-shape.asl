@@ -61,7 +61,6 @@ readonly func BundleCubeDimensionValue(
     dimension: BundleDimensionRegister) => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(dimension);
-    if !_BundleDimensionPresent[[index]] then return 1; end;
     let raw = UInt(_BundleDimensions[[index]]);
     if raw <= 65535 then return raw as integer {0..65535}; end;
     return 0;

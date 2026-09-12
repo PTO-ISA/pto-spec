@@ -43,7 +43,7 @@ begin
     _BundleOperation.branch_type_valid = FALSE;
     _BundleOperation.branch_type = Zeros{3};
     for index = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
-        _BundleDimensions[[index]] = Zeros{PTO_XLEN};
+        _BundleDimensions[[index]] = ZeroExtend{PTO_XLEN}('1');
         _BundleDimensionPresent[[index]] = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_SCALAR_BINDING_COUNT - 1 do

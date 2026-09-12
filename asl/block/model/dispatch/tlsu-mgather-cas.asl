@@ -61,11 +61,8 @@ begin
         return FALSE;
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-    let columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) as integer {1..65535}
-        else valid_columns;
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     if _Tiles[[indices]].valid_rows != valid_rows ||
        _Tiles[[indices]].valid_columns != valid_columns ||
        _Tiles[[expected]].valid_rows != valid_rows ||

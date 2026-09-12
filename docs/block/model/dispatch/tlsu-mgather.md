@@ -27,20 +27,15 @@ end;
 
 readonly func BundleMGATHERDimensionsLegal() => boolean
 begin
-    if !_BundleDimensionPresent[[0]] then return FALSE; end;
     for dimension = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) == 0 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) == 0 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-    let columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) as integer {1..65535}
-        else valid_columns;
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     return valid_columns <= columns && IsNonzeroPowerOfTwo(columns) &&
            valid_rows * valid_columns <= PTO_MODEL_TILE_ELEMENTS;
 end;
@@ -83,11 +78,8 @@ begin
         return FALSE;
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-    let columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) as integer {1..65535}
-        else valid_columns;
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     if _Tiles[[binding.source0]].valid_rows != valid_rows ||
        _Tiles[[binding.source0]].valid_columns != valid_columns then
         SetFault(Fault_TileLegality, ReadTPC());
