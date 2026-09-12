@@ -5,18 +5,32 @@ begin
     instruction[31:27] = Zeros{5} + 4;
     return instruction;
 end;
-pure func Binding() => bits(64)
+pure func DestinationBindingAt(source0: integer, source1: integer,
+                               parent_size: integer,
+                               mode: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00004013;
-    instruction[31:26] = Zeros{6} + 2;
-    instruction[25:20] = Zeros{6} + 1;
-    instruction[19] = '1'; instruction[18:15] = Zeros{4} + 1;
-    instruction[11:9] = '111'; instruction[8:7] = '00';
+    instruction[31:26] = Zeros{6} + source1;
+    instruction[25:20] = Zeros{6} + source0;
+    instruction[19] = '1';
+    instruction[18:15] = Zeros{4} + parent_size;
+    instruction[11:9] = Zeros{3} + mode;
     return instruction;
 end;
-pure func BindingMode(mode: integer) => bits(64)
+pure func SourceBindingAt(source0: integer, source1: integer,
+                          mode: integer) => bits(64)
 begin
-    var instruction = Binding();
+    var instruction = Zeros{64} + 0x00004013;
+    instruction[31:26] = Zeros{6} + source1;
+    instruction[25:20] = Zeros{6} + source0;
+    instruction[11:9] = Zeros{3} + mode;
+    return instruction;
+end;
+pure func ParentBinding(parent: integer, mode: integer) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00005013;
+    instruction[25:20] = Zeros{6} + parent;
+    instruction[19] = '1';
     instruction[11:9] = Zeros{3} + mode;
     return instruction;
 end;
@@ -42,31 +56,67 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
 end;
-func Run(init: boolean, last: boolean, parent: integer, offset: integer)
+func Run(init: boolean, last: boolean, parent_size: integer, offset: integer)
         => boolean
 begin
     let started = ExecuteCommandInstruction(Start(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
-    let bound = ExecuteCommandInstruction(Binding(), 32);
+    let bound = ExecuteCommandInstruction(
+        if init then DestinationBindingAt(1, 2, parent_size, 7)
+        else SourceBindingAt(1, 2, 7), 32);
+    var parent_bound = CommandExecution_Executed;
+    if !init then
+        parent_bound = ExecuteCommandInstruction(ParentBinding(0, 7), 32);
+    end;
     let assembled = ExecuteCommandInstruction(
-        Assemble(init, last, parent, offset), 32);
+        Assemble(init, last, 1, offset), 32);
     assert started == CommandExecution_Executed;
     assert bound == CommandExecution_Executed;
+    assert parent_bound == CommandExecution_Executed;
     assert assembled == CommandExecution_Executed;
     return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
 end;
-func RunMode(init: boolean, last: boolean, parent: integer, offset: integer,
+func RunShifted(init: boolean, last: boolean, parent_size: integer,
+                offset: integer)
+        => boolean
+begin
+    let started = ExecuteCommandInstruction(Start(), 32);
+    SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
+        FALSE, FALSE, FALSE, FALSE);
+    let bound = ExecuteCommandInstruction(
+        if init then DestinationBindingAt(2, 3, parent_size, 7)
+        else SourceBindingAt(2, 3, 7), 32);
+    var parent_bound = CommandExecution_Executed;
+    if !init then
+        parent_bound = ExecuteCommandInstruction(ParentBinding(0, 7), 32);
+    end;
+    let assembled = ExecuteCommandInstruction(
+        Assemble(init, last, 1, offset), 32);
+    assert started == CommandExecution_Executed;
+    assert bound == CommandExecution_Executed;
+    assert parent_bound == CommandExecution_Executed;
+    assert assembled == CommandExecution_Executed;
+    return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
+end;
+func RunMode(init: boolean, last: boolean, parent_size: integer, offset: integer,
              mode: integer) => boolean
 begin
     let started = ExecuteCommandInstruction(Start(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
-    let bound = ExecuteCommandInstruction(BindingMode(mode), 32);
+    let bound = ExecuteCommandInstruction(
+        if init then DestinationBindingAt(2, 3, parent_size, mode)
+        else SourceBindingAt(2, 3, mode), 32);
+    var parent_bound = CommandExecution_Executed;
+    if !init then
+        parent_bound = ExecuteCommandInstruction(ParentBinding(0, mode), 32);
+    end;
     let assembled = ExecuteCommandInstruction(
-        Assemble(init, last, parent, offset), 32);
+        Assemble(init, last, 1, offset), 32);
     assert started == CommandExecution_Executed;
     assert bound == CommandExecution_Executed;
+    assert parent_bound == CommandExecution_Executed;
     assert assembled == CommandExecution_Executed;
     return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
 end;
@@ -75,7 +125,8 @@ begin
     let started = ExecuteCommandInstruction(Start(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
-    let bound = ExecuteCommandInstruction(Binding(), 32);
+    let bound = ExecuteCommandInstruction(
+        DestinationBindingAt(2, 3, 1, 7), 32);
     assert started == CommandExecution_Executed;
     assert bound == CommandExecution_Executed;
     return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
@@ -84,35 +135,34 @@ func main() => integer
 begin
     ResetProfileState(); BeginSource();
     let missing_init = Run(FALSE, TRUE, 0, 0);
-    assert !missing_init && _LastFault == Fault_BundleControl;
+    assert !missing_init && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
     ResetProfileState(); BeginSource();
     let first_init = Run(TRUE, FALSE, 1, 0);
     assert first_init && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
-    let overlap = Run(FALSE, FALSE, 0, 0);
+    let overlap = RunShifted(FALSE, FALSE, 0, 0);
     assert !overlap && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
-    // A decoded writer in another selected-PE domain cannot silently open a
-    // second generation for the same architectural hand while the original
-    // domain remains open.
+    // A decoded continuation selects the exact open parent through its final
+    // source-form ParentRef.
     ResetProfileState(); BeginSource();
     let domain_base = Run(TRUE, FALSE, 4, 0);
     assert domain_base && _LocalGenerations[[
         BundleLocalGenerationSlot(0, '1111')]].open;
-    let domain_mismatch = RunMode(FALSE, FALSE, 0, 2, 3);
-    assert !domain_mismatch && _LastFault == Fault_TileLegality;
+    let domain_mismatch = RunMode(FALSE, FALSE, 0, 2, 7);
+    assert domain_mismatch && _LastFault == Fault_None;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
-    // A normal decoded destination with no B.ASSEMBLE cannot replace or
-    // release the still-open hand; only a matching writer may advance it.
+    // An ordinary destination may be inserted while a Local generation is
+    // open; it enters the same hand queue and does not close that generation.
     ResetProfileState(); BeginSource();
     let standalone_base = Run(TRUE, FALSE, 4, 0);
     assert standalone_base && _LocalGenerations[[
         BundleLocalGenerationSlot(0, '1111')]].open;
     let standalone = RunWithoutAssemble();
-    assert !standalone && _LastFault == Fault_BundleControl;
+    assert standalone && _LastFault == Fault_None;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
     // A descriptor mutation after decoded INIT is rejected before a writer
@@ -123,7 +173,7 @@ begin
     let descriptor_slot = BundleLocalGenerationSlot(0, '1111');
     let descriptor_object = _LocalGenerations[[descriptor_slot]].working_destination;
     _Tiles[[descriptor_object]].layout = TileLayout_RowMajor;
-    let descriptor_mismatch = Run(FALSE, FALSE, 0, 2);
+    let descriptor_mismatch = RunShifted(FALSE, FALSE, 0, 2);
     assert !descriptor_mismatch && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[descriptor_slot]].open &&
            _Tiles[[1]].allocated && _Tiles[[1]].contents_defined;
@@ -135,7 +185,7 @@ begin
     assert object_base;
     let object_slot = BundleLocalGenerationSlot(0, '1111');
     _LocalGenerations[[object_slot]].parent_descriptor.object_name = 15;
-    let object_mismatch = Run(FALSE, FALSE, 0, 2);
+    let object_mismatch = RunShifted(FALSE, FALSE, 0, 2);
     assert !object_mismatch && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[object_slot]].open &&
            _Tiles[[1]].allocated && _Tiles[[1]].contents_defined;
@@ -146,22 +196,22 @@ begin
     let kind_slot = BundleLocalGenerationSlot(0, '1111');
     let kind_object = _LocalGenerations[[kind_slot]].working_destination;
     _Tiles[[kind_object]].storage_kind = TileStorage_Predicate;
-    let kind_mismatch = Run(FALSE, FALSE, 0, 2);
+    let kind_mismatch = RunShifted(FALSE, FALSE, 0, 2);
     assert !kind_mismatch && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[kind_slot]].open &&
            _Tiles[[1]].allocated && _Tiles[[1]].contents_defined;
 
     ResetProfileState(); BeginSource();
-    let duplicate_base = Run(TRUE, FALSE, 1, 0);
+    let duplicate_base = Run(TRUE, FALSE, 4, 0);
     assert duplicate_base && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
-    let duplicate_init = Run(TRUE, FALSE, 1, 0);
-    assert !duplicate_init && _LastFault == Fault_BundleControl;
-    assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
+    let duplicate_init = RunShifted(TRUE, FALSE, 1, 0);
+    assert duplicate_init && _LastFault == Fault_None;
+    assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
     ResetProfileState(); BeginSource();
-    let bounds_base = Run(TRUE, FALSE, 1, 0);
+    let bounds_base = Run(TRUE, FALSE, 4, 0);
     assert bounds_base && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
-    let out_of_bounds = Run(FALSE, TRUE, 0, 1);
+    let out_of_bounds = RunShifted(FALSE, TRUE, 0, 8);
     assert !out_of_bounds && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
@@ -173,7 +223,7 @@ begin
     ResetProfileState(); BeginSource();
     let closed = Run(TRUE, TRUE, 1, 0);
     assert closed && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].closed;
-    let after_last = Run(FALSE, FALSE, 0, 0);
+    let after_last = RunShifted(FALSE, FALSE, 0, 0);
     assert !after_last && _LastFault == Fault_TileLegality;
 
     // Force the architectural capacity boundary after the decoded sources

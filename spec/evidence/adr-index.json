@@ -5814,7 +5814,7 @@
       "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
       "created": "2026-08-21",
       "id": "ADR-BLOCK-0016",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/122",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/262",
       "legacy_ids": [
         "ADR-0098"
       ],
@@ -5827,7 +5827,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.4"
+        "0.58.6"
       ],
       "title": "B.SUBVIEW and B.ASSEMBLE range-modifier association",
       "title_zh": "B.SUBVIEW \u548c B.ASSEMBLE \u8303\u56f4\u4fee\u9970\u7b26\u5173\u8054"

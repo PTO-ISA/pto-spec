@@ -23,21 +23,22 @@ begin
     return instruction;
 end;
 
-func WeightCoopShared(writer_size: integer {1..2}) => bits(64)
+func WeightCoopShared(init: boolean) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
     instruction[25:20] = Zeros{6} + 8;
-    instruction[18:15] = Zeros{4} + writer_size;
+    instruction[18:15] = if init then '0011' else '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-func WeightCoopAssemble(init: boolean, last: boolean) => bits(64)
+func WeightCoopAssemble(init: boolean, last: boolean,
+                        writer_size: integer {1..2}) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001053;
     instruction[31] = if init then '1' else '0';
     instruction[11] = if last then '1' else '0';
-    instruction[10:7] = if init then '0011' else '0000';
+    instruction[10:7] = Zeros{4} + writer_size;
     return instruction;
 end;
 
@@ -65,9 +66,9 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
     let ior_status = ExecuteCommandInstruction(WeightCoopIOR(), 32);
     let shared_status = ExecuteCommandInstruction(
-        WeightCoopShared(writer_size), 32);
+        WeightCoopShared(init), 32);
     let assemble_status = ExecuteCommandInstruction(
-        WeightCoopAssemble(init, last), 32);
+        WeightCoopAssemble(init, last, writer_size), 32);
     assert ior_status == CommandExecution_Executed;
     assert shared_status == CommandExecution_Executed;
     assert assemble_status == CommandExecution_Executed;

@@ -135,7 +135,7 @@ Issue #99. Release assignment and publication remain separate decisions.
 
 - Implementation issue: #99.
 - Baseline: `226b5806d8ed8d03c38ee6ec6ff3f880b381ddaf`.
-- The candidate encoded-form projection fingerprint is `2a25effce30a8526cbb4f056406eff369ddd5c3b731d6da0611d2fe0be15ce89`; this is the mechanical review binding for the frozen layout/contract projection.
+- The candidate encoded-form projection fingerprint is `09d2fa91f3c9dac5b2cf9867d19b80e9268be813339035467f390fdbe4775b16`; this is the mechanical review binding for the frozen layout/contract projection.
 - NDF owners: `PTO-BSTART-TLOAD-WEIGHT-NK-CONTRACT-001`,
   `PTO-BSTART-TLOAD-WEIGHT-SOURCE-001`,
   `PTO-BSTART-TLOAD-WEIGHT-KORDER-001`,

@@ -17,6 +17,11 @@
 // Matrix consumers derive/validate each selected view's metadata before any
 // payload snapshot or destination allocation; one bad view rejects the whole operation.
 // NDF-END: PTO-B-SUBVIEW-SHARED-PER-PE-001
+readonly func BundleSharedGenerationCapacity(binding: BundleSharedBindingIndex) => integer {0..12}
+begin
+    if !BundleSharedBindingIsReusedDestination(binding) then return _BundleSharedBindings[[binding]].size_code; end;
+    return _SharedGenerations[[SharedTileArrayIndex(_BundleSharedBindings[[binding]].shared_tile_id)]].parent_size_code;
+end;
 func AbortBundleSharedGenerationsForBundle()
 begin
     for binding = 0 to 3 do
@@ -27,7 +32,6 @@ begin
         end;
     end;
 end;
-
 // Shared generation coverage is tracked internally in 32-byte units. Ordinary
 // B.ASSEMBLE offsets and SizeCodes remain 128-byte Tile CELL quantities and
 // the compatibility wrappers below expand each such CELL to four units. The
@@ -70,6 +74,8 @@ begin
     let index = SharedTileArrayIndex(shared_tile_id);
     let assemble = _BundleSharedBindings[[binding]].destination_assemble;
     let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
+    if assemble.init && _BundleSharedBindings[[binding]].size_code == 0 then return FALSE; end;
+    if !assemble.init && !BundleSharedBindingIsReusedDestination(binding) then return FALSE; end;
     if participant_arrival == Zeros{4} ||
        (participant_arrival AND participant_mask) != participant_arrival then
         return FALSE;
@@ -98,12 +104,13 @@ begin
         return FALSE;
     end;
     if assemble.init &&
-       (assemble.size_code < 1 || assemble.size_code > 12) then
+       (_BundleSharedBindings[[binding]].size_code < 1 ||
+        _BundleSharedBindings[[binding]].size_code > 12) then
         return FALSE;
     end;
     let parent_cells = if assemble.init then
         BundleLocalGenerationCellCount(
-            assemble.size_code as integer {1..12}) * 4
+            _BundleSharedBindings[[binding]].size_code as integer {1..12}) * 4
         else _SharedGenerations[[index]].parent_cell_count;
     if offset_cells + coverage_cells > parent_cells then return FALSE; end;
     if !assemble.init then
@@ -130,7 +137,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func ValidateBundleSharedGeneration() => boolean
 begin
     for binding = 0 to 3 do
@@ -141,9 +147,11 @@ begin
             let index = SharedTileArrayIndex(shared_tile_id);
             let assemble =
                 _BundleSharedBindings[[binding]].destination_assemble;
-            let writer_size = _BundleSharedBindings[[binding]].size_code;
+            let writer_size = assemble.size_code;
             let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
             if writer_size < 1 || writer_size > 12 then return FALSE; end;
+            if assemble.init && _BundleSharedBindings[[binding]].size_code == 0 then return FALSE; end;
+            if !assemble.init && !BundleSharedBindingIsReusedDestination(binding) then return FALSE; end;
             if assemble.init && _SharedGenerations[[index]].open then
                 return FALSE;
             end;
@@ -172,7 +180,6 @@ begin
     end;
     return TRUE;
 end;
-
 func CommitBundleSharedGenerationCandidateRange(
     binding: BundleSharedBindingIndex, candidate: SharedTileInfo,
     offset_cells: integer {0..8192},
@@ -200,7 +207,7 @@ begin
         return FALSE;
     end;
     if assemble.init then
-        let parent_size = assemble.size_code as integer {1..12};
+        let parent_size = _BundleSharedBindings[[binding]].size_code as integer {1..12};
         let parent_bytes = TileSizeCodeBytes(parent_size);
         let parent_rows = DerivedTileRows(
             parent_bytes, candidate.tile.columns, candidate.tile.data_type);
@@ -331,9 +338,7 @@ func CommitBundleSharedGenerationCandidate(
 begin
     let assemble = _BundleSharedBindings[[binding]].destination_assemble;
     let offset_cells = (UInt(assemble.offset) * 4) as integer {0..8188};
-    let writer_cells = (BundleLocalGenerationCellCount(
-        _BundleSharedBindings[[binding]].size_code as integer {1..12}) * 4)
-        as integer {4..8192};
+    let writer_cells = (BundleLocalGenerationCellCount(assemble.size_code as integer {1..12}) * 4) as integer {4..8192};
     return CommitBundleSharedGenerationCandidateRange(binding, candidate,
         offset_cells, writer_cells, writer_cells,
         _BundleSharedBindings[[binding]].pe_mask, FALSE,
@@ -352,13 +357,11 @@ begin
     _SharedTiles[[index]].published = FALSE;
     return prior;
 end;
-
 func RestoreBundleSharedGenerationProbe(
     shared_tile_id: SharedTileID, prior: SharedTileInfo)
 begin
     _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]] = prior;
 end;
-
 readonly func BundleSharedSubviewOffsetRawForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word
 begin
@@ -366,7 +369,6 @@ begin
     return ReadPEAbsoluteGPROperand(pe_identity, modifier.reg_src) +
         ZeroExtend{PTO_XLEN}(modifier.uimm11);
 end;
-
 readonly func BundleSharedSubviewOffsetCellsForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId)
     => integer {0..2047}
@@ -376,7 +378,6 @@ begin
     assert raw_offset <= 2047;
     return raw_offset as integer {0..2047};
 end;
-
 readonly func BundleSharedSubviewLegal(
     binding: BundleSharedBindingIndex) => boolean
 begin
@@ -428,7 +429,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func MaterializeBundleSharedSubviewForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => TileInfo
 begin
@@ -492,7 +492,6 @@ begin
         (tile.valid_rows * tile.valid_columns) as integer {0..524288};
     return tile;
 end;
-
 readonly func MaterializeBundleSharedSubview(
     binding: BundleSharedBindingIndex) => TileInfo
 begin

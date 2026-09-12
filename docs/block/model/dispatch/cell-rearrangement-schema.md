@@ -52,6 +52,22 @@ begin
     let source_tile = _Tiles[[source]];
     let capacity_bytes = BundleLocalDestinationAllocationBytes(
         destination_binding);
+    if binding.destination_reused_by_generation then
+        let destination = _Tiles[[binding.destination]];
+        if !TileCubeDescriptorLegal(destination) ||
+           destination.capacity_bytes != capacity_bytes ||
+           destination.valid_rows != source_tile.valid_rows ||
+           destination.valid_columns != source_tile.valid_columns ||
+           destination.data_type != source_tile.data_type ||
+           destination.layout != source_tile.layout ||
+           destination.location != TileLocation_Matrix ||
+           (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
+               binding.pe_mask then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
     if !TileCubeDescriptorShapeLegal(capacity_bytes,
            source_tile.valid_rows, source_tile.valid_columns,
            source_tile.data_type, source_tile.layout) then

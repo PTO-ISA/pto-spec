@@ -116,7 +116,7 @@ begin
         return FALSE;
     end;
     if output == BundleTIMG2COLOutput_SharedND &&
-       (BundleSharedBindingCount() != 1 || BundleTileBindingCount() != 0) then
+       (BundleSharedBindingPhysicalCount() != 1 || BundleTileBindingCount() != 0) then
         return FALSE;
     end;
     if output != BundleTIMG2COLOutput_SharedND &&
@@ -162,13 +162,13 @@ begin
     if !BundleTIMG2COLShapeLegal(shape) then return FALSE; end;
     if output == BundleTIMG2COLOutput_SharedND then
         let shared_mask = BundleSharedBindingMask(0);
-        if BundleSharedBindingSize(0) == 0 ||
+        if BundleSharedGenerationCapacity(0) == 0 ||
            (PEMaskPopulation(shared_mask) != 1 && shared_mask != '1111') ||
            (shared_mask AND BundleTIMG2COLPEBit()) == Zeros{4} then
             return FALSE;
         end;
         let shared_capacity = TileSizeCodeBytes(
-            BundleSharedBindingSize(0) as integer {1..12});
+            BundleSharedGenerationCapacity(0) as integer {1..12});
         if !BundleTIMG2COLDestinationShapeLegal(output, shared_capacity,
                valid_row, valid_col, total_col, data_type) then
             return FALSE;
@@ -177,7 +177,8 @@ begin
             _BundleDataAttributes.data_layout, _BundleOperation.data_type,
             _BundleDimensions[[0]][15:0], _BundleDimensions[[1]][7:0],
             _BundleDimensions[[2]][15:0],
-            Zeros{4} + BundleSharedBindingSize(0), BundleSharedBindingId(0));
+            Zeros{4} + BundleSharedGenerationCapacity(0),
+            BundleSharedBindingId(0));
         if shared_mask == '1111' then
             let assemble = _BundleSharedBindings[[0]].destination_assemble;
             let pe = BundleTIMG2COLCurrentPE();
@@ -187,8 +188,7 @@ begin
             if !assemble.valid || !expected_phase ||
                assemble.reg_src != 0 || assemble.uimm11 != Zeros{11} ||
                assemble.offset != Zeros{PTO_XLEN} ||
-               (assemble.init && assemble.size_code == 0) ||
-               (!assemble.init && assemble.size_code != 0) then
+               (assemble.size_code < 1 || assemble.size_code > 12) then
                 return FALSE;
             end;
             let c0 = BundleTIMG2COLC0Elements(data_type);
@@ -241,7 +241,7 @@ begin
     if !assemble.last then return (TRUE, writer_cells); end;
     let shared_tile_id = BundleSharedBindingId(0);
     let parent_cells = if assemble.init then BundleLocalGenerationCellCount(
-        assemble.size_code as integer {1..12}) * 4 else
+        BundleSharedBindingSize(0) as integer {1..12}) * 4 else
         _SharedGenerations[[SharedTileArrayIndex(shared_tile_id)]].parent_cell_count;
     if offset_cells > parent_cells then return (FALSE, 0); end;
     return (TRUE, (parent_cells - offset_cells) as integer {0..8192});
@@ -288,7 +288,8 @@ begin
         return FALSE;
     end;
     let capacity = if output == BundleTIMG2COLOutput_SharedND then
-        TileSizeCodeBytes(BundleSharedBindingSize(0) as integer {1..12})
+        TileSizeCodeBytes(BundleSharedGenerationCapacity(0)
+            as integer {1..12})
         else BundleTileDestinationSizeBytes(0);
     let rows_to_write = if output == BundleTIMG2COLOutput_SharedND &&
         BundleSharedBindingMask(0) != '1111' then valid_row else pe_valid_row;
@@ -380,7 +381,7 @@ begin
                 _BundleDataAttributes.data_layout, _BundleOperation.data_type,
                 _BundleDimensions[[0]][15:0], _BundleDimensions[[1]][7:0],
                 _BundleDimensions[[2]][15:0],
-                Zeros{4} + BundleSharedBindingSize(0),
+                Zeros{4} + BundleSharedGenerationCapacity(0),
                 BundleSharedBindingId(0));
             if derived_offset > 8192 then return FALSE; end;
             let (coverage_legal, coverage_cells) =
@@ -419,7 +420,7 @@ end;
 func BundleTIMG2COLAbortFailedAttempt()
 begin
     if BundleTIMG2COLSelected() &&
-       BundleSharedBindingCount() == 1 &&
+       BundleSharedBindingPhysicalCount() == 1 &&
        _BundleSharedBindings[[0]].destination_assemble.valid then
         AbortBundleSharedGeneration(BundleSharedBindingId(0));
     elsif BundleTIMG2COLSelected() && BundleTileBindingCount() == 1 then

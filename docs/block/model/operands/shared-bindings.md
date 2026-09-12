@@ -56,11 +56,71 @@ begin
     return TRUE;
 end;
 
-readonly func BundleSharedBindingCount() => integer {0..4}
+readonly func BundleSharedBindingPhysicalCount() => integer {0..4}
 begin
     var count: integer {0..4} = 0;
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid then
+            count = (count + 1) as integer {0..4};
+        end;
+    end;
+    return count;
+end;
+
+// A Shared B.IOS SizeCode=0 binder is ordinary source material except when the
+// same physical binder is immediately marked by a B.ASSEMBLE continuation.
+readonly func BundleSharedBindingIsReusedDestination(
+    ordinal: integer {0..3}) => boolean
+begin
+    return _BundleSharedBindings[[ordinal]].valid &&
+           _BundleSharedBindings[[ordinal]].size_code == 0 &&
+           _BundleSharedBindings[[ordinal]].destination_assemble.valid &&
+           !_BundleSharedBindings[[ordinal]].destination_assemble.init;
+end;
+
+readonly func BundleSharedReusedDestinationCount() => integer {0..4}
+begin
+    var count: integer {0..4} = 0;
+    for index = 0 to 3 do
+        if BundleSharedBindingIsReusedDestination(index) then
+            count = (count + 1) as integer {0..4};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleSharedReusedDestinationIsFinal() => boolean
+begin
+    var final_binding: integer {0..3} = 0;
+    var found = FALSE;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid then
+            final_binding = index as integer {0..3};
+            found = TRUE;
+        end;
+    end;
+    if !found || BundleSharedReusedDestinationCount() != 1 then return FALSE; end;
+    return BundleSharedBindingIsReusedDestination(final_binding);
+end;
+
+readonly func BundleSharedBindingCount() => integer {0..4}
+begin
+    var count: integer {0..4} = 0;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid &&
+           !BundleSharedBindingIsReusedDestination(index) then
+            count = (count + 1) as integer {0..4};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleSharedPhysicalDestinationCount() => integer {0..4}
+begin
+    var count: integer {0..4} = 0;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid &&
+           _BundleSharedBindings[[index]].size_code != 0 then
             count = (count + 1) as integer {0..4};
         end;
     end;
@@ -108,18 +168,26 @@ end;
 
 func ConsumeBundleSharedBindings(count: integer {1..4})
 begin
-    assert BundleSharedBindingCount() == count;
-    for index = 0 to count - 1 looplimit 4 do
-        assert _BundleSharedBindings[[index]].valid &&
-               !_BundleSharedBindings[[index]].consumed;
-        _BundleSharedBindings[[index]].consumed = TRUE;
+    assert BundleSharedBindingCount() == count ||
+           BundleSharedBindingPhysicalCount() == count;
+    var ordinary_consumed: integer {0..4} = 0;
+    for index = 0 to 3 looplimit 4 do
+        if _BundleSharedBindings[[index]].valid &&
+           !_BundleSharedBindings[[index]].consumed &&
+           !BundleSharedBindingIsReusedDestination(index) &&
+           ordinary_consumed < count then
+            _BundleSharedBindings[[index]].consumed = TRUE;
+            ordinary_consumed = (ordinary_consumed + 1) as integer {0..4};
+        end;
     end;
+    assert ordinary_consumed == BundleSharedBindingCount();
 end;
 
 readonly func BundleSharedBindingsUnconsumed() => boolean
 begin
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid &&
+           !BundleSharedBindingIsReusedDestination(index) &&
            !_BundleSharedBindings[[index]].consumed then return TRUE; end;
     end;
     return FALSE;

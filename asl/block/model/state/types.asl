@@ -95,11 +95,16 @@ type LocalGenerationWriter of record {
     offset_cells: integer {0..2047},
     cell_count: integer {0..2048},
     destination: TileIndex,
+    pe_mask: bits(4),
     ready: boolean,
     identity: PortableSpeculationIdentity
 };
 
 type LocalGenerationWriterSnapshot of array [[16]] of LocalGenerationWriter;
+
+type LocalGenerationPECoverageSnapshot of array [[4]] of bits(2048);
+type LocalGenerationPEBooleanSnapshot of array [[4]] of boolean;
+type LocalGenerationPEDestinationSnapshot of array [[4]] of TileIndex;
 
 type BundleConsumerDependencyMode of enumeration {
     BundleConsumerDependency_Range,
@@ -119,6 +124,7 @@ type BundleConsumerDependencyState of enumeration {
 type BundleConsumerDependency of record {
     valid: boolean,
     source: TileIndex,
+    participant_mask: bits(4),
     generation_instance: Word,
     execution_domain_token: integer,
     mode: BundleConsumerDependencyMode,
@@ -182,12 +188,17 @@ type LocalGenerationState of record {
     working_destination: TileIndex,
     published_destination: TileIndex,
     committed_destination: TileIndex,
-    committed_valid: boolean
+    committed_valid: boolean,
+    per_pe_covered_cells: LocalGenerationPECoverageSnapshot,
+    per_pe_ready_cells: LocalGenerationPECoverageSnapshot,
+    per_pe_closed: LocalGenerationPEBooleanSnapshot,
+    per_pe_published: LocalGenerationPEBooleanSnapshot,
+    per_pe_working_destination: LocalGenerationPEDestinationSnapshot
 };
 
-// One aggregate state is retained for each architectural hand and each
-// decoded four-PE participation mask.  This preserves independent open
-// generation domains instead of collapsing distinct selected-PE identities.
+// The 64 records are the four ordinary relative-generation queues (T/U/M/N),
+// sixteen positions per hand.  A record is keyed by its allocated destination
+// and carries the independent participating-PE state for one logical parent.
 type LocalGenerationSnapshot of array [[64]] of LocalGenerationState;
 
 type SharedGenerationState of record {
@@ -224,7 +235,7 @@ type BundleRangeModifier of record {
     valid: boolean,
     reg_src: Reg5Selector,
     uimm11: bits(11),
-    size_code: integer {0..12},
+    size_code: integer {0..15},
     offset: Word,
     init: boolean,
     last: boolean,
@@ -271,6 +282,9 @@ type BundleTileBinding of record {
     source1_relative: boolean,
     source0: TileIndex,
     source1: TileIndex,
+    parent_ref_valid: boolean,
+    parent_ref_relative: boolean,
+    parent_ref: TileIndex,
     last: boolean,
     source0_subview: BundleRangeModifier,
     source1_subview: BundleRangeModifier,

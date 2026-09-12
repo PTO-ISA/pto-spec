@@ -5,13 +5,29 @@ begin
     instruction[31:27] = Zeros{5} + 4;
     return instruction;
 end;
-pure func Binding() => bits(64)
+pure func DestinationBinding(parent_size: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00004013;
     instruction[31:26] = Zeros{6} + 2;
     instruction[25:20] = Zeros{6} + 1;
-    instruction[19] = '1'; instruction[18:15] = Zeros{4} + 1;
+    instruction[19] = '1';
+    instruction[18:15] = Zeros{4} + parent_size;
     instruction[11:9] = '111'; instruction[8:7] = '00';
+    return instruction;
+end;
+pure func SourceBindingShifted() => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00004013;
+    instruction[31:26] = Zeros{6} + 3;
+    instruction[25:20] = Zeros{6} + 2;
+    instruction[11:9] = '111';
+    return instruction;
+end;
+pure func ParentBinding() => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00005013;
+    instruction[25:20] = Zeros{6};
+    instruction[19] = '1'; instruction[11:9] = '111';
     return instruction;
 end;
 pure func Assemble(init: boolean, last: boolean, parent: integer,
@@ -36,17 +52,35 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 9);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 9);
 end;
-func Run(init: boolean, last: boolean, parent: integer, offset: integer)
+func Run(init: boolean, last: boolean, parent_size: integer, offset: integer)
         => boolean
 begin
     let started = ExecuteCommandInstruction(Start(), 32);
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
-    let bound = ExecuteCommandInstruction(Binding(), 32);
+    let bound = ExecuteCommandInstruction(
+        DestinationBinding(parent_size), 32);
     let assembled = ExecuteCommandInstruction(
-        Assemble(init, last, parent, offset), 32);
+        Assemble(init, last, 1, offset), 32);
     assert started == CommandExecution_Executed;
     assert bound == CommandExecution_Executed;
+    assert assembled == CommandExecution_Executed;
+    return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
+end;
+func RunShifted(init: boolean, last: boolean, parent_size: integer,
+                offset: integer)
+        => boolean
+begin
+    let started = ExecuteCommandInstruction(Start(), 32);
+    SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
+        FALSE, FALSE, FALSE, FALSE);
+    let bound = ExecuteCommandInstruction(SourceBindingShifted(), 32);
+    let parent_bound = ExecuteCommandInstruction(ParentBinding(), 32);
+    let assembled = ExecuteCommandInstruction(
+        Assemble(init, last, 1, offset), 32);
+    assert started == CommandExecution_Executed;
+    assert bound == CommandExecution_Executed;
+    assert parent_bound == CommandExecution_Executed;
     assert assembled == CommandExecution_Executed;
     return CompleteBundleAt(Zeros{PTO_XLEN} + 0x700);
 end;
@@ -70,7 +104,7 @@ begin
     let opened = Run(TRUE, FALSE, 1, 0);
     assert opened && _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
     let earliest = _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].init_tpc;
-    let rejected_middle = Run(FALSE, FALSE, 0, 8);
+    let rejected_middle = RunShifted(FALSE, FALSE, 0, 8);
     assert !rejected_middle && _LastFault == Fault_TileLegality;
     let middle_target = CurrentACR();
     assert _TrapContexts[[middle_target]].valid;
@@ -84,7 +118,7 @@ begin
     assert opened_for_last;
     let last_earliest = _LocalGenerations[[
         BundleLocalGenerationSlot(0, '1111')]].init_tpc;
-    let rejected_last = Run(FALSE, TRUE, 0, 1);
+    let rejected_last = RunShifted(FALSE, TRUE, 0, 1);
     assert !rejected_last && _LastFault == Fault_TileLegality;
     let last_target = CurrentACR();
     assert _TrapContexts[[last_target]].valid;

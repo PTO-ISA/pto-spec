@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-PORTABLE-CARRIERS-001","source":"asl/block/model/operands/portable-carriers.asl","requirements":["PTO-B-ASSEMBLE-CONSUMER-READINESS-001","PTO-B-ASSEMBLE-SPECULATION-001","PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001","PTO-INST-BLOCK-BSTART","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-SUBVIEW","PTO-INST-BLOCK-B-ASSEMBLE"],"kind":"execution","summary":"Decoded Local assembly binds portable range readiness, cancels wrong-path writers, and rejects a nonrollback producer before effects.","pass_condition":"A decoded post-LAST range waits without a fault or temporary source effect until its selected cells become ready; decoded writer squash removes coverage and allocation while preserving sources; a decoded B.ASSEMBLE producer with a nonrollback handler raises Fault_TileLegality before effects.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/dispatch/tile-execution.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-PORTABLE-CARRIERS-001","source":"asl/block/model/operands/portable-carriers.asl","requirements":["PTO-B-ASSEMBLE-CONSUMER-READINESS-001","PTO-B-ASSEMBLE-SPECULATION-001","PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001","PTO-INST-BLOCK-BSTART","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-SUBVIEW","PTO-INST-BLOCK-B-ASSEMBLE"],"kind":"execution","summary":"Decoded Local assembly binds per-PE range and whole-parent readiness, cancels wrong-path writers, and rejects a nonrollback producer before effects.","pass_condition":"A decoded range waits until every consumer PE has its selected cells ready; a whole-parent consumer also waits for atomic publication; delayed completion publishes every INIT participant and wakes both modes; squash removes wrong-path coverage/allocation; nonrollback producers fault before effects.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/dispatch/tile-execution.asl"]}
 pure func Start() => bits(64)
 begin
     var instruction = Zeros{64} + 0x00031181;
@@ -85,9 +85,9 @@ begin
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
     let bound = ExecuteCommandInstruction(Binding(1, 2, 0, 2), 32);
-    let parent = if init && last then 2 else 4;
+    let writer_size = if init && last then 2 else 1;
     let assembled = ExecuteCommandInstruction(
-        Assemble(init, last, parent, 0), 32);
+        Assemble(init, last, writer_size, 0), 32);
     assert started == CommandExecution_Executed &&
            bound == CommandExecution_Executed &&
            assembled == CommandExecution_Executed;
@@ -182,6 +182,9 @@ begin
         BundleConsumerDependency_Eligible;
     assert _LocalGenerations[[slot]].consumers[[1]].state ==
         BundleConsumerDependency_Eligible;
+    for pe = 0 to 3 do
+        assert _LocalGenerations[[slot]].per_pe_published[[pe]];
+    end;
     let whole_ready = ExecuteBundleTileOperation();
     assert whole_ready && _LastFault == Fault_None;
     assert _LocalGenerations[[slot]].consumers[[1]].state ==
@@ -216,6 +219,48 @@ begin
                Zeros{PTO_XLEN} + 0x41900000 &&
            ReadTileElement(destination, 0, 0) ==
                Zeros{PTO_XLEN} + 0x40c00000;
+
+    // Aggregate readiness cannot satisfy a consumer whose second selected PE
+    // is still missing the range. Whole-parent readiness additionally requires
+    // publication even when every required cell is ready.
+    let range_slot: integer {0..63} = 5;
+    ClearBundleLocalGenerationState(range_slot);
+    _LocalGenerations[[range_slot]].parent_descriptor.valid = TRUE;
+    _LocalGenerations[[range_slot]].parent_cell_count = 1;
+    _LocalGenerations[[range_slot]].participant_mask = '0011';
+    _LocalGenerations[[range_slot]].generation_instance =
+        Zeros{PTO_XLEN} + 0xa00;
+    var pe_ready = Zeros{2048}; pe_ready[0] = '1';
+    _LocalGenerations[[range_slot]].per_pe_ready_cells[[2]] = pe_ready;
+    let per_pe_waiting = BundleConsumerDependencyRequiredRange(
+        range_slot, 4, Zeros{PTO_XLEN}, 1, FALSE, '0011',
+        Zeros{PTO_XLEN} + 0xa04);
+    assert !per_pe_waiting;
+    assert _LocalGenerations[[range_slot]].consumers[[0]].participant_mask ==
+        '0011';
+    _LocalGenerations[[range_slot]].per_pe_ready_cells[[3]] = pe_ready;
+    let per_pe_ready = BundleConsumerDependencyRequiredRange(
+        range_slot, 4, Zeros{PTO_XLEN}, 1, FALSE, '0011',
+        Zeros{PTO_XLEN} + 0xa04);
+    assert per_pe_ready;
+
+    let whole_slot: integer {0..63} = 6;
+    ClearBundleLocalGenerationState(whole_slot);
+    _LocalGenerations[[whole_slot]].parent_descriptor.valid = TRUE;
+    _LocalGenerations[[whole_slot]].parent_cell_count = 1;
+    _LocalGenerations[[whole_slot]].participant_mask = '1000';
+    _LocalGenerations[[whole_slot]].generation_instance =
+        Zeros{PTO_XLEN} + 0xb00;
+    _LocalGenerations[[whole_slot]].per_pe_ready_cells[[0]] = pe_ready;
+    let whole_open_waiting = BundleConsumerDependencyRequiredRange(
+        whole_slot, 5, Zeros{PTO_XLEN}, 0, TRUE, '1000',
+        Zeros{PTO_XLEN} + 0xb04);
+    assert !whole_open_waiting;
+    _LocalGenerations[[whole_slot]].per_pe_published[[0]] = TRUE;
+    let whole_published_ready = BundleConsumerDependencyRequiredRange(
+        whole_slot, 5, Zeros{PTO_XLEN}, 0, TRUE, '1000',
+        Zeros{PTO_XLEN} + 0xb04);
+    assert whole_published_ready;
 
     ResetProfileState();
     ConfigureTileForMask(1, 128, 1, 1, 1, 1,

@@ -69,6 +69,9 @@ begin
         _BundleTileBindings[[index]].source1_relative = FALSE;
         _BundleTileBindings[[index]].source0 = 0;
         _BundleTileBindings[[index]].source1 = 0;
+        _BundleTileBindings[[index]].parent_ref_valid = FALSE;
+        _BundleTileBindings[[index]].parent_ref_relative = FALSE;
+        _BundleTileBindings[[index]].parent_ref = 0;
         _BundleTileBindings[[index]].last = FALSE;
         _BundleTileBindings[[index]].source0_subview.valid = FALSE;
         _BundleTileBindings[[index]].source0_subview.reg_src = 0;

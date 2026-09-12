@@ -10,6 +10,13 @@
 // imply payload quarters or offsets. One issuer publishes a complete parent;
 // multi-PE destinations require B.ASSEMBLE. Pending sources MUST wait without
 // payload access or binding consumption.
+// On a continuation B.ASSEMBLE, the final source-form B.IOS with SizeCode=0
+// is contextually reclassified as the one reused Shared destination. It
+// consumes one of the four physical Shared-binding slots but is absent from
+// the ordinary Shared source stream, so the continuation limit is three
+// ordinary Shared bindings plus that reused destination. Outside that exact
+// contiguous group, SizeCode=0 remains an ordinary source. INIT and
+// non-assemble forms retain the four-binding limit.
 // NDF-END: PTO-B-IOS-SHARED-STATE-001
 // DOC-BEGIN: decode
 readonly func InstructionContractMatches_B_IOS(operation: CommandOperation) => boolean

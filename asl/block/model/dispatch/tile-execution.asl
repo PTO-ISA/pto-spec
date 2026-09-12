@@ -129,6 +129,15 @@ begin
             return FALSE;
         end;
     end;
+    // ParentRef/output structure is a bundle contract and must fault before
+    // relative-parent resolution, consumer readiness, descriptor preparation,
+    // or any destination allocation.  Zero-participation groups retain their
+    // strict no-effect path below the existing binder contract.
+    if !SelectedBundleTileMaskIsZero() &&
+       !BundleAssembleOutputStructureLegal() then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
     if !BundleSharedDestinationAssemblyPolicyLegal() then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -143,6 +152,14 @@ begin
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
+    // Normalize a Local continuation ParentRef into its existing semantic
+    // destination after wire-form validation and before every closed schema or
+    // specialized handler.  This never allocates or publishes a new Tile.
+    if !matrix_selected && !timg2col_selected && !weight_tload_selected &&
+       !ReuseBundleLocalGenerationDestination() then
+        DiscardBundleSubviewMaterializations();
+        return FALSE;
+    end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
     if timg2col_selected then
@@ -152,16 +169,8 @@ begin
     elsif matrix_selected then
         specialized_completed = ExecuteBundleTMATMULOperation();
     elsif BundleCubeTransportSelected() then
-        if !ReuseBundleLocalGenerationDestination() then
-            DiscardBundleSubviewMaterializations();
-            return FALSE;
-        end;
         specialized_completed = ExecuteBundleCubeTransportOperation();
     elsif BundleGMOVSelected() then
-        if !ReuseBundleLocalGenerationDestination() then
-            DiscardBundleSubviewMaterializations();
-            return FALSE;
-        end;
         specialized_completed = ExecuteBundleGMOVOperation();
     elsif BundleMGATHERCASSelected() then
         specialized_completed = ExecuteBundleMGATHERCASOperation();
@@ -253,10 +262,6 @@ begin
     end;
     if !SelectedBundleTileMasksLegal() then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !ReuseBundleLocalGenerationDestination() then
-        DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
     if !ResolveBundleTileDestinationsForOperation(operation) then

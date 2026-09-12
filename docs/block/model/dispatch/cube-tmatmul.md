@@ -120,7 +120,7 @@ begin
     let expected_sources = mathematical_sources +
         BundleMatrixPostProcessSourceCount();
     return BundleLocalTileSourceCount() == expected_sources &&
-           BundleLocalTileDestinationCount() ==
+           BundleLocalTileDestinationCount() + BundleLocalTileParentRefCount() ==
                BundleMatrixDestinationCount() &&
            BundleTileBindingStreamTerminated() &&
            BundleOperationScalarBindingSchemaLegal(operation);

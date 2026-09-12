@@ -36,6 +36,7 @@ def update_runtime_row_owner_policy() -> None:
 
 MACRO_OWNER = ROOT / "asl/arch/overview/instruction-classification.asl"
 MACRO_RECORD_PREFIX = "// PTO-TILEOP-MACRO: "
+MACRO_CONTRACT_PREFIX = "// PTO-TILEOP-MACRO-CONTRACT: "
 
 
 def load_macro_form_definitions() -> dict[str, dict[str, object]]:
@@ -70,6 +71,125 @@ def load_macro_form_definitions() -> dict[str, dict[str, object]]:
                 raise ValueError(f"TileOp macro owner lacks operand mapping: {mnemonic}")
         definitions[mnemonic] = record
     return definitions
+
+
+def load_macro_assembly_contract() -> dict[str, object]:
+    records = []
+    for line in MACRO_OWNER.read_text(encoding="utf-8").splitlines():
+        if line.startswith(MACRO_CONTRACT_PREFIX):
+            records.append(json.loads(line[len(MACRO_CONTRACT_PREFIX) :]))
+    if len(records) != 1:
+        raise ValueError(
+            "TileOp macro owner must contain exactly one assemble contract record"
+        )
+    record = records[0]
+    if record.get("owner_clause") != "PTO-AS-TILEOP-MACRO-001":
+        raise ValueError("TileOp assemble contract is not backed by the macro NDF owner")
+    contract = record.get("assemble_parent")
+    audit = record.get("capacity_audit")
+    if not isinstance(contract, dict) or not isinstance(audit, dict):
+        raise ValueError("TileOp assemble contract lacks schema or capacity audit")
+    required = {
+        "assemble_command",
+        "parent_capacity_field",
+        "parent_ref_slot",
+        "parent_ref_size_code",
+        "parent_ref_physical_role",
+        "writer_mask",
+        "binding_kind",
+        "role_kind",
+        "field",
+        "physical_role",
+        "carrier",
+        "size_code",
+        "semantic_source",
+        "handler_source_argument",
+        "ordinary_source_ordinal",
+        "subview_allowed",
+        "local_capacity",
+        "shared_capacity",
+        "writer_field",
+        "writer_range",
+        "parent_capacity",
+        "shared_continuation",
+        "phases",
+        "canonical_suffixes",
+        "concrete_examples",
+        "folding",
+    }
+    if set(contract) != required:
+        raise ValueError(
+            "TileOp assemble contract schema drift: "
+            f"missing={sorted(required - set(contract))} "
+            f"extra={sorted(set(contract) - required)}"
+        )
+    phases = contract["phases"]
+    if not isinstance(phases, dict) or set(phases) != {"allocating", "continuation"}:
+        raise ValueError("TileOp assemble contract phase schema is incomplete")
+    for phase_group in phases.values():
+        if not isinstance(phase_group, list) or not phase_group:
+            raise ValueError("TileOp assemble contract phase group is empty")
+    shared_continuation = contract["shared_continuation"]
+    if not isinstance(shared_continuation, dict) or set(shared_continuation) != {
+        "binding_kind",
+        "carrier",
+        "field",
+        "handler_source_argument",
+        "no_allocation",
+        "ordinary_source_ordinal",
+        "parent_capacity",
+        "physical_role",
+        "role_kind",
+        "semantic_source",
+        "size_code",
+        "subview_allowed",
+    }:
+        raise ValueError("TileOp Shared assemble continuation schema is incomplete")
+    if not isinstance(shared_continuation["binding_kind"], str) or \
+       not isinstance(shared_continuation["role_kind"], str) or \
+       not isinstance(shared_continuation["physical_role"], str) or \
+       not isinstance(shared_continuation["size_code"], int) or \
+       not isinstance(shared_continuation["semantic_source"], bool) or \
+       not isinstance(shared_continuation["handler_source_argument"], bool) or \
+       not isinstance(shared_continuation["no_allocation"], bool) or \
+       not isinstance(shared_continuation["subview_allowed"], bool):
+        raise ValueError("TileOp Shared assemble continuation schema has invalid types")
+    if set(audit) != {"Local", "Shared"}:
+        raise ValueError("TileOp assemble capacity audit lacks Local/Shared rows")
+    for parent_kind, capacity_key in (("Local", "local_capacity"), ("Shared", "shared_capacity")):
+        capacity = contract[capacity_key]
+        rows = audit[parent_kind]
+        if not isinstance(capacity, dict) or not isinstance(rows, dict):
+            raise ValueError(f"TileOp assemble capacity schema is invalid: {parent_kind}")
+        if set(rows) != {"INIT", "continuation"}:
+            raise ValueError(f"TileOp assemble capacity audit is incomplete: {parent_kind}")
+        for phase, row in rows.items():
+            if not isinstance(row, dict):
+                raise ValueError(f"TileOp assemble capacity audit row is invalid: {parent_kind}/{phase}")
+            for key in (
+                "physical_slots",
+                "ordinary_source_min",
+                "ordinary_source_max",
+                "parent_ref_count",
+                "reused_destination_count",
+                "overflow_fault",
+                "fault_order",
+            ):
+                if key not in row:
+                    raise ValueError(f"TileOp assemble capacity audit lacks {parent_kind}/{phase}/{key}")
+            if row["physical_slots"] != capacity["physical_slots"]:
+                raise ValueError(f"TileOp assemble capacity audit disagrees with owner capacity: {parent_kind}")
+            if (not isinstance(row["parent_ref_count"], int) or
+                not isinstance(row["reused_destination_count"], int) or
+                row["parent_ref_count"] < 0 or
+                row["reused_destination_count"] < 0):
+                raise ValueError(f"TileOp assemble capacity audit carrier counts are invalid: {parent_kind}/{phase}")
+            if (row["ordinary_source_min"] < 0 or
+                row["ordinary_source_max"] < row["ordinary_source_min"] or
+                row["ordinary_source_max"] + row["parent_ref_count"] +
+                row["reused_destination_count"] > row["physical_slots"]):
+                raise ValueError(f"TileOp assemble capacity audit boundary is invalid: {parent_kind}/{phase}")
+    return {"assemble_parent": contract, "capacity_audit": audit}
 
 
 def load_tile_instructions() -> list[tuple[Path, dict[str, object]]]:
@@ -1209,6 +1329,429 @@ def parse_macro_structure(
     )
 
 
+def _assemble_destination_candidates(
+    form: dict[str, object], expansion: dict[str, object]
+) -> list[dict[str, object]]:
+    """Return the uniquely range-eligible Tile/Shared destination carriers.
+
+    Assemble is a physical range modifier on a Tile/Shared output.  Scalar and
+    auxiliary destinations remain ordinary destinations and are never inferred
+    as an assemble parent.  An ambiguous owner mapping is fail-closed rather
+    than silently choosing one output.
+    """
+    candidates: list[dict[str, object]] = []
+    bindings = expansion["operand_bindings"]
+    assert isinstance(bindings, list)
+    for binding in bindings:
+        assert isinstance(binding, dict)
+        if binding.get("role_kind") != "destination":
+            continue
+        command = str(binding.get("command"))
+        if command not in {"B.IOT", "B.IOS"}:
+            continue
+        members = binding.get("members")
+        assert isinstance(members, list)
+        for member in members:
+            assert isinstance(member, dict)
+            if not str(member.get("physical_role", "")).startswith("destination"):
+                continue
+            modifiers = member.get("eligible_modifiers", [])
+            assert isinstance(modifiers, list)
+            if any(
+                str(item.get("modifier", "")).startswith("B.ASSEMBLE")
+                for item in modifiers
+            ):
+                candidates.append(
+                    {
+                        "binding": binding,
+                        "member": member,
+                        "command": command,
+                    }
+                )
+    if len(candidates) > 1:
+        return []
+    return candidates
+
+
+def _assemble_suffix(
+    command: str, phase: str, assemble_contract: dict[str, object]
+) -> tuple[str, str]:
+    parent_kind = "Shared" if command == "B.IOS" else "Local"
+    prefix = "->Sx" if parent_kind == "Shared" else "->T"
+    suffixes = assemble_contract["canonical_suffixes"]
+    assert isinstance(suffixes, list)
+    matches = [
+        str(suffix)
+        for suffix in suffixes
+        if str(suffix).startswith(prefix) and f"[assemble={phase}," in str(suffix)
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"TileOp assemble contract has no unique suffix: {parent_kind}/{phase}"
+        )
+    return matches[0], parent_kind
+
+
+def _assemble_concrete_example(
+    parent_kind: str, phase: str, assemble_contract: dict[str, object]
+) -> str:
+    examples = assemble_contract["concrete_examples"]
+    assert isinstance(examples, dict)
+    kind_examples = examples[parent_kind]
+    assert isinstance(kind_examples, dict)
+    return str(kind_examples[phase])
+
+
+def _assemble_phase_lowering(
+    phase: str,
+    command: str,
+    member: dict[str, object],
+    continuation: bool,
+    assemble_contract: dict[str, object],
+    target_field: str,
+) -> dict[str, object]:
+    parent_kind = "Shared" if command == "B.IOS" else "Local"
+    shared_contract = assemble_contract["shared_continuation"]
+    assert isinstance(shared_contract, dict)
+    capacity_value = (
+        shared_contract["parent_capacity"]
+        if continuation and parent_kind == "Shared"
+        else "selected-ParentRef"
+        if continuation
+        else assemble_contract["parent_capacity_field"]
+    )
+    lowering = {
+        "command": assemble_contract["assemble_command"],
+        "phase": phase,
+        "init_bit": phase in assemble_contract["phases"]["allocating"],
+        "last_bit": phase in {
+            assemble_contract["phases"]["allocating"][1],
+            assemble_contract["phases"]["continuation"][1],
+        },
+        "writer_range": assemble_contract["writer_range"],
+        "fields": {
+            "RegSrc": "RegSrc",
+            "uimm11": "uimm11",
+            str(assemble_contract["writer_field"]): str(assemble_contract["writer_field"]),
+        },
+        "parent_capacity": {
+            "command": command,
+            "slot": member["slot"],
+            "field": "SizeCode",
+            "value": (
+                capacity_value
+            ),
+            "allocation": not continuation,
+        },
+    }
+    if continuation and parent_kind == "Shared":
+        lowering["shared_destination"] = {
+            "command": command,
+            "field": target_field,
+            "slot": member["slot"],
+            "binding_kind": shared_contract["binding_kind"],
+            "role_kind": shared_contract["role_kind"],
+            "physical_role": shared_contract["physical_role"],
+            "size_code": shared_contract["size_code"],
+            "semantic_source": shared_contract["semantic_source"],
+            "handler_source_argument": shared_contract["handler_source_argument"],
+            "subview_allowed": shared_contract["subview_allowed"],
+        }
+    elif continuation:
+        lowering["parent_ref"] = {
+            "physical_role": assemble_contract["parent_ref_physical_role"],
+            "size_code": assemble_contract["parent_ref_size_code"],
+            "final_source_form": True,
+            "pe_mask": assemble_contract["writer_mask"],
+        }
+    else:
+        lowering["parent_ref"] = None
+    return lowering
+
+
+def _assemble_destination(
+    base: dict[str, object],
+    suffix: str,
+    phase: str,
+    continuation: bool,
+    parent_kind: str,
+    assemble_contract: dict[str, object],
+) -> dict[str, object]:
+    if not continuation:
+        destination = copy.deepcopy(base)
+        destination["syntax"] = suffix
+        destination["size"] = assemble_contract["parent_capacity_field"]
+        destination["assemble_phase"] = phase
+        destination["parent_capacity"] = assemble_contract["parent_capacity_field"]
+        destination["writer_range"] = assemble_contract["writer_range"]
+        return destination
+    destination = copy.deepcopy(base)
+    if parent_kind == "Shared":
+        shared_contract = assemble_contract["shared_continuation"]
+        assert isinstance(shared_contract, dict)
+        destination.update(
+            {
+                "syntax": suffix,
+                "role": "reused Shared assemble destination identity",
+                "binding_kind": shared_contract["binding_kind"],
+                "size": shared_contract["size_code"],
+                "size_code": shared_contract["size_code"],
+                "assemble_phase": phase,
+                "physical_role": shared_contract["physical_role"],
+                "semantic_source": shared_contract["semantic_source"],
+                "subview_allowed": shared_contract["subview_allowed"],
+                "writer_range": assemble_contract["writer_range"],
+            }
+        )
+        return destination
+    destination.update(
+        {
+            "field": assemble_contract["field"],
+            "syntax": suffix,
+            "role": "reused assemble parent destination identity",
+            "binding_kind": assemble_contract["binding_kind"],
+            "size": None,
+            "assemble_phase": phase,
+            "physical_role": assemble_contract["physical_role"],
+            "semantic_source": assemble_contract["semantic_source"],
+            "subview_allowed": assemble_contract["subview_allowed"],
+            "writer_range": assemble_contract["writer_range"],
+        }
+    )
+    return destination
+
+
+def assemble_variants(
+    form: dict[str, object],
+    expansion: dict[str, object],
+    assemble_contract: dict[str, object],
+    capacity_audit: dict[str, object],
+) -> list[dict[str, object]]:
+    candidates = _assemble_destination_candidates(form, expansion)
+    if not candidates:
+        return []
+    candidate = candidates[0]
+    binding = candidate["binding"]
+    member = candidate["member"]
+    assert isinstance(binding, dict) and isinstance(member, dict)
+    command = str(candidate["command"])
+    target_field = str(binding["field"])
+    target_syntax = str(binding["syntax"])
+    destination_commands = {
+        str(item["field"]): str(item["command"])
+        for item in expansion["operand_bindings"]
+        if isinstance(item, dict) and item.get("role_kind") == "destination"
+    }
+    variants: list[dict[str, object]] = []
+    phases = assemble_contract["phases"]
+    assert isinstance(phases, dict)
+    phase_order = [*phases["allocating"], *phases["continuation"]]
+    for phase in phase_order:
+        continuation = phase in phases["continuation"]
+        suffix, parent_kind = _assemble_suffix(command, str(phase), assemble_contract)
+        variant_macro = str(form["macro_format"]).replace(
+            target_syntax, suffix, 1
+        )
+        destinations = copy.deepcopy(form["destinations"])
+        assert isinstance(destinations, list)
+        rejected_allocating_destinations: list[str] = []
+        if continuation:
+            retained_destinations: list[dict[str, object]] = []
+            for destination in destinations:
+                assert isinstance(destination, dict)
+                field = str(destination.get("field"))
+                if (
+                    field != target_field
+                    and destination_commands.get(field) in {"B.IOT", "B.IOS"}
+                ):
+                    rejected_allocating_destinations.append(field)
+                    variant_macro = variant_macro.replace(
+                        ", " + str(destination["syntax"]), "", 1
+                    )
+                    continue
+                retained_destinations.append(destination)
+            destinations = retained_destinations
+        replaced = False
+        for index, destination in enumerate(destinations):
+            assert isinstance(destination, dict)
+            if str(destination.get("field")) == target_field and not replaced:
+                destinations[index] = _assemble_destination(
+                    destination, suffix, str(phase), continuation, parent_kind,
+                    assemble_contract
+                )
+                replaced = True
+        if not replaced:
+            raise ValueError(
+                f"TileOp assemble carrier is absent from destinations: {form['spelling']}"
+            )
+
+        parent_binding = None
+        if continuation and parent_kind == "Local":
+            parent_binding = {
+                "field": assemble_contract["field"],
+                "syntax": suffix,
+                "role_kind": assemble_contract["role_kind"],
+                "binding_kind": assemble_contract["binding_kind"],
+                "command": command,
+                "members": [
+                    {
+                        "physical_role": assemble_contract["physical_role"],
+                        "source_form": True,
+                        "final": True,
+                        "slot": assemble_contract["parent_ref_slot"],
+                        "command_group": member["command_group"],
+                        "size_code": assemble_contract["size_code"],
+                        "semantic_source": assemble_contract["semantic_source"],
+                        "handler_source_argument": assemble_contract["handler_source_argument"],
+                        "pe_mask": assemble_contract["writer_mask"],
+                        "subview_allowed": assemble_contract["subview_allowed"],
+                    }
+                ],
+            }
+        shared_contract = assemble_contract["shared_continuation"]
+        assert isinstance(shared_contract, dict)
+        parent_contract = copy.deepcopy(
+            shared_contract if continuation and parent_kind == "Shared"
+            else assemble_contract
+        )
+        parent_contract.update(
+            {
+                "assemble_phase": str(phase),
+                "parent_kind": parent_kind,
+                "no_allocation": continuation,
+                "parent_identity": (
+                    "selected exact OPEN Shared generation"
+                    if continuation and parent_kind == "Shared"
+                    else "selected relative-or-absolute parent"
+                    if continuation
+                    else "new destination identity"
+                ),
+                "writer_range": assemble_contract["writer_range"],
+                "representative_spelling": _assemble_concrete_example(
+                    parent_kind, str(phase), assemble_contract
+                ),
+                "physical_binding": parent_binding,
+                "semantic_sources_unchanged": True,
+                "handler_source_arguments_unchanged": True,
+            }
+        )
+        if not continuation:
+            parent_contract.update(
+                {
+                    "binding_kind": binding["binding_kind"],
+                    "role_kind": "destination",
+                    "field": target_field,
+                    "physical_role": member["physical_role"],
+                    "size_code": assemble_contract["parent_capacity_field"],
+                    "subview_allowed": False,
+                }
+            )
+        else:
+            parent_contract.update(
+                {
+                    "binding_kind": shared_contract["binding_kind"]
+                    if parent_kind == "Shared" else assemble_contract["binding_kind"],
+                    "role_kind": shared_contract["role_kind"]
+                    if parent_kind == "Shared" else assemble_contract["role_kind"],
+                    "field": target_field
+                    if parent_kind == "Shared" else assemble_contract["field"],
+                    "physical_role": shared_contract["physical_role"]
+                    if parent_kind == "Shared" else assemble_contract["physical_role"],
+                    "size_code": shared_contract["size_code"]
+                    if parent_kind == "Shared" else assemble_contract["size_code"],
+                    "subview_allowed": shared_contract["subview_allowed"]
+                    if parent_kind == "Shared" else assemble_contract["subview_allowed"],
+                }
+            )
+        lowering = _assemble_phase_lowering(
+            str(phase), command, member, continuation, assemble_contract, target_field
+        )
+        fold = {
+            "policy": "unique-exact-match-or-physical",
+            "requires_complete_boundary": True,
+            "key_fields": [
+                "assemble_phase",
+                "writer_range",
+                "parent_identity",
+                "semantic_source_list",
+                "no_allocation",
+            ],
+            "on_ambiguity": "retain physical assembly",
+        }
+        variant = {
+            "assemble_phase": phase,
+            "spelling": str(form["spelling"]),
+            "macro_format": variant_macro,
+            "representative_spelling": _assemble_concrete_example(
+                parent_kind, str(phase), assemble_contract
+            ),
+            "sources": copy.deepcopy(form["sources"]),
+            "destinations": destinations,
+            "expansion": {
+                "assemble_parent": parent_contract,
+                "assemble_lowering": lowering,
+                "semantic_sources": copy.deepcopy(form["sources"]),
+                "handler_source_arguments": copy.deepcopy(
+                    expansion["argument_bindings"]
+                ),
+                "no_allocation": continuation,
+                "rejected_allocating_destinations": rejected_allocating_destinations,
+                "structural_fault": (
+                    "Fault_BundleControl"
+                    if continuation
+                    else None
+                ),
+                "parent_identity": parent_contract["parent_identity"],
+                "writer_range": assemble_contract["writer_range"],
+                "capacity_audit": copy.deepcopy(capacity_audit[parent_kind]),
+                "fold": fold,
+            },
+        }
+        if continuation and parent_kind == "Local":
+            variant["expansion"]["assemble_parent_binding"] = parent_binding
+        elif continuation:
+            variant["expansion"]["assemble_destination_binding"] = {
+                "field": target_field,
+                "syntax": suffix,
+                "role_kind": shared_contract["role_kind"],
+                "binding_kind": shared_contract["binding_kind"],
+                "command": command,
+                "members": [
+                    {
+                        "physical_role": shared_contract["physical_role"],
+                        "source_form": False,
+                        "final": True,
+                        "slot": member["slot"],
+                        "command_group": member["command_group"],
+                        "size_code": shared_contract["size_code"],
+                        "semantic_source": shared_contract["semantic_source"],
+                        "handler_source_argument": shared_contract["handler_source_argument"],
+                        "pe_mask": assemble_contract["writer_mask"],
+                        "subview_allowed": shared_contract["subview_allowed"],
+                    }
+                ],
+            }
+        payload = {
+            "assemble_phase": str(phase),
+            "writer_range": assemble_contract["writer_range"],
+            "parent_identity": parent_contract["parent_identity"],
+            "semantic_source_list": variant["sources"],
+            "no_allocation": continuation,
+            "physical_parent_binding": parent_binding
+            if parent_kind == "Local" else None,
+            "physical_destination_binding": (
+                variant["expansion"].get("assemble_destination_binding")
+                if parent_kind == "Shared" else None
+            ),
+        }
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        variant["expansion"]["fold_signature_sha256"] = hashlib.sha256(
+            encoded.encode("utf-8")
+        ).hexdigest()
+        variants.append(variant)
+    return variants
+
+
 def physical_fold_signature(expansion: dict[str, object]) -> str:
     configuration = [
         {"targets": item["targets"]}
@@ -1285,6 +1828,8 @@ def build_operation(
     record: dict[str, object],
     macro_definition: dict[str, object],
     evidence_rows: list[dict[str, object]],
+    assemble_contract: dict[str, object],
+    capacity_audit: dict[str, object],
 ) -> dict[str, object]:
     mnemonic = str(record["mnemonic"])
     spelling = macro_mnemonic(record)
@@ -1320,6 +1865,9 @@ def build_operation(
         }
         form["expansion"] = expansion_plan(
             mnemonic, form, owner_form, record, catalog_record, evidence_rows
+        )
+        form["assemble_variants"] = assemble_variants(
+            form, form["expansion"], assemble_contract, capacity_audit
         )
         forms.append(form)
 
@@ -1417,6 +1965,11 @@ def validate_current_inventory(operations: list[dict[str, object]]) -> None:
 def build_catalog() -> dict[str, object]:
     tile_records = load_tile_instructions()
     definitions = load_macro_form_definitions()
+    macro_contract = load_macro_assembly_contract()
+    assemble_contract = macro_contract["assemble_parent"]
+    capacity_audit = macro_contract["capacity_audit"]
+    assert isinstance(assemble_contract, dict)
+    assert isinstance(capacity_audit, dict)
     role_evidence = load_operation_role_evidence()
     operation_names = {str(record["mnemonic"]) for _, record in tile_records}
     if set(definitions) != operation_names:
@@ -1437,6 +1990,8 @@ def build_catalog() -> dict[str, object]:
             record,
             definitions[str(record["mnemonic"])],
             role_evidence[str(record["mnemonic"])],
+            assemble_contract,
+            capacity_audit,
         )
         for path, record in tile_records
     ]
@@ -1450,7 +2005,7 @@ def build_catalog() -> dict[str, object]:
             "form_count": sum(len(operation["forms"]) for operation in operations),
         },
         "architecture_identity": "0.58.6",
-        "source_of_truth": "PTO-TILEOP-MACRO records in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
+        "source_of_truth": "PTO-TILEOP-MACRO records and the unit-level PTO-TILEOP-MACRO-CONTRACT in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
         "syntax_shape": "TileOp <bundle configuration>, ordered sources, ->ordered destinations",
         "line_grammar": {
             "instruction_lines": 1,
@@ -1468,7 +2023,7 @@ def build_catalog() -> dict[str, object]:
                 "output.modifier": "B.ASSEMBLE INIT_LAST",
                 "B.ASSEMBLE.INIT": 1,
                 "B.ASSEMBLE.LAST": 1,
-                "B.ASSEMBLE.ParentSizeCode": 1,
+                "B.ASSEMBLE.WriterSizeCode": 1,
             },
             "placement": "immediately after the owning B.IOT or B.IOS group in source0, source1, destination role order",
         },
@@ -1544,6 +2099,8 @@ def build_catalog() -> dict[str, object]:
             {"kind": "predicate-cell", "syntax": "->PredicateCell<Size>", "concrete_example": "->M<512B>", "physical_binding": "B.IOT.DstTile", "resulting_generation": "M#1"},
             {"kind": "predicate-gpr", "syntax": "->PredicateGPR", "concrete_example": "->a0", "physical_binding": "B.IOR.RegDst"},
         ],
+        "assemble_parent_contract": copy.deepcopy(assemble_contract),
+        "assemble_capacity_audit": copy.deepcopy(capacity_audit),
         "operations": operations,
     }
 
@@ -1592,6 +2149,10 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
         "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
         "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
+        "- A source range keeps the canonical `[base=GPR, offset=uimm11]` spelling. Assemble variants additionally identify INIT, INIT_LAST, MIDDLE, or LAST because the phase changes allocation and parent-selection semantics.",
+        "- An assemble continuation folds only the exact owner-derived phase contract: Local uses a final source-form B.IOT SizeCode=0 `AssembleParent` with physical role `assemble-parent-ref`; Shared retains its owning destination B.IOS SharedTileID with SizeCode=0 and physical role `shared-assemble-destination-reuse`. Each carrier is absent from ordinary semantic sources and handler source arguments; Local capacity is seven ordinary sources plus its carrier, Shared capacity is three plus its reused destination.",
+        "- Canonical assemble suffixes are `->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]`, `->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]`, and the analogous `->Sx` forms; ambiguous matches retain physical assembly.",
+        "- Representative concrete assemble spellings are `->T<8KB>[assemble=INIT,a0+0:2KB]`, `->T#3[assemble=MIDDLE,a0+2048:2KB]`, `->T#3[assemble=LAST,a0+4096:2KB]`, `->S7<64KB>[assemble=INIT_LAST,zero+0:64KB]`, and `->S7[assemble=LAST,a1+32768:32KB]`.",
         f"- Source range syntax: `{catalog['range_modifier_grammar']['source']}`. Destination range syntax: `{catalog['range_modifier_grammar']['destination']}`. {catalog['range_modifier_grammar']['placement']}.",
         "- One macro instruction is one Block instruction and maps to one physical BSTART bundle. The next non-modifier Block instruction or end of section closes its command range; source does not add `BSTOP`, `BSTART`, or `C.BSTART`.",
         "- `PEMask` is PE participation and is distinct from an element predicate carrier. It defaults to `AllPE`; other accepted names are `NoPE`, `PE0`, `PE1`, `PE2`, `PE3`, `PE0_1`, and `PE0_1_2`.",

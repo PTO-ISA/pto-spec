@@ -7750,7 +7750,7 @@ def canonical_command_execution_witness(row: dict, witness: int) -> int:
     if row["semantic_handler"] == "ApplyBundleAssemble":
         witness = encode_field(row, "INIT", witness, 1)
         witness = encode_field(row, "LAST", witness, 1)
-        witness = encode_field(row, "ParentSizeCode", witness, 1)
+        witness = encode_field(row, "WriterSizeCode", witness, 1)
         return witness
     if row["semantic_handler"] in {
         "ExecuteFrameEntry",

@@ -16,12 +16,12 @@ begin
 end;
 
 pure func ExplicitSharedAssemble(init: boolean, last: boolean,
-                                 parent_size: integer) => bits(64)
+                                 writer_size: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001053;
     instruction[31] = if init then '1' else '0';
     instruction[11] = if last then '1' else '0';
-    instruction[10:7] = Zeros{4} + parent_size;
+    instruction[10:7] = Zeros{4} + writer_size;
     return instruction;
 end;
 
@@ -33,10 +33,12 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 128);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 128);
-    let binder = ExecuteCommandInstruction(ExplicitSharedBIOS(), 32);
+    var binder_instruction = ExplicitSharedBIOS();
+    binder_instruction[18:15] = if init then '0010' else '0000';
+    let binder = ExecuteCommandInstruction(binder_instruction, 32);
     assert binder == CommandExecution_Executed;
     let modifier = ExecuteCommandInstruction(
-        ExplicitSharedAssemble(init, last, parent_size), 32);
+        ExplicitSharedAssemble(init, last, 1), 32);
     assert modifier == CommandExecution_Executed;
 end;
 
