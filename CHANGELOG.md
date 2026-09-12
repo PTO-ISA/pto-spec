@@ -10,6 +10,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-GOV-0010](docs/status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md): PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity
 
 ### Cross-cutting
+- [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
 - [ADR-BLOCK-0018](docs/status/decisions/ADR-BLOCK-0018-bstart-timg2col-feature-map-img2col.md): BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement
 - [ADR-CUBE-0018](docs/status/decisions/ADR-CUBE-0018-internal-acc-partial-sum-routing.md): InternalAcc partial-sum routing for CUBE matrix operations
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations

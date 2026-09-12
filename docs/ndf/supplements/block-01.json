@@ -125,6 +125,18 @@
       }
     },
     {
+      "id": "PTO-BUNDLE-DIMENSION-DEFAULT-001",
+      "source_path": "asl/block/model/schema/dimensions.asl",
+      "title": {
+        "en": "Omitted bundle dimension defaults",
+        "zh-CN": "省略的块维度默认值"
+      },
+      "summary": {
+        "en": "This clause gives each omitted LB0, LB1, and LB2 an effective value of one. Explicit writes remain distinct, including explicit zero, while presence is retained only for duplicate-write rejection and trap recovery.",
+        "zh-CN": "本条款规定省略的 LB0、LB1 和 LB2 的有效值均为一。包括显式零在内的写入仍保持独立语义，presence 仅用于拒绝重复写入和陷阱恢复。"
+      }
+    },
+    {
       "id": "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
       "source_path": "asl/block/attributes/B.FPATR.asl",
       "title": {

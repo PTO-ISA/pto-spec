@@ -53,7 +53,7 @@ begin
         return FALSE;
     end;
     for dimension = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
-        if _BundleDimensionPresent[[dimension]] then
+        if UInt(_BundleDimensions[[dimension]]) != 1 then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;

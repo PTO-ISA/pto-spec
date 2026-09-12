@@ -37,15 +37,13 @@ end;
 
 readonly func SelectedBundleComparisonDimensionsLegal() => boolean
 begin
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then
         return FALSE;
     end;
     for dimension = 1 to 2 looplimit 2 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) < 1 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) < 1 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;
@@ -57,10 +55,8 @@ readonly func SelectedBundleComparisonShapeMatches(
 begin
     let tile = _Tiles[[source]];
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
-    let valid_rows = (if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) else 1) as integer {1..65535};
-    let columns = (if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) else valid_columns) as integer {1..65535};
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     if tile.valid_rows != valid_rows ||
        tile.valid_columns != valid_columns then
         return FALSE;

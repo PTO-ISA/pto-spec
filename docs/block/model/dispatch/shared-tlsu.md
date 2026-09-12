@@ -28,44 +28,29 @@ end;
 readonly func BundleSharedStoreValidColumns(shared_tile_id: SharedTileID)
     => integer {0..65535}
 begin
-    if _BundleDimensionPresent[[0]] then
-        if UInt(_BundleDimensions[[0]]) <= 65535 then
-            return UInt(_BundleDimensions[[0]]) as integer {0..65535};
-        end;
-        return 0;
+    if UInt(_BundleDimensions[[0]]) <= 65535 then
+        return UInt(_BundleDimensions[[0]]) as integer {0..65535};
     end;
-    let shared = SharedTileRecord(shared_tile_id);
-    if shared.descriptor_valid then return shared.tile.valid_columns; end;
-    return 1;
+    return 0;
 end;
 
 readonly func BundleSharedStoreValidRows(shared_tile_id: SharedTileID)
     => integer {0..65535}
 begin
-    if _BundleDimensionPresent[[1]] then
-        if UInt(_BundleDimensions[[1]]) <= 65535 then
-            return UInt(_BundleDimensions[[1]]) as integer {0..65535};
-        end;
-        return 0;
+    if UInt(_BundleDimensions[[1]]) <= 65535 then
+        return UInt(_BundleDimensions[[1]]) as integer {0..65535};
     end;
-    let shared = SharedTileRecord(shared_tile_id);
-    if shared.descriptor_valid then return shared.tile.valid_rows; end;
-    return 1;
+    return 0;
 end;
 
 readonly func BundleSharedStoreColumns(shared_tile_id: SharedTileID,
                                         valid_columns: integer {0..65535})
     => integer {0..65535}
 begin
-    if _BundleDimensionPresent[[2]] then
-        if UInt(_BundleDimensions[[2]]) <= 65535 then
-            return UInt(_BundleDimensions[[2]]) as integer {0..65535};
-        end;
-        return 0;
+    if UInt(_BundleDimensions[[2]]) <= 65535 then
+        return UInt(_BundleDimensions[[2]]) as integer {0..65535};
     end;
-    let shared = SharedTileRecord(shared_tile_id);
-    if shared.descriptor_valid then return shared.tile.columns; end;
-    return valid_columns;
+    return 0;
 end;
 
 readonly func BundleSharedTMOVLocalSchemaLegal() => boolean

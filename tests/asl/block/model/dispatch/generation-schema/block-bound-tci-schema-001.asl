@@ -22,6 +22,7 @@ begin
     let started = ExecuteCommandInstruction(TCISchemaStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE,
         0,

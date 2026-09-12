@@ -24,15 +24,13 @@ begin
        !binding.last then
         return FALSE;
     end;
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then
         return FALSE;
     end;
     for dimension = 1 to 2 looplimit 2 do
-        if _BundleDimensionPresent[[dimension]] &&
-           (UInt(_BundleDimensions[[dimension]]) < 1 ||
-            UInt(_BundleDimensions[[dimension]]) > 65535) then
+        if UInt(_BundleDimensions[[dimension]]) < 1 ||
+           UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
     end;
@@ -57,8 +55,7 @@ begin
 
     let source_layout = _Tiles[[source]].layout;
     let requested_valid_columns = UInt(_BundleDimensions[[0]]);
-    let requested_valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) else 1;
+    let requested_valid_rows = UInt(_BundleDimensions[[1]]);
     let source_cube_m_layout =
         source_layout == TileLayout_CUBE_M16 ||
         source_layout == TileLayout_CUBE_M32;
@@ -68,7 +65,7 @@ begin
         // destination type and the requested TSize.
         return requested_valid_columns == _Tiles[[source]].valid_columns &&
                requested_valid_rows == _Tiles[[source]].valid_rows &&
-               !_BundleDimensionPresent[[2]] &&
+               UInt(_BundleDimensions[[2]]) == 1 &&
                !CurrentBundleCanonicalize() &&
                CurrentBundleDataLayout() == TileDataLayout_NORM &&
                _Tiles[[source]].location == TileLocation_Matrix &&
@@ -83,8 +80,7 @@ begin
         return FALSE;
     end;
 
-    let requested_columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) else requested_valid_columns;
+    let requested_columns = UInt(_BundleDimensions[[2]]);
     let destination_capacity = BundleLocalDestinationAllocationBytes(0);
     let destination_rows = DerivedTileRows(
         destination_capacity,

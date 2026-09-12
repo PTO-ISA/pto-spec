@@ -60,8 +60,7 @@ readonly func BundleWeightTLOADStateLegal() => boolean
 begin
     if !BundleWeightTLOADSelected() ||
        !_BundleOperation.data_type_valid ||
-       !BundleDataTypeConcrete(_BundleOperation.data_type) ||
-       !BundleWeightTLOADDimensionRolesComplete() then
+       !BundleDataTypeConcrete(_BundleOperation.data_type) then
         return FALSE;
     end;
     let data_type = TileDataTypeFromEncoding(
@@ -185,12 +184,6 @@ begin
         derived_offset as integer {0..8192}, coverage_cells,
         BundleWeightTLOADPEBit(), TRUE, gm_base, shape_word, start_word,
         generation_metadata, Zeros{PTO_XLEN});
-end;
-
-readonly func BundleWeightTLOADDimensionRolesComplete() => boolean
-begin
-    return _BundleDimensionPresent[[0]] && _BundleDimensionPresent[[1]] &&
-           _BundleDimensionPresent[[2]];
 end;
 
 func BundleWeightTLOADBuildAndPublish() => boolean

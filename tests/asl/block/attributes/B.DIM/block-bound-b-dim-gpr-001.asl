@@ -34,6 +34,6 @@ begin
         BundleDimensionInstruction(0, 24, Zeros{17} + 7), 32);
     assert rejected == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
-    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN};
+    assert _BundleDimensions[[0]] == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

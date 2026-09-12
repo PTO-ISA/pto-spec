@@ -21,15 +21,11 @@ end;
 
 readonly func BundleCubeTransportDimensionsLegal() => boolean
 begin
-    if !_BundleDimensionPresent[[0]] ||
-       !_BundleDimensionPresent[[1]] ||
-       _BundleDimensionPresent[[2]] then
-        return FALSE;
-    end;
     let valid_columns = UInt(_BundleDimensions[[0]]);
     let valid_rows = UInt(_BundleDimensions[[1]]);
     return 1 <= valid_columns && valid_columns <= 65535 &&
-           1 <= valid_rows && valid_rows <= 65535;
+           1 <= valid_rows && valid_rows <= 65535 &&
+           UInt(_BundleDimensions[[2]]) == 1;
 end;
 
 readonly func BundleCubeTransportDataAttributesLegal() => boolean

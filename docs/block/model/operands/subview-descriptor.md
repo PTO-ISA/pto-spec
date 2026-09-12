@@ -369,7 +369,7 @@ begin
             if row_broadcast then 1
             else descriptor.valid_columns as integer {1..65535};
         let physical_columns_raw = UInt(_BundleDimensions[[2]]);
-        if !row_broadcast && _BundleDimensionPresent[[2]] &&
+        if !row_broadcast &&
            physical_columns_raw >= descriptor.valid_columns &&
            physical_columns_raw <= 65535 then
             row_major_columns =

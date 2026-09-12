@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-SCHEMA-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-INST-TILE-TCMP"],"kind":"fault","summary":"TCMP accepts exactly two typed Local sources and one new terminating predicate destination","pass_condition":"the canonical binding passes while scalar input, an unsupported type, or a missing dimension rejects before allocation","related_sources":["asl/block/model/dispatch/comparison-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-SCHEMA-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-INST-TILE-TCMP"],"kind":"fault","summary":"TCMP accepts exactly two typed Local sources and one new terminating predicate destination","pass_condition":"the canonical binding passes while scalar input, an unsupported type, or an explicit zero dimension rejects before allocation","related_sources":["asl/block/model/dispatch/comparison-schema.asl"]}
 func ConfigureTCMPSchema()
 begin
     ResetProfileState();
@@ -31,6 +31,7 @@ begin
         32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE,
         0,
@@ -56,7 +57,7 @@ begin
     assert !SelectedBundleClosedTCMPSchemaLegal(12);
 
     ConfigureTCMPSchema();
-    _BundleDimensionPresent[[0]] = FALSE;
+    _BundleDimensions[[0]] = Zeros{PTO_XLEN};
     assert !SelectedBundleClosedTCMPSchemaLegal(12);
     return 0;
 end;

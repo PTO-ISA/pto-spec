@@ -10,25 +10,21 @@ end;
 readonly func SelectedBundleGenerationDimensionsLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    if !_BundleDimensionPresent[[0]] ||
-       UInt(_BundleDimensions[[0]]) < 1 ||
+    if UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then
         return FALSE;
     end;
-    if _BundleDimensionPresent[[2]] &&
-       (UInt(_BundleDimensions[[2]]) < UInt(_BundleDimensions[[0]]) ||
-        UInt(_BundleDimensions[[2]]) > 65535) then
+    if UInt(_BundleDimensions[[2]]) < UInt(_BundleDimensions[[0]]) ||
+       UInt(_BundleDimensions[[2]]) > 65535 then
         return FALSE;
     end;
 
     let decoded = TileOperationOfIndex(operation);
     if decoded == TileOperation_TCI then
-        return !_BundleDimensionPresent[[1]] ||
-               UInt(_BundleDimensions[[1]]) == 1;
+        return UInt(_BundleDimensions[[1]]) == 1;
     end;
-    return !_BundleDimensionPresent[[1]] ||
-           (UInt(_BundleDimensions[[1]]) >= 1 &&
-            UInt(_BundleDimensions[[1]]) <= 65535);
+    return UInt(_BundleDimensions[[1]]) >= 1 &&
+           UInt(_BundleDimensions[[1]]) <= 65535;
 end;
 
 readonly func SelectedBundleClosedGenerationSchemaLegal(

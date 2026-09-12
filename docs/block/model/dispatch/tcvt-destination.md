@@ -47,9 +47,7 @@ begin
 
     let valid_columns = UInt(_BundleDimensions[[0]])
         as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) as integer {1..65535}
-        else 1;
+    let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
     // CUBE physical rows/columns and CELL count are derived from the
     // destination DataType.  In particular, a narrower source and wider

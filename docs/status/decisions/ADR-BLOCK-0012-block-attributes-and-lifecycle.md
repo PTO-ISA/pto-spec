@@ -20,12 +20,14 @@
   "target_releases": [
     "0.58.1",
     "0.58.2",
-    "0.58.5"
+    "0.58.5",
+    "0.58.6.0"
   ],
   "affected_ndf": [
     "PTO-B-CATR-CONTROL-001",
     "PTO-B-DATR-FIELDS-001",
     "PTO-B-DIM-WRITE-001",
+    "PTO-BUNDLE-DIMENSION-DEFAULT-001",
     "PTO-B-HINT-LIFECYCLE-001",
     "PTO-BSTART-DECISION-BINDING-001",
     "PTO-BSTOP-DECISION-BINDING-001",
@@ -61,14 +63,41 @@
     "PTO-BLOCK-FEXIT",
     "PTO-BLOCK-FRET-RA",
     "PTO-BLOCK-FRET-STK",
-    "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+    "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+    "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH",
+    "PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC",
+    "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+    "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+    "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
   ],
   "resolves": [],
   "supersedes": [
     "ADR-GOV-0006"
   ],
   "superseded_by": [],
-  "implementation_issue": null,
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/274",
   "release_impact": "required",
   "legacy_ids": [
     "PRD-001",
@@ -131,6 +160,46 @@
         "PTO-BLOCK-FRET-RA",
         "PTO-BLOCK-FRET-STK",
         "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+      ]
+    },
+    {
+      "date": "2026-09-12",
+      "baseline": "ab6d11c7b7eeb59c84ff116d5fed201276144252",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/274",
+      "affected_ndf": [
+        "PTO-BUNDLE-DIMENSION-DEFAULT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH",
+        "PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
       ]
     }
   ]
@@ -342,6 +411,18 @@ opens an empty block and records the selected boundary.
 The TRACE form MUST NOT complete or commit the empty block by itself. The block
 MUST subsequently be terminated by `BSTOP` or by the next `BSTART`, following
 the normal block lifecycle and commit rules.
+
+## Decision 018: omitted bundle dimensions have value one
+
+LB0, LB1, and LB2 each have effective value one when the active block omits a
+`B.DIM` or `C.B.DIMI` write for that register. An explicit write, including
+zero, replaces the omission default and remains subject to the existing
+write-once rule.
+
+Dimension presence is retained only to reject duplicate writes and to preserve
+in-flight state across trap recovery. Tile operation legality and execution
+consume the effective LB values and MUST NOT distinguish an omitted dimension
+from an explicitly encoded value one.
 
 ## Lifecycle corrections
 
