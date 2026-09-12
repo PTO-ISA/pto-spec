@@ -464,25 +464,45 @@ syntax and canonical disassembly wrapping are not accepted.
 One macro expression expands to exactly one existing physical Block bundle and
 inherits its complete legality, fault, effect, ordering, restart, and
 publication behavior. It introduces no opcode, hidden state, or multi-operation
-atomicity. The boundary is explicit `BSTOP` or the following `BSTART`; the
-following header commits the prior bundle but is outside its half-open command
-range.
+atomicity. The macro is one Block instruction. Its expansion begins with the
+owning physical BSTART and ends before the next non-modifier Block instruction
+or at end of section; source does not add a BSTOP, BSTART, or C.BSTART.
 
 The generated schema consumes owning `PTO-INSTRUCTION` metadata under
 `asl/tile/` and is cross-checked against `spec/catalog/tile-operations.json`.
-Folding is fail-closed: a disassembler prints a macro only for one unique exact
-schema match and otherwise retains physical assembly. Bare attribute values may
-be omitted only under one owner-defined default or unambiguous typed inference.
+Canonical disassembly folds every complete exact physical schema without
+runtime Tile descriptor state. Physically identical PredicateTile and
+PredicateCell source forms use the first catalog form as their canonical output.
+Bare attribute values may be omitted only under one owner-defined default or
+unambiguous typed inference.
 The historical Consequences count of 109 records the original decision
 baseline; this amendment supersedes that count with the current 117-operation
 PTO 0.58.6 inventory.
+
+Rectangular macro source uses `Row`, `Col`, `ValidRow`, and `ValidCol`, while
+matrix forms use `M`, `N`, and `K`; physical `LB0`/`LB1`/`LB2` names are not
+part of the macro language. `Row` is a derived readability value checked from
+the selected form's resolution record. An ordinary row-major numeric
+destination may supply `TSize`, `Col`, and form-specific element type.
+For mixed RowMajor/CUBE forms that size rule applies only to RowMajor; CUBE
+forms use encoded ValidRow because destination size is capacity. Predicate and
+descriptor-preserving forms keep Row runtime-derived from source descriptor
+state; stateless disassembly omits that unencoded field instead of inventing a
+value. TLOAD.CUBE and TGPR2T recover Row from encoded ValidRow. The selected form's own
+`ValidRow` and `ValidCol`
+defaults are authoritative; `ValidRow=Row` and `ValidCol=Col` are only the
+common rectangular defaults. `PEMask=AllPE` remains the PE-mask default.
+Canonical output suppresses a Valid field only when it equals the selected-form
+default and uses symbolic enum or string values rather than raw carrier
+numbers.
 
 PTO 0.58.6 为当前 Direct Tile 操作清单定义一套生成式宏汇编表面。每条宏指令在
 同一源码行内包含一个 TileOp 助记符、有序 Bundle 配置、有序源和有序目的；换行
 结束该指令，不允许续行，规范反汇编也不得自动折行。每条宏指令只展开为一个现有
 物理 Block Bundle，并完整继承其合法性、异常、效果、顺序、重启和发布语义，不
-新增 opcode、隐藏状态或多操作原子性。反汇编只有在 schema 唯一精确匹配时才折叠，
-否则保留物理汇编。
+新增 opcode、隐藏状态或多操作原子性。每个完整且精确匹配的物理 schema 都折叠为
+宏指令；未编码且依赖运行时描述符的 Row 字段在无状态反汇编中省略。物理编码完全
+相同的 PredicateTile/PredicateCell 形式使用目录中的第一个形式作为规范输出。
 
 ## Consequences
 

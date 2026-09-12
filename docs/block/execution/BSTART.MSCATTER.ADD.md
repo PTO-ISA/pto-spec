@@ -147,6 +147,8 @@ end;
 ```asm
 BSTART.MSCATTER.ADD DataType
 B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional, default 1)
+B.DIM LB2=ValidCol
 B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>
 B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
@@ -178,6 +180,7 @@ end;
 ## Defaults and encoded zero
 
 - PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.
+- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
 
 ## Legality
 

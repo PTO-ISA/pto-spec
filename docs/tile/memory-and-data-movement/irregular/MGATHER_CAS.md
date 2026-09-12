@@ -97,6 +97,9 @@ end;
 
 ```asm
 BSTART.MGATHER.CAS DataType
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional, default 1)
+B.DIM LB2=ValidCol
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
 B.IOR BaseGPR, RowStrideGPR, zero, ->zero
@@ -120,11 +123,13 @@ end;
 
 ## Defaults and encoded zero
 
+- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
 - Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64.
 
 ## Legality
 
 - mgather.cas uses raw U16/U32/U64 carriers; U128 and all non-U types are rejected.
+- ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol.
 
 ## State effects
 

@@ -15,6 +15,24 @@ ROOT = Path(__file__).resolve().parent.parent
 JSON_OUTPUT = ROOT / "spec/catalog/tile-macro-assembly.json"
 MARKDOWN_OUTPUT = ROOT / "docs/virtual-isa/tileop-macro-assembly.md"
 
+RUNTIME_ROW_POLICY_REPLACEMENTS = {
+    "retain physical assembly because Row is not recoverable":
+        "omit Row because it has no encoded carrier",
+    "retain physical assembly without source descriptor state":
+        "omit Row because it remains runtime-derived from the source descriptor",
+    "retain physical assembly without destination descriptor state":
+        "omit Row because it remains runtime-derived from the destination descriptor",
+}
+
+
+def update_runtime_row_owner_policy() -> None:
+    text = MACRO_OWNER.read_text(encoding="utf-8")
+    updated = text
+    for old, new in RUNTIME_ROW_POLICY_REPLACEMENTS.items():
+        updated = updated.replace(old, new)
+    if updated != text:
+        MACRO_OWNER.write_text(updated, encoding="utf-8")
+
 
 MACRO_OWNER = ROOT / "asl/arch/overview/instruction-classification.asl"
 MACRO_RECORD_PREFIX = "// PTO-TILEOP-MACRO: "
@@ -389,14 +407,15 @@ def expected_operand_bindings(
                         member_syntax = (
                             "GMBaseGPR" if "GMBaseGPR" in syntax else "BaseGPR"
                         )
-                        default = "zero" if "=zero" in syntax else None
-                        optional = "=zero" in syntax
+                        named_base = "base=" in syntax
+                        default = "zero" if "=zero" in syntax or named_base else None
+                        optional = "=zero" in syntax or named_base
                     elif role == "scalar0":
                         member_syntax = (
                             "ShapeGPR" if "ShapeGPR" in syntax else "RowStrideGPR"
                         )
                         default = None
-                        optional = "?" in syntax
+                        optional = "?" in syntax or "stride=" in syntax
                     elif role == "scalar1":
                         member_syntax = "StartGPR"
                         default = None
@@ -461,7 +480,19 @@ HEADER_CONFIGURATION_FIELDS = {
     "AType",
     "U8",
     "U32",
-    "DTYPE_NONE",
+}
+
+DIMENSION_PHYSICAL_SLOTS = {
+    "Row": None,
+    "ValidCol": "LB0",
+    "ValidRow": "LB1",
+    "Col": "LB2",
+    "M": "LB0",
+    "N": "LB1",
+    "K": "LB2",
+    "ValidK": "LB0",
+    "ValidN": "LB1",
+    "TotalK": "LB2",
 }
 
 DATR_PHYSICAL_SLOTS = {
@@ -470,6 +501,7 @@ DATR_PHYSICAL_SLOTS = {
     "Canonicalize": "Canonicalize",
     "CubeLayout": "Layout",
     "DstDataType": "DataType",
+    "DTYPE_NONE": "DataType",
     "Layout": "Layout",
     "WeightLayout": "Layout",
     "PadValue": "PadValueOrByteId",
@@ -479,12 +511,195 @@ DATR_PHYSICAL_SLOTS = {
     "SatMode": "Sat",
 }
 
+FPATR_PHYSICAL_SLOTS = {
+    "PreMode": "PreQuantMode",
+    "PostMode": "ReluMode",
+    "PostScale": "GroupNCode",
+    "RowMax": "RowMaxEn",
+    "GroupMax": "GroupMaxEn",
+    "RowMaxInit": "RowMaxInit",
+    "FlushToZero": "MaxAbsEn",
+    "TransposeA": "TransA",
+    "TransposeB": "TransB",
+    "CScale": "CScaleEn",
+}
+
+
+def physical_fpatr_slots(record: dict[str, object]) -> set[str]:
+    lines = [line for line in physical_bundle(record) if line.startswith("B.FPATR ")]
+    if len(lines) != 1:
+        raise ValueError(f"TileOp must have exactly one B.FPATR owner: {record['mnemonic']}")
+    fields = lines[0].removeprefix("B.FPATR ").split(" (", 1)[0]
+    return {field.strip() for field in fields.split(",")}
+
+
+def row_resolution(
+    form: dict[str, object], record: dict[str, object]
+) -> dict[str, object]:
+    configuration = form["configuration"]
+    destinations = form["destinations"]
+    sources = form["sources"]
+    assert isinstance(configuration, list)
+    assert isinstance(destinations, list)
+    assert isinstance(sources, list)
+    fields = {str(item["field"]) for item in configuration}
+    spelling = str(form.get("spelling", ""))
+    element_type = next(
+        (
+            field
+            for field in ("DstDataType", "ValueDataType", "DataType", "U8", "U32")
+            if field in fields
+        ),
+        "CubeLayoutElementType" if "CubeLayout" in fields else None,
+    )
+    descriptor_source = next(
+        (
+            str(item["field"])
+            for item in sources
+            if item.get("binding_kind")
+            in {"tile-source-binding", "shared-tile-binding"}
+        ),
+        None,
+    )
+
+    def runtime_descriptor_row() -> dict[str, object]:
+        if descriptor_source is None:
+            return {
+                "kind": "input-only-check",
+                "expression": "ExplicitRowOnly",
+                "canonical_output": "omit Row because it has no encoded carrier",
+                "requires_runtime_state": True,
+            }
+        return {
+            "kind": "runtime-derived-check",
+            "expression": f"{descriptor_source}.Descriptor.Row",
+            "canonical_output": (
+                "omit Row because it remains runtime-derived from the source descriptor"
+            ),
+            "requires_runtime_state": True,
+        }
+
+    # These CUBE-producing forms carry their logical Row through ValidRow.
+    # Destination TSize is only an allocation-capacity bound.
+    if "CubeLayout" in fields or spelling == "TGPR2T":
+        return {
+            "kind": "derived-check",
+            "expression": "ValidRow",
+            "canonical_output": "print concrete Row from the encoded ValidRow",
+            "requires_runtime_state": False,
+        }
+
+    # Predicate destinations inherit their numeric source shape; their TSize
+    # is packed-predicate capacity.  TCVT and CUBE-select forms likewise
+    # preserve descriptor geometry that destination capacity cannot recover.
+    predicate_destination = any(
+        item.get("binding_kind")
+        in {
+            "predicate-tile-destination",
+            "predicate-cell-destination",
+            "predicate-gpr-destination",
+        }
+        for item in destinations
+    )
+    valid_row = next(
+        (item for item in configuration if item["field"] == "ValidRow"),
+        None,
+    )
+    row_via_valid_row = spelling in {
+        "TCI",
+        "TCMP",
+        "TCMPS",
+        "TPREFETCH",
+        "TSEL",
+        "TSELS",
+        "TTRI",
+    }
+    if (
+        row_via_valid_row
+        and valid_row is not None
+        and valid_row.get("default") == "Row"
+    ):
+        return {
+            "kind": "derived-check",
+            "expression": "ValidRow",
+            "canonical_output": "print concrete Row from the encoded ValidRow",
+            "requires_runtime_state": False,
+        }
+    descriptor_dependent_select = spelling in {"TSEL", "TSELS"} and any(
+        item.get("binding_kind")
+        in {"predicate-cell-source", "predicate-gpr-source"}
+        for item in sources
+    )
+    if spelling == "TCVT" or predicate_destination or descriptor_dependent_select:
+        return runtime_descriptor_row()
+
+    sized_destination = next(
+        (
+            str(item["field"])
+            for item in destinations
+            if item.get("size") == "Size"
+        ),
+        None,
+    )
+    owner_contract = json.dumps(record["contract"], sort_keys=True)
+    cube_capable_destination = (
+        "Layout" in fields
+        and "CUBE_M16" in owner_contract
+        and "CUBE_M32" in owner_contract
+    )
+    if (
+        cube_capable_destination
+        and sized_destination is not None
+        and element_type is not None
+    ):
+        return {
+            "kind": "layout-dependent-check",
+            "expression": (
+                f"Layout=RowMajor?{sized_destination}.TSize/Col/"
+                f"{element_type}:ValidRow"
+            ),
+            "canonical_output": (
+                "derive Row from destination TSize for RowMajor or from "
+                "encoded ValidRow for CUBE; an omitted Layout with no integral "
+                "RowMajor capacity solution is necessarily CUBE"
+            ),
+            "requires_runtime_state": False,
+        }
+    col = next(
+        (item for item in configuration if item["field"] == "Col"),
+        None,
+    )
+    col_requires_runtime = bool(
+        col
+        and col.get("default")
+        in {"DestinationLayout", "SourceDescriptor", "SourceOrValidCol"}
+    )
+    if sized_destination is not None and element_type is not None:
+        if col_requires_runtime:
+            return {
+                "kind": "runtime-derived-check",
+                "expression": f"{sized_destination}.TSize/{sized_destination}.LayoutCol/{element_type}",
+                "canonical_output": (
+                    "omit Row because it remains runtime-derived from the destination descriptor"
+                ),
+                "requires_runtime_state": True,
+            }
+        return {
+            "kind": "derived-check",
+            "expression": f"{sized_destination}.TSize/Col/{element_type}",
+            "canonical_output": "print concrete Row when statically resolved",
+            "requires_runtime_state": False,
+        }
+    return runtime_descriptor_row()
+
 
 def expected_configuration_bindings(
     form: dict[str, object],
+    record: dict[str, object],
     header_command: str,
     operand_bindings: list[dict[str, object]],
     datr_contract: dict[str, object],
+    has_physical_col: bool,
 ) -> list[dict[str, object]]:
     carriers: list[tuple[str, int]] = []
     for binding in operand_bindings:
@@ -504,17 +719,62 @@ def expected_configuration_bindings(
     for field in configuration:
         assert isinstance(field, dict)
         name = str(field["field"])
-        if name.startswith("LB"):
-            targets = [{"command": "B.DIM", "group": None, "slot": name}]
+        if name == "Row":
+            targets = []
+            resolution = row_resolution(form, record)
+        elif name == "Col" and not has_physical_col:
+            targets = []
+            resolution = {
+                "kind": "derived-check",
+                "expression": (
+                    "CubeLayout"
+                    if any(item["field"] == "CubeLayout" for item in configuration)
+                    else "DestinationLayout"
+                ),
+                "canonical_output": "print concrete Col when statically resolved",
+            }
+        elif (
+            name == "ValidCol"
+            and str(record["mnemonic"]).startswith(("MGATHER", "MSCATTER"))
+            and not any(item["field"] == "Col" for item in configuration)
+        ):
+            targets = [
+                {"command": "B.DIM", "group": None, "slot": "LB0"},
+                {"command": "B.DIM", "group": None, "slot": "LB2"},
+            ]
+            resolution = None
+        elif name in DIMENSION_PHYSICAL_SLOTS:
+            targets = [
+                {
+                    "command": "B.DIM",
+                    "group": None,
+                    "slot": DIMENSION_PHYSICAL_SLOTS[name],
+                }
+            ]
+            resolution = None
         elif name == "PEMask":
             targets = [
                 {"command": command, "group": group, "slot": "PE_MASK"}
                 for command, group in carriers
             ]
-        elif name == "FPAttrs":
-            targets = [{"command": "B.FPATR", "group": None, "slot": "attributes"}]
+            resolution = None
+        elif name in FPATR_PHYSICAL_SLOTS:
+            physical_slot = FPATR_PHYSICAL_SLOTS[name]
+            if physical_slot not in physical_fpatr_slots(record):
+                raise ValueError(
+                    f"TileOp macro B.FPATR slot is not owned: {name}->{physical_slot}"
+                )
+            targets = [
+                {
+                    "command": "B.FPATR",
+                    "group": None,
+                    "slot": physical_slot,
+                }
+            ]
+            resolution = None
         elif name in HEADER_CONFIGURATION_FIELDS:
             targets = [{"command": header_command, "group": None, "slot": "DataType"}]
+            resolution = None
         else:
             physical_slot = DATR_PHYSICAL_SLOTS.get(name)
             if physical_slot is None:
@@ -527,7 +787,11 @@ def expected_configuration_bindings(
             targets = [
                 {"command": "B.DATR", "group": None, "slot": physical_slot}
             ]
-        result.append({"field": name, "syntax": field["syntax"], "targets": targets})
+            resolution = None
+        item = {"field": name, "syntax": field["syntax"], "targets": targets}
+        if resolution is not None:
+            item["resolution"] = resolution
+        result.append(item)
     return result
 
 
@@ -549,14 +813,20 @@ def expansion_plan(
         raise ValueError(f"TileOp macro operand mapping drift: {mnemonic} {form['spelling']}")
     expected_configuration = expected_configuration_bindings(
         form,
+        record,
         header_command,
         expected_operands,
         catalog_record.get("datr_contract", {}),
+        any(
+            binding["field"] == "Col" and binding.get("targets")
+            for binding in owner_form["configuration_bindings"]
+        ),
     )
     owner_configuration = owner_form["configuration_bindings"]
     if owner_configuration != expected_configuration:
         raise ValueError(
-            f"TileOp macro configuration mapping drift: {mnemonic} {form['spelling']}"
+            f"TileOp macro configuration mapping drift: {mnemonic} {form['spelling']}; "
+            f"expected={expected_configuration!r}; owner={owner_configuration!r}"
         )
 
     operand_bindings = copy.deepcopy(expected_operands)
@@ -636,7 +906,12 @@ def expansion_plan(
                 )
             ]
         elif physical_role.startswith("positive"):
-            configuration_fields = [f"LB{physical_role.removeprefix('positive')}"]
+            physical_slot = f"LB{physical_role.removeprefix('positive')}"
+            configuration_fields = [
+                item["field"]
+                for item in expected_configuration
+                if any(target.get("slot") == physical_slot for target in item["targets"])
+            ]
         if not configuration_fields or any(
             not any(item["field"] == name for item in expected_configuration)
             for name in configuration_fields
@@ -679,11 +954,15 @@ def expansion_plan(
         ],
         "modifier_bindings": modifier_bindings,
         "boundary": {
-            "accepted": ["explicit BSTOP", "next BSTART"],
-            "command_range": "half-open; a following BSTART commits the prior bundle but belongs to the next form",
+            "accepted": [
+                "next non-modifier Block instruction",
+                "end of section",
+                "explicit BSTOP compatibility boundary",
+            ],
+            "command_range": "half-open; the following non-modifier instruction closes the macro bundle but belongs to the next Block instruction",
         },
         "fold": {
-            "policy": "unique-exact-match-or-physical",
+            "policy": "canonical-exact-match",
             "requires_complete_boundary": True,
         },
     }
@@ -869,14 +1148,16 @@ def parse_macro_structure(
             "size": size_match.group(1) if size_match else None,
             "configuration_kind": (
                 "dimension"
-                if kind == "bundle-configuration" and base.startswith("LB")
+                if kind == "bundle-configuration"
+                and field_name(token, fallback) in DIMENSION_PHYSICAL_SLOTS
                 else "attribute"
                 if kind == "bundle-configuration"
                 else None
             ),
             "value_style": (
-                "named-role"
-                if kind == "bundle-configuration" and base.startswith("LB")
+                "named-assignment"
+                if kind == "bundle-configuration"
+                and field_name(token, fallback) in DIMENSION_PHYSICAL_SLOTS
                 else "bare-value"
                 if kind == "bundle-configuration"
                 else None
@@ -976,6 +1257,29 @@ def physical_fold_signature(expansion: dict[str, object]) -> str:
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
+def validate_condition_fields(
+    mnemonic: str,
+    configuration: list[dict[str, object]],
+    operands: list[dict[str, object]],
+) -> None:
+    fields = {str(item["field"]) for item in configuration}
+    for operand in operands:
+        condition = operand.get("condition")
+        if condition is None:
+            continue
+        references = {
+            match.group(0)
+            for term in str(condition).split("&&")
+            if (match := re.match(r"[A-Za-z][A-Za-z0-9_]*", term.strip()))
+        }
+        unresolved = references - fields
+        if unresolved:
+            raise ValueError(
+                f"TileOp macro condition has unresolved configuration fields: "
+                f"{mnemonic} condition={condition!r} unresolved={sorted(unresolved)}"
+            )
+
+
 def build_operation(
     path: Path,
     record: dict[str, object],
@@ -1004,6 +1308,9 @@ def build_operation(
         macro_config, macro_sources, macro_destinations = parse_macro_structure(
             variant_format, variant_spelling, sources, destinations
         )
+        validate_condition_fields(
+            mnemonic, macro_config, macro_sources + macro_destinations
+        )
         form = {
             "spelling": variant_spelling,
             "macro_format": variant_format,
@@ -1023,15 +1330,22 @@ def build_operation(
         signature = physical_fold_signature(expansion)
         expansion["fold_signature_sha256"] = signature
         signature_counts[signature] = signature_counts.get(signature, 0) + 1
+    canonical_form_by_signature: dict[str, str] = {}
     for form in forms:
         expansion = form["expansion"]
         assert isinstance(expansion, dict)
         signature = physical_fold_signature(expansion)
         fold = expansion["fold"]
         assert isinstance(fold, dict)
-        fold["unique_without_runtime_state"] = signature_counts[signature] == 1
-        if signature_counts[signature] != 1:
-            fold["on_ambiguity"] = "retain physical assembly"
+        unique = signature_counts[signature] == 1
+        canonical = signature not in canonical_form_by_signature
+        fold["unique_without_runtime_state"] = unique
+        fold["canonical_without_runtime_state"] = canonical
+        if canonical:
+            canonical_form_by_signature[signature] = str(expansion["form_id"])
+        else:
+            fold["canonical_form_id"] = canonical_form_by_signature[signature]
+            fold["on_alias"] = "use the first physically identical catalog form"
     primary = forms[0]
 
     contract = record["contract"]
@@ -1049,7 +1363,11 @@ def build_operation(
         "destinations": primary["destinations"],
         "forms": forms,
         "semantic_operands": contract.get("operands", []),
-        "commit_boundaries": ["explicit BSTOP", "next BSTART"],
+        "commit_boundaries": [
+            "next non-modifier Block instruction",
+            "end of section",
+            "explicit BSTOP compatibility boundary",
+        ],
         "physical_schema": {
             "command_mnemonic": catalog_record["command_mnemonic"],
             "family": catalog_record["family"],
@@ -1140,8 +1458,66 @@ def build_catalog() -> dict[str, object]:
             "continuations_allowed": False,
             "canonical_output_wraps": False,
         },
+        "range_modifier_grammar": {
+            "source": "Source[base=GPR, offset=uimm11]",
+            "destination": "->Destination<Size>[base=GPR, offset=uimm11]",
+            "derived_fields": {
+                "input.modifier": "B.SUBVIEW",
+                "B.SUBVIEW.SrcSelect": "owning source role",
+                "B.SUBVIEW.SubviewSizeCode": 1,
+                "output.modifier": "B.ASSEMBLE INIT_LAST",
+                "B.ASSEMBLE.INIT": 1,
+                "B.ASSEMBLE.LAST": 1,
+                "B.ASSEMBLE.ParentSizeCode": 1,
+            },
+            "placement": "immediately after the owning B.IOT or B.IOS group in source0, source1, destination role order",
+        },
         "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
-        "attribute_syntax": "attributes are positional self-describing values; a defaulted or inferable attribute is omitted without a placeholder",
+        "dimension_syntax": "dimensions use programmer-facing named assignments such as Row=8, Col=64, or M=32; physical LB0/LB1/LB2 names are forbidden in TileOp assembly",
+        "shape_resolution": {
+            "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
+            "valid_defaults": {
+                "rule": "the selected form's declared default is authoritative",
+                "common_rectangular": {"ValidRow": "Row", "ValidCol": "Col"},
+            },
+            "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
+            "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
+            "irregular_memory": "Every MGATHER and MSCATTER form exposes ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
+            "descriptor_inherited": "TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state",
+        },
+        "canonicalization_examples": [
+            {
+                "case": "full immediate rectangle",
+                "assembly": "TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>",
+                "reason": "ValidRow=Row, ValidCol=Col, PadValue=Null, and PEMask=AllPE are exact defaults and are omitted",
+            },
+            {
+                "case": "partial immediate rectangle",
+                "assembly": "TADD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero, PE0_1>, T#1, T#2, ->T<2KB>",
+                "reason": "partial valid dimensions and nondefault symbolic attributes remain explicit",
+            },
+        ],
+        "attribute_syntax": "attributes use symbolic enum or string values; numeric carrier encodings are forbidden; a defaulted or inferable field is omitted without a placeholder",
+        "gpr_operand_syntax": {
+            "address": "[base=GPR]",
+            "row_stride": "stride=GPR",
+        },
+        "symbolic_values": {
+            "PEMask": {
+                "default": "AllPE",
+                "numeric_encodings_allowed": False,
+                "values": {
+                    "NoPE": "0000",
+                    "PE0": "1000",
+                    "PE1": "0100",
+                    "PE2": "0010",
+                    "PE3": "0001",
+                    "PE0_1": "1100",
+                    "PE0_1_2": "1110",
+                    "AllPE": "1111",
+                },
+            }
+        },
         "attribute_resolution": [
             {
                 "rule": "metavariable",
@@ -1191,6 +1567,8 @@ def build_markdown(catalog: dict[str, object]) -> str:
         groups.setdefault(group, []).append(operation)
 
     operation_count = int(catalog["summary"]["operation_count"])
+    shape_resolution = catalog["shape_resolution"]
+    valid_defaults = shape_resolution["valid_defaults"]
     lines = [
         "# PTO TileOp macro assembly",
         "",
@@ -1204,26 +1582,38 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "```",
         "",
         "- One TileOp macro instruction MUST occupy exactly one source line. A newline terminates the instruction; continuation syntax is not accepted and canonical disassembly never wraps the instruction.",
-        "- Configuration fields follow LB index order, then type/attribute fields, then `PEMask` when the physical bindings carry a PE mask.",
-        "- LB dimensions retain named roles such as `LB0:ValidCol`; attributes are positional self-describing values, so concrete assembly writes `FP32`, not `DataType:FP32`.",
-        "- An attribute may be removed from the angle-bracket list entirely when the selected TileOp schema supplies an exact default or a unique inference from typed operands; omission leaves no empty slot or placeholder.",
+        "- Rectangular shapes use programmer-facing assignments such as `Row=8` and `Col=64`; matrix shapes use `M`, `N`, and `K`. TileOp source never exposes physical `LB0`, `LB1`, or `LB2` names.",
+        f"- `Row` resolution: {shape_resolution['row']}.",
+        f"- Valid-dimension defaults: {valid_defaults['rule']}. The common rectangular defaults are `ValidRow={valid_defaults['common_rectangular']['ValidRow']}` and `ValidCol={valid_defaults['common_rectangular']['ValidCol']}`. {shape_resolution['canonical_omission']}.",
+        f"- Irregular memory shape: {shape_resolution['irregular_memory']}.",
+        f"- Descriptor-inherited shape: {shape_resolution['descriptor_inherited']}.",
+        "- Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.",
+        "- Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.",
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
         "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
         "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
-        "- A source may carry `[subview=<range>]` and a destination may carry `[assemble=<range>]` when the owning operation accepts the corresponding range modifier.",
-        "- One macro instruction maps to one physical bundle. Its boundary is an explicit `BSTOP` or the next `BSTART`.",
-        "- `PEMask` is PE participation and is distinct from an element predicate carrier.",
+        f"- Source range syntax: `{catalog['range_modifier_grammar']['source']}`. Destination range syntax: `{catalog['range_modifier_grammar']['destination']}`. {catalog['range_modifier_grammar']['placement']}.",
+        "- One macro instruction is one Block instruction and maps to one physical BSTART bundle. The next non-modifier Block instruction or end of section closes its command range; source does not add `BSTOP`, `BSTART`, or `C.BSTART`.",
+        "- `PEMask` is PE participation and is distinct from an element predicate carrier. It defaults to `AllPE`; other accepted names are `NoPE`, `PE0`, `PE1`, `PE2`, `PE3`, `PE0_1`, and `PE0_1_2`.",
         "- Destinations may be Tile (`->DstTile<Size>`), Shared Tile (`->DstShared<Size>`), scalar through `B.IOR.RegDst` (`->ScalarDst`), legacy predicate Tile (`->PredicateTile<Size>`), CUBE PredicateCell (`->PredicateCell<Size>`), or predicate-mask GPR (`->PredicateGPR`).",
         "- `X?` is optional; `X=value` states the virtual default; `X{if Condition}` is present only when that configuration condition holds.",
         "- `X{must be Value}` is a legality constraint, not an omission default.",
         "- `SourceOr1` and `SourceOrValidCol` mean an allocated Shared source contributes its descriptor value; an unallocated Shared source uses 1 or ValidCol as specified by TSTORE.",
-        "- `FPAttrs` expands to `PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn`.",
-        "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling FPAttrs condition.",
+        "- B.FPATR fields are direct entries in the bundle attribute list: enabled booleans use bare names such as `TransposeB`, and valued fields use assignments such as `PreMode=2`; there is no `FPAttrs(...)` wrapper.",
+        "- TGEMV-family `M=1` is a mandatory architectural constraint rather than an omission default. Canonical macro assembly prints it, while physical expansion omits the redundant value-one LB0 command.",
+        "- Canonical concrete GM address operands expose their physical role: addresses use `[base=a0]` and row strides use `stride=a1`. Ordinary scalar inputs remain bare GPRs such as `a2`, and scalar or predicate-mask results remain `->a3`.",
+        "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling B.FPATR fields.",
         "",
         "A concrete macro is always written on one line:",
         "",
         "```text",
-        "TADD <LB0:100, LB1:a0, LB2:a1+10, FP32, Null, 1111>, T#1, T#2, ->T<2KB>",
+        "TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>",
+        "```",
+        "",
+               "A partial Tile retains the differing valid shape and nondefault symbolic values:",
+        "",
+        "```text",
+        "TADD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero, PE0_1>, T#1, T#2, ->T<2KB>",
         "```",
         "",
         "Destination metavariables likewise become physical binding operands. A Local destination names only its encoded `B.IOT.DstTile` hand: for example, `->T<2KB>` publishes a new `T#1`, while `->U<512B>` may publish a legacy packed predicate Tile or a CUBE PredicateCell as the new `U#1` according to the selected TCMP/TCMPS form. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`. PTO 0.58.6 defines no architectural predicate-register destination for these TileOps.",
@@ -1258,12 +1648,12 @@ def build_markdown(catalog: dict[str, object]) -> str:
             "## Physical expansion and disassembly",
             "",
             "The JSON catalog records the complete physical `block_composition`, defaults, exceptions, semantic source roles, and destination roles for every row above.",
-            "A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds only a unique exact schema match and otherwise prints physical bundle assembly.",
+            "A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds every complete canonical physical schema. A configuration field such as `Row` that has no encoded carrier and remains runtime-derived is omitted from disassembly rather than printed as an invented value. When PredicateTile and PredicateCell forms have identical physical bytes, disassembly uses the first catalog form as the canonical spelling; reassembly preserves the bytes exactly.",
             "",
             "## Tool integration boundary",
             "",
             "This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.",
-            "Every folded instruction remains one output line. A missing boundary, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.",
+            "Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, or unmatched encoded value remains physical assembly. Runtime descriptor state is not required for canonical folding.",
             "",
         ]
     )
@@ -1321,6 +1711,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
+    if not args.check:
+        update_runtime_row_owner_policy()
     catalog = build_catalog()
     validate_catalog(catalog)
     json_text = render_json(catalog)

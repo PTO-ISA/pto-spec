@@ -19,7 +19,8 @@
 // NDF-BEGIN: PTO-BSTART-TLOAD-CUBE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // An explicit ND2M32, ND2M16, or ND2N8 B.DATR MUST select Local CUBE
-// conversion, MUST use the BSTART DataType through DTYPE_NONE, MUST interpret
+// conversion, MUST use the explicit BSTART DataType as the transfer type,
+// MUST require DTYPE_NONE in B.DATR.DataType, MUST interpret
 // LB1 as valid rows and LB0 as valid columns, and MUST reject LB2 or B.IOS.
 // NDF-END: PTO-BSTART-TLOAD-CUBE-001
 // DOC-BEGIN: decode
