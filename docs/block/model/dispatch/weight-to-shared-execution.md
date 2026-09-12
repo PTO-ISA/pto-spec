@@ -195,6 +195,7 @@ end;
 
 func BundleWeightTLOADBuildAndPublish() => boolean
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let data_type = TileDataTypeFromEncoding(
         _BundleOperation.data_type as TileDataTypeEncoding);
     let layout = TileDataLayoutOfCode(_BundleDataAttributes.data_layout);
@@ -245,7 +246,7 @@ begin
     candidate.location = TileLocation_Any;
     candidate.contents_defined = FALSE;
     candidate.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    candidate.packed_defined_elements = ZeroPackedTileDefinedElements();
+    candidate.packed_defined_elements = zero_packed_tile_elements;
     candidate.defined_valid_elements = 0;
     for row = 0 to rows_to_write - 1 looplimit 65535 do
         for col = 0 to valid_col - 1 looplimit 65535 do

@@ -132,6 +132,7 @@ end;
 func TCVT(destination: TileIndex, source: TileIndex,
           control: NumericExecutionControl)
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     var result = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let source_operation_type = if BundleTileOperationSelected() &&
@@ -150,7 +151,7 @@ begin
     var conversion_flags = Zeros{5};
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
-    result.packed_defined_elements = ZeroPackedTileDefinedElements();
+    result.packed_defined_elements = zero_packed_tile_elements;
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do

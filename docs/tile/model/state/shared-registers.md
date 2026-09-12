@@ -217,6 +217,7 @@ readonly func MaterializeSharedTileForReadSchema(
     valid_columns: integer {0..65535}, columns: integer {0..65535},
     data_type: TileDataType, layout: TileLayout) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert SharedTileReadSchemaLegal(shared_tile_id, valid_rows, valid_columns,
         columns, data_type, layout);
     let shared = SharedTileRecord(shared_tile_id);
@@ -230,7 +231,7 @@ begin
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.capacity_bytes = capacity_bytes;
     tile.rows = DerivedTileRows(capacity_bytes, columns, data_type);
     tile.columns = columns;
@@ -253,6 +254,7 @@ readonly func MaterializeSharedTileForReadSchemaAtCapacity(
     data_type: TileDataType, layout: TileLayout,
     capacity_bytes: integer {0..262144}) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert SharedTileReadSchemaLegalAtCapacity(shared_tile_id, valid_rows,
         valid_columns, columns, data_type, layout, capacity_bytes);
     var tile = SharedTileRecord(shared_tile_id).tile;
@@ -260,7 +262,7 @@ begin
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.capacity_bytes = capacity_bytes;
     tile.rows = DerivedTileRows(capacity_bytes, columns, data_type);
     tile.columns = columns;

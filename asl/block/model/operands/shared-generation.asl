@@ -183,6 +183,7 @@ func CommitBundleSharedGenerationCandidateRange(
     specialized_input0: Word, specialized_input1: Word, specialized_input2: Word,
     specialized_input3: Word, specialized_metadata: Word) => boolean
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].destination_assemble.valid;
     let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
@@ -231,7 +232,7 @@ begin
         _SharedGenerations[[index]].working_tile.defined_elements =
             Zeros{PTO_MODEL_TILE_ELEMENTS};
         _SharedGenerations[[index]].working_tile.packed_defined_elements =
-            ZeroPackedTileDefinedElements();
+            zero_packed_tile_elements;
         _SharedGenerations[[index]].working_tile.defined_valid_elements = 0;
         _SharedGenerations[[index]].working_initialized_mask = Zeros{4};
     else
@@ -247,11 +248,9 @@ begin
     end;
     if payload_cells != 0 then
         let element_bits = TileElementBits(candidate.tile.data_type);
-        let destination_offset =
-            ((offset_cells * 32 * 8) DIVRM element_bits)
+        let destination_offset = ((offset_cells * 32 * 8) DIVRM element_bits)
             as integer {0..524287};
-        let source_elements =
-            ((payload_cells * 32 * 8) DIVRM element_bits)
+        let source_elements = ((payload_cells * 32 * 8) DIVRM element_bits)
             as integer {1..524288};
         let parent_elements = TileLogicalElementCapacity(
             _SharedGenerations[[index]].working_tile.capacity_bytes,
@@ -433,6 +432,7 @@ end;
 readonly func MaterializeBundleSharedSubviewForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => TileInfo
 begin
+    let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert BundleSharedSubviewLegal(binding);
     let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
     let parent = SharedTileRecord(shared_tile_id).tile;
@@ -477,7 +477,7 @@ begin
             else 0;
     end;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
     tile.contents_defined = FALSE;
     for element = 0 to selected_elements - 1 looplimit 524288 do
