@@ -2,10 +2,11 @@
 
 // NDF-BEGIN: PTO-REQ-SCALAR-BODY-ENTRY-001
 // ndf: kind=contract level=L1 layer=scalar status=accepted
-// After a scalar form decodes successfully, scalar dispatch MUST enter an
-// active body-inactive bundle before operation applicability or operand
-// legality. An unmatched carrier MUST reject without entering the body. Once
-// decoded, a later scalar fault preserves the body-active transition.
+// After a scalar form decodes successfully, scalar dispatch MUST enter any
+// active body-inactive bundle, including a Tile block, before operation
+// applicability or operand legality. An unmatched carrier MUST reject without
+// entering the body. Once decoded, a later scalar fault preserves the
+// body-active transition and the active block kind.
 // NDF-END: PTO-REQ-SCALAR-BODY-ENTRY-001
 
 func ExecuteScalarInstruction(instruction: bits(48),
