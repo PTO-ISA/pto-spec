@@ -57,7 +57,8 @@ begin
         destination_binding);
     let cube = source_tile.layout == TileLayout_CUBE_M16 ||
         source_tile.layout == TileLayout_CUBE_M32;
-    if binding.destination_allocated_by_bundle then
+    if binding.destination_allocated_by_bundle ||
+       binding.destination_reused_by_generation then
         let destination = binding.destination;
         let destination_tile = _Tiles[[destination]];
         let descriptor_legal = if cube then
@@ -168,7 +169,8 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-    if binding.destination_allocated_by_bundle then
+    if binding.destination_allocated_by_bundle ||
+       binding.destination_reused_by_generation then
         let destination_tile = _Tiles[[binding.destination]];
         if !TileCubeDescriptorLegal(destination_tile) ||
            destination_tile.storage_kind != TileStorage_Numeric ||

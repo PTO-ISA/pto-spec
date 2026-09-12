@@ -49,6 +49,22 @@ begin
         as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
+    if binding.destination_reused_by_generation then
+        let destination = _Tiles[[binding.destination]];
+        if !TileCubeDescriptorLegal(destination) ||
+           destination.capacity_bytes != capacity_bytes ||
+           destination.valid_rows != valid_rows ||
+           destination.valid_columns != valid_columns ||
+           destination.data_type != destination_type ||
+           destination.layout != source_layout ||
+           destination.location != TileLocation_Matrix ||
+           (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
+               binding.pe_mask then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
     // CUBE physical rows/columns and CELL count are derived from the
     // destination DataType.  In particular, a narrower source and wider
     // destination can require a different minimum power-of-two TSize.

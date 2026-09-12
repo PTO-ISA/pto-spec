@@ -5615,7 +5615,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode",
+      "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, WriterSizeCode",
       "constraints": [
         {
           "field": "INIT",
@@ -5656,7 +5656,7 @@
           ]
         },
         {
-          "field": "ParentSizeCode",
+          "field": "WriterSizeCode",
           "operator": "one-of",
           "values": [
             0,
@@ -5734,7 +5734,7 @@
           "width": 1
         },
         {
-          "name": "ParentSizeCode",
+          "name": "WriterSizeCode",
           "pieces": [
             {
               "instruction_lsb": 7,
@@ -5752,7 +5752,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Range Modifier",
       "semantic_handler": "ApplyBundleAssemble",
-      "semantic_summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+      "semantic_summary": "Decodes one writer-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
       "status": "accepted"
     },
     {

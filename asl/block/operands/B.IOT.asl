@@ -9,7 +9,10 @@
 // through 64 KiB and MUST charge the encoded capacity independently to each
 // selected PE's 256 KiB Local pool; codes 11..15 MUST remain reserved.
 // Every source selector MUST resolve newest-first within its encoded T/U/M/N
-// hand before destination allocation. Each successfully published destination
+// hand before destination allocation. A Local continuation may consume at most
+// seven ordinary data-source bindings plus one final source-form
+// AssembleParentRef; the ParentRef occupies one physical slot but is removed
+// before operation source-schema handling. Each successfully published destination
 // MUST become #1 of its selected hand while existing source generations
 // persist and shift toward older relative indices.
 // NDF-END: PTO-B-IOT-STREAM-001

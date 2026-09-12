@@ -17,7 +17,7 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode",
+          "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, WriterSizeCode",
           "constraints": [
             {
               "field": "INIT",
@@ -58,7 +58,7 @@
               ]
             },
             {
-              "field": "ParentSizeCode",
+              "field": "WriterSizeCode",
               "operator": "one-of",
               "values": [
                 0,
@@ -136,7 +136,7 @@
               "width": 1
             },
             {
-              "name": "ParentSizeCode",
+              "name": "WriterSizeCode",
               "pieces": [
                 {
                   "instruction_lsb": 7,
@@ -154,7 +154,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Range Modifier",
           "semantic_handler": "ApplyBundleAssemble",
-          "semantic_summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+          "semantic_summary": "Decodes one writer-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
           "status": "accepted"
         }
       ],
@@ -166,7 +166,7 @@
           "Immediately follows B.IOT or B.IOS and is contiguous with the associated modifier group."
         ],
         "canonical_assembly": [
-          "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode"
+          "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, WriterSizeCode"
         ],
         "defaults": [
           "uimm11 is unsigned and zero-extended. RegSrc zero names the architectural zero GPR. INIT=0 encodes MIDDLE/LAST; INIT=1 encodes INIT/INIT_LAST."
@@ -252,7 +252,7 @@
                 12
               ]
             ],
-            "field": "ParentSizeCode",
+            "field": "WriterSizeCode",
             "form_id": "b_assemble_32_122000000002",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
@@ -262,10 +262,10 @@
                 15
               ]
             ],
-            "role": "raw parent size code",
+            "role": "current writer extent code",
             "signedness": "encoding-defined",
             "width": 4,
-            "zero_meaning": "Zero is the MIDDLE/LAST-only no-parent-size encoding."
+            "zero_meaning": "Zero is reserved for discarded groups; participating writers require a nonzero extent."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -273,15 +273,15 @@
           "B.IOT T0, mask=1111, ->T1<1>; B.ASSEMBLE 1, 1, a0, 0, 10"
         ],
         "exceptions": [
-          "Reserved funct3/opcode, RegSrc24..31, and ParentSizeCode13..15 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance.",
-          "INIT=1 with ParentSizeCode=0 or INIT=0 with a nonzero ParentSizeCode raises Fault_BundleControl.",
+          "Reserved funct3/opcode and RegSrc24..31 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance; raw WriterSizeCode 13..15 is reserved and raises Fault_IllegalInstruction.",
+          "Participating INIT, MIDDLE, and LAST writers require a legal nonzero WriterSizeCode; raw reserved codes raise Fault_IllegalInstruction.",
           "Missing, reversed, duplicate, intervening, or role-incompatible groups raise Fault_BundleControl."
         ],
         "field_domains": [],
         "legality": [
           "RegSrc accepts only absolute GPR selectors 0..23.",
-          "ParentSizeCode raw values 0..12 are decoded; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.",
-          "Local parent sizes 1..10 are accepted; Shared parent sizes 1..12 are accepted.",
+          "WriterSizeCode raw values 0..12 are decoded; raw values 13..15 are reserved and raise Fault_IllegalInstruction; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.",
+          "Local WriterSizeCode values 1..10 and Shared WriterSizeCode values 1..12 are accepted in every phase; Local continuation identity is carried by the final source-form binder slot, while Shared continuation reuses the final B.IOS SizeCode=0 destination and selects the exact OPEN Sx generation.",
           "The modifier is legal only in the contiguous immediately preceding binder group and follows source roles."
         ],
         "memory_effects": [
@@ -305,8 +305,8 @@
             "role": "unsigned XLEN addend"
           },
           {
-            "field": "ParentSizeCode",
-            "role": "raw parent size code"
+            "field": "WriterSizeCode",
+            "role": "current writer extent code"
           }
         ],
         "ordering": [
@@ -314,7 +314,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Store raw INIT/LAST/RegSrc/uimm11/ParentSizeCode and the derived XLEN offset in the destination carrier of the open binder group.",
+          "Store raw INIT/LAST/RegSrc/uimm11/WriterSizeCode and the derived XLEN offset in the destination carrier of the open binder group.",
           "PEMode=000 on the binder opens a discarded syntactic group; every raw-legal contiguous modifier advances TPC without reads, state, role, or fault effects."
         ]
       },
@@ -323,7 +323,7 @@
       "mnemonic": "B.ASSEMBLE",
       "ndf_clause": "PTO-INST-BLOCK-B-ASSEMBLE",
       "source": "asl/block/operands/B.ASSEMBLE.asl",
-      "summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+      "summary": "Decodes one writer-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
       "surface": "block"
     },
     {

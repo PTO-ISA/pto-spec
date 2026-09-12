@@ -107,6 +107,7 @@ begin
         for binding = 0 to 3 do
             if _BundleSharedBindings[[binding]].valid &&
                !_BundleSharedBindings[[binding]].consumed &&
+               !BundleSharedBindingIsReusedDestination(binding) &&
                !BundleSharedBindingIsDestination(binding) then
                 let shared_tile_id = BundleSharedBindingId(binding);
                 if SharedTileDescriptorLegal(shared_tile_id) then
@@ -233,6 +234,70 @@ begin
     end;
 end;
 
+readonly func BundleAssembleOutputStructureLegal() => boolean
+begin
+    var destination_count: integer = 0;
+    var source_count: integer = 0;
+    var local_continuations: integer = 0;
+    var shared_continuations: integer = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].destination_valid &&
+               !_BundleTileBindings[[binding]].destination_reused_by_generation then
+                destination_count = destination_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                source_count = source_count + 1;
+            end;
+            if _BundleTileBindings[[binding]].destination_assemble.valid &&
+               !_BundleTileBindings[[binding]].destination_assemble.init then
+                local_continuations = local_continuations + 1;
+            end;
+        end;
+    end;
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].destination_assemble.valid &&
+           !_BundleSharedBindings[[binding]].destination_assemble.init then
+            shared_continuations = shared_continuations + 1;
+        end;
+    end;
+    let local_parent_refs = BundleLocalTileParentRefCount();
+    let shared_destinations = BundleSharedPhysicalDestinationCount();
+    let shared_reused_destinations = BundleSharedReusedDestinationCount();
+    if local_parent_refs > 1 then return FALSE; end;
+    if local_continuations != 0 && local_parent_refs != 1 then
+        return FALSE;
+    end;
+    if shared_continuations != 0 then
+        if shared_reused_destinations != 1 ||
+           !BundleSharedReusedDestinationIsFinal() ||
+           BundleSharedBindingCount() > 3 || local_parent_refs != 0 then
+            return FALSE;
+        end;
+    end;
+    if local_parent_refs == 1 then
+        if !BundleLocalTileParentRefIsFinal() || destination_count != 0 ||
+           source_count > 7 || shared_destinations != 0 then
+            return FALSE;
+        end;
+    end;
+    if shared_reused_destinations != 0 && shared_continuations == 0 then
+        return FALSE;
+    end;
+    if shared_reused_destinations > 1 then return FALSE; end;
+    if shared_reused_destinations == 1 then
+        if destination_count != 0 || shared_destinations != 0 ||
+           local_parent_refs != 0 then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func BundleOperationBindingsComplete(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -262,7 +327,8 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid then
             binding_count = binding_count + 1;
-            if _BundleTileBindings[[binding]].destination_valid then
+            if _BundleTileBindings[[binding]].destination_valid &&
+               !_BundleTileBindings[[binding]].destination_reused_by_generation then
                 destination_count = destination_count + 1;
             end;
             if _BundleTileBindings[[binding]].source0_valid then
@@ -273,6 +339,8 @@ begin
             end;
         end;
     end;
+    if !BundleAssembleOutputStructureLegal() then return FALSE; end;
+    let local_parent_refs = BundleLocalTileParentRefCount();
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let expected_destinations =
@@ -334,10 +402,14 @@ begin
     // The complete-bundle B.FPATR carrier has nine compact Local source
     // ordinals and three compact destination ordinals. Reject surplus
     // streams before descriptor allocation or operand consumption.
-    if matrix && (source_count > 9 || destination_count > 3) then
+    if (source_count + local_parent_refs > 8) ||
+       (matrix && (source_count > 9 || destination_count > 3)) then
         return FALSE;
     end;
-    if destination_count != expected_destinations ||
+    let effective_destination_count = destination_count + local_parent_refs +
+        BundleSharedPhysicalDestinationCount() +
+        BundleSharedReusedDestinationCount();
+    if effective_destination_count != expected_destinations ||
        source_count != expected_sources then return FALSE; end;
     if binding_count > 0 && !BundleTileBindingStreamTerminated() then
         return FALSE;

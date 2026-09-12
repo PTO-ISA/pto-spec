@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
 func SetBundleTileBinding(index: BundleTileBindingIndex,
                          destination_valid: boolean,
                          destination: TileIndex,
@@ -30,6 +30,9 @@ begin
     _BundleTileBindings[[index]].source1_relative = FALSE;
     _BundleTileBindings[[index]].source0 = source0;
     _BundleTileBindings[[index]].source1 = source1;
+    _BundleTileBindings[[index]].parent_ref_valid = FALSE;
+    _BundleTileBindings[[index]].parent_ref_relative = FALSE;
+    _BundleTileBindings[[index]].parent_ref = 0;
     _BundleTileBindings[[index]].last = last;
 end;
 
@@ -41,27 +44,106 @@ begin
         _BundleTileBindings[[index]].source1_valid;
 end;
 
+readonly func BundleLocalTileParentRefCount() => integer {0..16}
+begin
+    var count: integer {0..16} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].parent_ref_valid then
+            count = (count + 1) as integer {0..16};
+        end;
+    end;
+    return count;
+end;
+
+readonly func BundleLocalTileParentRefIsFinal() => boolean
+begin
+    var final_binding: integer {0..15} = 0;
+    var found = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            final_binding = binding as integer {0..15};
+            found = TRUE;
+        end;
+    end;
+    if !found || BundleLocalTileParentRefCount() != 1 then return FALSE; end;
+    return _BundleTileBindings[[final_binding]].parent_ref_valid &&
+           _BundleTileBindings[[final_binding]].last;
+end;
+
+// Convert one already validated continuation ParentRef into the semantic
+// destination consumed by schemas and handlers. A parent-only final carrier
+// is folded into the preceding ordinary binding so it does not add an operand
+// group. The selected Tile already exists and is never allocated here.
+func BindBundleLocalGenerationDestination(
+    binding: BundleTileBindingIndex, generation_slot: integer {0..63},
+    selected: TileIndex)
+begin
+    let destination = _LocalGenerations[[generation_slot]].working_destination;
+    let assemble = _BundleTileBindings[[binding]].destination_assemble;
+    var semantic_binding = binding;
+    if !_BundleTileBindings[[binding]].source0_valid &&
+       !_BundleTileBindings[[binding]].source1_valid then
+        var prior_found = FALSE;
+        for prior = 0 to binding - 1 do
+            if _BundleTileBindings[[prior]].valid then
+                semantic_binding = prior as BundleTileBindingIndex;
+                prior_found = TRUE;
+            end;
+        end;
+        if prior_found then
+            assert !_BundleTileBindings[[semantic_binding]].destination_valid;
+            assert !_BundleTileBindings[[semantic_binding]].parent_ref_valid;
+            assert !_BundleTileBindings[[semantic_binding]].destination_assemble.valid;
+            _BundleTileBindings[[semantic_binding]].parent_ref_valid = TRUE;
+            _BundleTileBindings[[semantic_binding]].parent_ref_relative = FALSE;
+            _BundleTileBindings[[semantic_binding]].parent_ref = selected;
+            _BundleTileBindings[[semantic_binding]].destination_assemble = assemble;
+            _BundleTileBindings[[semantic_binding]].last = TRUE;
+            _BundleTileBindings[[binding]].valid = FALSE;
+        end;
+    end;
+    _BundleTileBindings[[semantic_binding]].destination_valid = TRUE;
+    _BundleTileBindings[[semantic_binding]].destination = destination;
+    _BundleTileBindings[[semantic_binding]].destination_hand =
+        Zeros{2} + _LocalGenerations[[generation_slot]].destination_hand;
+    _BundleTileBindings[[semantic_binding]].destination_size =
+        _LocalGenerations[[generation_slot]].parent_size_code;
+    _BundleTileBindings[[semantic_binding]].destination_allocated_by_bundle = FALSE;
+    _BundleTileBindings[[semantic_binding]].destination_reused_by_generation = TRUE;
+end;
+
+readonly func BundleLocalGenerationPEPublicationEligible(
+    slot: integer {0..63}, pe: integer {0..3}) => boolean
+begin
+    if !_LocalGenerations[[slot]].last_seen ||
+       !_LocalGenerations[[slot]].parent_descriptor.valid ||
+       _LocalGenerations[[slot]].participant_mask[
+           PTOPEMaskBitOfPEIdentity(pe)] == '0' then return FALSE; end;
+    let required = _LocalGenerations[[slot]].parent_cell_count;
+    if required == 0 || required > 2048 then return FALSE; end;
+    for cell = 0 to 2047 do
+        if cell < required &&
+           (_LocalGenerations[[slot]].per_pe_covered_cells[[pe]][cell] == '0' ||
+            _LocalGenerations[[slot]].per_pe_ready_cells[[pe]][cell] == '0') then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func BundlePendingRelativeGeneration(
     binding: BundleTileBindingIndex, selector: TileIndex) => boolean
 begin
-    let hand = RelativeTileHandIndex(selector);
-    let mask = _BundleTileBindings[[binding]].pe_mask;
-    let slot = (hand + UInt(mask) * 4) as integer {0..63};
-    return _LocalGenerations[[slot]].closed &&
-           !_LocalGenerations[[slot]].published &&
-           _Tiles[[_LocalGenerations[[slot]].working_destination]].allocated;
+    // Local generations are inserted into the ordinary relative queue at
+    // successful INIT allocation.  No private assemble namespace or fallback
+    // is used; an explicitly selected open entry remains that exact entry.
+    return FALSE;
 end;
 
 readonly func BundleRelativeTileSourceAvailable(
     binding: BundleTileBindingIndex, selector: TileIndex) => boolean
 begin
-    let distance = RelativeTileDistance(selector);
-    if BundlePendingRelativeGeneration(binding, selector) then
-        if distance == 0 then return TRUE; end;
-        let shifted = ((RelativeTileHandIndex(selector) * 16 + distance) - 1)
-            as TileIndex;
-        return RelativeTileSourceAvailable(shifted);
-    end;
     return RelativeTileSourceAvailable(selector);
 end;
 
@@ -69,18 +151,6 @@ readonly func ResolveBundleRelativeTileSource(
     binding: BundleTileBindingIndex, selector: TileIndex) => TileIndex
 begin
     assert BundleRelativeTileSourceAvailable(binding, selector);
-    let distance = RelativeTileDistance(selector);
-    if BundlePendingRelativeGeneration(binding, selector) then
-        if distance == 0 then
-            let hand = RelativeTileHandIndex(selector);
-            let mask = _BundleTileBindings[[binding]].pe_mask;
-            let slot = (hand + UInt(mask) * 4) as integer {0..63};
-            return _LocalGenerations[[slot]].working_destination;
-        end;
-        let shifted = ((RelativeTileHandIndex(selector) * 16 + distance) - 1)
-            as TileIndex;
-        return ResolveRelativeTileSource(shifted);
-    end;
     return ResolveRelativeTileSource(selector);
 end;
 
@@ -119,6 +189,18 @@ begin
                         binding as BundleTileBindingIndex,
                         _BundleTileBindings[[binding]].source1);
                 _BundleTileBindings[[binding]].source1_relative = FALSE;
+            end;
+            if _BundleTileBindings[[binding]].parent_ref_valid &&
+               _BundleTileBindings[[binding]].parent_ref_relative then
+                if !RelativeTileSourceAvailable(
+                       _BundleTileBindings[[binding]].parent_ref) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return FALSE;
+                end;
+                _BundleTileBindings[[binding]].parent_ref =
+                    ResolveRelativeTileSource(
+                        _BundleTileBindings[[binding]].parent_ref);
+                _BundleTileBindings[[binding]].parent_ref_relative = FALSE;
             end;
         end;
     end;

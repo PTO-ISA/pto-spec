@@ -5,7 +5,7 @@ begin
        _BundleOperation.operation_class != BundleOperation_TileMemory ||
        !_BundleOperation.selector_valid then return FALSE; end;
     let function = UInt(_BundleOperation.selector[4:0]);
-    return BundleSharedBindingCount() > 0;
+    return BundleSharedBindingPhysicalCount() > 0;
 end;
 
 readonly func BundleSharedStoreValidColumns(shared_tile_id: SharedTileID)
@@ -38,15 +38,18 @@ end;
 
 readonly func BundleSharedTMOVLocalSchemaLegal() => boolean
 begin
-    if BundleSharedBindingCount() != 1 ||
+    if BundleSharedBindingPhysicalCount() != 1 ||
        BundleTileBindingCount() != 1 then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
-    let shared_size = BundleSharedBindingSize(0);
+    let shared_size = if BundleSharedBindingIsReusedDestination(0) then
+        BundleSharedGenerationCapacity(0)
+        else BundleSharedBindingSize(0);
     let shared_mask = BundleSharedBindingMask(0);
     if !binding.valid || binding.destination_valid ||
        !binding.source0_valid || binding.source1_valid || !binding.last ||
        binding.destination_size != 0 ||
-       !TileSizeCodeIsLegal(shared_size) ||
+       (!TileSizeCodeIsLegal(shared_size) &&
+        !BundleSharedBindingIsReusedDestination(0)) ||
        binding.pe_mask != shared_mask then return FALSE; end;
     if shared_mask == Zeros{4} then return TRUE; end;
     if !TileSourceContentsDefined(binding.source0) ||
@@ -105,12 +108,14 @@ end;
 func ExecuteBundleSharedTLSUOperation() => boolean
 begin
     let function = UInt(_BundleOperation.selector[4:0]);
-    if BundleSharedBindingCount() != 1 then
+    if BundleSharedBindingPhysicalCount() != 1 then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let shared_tile_id = BundleSharedBindingId(0);
-    let shared_size = BundleSharedBindingSize(0);
+    let shared_size = if BundleSharedBindingIsReusedDestination(0) then
+        BundleSharedGenerationCapacity(0)
+        else BundleSharedBindingSize(0);
     let shared_mask = BundleSharedBindingMask(0);
     if shared_mask == Zeros{4} then return TRUE; end;
     let decoded = DecodeTileOperation(TileDecode_TLSU,
@@ -135,7 +140,8 @@ begin
         return FALSE;
     end;
     if function == 0 then
-        if !BundleSharedBindingIsDestination(0) ||
+        if (!BundleSharedBindingIsDestination(0) &&
+            !BundleSharedBindingIsReusedDestination(0)) ||
            !TileSizeCodeIsLegal(shared_size) ||
            BundleTileBindingCount() != 0 then
             SetFault(Fault_TileLegality, ReadTPC());
@@ -253,7 +259,8 @@ begin
                 shared_tile_id, store_tile, shared_mask);
         end;
     elsif function == 2 then
-        let shared_is_destination = BundleSharedBindingIsDestination(0);
+        let shared_is_destination = BundleSharedBindingIsDestination(0) ||
+            BundleSharedBindingIsReusedDestination(0);
         if shared_is_destination then
             if !BundleSharedTMOVLocalSchemaLegal() then
                 SetFault(Fault_TileLegality, ReadTPC());

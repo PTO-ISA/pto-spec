@@ -16,22 +16,22 @@ begin
     return instruction;
 end;
 
-pure func Timg2COLSharedIO() => bits(64)
+pure func Timg2COLSharedIO(init: boolean) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
     instruction[25:20] = Zeros{6} + 8;
-    instruction[18:15] = Zeros{4} + 1;
+    instruction[18:15] = if init then '0001' else '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
 pure func Timg2COLAssemble(init: boolean, last: boolean,
-                      parent_size: integer) => bits(64)
+                      writer_size: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001053;
     instruction[31] = if init then '1' else '0';
     instruction[11] = if last then '1' else '0';
-    instruction[10:7] = Zeros{4} + parent_size;
+    instruction[10:7] = Zeros{4} + writer_size;
     return instruction;
 end;
 
@@ -58,11 +58,11 @@ begin
     assert gm_binding == CommandExecution_Executed;
     let parameter_binding = ExecuteCommandInstruction(Timg2COLIOR(3, 4, 5), 32);
     assert parameter_binding == CommandExecution_Executed;
-    let shared_binding = ExecuteCommandInstruction(Timg2COLSharedIO(), 32);
+    let shared_binding = ExecuteCommandInstruction(
+        Timg2COLSharedIO(init), 32);
     assert shared_binding == CommandExecution_Executed;
-    let assemble_parent_size = if init then 1 else 0;
     let assemble_status = ExecuteCommandInstruction(
-        Timg2COLAssemble(init, last, assemble_parent_size), 32);
+        Timg2COLAssemble(init, last, 1), 32);
     assert assemble_status == CommandExecution_Executed;
     let completed = CompleteBundleAt(Zeros{PTO_XLEN} + 0x100);
     return completed;

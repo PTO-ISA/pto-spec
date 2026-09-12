@@ -457,6 +457,12 @@ begin
     end;
     return count;
 end;
+
+readonly func BundleLocalTileEncodedSourceCount() => integer {0..32}
+begin
+    return (BundleLocalTileSourceCount() +
+        BundleLocalTileParentRefCount()) as integer {0..32};
+end;
 readonly func BundleLocalTileDestinationCount() => integer {0..16}
 begin
     var count: integer {0..16} = 0;

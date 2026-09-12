@@ -184,24 +184,62 @@ begin
     if !_BundleRangeGroup.open || _BundleRangeGroup.zero_mode then
         return _BundleRangeGroup.open;
     end;
-    if !BundleRangeRoleLegal(2) then return FALSE; end;
-    if init && size_code == 0 then return FALSE; end;
-    if !init && size_code != 0 then return FALSE; end;
-    if size_code != 0 && _BundleRangeGroup.kind == BundleRangeGroup_Local &&
-       !LocalTileSizeCodeIsLegal(size_code) then return FALSE; end;
-    if size_code != 0 && _BundleRangeGroup.kind == BundleRangeGroup_Shared &&
-       !TileSizeCodeIsLegal(size_code) then return FALSE; end;
-    return TRUE;
+    if init then
+        if !_BundleRangeGroup.destination_allowed ||
+           !BundleRangeRoleLegal(2) then return FALSE; end;
+        if _BundleRangeGroup.kind == BundleRangeGroup_Local then
+            return LocalTileSizeCodeIsLegal(size_code);
+        end;
+        return TileSizeCodeIsLegal(size_code);
+    end;
+    // A continuation ParentRef occupies the final source-form binder slot;
+    // it is not a destination and therefore has no destination SizeCode.
+    if _BundleRangeGroup.destination_allowed ||
+       _BundleRangeGroup.destination_seen then return FALSE; end;
+    if _BundleRangeGroup.kind == BundleRangeGroup_Local then
+        return LocalTileSizeCodeIsLegal(size_code) &&
+               ((_BundleRangeGroup.source1_allowed &&
+                 !_BundleRangeGroup.source1_seen) ||
+                (_BundleRangeGroup.source0_allowed &&
+                 !_BundleRangeGroup.source1_allowed &&
+                 !_BundleRangeGroup.source0_seen));
+    end;
+    return TileSizeCodeIsLegal(size_code) &&
+           _BundleRangeGroup.source0_allowed &&
+           !_BundleRangeGroup.source0_seen;
 end;
 
 func RecordBundleRangeAssemble(init: boolean,
                               last: boolean,
                               reg_src: Reg5Selector,
                               uimm11: bits(11),
-                              size_code: integer {0..12},
+                              size_code: integer {0..15},
                               offset: Word)
 begin
     if _BundleRangeGroup.kind == BundleRangeGroup_Local then
+        if !init && !_BundleRangeGroup.destination_allowed then
+            let binding = _BundleRangeGroup.tile_binding;
+            if _BundleTileBindings[[binding]].source1_valid then
+                _BundleTileBindings[[binding]].parent_ref_valid = TRUE;
+                _BundleTileBindings[[binding]].parent_ref_relative =
+                    _BundleTileBindings[[binding]].source1_relative;
+                _BundleTileBindings[[binding]].parent_ref =
+                    _BundleTileBindings[[binding]].source1;
+                _BundleTileBindings[[binding]].source1_valid = FALSE;
+                _BundleTileBindings[[binding]].source1_relative = FALSE;
+            elsif _BundleTileBindings[[binding]].source0_valid then
+                _BundleTileBindings[[binding]].parent_ref_valid = TRUE;
+                _BundleTileBindings[[binding]].parent_ref_relative =
+                    _BundleTileBindings[[binding]].source0_relative;
+                _BundleTileBindings[[binding]].parent_ref =
+                    _BundleTileBindings[[binding]].source0;
+                _BundleTileBindings[[binding]].source0_valid = FALSE;
+                _BundleTileBindings[[binding]].source0_relative = FALSE;
+            else
+                SetFault(Fault_BundleControl, ReadTPC());
+                return;
+            end;
+        end;
         _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
             .destination_assemble.valid = TRUE;
         _BundleTileBindings[[_BundleRangeGroup.tile_binding]]

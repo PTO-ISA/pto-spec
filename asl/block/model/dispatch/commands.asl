@@ -309,7 +309,7 @@ begin
             let reg_src = CommandDecodedReg5(instruction, form,
                 CommandField_RegSrc);
             let size_code = CommandDecodedSmall(instruction, form,
-                CommandField_ParentSizeCode);
+                CommandField_WriterSizeCode);
             let init = CommandDecodedBool(instruction, form,
                 CommandField_INIT);
             let last = CommandDecodedBool(instruction, form,
@@ -334,7 +334,7 @@ begin
                 let offset = ReadScalarRegisterOperand(reg_src) +
                     ZeroExtend{PTO_XLEN}(uimm11);
                 RecordBundleRangeAssemble(init, last, reg_src, uimm11,
-                    size_code as integer {0..12}, offset);
+                    size_code as integer {0..15}, offset);
             end;
         when CommandHandler_ExecuteBundleStart =>
             ExecuteDecodedBundleStart(instruction, form, length_bits);

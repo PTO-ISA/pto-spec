@@ -84,7 +84,7 @@ begin
     let bad_first1 = ExecuteCommandInstruction(View(TRUE), 32);
     let bad_first_assemble = ExecuteCommandInstruction(Assemble(TRUE, 1), 32);
     let bad_second = ExecuteCommandInstruction(Binding(1, TRUE, FALSE), 32);
-    let bad_second_assemble = ExecuteCommandInstruction(Assemble(TRUE, 2), 32);
+    let bad_second_assemble = ExecuteCommandInstruction(Assemble(TRUE, 10), 32);
     assert bad_started == CommandExecution_Executed &&
            bad_first == CommandExecution_Executed &&
            bad_first0 == CommandExecution_Executed &&

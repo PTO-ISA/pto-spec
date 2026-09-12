@@ -15,7 +15,7 @@ begin
     if !assemble.last then return (TRUE, writer_cells); end;
     let shared_tile_id = BundleSharedBindingId(0);
     let parent_cells = if assemble.init then BundleLocalGenerationCellCount(
-        assemble.size_code as integer {1..12}) * 4 else
+        BundleSharedBindingSize(0) as integer {1..12}) * 4 else
         _SharedGenerations[[SharedTileArrayIndex(shared_tile_id)]].parent_cell_count;
     if offset_cells > parent_cells then return (FALSE, 0); end;
     return (TRUE, (parent_cells - offset_cells) as integer {0..8192});
@@ -34,9 +34,8 @@ begin
         return BundleSharedBindingSize(0);
     end;
     let assemble = _BundleSharedBindings[[0]].destination_assemble;
-    if assemble.init then return assemble.size_code; end;
-    return _SharedGenerations[[
-        SharedTileArrayIndex(BundleSharedBindingId(0))]].parent_size_code;
+    if assemble.init then return BundleSharedBindingSize(0); end;
+    return BundleSharedGenerationCapacity(0);
 end;
 
 readonly func BundleWeightTLOADStateLegal() => boolean
@@ -59,9 +58,13 @@ begin
            _BundleDataAttributes.canonicalize) then
         return FALSE;
     end;
-    if BundleSharedBindingCount() != 1 || BundleTileBindingCount() != 0 ||
-       !BundleSharedBindingIsDestination(0) ||
-       !TileSizeCodeIsLegal(BundleSharedBindingSize(0)) ||
+    if BundleSharedBindingPhysicalCount() != 1 || BundleTileBindingCount() != 0 ||
+       ((!BundleSharedBindingIsReusedDestination(0) &&
+         !BundleSharedBindingIsDestination(0)) ||
+        (BundleSharedBindingIsReusedDestination(0) &&
+         _BundleSharedBindings[[0]].size_code != 0)) ||
+       (!BundleSharedBindingIsReusedDestination(0) &&
+        !TileSizeCodeIsLegal(BundleSharedBindingSize(0))) ||
        !_BundleScalarBindings[[0]].valid ||
        _BundleScalarBindings[[1]].valid ||
        _BundleScalarBindings[[0]].source_count != 3 ||
@@ -128,9 +131,7 @@ begin
         else !assemble.init && !assemble.last;
     if !assemble.valid || !expected_phase || assemble.reg_src != 0 ||
        assemble.uimm11 != Zeros{11} || assemble.offset != Zeros{PTO_XLEN} ||
-       (assemble.init &&
-           (assemble.size_code < 1 || assemble.size_code > 12)) ||
-       (!assemble.init && assemble.size_code != 0) then
+       (assemble.size_code < 1 || assemble.size_code > 12) then
         return FALSE;
     end;
     let rank = BundleWeightTLOADCurrentPERank(mask);
@@ -145,12 +146,12 @@ begin
     let intended_writer_bytes: integer = rows_to_write * shape.total_col *
         TileMemoryElementBytes(data_type);
     let encoded_writer_bytes = TileSizeCodeBytes(
-        BundleSharedBindingSize(0) as integer {1..12});
+        assemble.size_code as integer {1..12});
     if rows_to_write != 0 && intended_writer_bytes != encoded_writer_bytes then
         return FALSE;
     end;
     let encoded_writer_cells = BundleWeightTLOADWriterCells(
-        BundleSharedBindingSize(0) as integer {1..12});
+        assemble.size_code as integer {1..12});
     let payload_cells = if rows_to_write == 0 then 0 else encoded_writer_cells;
     if derived_offset > 8192 then return FALSE; end;
     let (coverage_legal, coverage_cells) = BundleWeightTLOADGenerationCoverage(
@@ -188,6 +189,7 @@ begin
         shape_word, start_word);
     let cooperative = PEMaskPopulation(mask) > 1;
     let rank = if cooperative then BundleWeightTLOADCurrentPERank(mask) else 0;
+    let assemble = _BundleSharedBindings[[0]].destination_assemble;
     let rows_to_write = if cooperative then BundleWeightTLOADRowsForRank(
         valid_row, mask, rank) else valid_row;
     let destination_row_start = if cooperative then
@@ -264,7 +266,7 @@ begin
     let c0 = BundleWeightTLOADC0Elements(data_type);
     let derived_offset = (destination_row_start * total_col) DIVRM c0;
     let encoded_writer_cells = BundleWeightTLOADWriterCells(
-        BundleSharedBindingSize(0) as integer {1..12});
+        assemble.size_code as integer {1..12});
     let payload_cells = if rows_to_write == 0 then 0 else encoded_writer_cells;
     let (coverage_legal, coverage_cells) = BundleWeightTLOADGenerationCoverage(
         derived_offset as integer {0..8192}, payload_cells);
@@ -297,7 +299,7 @@ end;
 
 func BundleWeightTLOADAbortFailedAttempt()
 begin
-    if BundleWeightTLOADSelected() && BundleSharedBindingCount() == 1 &&
+    if BundleWeightTLOADSelected() && BundleSharedBindingPhysicalCount() == 1 &&
        _BundleSharedBindings[[0]].destination_assemble.valid then
         AbortBundleSharedGeneration(BundleSharedBindingId(0));
     end;
@@ -309,7 +311,7 @@ begin
     // binding. Preserve the ordinary strict no-op even for a selected weight
     // layout, before dimensions, scalar bindings, GPRs, or DATR fields matter.
     if _BundleZeroParticipationSeen && BundleTileBindingCount() == 0 &&
-       BundleSharedBindingCount() == 0 then
+       BundleSharedBindingPhysicalCount() == 0 then
         return TRUE;
     end;
     if !BundleWeightTLOADStateLegal() then

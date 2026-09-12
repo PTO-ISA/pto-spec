@@ -48,14 +48,11 @@ begin
        !_LocalGenerations[[slot]].parent_descriptor.valid then
         return FALSE;
     end;
-    let required = _LocalGenerations[[slot]].parent_cell_count;
-    if required == 0 || required > 2048 then return FALSE; end;
-    for cell = 0 to 2047 do
-        if cell < required &&
-           (_LocalGenerations[[slot]].covered_cells[cell] == '0' ||
-            _LocalGenerations[[slot]].ready_cells[cell] == '0') then
-            return FALSE;
-        end;
+    for pe = 0 to 3 do
+        if _LocalGenerations[[slot]].participant_mask[
+               PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
+           !BundleLocalGenerationPEPublicationEligible(slot, pe) then
+            return FALSE; end;
     end;
     return TRUE;
 end;
@@ -63,24 +60,33 @@ end;
 readonly func BundleLocalGenerationSlotForSource(source: TileIndex)
     => integer {0..64}
 begin
-    for slot = 0 to 63 do
-        // A post-LAST consumer binds by the architectural generation hand,
-        // including a closed-pending working destination.  It must not wait
-        // for publication merely to discover the generation it depends on.
-        if (_LocalGenerations[[slot]].committed_valid &&
-            _LocalGenerations[[slot]].committed_destination == source) ||
-           (_LocalGenerations[[slot]].closed &&
-            _LocalGenerations[[slot]].working_destination == source) then
-            return slot;
+    return BundleLocalGenerationSlotForDestination(source);
+end;
+
+readonly func BundleConsumerDependencyReady(
+    slot: integer {0..63}, index: integer {0..15}) => boolean
+begin
+    let dependency = _LocalGenerations[[slot]].consumers[[index]];
+    for pe = 0 to 3 do
+        if dependency.participant_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+            if dependency.mode == BundleConsumerDependency_WholeParent &&
+               !_LocalGenerations[[slot]].per_pe_published[[pe]] then
+                return FALSE;
+            end;
+            for cell = 0 to 2047 do
+                if dependency.required_cells[cell] == '1' &&
+                   _LocalGenerations[[slot]].per_pe_ready_cells[[pe]][cell] == '0' then
+                    return FALSE; end;
+            end;
         end;
     end;
-    return 64;
+    return TRUE;
 end;
 
 func BundleConsumerDependencyRequiredRange(
     slot: integer {0..63}, source: TileIndex, offset: Word,
-    size_code: integer {0..12}, whole: boolean,
-    consumer_instance: Word) => boolean
+    size_code: integer {0..15}, whole: boolean,
+    participant_mask: bits(4), consumer_instance: Word) => boolean
 begin
     let raw_offset = UInt(offset);
     if raw_offset > 2047 then return FALSE; end;
@@ -125,19 +131,15 @@ begin
            _LocalGenerations[[slot]].consumers[[index]]
                .execution_domain_token == _BundleExecutionDomainToken &&
            _LocalGenerations[[slot]].consumers[[index]].source == source &&
+           _LocalGenerations[[slot]].consumers[[index]].participant_mask ==
+               participant_mask &&
            _LocalGenerations[[slot]].consumers[[index]].required_cells ==
                required then
             found = TRUE;
             if _LocalGenerations[[slot]].consumers[[index]].state ==
                    BundleConsumerDependency_Waiting then
-                var ready = TRUE;
-                for cell = 0 to 2047 do
-                    if required[cell] == '1' &&
-                       _LocalGenerations[[slot]].ready_cells[cell] == '0' then
-                        ready = FALSE;
-                    end;
-                end;
-                if ready then
+                if BundleConsumerDependencyReady(
+                       slot, index as integer {0..15}) then
                     _LocalGenerations[[slot]].consumers[[index]].state =
                         BundleConsumerDependency_Eligible;
                 end;
@@ -150,6 +152,8 @@ begin
         let index = _LocalGenerations[[slot]].consumer_count;
         _LocalGenerations[[slot]].consumers[[index]].valid = TRUE;
         _LocalGenerations[[slot]].consumers[[index]].source = source;
+        _LocalGenerations[[slot]].consumers[[index]].participant_mask =
+            participant_mask;
         _LocalGenerations[[slot]].consumers[[index]].generation_instance =
             _LocalGenerations[[slot]].generation_instance;
         _LocalGenerations[[slot]].consumers[[index]].execution_domain_token =
@@ -159,19 +163,14 @@ begin
             else BundleConsumerDependency_Range;
         _LocalGenerations[[slot]].consumers[[index]].required_cells = required;
         _LocalGenerations[[slot]].consumers[[index]].required_cell_count =
-            required_count as integer {0..16};
+            required_count as integer {0..2048};
         _LocalGenerations[[slot]].consumers[[index]].after_last = TRUE;
         _LocalGenerations[[slot]].consumers[[index]]
             .consumer_instruction_instance = consumer_instance;
         _LocalGenerations[[slot]].consumer_count = (index + 1)
             as integer {0..16};
-        var ready = TRUE;
-        for cell = 0 to 2047 do
-            if required[cell] == '1' &&
-               _LocalGenerations[[slot]].ready_cells[cell] == '0' then
-                ready = FALSE;
-            end;
-        end;
+        let ready = BundleConsumerDependencyReady(
+            slot, index as integer {0..15});
         _LocalGenerations[[slot]].consumers[[index]].state = if ready then
             BundleConsumerDependency_Eligible
             else BundleConsumerDependency_Waiting;
@@ -182,16 +181,15 @@ end;
 
 func BundlePrepareConsumerSource(
     source: TileIndex, modifier_valid: boolean, offset: Word,
-    size_code: integer {0..12}) => boolean
+    size_code: integer {0..15}, participant_mask: bits(4)) => boolean
 begin
     let slot = BundleLocalGenerationSlotForSource(source);
-    if slot == 64 || !_LocalGenerations[[slot]].last_seen then return TRUE; end;
-    // An open generation still exposes the prior committed source. Only a
-    // closed LAST generation binds a post-LAST consumer dependency.
-    if !_LocalGenerations[[slot]].closed then return TRUE; end;
+    if slot == 64 || !_LocalGenerations[[slot]].parent_descriptor.valid then
+        return TRUE;
+    end;
     return BundleConsumerDependencyRequiredRange(
         slot as integer {0..63}, source, offset, size_code,
-        !modifier_valid, ReadBPC());
+        !modifier_valid, participant_mask, ReadBPC());
 end;
 
 func PrepareBundleConsumerDependencies() => boolean
@@ -203,7 +201,8 @@ begin
                    _BundleTileBindings[[binding]].source0,
                    _BundleTileBindings[[binding]].source0_subview.valid,
                    _BundleTileBindings[[binding]].source0_subview.offset,
-                   _BundleTileBindings[[binding]].source0_subview.size_code) then
+                   _BundleTileBindings[[binding]].source0_subview.size_code,
+                   _BundleTileBindings[[binding]].pe_mask) then
                 return FALSE;
             end;
             if _BundleTileBindings[[binding]].source1_valid &&
@@ -211,7 +210,8 @@ begin
                    _BundleTileBindings[[binding]].source1,
                    _BundleTileBindings[[binding]].source1_subview.valid,
                    _BundleTileBindings[[binding]].source1_subview.offset,
-                   _BundleTileBindings[[binding]].source1_subview.size_code) then
+                   _BundleTileBindings[[binding]].source1_subview.size_code,
+                   _BundleTileBindings[[binding]].pe_mask) then
                 return FALSE;
             end;
         end;
@@ -258,6 +258,19 @@ begin
            _LocalGenerations[[slot]].writers[[writer]].cell_count ==
                cell_count then
             _LocalGenerations[[slot]].writers[[writer]].ready = TRUE;
+            for pe = 0 to 3 do
+                if _LocalGenerations[[slot]].writers[[writer]].pe_mask[
+                       PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                    var pe_ready = _LocalGenerations[[slot]].per_pe_ready_cells[[pe]];
+                    for cell = 0 to 2047 do
+                        if cell < _LocalGenerations[[slot]].writers[[writer]].cell_count &&
+                           _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell < 2048 then
+                            pe_ready[_LocalGenerations[[slot]].writers[[writer]].offset_cells + cell] = '1';
+                        end;
+                    end;
+                    _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = pe_ready;
+                end;
+            end;
             matched = TRUE;
         end;
     end;
@@ -281,22 +294,9 @@ begin
         end;
     end;
     _LocalGenerations[[slot]].ready_cells = ready;
-    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
-        looplimit 16 do
-        if _LocalGenerations[[slot]].consumers[[index]].valid &&
-           _LocalGenerations[[slot]].consumers[[index]].state ==
-               BundleConsumerDependency_Waiting then
-            var complete = TRUE;
-            for cell = 0 to 2047 do
-                if _LocalGenerations[[slot]].consumers[[index]]
-                       .required_cells[cell] == '1' && ready[cell] == '0' then
-                    complete = FALSE;
-                end;
-            end;
-            if complete then
-                _LocalGenerations[[slot]].consumers[[index]].state =
-                    BundleConsumerDependency_Eligible;
-            end;
+    for pe = 0 to 3 do
+        if BundleLocalGenerationPEPublicationEligible(slot, pe) then
+            _LocalGenerations[[slot]].per_pe_published[[pe]] = TRUE;
         end;
     end;
     if _LocalGenerations[[slot]].closed &&
@@ -311,8 +311,20 @@ begin
         _LocalGenerations[[slot]].committed_destination =
             _LocalGenerations[[slot]].working_destination;
         _LocalGenerations[[slot]].committed_valid = TRUE;
-        PublishRelativeTileDestination(
-            _LocalGenerations[[slot]].working_destination);
+        PublishRelativeTileDestination(_LocalGenerations[[slot]].working_destination);
+    end;
+    // Publication is part of whole-parent readiness, so re-evaluate waiting
+    // consumers only after the delayed publication transition above.
+    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].consumers[[index]].valid &&
+           _LocalGenerations[[slot]].consumers[[index]].state ==
+               BundleConsumerDependency_Waiting &&
+           BundleConsumerDependencyReady(
+               slot, index as integer {0..15}) then
+            _LocalGenerations[[slot]].consumers[[index]].state =
+                BundleConsumerDependency_Eligible;
+        end;
     end;
     return TRUE;
 end;
@@ -364,10 +376,31 @@ begin
                 _LocalGenerations[[slot]].consumers[[index]].valid = FALSE;
             end;
         end;
+        for pe = 0 to 3 do
+            var pe_covered = Zeros{2048};
+            var pe_ready = Zeros{2048};
+            for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+                looplimit 16 do
+                if _LocalGenerations[[slot]].writers[[writer]].valid &&
+                   _LocalGenerations[[slot]].writers[[writer]].pe_mask[
+                       PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                    for cell = 0 to 2047 do
+                        if cell < _LocalGenerations[[slot]].writers[[writer]].cell_count &&
+                           _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell < 2048 then
+                            let index = _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell;
+                            pe_covered[index] = '1';
+                            if _LocalGenerations[[slot]].writers[[writer]].ready then
+                                pe_ready[index] = '1';
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+            _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = pe_covered;
+            _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = pe_ready;
+        end;
         if writers_left == 0 && _LocalGenerations[[slot]].open then
-            AbortBundleLocalGeneration(
-                _LocalGenerations[[slot]].destination_hand,
-                _LocalGenerations[[slot]].participant_mask);
+            AbortBundleLocalGeneration(slot);
         end;
     end;
 end;

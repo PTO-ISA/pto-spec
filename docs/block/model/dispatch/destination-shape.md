@@ -46,6 +46,37 @@ begin
     end;
     return 0;
 end;
+readonly func BundleReusedDestinationDescriptorMatches(
+    binding: BundleTileBindingIndex, capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    columns: integer {0..65535}, data_type: TileDataType,
+    layout: TileLayout, cube: boolean) => boolean
+begin
+    let index = _BundleTileBindings[[binding]].destination;
+    let destination = _Tiles[[index]];
+    let mask_legal = (_TileAllocationMasks[[index]] AND
+        _BundleTileBindings[[binding]].pe_mask) ==
+        _BundleTileBindings[[binding]].pe_mask;
+    if cube then
+        return TileCubeDescriptorLegal(destination) &&
+               destination.capacity_bytes == capacity_bytes &&
+               destination.valid_rows == valid_rows &&
+               destination.valid_columns == valid_columns &&
+               destination.data_type == data_type &&
+               destination.layout == layout &&
+               destination.location == TileLocation_Matrix && mask_legal;
+    end;
+    return TileDescriptorLegal(index) &&
+           destination.storage_kind == TileStorage_Numeric &&
+           destination.capacity_bytes == capacity_bytes &&
+           destination.rows == DerivedTileRows(capacity_bytes, columns, data_type) &&
+           destination.columns == columns &&
+           destination.valid_rows == valid_rows &&
+           destination.valid_columns == valid_columns &&
+           destination.data_type == data_type &&
+           destination.layout == layout &&
+           destination.location == TileLocation_Any && mask_legal;
+end;
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
 begin
     var additional0: integer = 0;
@@ -55,7 +86,8 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           !_BundleTileBindings[[binding]].destination_reused_by_generation then
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             let mask = _BundleTileBindings[[binding]].pe_mask;
@@ -104,8 +136,9 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         resolved[[binding]] = 0;
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid &&
-            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            _BundleTileBindings[[binding]].destination_valid &&
+            !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+            !_BundleTileBindings[[binding]].destination_reused_by_generation then
             let hand =
                 UInt(_BundleTileBindings[[binding]].destination_hand);
             var found = FALSE;
@@ -163,8 +196,7 @@ begin
     var destination_ordinal: integer = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           _BundleTileBindings[[binding]].destination_valid then
             let valid_rows = if explicit_shape then explicit_valid_rows else
                 BundleDestinationValidRows(shape_source_valid, shape_source);
             let valid_columns = if explicit_shape then
@@ -199,6 +231,8 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
+            let reused =
+                _BundleTileBindings[[binding]].destination_reused_by_generation;
             let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
                 destination_layout == TileLayout_CUBE_M32;
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
@@ -214,7 +248,15 @@ begin
                (!cube_destination && rows * auxiliary_columns >
                    TileLogicalElementCapacity(capacity_bytes,
                        destination_type)) then
-                SetFault(Fault_TileAllocation, ReadTPC());
+                if reused then SetFault(Fault_TileLegality, ReadTPC());
+                else SetFault(Fault_TileAllocation, ReadTPC()); end;
+                return FALSE;
+            end;
+            if reused && !BundleReusedDestinationDescriptorMatches(
+                   binding as BundleTileBindingIndex, capacity_bytes,
+                   valid_rows, auxiliary_valid_columns, auxiliary_columns,
+                   destination_type, destination_layout, cube_destination) then
+                SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
             destination_ordinal = destination_ordinal + 1;
@@ -223,56 +265,62 @@ begin
     destination_ordinal = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let valid_rows = if explicit_shape then explicit_valid_rows else
-                BundleDestinationValidRows(shape_source_valid, shape_source);
-            let valid_columns = if explicit_shape then
-                explicit_valid_columns else BundleDestinationValidColumns(
-                    shape_source_valid, shape_source);
-            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT &&
-                TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then
-                if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
-            else CurrentBundleTileLayout();
-            let columns = if explicit_shape then explicit_columns else
-                BundleDestinationPhysicalColumns(
-                    shape_source_valid, shape_source);
-            let destination_type = if destination_ordinal == 0 then
-                primary_output_type else if matrix then accumulator_type
-                else TileDataType_U32;
-            let auxiliary_row = matrix &&
-                _BundleFixedPointAttributes.row_max_en &&
-                destination_ordinal == 1;
-            let auxiliary_group = matrix &&
-                _BundleFixedPointAttributes.group_max_en &&
-                ((!_BundleFixedPointAttributes.row_max_en &&
-                  destination_ordinal == 1) ||
-                 (_BundleFixedPointAttributes.row_max_en &&
-                  destination_ordinal == 2));
-            let auxiliary_columns = if auxiliary_row then 1
-                else if auxiliary_group then
-                    BundleGroupMaxColumns(columns)
-                else columns;
-            let auxiliary_valid_columns = if auxiliary_row then 1
-                else if auxiliary_group then
-                    BundleGroupMaxColumns(valid_columns)
-                else valid_columns;
-            let capacity_bytes = BundleLocalDestinationAllocationBytes(
-                binding as BundleTileBindingIndex);
-            let tgpr2t = (decoded_operation != PTO_TILE_OPERATION_COUNT &&
-                TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
-                destination_layout == TileLayout_CUBE_M16 ||
-                destination_layout == TileLayout_CUBE_M32;
-            if !ConfigureBundleTileDestination(resolved[[binding]],
-                    capacity_bytes, valid_rows, auxiliary_columns,
-                    auxiliary_valid_columns, destination_type,
-                    destination_layout, _BundleTileBindings[[binding]].pe_mask,
-                    tgpr2t) then
-                SetFault(Fault_TileAllocation, ReadTPC());
-                return FALSE;
+           _BundleTileBindings[[binding]].destination_valid then
+            if !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+               !_BundleTileBindings[[binding]].destination_reused_by_generation then
+                let valid_rows = if explicit_shape then explicit_valid_rows else
+                    BundleDestinationValidRows(shape_source_valid, shape_source);
+                let valid_columns = if explicit_shape then
+                    explicit_valid_columns else BundleDestinationValidColumns(
+                        shape_source_valid, shape_source);
+                let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                    TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then
+                    if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
+                else CurrentBundleTileLayout();
+                let columns = if explicit_shape then explicit_columns else
+                    BundleDestinationPhysicalColumns(
+                        shape_source_valid, shape_source);
+                let destination_type = if destination_ordinal == 0 then
+                    primary_output_type else if matrix then accumulator_type
+                    else TileDataType_U32;
+                let auxiliary_row = matrix &&
+                    _BundleFixedPointAttributes.row_max_en &&
+                    destination_ordinal == 1;
+                let auxiliary_group = matrix &&
+                    _BundleFixedPointAttributes.group_max_en &&
+                    ((!_BundleFixedPointAttributes.row_max_en &&
+                      destination_ordinal == 1) ||
+                     (_BundleFixedPointAttributes.row_max_en &&
+                      destination_ordinal == 2));
+                let auxiliary_columns = if auxiliary_row then 1
+                    else if auxiliary_group then
+                        BundleGroupMaxColumns(columns)
+                    else columns;
+                let auxiliary_valid_columns = if auxiliary_row then 1
+                    else if auxiliary_group then
+                        BundleGroupMaxColumns(valid_columns)
+                    else valid_columns;
+                let capacity_bytes = BundleLocalDestinationAllocationBytes(
+                    binding as BundleTileBindingIndex);
+                let tgpr2t = (decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                    TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
+                    destination_layout == TileLayout_CUBE_M16 ||
+                    destination_layout == TileLayout_CUBE_M32;
+                if !ConfigureBundleTileDestination(resolved[[binding]],
+                        capacity_bytes, valid_rows, auxiliary_columns,
+                        auxiliary_valid_columns, destination_type,
+                        destination_layout, _BundleTileBindings[[binding]].pe_mask,
+                        tgpr2t) then
+                    SetFault(Fault_TileAllocation, ReadTPC());
+                    return FALSE;
+                end;
+                _BundleTileBindings[[binding]].destination = resolved[[binding]];
+                _BundleTileBindings[[binding]].destination_allocated_by_bundle = TRUE;
+                if _BundleTileBindings[[binding]].destination_assemble.valid &&
+                   _BundleTileBindings[[binding]].destination_assemble.init then
+                    PublishRelativeTileDestination(resolved[[binding]]);
+                end;
             end;
-            _BundleTileBindings[[binding]].destination = resolved[[binding]];
-            _BundleTileBindings[[binding]].destination_allocated_by_bundle = TRUE;
             destination_ordinal = destination_ordinal + 1;
         end;
     end;

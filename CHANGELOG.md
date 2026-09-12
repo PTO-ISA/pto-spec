@@ -3,6 +3,11 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.58.6
+
+### Cross-cutting
+- [ADR-BLOCK-0016](docs/status/decisions/ADR-BLOCK-0016-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
+
 ## Release 0.58.6.0
 
 ### Architecture
@@ -54,7 +59,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ## Release 0.58.4
 
 ### Cross-cutting
-- [ADR-BLOCK-0016](docs/status/decisions/ADR-BLOCK-0016-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
 - [ADR-CUBE-0010](docs/status/decisions/ADR-CUBE-0010-local-shared-capacity-and-cooperative-m-sharding.md): Local and Shared capacity pools with cooperative M-sharding
 - [ADR-CUBE-0011](docs/status/decisions/ADR-CUBE-0011-cooperative-group-m-distribution.md): Cooperative Group-M Distribution and Inactive PE Semantics
 - [ADR-CUBE-0012](docs/status/decisions/ADR-CUBE-0012-matrix-scale-and-cscale.md): Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale

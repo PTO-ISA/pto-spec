@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.ASSEMBLE.asl`
 
-Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.
+Decodes one writer-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.
 
 ## Normative identity {#PTO-INST-BLOCK-B-ASSEMBLE}
 
@@ -63,14 +63,14 @@ The destination form of `B.IOT` opens the exact destination carrier group. The i
 ## Assembly
 
 ```asm
-B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode
+B.ASSEMBLE INIT, LAST, RegSrc, uimm11, WriterSizeCode
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_assemble_32_122000000002 | L32 | 32 | 0x00001053 / 0x0000707f | [{"field":"INIT","operator":"one-of","values":[0,1]},{"field":"RegSrc","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"ParentSizeCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12]}] |
+| b_assemble_32_122000000002 | L32 | 32 | 0x00001053 / 0x0000707f | [{"field":"INIT","operator":"one-of","values":[0,1]},{"field":"RegSrc","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"WriterSizeCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12]}] |
 
 ### Fields
 
@@ -80,7 +80,7 @@ B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode
 | b_assemble_32_122000000002 | uimm11 | 11 | unsigned | [{"instruction_lsb":20,"value_lsb":0,"width":11}] |
 | b_assemble_32_122000000002 | RegSrc | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | b_assemble_32_122000000002 | LAST | 1 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":1}] |
-| b_assemble_32_122000000002 | ParentSizeCode | 4 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":4}] |
+| b_assemble_32_122000000002 | WriterSizeCode | 4 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":4}] |
 
 ## Encoding class
 
@@ -97,10 +97,10 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_assemble_32_122000000002 | uimm11 | 11 | 0–2047 | none | none | unsigned XLEN addend | Zero is a real zero displacement. |
 | b_assemble_32_122000000002 | RegSrc | 5 | 0–23 | none | 24–31 | absolute GPR selector | Zero names the architectural zero GPR. |
 | b_assemble_32_122000000002 | LAST | 1 | 0–1 | none | none | marks the final assembler carrier | One closes the modifier sequence at the semantic assembler. |
-| b_assemble_32_122000000002 | ParentSizeCode | 4 | 0–12 | none | 13–15 | raw parent size code | Zero is the MIDDLE/LAST-only no-parent-size encoding. |
+| b_assemble_32_122000000002 | WriterSizeCode | 4 | 0–12 | none | 13–15 | current writer extent code | Zero is reserved for discarded groups; participating writers require a nonzero extent. |
 
 - `b_assemble_32_122000000002.RegSrc` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
-- `b_assemble_32_122000000002.ParentSizeCode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `b_assemble_32_122000000002.WriterSizeCode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | LAST | marks the final assembler carrier |
 | RegSrc | absolute GPR selector |
 | uimm11 | unsigned XLEN addend |
-| ParentSizeCode | raw parent size code |
+| WriterSizeCode | current writer extent code |
 
 ## Decode
 
@@ -133,7 +133,7 @@ Immediately follows B.IOT or B.IOS and is contiguous with the associated modifie
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.ASSEMBLE.asl -->
 ```asl
-pure func InstructionContractParentSizeCodeIsRawLegal_B_ASSEMBLE(code: integer {0..15}) => boolean
+pure func InstructionContractWriterSizeCodeIsRawLegal_B_ASSEMBLE(code: integer {0..15}) => boolean
 begin
     return code <= 12;
 end;
@@ -152,13 +152,13 @@ end;
 ## Legality
 
 - RegSrc accepts only absolute GPR selectors 0..23.
-- ParentSizeCode raw values 0..12 are decoded; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.
-- Local parent sizes 1..10 are accepted; Shared parent sizes 1..12 are accepted.
+- WriterSizeCode raw values 0..12 are decoded; raw values 13..15 are reserved and raise Fault_IllegalInstruction; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.
+- Local WriterSizeCode values 1..10 and Shared WriterSizeCode values 1..12 are accepted in every phase; Local continuation identity is carried by the final source-form binder slot, while Shared continuation reuses the final B.IOS SizeCode=0 destination and selects the exact OPEN Sx generation.
 - The modifier is legal only in the contiguous immediately preceding binder group and follows source roles.
 
 ## State effects
 
-- Store raw INIT/LAST/RegSrc/uimm11/ParentSizeCode and the derived XLEN offset in the destination carrier of the open binder group.
+- Store raw INIT/LAST/RegSrc/uimm11/WriterSizeCode and the derived XLEN offset in the destination carrier of the open binder group.
 - PEMode=000 on the binder opens a discarded syntactic group; every raw-legal contiguous modifier advances TPC without reads, state, role, or fault effects.
 
 ## Memory effects and ordering
@@ -173,8 +173,8 @@ end;
 
 ## Exceptions
 
-- Reserved funct3/opcode, RegSrc24..31, and ParentSizeCode13..15 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance.
-- INIT=1 with ParentSizeCode=0 or INIT=0 with a nonzero ParentSizeCode raises Fault_BundleControl.
+- Reserved funct3/opcode and RegSrc24..31 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance; raw WriterSizeCode 13..15 is reserved and raises Fault_IllegalInstruction.
+- Participating INIT, MIDDLE, and LAST writers require a legal nonzero WriterSizeCode; raw reserved codes raise Fault_IllegalInstruction.
 - Missing, reversed, duplicate, intervening, or role-incompatible groups raise Fault_BundleControl.
 
 ## Examples

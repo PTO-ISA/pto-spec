@@ -90,6 +90,22 @@ func ResolveBundleCubeTransportDestination(
 begin
     let binding = _BundleTileBindings[[0]];
     let capacity_bytes = BundleTileDestinationSizeBytes(0);
+    if binding.destination_reused_by_generation then
+        let destination = _Tiles[[binding.destination]];
+        if !TileCubeDescriptorLegal(destination) ||
+           destination.capacity_bytes != capacity_bytes ||
+           destination.valid_rows != valid_rows ||
+           destination.valid_columns != valid_columns ||
+           destination.data_type != data_type ||
+           destination.layout != layout ||
+           destination.location != TileLocation_Matrix ||
+           (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
+               binding.pe_mask then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
     if !TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
            valid_columns, data_type, layout) ||
        !LocalTileAllocationFits(binding.pe_mask, capacity_bytes) then

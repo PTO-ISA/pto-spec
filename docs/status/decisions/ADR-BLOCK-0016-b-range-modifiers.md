@@ -16,7 +16,7 @@
   "superseded": null,
   "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
   "target_releases": [
-    "0.58.4"
+    "0.58.6"
   ],
   "affected_ndf": [
     "PTO-B-IOT-STREAM-001",
@@ -63,7 +63,7 @@
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
-  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/122",
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/262",
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0098"
@@ -195,3 +195,27 @@ Each modifier attaches only to the eligible Local or Shared binding group define
 The modifiers do not form an independent command group and cannot associate retroactively. Reserved encodings remain illegal, and operation semantics outside the listed range effects remain with their owners.
 
 修饰符不构成独立命令组，也不能追溯关联。保留编码继续非法，所列范围效果之外的操作语义仍由各自 owner 管理。
+
+## Release amendment: ParentRef, WriterSize, and Shared destination reuse
+
+The historical ADR-0098 prose above is preserved verbatim and in order for the serial-to-typed ADR migration. This section is the sole 0.58.6 amendment and is authoritative for the final frozen candidate.
+
+### Frozen contract
+
+B.SUBVIEW retains its existing 0x53 match and mask. B.ASSEMBLE retains match 0x00001053 and mask 0x0000707f, applies only to the immediately preceding contiguous B.IOT or B.IOS group, and preserves the unsigned GPR-plus-uimm11 offset modulo XLEN. Raw WriterSizeCode values 0 through 12 are legal; 13 through 15 are reserved and raise Fault_IllegalInstruction. Participating INIT, MIDDLE, and LAST writers require a nonzero extent that fits the selected parent capacity. INIT=1 selects INIT or INIT_LAST, INIT=0 selects MIDDLE or LAST, and LAST closes the semantic assembler.
+
+On INIT, ParentCapacity is selected from the immediately preceding allocating binder SizeCode. On Local continuation, the final source-form SizeCode=0 binder is exactly one Local ParentRef. On Shared continuation, the final B.IOS SharedTileID with SizeCode=0 is contextually reclassified as exactly one reused destination, selects the exact OPEN _SharedGenerations[Sx], inherits that generation's ParentCapacity, and allocates nothing. Outside that exact contiguous B.ASSEMBLE continuation group, B.IOS SizeCode=0 remains an ordinary Shared source.
+
+Local continuation permits seven ordinary Local sources plus one final ParentRef in eight physical B.IOT slots. Shared continuation permits three ordinary Shared bindings plus one reused destination in four physical B.IOS slots. Structural preflight requires exactly one reused Shared destination, no additional allocating Local or Shared destination, and no simultaneous Local ParentRef; violations raise Fault_BundleControl before lookup, resolution, or effects. The reused Shared destination and Local ParentRef are excluded from ordinary source slots, handler source arguments, readiness, definedness, alias/dependency analysis, subviews, and source faults.
+
+The Shared continuation macro retains the owning Shared destination field and uses role_kind=destination, binding_kind=shared-assemble-destination-reuse, physical_role=shared-assemble-destination-reuse, and the same B.IOS SharedTileID with SizeCode=0. The Local continuation uses field=AssembleParent, binding_kind=assemble-parent-reuse, and physical_role=assemble-parent-ref. Both surfaces expose the exact INIT, INIT_LAST, MIDDLE, and LAST variants; exact physical matches fold uniquely, incomplete or ambiguous matches remain physical, and no continuation variant is a subview.
+
+PEMode=000 continues to discard raw-legal modifiers without reads or architectural effects, while reserved raw encodings remain illegal. Local generation identity, readiness, coverage, publication, replay, restart, and protected Issue #259/#260 behavior remain unchanged. Shared generation identity, exact Sx selection, publication, and cooperative continuation behavior remain unchanged except for the final destination-reuse classification above.
+
+### Owner and projection closure
+
+The authoritative owner is the PTO-TILEOP-MACRO-001 record in asl/arch/overview/instruction-classification.asl. Its generated macro catalog, ASL documentation mirror, ADR index, release traceability, architecture/release readiness, mnemonic coverage summary, and CHANGELOG are regenerated from that owner and are not independent semantic sources.
+
+### Reviewed provenance
+
+The reviewed scalar-plus-command encoded-form projection has 561 forms and SHA-256 fingerprint 0589076678a0e1954d83d444e61769f57a68640ce79c1e5e2eeed3efaa387f71. The refreshed Local selector projection has candidate fingerprint f46fe83c2ff29c9c40e03b8aec8bd110852308d7fb37b7dc2cdc6b4a03ca3afb, with encoding ABI pto-isa-0.58.6-mode-function-v1. This amendment is release-impacting for 0.58.6 but does not itself publish a release.

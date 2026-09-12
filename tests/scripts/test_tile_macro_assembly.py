@@ -149,6 +149,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             ROOT / "asl/arch/overview/instruction-classification.asl"
         ).read_text(encoding="utf-8")
         self.assertEqual(owner.count("// PTO-TILEOP-MACRO: "), 117)
+        self.assertEqual(owner.count("// PTO-TILEOP-MACRO-CONTRACT: "), 1)
         self.assertIn("are the sole owners of canonical", owner)
         definitions = self.generator["load_macro_form_definitions"]()
         for definition in definitions.values():
@@ -158,7 +159,73 @@ class TileMacroAssemblyTest(unittest.TestCase):
         generator = GENERATOR.read_text(encoding="utf-8")
         self.assertNotIn("FORMAT_OVERRIDES", generator)
         self.assertNotIn("FORMAT_VARIANTS", generator)
+        self.assertNotIn("ASSEMBLE_PARENT_CONTRACT", generator)
         self.assertNotIn("def config_fields", generator)
+
+    def test_assemble_schema_and_capacity_audit_are_owner_derived(self) -> None:
+        owner_contract = self.generator["load_macro_assembly_contract"]()
+        self.assertEqual(
+            owner_contract["assemble_parent"], self.catalog["assemble_parent_contract"]
+        )
+        self.assertEqual(
+            owner_contract["assemble_parent"]["parent_capacity"],
+            "allocating-binder-SizeCode-or-selected-Local-ParentRef-or-open-Shared-generation",
+        )
+        self.assertEqual(
+            owner_contract["capacity_audit"], self.catalog["assemble_capacity_audit"]
+        )
+        audit = self.catalog["assemble_capacity_audit"]
+        self.assertEqual(
+            (audit["Local"]["INIT"]["physical_slots"], audit["Local"]["INIT"]["ordinary_source_max"]),
+            (8, 8),
+        )
+        self.assertEqual(
+            (audit["Local"]["continuation"]["ordinary_source_max"], audit["Local"]["continuation"]["parent_ref_count"]),
+            (7, 1),
+        )
+        self.assertEqual(
+            (audit["Shared"]["INIT"]["physical_slots"], audit["Shared"]["INIT"]["ordinary_source_max"]),
+            (4, 4),
+        )
+        self.assertEqual(
+            (audit["Shared"]["continuation"]["ordinary_source_max"], audit["Shared"]["continuation"]["parent_ref_count"]),
+            (3, 0),
+        )
+        self.assertEqual(audit["Shared"]["continuation"]["reused_destination_count"], 1)
+        for parent_kind in ("Local", "Shared"):
+            for phase, row in audit[parent_kind].items():
+                slots = row["physical_slots"]
+                carrier_count = row["parent_ref_count"] + row["reused_destination_count"]
+                for ordinary_sources in range(
+                    row["ordinary_source_min"], row["ordinary_source_max"] + 1
+                ):
+                    self.assertLessEqual(
+                        ordinary_sources + carrier_count,
+                        slots,
+                        f"{parent_kind}/{phase} representable capacity",
+                    )
+                self.assertGreater(
+                    row["ordinary_source_max"] + 1 + carrier_count,
+                    slots,
+                    f"{parent_kind}/{phase} overflow capacity",
+                )
+        for operation in self.operations:
+            for form in operation["forms"]:
+                for variant in form.get("assemble_variants", []):
+                    phase = variant["assemble_phase"]
+                    kind = "Shared" if "->Sx" in variant["macro_format"] else "Local"
+                    self.assertEqual(
+                        variant["expansion"]["capacity_audit"], audit[kind]
+                    )
+                    self.assertEqual(
+                        variant["expansion"]["assemble_parent"]["writer_range"],
+                        self.catalog["assemble_parent_contract"]["writer_range"],
+                    )
+                    if phase in {"MIDDLE", "LAST"}:
+                        self.assertEqual(
+                            variant["expansion"]["capacity_audit"]["continuation"]["fault_order"],
+                            "before-resolution-effects",
+                        )
 
     def test_every_form_has_a_complete_physical_plan(self) -> None:
         form_ids = set()
@@ -338,6 +405,178 @@ class TileMacroAssemblyTest(unittest.TestCase):
             shared_store_source["eligible_modifiers"][0]["modifier"],
             "B.SUBVIEW",
         )
+
+    def test_assemble_variants_project_parent_identity_without_source_leakage(self) -> None:
+        local = self.by_name["TLOAD"]["forms"][0]
+        shared = self.by_name["TLOAD"]["forms"][1]
+        local_variants = {
+            variant["assemble_phase"]: variant
+            for variant in local["assemble_variants"]
+        }
+        shared_variants = {
+            variant["assemble_phase"]: variant
+            for variant in shared["assemble_variants"]
+        }
+        self.assertTrue(
+            local_variants["INIT"]["macro_format"].endswith(
+                "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]"
+            )
+        )
+        self.assertTrue(
+            local_variants["INIT_LAST"]["macro_format"].endswith(
+                "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]"
+            )
+        )
+        self.assertTrue(
+            local_variants["MIDDLE"]["macro_format"].endswith(
+                "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]"
+            )
+        )
+        self.assertTrue(
+            shared_variants["LAST"]["macro_format"].endswith(
+                "->Sx[assemble=LAST,RegSrc+uimm11:WriterSize]"
+            )
+        )
+
+        for variants, expected_sources in (
+            (local_variants, local["sources"]),
+            (shared_variants, shared["sources"]),
+        ):
+            self.assertEqual(set(variants), {"INIT", "INIT_LAST", "MIDDLE", "LAST"})
+            for phase, variant in variants.items():
+                self.assertEqual(variant["sources"], expected_sources)
+                self.assertFalse(
+                    any(source["field"] == "AssembleParent" for source in variant["sources"])
+                )
+                expansion = variant["expansion"]
+                self.assertEqual(
+                    expansion["assemble_lowering"]["writer_range"],
+                    "RegSrc+uimm11:WriterSize",
+                )
+                self.assertEqual(
+                    expansion["assemble_lowering"]["fields"],
+                    {
+                        "RegSrc": "RegSrc",
+                        "uimm11": "uimm11",
+                        "WriterSizeCode": "WriterSizeCode",
+                    },
+                )
+                parent = expansion["assemble_parent"]
+                is_shared = variants is shared_variants
+                if phase in {"INIT", "INIT_LAST"}:
+                    self.assertNotEqual(parent["binding_kind"], "assemble-parent-reuse")
+                    base_destinations = (
+                        local["destinations"]
+                        if variants is local_variants
+                        else shared["destinations"]
+                    )
+                    self.assertEqual(
+                        variant["destinations"][0]["field"],
+                        base_destinations[0]["field"],
+                    )
+                    self.assertEqual(variant["destinations"][0]["size"], "ParentCapacity")
+                    self.assertEqual(
+                        variant["destinations"][0]["binding_kind"],
+                        base_destinations[0]["binding_kind"],
+                    )
+                    self.assertFalse(expansion["no_allocation"])
+                    self.assertIsNone(expansion["assemble_lowering"]["parent_ref"])
+                else:
+                    if is_shared:
+                        self.assertEqual(
+                            parent["binding_kind"],
+                            "shared-assemble-destination-reuse",
+                        )
+                        self.assertEqual(parent["role_kind"], "destination")
+                        self.assertEqual(parent["physical_role"], "shared-assemble-destination-reuse")
+                        self.assertEqual(parent["field"], shared["destinations"][0]["field"])
+                        self.assertIsNone(parent["physical_binding"])
+                        self.assertNotIn("parent_ref", expansion["assemble_lowering"])
+                        self.assertEqual(
+                            expansion["assemble_lowering"]["shared_destination"]["size_code"],
+                            0,
+                        )
+                        self.assertEqual(
+                            [destination["field"] for destination in variant["destinations"]],
+                            [shared["destinations"][0]["field"]],
+                        )
+                        self.assertEqual(
+                            variant["destinations"][0]["binding_kind"],
+                            "shared-assemble-destination-reuse",
+                        )
+                        self.assertNotIn("assemble-parent-ref", json.dumps(expansion))
+                        self.assertNotIn("AssembleParent", json.dumps(expansion))
+                    else:
+                        self.assertEqual(parent["binding_kind"], "assemble-parent-reuse")
+                        self.assertEqual(
+                            parent["physical_binding"]["members"][0]["physical_role"],
+                            "assemble-parent-ref",
+                        )
+                        self.assertEqual(
+                            parent["physical_binding"]["members"][0]["size_code"], 0
+                        )
+                        self.assertTrue(parent["physical_binding"]["members"][0]["final"])
+                        self.assertFalse(
+                            parent["physical_binding"]["members"][0]["handler_source_argument"]
+                        )
+                        self.assertTrue(
+                            any(
+                                destination["field"] == "AssembleParent"
+                                and destination["binding_kind"] == "assemble-parent-reuse"
+                                for destination in variant["destinations"]
+                            )
+                        )
+                        self.assertEqual(
+                            [destination["field"] for destination in variant["destinations"]],
+                            ["AssembleParent"],
+                        )
+                    self.assertTrue(expansion["no_allocation"])
+                self.assertFalse(
+                    any(
+                        argument.get("physical_role") == "assemble-parent-ref"
+                        for argument in expansion["handler_source_arguments"]
+                        if isinstance(argument, dict)
+                    )
+                )
+
+        matrix_continuation = self.by_name["TGEMV"]["forms"][0][
+            "assemble_variants"
+        ][2]
+        self.assertEqual(
+            [destination["field"] for destination in matrix_continuation["destinations"]],
+            ["AssembleParent"],
+        )
+        self.assertEqual(
+            matrix_continuation["expansion"]["rejected_allocating_destinations"],
+            ["RowMaxOut", "GroupMaxOut"],
+        )
+        self.assertEqual(
+            matrix_continuation["expansion"]["structural_fault"],
+            "Fault_BundleControl",
+        )
+
+    def test_assemble_variants_are_absent_from_inapplicable_forms_and_fold_fail_closed(self) -> None:
+        for form in self.by_name["TSTORE"]["forms"]:
+            self.assertEqual(form.get("assemble_variants", []), [])
+            self.assertNotIn("assemble_parent", form["expansion"])
+
+        tload = self.by_name["TLOAD"]["forms"][0]
+        variant = tload["assemble_variants"][2]
+        self.assertEqual(
+            variant["expansion"]["fold"]["key_fields"],
+            [
+                "assemble_phase",
+                "writer_range",
+                "parent_identity",
+                "semantic_source_list",
+                "no_allocation",
+            ],
+        )
+        invalid = copy.deepcopy(self.catalog)
+        operation = next(item for item in invalid["operations"] if item["mnemonic"] == "TLOAD")
+        operation["forms"][0]["assemble_variants"][2]["expansion"]["no_allocation"] = False
+        with self.assertRaises(ValueError):
+            self.generator["validate_catalog"](invalid)
 
     def test_catalog_validation_fails_closed(self) -> None:
         validate = self.generator["validate_catalog"]
@@ -724,7 +963,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 "output.modifier": "B.ASSEMBLE INIT_LAST",
                 "B.ASSEMBLE.INIT": 1,
                 "B.ASSEMBLE.LAST": 1,
-                "B.ASSEMBLE.ParentSizeCode": 1,
+                "B.ASSEMBLE.WriterSizeCode": 1,
             },
         )
 

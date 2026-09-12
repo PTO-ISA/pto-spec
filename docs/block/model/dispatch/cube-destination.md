@@ -24,7 +24,8 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           !_BundleTileBindings[[binding]].destination_reused_by_generation then
             additional = additional + BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
         end;
@@ -56,7 +57,8 @@ begin
         resolved[[binding]] = 0;
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           !_BundleTileBindings[[binding]].destination_reused_by_generation then
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
             let hand = UInt(
@@ -85,17 +87,36 @@ begin
     var destination_ordinal: integer {0..3} = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           _BundleTileBindings[[binding]].destination_valid then
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
+            let reused =
+                _BundleTileBindings[[binding]].destination_reused_by_generation;
             if destination_ordinal == 0 then
                 if !TileMatrixMLayoutLegal(primary_layout, m) ||
                    !TileCubeDescriptorShapeLegal(
                        capacity_bytes, m, n,
                        output_type, primary_layout) then
-                    SetFault(Fault_TileAllocation, ReadTPC());
+                    if reused then SetFault(Fault_TileLegality, ReadTPC());
+                    else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
+                end;
+                if reused then
+                    let destination =
+                        _Tiles[[_BundleTileBindings[[binding]].destination]];
+                    if !TileCubeDescriptorLegal(destination) ||
+                       destination.capacity_bytes != capacity_bytes ||
+                       destination.valid_rows != m ||
+                       destination.valid_columns != n ||
+                       destination.data_type != output_type ||
+                       destination.layout != primary_layout ||
+                       destination.location != TileLocation_Matrix ||
+                       (_TileAllocationMasks[[_BundleTileBindings[[binding]]
+                            .destination]] AND allocation_mask) !=
+                           allocation_mask then
+                        SetFault(Fault_TileLegality, ReadTPC());
+                        return FALSE;
+                    end;
                 end;
             else
                 let row_auxiliary =
@@ -117,8 +138,30 @@ begin
                        capacity_bytes, auxiliary_columns, m,
                        auxiliary_columns, accumulator_type) ||
                    rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS then
-                    SetFault(Fault_TileAllocation, ReadTPC());
+                    if reused then SetFault(Fault_TileLegality, ReadTPC());
+                    else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
+                end;
+                if reused then
+                    let destination =
+                        _Tiles[[_BundleTileBindings[[binding]].destination]];
+                    if !TileDescriptorLegal(
+                           _BundleTileBindings[[binding]].destination) ||
+                       destination.storage_kind != TileStorage_Numeric ||
+                       destination.capacity_bytes != capacity_bytes ||
+                       destination.rows != rows ||
+                       destination.columns != auxiliary_columns ||
+                       destination.valid_rows != m ||
+                       destination.valid_columns != auxiliary_columns ||
+                       destination.data_type != accumulator_type ||
+                       destination.layout != TileLayout_RowMajor ||
+                       destination.location != TileLocation_Any ||
+                       (_TileAllocationMasks[[_BundleTileBindings[[binding]]
+                            .destination]] AND allocation_mask) !=
+                           allocation_mask then
+                        SetFault(Fault_TileLegality, ReadTPC());
+                        return FALSE;
+                    end;
                 end;
             end;
             destination_ordinal =
@@ -129,40 +172,42 @@ begin
     destination_ordinal = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid &&
-           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let capacity_bytes = BundleTileDestinationSizeBytes(
-                binding as BundleTileBindingIndex);
-            if destination_ordinal == 0 then
-                let configured = ConfigureCubeTileForMask(
-                    resolved[[binding]], capacity_bytes, m, n,
-                    output_type, primary_layout,
-                    TileLocation_Matrix, allocation_mask);
-                assert configured;
-            else
-                let row_auxiliary =
-                    _BundleFixedPointAttributes.row_max_en &&
-                    destination_ordinal == 1;
-                let group_auxiliary =
-                    _BundleFixedPointAttributes.group_max_en &&
-                    ((!_BundleFixedPointAttributes.row_max_en &&
-                      destination_ordinal == 1) ||
-                     (_BundleFixedPointAttributes.row_max_en &&
-                      destination_ordinal == 2));
-                let auxiliary_columns = if row_auxiliary then 1
-                    else if group_auxiliary then
-                        BundleGroupMaxColumns(n)
-                    else n;
-                ConfigureTileForMask(
-                    resolved[[binding]], capacity_bytes,
-                    m, auxiliary_columns, m, auxiliary_columns,
-                    accumulator_type, TileLayout_RowMajor,
-                    TileLocation_Any, allocation_mask);
+           _BundleTileBindings[[binding]].destination_valid then
+            if !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+               !_BundleTileBindings[[binding]].destination_reused_by_generation then
+                let capacity_bytes = BundleTileDestinationSizeBytes(
+                    binding as BundleTileBindingIndex);
+                if destination_ordinal == 0 then
+                    let configured = ConfigureCubeTileForMask(
+                        resolved[[binding]], capacity_bytes, m, n,
+                        output_type, primary_layout,
+                        TileLocation_Matrix, allocation_mask);
+                    assert configured;
+                else
+                    let row_auxiliary =
+                        _BundleFixedPointAttributes.row_max_en &&
+                        destination_ordinal == 1;
+                    let group_auxiliary =
+                        _BundleFixedPointAttributes.group_max_en &&
+                        ((!_BundleFixedPointAttributes.row_max_en &&
+                          destination_ordinal == 1) ||
+                         (_BundleFixedPointAttributes.row_max_en &&
+                          destination_ordinal == 2));
+                    let auxiliary_columns = if row_auxiliary then 1
+                        else if group_auxiliary then
+                            BundleGroupMaxColumns(n)
+                        else n;
+                    ConfigureTileForMask(
+                        resolved[[binding]], capacity_bytes,
+                        m, auxiliary_columns, m, auxiliary_columns,
+                        accumulator_type, TileLayout_RowMajor,
+                        TileLocation_Any, allocation_mask);
+                end;
+                _BundleTileBindings[[binding]].destination =
+                    resolved[[binding]];
+                _BundleTileBindings[[binding]].destination_allocated_by_bundle =
+                    TRUE;
             end;
-            _BundleTileBindings[[binding]].destination =
-                resolved[[binding]];
-            _BundleTileBindings[[binding]].destination_allocated_by_bundle =
-                TRUE;
             destination_ordinal =
                 (destination_ordinal + 1) as integer {0..3};
         end;
