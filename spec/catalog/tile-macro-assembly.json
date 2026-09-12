@@ -318,7 +318,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -1051,7 +1052,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -1627,7 +1629,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -2222,7 +2225,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -2834,7 +2838,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -3579,7 +3584,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -4174,7 +4180,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -4769,7 +4776,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -5611,7 +5619,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -6273,7 +6282,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -6868,7 +6878,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -7463,7 +7474,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -8058,7 +8070,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -8729,7 +8742,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -8810,10 +8823,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "cd1f38662be4391d1f504292c7e10f0ffa4d66dc9de76ef33f2a96c5b58c2d49",
             "form_id": "pto0586-mscatter-edbfc938336d2e2b",
@@ -9364,7 +9377,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -9854,7 +9868,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -10344,7 +10359,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -10834,7 +10850,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -11459,7 +11476,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -11545,10 +11562,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "6e175fa558784976b66c6d49dab5167699e80dd9961eaa86c32fd8dabe7442dc",
             "form_id": "pto0586-mscatter-mask-7bbe2792d1e879ff",
@@ -12186,7 +12203,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -12676,7 +12694,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -13166,7 +13185,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -13674,7 +13694,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -14076,7 +14097,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -14773,7 +14795,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -15375,7 +15398,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -16058,7 +16082,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -16733,7 +16758,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -17416,7 +17442,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -18049,7 +18076,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -18660,7 +18688,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -18747,8 +18775,8 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -19124,7 +19152,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -19211,8 +19239,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_form_id": "pto0586-tcmp-c317ad08bda7b5a3",
+              "canonical_without_runtime_state": false,
+              "on_alias": "use the first physically identical catalog form",
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -19602,7 +19632,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -19700,10 +19730,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "5bfd327e46adf51f0074513c034759131efedd86287414f50026a06994c7fb79",
             "form_id": "pto0586-tcmp-cd19732dd8bd6e77",
@@ -20342,7 +20372,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -20429,8 +20459,8 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -20799,7 +20829,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -20886,8 +20916,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_form_id": "pto0586-tcmps-dff2204cec373cfe",
+              "canonical_without_runtime_state": false,
+              "on_alias": "use the first physically identical catalog form",
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -21270,7 +21302,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -21368,10 +21400,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "1ea63b083ee3e23c34b79e370cd207a0f6709a7f73ab066dd7fb12f949fab35f",
             "form_id": "pto0586-tcmps-6b93fa6cb33006c2",
@@ -22073,7 +22105,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -22711,7 +22744,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -23362,7 +23396,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -24016,7 +24051,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -24748,7 +24784,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -25477,7 +25514,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -26209,7 +26247,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -26940,7 +26979,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -27671,7 +27711,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -28402,7 +28443,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -29120,7 +29162,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -29758,7 +29801,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -30396,7 +30440,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -31034,7 +31079,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -31702,7 +31748,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile0.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -31833,10 +31879,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "453581797049a958c1c55d2f1bcff1fcab72dc180cc27a93540b9992384158fe",
             "form_id": "pto0586-tcvt-ff08afbc817392ad",
@@ -32449,7 +32495,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -33132,7 +33179,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -33795,7 +33843,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -34420,7 +34469,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -35027,7 +35077,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -35789,7 +35840,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -36978,7 +37030,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -38556,7 +38609,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -40219,7 +40273,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -41894,7 +41949,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -43667,7 +43723,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -45525,7 +45582,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -46884,7 +46942,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -47676,7 +47735,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -48064,7 +48124,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -48501,7 +48562,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -48864,7 +48926,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -49493,7 +49556,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -50605,7 +50669,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -51664,7 +51729,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -52716,7 +52782,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -54280,7 +54347,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -55468,7 +55536,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -56654,7 +56723,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -58365,7 +58435,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -59501,7 +59572,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -60625,7 +60697,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -62275,7 +62348,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -63477,7 +63551,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -64613,7 +64688,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -66300,7 +66376,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -67636,7 +67713,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -68912,7 +68990,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -70746,7 +70825,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -72020,7 +72100,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -73222,7 +73303,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -74427,7 +74509,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -75110,7 +75193,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -75785,7 +75869,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -76468,7 +76553,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -76975,7 +77061,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -77577,7 +77664,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -78260,7 +78348,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -78923,7 +79012,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -79513,7 +79603,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -80115,7 +80206,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -80798,7 +80890,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -81323,7 +81416,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -81929,7 +82023,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -82563,7 +82658,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly because Row is not recoverable",
+                  "canonical_output": "omit Row because it has no encoded carrier",
                   "expression": "ExplicitRowOnly",
                   "kind": "input-only-check",
                   "requires_runtime_state": true
@@ -82628,10 +82723,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "ea77d0a10bdc0f656fcf38d7bb576239d9e25176475befd6d4e7bdf0ef08fb62",
             "form_id": "pto0586-tprefetch-7f083c9ceaf1e87d",
@@ -83211,7 +83306,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -83801,7 +83897,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -84403,7 +84500,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -85086,7 +85184,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -85793,7 +85892,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -86431,7 +86531,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -87082,7 +87183,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -87736,7 +87838,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -88468,7 +88571,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -89197,7 +89301,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -89929,7 +90034,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -90660,7 +90766,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -91391,7 +91498,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -92122,7 +92230,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -92840,7 +92949,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -93478,7 +93588,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -94116,7 +94227,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -94754,7 +94866,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -95349,7 +95462,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -95947,7 +96061,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -96639,8 +96754,8 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -97067,7 +97182,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile1.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -97148,8 +97263,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_form_id": "pto0586-tsel-2bc53c02929e9aa5",
+              "canonical_without_runtime_state": false,
+              "on_alias": "use the first physically identical catalog form",
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -97582,7 +97699,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile1.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -97663,10 +97780,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "768b97bc3e983e4cc913cb27221528ebf2f535b9b128768e85de5b6be4779758",
             "form_id": "pto0586-tsel-b0338a55f8ed25f6",
@@ -98473,8 +98590,8 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -98888,7 +99005,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile1.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -98964,8 +99081,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_form_id": "pto0586-tsels-258a8ff0a2de24c1",
+              "canonical_without_runtime_state": false,
+              "on_alias": "use the first physically identical catalog form",
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
@@ -99385,7 +99504,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile1.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -99461,10 +99580,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "cd6fa40614aa6ea0141439298df55ee2eb2933d7c0f986eab95a3d8b62563975",
             "form_id": "pto0586-tsels-2154a0c3f87c0d3a",
@@ -100242,7 +100361,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -100925,7 +101045,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -101600,7 +101721,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -102283,7 +102405,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -102808,7 +102931,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -103546,7 +103670,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -104039,7 +104164,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcTile.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -104115,10 +104240,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "c01151bf206a305e752cde402dc5e073cd4c352b3a37e5d1d4f2cfef62dafc60",
             "form_id": "pto0586-tstore-d378fbb002fb694b",
@@ -104427,7 +104552,7 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "retain physical assembly without source descriptor state",
+                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
                   "expression": "SrcShared.Descriptor.Row",
                   "kind": "runtime-derived-check",
                   "requires_runtime_state": true
@@ -104503,10 +104628,10 @@
               }
             ],
             "fold": {
-              "on_ambiguity": "retain physical assembly",
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "de96572986eca123a331c26780cb0f6b0d774bb0149e47e77452155773492c37",
             "form_id": "pto0586-tstore-5b4c39b257449834",
@@ -104940,7 +105065,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -105584,7 +105710,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -106267,7 +106394,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -106900,7 +107028,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -107394,7 +107523,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -108064,7 +108194,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
@@ -108747,7 +108878,8 @@
               }
             ],
             "fold": {
-              "policy": "unique-exact-match-or-physical",
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },

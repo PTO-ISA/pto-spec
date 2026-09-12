@@ -182,7 +182,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 )
                 self.assertEqual(
                     expansion["fold"]["policy"],
-                    "unique-exact-match-or-physical",
+                    "canonical-exact-match",
                 )
                 self.assertTrue(expansion["fold"]["requires_complete_boundary"])
                 self.assertTrue(expansion["operand_commands"])
@@ -472,12 +472,15 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.assertEqual(
                 first["fold_signature_sha256"], second["fold_signature_sha256"]
             )
-            for expansion in (first, second):
-                self.assertFalse(expansion["fold"]["unique_without_runtime_state"])
-                self.assertEqual(
-                    expansion["fold"]["on_ambiguity"], "retain physical assembly"
-                )
-            self.assertFalse(gpr["fold"]["unique_without_runtime_state"])
+            self.assertFalse(first["fold"]["unique_without_runtime_state"])
+            self.assertFalse(second["fold"]["unique_without_runtime_state"])
+            self.assertTrue(first["fold"]["canonical_without_runtime_state"])
+            self.assertFalse(second["fold"]["canonical_without_runtime_state"])
+            self.assertEqual(
+                second["fold"]["canonical_form_id"], first["form_id"]
+            )
+            self.assertTrue(gpr["fold"]["unique_without_runtime_state"])
+            self.assertTrue(gpr["fold"]["canonical_without_runtime_state"])
 
         tcmp_kinds = [
             form["destinations"][0]["binding_kind"]
@@ -559,10 +562,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                             form["expansion"]["form_id"],
                         )
                 if resolution["requires_runtime_state"]:
-                    self.assertFalse(
-                        form["expansion"]["fold"]["unique_without_runtime_state"],
-                        form["expansion"]["form_id"],
-                    )
+                    self.assertIn("omit Row", resolution["canonical_output"])
                 if resolution["kind"] == "runtime-derived-check":
                     runtime_forms.append((operation["mnemonic"], form["spelling"], expression))
                 elif resolution["kind"] == "input-only-check":

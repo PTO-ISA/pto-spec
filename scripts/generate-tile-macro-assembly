@@ -15,6 +15,24 @@ ROOT = Path(__file__).resolve().parent.parent
 JSON_OUTPUT = ROOT / "spec/catalog/tile-macro-assembly.json"
 MARKDOWN_OUTPUT = ROOT / "docs/virtual-isa/tileop-macro-assembly.md"
 
+RUNTIME_ROW_POLICY_REPLACEMENTS = {
+    "retain physical assembly because Row is not recoverable":
+        "omit Row because it has no encoded carrier",
+    "retain physical assembly without source descriptor state":
+        "omit Row because it remains runtime-derived from the source descriptor",
+    "retain physical assembly without destination descriptor state":
+        "omit Row because it remains runtime-derived from the destination descriptor",
+}
+
+
+def update_runtime_row_owner_policy() -> None:
+    text = MACRO_OWNER.read_text(encoding="utf-8")
+    updated = text
+    for old, new in RUNTIME_ROW_POLICY_REPLACEMENTS.items():
+        updated = updated.replace(old, new)
+    if updated != text:
+        MACRO_OWNER.write_text(updated, encoding="utf-8")
+
 
 MACRO_OWNER = ROOT / "asl/arch/overview/instruction-classification.asl"
 MACRO_RECORD_PREFIX = "// PTO-TILEOP-MACRO: "
@@ -549,13 +567,15 @@ def row_resolution(
             return {
                 "kind": "input-only-check",
                 "expression": "ExplicitRowOnly",
-                "canonical_output": "retain physical assembly because Row is not recoverable",
+                "canonical_output": "omit Row because it has no encoded carrier",
                 "requires_runtime_state": True,
             }
         return {
             "kind": "runtime-derived-check",
             "expression": f"{descriptor_source}.Descriptor.Row",
-            "canonical_output": "retain physical assembly without source descriptor state",
+            "canonical_output": (
+                "omit Row because it remains runtime-derived from the source descriptor"
+            ),
             "requires_runtime_state": True,
         }
 
@@ -631,7 +651,9 @@ def row_resolution(
             return {
                 "kind": "runtime-derived-check",
                 "expression": f"{sized_destination}.TSize/{sized_destination}.LayoutCol/{element_type}",
-                "canonical_output": "retain physical assembly without destination descriptor state",
+                "canonical_output": (
+                    "omit Row because it remains runtime-derived from the destination descriptor"
+                ),
                 "requires_runtime_state": True,
             }
         return {
@@ -902,7 +924,7 @@ def expansion_plan(
             "command_range": "half-open; the following non-modifier instruction closes the macro bundle but belongs to the next Block instruction",
         },
         "fold": {
-            "policy": "unique-exact-match-or-physical",
+            "policy": "canonical-exact-match",
             "requires_complete_boundary": True,
         },
     }
@@ -1270,29 +1292,22 @@ def build_operation(
         signature = physical_fold_signature(expansion)
         expansion["fold_signature_sha256"] = signature
         signature_counts[signature] = signature_counts.get(signature, 0) + 1
+    canonical_form_by_signature: dict[str, str] = {}
     for form in forms:
         expansion = form["expansion"]
         assert isinstance(expansion, dict)
         signature = physical_fold_signature(expansion)
         fold = expansion["fold"]
         assert isinstance(fold, dict)
-        row_binding = next(
-            (
-                item
-                for item in expansion["configuration_bindings"]
-                if item["field"] == "Row"
-            ),
-            None,
-        )
-        row_needs_runtime = bool(
-            row_binding
-            and row_binding.get("resolution", {}).get("requires_runtime_state")
-        )
-        fold["unique_without_runtime_state"] = (
-            signature_counts[signature] == 1 and not row_needs_runtime
-        )
-        if signature_counts[signature] != 1 or row_needs_runtime:
-            fold["on_ambiguity"] = "retain physical assembly"
+        unique = signature_counts[signature] == 1
+        canonical = signature not in canonical_form_by_signature
+        fold["unique_without_runtime_state"] = unique
+        fold["canonical_without_runtime_state"] = canonical
+        if canonical:
+            canonical_form_by_signature[signature] = str(expansion["form_id"])
+        else:
+            fold["canonical_form_id"] = canonical_form_by_signature[signature]
+            fold["on_alias"] = "use the first physically identical catalog form"
     primary = forms[0]
 
     contract = record["contract"]
@@ -1585,12 +1600,12 @@ def build_markdown(catalog: dict[str, object]) -> str:
             "## Physical expansion and disassembly",
             "",
             "The JSON catalog records the complete physical `block_composition`, defaults, exceptions, semantic source roles, and destination roles for every row above.",
-            "A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds only a unique exact schema match and otherwise prints physical bundle assembly.",
+            "A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds every complete canonical physical schema. A configuration field such as `Row` that has no encoded carrier and remains runtime-derived is omitted from disassembly rather than printed as an invented value. When PredicateTile and PredicateCell forms have identical physical bytes, disassembly uses the first catalog form as the canonical spelling; reassembly preserves the bytes exactly.",
             "",
             "## Tool integration boundary",
             "",
             "This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.",
-            "Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.",
+            "Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, or unmatched encoded value remains physical assembly. Runtime descriptor state is not required for canonical folding.",
             "",
         ]
     )
@@ -1648,6 +1663,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
+    if not args.check:
+        update_runtime_row_owner_policy()
     catalog = build_catalog()
     validate_catalog(catalog)
     json_text = render_json(catalog)

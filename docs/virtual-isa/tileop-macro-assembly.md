@@ -259,9 +259,9 @@ Destination metavariables likewise become physical binding operands. A Local des
 ## Physical expansion and disassembly
 
 The JSON catalog records the complete physical `block_composition`, defaults, exceptions, semantic source roles, and destination roles for every row above.
-A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds only a unique exact schema match and otherwise prints physical bundle assembly.
+A TileOp assembler expands through that generated schema. A bundle-aware disassembler folds every complete canonical physical schema. A configuration field such as `Row` that has no encoded carrier and remains runtime-derived is omitted from disassembly rather than printed as an invented value. When PredicateTile and PredicateCell forms have identical physical bytes, disassembly uses the first catalog form as the canonical spelling; reassembly preserves the bytes exactly.
 
 ## Tool integration boundary
 
 This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.
-Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, unmatched default, or ambiguous form remains physical assembly.
+Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, or unmatched encoded value remains physical assembly. Runtime descriptor state is not required for canonical folding.
