@@ -594,9 +594,37 @@ def row_resolution(
     # preserve descriptor geometry that destination capacity cannot recover.
     predicate_destination = any(
         item.get("binding_kind")
-        in {"predicate-tile-destination", "predicate-cell-destination"}
+        in {
+            "predicate-tile-destination",
+            "predicate-cell-destination",
+            "predicate-gpr-destination",
+        }
         for item in destinations
     )
+    valid_row = next(
+        (item for item in configuration if item["field"] == "ValidRow"),
+        None,
+    )
+    row_via_valid_row = spelling in {
+        "TCI",
+        "TCMP",
+        "TCMPS",
+        "TPREFETCH",
+        "TSEL",
+        "TSELS",
+        "TTRI",
+    }
+    if (
+        row_via_valid_row
+        and valid_row is not None
+        and valid_row.get("default") == "Row"
+    ):
+        return {
+            "kind": "derived-check",
+            "expression": "ValidRow",
+            "canonical_output": "print concrete Row from the encoded ValidRow",
+            "requires_runtime_state": False,
+        }
     descriptor_dependent_select = spelling in {"TSEL", "TSELS"} and any(
         item.get("binding_kind")
         in {"predicate-cell-source", "predicate-gpr-source"}
@@ -705,6 +733,17 @@ def expected_configuration_bindings(
                 ),
                 "canonical_output": "print concrete Col when statically resolved",
             }
+        elif (
+            name == "ValidCol"
+            and str(record["mnemonic"])
+            in {"MGATHER", "MGATHER_MASK", "MSCATTER", "MSCATTER_MASK"}
+            and not any(item["field"] == "Col" for item in configuration)
+        ):
+            targets = [
+                {"command": "B.DIM", "group": None, "slot": "LB0"},
+                {"command": "B.DIM", "group": None, "slot": "LB2"},
+            ]
+            resolution = None
         elif name in DIMENSION_PHYSICAL_SLOTS:
             targets = [
                 {
@@ -1444,6 +1483,7 @@ def build_catalog() -> dict[str, object]:
             },
             "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
             "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
+            "irregular_memory": "MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
         },
         "canonicalization_examples": [
             {
@@ -1458,6 +1498,10 @@ def build_catalog() -> dict[str, object]:
             },
         ],
         "attribute_syntax": "attributes use symbolic enum or string values; numeric carrier encodings are forbidden; a defaulted or inferable field is omitted without a placeholder",
+        "gpr_operand_syntax": {
+            "address": "[base=GPR]",
+            "row_stride": "stride=GPR",
+        },
         "symbolic_values": {
             "PEMask": {
                 "default": "AllPE",
@@ -1541,6 +1585,7 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- Rectangular shapes use programmer-facing assignments such as `Row=8` and `Col=64`; matrix shapes use `M`, `N`, and `K`. TileOp source never exposes physical `LB0`, `LB1`, or `LB2` names.",
         f"- `Row` resolution: {shape_resolution['row']}.",
         f"- Valid-dimension defaults: {valid_defaults['rule']}. The common rectangular defaults are `ValidRow={valid_defaults['common_rectangular']['ValidRow']}` and `ValidCol={valid_defaults['common_rectangular']['ValidCol']}`. {shape_resolution['canonical_omission']}.",
+        f"- Irregular memory shape: {shape_resolution['irregular_memory']}.",
         "- Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.",
         "- Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.",
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
@@ -1554,6 +1599,8 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- `X{must be Value}` is a legality constraint, not an omission default.",
         "- `SourceOr1` and `SourceOrValidCol` mean an allocated Shared source contributes its descriptor value; an unallocated Shared source uses 1 or ValidCol as specified by TSTORE.",
         "- B.FPATR fields are direct entries in the bundle attribute list: enabled booleans use bare names such as `TransposeB`, and valued fields use assignments such as `PreMode=2`; there is no `FPAttrs(...)` wrapper.",
+        "- TGEMV-family `M=1` is a mandatory architectural constraint rather than an omission default. Canonical macro assembly prints it, while physical expansion omits the redundant value-one LB0 command.",
+        "- Canonical concrete GM address operands expose their physical role: addresses use `[base=a0]` and row strides use `stride=a1`. Ordinary scalar inputs remain bare GPRs such as `a2`, and scalar or predicate-mask results remain `->a3`.",
         "- CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling B.FPATR fields.",
         "",
         "A concrete macro is always written on one line:",

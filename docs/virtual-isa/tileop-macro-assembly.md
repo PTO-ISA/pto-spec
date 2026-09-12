@@ -13,6 +13,7 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 - Rectangular shapes use programmer-facing assignments such as `Row=8` and `Col=64`; matrix shapes use `M`, `N`, and `K`. TileOp source never exposes physical `LB0`, `LB1`, or `LB2` names.
 - `Row` resolution: Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding.
 - Valid-dimension defaults: the selected form's declared default is authoritative. The common rectangular defaults are `ValidRow=Row` and `ValidCol=Col`. canonical assembly omits a Valid field only when it equals the selected form's declared default.
+- Irregular memory shape: MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier.
 - Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.
 - Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.
 - The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.
@@ -26,6 +27,8 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 - `X{must be Value}` is a legality constraint, not an omission default.
 - `SourceOr1` and `SourceOrValidCol` mean an allocated Shared source contributes its descriptor value; an unallocated Shared source uses 1 or ValidCol as specified by TSTORE.
 - B.FPATR fields are direct entries in the bundle attribute list: enabled booleans use bare names such as `TransposeB`, and valued fields use assignments such as `PreMode=2`; there is no `FPAttrs(...)` wrapper.
+- TGEMV-family `M=1` is a mandatory architectural constraint rather than an omission default. Canonical macro assembly prints it, while physical expansion omits the redundant value-one LB0 command.
+- Canonical concrete GM address operands expose their physical role: addresses use `[base=a0]` and row strides use `stride=a1`. Ordinary scalar inputs remain bare GPRs such as `a2`, and scalar or predicate-mask results remain `->a3`.
 - CUBE conditional operands explicitly name RowMax, GroupMax, quantization, ReLU, and CScale sources or destinations together with their controlling B.FPATR fields.
 
 A concrete macro is always written on one line:
@@ -67,12 +70,12 @@ Destination metavariables likewise become physical binding operands. A Local des
 | --- | --- | --- |
 | `TABS` | `VEC` | `TABS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
 | `TAND` | `VEC` | `TAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TCMP` | `VEC` | `TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>`<br>`TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateCell<Size>`<br>`TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateGPR` |
+| `TCMP` | `VEC` | `TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>`<br>`TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateCell<Size>`<br>`TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateGPR` |
 | `TNEG` | `VEC` | `TNEG <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
 | `TNOT` | `VEC` | `TNOT <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
 | `TOR` | `VEC` | `TOR <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `TRELU` | `VEC` | `TRELU <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
-| `TSEL` | `VEC` | `TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>`<br>`TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, SrcTile2, ->DstTile<Size>`<br>`TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, SrcTile2, ->DstTile<Size>` |
+| `TSEL` | `VEC` | `TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>`<br>`TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, SrcTile2, ->DstTile<Size>`<br>`TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, SrcTile2, ->DstTile<Size>` |
 | `TSHL` | `VEC` | `TSHL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `TSHR` | `VEC` | `TSHR <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `TXOR` | `VEC` | `TXOR <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
@@ -93,8 +96,8 @@ Destination metavariables likewise become physical binding operands. A Local des
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `TCI` | `SFU` | `TCI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>` |
-| `TTRI` | `SFU` | `TTRI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>` |
+| `TCI` | `SFU` | `TCI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>` |
+| `TTRI` | `SFU` | `TTRI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>` |
 
 ### irregular-and-complex/layout
 
@@ -129,35 +132,35 @@ Destination metavariables likewise become physical binding operands. A Local des
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `TGEMV` | `CUBE` | `TGEMV <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
-| `TGEMV_ACC` | `CUBE` | `TGEMV_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
-| `TGEMV_BIAS` | `CUBE` | `TGEMV_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
-| `TGEMV_MX` | `CUBE` | `TGEMV_MX <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
-| `TGEMV_MX_ACC` | `CUBE` | `TGEMV_MX_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
-| `TGEMV_MX_BIAS` | `CUBE` | `TGEMV_MX_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV` | `CUBE` | `TGEMV <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV_ACC` | `CUBE` | `TGEMV_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV_BIAS` | `CUBE` | `TGEMV_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV_MX` | `CUBE` | `TGEMV_MX <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV_MX_ACC` | `CUBE` | `TGEMV_MX_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
+| `TGEMV_MX_BIAS` | `CUBE` | `TGEMV_MX_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}` |
 
 ### memory-and-data-movement/irregular
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `MGATHER` | `TLSU` | `MGATHER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>` |
+| `MGATHER` | `TLSU` | `MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>` |
 | `MGATHER_ADD` | `TLSU` | `MGATHER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_AND` | `TLSU` | `MGATHER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_CAS` | `TLSU` | `MGATHER_CAS <DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>` |
 | `MGATHER_DEC` | `TLSU` | `MGATHER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_EXCH` | `TLSU` | `MGATHER_EXCH <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_INC` | `TLSU` | `MGATHER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_MASK` | `TLSU` | `MGATHER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>` |
+| `MGATHER_MASK` | `TLSU` | `MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>` |
 | `MGATHER_MAX` | `TLSU` | `MGATHER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_MIN` | `TLSU` | `MGATHER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_OR` | `TLSU` | `MGATHER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_XOR` | `TLSU` | `MGATHER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MSCATTER` | `TLSU` | `MSCATTER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1` |
+| `MSCATTER` | `TLSU` | `MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1` |
 | `MSCATTER_ADD` | `TLSU` | `MSCATTER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_AND` | `TLSU` | `MSCATTER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_DEC` | `TLSU` | `MSCATTER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_INC` | `TLSU` | `MSCATTER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_MASK` | `TLSU` | `MSCATTER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2` |
+| `MSCATTER_MASK` | `TLSU` | `MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2` |
 | `MSCATTER_MAX` | `TLSU` | `MSCATTER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_MIN` | `TLSU` | `MSCATTER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_OR` | `TLSU` | `MSCATTER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
@@ -175,7 +178,7 @@ Destination metavariables likewise become physical binding operands. A Local des
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
 | `TLOAD` | `TLSU` | `TLOAD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [base=BaseGPR, stride=RowStrideGPR], ->DstTile<Size>`<br>`TLOAD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [base=BaseGPR, stride=RowStrideGPR], ->DstShared<Size>`<br>`TLOAD <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, DataType, CubeLayout, DTYPE_NONE=DTYPE_NONE, PadValue=Null, PEMask=AllPE>, [base=BaseGPR, stride=RowStrideGPR], ->DstTile<Size>`<br>`TLOAD <ValidK, ValidN, TotalK, DataType, WeightLayout{must be OHWI2NK or OIHW2NK}, PEMask=AllPE>, [GMBaseGPR, ShapeGPR, StartGPR], ->DstShared<Size>` |
-| `TPREFETCH` | `TLSU` | `TPREFETCH <Row=Derived, Col, ValidRow=1, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]` |
+| `TPREFETCH` | `TLSU` | `TPREFETCH <Row=Derived, Col, ValidRow=Row, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]` |
 | `TSTORE` | `TLSU` | `TSTORE <Row=Derived, Col=SourceDescriptor, ValidRow=SourceDescriptor, ValidCol=SourceDescriptor, DataType, Layout?, PEMask=AllPE>, SrcTile, [base=BaseGPR, stride=RowStrideGPR]`<br>`TSTORE <Row=Derived, Col=SourceOrValidCol, ValidRow=SourceOr1, ValidCol=SourceOr1, DataType, Layout?, PEMask=AllPE>, SrcShared, [base=BaseGPR, stride=RowStrideGPR]`<br>`TSTORE <Row=Derived, Col=CubeLayout, ValidRow=Row, ValidCol=Col, DataType, CubeLayout, DTYPE_NONE=DTYPE_NONE, PadValue=Null, PEMask=AllPE>, SrcTile, [base=BaseGPR, stride=RowStrideGPR]` |
 
 ### reduce-and-expand/column-expansion
@@ -249,9 +252,9 @@ Destination metavariables likewise become physical binding operands. A Local des
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
 | `TANDS` | `VEC` | `TANDS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
-| `TCMPS` | `VEC` | `TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>`<br>`TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateCell<Size>`<br>`TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateGPR` |
+| `TCMPS` | `VEC` | `TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>`<br>`TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateCell<Size>`<br>`TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateGPR` |
 | `TORS` | `VEC` | `TORS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
-| `TSELS` | `VEC` | `TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>`<br>`TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>`<br>`TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>` |
+| `TSELS` | `VEC` | `TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>`<br>`TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>`<br>`TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>` |
 | `TSHLS` | `VEC` | `TSHLS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
 | `TSHRS` | `VEC` | `TSHRS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
 | `TXORS` | `VEC` | `TXORS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |

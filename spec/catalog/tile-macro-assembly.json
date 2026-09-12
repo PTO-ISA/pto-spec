@@ -73,6 +73,10 @@
     }
   ],
   "dimension_syntax": "dimensions use programmer-facing named assignments such as Row=8, Col=64, or M=32; physical LB0/LB1/LB2 names are forbidden in TileOp assembly",
+  "gpr_operand_syntax": {
+    "address": "[base=GPR]",
+    "row_stride": "stride=GPR"
+  },
   "line_grammar": {
     "canonical_output_wraps": false,
     "continuations_allowed": false,
@@ -616,13 +620,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "Derived",
-          "field": "Row",
+          "default": "1",
+          "field": "ValidRow",
           "optional": true,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Row=Derived",
+          "syntax": "ValidRow=1",
           "value_style": "named-assignment"
         },
         {
@@ -630,41 +634,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": null,
-          "field": "Col",
-          "optional": false,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
           "ordinal": 1,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Col",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Row",
-          "field": "ValidRow",
-          "optional": true,
-          "ordinal": 2,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidRow=Row",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Col",
-          "field": "ValidCol",
-          "optional": true,
-          "ordinal": 3,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidCol=Col",
+          "syntax": "ValidCol=1",
           "value_style": "named-assignment"
         },
         {
@@ -675,7 +651,7 @@
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 4,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -689,7 +665,7 @@
           "default": null,
           "field": "PadValue",
           "optional": true,
-          "ordinal": 5,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PadValue?",
@@ -703,7 +679,7 @@
           "default": null,
           "field": "Layout",
           "optional": true,
-          "ordinal": 6,
+          "ordinal": 4,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "Layout?",
@@ -717,7 +693,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 5,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -761,13 +737,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "Derived",
-              "field": "Row",
+              "default": "1",
+              "field": "ValidRow",
               "optional": true,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Row=Derived",
+              "syntax": "ValidRow=1",
               "value_style": "named-assignment"
             },
             {
@@ -775,41 +751,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": null,
-              "field": "Col",
-              "optional": false,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
               "ordinal": 1,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Col",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Row",
-              "field": "ValidRow",
-              "optional": true,
-              "ordinal": 2,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidRow=Row",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Col",
-              "field": "ValidCol",
-              "optional": true,
-              "ordinal": 3,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidCol=Col",
+              "syntax": "ValidCol=1",
               "value_style": "named-assignment"
             },
             {
@@ -820,7 +768,7 @@
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 4,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -834,7 +782,7 @@
               "default": null,
               "field": "PadValue",
               "optional": true,
-              "ordinal": 5,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PadValue?",
@@ -848,7 +796,7 @@
               "default": null,
               "field": "Layout",
               "optional": true,
-              "ordinal": 6,
+              "ordinal": 4,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "Layout?",
@@ -862,7 +810,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 5,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -958,30 +906,8 @@
             ],
             "configuration_bindings": [
               {
-                "field": "Row",
-                "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
-                  "kind": "derived-check",
-                  "requires_runtime_state": false
-                },
-                "syntax": "Row=Derived",
-                "targets": []
-              },
-              {
-                "field": "Col",
-                "syntax": "Col",
-                "targets": [
-                  {
-                    "command": "B.DIM",
-                    "group": null,
-                    "slot": "LB2"
-                  }
-                ]
-              },
-              {
                 "field": "ValidRow",
-                "syntax": "ValidRow=Row",
+                "syntax": "ValidRow=1",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -992,12 +918,17 @@
               },
               {
                 "field": "ValidCol",
-                "syntax": "ValidCol=Col",
+                "syntax": "ValidCol=1",
                 "targets": [
                   {
                     "command": "B.DIM",
                     "group": null,
                     "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
                   }
                 ]
               },
@@ -1057,8 +988,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6bd3ab5a093229bb48b11bc84125d6d4cb146e3e0536bfc2f056630780bb6d1e",
-            "form_id": "pto0586-mgather-547fe398a16b48a2",
+            "fold_signature_sha256": "393102e317973fe7a9b1e7260205e42c518d4882a02a4e07658f57a4bb3d6963",
+            "form_id": "pto0586-mgather-3001229cd30ab57c",
             "header": {
               "command": "BSTART.MGATHER",
               "family": "TLSU",
@@ -1225,7 +1156,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
+          "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -1273,7 +1204,7 @@
           "spelling": "MGATHER"
         }
       ],
-      "macro_format": "MGATHER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
+      "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
       "mnemonic": "MGATHER",
       "physical_bundle": [
         "BSTART.MGATHER DataType",
@@ -5166,13 +5097,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "Derived",
-          "field": "Row",
+          "default": "1",
+          "field": "ValidRow",
           "optional": true,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Row=Derived",
+          "syntax": "ValidRow=1",
           "value_style": "named-assignment"
         },
         {
@@ -5180,41 +5111,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": null,
-          "field": "Col",
-          "optional": false,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
           "ordinal": 1,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Col",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Row",
-          "field": "ValidRow",
-          "optional": true,
-          "ordinal": 2,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidRow=Row",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Col",
-          "field": "ValidCol",
-          "optional": true,
-          "ordinal": 3,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidCol=Col",
+          "syntax": "ValidCol=1",
           "value_style": "named-assignment"
         },
         {
@@ -5225,7 +5128,7 @@
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 4,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -5239,7 +5142,7 @@
           "default": null,
           "field": "PadValue",
           "optional": true,
-          "ordinal": 5,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PadValue?",
@@ -5253,7 +5156,7 @@
           "default": null,
           "field": "Layout",
           "optional": true,
-          "ordinal": 6,
+          "ordinal": 4,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "Layout?",
@@ -5267,7 +5170,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 5,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -5311,13 +5214,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "Derived",
-              "field": "Row",
+              "default": "1",
+              "field": "ValidRow",
               "optional": true,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Row=Derived",
+              "syntax": "ValidRow=1",
               "value_style": "named-assignment"
             },
             {
@@ -5325,41 +5228,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": null,
-              "field": "Col",
-              "optional": false,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
               "ordinal": 1,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Col",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Row",
-              "field": "ValidRow",
-              "optional": true,
-              "ordinal": 2,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidRow=Row",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Col",
-              "field": "ValidCol",
-              "optional": true,
-              "ordinal": 3,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidCol=Col",
+              "syntax": "ValidCol=1",
               "value_style": "named-assignment"
             },
             {
@@ -5370,7 +5245,7 @@
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 4,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -5384,7 +5259,7 @@
               "default": null,
               "field": "PadValue",
               "optional": true,
-              "ordinal": 5,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PadValue?",
@@ -5398,7 +5273,7 @@
               "default": null,
               "field": "Layout",
               "optional": true,
-              "ordinal": 6,
+              "ordinal": 4,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "Layout?",
@@ -5412,7 +5287,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 5,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -5520,30 +5395,8 @@
             ],
             "configuration_bindings": [
               {
-                "field": "Row",
-                "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
-                  "kind": "derived-check",
-                  "requires_runtime_state": false
-                },
-                "syntax": "Row=Derived",
-                "targets": []
-              },
-              {
-                "field": "Col",
-                "syntax": "Col",
-                "targets": [
-                  {
-                    "command": "B.DIM",
-                    "group": null,
-                    "slot": "LB2"
-                  }
-                ]
-              },
-              {
                 "field": "ValidRow",
-                "syntax": "ValidRow=Row",
+                "syntax": "ValidRow=1",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -5554,12 +5407,17 @@
               },
               {
                 "field": "ValidCol",
-                "syntax": "ValidCol=Col",
+                "syntax": "ValidCol=1",
                 "targets": [
                   {
                     "command": "B.DIM",
                     "group": null,
                     "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
                   }
                 ]
               },
@@ -5624,8 +5482,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e8ab4edaf541e9b10fb6b28c827a217c2f82229fe990b24380285a98ca5e3175",
-            "form_id": "pto0586-mgather-mask-de15588db8fa9687",
+            "fold_signature_sha256": "0bf7aa0365954ad68363338cd0ceb6a394f91428c6eec1e817071f455cd299de",
+            "form_id": "pto0586-mgather-mask-923a88e5c046bc5b",
             "header": {
               "command": "BSTART.MGATHER.MASK",
               "family": "TLSU",
@@ -5838,7 +5696,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -5900,7 +5758,7 @@
           "spelling": "MGATHER_MASK"
         }
       ],
-      "macro_format": "MGATHER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_MASK",
       "physical_bundle": [
         "BSTART.MGATHER.MASK DataType",
@@ -8460,13 +8318,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "Derived",
-          "field": "Row",
+          "default": "1",
+          "field": "ValidRow",
           "optional": true,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Row=Derived",
+          "syntax": "ValidRow=1",
           "value_style": "named-assignment"
         },
         {
@@ -8474,41 +8332,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": null,
-          "field": "Col",
-          "optional": false,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
           "ordinal": 1,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Col",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Row",
-          "field": "ValidRow",
-          "optional": true,
-          "ordinal": 2,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidRow=Row",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Col",
-          "field": "ValidCol",
-          "optional": true,
-          "ordinal": 3,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidCol=Col",
+          "syntax": "ValidCol=1",
           "value_style": "named-assignment"
         },
         {
@@ -8519,7 +8349,7 @@
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 4,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -8533,7 +8363,7 @@
           "default": null,
           "field": "Layout",
           "optional": true,
-          "ordinal": 5,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "Layout?",
@@ -8547,7 +8377,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 6,
+          "ordinal": 4,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -8576,13 +8406,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "Derived",
-              "field": "Row",
+              "default": "1",
+              "field": "ValidRow",
               "optional": true,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Row=Derived",
+              "syntax": "ValidRow=1",
               "value_style": "named-assignment"
             },
             {
@@ -8590,41 +8420,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": null,
-              "field": "Col",
-              "optional": false,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
               "ordinal": 1,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Col",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Row",
-              "field": "ValidRow",
-              "optional": true,
-              "ordinal": 2,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidRow=Row",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Col",
-              "field": "ValidCol",
-              "optional": true,
-              "ordinal": 3,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidCol=Col",
+              "syntax": "ValidCol=1",
               "value_style": "named-assignment"
             },
             {
@@ -8635,7 +8437,7 @@
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 4,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -8649,7 +8451,7 @@
               "default": null,
               "field": "Layout",
               "optional": true,
-              "ordinal": 5,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "Layout?",
@@ -8663,7 +8465,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 6,
+              "ordinal": 4,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -8740,30 +8542,8 @@
             ],
             "configuration_bindings": [
               {
-                "field": "Row",
-                "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
-                },
-                "syntax": "Row=Derived",
-                "targets": []
-              },
-              {
-                "field": "Col",
-                "syntax": "Col",
-                "targets": [
-                  {
-                    "command": "B.DIM",
-                    "group": null,
-                    "slot": "LB2"
-                  }
-                ]
-              },
-              {
                 "field": "ValidRow",
-                "syntax": "ValidRow=Row",
+                "syntax": "ValidRow=1",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -8774,12 +8554,17 @@
               },
               {
                 "field": "ValidCol",
-                "syntax": "ValidCol=Col",
+                "syntax": "ValidCol=1",
                 "targets": [
                   {
                     "command": "B.DIM",
                     "group": null,
                     "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
                   }
                 ]
               },
@@ -8828,8 +8613,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "cd1f38662be4391d1f504292c7e10f0ffa4d66dc9de76ef33f2a96c5b58c2d49",
-            "form_id": "pto0586-mscatter-edbfc938336d2e2b",
+            "fold_signature_sha256": "bbe7befe8bd849be70013e9ee3c2d0e5e15ce97b750e8ec01fbd88cc6a59466f",
+            "form_id": "pto0586-mscatter-8dea10f722ca4f2e",
             "header": {
               "command": "BSTART.MSCATTER",
               "family": "TLSU",
@@ -8996,7 +8781,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -9058,7 +8843,7 @@
           "spelling": "MSCATTER"
         }
       ],
-      "macro_format": "MSCATTER <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER",
       "physical_bundle": [
         "BSTART.MSCATTER DataType",
@@ -11182,13 +10967,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "Derived",
-          "field": "Row",
+          "default": "1",
+          "field": "ValidRow",
           "optional": true,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Row=Derived",
+          "syntax": "ValidRow=1",
           "value_style": "named-assignment"
         },
         {
@@ -11196,41 +10981,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": null,
-          "field": "Col",
-          "optional": false,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
           "ordinal": 1,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "Col",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Row",
-          "field": "ValidRow",
-          "optional": true,
-          "ordinal": 2,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidRow=Row",
-          "value_style": "named-assignment"
-        },
-        {
-          "binding_kind": "bundle-configuration",
-          "condition": null,
-          "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "Col",
-          "field": "ValidCol",
-          "optional": true,
-          "ordinal": 3,
-          "role": "bundle configuration field",
-          "size": null,
-          "syntax": "ValidCol=Col",
+          "syntax": "ValidCol=1",
           "value_style": "named-assignment"
         },
         {
@@ -11241,7 +10998,7 @@
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 4,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -11255,7 +11012,7 @@
           "default": null,
           "field": "Layout",
           "optional": true,
-          "ordinal": 5,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "Layout?",
@@ -11269,7 +11026,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 6,
+          "ordinal": 4,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -11298,13 +11055,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "Derived",
-              "field": "Row",
+              "default": "1",
+              "field": "ValidRow",
               "optional": true,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Row=Derived",
+              "syntax": "ValidRow=1",
               "value_style": "named-assignment"
             },
             {
@@ -11312,41 +11069,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": null,
-              "field": "Col",
-              "optional": false,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
               "ordinal": 1,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "Col",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Row",
-              "field": "ValidRow",
-              "optional": true,
-              "ordinal": 2,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidRow=Row",
-              "value_style": "named-assignment"
-            },
-            {
-              "binding_kind": "bundle-configuration",
-              "condition": null,
-              "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "Col",
-              "field": "ValidCol",
-              "optional": true,
-              "ordinal": 3,
-              "role": "bundle configuration field",
-              "size": null,
-              "syntax": "ValidCol=Col",
+              "syntax": "ValidCol=1",
               "value_style": "named-assignment"
             },
             {
@@ -11357,7 +11086,7 @@
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 4,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -11371,7 +11100,7 @@
               "default": null,
               "field": "Layout",
               "optional": true,
-              "ordinal": 5,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "Layout?",
@@ -11385,7 +11114,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 6,
+              "ordinal": 4,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -11474,30 +11203,8 @@
             ],
             "configuration_bindings": [
               {
-                "field": "Row",
-                "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
-                },
-                "syntax": "Row=Derived",
-                "targets": []
-              },
-              {
-                "field": "Col",
-                "syntax": "Col",
-                "targets": [
-                  {
-                    "command": "B.DIM",
-                    "group": null,
-                    "slot": "LB2"
-                  }
-                ]
-              },
-              {
                 "field": "ValidRow",
-                "syntax": "ValidRow=Row",
+                "syntax": "ValidRow=1",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -11508,12 +11215,17 @@
               },
               {
                 "field": "ValidCol",
-                "syntax": "ValidCol=Col",
+                "syntax": "ValidCol=1",
                 "targets": [
                   {
                     "command": "B.DIM",
                     "group": null,
                     "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
                   }
                 ]
               },
@@ -11567,8 +11279,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6e175fa558784976b66c6d49dab5167699e80dd9961eaa86c32fd8dabe7442dc",
-            "form_id": "pto0586-mscatter-mask-7bbe2792d1e879ff",
+            "fold_signature_sha256": "09f8647707176194e65568863f0a5946ec0488ff8f441d61cd334c553951738a",
+            "form_id": "pto0586-mscatter-mask-3b79cbff878c2c9c",
             "header": {
               "command": "BSTART.MSCATTER.MASK",
               "family": "TLSU",
@@ -11781,7 +11493,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
+          "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -11857,7 +11569,7 @@
           "spelling": "MSCATTER_MASK"
         }
       ],
-      "macro_format": "MSCATTER_MASK <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
+      "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
       "mnemonic": "MSCATTER_MASK",
       "physical_bundle": [
         "BSTART.MSCATTER.MASK DataType",
@@ -17768,13 +17480,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -17884,13 +17596,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -18011,8 +17723,8 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
                   "kind": "derived-check",
                   "requires_runtime_state": false
                 },
@@ -18032,7 +17744,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -18082,7 +17794,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "d8e769348c74ce3a38fba0ab85ad1d5038794cfcbf631f83dfa0a98e1cbac9d1",
-            "form_id": "pto0586-tci-f6590170694d658c",
+            "form_id": "pto0586-tci-cdcd12f04f2b8b5e",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -18203,7 +17915,7 @@
               }
             ]
           },
-          "macro_format": "TCI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>",
+          "macro_format": "TCI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -18237,7 +17949,7 @@
           "spelling": "TCI"
         }
       ],
-      "macro_format": "TCI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>",
+      "macro_format": "TCI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Start=0, Direction=ascending, ->DstTile<Size>",
       "mnemonic": "TCI",
       "physical_bundle": [
         "BSTART.SFU TCI, S32|S16|U32|U16",
@@ -18383,13 +18095,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -18526,13 +18238,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -18688,10 +18400,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -18709,7 +18421,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -18781,7 +18493,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "1b2f4666320e653b048aeebafe209b7bd4fd8f21eb444794f242b179bd25b63e",
-            "form_id": "pto0586-tcmp-c317ad08bda7b5a3",
+            "form_id": "pto0586-tcmp-07a36bcf9a0e6409",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -18922,7 +18634,7 @@
               }
             ]
           },
-          "macro_format": "TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>",
+          "macro_format": "TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -18990,13 +18702,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -19152,10 +18864,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -19173,7 +18885,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -19239,7 +18951,7 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0586-tcmp-c317ad08bda7b5a3",
+              "canonical_form_id": "pto0586-tcmp-07a36bcf9a0e6409",
               "canonical_without_runtime_state": false,
               "on_alias": "use the first physically identical catalog form",
               "policy": "canonical-exact-match",
@@ -19247,7 +18959,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "1b2f4666320e653b048aeebafe209b7bd4fd8f21eb444794f242b179bd25b63e",
-            "form_id": "pto0586-tcmp-06929c1f1098e36e",
+            "form_id": "pto0586-tcmp-22b73ffeba6b5a91",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -19388,7 +19100,7 @@
               }
             ]
           },
-          "macro_format": "TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateCell<Size>",
+          "macro_format": "TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateCell<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -19456,13 +19168,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -19632,10 +19344,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -19653,7 +19365,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -19736,7 +19448,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "5bfd327e46adf51f0074513c034759131efedd86287414f50026a06994c7fb79",
-            "form_id": "pto0586-tcmp-cd19732dd8bd6e77",
+            "form_id": "pto0586-tcmp-1dcc1a5a2d1ab8cb",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -19870,7 +19582,7 @@
               }
             ]
           },
-          "macro_format": "TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateGPR",
+          "macro_format": "TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateGPR",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -19904,7 +19616,7 @@
           "spelling": "TCMP"
         }
       ],
-      "macro_format": "TCMP <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>",
+      "macro_format": "TCMP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, SrcTile1, ->PredicateTile<Size>",
       "mnemonic": "TCMP",
       "physical_bundle": [
         "BSTART.VEC TCMP, DataType",
@@ -20067,13 +19779,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -20210,13 +19922,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -20372,10 +20084,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -20393,7 +20105,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -20465,7 +20177,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "fea6ba3ac8d93c0569c5d13b7cb01d65fc0e01d36286c4c4748c36cc167bb01d",
-            "form_id": "pto0586-tcmps-dff2204cec373cfe",
+            "form_id": "pto0586-tcmps-5020b64962347af8",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -20599,7 +20311,7 @@
               }
             ]
           },
-          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>",
+          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -20667,13 +20379,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -20829,10 +20541,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -20850,7 +20562,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -20916,7 +20628,7 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0586-tcmps-dff2204cec373cfe",
+              "canonical_form_id": "pto0586-tcmps-5020b64962347af8",
               "canonical_without_runtime_state": false,
               "on_alias": "use the first physically identical catalog form",
               "policy": "canonical-exact-match",
@@ -20924,7 +20636,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "fea6ba3ac8d93c0569c5d13b7cb01d65fc0e01d36286c4c4748c36cc167bb01d",
-            "form_id": "pto0586-tcmps-e8776e9dded64076",
+            "form_id": "pto0586-tcmps-557774737cf00cfa",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -21058,7 +20770,7 @@
               }
             ]
           },
-          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateCell<Size>",
+          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateCell<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -21126,13 +20838,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -21302,10 +21014,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile0.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -21323,7 +21035,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -21406,7 +21118,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "1ea63b083ee3e23c34b79e370cd207a0f6709a7f73ab066dd7fb12f949fab35f",
-            "form_id": "pto0586-tcmps-6b93fa6cb33006c2",
+            "form_id": "pto0586-tcmps-5c1ac80e2e34c2ee",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -21527,7 +21239,7 @@
               }
             ]
           },
-          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateGPR",
+          "macro_format": "TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, SatMode?, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateGPR",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -21561,7 +21273,7 @@
           "spelling": "TCMPS"
         }
       ],
-      "macro_format": "TCMPS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>",
+      "macro_format": "TCMPS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, CMode=EQ, PadValue=Null, PEMask=AllPE>, SrcTile0, ScalarGPR0=zero, ->PredicateTile<Size>",
       "mnemonic": "TCMPS",
       "physical_bundle": [
         "BSTART.VEC TCMPS, DataType",
@@ -36141,14 +35853,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -36456,14 +36168,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -36807,7 +36519,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -37036,7 +36748,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "203d8795cb9791a6d1c3dda102cc1399bc94413513b68624a104396b2c160266",
-            "form_id": "pto0586-tgemv-6b2088e9e8122c05",
+            "form_id": "pto0586-tgemv-5ed3abbc46cc8f96",
             "header": {
               "command": "BSTART.TGEMV",
               "family": "CUBE",
@@ -37402,7 +37114,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -37506,7 +37218,7 @@
           "spelling": "TGEMV"
         }
       ],
-      "macro_format": "TGEMV <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV",
       "physical_bundle": [
         "BSTART.TGEMV AType",
@@ -37702,14 +37414,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -38018,14 +37730,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -38381,7 +38093,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -38615,7 +38327,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "8297b0d7c09f647338482763f4e0e056e48fe3b89c184b8ffe8fa2178d8eb4e4",
-            "form_id": "pto0586-tgemv-acc-9e32fbcef47ff241",
+            "form_id": "pto0586-tgemv-acc-e8722eabe810a733",
             "header": {
               "command": "BSTART.TGEMV.ACC",
               "family": "CUBE",
@@ -39027,7 +38739,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -39145,7 +38857,7 @@
           "spelling": "TGEMV_ACC"
         }
       ],
-      "macro_format": "TGEMV_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, SrcMatrix, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV_ACC",
       "physical_bundle": [
         "BSTART.TGEMV.ACC AType",
@@ -39367,14 +39079,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -39682,14 +39394,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -40045,7 +39757,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -40279,7 +39991,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "526f8b8ddee7d1fe273a2052b42efc48fdf67e07d01269e906ce2ee353fbef8d",
-            "form_id": "pto0586-tgemv-bias-397fa97940204de4",
+            "form_id": "pto0586-tgemv-bias-771b3df5d8ebd61e",
             "header": {
               "command": "BSTART.TGEMV.BIAS",
               "family": "CUBE",
@@ -40691,7 +40403,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -40809,7 +40521,7 @@
           "spelling": "TGEMV_BIAS"
         }
       ],
-      "macro_format": "TGEMV_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, SrcMatrix, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV_BIAS",
       "physical_bundle": [
         "BSTART.TGEMV.BIAS AType",
@@ -41031,14 +40743,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -41346,14 +41058,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -41721,7 +41433,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -41955,7 +41667,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "f83153b75468577b70672e7d91f7b428b5ffd70f684a172745dd8a1f4edbf19c",
-            "form_id": "pto0586-tgemv-mx-64244db9289e0293",
+            "form_id": "pto0586-tgemv-mx-97bf4eba8109ff1a",
             "header": {
               "command": "BSTART.TGEMVMX",
               "family": "CUBE",
@@ -42407,7 +42119,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV_MX <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV_MX <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -42539,7 +42251,7 @@
           "spelling": "TGEMV_MX"
         }
       ],
-      "macro_format": "TGEMV_MX <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV_MX <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV_MX",
       "physical_bundle": [
         "BSTART.TGEMVMX AType",
@@ -42787,14 +42499,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -43103,14 +42815,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -43490,7 +43202,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -43729,7 +43441,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "2180344bbe12996c6ec74015dcc611cec6a269bf109a27c76fd7b1d8772c839f",
-            "form_id": "pto0586-tgemv-mx-acc-7be6e16bf3af02be",
+            "form_id": "pto0586-tgemv-mx-acc-c4c29e6a5703e787",
             "header": {
               "command": "BSTART.TGEMVMX.ACC",
               "family": "CUBE",
@@ -44227,7 +43939,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV_MX_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV_MX_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -44373,7 +44085,7 @@
           "spelling": "TGEMV_MX_ACC"
         }
       ],
-      "macro_format": "TGEMV_MX_ACC <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV_MX_ACC <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, AccTile, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV_MX_ACC",
       "physical_bundle": [
         "BSTART.TGEMVMX.ACC AType",
@@ -44647,14 +44359,14 @@
           "binding_kind": "bundle-configuration",
           "condition": null,
           "configuration_kind": "dimension",
-          "constraint": null,
-          "default": "1",
+          "constraint": "1",
+          "default": null,
           "field": "M",
-          "optional": true,
+          "optional": false,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "M=1",
+          "syntax": "M{must be 1}",
           "value_style": "named-assignment"
         },
         {
@@ -44962,14 +44674,14 @@
               "binding_kind": "bundle-configuration",
               "condition": null,
               "configuration_kind": "dimension",
-              "constraint": null,
-              "default": "1",
+              "constraint": "1",
+              "default": null,
               "field": "M",
-              "optional": true,
+              "optional": false,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "M=1",
+              "syntax": "M{must be 1}",
               "value_style": "named-assignment"
             },
             {
@@ -45349,7 +45061,7 @@
             "configuration_bindings": [
               {
                 "field": "M",
-                "syntax": "M=1",
+                "syntax": "M{must be 1}",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -45588,7 +45300,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "b0c81a7b2170720ce1cbd4b526a278e66c5a1df84cf982f6cf042513131c6851",
-            "form_id": "pto0586-tgemv-mx-bias-c4c6d663159710df",
+            "form_id": "pto0586-tgemv-mx-bias-caf71db00e3100a5",
             "header": {
               "command": "BSTART.TGEMVMX.BIAS",
               "family": "CUBE",
@@ -46086,7 +45798,7 @@
               }
             ]
           },
-          "macro_format": "TGEMV_MX_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+          "macro_format": "TGEMV_MX_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -46232,7 +45944,7 @@
           "spelling": "TGEMV_MX_BIAS"
         }
       ],
-      "macro_format": "TGEMV_MX_BIAS <M=1, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
+      "macro_format": "TGEMV_MX_BIAS <M{must be 1}, N=1, K=1, AType, BType?, RMode?, Sat?, PreMode=0, PostMode=0, PostScale=0, RowMax=0, GroupMax=0, RowMaxInit=0, FlushToZero=0, TransposeA=0, TransposeB=0, CScale=0, PEMask=AllPE>, SrcVector, RowScaleTile{if AType requires MX scale}, SrcMatrix, ColumnScaleTile{if BType requires MX scale}, BiasTile, RowMaxIn{if RowMax&&RowMaxInit}, QuantParamTile{if PreMode=vector}, ReluParamTile{if PostMode=vector}, QuantParamGPR{if PreMode=scalar}, ReluParamGPR{if PostMode=scalar}, ->DstTile<Size>, ->RowMaxOut<Size>{if RowMax}, ->GroupMaxOut<Size>{if GroupMax}",
       "mnemonic": "TGEMV_MX_BIAS",
       "physical_bundle": [
         "BSTART.TGEMVMX.BIAS AType",
@@ -82438,13 +82150,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -82537,13 +82249,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -82658,10 +82370,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it has no encoded carrier",
-                  "expression": "ExplicitRowOnly",
-                  "kind": "input-only-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -82679,7 +82391,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -82729,7 +82441,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "ea77d0a10bdc0f656fcf38d7bb576239d9e25176475befd6d4e7bdf0ef08fb62",
-            "form_id": "pto0586-tprefetch-7f083c9ceaf1e87d",
+            "form_id": "pto0586-tprefetch-8321cc80129f2f7d",
             "header": {
               "command": "BSTART.TPREFETCH",
               "family": "TLSU",
@@ -82794,7 +82506,7 @@
               }
             ]
           },
-          "macro_format": "TPREFETCH <Row=Derived, Col, ValidRow=1, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]",
+          "macro_format": "TPREFETCH <Row=Derived, Col, ValidRow=Row, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -82814,7 +82526,7 @@
           "spelling": "TPREFETCH"
         }
       ],
-      "macro_format": "TPREFETCH <Row=Derived, Col, ValidRow=1, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]",
+      "macro_format": "TPREFETCH <Row=Derived, Col, ValidRow=Row, ValidCol=1, DataType, Layout?>, [BaseGPR=zero, RowStrideGPR?]",
       "mnemonic": "TPREFETCH",
       "physical_bundle": [
         "BSTART.TPREFETCH DataType",
@@ -96391,13 +96103,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -96520,13 +96232,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -96673,8 +96385,8 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
                   "kind": "derived-check",
                   "requires_runtime_state": false
                 },
@@ -96694,7 +96406,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -96760,7 +96472,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "c2f73ea49836f553fac09bbde4201db408e25ebdcfe4f5caab7c810f574f93eb",
-            "form_id": "pto0586-tsel-2bc53c02929e9aa5",
+            "form_id": "pto0586-tsel-c95bd7ebfb1f485a",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -96947,7 +96659,7 @@
               }
             ]
           },
-          "macro_format": "TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+          "macro_format": "TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-tile-source",
@@ -97029,13 +96741,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -97182,10 +96894,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile1.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -97203,7 +96915,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -97263,7 +96975,7 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0586-tsel-2bc53c02929e9aa5",
+              "canonical_form_id": "pto0586-tsel-c95bd7ebfb1f485a",
               "canonical_without_runtime_state": false,
               "on_alias": "use the first physically identical catalog form",
               "policy": "canonical-exact-match",
@@ -97271,7 +96983,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "c2f73ea49836f553fac09bbde4201db408e25ebdcfe4f5caab7c810f574f93eb",
-            "form_id": "pto0586-tsel-6805079e5e14f52c",
+            "form_id": "pto0586-tsel-e47a42faa2dab1fe",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -97458,7 +97170,7 @@
               }
             ]
           },
-          "macro_format": "TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, SrcTile2, ->DstTile<Size>",
+          "macro_format": "TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, SrcTile2, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-cell-source",
@@ -97540,13 +97252,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -97699,10 +97411,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile1.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -97720,7 +97432,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -97786,7 +97498,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "768b97bc3e983e4cc913cb27221528ebf2f535b9b128768e85de5b6be4779758",
-            "form_id": "pto0586-tsel-b0338a55f8ed25f6",
+            "form_id": "pto0586-tsel-d06c2378a78c02ab",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -97993,7 +97705,7 @@
               }
             ]
           },
-          "macro_format": "TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, SrcTile2, ->DstTile<Size>",
+          "macro_format": "TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, SrcTile2, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-gpr-source",
@@ -98055,7 +97767,7 @@
           "spelling": "TSEL"
         }
       ],
-      "macro_format": "TSEL <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+      "macro_format": "TSEL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
       "mnemonic": "TSEL",
       "physical_bundle": [
         "BSTART.VEC TSEL, DataType",
@@ -98232,13 +97944,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -98361,13 +98073,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -98514,8 +98226,8 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
                   "kind": "derived-check",
                   "requires_runtime_state": false
                 },
@@ -98535,7 +98247,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -98596,7 +98308,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "f24826ba72a6e76fe6349df55fab8831da734eeaefba83a04d52672c5fe6cf18",
-            "form_id": "pto0586-tsels-258a8ff0a2de24c1",
+            "form_id": "pto0586-tsels-132152e62e92e800",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -98770,7 +98482,7 @@
               }
             ]
           },
-          "macro_format": "TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
+          "macro_format": "TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-tile-source",
@@ -98852,13 +98564,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -99005,10 +98717,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile1.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -99026,7 +98738,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -99081,7 +98793,7 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0586-tsels-258a8ff0a2de24c1",
+              "canonical_form_id": "pto0586-tsels-132152e62e92e800",
               "canonical_without_runtime_state": false,
               "on_alias": "use the first physically identical catalog form",
               "policy": "canonical-exact-match",
@@ -99089,7 +98801,7 @@
               "unique_without_runtime_state": false
             },
             "fold_signature_sha256": "f24826ba72a6e76fe6349df55fab8831da734eeaefba83a04d52672c5fe6cf18",
-            "form_id": "pto0586-tsels-6cadf70ca6e03681",
+            "form_id": "pto0586-tsels-ed86c693a0ea5fd3",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -99263,7 +98975,7 @@
               }
             ]
           },
-          "macro_format": "TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
+          "macro_format": "TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateCell0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-cell-source",
@@ -99345,13 +99057,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -99504,10 +99216,10 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "omit Row because it remains runtime-derived from the source descriptor",
-                  "expression": "SrcTile1.Descriptor.Row",
-                  "kind": "runtime-derived-check",
-                  "requires_runtime_state": true
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
+                  "kind": "derived-check",
+                  "requires_runtime_state": false
                 },
                 "syntax": "Row=Derived",
                 "targets": []
@@ -99525,7 +99237,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -99586,7 +99298,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "cd6fa40614aa6ea0141439298df55ee2eb2933d7c0f986eab95a3d8b62563975",
-            "form_id": "pto0586-tsels-2154a0c3f87c0d3a",
+            "form_id": "pto0586-tsels-2779cc7ee7db1a77",
             "header": {
               "command": "BSTART.VEC",
               "family": "TEPL",
@@ -99774,7 +99486,7 @@
               }
             ]
           },
-          "macro_format": "TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
+          "macro_format": "TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateGPR0, PredicateGPR1{if DataType=U8}, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "predicate-gpr-source",
@@ -99836,7 +99548,7 @@
           "spelling": "TSELS"
         }
       ],
-      "macro_format": "TSELS <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
+      "macro_format": "TSELS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue=Null, PEMask=AllPE>, PredicateTile0, SrcTile1, ScalarFalseGPR=zero, ->DstTile<Size>",
       "mnemonic": "TSELS",
       "physical_bundle": [
         "BSTART.VEC TSELS, DataType",
@@ -106720,13 +106432,13 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": "1",
+          "default": "Row",
           "field": "ValidRow",
           "optional": true,
           "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidRow=1",
+          "syntax": "ValidRow=Row",
           "value_style": "named-assignment"
         },
         {
@@ -106836,13 +106548,13 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": "1",
+              "default": "Row",
               "field": "ValidRow",
               "optional": true,
               "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidRow=1",
+              "syntax": "ValidRow=Row",
               "value_style": "named-assignment"
             },
             {
@@ -106963,8 +106675,8 @@
               {
                 "field": "Row",
                 "resolution": {
-                  "canonical_output": "print concrete Row when statically resolved",
-                  "expression": "DstTile.TSize/Col/DataType",
+                  "canonical_output": "print concrete Row from the encoded ValidRow",
+                  "expression": "ValidRow",
                   "kind": "derived-check",
                   "requires_runtime_state": false
                 },
@@ -106984,7 +106696,7 @@
               },
               {
                 "field": "ValidRow",
-                "syntax": "ValidRow=1",
+                "syntax": "ValidRow=Row",
                 "targets": [
                   {
                     "command": "B.DIM",
@@ -107034,7 +106746,7 @@
               "unique_without_runtime_state": true
             },
             "fold_signature_sha256": "06c622111aacaacd713f67ee7fcc4ae24d748b00a2ec324917c82a1783749153",
-            "form_id": "pto0586-ttri-a39014916ad01a8c",
+            "form_id": "pto0586-ttri-7d904cca10878fef",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -107155,7 +106867,7 @@
               }
             ]
           },
-          "macro_format": "TTRI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>",
+          "macro_format": "TTRI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -107189,7 +106901,7 @@
           "spelling": "TTRI"
         }
       ],
-      "macro_format": "TTRI <Row=Derived, Col, ValidRow=1, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>",
+      "macro_format": "TTRI <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PEMask=AllPE>, Diagonal=0, Orientation=lower, ->DstTile<Size>",
       "mnemonic": "TTRI",
       "physical_bundle": [
         "BSTART.SFU TTRI, FP32|FP16|S32|S16|U32|U16",
@@ -109179,6 +108891,7 @@
   "shape_resolution": {
     "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
     "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
+    "irregular_memory": "MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
     "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
     "valid_defaults": {
       "common_rectangular": {

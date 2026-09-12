@@ -568,10 +568,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 elif resolution["kind"] == "input-only-check":
                     input_only_forms.append((operation["mnemonic"], form["spelling"], expression))
 
-        self.assertEqual(
-            input_only_forms,
-            [("TPREFETCH", "TPREFETCH", "ExplicitRowOnly")],
-        )
+        self.assertEqual(input_only_forms, [])
         expected_layout_dependent = set()
         for operation in self.catalog["operations"]:
             owner = (ROOT / operation["source"]).read_text(encoding="utf-8")
@@ -591,13 +588,9 @@ class TileMacroAssemblyTest(unittest.TestCase):
                     )
         self.assertEqual(set(layout_dependent_forms), expected_layout_dependent)
         self.assertEqual(len(layout_dependent_forms), 29)
-        self.assertEqual(len(runtime_forms), 15)
-        self.assertEqual(
-            sum(
-                mnemonic == "TCMP" and expression == "SrcTile0.Descriptor.Row"
-                for mnemonic, _, expression in runtime_forms
-            ),
-            3,
+        self.assertEqual(len(runtime_forms), 3)
+        self.assertFalse(
+            any(mnemonic in {"TCMP", "TCMPS"} for mnemonic, _, _ in runtime_forms)
         )
         self.assertIn(
             ("TCVT", "TCVT", "SrcTile0.Descriptor.Row"), runtime_forms
@@ -624,12 +617,29 @@ class TileMacroAssemblyTest(unittest.TestCase):
 
         tcmp = self.by_name["TCMP"]["forms"][0]
         tcmp_defaults = {item["field"]: item["default"] for item in tcmp["configuration"]}
-        self.assertEqual(tcmp_defaults["ValidRow"], "1")
+        self.assertEqual(tcmp_defaults["ValidRow"], "Row")
+        for mnemonic in (
+            "TCI",
+            "TCMP",
+            "TCMPS",
+            "TPREFETCH",
+            "TSEL",
+            "TSELS",
+            "TTRI",
+        ):
+            for form in self.by_name[mnemonic]["forms"]:
+                row = next(
+                    item
+                    for item in form["expansion"]["configuration_bindings"]
+                    if item["field"] == "Row"
+                )
+                self.assertEqual(row["resolution"]["expression"], "ValidRow")
+                self.assertFalse(row["resolution"]["requires_runtime_state"])
         tprefetch = self.by_name["TPREFETCH"]["forms"][0]
         prefetch_defaults = {
             item["field"]: item["default"] for item in tprefetch["configuration"]
         }
-        self.assertEqual(prefetch_defaults["ValidRow"], "1")
+        self.assertEqual(prefetch_defaults["ValidRow"], "Row")
         self.assertEqual(prefetch_defaults["ValidCol"], "1")
         self.assertEqual(
             self.catalog["shape_resolution"]["valid_defaults"]["rule"],
@@ -817,6 +827,57 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(forms["predicate-gpr"]["physical_binding"], "B.IOR.RegDst")
         self.assertNotIn("predicate-register", forms)
 
+    def test_concrete_gpr_operands_expose_their_roles(self) -> None:
+        self.assertEqual(
+            self.catalog["gpr_operand_syntax"],
+            {
+                "address": "[base=GPR]",
+                "row_stride": "stride=GPR",
+            },
+        )
+
+    def test_irregular_memory_uses_only_valid_shape(self) -> None:
+        for mnemonic in (
+            "MGATHER",
+            "MGATHER_MASK",
+            "MSCATTER",
+            "MSCATTER_MASK",
+        ):
+            form = self.by_name[mnemonic]["forms"][0]
+            dimensions = [
+                item["field"]
+                for item in form["configuration"]
+                if item["configuration_kind"] == "dimension"
+            ]
+            self.assertEqual(dimensions, ["ValidRow", "ValidCol"])
+            bindings = {
+                item["field"]: item
+                for item in form["expansion"]["configuration_bindings"]
+            }
+            self.assertEqual(
+                bindings["ValidCol"]["targets"],
+                [
+                    {"command": "B.DIM", "group": None, "slot": "LB0"},
+                    {"command": "B.DIM", "group": None, "slot": "LB2"},
+                ],
+            )
+
+    def test_tgemv_prints_fixed_m_as_a_constraint(self) -> None:
+        for mnemonic in (
+            "TGEMV",
+            "TGEMV_ACC",
+            "TGEMV_BIAS",
+            "TGEMV_MX",
+            "TGEMV_MX_ACC",
+            "TGEMV_MX_BIAS",
+        ):
+            form = self.by_name[mnemonic]["forms"][0]
+            m = next(item for item in form["configuration"] if item["field"] == "M")
+            self.assertEqual(m["constraint"], "1")
+            self.assertIsNone(m["default"])
+            self.assertFalse(m["optional"])
+            self.assertIn("<M{must be 1}, N=1, K=1,", form["macro_format"])
+
     def test_reference_is_0586_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         self.assertIn("all 117 current direct Tile operations", reference)
@@ -831,6 +892,12 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertIn("`FP32`, `Null`, and `AllPE`", reference)
         self.assertIn("`->PredicateCell<Size>`", reference)
         self.assertIn("`->PredicateGPR`", reference)
+        self.assertIn("addresses use `[base=a0]`", reference)
+        self.assertIn("row strides use `stride=a1`", reference)
+        self.assertIn("expose only ValidRow and ValidCol", reference)
+        self.assertIn("scalar inputs remain bare GPRs", reference)
+        self.assertIn("results remain `->a3`", reference)
+        self.assertIn("mandatory architectural constraint", reference)
         self.assertIn(
             "TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>",
             reference,
