@@ -168,10 +168,10 @@ end;
 
 ```asm
 BSTART.MGATHER.CAS DataType
-B.DATR PadValue, Layout (optional)
 B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
+B.DIM LB1=ValidRow (optional, default 1)
+B.DIM LB2=ValidCol
+B.DATR PadValue, Layout (optional)
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
 B.IOR BaseGPR, StrideGPR, zero, ->zero
@@ -205,6 +205,7 @@ end;
 
 - DataType is always encoded and selects the transfer, comparison, replacement, and destination element type.
 - The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
+- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
 
 ## Legality
 

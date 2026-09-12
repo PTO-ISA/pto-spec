@@ -837,12 +837,13 @@ class TileMacroAssemblyTest(unittest.TestCase):
         )
 
     def test_irregular_memory_uses_only_valid_shape(self) -> None:
-        for mnemonic in (
-            "MGATHER",
-            "MGATHER_MASK",
-            "MSCATTER",
-            "MSCATTER_MASK",
-        ):
+        mnemonics = [
+            mnemonic
+            for mnemonic in self.by_name
+            if mnemonic.startswith(("MGATHER", "MSCATTER"))
+        ]
+        self.assertEqual(len(mnemonics), 23)
+        for mnemonic in mnemonics:
             form = self.by_name[mnemonic]["forms"][0]
             dimensions = [
                 item["field"]
@@ -878,6 +879,20 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.assertFalse(m["optional"])
             self.assertIn("<M{must be 1}, N=1, K=1,", form["macro_format"])
 
+    def test_pack_shapes_are_descriptor_inherited(self) -> None:
+        for mnemonic in ("TPACK", "TUNPACK"):
+            form = self.by_name[mnemonic]["forms"][0]
+            self.assertFalse(
+                any(
+                    item["configuration_kind"] == "dimension"
+                    for item in form["configuration"]
+                )
+            )
+        self.assertIn(
+            "preserve the first source Tile descriptor shape",
+            self.catalog["shape_resolution"]["descriptor_inherited"],
+        )
+
     def test_reference_is_0586_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         self.assertIn("all 117 current direct Tile operations", reference)
@@ -894,10 +909,12 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertIn("`->PredicateGPR`", reference)
         self.assertIn("addresses use `[base=a0]`", reference)
         self.assertIn("row strides use `stride=a1`", reference)
-        self.assertIn("expose only ValidRow and ValidCol", reference)
+        self.assertIn("Every MGATHER and MSCATTER form exposes ValidRow", reference)
+        self.assertIn("TPACK and TUNPACK preserve the first source Tile", reference)
         self.assertIn("scalar inputs remain bare GPRs", reference)
         self.assertIn("results remain `->a3`", reference)
         self.assertIn("mandatory architectural constraint", reference)
+        self.assertIn("Descriptor-inherited shape", reference)
         self.assertIn(
             "TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>",
             reference,

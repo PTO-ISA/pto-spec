@@ -94,6 +94,8 @@ end;
 ```asm
 BSTART.MSCATTER.POPC DataType
 B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional, default 1)
+B.DIM LB2=ValidCol
 B.IOT IndexTile, mask=PE_MASK, <last>
 B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
@@ -116,12 +118,14 @@ end;
 
 ## Defaults and encoded zero
 
+- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
 - GM indexed operation uses byte-displacement addresses and complete preflight.
 
 ## Legality
 
 - GM-only; Shared, vector, packed, and U128 forms are rejected.
 - The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden.
+- ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol.
 
 ## State effects
 

@@ -13,7 +13,8 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 - Rectangular shapes use programmer-facing assignments such as `Row=8` and `Col=64`; matrix shapes use `M`, `N`, and `K`. TileOp source never exposes physical `LB0`, `LB1`, or `LB2` names.
 - `Row` resolution: Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding.
 - Valid-dimension defaults: the selected form's declared default is authoritative. The common rectangular defaults are `ValidRow=Row` and `ValidCol=Col`. canonical assembly omits a Valid field only when it equals the selected form's declared default.
-- Irregular memory shape: MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier.
+- Irregular memory shape: Every MGATHER and MSCATTER form exposes ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier.
+- Descriptor-inherited shape: TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state.
 - Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.
 - Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.
 - The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.
@@ -144,28 +145,28 @@ Destination metavariables likewise become physical binding operands. A Local des
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
 | `MGATHER` | `TLSU` | `MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>` |
-| `MGATHER_ADD` | `TLSU` | `MGATHER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_AND` | `TLSU` | `MGATHER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_CAS` | `TLSU` | `MGATHER_CAS <DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>` |
-| `MGATHER_DEC` | `TLSU` | `MGATHER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_EXCH` | `TLSU` | `MGATHER_EXCH <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_INC` | `TLSU` | `MGATHER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_ADD` | `TLSU` | `MGATHER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_AND` | `TLSU` | `MGATHER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_CAS` | `TLSU` | `MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>` |
+| `MGATHER_DEC` | `TLSU` | `MGATHER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_EXCH` | `TLSU` | `MGATHER_EXCH <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_INC` | `TLSU` | `MGATHER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_MASK` | `TLSU` | `MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>` |
-| `MGATHER_MAX` | `TLSU` | `MGATHER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_MIN` | `TLSU` | `MGATHER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_OR` | `TLSU` | `MGATHER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_XOR` | `TLSU` | `MGATHER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_MAX` | `TLSU` | `MGATHER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_MIN` | `TLSU` | `MGATHER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_OR` | `TLSU` | `MGATHER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `MGATHER_XOR` | `TLSU` | `MGATHER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MSCATTER` | `TLSU` | `MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1` |
-| `MSCATTER_ADD` | `TLSU` | `MSCATTER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_AND` | `TLSU` | `MSCATTER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_DEC` | `TLSU` | `MSCATTER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_INC` | `TLSU` | `MSCATTER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_ADD` | `TLSU` | `MSCATTER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_AND` | `TLSU` | `MSCATTER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_DEC` | `TLSU` | `MSCATTER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_INC` | `TLSU` | `MSCATTER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_MASK` | `TLSU` | `MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2` |
-| `MSCATTER_MAX` | `TLSU` | `MSCATTER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_MIN` | `TLSU` | `MSCATTER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_OR` | `TLSU` | `MSCATTER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_POPC` | `TLSU` | `MSCATTER_POPC <ValidCol, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0` |
-| `MSCATTER_XOR` | `TLSU` | `MSCATTER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_MAX` | `TLSU` | `MSCATTER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_MIN` | `TLSU` | `MSCATTER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_OR` | `TLSU` | `MSCATTER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
+| `MSCATTER_POPC` | `TLSU` | `MSCATTER_POPC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0` |
+| `MSCATTER_XOR` | `TLSU` | `MSCATTER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 
 ### memory-and-data-movement/pe-movement
 

@@ -735,8 +735,7 @@ def expected_configuration_bindings(
             }
         elif (
             name == "ValidCol"
-            and str(record["mnemonic"])
-            in {"MGATHER", "MGATHER_MASK", "MSCATTER", "MSCATTER_MASK"}
+            and str(record["mnemonic"]).startswith(("MGATHER", "MSCATTER"))
             and not any(item["field"] == "Col" for item in configuration)
         ):
             targets = [
@@ -1483,7 +1482,8 @@ def build_catalog() -> dict[str, object]:
             },
             "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
             "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
-            "irregular_memory": "MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
+            "irregular_memory": "Every MGATHER and MSCATTER form exposes ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
+            "descriptor_inherited": "TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state",
         },
         "canonicalization_examples": [
             {
@@ -1586,6 +1586,7 @@ def build_markdown(catalog: dict[str, object]) -> str:
         f"- `Row` resolution: {shape_resolution['row']}.",
         f"- Valid-dimension defaults: {valid_defaults['rule']}. The common rectangular defaults are `ValidRow={valid_defaults['common_rectangular']['ValidRow']}` and `ValidCol={valid_defaults['common_rectangular']['ValidCol']}`. {shape_resolution['canonical_omission']}.",
         f"- Irregular memory shape: {shape_resolution['irregular_memory']}.",
+        f"- Descriptor-inherited shape: {shape_resolution['descriptor_inherited']}.",
         "- Attributes use symbolic enum or string values such as `FP32`, `Null`, and `AllPE`; raw numeric carrier encodings are rejected.",
         "- Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.",
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",

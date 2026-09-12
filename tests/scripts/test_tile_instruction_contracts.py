@@ -69,6 +69,8 @@ class TileInstructionContractsTest(unittest.TestCase):
         expected_body = (
             "BSTART.MSCATTER.POPC DataType",
             "B.DIM LB0=ValidCol",
+            "B.DIM LB1=ValidRow (optional, default 1)",
+            "B.DIM LB2=ValidCol",
             "B.IOT IndexTile, mask=PE_MASK, <last>",
             "B.IOR BaseGPR, zero, zero, ->zero",
             "BSTOP",
@@ -89,6 +91,36 @@ class TileInstructionContractsTest(unittest.TestCase):
                 {"field": "source0", "role": "indices"},
             ],
         )
+
+    def test_gm_atomic_and_reduction_forms_carry_valid_shape(self) -> None:
+        by_mnemonic = {
+            unit.mnemonic: unit
+            for unit in load_units(ROOT / "asl")
+            if unit.mnemonic is not None
+        }
+        excluded = {"MGATHER", "MGATHER_MASK", "MSCATTER", "MSCATTER_MASK"}
+        operations = [
+            unit
+            for mnemonic, unit in by_mnemonic.items()
+            if mnemonic.startswith(("MGATHER", "MSCATTER"))
+            and mnemonic not in excluded
+            and unit.surface == "tile"
+        ]
+        self.assertEqual(len(operations), 19)
+        dimensions = (
+            "B.DIM LB0=ValidCol",
+            "B.DIM LB1=ValidRow (optional, default 1)",
+            "B.DIM LB2=ValidCol",
+        )
+        for tile in operations:
+            start_name = tile.metadata["catalog_records"][0]["command_mnemonic"]
+            start = by_mnemonic[start_name]
+            for unit in (tile, start):
+                self.assertEqual(tuple(unit.metadata["block"][1:4]), dimensions)
+                self.assertEqual(
+                    tuple(unit.metadata["contract"]["block_composition"][1:4]),
+                    dimensions,
+                )
 
     def test_assigned_tepl_selectors_do_not_overlap_reserved_ranges(self) -> None:
         units = load_units(ROOT / "asl")

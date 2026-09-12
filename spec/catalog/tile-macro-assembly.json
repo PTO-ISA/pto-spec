@@ -1352,12 +1352,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -1371,7 +1399,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -1379,6 +1407,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -1408,12 +1437,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -1427,7 +1484,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -1527,6 +1584,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -1565,8 +1649,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a000506374e9d2a93c32b98e5195de96cd68dbfab3032189b6e0b3ad414efefb",
-            "form_id": "pto0586-mgather-add-1c054384bdcbd2f3",
+            "fold_signature_sha256": "960be8bf55e11e04b51fbf2035aaa3d0aac2e1457de4527387a2b553f2b74e86",
+            "form_id": "pto0586-mgather-add-3ac9847089d912e5",
             "header": {
               "command": "BSTART.MGATHER.ADD",
               "family": "TLSU",
@@ -1752,7 +1836,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -1800,10 +1884,13 @@
           "spelling": "MGATHER_ADD"
         }
       ],
-      "macro_format": "MGATHER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_ADD",
       "physical_bundle": [
         "BSTART.MGATHER.ADD DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -1948,12 +2035,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -1967,7 +2082,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -1975,6 +2090,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -2004,12 +2120,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -2023,7 +2167,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -2123,6 +2267,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -2161,8 +2332,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c06d5e44dc494202e343155f669054d6938d49222f66525c94b9907481765f51",
-            "form_id": "pto0586-mgather-and-0a7555bcb835a340",
+            "fold_signature_sha256": "eb2c0a5eaf3f53d8e003efdc4ae5d4d3f7f1c6490108539f3f1bb5c7f4526ab7",
+            "form_id": "pto0586-mgather-and-1c6b875989bc691b",
             "header": {
               "command": "BSTART.MGATHER.AND",
               "family": "TLSU",
@@ -2348,7 +2519,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -2396,10 +2567,13 @@
           "spelling": "MGATHER_AND"
         }
       ],
-      "macro_format": "MGATHER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_AND",
       "physical_bundle": [
         "BSTART.MGATHER.AND DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -2544,12 +2718,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -2563,7 +2765,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -2571,6 +2773,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64."
       ],
       "destinations": [
@@ -2600,12 +2803,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -2619,7 +2850,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -2731,6 +2962,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -2774,8 +3032,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ce537455ddceb752bb525913ef30770f15f5d6f9d4e63c5eaa26191bc9e821e6",
-            "form_id": "pto0586-mgather-cas-a025fb039f54bcfe",
+            "fold_signature_sha256": "0f89e9557acde2dfa72e9cb01511319902c563d69b261daeb82689820c463ba9",
+            "form_id": "pto0586-mgather-cas-fa0f119d7e7dd234",
             "header": {
               "command": "BSTART.MGATHER.CAS",
               "family": "TLSU",
@@ -3034,7 +3292,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_CAS <DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+          "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -3110,10 +3368,13 @@
           "spelling": "MGATHER_CAS"
         }
       ],
-      "macro_format": "MGATHER_CAS <DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+      "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
       "mnemonic": "MGATHER_CAS",
       "physical_bundle": [
         "BSTART.MGATHER.CAS DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
         "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
@@ -3307,12 +3568,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -3326,7 +3615,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -3334,6 +3623,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -3363,12 +3653,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -3382,7 +3700,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -3482,6 +3800,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -3520,8 +3865,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2aeed20704a2eb33910971af01fb817662c830af0d77eecb67ec189813db07c5",
-            "form_id": "pto0586-mgather-dec-9faf15fa217397ba",
+            "fold_signature_sha256": "e116cc68b33731e8428d544e4bc3088cf1f7fbf37dcbe70f7c744986a619126e",
+            "form_id": "pto0586-mgather-dec-a0472623c9f99129",
             "header": {
               "command": "BSTART.MGATHER.DEC",
               "family": "TLSU",
@@ -3707,7 +4052,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -3755,10 +4100,13 @@
           "spelling": "MGATHER_DEC"
         }
       ],
-      "macro_format": "MGATHER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_DEC",
       "physical_bundle": [
         "BSTART.MGATHER.DEC DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -3903,12 +4251,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -3922,7 +4298,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -3930,6 +4306,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -3959,12 +4336,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -3978,7 +4383,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -4078,6 +4483,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -4116,8 +4548,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "9dd6991fba533d9764fa0526edcef0cc1a2c38052be3c4ab7f0ae3ed89f7de9d",
-            "form_id": "pto0586-mgather-exch-0eabef22aad77368",
+            "fold_signature_sha256": "7f5b7b42b0e68027672ef0a3c332073f5ceef3175b825e0c06e3f96dd7f2b191",
+            "form_id": "pto0586-mgather-exch-a8e211fd108cdb4a",
             "header": {
               "command": "BSTART.MGATHER.EXCH",
               "family": "TLSU",
@@ -4303,7 +4735,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_EXCH <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_EXCH <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -4351,10 +4783,13 @@
           "spelling": "MGATHER_EXCH"
         }
       ],
-      "macro_format": "MGATHER_EXCH <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_EXCH <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_EXCH",
       "physical_bundle": [
         "BSTART.MGATHER.EXCH DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -4499,12 +4934,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -4518,7 +4981,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -4526,6 +4989,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -4555,12 +5019,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -4574,7 +5066,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -4674,6 +5166,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -4712,8 +5231,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "0080724dd65a660dbfb23cc7aba205c8defa69e922755371ea74439176fb6aef",
-            "form_id": "pto0586-mgather-inc-c65dfae167a96244",
+            "fold_signature_sha256": "1578c8257bf64b7922bf0f850b6d00d1580fcb6beefaf61a19be465cd682e50b",
+            "form_id": "pto0586-mgather-inc-cfd16e1bfb4b4e01",
             "header": {
               "command": "BSTART.MGATHER.INC",
               "family": "TLSU",
@@ -4899,7 +5418,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -4947,10 +5466,13 @@
           "spelling": "MGATHER_INC"
         }
       ],
-      "macro_format": "MGATHER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_INC",
       "physical_bundle": [
         "BSTART.MGATHER.INC DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -5932,12 +6454,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -5951,7 +6501,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -5959,6 +6509,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -5988,12 +6539,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -6007,7 +6586,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -6107,6 +6686,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -6145,8 +6751,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "3ee30b57f4e15e3baa28d2bd776e5199285946cf10d1f91a1f14f10fe70ffbfe",
-            "form_id": "pto0586-mgather-max-105cd31e041f6f04",
+            "fold_signature_sha256": "0cc665b018154a15c020702a72a988e84ece24a118e43ea7dcfd913dfcc6f3c4",
+            "form_id": "pto0586-mgather-max-4e5f190ef35022c9",
             "header": {
               "command": "BSTART.MGATHER.MAX",
               "family": "TLSU",
@@ -6332,7 +6938,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -6380,10 +6986,13 @@
           "spelling": "MGATHER_MAX"
         }
       ],
-      "macro_format": "MGATHER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_MAX",
       "physical_bundle": [
         "BSTART.MGATHER.MAX DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -6528,12 +7137,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -6547,7 +7184,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -6555,6 +7192,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -6584,12 +7222,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -6603,7 +7269,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -6703,6 +7369,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -6741,8 +7434,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5079f3c055b7d851d5d3af97c3e24241370c82bbf9bfd8d01058f1599297cc4f",
-            "form_id": "pto0586-mgather-min-4f9154cf75177af5",
+            "fold_signature_sha256": "b7f97326e8fcd54961445936740abe2d5545fe888ce50949abf763a4fa9acbb9",
+            "form_id": "pto0586-mgather-min-de889a5ab82c7875",
             "header": {
               "command": "BSTART.MGATHER.MIN",
               "family": "TLSU",
@@ -6928,7 +7621,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -6976,10 +7669,13 @@
           "spelling": "MGATHER_MIN"
         }
       ],
-      "macro_format": "MGATHER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_MIN",
       "physical_bundle": [
         "BSTART.MGATHER.MIN DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -7124,12 +7820,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -7143,7 +7867,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -7151,6 +7875,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -7180,12 +7905,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -7199,7 +7952,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -7299,6 +8052,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -7337,8 +8117,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "008ffeed634a2424d437cd7b81181fa7613db37848b1ae6665360ee76c2e2c54",
-            "form_id": "pto0586-mgather-or-5d2f2162b6e46741",
+            "fold_signature_sha256": "f89279bd688376be435a8ed7218ccf9b7ec6ce825674e1233d4715827a97e418",
+            "form_id": "pto0586-mgather-or-d8e2ff8ca607fe40",
             "header": {
               "command": "BSTART.MGATHER.OR",
               "family": "TLSU",
@@ -7524,7 +8304,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -7572,10 +8352,13 @@
           "spelling": "MGATHER_OR"
         }
       ],
-      "macro_format": "MGATHER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_OR",
       "physical_bundle": [
         "BSTART.MGATHER.OR DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -7720,12 +8503,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -7739,7 +8550,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -7747,6 +8558,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [
@@ -7776,12 +8588,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -7795,7 +8635,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -7895,6 +8735,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -7933,8 +8800,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f8b666d3a89d727a5f0376ca7c522981c2544f3111b89bf0f9cd054e8150e744",
-            "form_id": "pto0586-mgather-xor-075df609d6f8c3d7",
+            "fold_signature_sha256": "403b6d2227b31b38c93860549c2a30b51a43979b3816d0ed94a5852c3e48ce76",
+            "form_id": "pto0586-mgather-xor-d5fad25e0aed6384",
             "header": {
               "command": "BSTART.MGATHER.XOR",
               "family": "TLSU",
@@ -8120,7 +8987,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -8168,10 +9035,13 @@
           "spelling": "MGATHER_XOR"
         }
       ],
-      "macro_format": "MGATHER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_XOR",
       "physical_bundle": [
         "BSTART.MGATHER.XOR DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -9001,12 +9871,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -9020,7 +9918,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -9028,6 +9926,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -9042,12 +9941,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -9061,7 +9988,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -9134,6 +10061,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -9167,8 +10121,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "67c883a70b66ea634b197df400b727a9b95aeabae32b189275086075363c4818",
-            "form_id": "pto0586-mscatter-add-df8ce40c4c84cbf2",
+            "fold_signature_sha256": "79e6056089b2109fbbb7c7237ff17d4b4ca709e5deb8a7d4db0acd16a8bd49e3",
+            "form_id": "pto0586-mscatter-add-8a377a87e6032e8c",
             "header": {
               "command": "BSTART.MSCATTER.ADD",
               "family": "TLSU",
@@ -9308,7 +10262,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -9356,10 +10310,13 @@
           "spelling": "MSCATTER_ADD"
         }
       ],
-      "macro_format": "MSCATTER_ADD <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_ADD",
       "physical_bundle": [
         "BSTART.MSCATTER.ADD DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -9492,12 +10449,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -9511,7 +10496,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -9519,6 +10504,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -9533,12 +10519,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -9552,7 +10566,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -9625,6 +10639,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -9658,8 +10699,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "290499424c07e4d48e220200b4c2c5c6059be3cbc7ff5c32362d96b52af21402",
-            "form_id": "pto0586-mscatter-and-6fea524fb5fc4af3",
+            "fold_signature_sha256": "d925d0f3d40643ca23a04555359725a6090dcc1c204fb2ea5d4ea9794b32e5a8",
+            "form_id": "pto0586-mscatter-and-79ab9372fc5f30d2",
             "header": {
               "command": "BSTART.MSCATTER.AND",
               "family": "TLSU",
@@ -9799,7 +10840,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -9847,10 +10888,13 @@
           "spelling": "MSCATTER_AND"
         }
       ],
-      "macro_format": "MSCATTER_AND <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_AND",
       "physical_bundle": [
         "BSTART.MSCATTER.AND DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -9983,12 +11027,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -10002,7 +11074,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -10010,6 +11082,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -10024,12 +11097,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -10043,7 +11144,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -10116,6 +11217,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -10149,8 +11277,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "8ad03ddd3224e1887403837fab6418221b442ad8fc24f83977e83ca161b49d96",
-            "form_id": "pto0586-mscatter-dec-fc7710e5da63412b",
+            "fold_signature_sha256": "ab2ac0453ccdb65d8cd43acbe4e32a4b7ccbbc8ff6c69a6b6b50063d9898dd29",
+            "form_id": "pto0586-mscatter-dec-d30c8b2faf3e57d6",
             "header": {
               "command": "BSTART.MSCATTER.DEC",
               "family": "TLSU",
@@ -10290,7 +11418,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -10338,10 +11466,13 @@
           "spelling": "MSCATTER_DEC"
         }
       ],
-      "macro_format": "MSCATTER_DEC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_DEC",
       "physical_bundle": [
         "BSTART.MSCATTER.DEC DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -10474,12 +11605,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -10493,7 +11652,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -10501,6 +11660,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -10515,12 +11675,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -10534,7 +11722,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -10607,6 +11795,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -10640,8 +11855,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f90b1100f440c90e82cbe36976f23a99ec446670e415821173e10e2ef79b34f2",
-            "form_id": "pto0586-mscatter-inc-90ceb2fd933a259d",
+            "fold_signature_sha256": "a09ef3e328589696c33fc2a58a3ec1f7c2fc618c8c0697a98a3002259e214204",
+            "form_id": "pto0586-mscatter-inc-4f70bc5d59e7b48d",
             "header": {
               "command": "BSTART.MSCATTER.INC",
               "family": "TLSU",
@@ -10781,7 +11996,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -10829,10 +12044,13 @@
           "spelling": "MSCATTER_INC"
         }
       ],
-      "macro_format": "MSCATTER_INC <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_INC",
       "physical_bundle": [
         "BSTART.MSCATTER.INC DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -11754,12 +12972,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -11773,7 +13019,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -11781,6 +13027,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -11795,12 +13042,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -11814,7 +13089,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -11887,6 +13162,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -11920,8 +13222,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c6960607712e2729c23382f93f620a401a750e484a20ebfd1052e4722012fab0",
-            "form_id": "pto0586-mscatter-max-4b0c17c3608b9cde",
+            "fold_signature_sha256": "c80c86457d25eb6d97150e89bf2b094f5dce3acf5c0f08546703c4aecd844f57",
+            "form_id": "pto0586-mscatter-max-d83a280b31cec176",
             "header": {
               "command": "BSTART.MSCATTER.MAX",
               "family": "TLSU",
@@ -12061,7 +13363,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -12109,10 +13411,13 @@
           "spelling": "MSCATTER_MAX"
         }
       ],
-      "macro_format": "MSCATTER_MAX <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_MAX",
       "physical_bundle": [
         "BSTART.MSCATTER.MAX DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -12245,12 +13550,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -12264,7 +13597,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -12272,6 +13605,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -12286,12 +13620,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -12305,7 +13667,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -12378,6 +13740,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -12411,8 +13800,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "781239b403cc3558e545b3c5f65e6f49ad8377fc852ffe1a8ed16165538f5a38",
-            "form_id": "pto0586-mscatter-min-02f9cc3261a5366a",
+            "fold_signature_sha256": "efc13a443f843c9a0c007f31ac030877fb6d1a458e689a3f2103bd0afb9aa0a6",
+            "form_id": "pto0586-mscatter-min-f62a09741cbdc897",
             "header": {
               "command": "BSTART.MSCATTER.MIN",
               "family": "TLSU",
@@ -12552,7 +13941,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -12600,10 +13989,13 @@
           "spelling": "MSCATTER_MIN"
         }
       ],
-      "macro_format": "MSCATTER_MIN <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_MIN",
       "physical_bundle": [
         "BSTART.MSCATTER.MIN DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -12736,12 +14128,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -12755,7 +14175,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -12763,6 +14183,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -12777,12 +14198,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -12796,7 +14245,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -12869,6 +14318,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -12902,8 +14378,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2bf40eee3d6852903bf73a3b53085a4f20b64df8c407257f11c5932d011c3199",
-            "form_id": "pto0586-mscatter-or-aca75645eadb5a73",
+            "fold_signature_sha256": "8810784cc1761f150d5a58d98590af63f5e0c419ba669b638cba2dd2a9a198fe",
+            "form_id": "pto0586-mscatter-or-b8969b8415ff735b",
             "header": {
               "command": "BSTART.MSCATTER.OR",
               "family": "TLSU",
@@ -13043,7 +14519,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -13091,10 +14567,13 @@
           "spelling": "MSCATTER_OR"
         }
       ],
-      "macro_format": "MSCATTER_OR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_OR",
       "physical_bundle": [
         "BSTART.MSCATTER.OR DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -13229,13 +14708,27 @@
           "condition": null,
           "configuration_kind": "dimension",
           "constraint": null,
-          "default": null,
-          "field": "ValidCol",
-          "optional": false,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
           "ordinal": 0,
           "role": "bundle configuration field",
           "size": null,
-          "syntax": "ValidCol",
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
           "value_style": "named-assignment"
         },
         {
@@ -13246,7 +14739,7 @@
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 1,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -13260,7 +14753,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 2,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -13268,6 +14761,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -13284,13 +14778,27 @@
               "condition": null,
               "configuration_kind": "dimension",
               "constraint": null,
-              "default": null,
-              "field": "ValidCol",
-              "optional": false,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
               "ordinal": 0,
               "role": "bundle configuration field",
               "size": null,
-              "syntax": "ValidCol",
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
               "value_style": "named-assignment"
             },
             {
@@ -13301,7 +14809,7 @@
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 1,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -13315,7 +14823,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 2,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -13372,13 +14880,29 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
                 "field": "ValidCol",
-                "syntax": "ValidCol",
+                "syntax": "ValidCol=1",
                 "targets": [
                   {
                     "command": "B.DIM",
                     "group": null,
                     "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
                   }
                 ]
               },
@@ -13411,8 +14935,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2ddb91a0d5591aaf09c0f040174f695bf2cddb8d1a05118bd11a89bccf40460f",
-            "form_id": "pto0586-mscatter-popc-2595f2f54a2bbdef",
+            "fold_signature_sha256": "876d9e9cebe57030623fe04e2af902737723655b313b47317476738e985a578b",
+            "form_id": "pto0586-mscatter-popc-5fff756e39e8e074",
             "header": {
               "command": "BSTART.MSCATTER.POPC",
               "family": "TLSU",
@@ -13506,7 +15030,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_POPC <ValidCol, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0",
+          "macro_format": "MSCATTER_POPC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -13540,11 +15064,13 @@
           "spelling": "MSCATTER_POPC"
         }
       ],
-      "macro_format": "MSCATTER_POPC <ValidCol, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0",
+      "macro_format": "MSCATTER_POPC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0",
       "mnemonic": "MSCATTER_POPC",
       "physical_bundle": [
         "BSTART.MSCATTER.POPC DataType",
         "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -13648,12 +15174,40 @@
         {
           "binding_kind": "bundle-configuration",
           "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "1",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=1",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
           "default": null,
           "field": "DataType",
           "optional": false,
-          "ordinal": 0,
+          "ordinal": 2,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "DataType",
@@ -13667,7 +15221,7 @@
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 1,
+          "ordinal": 3,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -13675,6 +15229,7 @@
         }
       ],
       "defaults": [
+        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
         "GM indexed operation uses byte-displacement addresses and complete preflight."
       ],
       "destinations": [],
@@ -13689,12 +15244,40 @@
             {
               "binding_kind": "bundle-configuration",
               "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "1",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=1",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
               "default": null,
               "field": "DataType",
               "optional": false,
-              "ordinal": 0,
+              "ordinal": 2,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "DataType",
@@ -13708,7 +15291,7 @@
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 1,
+              "ordinal": 3,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -13781,6 +15364,33 @@
             ],
             "configuration_bindings": [
               {
+                "field": "ValidRow",
+                "syntax": "ValidRow=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=1",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  },
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
                 "field": "DataType",
                 "syntax": "DataType",
                 "targets": [
@@ -13814,8 +15424,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "abeeaea639332a7ca6e53d26b93a9a023387591bbaa75e22dcbb5ff8cd2d403c",
-            "form_id": "pto0586-mscatter-xor-39fd1c208fa85dca",
+            "fold_signature_sha256": "72483a04c1f0b2f92331acc1893294a5e20538c6c49925fec9d81c3b4910881a",
+            "form_id": "pto0586-mscatter-xor-e5aba1002c221e8b",
             "header": {
               "command": "BSTART.MSCATTER.XOR",
               "family": "TLSU",
@@ -13955,7 +15565,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -14003,10 +15613,13 @@
           "spelling": "MSCATTER_XOR"
         }
       ],
-      "macro_format": "MSCATTER_XOR <DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER_XOR",
       "physical_bundle": [
         "BSTART.MSCATTER.XOR DataType",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional, default 1)",
+        "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
         "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
@@ -108890,8 +110503,9 @@
   "schema_version": 2,
   "shape_resolution": {
     "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
+    "descriptor_inherited": "TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state",
     "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
-    "irregular_memory": "MGATHER, MGATHER_MASK, MSCATTER, and MSCATTER_MASK expose only ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
+    "irregular_memory": "Every MGATHER and MSCATTER form exposes ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
     "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
     "valid_defaults": {
       "common_rectangular": {
