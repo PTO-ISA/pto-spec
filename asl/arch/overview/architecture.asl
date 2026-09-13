@@ -43,5 +43,7 @@
 // every independent AVS result, coverage, projections, and release-evidence checks.
 // NDF-END: PTO-RELEASE-VERIFICATION
 
-constant PTO_ARCHITECTURE_VERSION = 0;
+// The architecture identity is the release architecture version owned by
+// specification.toml ([release].architecture_version). Normative ASL remains
+// release-version neutral, so this unit declares no version literal.
 constant PTO_XLEN = 64;
