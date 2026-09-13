@@ -28,6 +28,9 @@ begin
 
     let full_start = ExecuteCommandInstruction(
         StoreMaskTestTLSUStart('00001', Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
     let full_shared = ExecuteCommandInstruction(
         StoreMaskTestSharedBinding(Zeros{6} + 9, '001'), 32);
     assert full_start == CommandExecution_Executed;

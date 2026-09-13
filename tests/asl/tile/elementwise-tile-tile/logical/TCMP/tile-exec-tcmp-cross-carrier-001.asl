@@ -15,6 +15,8 @@ begin
         Zeros{PTO_XLEN} + 0xd8d19181, 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, TRUE, 1, 2, TRUE);
     let completed = ExecuteBundleTileOperation();
     assert completed && _LastFault == Fault_None;

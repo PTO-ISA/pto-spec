@@ -14,6 +14,12 @@ begin
     InstallSharedTile((Zeros{6} + 16) as SharedTileID, _Tiles[[0]], '1111');
     let started = ExecuteCommandInstruction(Zeros{64} + 0x20211181, 32);
     assert started == CommandExecution_Executed;
+    let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
+    assert dim_400043 == CommandExecution_Executed;
+    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
+    assert dim_101043 == CommandExecution_Executed;
+    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
+    assert dim_402043 == CommandExecution_Executed;
     let shared = ExecuteCommandInstruction(Zeros{64} + 0x01001e13, 32);
     assert shared == CommandExecution_Executed;
     let subview = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);

@@ -1,16 +1,14 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-DEFAULTS-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"execution","summary":"TRELU applies the LB1 and LB2 omission defaults.","pass_condition":"The allocated destination has ValidRow one and Col equal to LB0 after TRELU.","related_sources":["asl/block/model/dispatch/destination-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-DEFAULTS-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"execution","summary":"TRELU applies the value-one default for every omitted dimension.","pass_condition":"With LB0, LB1, and LB2 omitted, the allocated destination has one valid row, one valid column, and one physical column.","related_sources":["asl/block/model/dispatch/destination-shape.asl"]}
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 8, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(1, 128, 8, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 7);
 
     let started = ExecuteCommandInstruction(
         Zeros{64} + 0xc1719181, 32);
     assert started == CommandExecution_Executed;
-    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);
 
@@ -18,7 +16,7 @@ begin
     assert completed;
     let destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[destination]].valid_rows == 1;
-    assert _Tiles[[destination]].valid_columns == 2;
-    assert _Tiles[[destination]].columns == 2;
+    assert _Tiles[[destination]].valid_columns == 1;
+    assert _Tiles[[destination]].columns == 1;
     return 0;
 end;

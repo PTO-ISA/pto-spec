@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-STRIDE-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"TLOAD distinguishes explicit, omitted, and encoded-zero byte row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission converts LB2 to a dense byte width, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-STRIDE-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"TLOAD distinguishes explicit, omitted, and encoded-zero byte row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission converts explicit LB2 to a dense byte width, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
 pure func TLoadStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -35,12 +35,13 @@ begin
     assert destination_status == CommandExecution_Executed;
 end;
 
-func StartTwoByTwoTLoadWithoutLB2()
+func StartTwoByTwoTLoadWithoutIOR()
 begin
     let start_status = ExecuteCommandInstruction(TLoadStrideStart(), 32);
     assert start_status == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let destination_status = ExecuteCommandInstruction(
         TLoadStrideDestination(), 32);
     assert destination_status == CommandExecution_Executed;
@@ -72,7 +73,7 @@ begin
     _Memory[[4]] = Zeros{8} + 6;
     _Memory[[8]] = Zeros{8} + 7;
     _Memory[[12]] = Zeros{8} + 8;
-    StartTwoByTwoTLoadWithoutLB2();
+    StartTwoByTwoTLoadWithoutIOR();
     let omitted_completed = ExecuteBundleTileOperation();
     assert omitted_completed;
     let omitted_tile = _BundleTileBindings[[0]].destination;

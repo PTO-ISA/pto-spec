@@ -54,6 +54,7 @@ begin
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let inputs = ExecuteCommandInstruction(
         TSELCellInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
     let result_binding = ExecuteCommandInstruction(

@@ -75,6 +75,7 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let inputs = ExecuteCommandInstruction(CasInputs('001'), 32);
     assert inputs == CommandExecution_Executed;
     let output = ExecuteCommandInstruction(CasOutput('001'), 32);

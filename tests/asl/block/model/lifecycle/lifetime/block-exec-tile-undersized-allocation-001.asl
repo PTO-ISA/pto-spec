@@ -22,6 +22,9 @@ begin
         branch_type_valid = FALSE,
         branch_type = Zeros{3}
     });
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 128);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 16, 0, TRUE);
     ClearFault();
     let undersized_resolved = ResolveBundleTileDestinations();

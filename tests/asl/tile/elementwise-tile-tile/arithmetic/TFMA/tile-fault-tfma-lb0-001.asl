@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-LB0-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"fault","summary":"TFMA requires an explicit nonzero LB0 ValidCol.","pass_condition":"The otherwise complete TFMA binding tuple rejects when LB0 is absent.","related_sources":["asl/block/model/dispatch/tile-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-LB0-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"fault","summary":"TFMA rejects an explicit zero LB0 ValidCol.","pass_condition":"The otherwise complete TFMA binding tuple rejects when LB0 is explicitly zero.","related_sources":["asl/block/model/dispatch/tile-schema.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -6,6 +6,7 @@ begin
     _BundleOperation.operation_class = BundleOperation_TileElement;
     _BundleOperation.data_type_valid = TRUE;
     _BundleOperation.data_type = Zeros{5} + 24;
+    SetBundleDimension(0, Zeros{PTO_XLEN});
     AddBundleTileBinding(
         FALSE, 0, 0, '1111', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(

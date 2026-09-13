@@ -17,7 +17,7 @@ begin
     assert dim_101043 == CommandExecution_Executed;
     let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
     assert dim_402043 == CommandExecution_Executed;
-    let ior = ExecuteCommandInstruction(Zeros{64} + 0x08310013, 32);
+    let ior = ExecuteCommandInstruction(Zeros{64} + 0x00310013, 32);
     assert ior == CommandExecution_Executed;
     let shared = ExecuteCommandInstruction(Zeros{64} + 0x01009e13, 32);
     assert shared == CommandExecution_Executed;

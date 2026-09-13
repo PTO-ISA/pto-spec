@@ -29,6 +29,8 @@ begin
         Zeros{PTO_XLEN} + 0xdad19181, 32);
     assert legacy_started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE, 0, 1, '0001', TRUE, FALSE, 1, 0, TRUE);
     let legacy_completed = ExecuteBundleTileOperation();
@@ -49,6 +51,7 @@ begin
     assert cube_started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let cube_bound = ExecuteCommandInstruction(
         TCMPSCubeBinding(Zeros{6} + 10), 32);
     assert cube_bound == CommandExecution_Executed;

@@ -54,6 +54,7 @@ begin
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 4);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     WriteGPR(2, Zeros{PTO_XLEN} + 5);
     WriteGPR(3, Zeros{PTO_XLEN} + 1);
     let tci_destination = ExecuteCommandInstruction(
@@ -77,6 +78,8 @@ begin
     let omitted_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let omitted_destination = ExecuteCommandInstruction(BundleTestTileDestination(
         '0001', '00', '111', TRUE), 32);
     let omitted_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
@@ -88,6 +91,8 @@ begin
     let zero_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let zero_destination = ExecuteCommandInstruction(BundleTestTileDestination(
         '0001', '00', '111', TRUE), 32);
     let zero_ior = ExecuteCommandInstruction(BundleTestScalarBinding(

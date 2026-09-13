@@ -9561,6 +9561,7 @@
       ],
       "decoded_start": "0x20011181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -9585,12 +9586,12 @@
       "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; the supported Shared collective commits its exact register or GM observable (shared-stage3-success)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-176",
       "row_assertion": "case_0176_normal_commit",
-      "gpr_word": "0x08310013",
+      "gpr_word": "0x00310013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {},
-      "datr_word": null,
+      "datr_word": "0x00401023",
       "destination_size_code": 1
     },
     {
@@ -9608,6 +9609,7 @@
       ],
       "decoded_start": "0x20111181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -9641,7 +9643,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x00401023",
       "destination_size_code": 1
     },
     {

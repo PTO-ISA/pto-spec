@@ -947,6 +947,13 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             f"    InstallSharedTile({shared_id}, _Tiles[[0]], '1111');",
             f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
             "    assert started == CommandExecution_Executed;",
+        ]
+        for value in dimension_words(row):
+            lines += [
+                f"    let dim_{value:x} = ExecuteCommandInstruction({asl_word(value)}, 32);",
+                f"    assert dim_{value:x} == CommandExecution_Executed;",
+            ]
+        lines += [
             f"    let shared = ExecuteCommandInstruction({asl_word(shared_binding('source0', 0))}, 32);",
             "    assert shared == CommandExecution_Executed;",
             f"    let subview = ExecuteCommandInstruction({asl_word(subview_word(False, 1))}, 32);",
@@ -970,6 +977,13 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             "    MarkTileValidRegionDefined(1);",
             f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
             "    assert started == CommandExecution_Executed;",
+        ]
+        for value in dimension_words(row):
+            lines += [
+                f"    let dim_{value:x} = ExecuteCommandInstruction({asl_word(value)}, 32);",
+                f"    assert dim_{value:x} == CommandExecution_Executed;",
+            ]
+        lines += [
             f"    let shared = ExecuteCommandInstruction({asl_word(shared_binding('destination0', 0))}, 32);",
             "    assert shared == CommandExecution_Executed;",
             f"    let assemble = ExecuteCommandInstruction({asl_word(assemble_word())}, 32);",
