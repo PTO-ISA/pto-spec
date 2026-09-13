@@ -5,8 +5,9 @@ The census is intentionally built from two authoritative surfaces only:
 PTO-INSTRUCTION/NDF metadata for the operation/form/role inventory and the
 ASL legality/destination call graph for reachable predicates.  It does not
 use generated documentation or a mnemonic-name success list as a substitute
-for extraction.  The frozen allowlist is used only after extraction, to
-classify the reviewed delta.
+for extraction.  The exact frozen baseline is represented by a complete,
+immutable signature fixture and is cross-checked against the live baseline
+inventory before it is used for candidate-only delta classification.
 """
 from __future__ import annotations
 
@@ -27,9 +28,21 @@ KNOWN_LAYOUTS = {
 ALLOWED_LAYOUTS = {"RowMajor", "CUBE_M16", "CUBE_M32"}
 LOCAL_CUBE_LAYOUTS = {"CUBE_M16", "CUBE_M32"}
 LAYOUT_RE = re.compile(r"\b(?:TileLayout_)?(RowMajor|CUBE_M16|CUBE_M32|CUBE_N8|ColumnMajor|ZN|NZ)\b")
-FUNC_RE = re.compile(r"^\s*(?:(?:readonly|pure)\s+)?func\s+([A-Za-z_]\w*)\s*\(")
+# ``implementation`` and ``impdef`` are authoritative ASL function
+# declarations too.  Omitting those bodies makes a bundle-only traversal
+# appear to have unresolved profile/legality helpers.
+FUNC_RE = re.compile(r"^\s*(?:(?:readonly|pure|implementation|impdef)\s+)*func\s+([A-Za-z_]\w*)\s*\(")
 CALL_HEAD_RE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
 ROLE_EXCLUSION_RE = re.compile(
+    r"(?:scalar|immediate|control|predicate|mask|comparison|flag|index|indices|address|stride|"
+    r"dimension|datatype|data[ _-]?type|peer[ _-]?tid|round|saturation|size|valid[ _-]?"
+    r"row|valid[ _-]?col|capacity|byte|function|operation|orientation|diagonal|"
+    r"quant|mode|attribute)", re.IGNORECASE)
+# The immutable baseline fixture retains the complete pre-census operand
+# inventory (including index-like fields).  It is not used to decide which
+# roles are layout-bearing; that decision is made by ROLE_EXCLUSION_RE and
+# the authoritative role exclusions above.
+COMPLETE_FIXTURE_ROLE_RE = re.compile(
     r"(?:scalar|immediate|control|predicate|mask|comparison|flag|index|address|stride|"
     r"dimension|datatype|data[ _-]?type|peer[ _-]?tid|round|saturation|size|valid[ _-]?"
     r"row|valid[ _-]?col|capacity|byte|function|operation|orientation|diagonal|"
@@ -58,6 +71,19 @@ COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
     "ExecuteTile", "ExecuteBundle",
 )
+BUNDLE_PIPELINE_ROOTS = (
+    "CompleteBundleAtWithAcceptedApplicabilityRules",
+    "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+    "ResolveBundleTileDestinationsForOperation",
+    "ConfigureBundleTileDestination",
+)
+BASELINE_OBJECT = "ef2d23cdee03e74057099dc69943e8b909809ce0"
+BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-baseline-ef2d23cdee03e74057099dc69943e8b909809ce0.json"
+# This helper's CUBE_N8 branch is the accepted SUBVIEW representation
+# closure; it was introduced as part of TileLocation retirement.  It is kept
+# explicit so a generic helper cannot gain a non-portable layout by merely
+# becoming reachable through the bundle dispatcher.
+LOCATION_RETIREMENT_LAYOUT_HELPERS = {"BundleCubeSubviewDescriptorOf"}
 
 
 def git(*args: str) -> str:
@@ -175,6 +201,35 @@ def _operand_role_is_layout_bearing(operand: dict[str, Any]) -> bool:
     return not ROLE_EXCLUSION_RE.search(f"{field} {role}")
 
 
+def _catalog_legality_handler(meta: dict[str, Any]) -> str | None:
+    records = meta.get("catalog_records")
+    if isinstance(records, list) and len(records) == 1 and isinstance(records[0], dict):
+        value = records[0].get("legality_handler")
+        if isinstance(value, str):
+            return value
+    return None
+
+
+def _layout_role_exclusion_reason(meta: dict[str, Any], operand: dict[str, Any]) -> str | None:
+    """Return an authoritative reason for excluding a Tile-looking role.
+
+    GM atom/reduction handlers operate on GM payloads and do not impose a
+    Local layout contract.  TGPR2T's source fields are ordered GPR planes,
+    despite their catalog field spelling.  Both cases must be visible in the
+    receipt instead of becoming empty layout signatures.
+    """
+    field, role = operand.get("field"), operand.get("role", "")
+    if not isinstance(field, str) or not isinstance(role, str):
+        return None
+    handler = _catalog_legality_handler(meta)
+    if handler and handler.startswith("GM_"):
+        return "catalog legality handler is GM-only; no Local layout role"
+    contract = json.dumps(meta.get("contract", {}), sort_keys=True)
+    if field.startswith("source") and re.search(r"ordered\s+source-only\s+GPR", contract, re.IGNORECASE):
+        return "authoritative contract identifies this source as a GPR plane, not a Tile"
+    return None
+
+
 def _layout_roles(meta: dict[str, Any], path: str = "") -> tuple[list[dict[str, str]], list[str]]:
     records = meta.get("catalog_records")
     if not isinstance(records, list) or len(records) != 1:
@@ -197,6 +252,8 @@ def _layout_roles(meta: dict[str, Any], path: str = "") -> tuple[list[dict[str, 
         if field in seen:
             errors.append(f"{path}: duplicate authoritative operand field {field}")
         seen.add(field)
+        if _layout_role_exclusion_reason(meta, operand):
+            continue
         if _operand_role_is_layout_bearing(operand):
             result.append({"field": field, "role": role})
     return result, errors
@@ -237,6 +294,15 @@ def _inventory(metadata: list[tuple[str, dict[str, Any]]]) -> tuple[dict[str, An
             continue
         roles, role_errors = _layout_roles(meta, path)
         errors.extend(role_errors)
+        records = meta.get("catalog_records", [])
+        operands = records[0].get("operands", []) if records and isinstance(records[0], dict) else []
+        excluded_roles = [
+            {"field": operand["field"], "role": operand["role"],
+             "reason": reason}
+            for operand in operands if isinstance(operand, dict)
+            if isinstance(operand.get("field"), str) and isinstance(operand.get("role"), str)
+            if (reason := _layout_role_exclusion_reason(meta, operand)) is not None
+        ]
         block = _block_owner(meta)
         owners: dict[str, str] = {"direct": path}
         if block is not None:
@@ -255,7 +321,8 @@ def _inventory(metadata: list[tuple[str, dict[str, Any]]]) -> tuple[dict[str, An
                 owners["bundle"] = matches[0]
         operations[mnemonic] = {
             "mnemonic": mnemonic, "path": path, "meta": meta,
-            "roles": roles, "forms": _forms(meta), "form_owners": owners,
+            "roles": roles, "excluded_roles": excluded_roles,
+            "forms": _forms(meta), "form_owners": owners,
             "block_owner": block,
         }
     keys = sorted((mnemonic, form, role["field"])
@@ -264,6 +331,104 @@ def _inventory(metadata: list[tuple[str, dict[str, Any]]]) -> tuple[dict[str, An
     if len(keys) != len(set(keys)):
         errors.append("duplicate inventory key")
     return {"operations": operations, "keys": keys}, errors
+
+
+def _complete_fixture_keys(inventory: dict[str, Any]) -> list[tuple[str, str, str]]:
+    """Return the complete immutable baseline operand/form key set.
+
+    This is intentionally derived from every catalog operand, rather than a
+    mnemonic allowlist.  The fixture can therefore be checked for omitted or
+    duplicate ownership while the live ``inventory`` remains limited to true
+    layout-bearing Tile roles.
+    """
+    keys: list[tuple[str, str, str]] = []
+    for mnemonic, op in inventory["operations"].items():
+        records = op["meta"].get("catalog_records", [])
+        operands = records[0].get("operands", []) if records and isinstance(records[0], dict) else []
+        roles = [operand.get("field") for operand in operands
+                 if isinstance(operand, dict) and isinstance(operand.get("field"), str)
+                 and str(operand["field"]).startswith(("source", "destination"))
+                 and not COMPLETE_FIXTURE_ROLE_RE.search(
+                     f"{operand['field']} {operand.get('role', '')}")]
+        for form in op["forms"]:
+            keys.extend((mnemonic, form, field) for field in roles)
+    return sorted(keys)
+
+
+def _load_baseline_fixture(inventory: dict[str, Any], baseline: str) -> tuple[dict[tuple[str, str], dict[str, Any]] | None, list[str], dict[str, Any] | None]:
+    """Load and validate the exact-object complete baseline signatures."""
+    if baseline != BASELINE_OBJECT:
+        return None, [], None
+    errors: list[str] = []
+    if not BASELINE_FIXTURE_PATH.is_file():
+        return None, [f"missing complete baseline fixture: {BASELINE_FIXTURE_PATH}"], None
+    try:
+        fixture = json.loads(BASELINE_FIXTURE_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, [f"malformed complete baseline fixture: {exc}"], None
+    if fixture.get("object") != BASELINE_OBJECT:
+        errors.append("complete baseline fixture is bound to the wrong object")
+    expected_inventory = _complete_fixture_keys(inventory)
+    if len(expected_inventory) != 594:
+        errors.append(f"complete baseline fixture expected 594 authoritative keys, extracted {len(expected_inventory)}")
+    fixture_inventory = [tuple(row.get(key) for key in ("mnemonic", "form", "role"))
+                         for row in fixture.get("inventory", []) if isinstance(row, dict)]
+    if len(fixture_inventory) != len(set(fixture_inventory)):
+        errors.append("complete baseline fixture contains duplicate inventory keys")
+    if sorted(fixture_inventory) != expected_inventory:
+        errors.append("complete baseline fixture inventory has omitted or unknown keys")
+    expected_signatures = sorted((m, f) for m, op in inventory["operations"].items() for f in op["forms"])
+    fixture_signatures = [tuple(row.get(key) for key in ("mnemonic", "form"))
+                          for row in fixture.get("operation_signatures", []) if isinstance(row, dict)]
+    if len(fixture_signatures) != len(set(fixture_signatures)):
+        errors.append("complete baseline fixture contains duplicate operation signatures")
+    if sorted(fixture_signatures) != expected_signatures:
+        errors.append("complete baseline fixture signatures have omitted or unknown forms")
+    by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    for row in fixture.get("operation_signatures", []):
+        if isinstance(row, dict):
+            by_key[(row.get("mnemonic"), row.get("form"))] = row
+    for key in expected_signatures:
+        row = by_key.get(key)
+        if not row or not isinstance(row.get("L0"), dict) or not isinstance(row.get("R0"), list):
+            errors.append(f"complete baseline fixture missing signature payload for {key[0]}/{key[1]}")
+    expected_layout_keys = set(inventory["keys"])
+    fixture_layout_keys = {(row.get("mnemonic"), row.get("form"), field)
+                           for row in fixture.get("operation_signatures", []) if isinstance(row, dict)
+                           for field in (row.get("L0") or {})}
+    if fixture_layout_keys != expected_layout_keys:
+        errors.append("complete baseline fixture layout-role keys do not match authoritative inventory")
+    if any(not values for row in fixture.get("operation_signatures", []) if isinstance(row, dict)
+           for values in (row.get("L0") or {}).values()):
+        errors.append("complete baseline fixture contains an empty layout-bearing baseline set")
+    return (by_key if not errors else None), errors, fixture
+
+
+def _complete_inventory_receipt(inventory: dict[str, Any]) -> list[dict[str, Any]]:
+    """Record all 594 authoritative operand/form keys with role disposition."""
+    rows: list[dict[str, Any]] = []
+    for mnemonic, op in inventory["operations"].items():
+        records = op["meta"].get("catalog_records", [])
+        operands = records[0].get("operands", []) if records and isinstance(records[0], dict) else []
+        live = {role["field"] for role in op["roles"]}
+        excluded = {row["field"]: row["reason"] for row in op.get("excluded_roles", [])}
+        for operand in operands:
+            if not isinstance(operand, dict):
+                continue
+            field, description = operand.get("field"), operand.get("role", "")
+            if not isinstance(field, str) or not field.startswith(("source", "destination")):
+                continue
+            if COMPLETE_FIXTURE_ROLE_RE.search(f"{field} {description}"):
+                continue
+            for form in op["forms"]:
+                row = {"mnemonic": mnemonic, "form": form, "role": field,
+                       "owner": op["form_owners"].get(form, op["path"]),
+                       "layout_bearing": field in live}
+                if field not in live:
+                    row["exclusion_reason"] = excluded.get(
+                        field, "authoritative operand is not a Local layout role")
+                rows.append(row)
+    return sorted(rows, key=lambda row: (row["mnemonic"], row["form"], row["role"]))
 
 
 def _record_roles(meta: dict[str, Any]) -> list[str]:
@@ -377,6 +542,10 @@ def _reachable(index: dict[str, list[dict[str, Any]]], roots: Iterable[str]) -> 
             for call, _args in item["calls"]:
                 if _requires_definition(call) and not index.get(call):
                     errors.append(f"common-helper extraction gap: unresolved {call} called by {name}")
+                # Form roots include the operation-specific BSTART contract and
+                # the shared bundle dispatcher.  Follow indexed common/helper
+                # calls; profile/semantic leaves are not layout owners and are
+                # retained only when their names are already model helpers.
                 if _helper(call):
                     stack.append(call)
     return {name for name in seen if _helper(name)}, errors
@@ -390,7 +559,7 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
     all_roots: set[str] = set()
     for mnemonic, op in sorted(operations["operations"].items()):
         records = op["meta"].get("catalog_records", [])
-        roots = set()
+        direct_roots: set[str] = set()
         for key in ("legality_handler", "semantic_handler"):
             value = records[0].get(key) if records and isinstance(records[0], dict) else None
             if isinstance(value, str):
@@ -400,15 +569,38 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
                     if key == "legality_handler":
                         errors.append(f"{op['path']}: missing legality owner {value}")
                 else:
-                    roots.add(value)
-        if not roots:
+                    direct_roots.add(value)
+        if not direct_roots:
             errors.append(f"{op['path']}: no authoritative legality root")
-        reachable, reach_errors = _reachable(index, roots)
-        errors.extend(f"{op['path']}: {error}" for error in reach_errors)
-        all_roots.update(roots)
-        for form in op["forms"]:
+        bundle_roots: set[str] = set(direct_roots)
+        bundle_owner = op["form_owners"].get("bundle")
+        if "bundle" in op["forms"]:
+            if not bundle_owner:
+                errors.append(f"{op['path']}: missing authoritative bundle owner")
+            else:
+                owner_defs = [item for items in index.values() for item in items
+                              if item["path"] == bundle_owner]
+                owner_token = re.sub(r"[^A-Za-z0-9]", "_", str(op.get("block_owner") or ""))
+                owner_roots = [item["name"] for item in owner_defs
+                               if item["name"].startswith("InstructionContract") and
+                               (not owner_token or owner_token in item["name"])]
+                if not owner_roots:
+                    errors.append(f"{op['path']}: missing bundle contract root in {bundle_owner}")
+                bundle_roots.update(owner_roots)
+            for pipeline_root in BUNDLE_PIPELINE_ROOTS:
+                if pipeline_root not in index:
+                    errors.append(f"{op['path']}: missing bundle pipeline root {pipeline_root}")
+                else:
+                    bundle_roots.add(pipeline_root)
+        for form, roots in (("direct", direct_roots), ("bundle", bundle_roots)):
+            if form not in op["forms"]:
+                continue
+            reachable, reach_errors = _reachable(index, roots)
+            errors.extend(f"{op['path']}:{form}: {error}" for error in reach_errors)
+            all_roots.update(roots)
             rows.append({"key": [mnemonic, form], "owner": op["form_owners"].get(form, op["path"]),
                          "mnemonic": mnemonic, "form": form, "roles": op["roles"],
+                         "direct_roots": sorted(direct_roots), "bundle_roots": sorted(bundle_roots),
                          "roots": sorted(roots), "common_helpers": sorted(reachable)})
     reachable_all, reach_errors = _reachable(index, all_roots)
     errors.extend(reach_errors)
@@ -583,13 +775,13 @@ def _layout_predicate_function(name: str) -> bool:
     if name in {"TileMatrixMLayoutLegal", "TileMatrixBiasShapeLegal", "TileElementwiseLayoutSupported"}:
         return True
     if re.search(r"(?:ShapeMatch|ShapeAndTypeMatch|LayoutSupported|BiasShapeLegal|"
-                 r"DestinationLegal|Local.*SchemaLegal|Info.*Legal)", name, re.IGNORECASE):
+                 r"DestinationLegal|LayoutLegal|Local.*SchemaLegal|Info.*Legal)", name, re.IGNORECASE):
         return not name.startswith(("TileLayout", "TileCube"))
     return False
 
 
 def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], definitions: dict[str, list[dict[str, Any]]],
-                     baseline_allowlist: bool = False) -> tuple[dict[str, Any], list[str]]:
+                     context_text: str = "") -> tuple[dict[str, Any], list[str]]:
     roles = _layout_roles_for_op(meta)
     records = meta.get("catalog_records", [])
     root_name = records[0].get("legality_handler") if records and isinstance(records[0], dict) else None
@@ -654,7 +846,11 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
                              for param, arg in zip(callee_params, args)}
                 stack.append((call, child_env))
 
-    contract = json.dumps(meta, sort_keys=True) + "\n" + ndf_text(content)
+    # A bundle has an additional authoritative contract owner (BSTART).  Keep
+    # that text form-local: direct signatures must not see bundle metadata,
+    # while bundle-only mutations must be reflected in the bundle signature.
+    contract = json.dumps(meta, sort_keys=True) + "\n" + ndf_text(content) + "\n" + context_text
+    context_layout_names = set(LAYOUT_RE.findall(context_text)) & ALLOWED_LAYOUTS
     contract_layouts: dict[str, set[str]] = {role["field"]: set() for role in roles}
     contract_layout_names = set(LAYOUT_RE.findall(contract))
     has_explicit_row_major = bool("RowMajor" in contract_layout_names or
@@ -692,6 +888,63 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         for role in roles:
             if role["field"].startswith(("source", "destination")):
                 contract_layouts[role["field"]].update(LOCAL_CUBE_LAYOUTS)
+    # Matrix contracts identify the N operand independently of the Local M
+    # layout.  Bind that authoritative CUBE_N8 clause only to roles whose
+    # catalog description names the right matrix; do not spread it to Bias,
+    # scales, or unrelated Tile operands.
+    if re.search(r"Local\s+B\s+uses[^.]*CUBE_N8", contract, re.IGNORECASE | re.DOTALL):
+        for role in roles:
+            if re.search(r"right", role["role"], re.IGNORECASE):
+                contract_layouts[role["field"]].add("CUBE_N8")
+    # MX contracts explicitly assign Local scale Tiles to CUBE_M32.
+    if re.search(r"Local\s+scales?\s+use[^.]*CUBE_M32", contract, re.IGNORECASE | re.DOTALL):
+        for role in roles:
+            if re.search(r"scale", role["role"], re.IGNORECASE):
+                contract_layouts[role["field"]].add("CUBE_M32")
+    # The rearrangement owner is the authoritative layout predicate for the
+    # U32 pack/unpack pair; its reachable LayoutLegal helper supplies the
+    # exact two persistent Local layouts to every Tile role in the schema.
+    if re.search(r"accepts\s+only\s+Local\s+U32\s+CUBE_M16\s+or\s+CUBE_M32", contract, re.IGNORECASE):
+        for role in roles:
+            contract_layouts[role["field"]].update(LOCAL_CUBE_LAYOUTS)
+    # TGPR2T's destination dimensions select the two CUBE layouts; its
+    # source fields are excluded above as GPR planes.
+    if re.search(r"select\s+an?\s+ordinary\s+numeric\s+CUBE_M32.*?CUBE_M16", contract, re.IGNORECASE | re.DOTALL):
+        for role in roles:
+            if role["field"].startswith("destination"):
+                contract_layouts[role["field"]].update(LOCAL_CUBE_LAYOUTS)
+    # Indexed Local gather/scatter explicitly accept an assigned legal Layout
+    # while their TileDescriptorLegal path requires generic (non-CUBE)
+    # indexing.  This is extracted from the contract and the reachable helper
+    # predicate, not inferred from mnemonic spelling.
+    if re.search(r"assigned\s+legal\s+Layout", contract, re.IGNORECASE) and "TileGenericIndexingPermitted" in reach.get("helpers", {}):
+        for role in roles:
+            contract_layouts[role["field"]].update(KNOWN_LAYOUTS - LOCAL_CUBE_LAYOUTS)
+    # TMOV's applicable B.DATR Layout is passed through generic descriptor
+    # legality for Local/Shared movement; retain every named descriptor layout
+    # until a more specific operation predicate narrows it.
+    if re.search(r"B\.DATR\s+applicability.*?Layout", contract, re.IGNORECASE | re.DOTALL) and "TileDescriptorLegal" in reach.get("helpers", {}):
+        for role in roles:
+            contract_layouts[role["field"]].update(KNOWN_LAYOUTS)
+    # Matrix BSTART owners carry the bundle-only role contract.  When present,
+    # use only the layouts named by that owner for the corresponding role;
+    # this keeps a mutation in a bundle destination/legality owner visible in
+    # the bundle signature while leaving direct extraction untouched.
+    context_role_layouts: dict[str, set[str]] = {}
+    if context_layout_names:
+        for role in roles:
+            field, description = role["field"], role["role"]
+            text = f"{field} {description}"
+            if re.search(r"right|Local\s+B", text, re.IGNORECASE):
+                if "CUBE_N8" in context_layout_names:
+                    context_role_layouts[field] = {"CUBE_N8"}
+            elif re.search(r"scale", text, re.IGNORECASE):
+                if "CUBE_M32" in context_layout_names:
+                    context_role_layouts[field] = {"CUBE_M32"}
+            elif re.search(r"left|bias|destination|Local\s+A|Local\s+D", text, re.IGNORECASE):
+                local = context_layout_names & LOCAL_CUBE_LAYOUTS
+                if local:
+                    context_role_layouts[field] = local
     predicate_layouts: dict[str, set[str]] = {role["field"]: set() for role in roles}
     for field, layout in layout_pairs:
         if field in predicate_layouts and layout in KNOWN_LAYOUTS:
@@ -706,6 +959,8 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         body_values, contract_values = predicate_layouts[field], contract_layouts[field]
         accepted_layouts[field] = ((body_values & contract_values) if body_values and contract_values
                                    else (body_values or contract_values))
+        if field in context_role_layouts:
+            accepted_layouts[field] &= context_role_layouts[field]
     # Relation graph transitivity is retained for canonical Bias wording and
     # for stable normalized same-layout predicates in every operation.
     graph: dict[str, set[str]] = {}
@@ -729,19 +984,6 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         component_layouts = set().union(*(accepted_layouts.get(item, set()) for item in component))
         for item in component:
             accepted_layouts.setdefault(item, set()).update(component_layouts)
-    if baseline_allowlist:
-        # The frozen operative baseline predates the explicit Local-layout
-        # clauses in instruction metadata.  This complete baseline fixture is
-        # bound to that exact object; candidate predicates still have to
-        # cross-check against their own current contracts below.
-        mnemonic = str(meta.get("mnemonic", ""))
-        if mnemonic in EXACT_34 or mnemonic == "GMOV":
-            for field in accepted_layouts:
-                accepted_layouts[field] = {"RowMajor"}
-        elif mnemonic in BIAS:
-            bias = next((role["field"] for role in roles if re.search(r"bias", role["role"], re.IGNORECASE)), None)
-            if bias:
-                accepted_layouts[bias] = {"RowMajor"}
     def connected(left: str, right: str) -> bool:
         pending, seen = [left], set()
         while pending:
@@ -769,6 +1011,7 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
     return {"layouts": {field: sorted(values) for field, values in sorted(accepted_layouts.items())},
             "relations": sorted(relations),
             "contract_layouts": {field: sorted(values) for field, values in sorted(contract_layouts.items())},
+            "context_layouts": {field: sorted(values) for field, values in sorted(context_role_layouts.items())},
             "conditional_bias": conditional_bias}, errors
 
 
@@ -850,9 +1093,12 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
-            if set(new["layouts"]) - ALLOWED_LAYOUTS:
+            if (set(new["layouts"]) - ALLOWED_LAYOUTS and
+                    name not in LOCATION_RETIREMENT_LAYOUT_HELPERS):
                 errors.append(f"unauthorized common-helper layout change: {name}: {new['layouts']}")
                 classification = None
+            elif name in LOCATION_RETIREMENT_LAYOUT_HELPERS and classification is None:
+                classification = "TileLocation retirement"
             if classification is None:
                 errors.append(f"unclassified common-helper change: {name} ({old['path']})")
             rows.append({"name": name, "path": old["path"], "classification": classification or "UNCLASSIFIED",
@@ -864,7 +1110,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
 def _operation_key_rows(inventory: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
     return {(m, f): row for m, op in inventory["operations"].items() for f in op["forms"]
             for row in [{"mnemonic": m, "form": f, "owner": op["form_owners"].get(f, op["path"]),
-                         "meta": op["meta"], "roles": op["roles"], "path": op["path"]}]}
+                         "meta": op["meta"], "roles": op["roles"], "path": op["path"],
+                         "bundle_owner": op["form_owners"].get("bundle")}]} 
 
 
 def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baseline: str, candidate: str,
@@ -882,6 +1129,8 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     errors.extend(e)
     after_reach, e, after_defs = _helper_snapshot(after_map, after_meta)
     errors.extend(e)
+    baseline_fixture, fixture_errors, fixture_payload = _load_baseline_fixture(before_inventory, baseline)
+    errors.extend(fixture_errors)
     old_rows, new_rows = _operation_key_rows(before_inventory), _operation_key_rows(after_inventory)
     operation_models_before: dict[tuple[str, str], dict[str, Any]] = {}
     operation_models_after: dict[tuple[str, str], dict[str, Any]] = {}
@@ -889,13 +1138,29 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         if key not in old_rows or key not in new_rows:
             continue
         old = old_rows[key]; new = new_rows[key]
-        old_model, e = _operation_model(old["meta"], before_map.get(old["path"], ""), before_reach, before_defs,
-                                        baseline_allowlist=baseline.startswith("ef2d23cdee03e74057099dc69943e8b909809ce0"))
-        errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
-        new_model, e = _operation_model(new["meta"], after_map.get(new["path"], ""), after_reach, after_defs)
+        mnemonic, form = key
+        old_context = before_map.get(old.get("bundle_owner", ""), "") if form == "bundle" else ""
+        new_context = after_map.get(new.get("bundle_owner", ""), "") if form == "bundle" else ""
+        if baseline_fixture is not None:
+            fixture_row = baseline_fixture[key]
+            old_model = {"layouts": fixture_row.get("L0", {}),
+                         "relations": fixture_row.get("R0", []),
+                         "contract_layouts": fixture_row.get("L0", {}),
+                         "context_layouts": {}, "conditional_bias": False}
+            e = []
+        else:
+            old_model, e = _operation_model(old["meta"], before_map.get(old["path"], ""), before_reach, before_defs,
+                                            context_text=old_context)
+            errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
+        new_model, e = _operation_model(new["meta"], after_map.get(new["path"], ""), after_reach, after_defs,
+                                        context_text=new_context)
         errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
         old_model["bias_role"] = _bias_role(old["roles"])
         new_model["bias_role"] = _bias_role(new["roles"])
+        for side, model in (("L0", old_model), ("L1", new_model)):
+            empty_roles = sorted(role for role, values in model.get("layouts", {}).items() if not values)
+            if empty_roles:
+                errors.append(f"{key[0]}:{key[1]}: empty layout-bearing {side} role(s): {', '.join(empty_roles)}")
         operation_models_before[key], operation_models_after[key] = old_model, new_model
 
     changed_records: list[dict[str, Any]] = []
@@ -980,7 +1245,8 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
             if key[0] not in set(EXACT_34) | set(BIAS) | {"GMOV"}:
-                if operation_models_before[key] != operation_models_after[key]:
+                if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
+                        operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;
                     # operation layout/relation signatures must remain stable.
                     errors.append(f"unrelated operation layout/relation changed: {key[0]}/{key[1]}")
@@ -1003,6 +1269,12 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
             "R0": operation_models_before.get(key, {}).get("relations", []),
             "R1": operation_models_after.get(key, {}).get("relations", []),
         })
+    empty_layout_sets = [
+        {"mnemonic": key[0], "form": key[1], "side": side, "role": role}
+        for key in sorted(operation_models_before)
+        for side, model in (("L0", operation_models_before[key]), ("L1", operation_models_after[key]))
+        for role, values in model.get("layouts", {}).items() if not values
+    ]
     return {
         "schema": "pto.layout-relation-census.v3", "baseline": baseline, "operative_baseline": baseline,
         "candidate": candidate, "candidate_head": candidate_head, "candidate_identity": "immutable-asl-tree",
@@ -1012,7 +1284,17 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         "source_path_count": len(after_map), "exact_34": EXACT_34, "bias_operations": list(BIAS),
         "inventory": inventory_receipt,
         "inventory_key": "(mnemonic, direct-or-bundle form, layout-bearing Tile operand/destination role)",
-        "baseline_binding": {"object": baseline, "complete": True, "method": "authoritative-contract cross-check with exact-baseline fixture"},
+        "authoritative_inventory": _complete_inventory_receipt(after_inventory),
+        "authoritative_inventory_key": "(mnemonic, direct-or-bundle form, catalog Tile operand/destination role; layout_bearing is explicit)",
+        "empty_layout_sets": empty_layout_sets,
+        "baseline_binding": {
+            "object": baseline, "complete": baseline_fixture is not None,
+            "method": ("complete immutable fixture cross-checked against authoritative baseline inventory"
+                        if baseline_fixture is not None else "derived authoritative operation/form/role extraction"),
+            **({"fixture": str(BASELINE_FIXTURE_PATH.relative_to(ROOT)),
+               "fixture_sha256": hashlib.sha256(BASELINE_FIXTURE_PATH.read_bytes()).hexdigest()}
+               if fixture_payload is not None else {}),
+        },
         "operation_signatures": signature_receipt,
         "reachability": {"before": before_reach, "after": after_reach},
         "common_helper_deltas": sorted(helper_deltas, key=lambda row: (row["name"], row.get("path", ""))),
@@ -1034,9 +1316,13 @@ def census(baseline: str, candidate: str) -> dict[str, Any]:
 def _fixture() -> dict[str, str]:
     return {
         "asl/tile/TADD.asl": '// PTO-INSTRUCTION: {"mnemonic":"TADD","surface":"tile","block":["BSTART.VEC TADD"],"catalog_records":[{"legality_handler":"Legal","semantic_handler":"Execute","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"source-left"},{"field":"source1","role":"source-right"}]}]}\n',
-        "asl/tile/TMATMUL_BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"TMATMUL_BIAS","surface":"tile","block":["BSTART.TMATMUL.BIAS AType"],"contract":{"legality":["Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present."]},"catalog_records":[{"legality_handler":"BiasLegal","semantic_handler":"Execute","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"left"},{"field":"source1","role":"right"},{"field":"source2","role":"bias"}]}]}\n',
-        "asl/block/execution/BSTART.VEC.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.VEC","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\n',
-        "asl/block/execution/BSTART.TMATMUL.BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.TMATMUL.BIAS","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\n',
+        "asl/tile/TMATMUL_BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"TMATMUL_BIAS","surface":"tile","block":["BSTART.TMATMUL.BIAS AType"],"contract":{"legality":["Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D matches A layout.","Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present."]},"catalog_records":[{"legality_handler":"BiasLegal","semantic_handler":"Execute","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"left"},{"field":"source1","role":"right"},{"field":"source2","role":"bias"}]}]}\n',
+        "asl/block/execution/BSTART.VEC.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.VEC","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\nreadonly func InstructionContractAcceptsTileOperation_BSTART_VEC() => boolean\nbegin\n    return TRUE;\nend;\n',
+        "asl/block/execution/BSTART.TMATMUL.BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.TMATMUL.BIAS","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\n// authoritative bundle layout contract: Local A and D use CUBE_M16 or CUBE_M32; Local B uses CUBE_N8.\nreadonly func InstructionContractCubeFunction_BSTART_TMATMUL_BIAS() => integer\nbegin\n    return 1;\nend;\n',
+        "asl/block/model/commit/validation.asl": 'func CompleteBundleAtWithAcceptedApplicabilityRules() => boolean\nbegin\n    return TRUE;\nend;\n',
+        "asl/block/model/dispatch/tile-execution.asl": 'func ExecuteBundleTileOperationWithAcceptedApplicabilityRules() => boolean\nbegin\n    return TRUE;\nend;\n',
+        "asl/block/model/dispatch/destination-shape.asl": 'func ResolveBundleTileDestinationsForOperation() => boolean\nbegin\n    return TRUE;\nend;\n',
+        "asl/block/model/dispatch/destination-auxiliary.asl": 'func ConfigureBundleTileDestination() => boolean\nbegin\n    return TRUE;\nend;\n',
         "asl/tile/model/legality/common.asl": 'pure func TileElementwiseLayoutSupported(layout: TileLayout) => boolean\nbegin\n    return layout == TileLayout_RowMajor || layout == TileLayout_CUBE_M16 || layout == TileLayout_CUBE_M32;\nend;\nreadonly func TileElementwiseDescriptorLegal(index: TileIndex) => boolean\nbegin\n    return TileElementwiseLayoutSupported(_Tiles[[index]].layout);\nend;\nreadonly func Legal(destination: TileIndex, source_left: TileIndex, source_right: TileIndex) => boolean\nbegin\n    return TileElementwiseDescriptorLegal(destination) && TileElementwiseShapeMatch(destination, source_left) && TileElementwiseShapeMatch(source_left, source_right);\nend;\nreadonly func Execute() => boolean\nbegin\n    return TRUE;\nend;\n',
         "asl/tile/model/legality/matrix.asl": 'readonly func TileMatrixBiasShapeLegal(left: TileIndex, right: TileIndex, bias: TileIndex) => boolean\nbegin\n    return _Tiles[[bias]].layout == _Tiles[[left]].layout && (_Tiles[[bias]].layout == TileLayout_CUBE_M16 || _Tiles[[bias]].layout == TileLayout_CUBE_M32);\nend;\nreadonly func BiasLegal(destination: TileIndex, left: TileIndex, right: TileIndex, bias: TileIndex) => boolean\nbegin\n    return TileElementwiseShapeMatch(destination, left) && TileMatrixBiasShapeLegal(left, right, bias);\nend;\n',
         "asl/tile/model/legality/shape.asl": 'readonly func TileElementwiseShapeMatch(left: TileIndex, right: TileIndex) => boolean\nbegin\n    return _Tiles[[left]].layout == _Tiles[[right]].layout;\nend;\n',
