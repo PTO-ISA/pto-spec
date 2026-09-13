@@ -2,7 +2,19 @@ from __future__ import annotations
 
 import unittest
 
-from scripts.layout_relation_census import BIAS, census, _census_texts, _fixture
+from scripts.layout_relation_census import (
+    BASELINE_OBJECT,
+    BIAS,
+    _complete_fixture_keys,
+    _census_texts,
+    _fixture,
+    _inventory,
+    _load_baseline_fixture,
+    _metadata_map,
+    census,
+    source_paths,
+    _ref_texts,
+)
 
 
 class LayoutRelationCensusTest(unittest.TestCase):
@@ -84,6 +96,67 @@ class LayoutRelationCensusTest(unittest.TestCase):
         )
         self.assertFalse(result["pass"])
         self.assertTrue(any("duplicate authoritative mnemonic owner" in error for error in result["errors"]))
+
+    def test_bundle_owner_mutation_changes_only_bundle_signature(self) -> None:
+        baseline = _fixture()
+        baseline["asl/block/execution/BSTART.TMATMUL.BIAS.asl"] += (
+            "// authoritative bundle layout contract: Local A and D use CUBE_M16 or CUBE_M32; "
+            "Local B uses CUBE_N8.\n"
+        )
+        candidate = dict(baseline)
+        candidate["asl/block/execution/BSTART.TMATMUL.BIAS.asl"] = candidate[
+            "asl/block/execution/BSTART.TMATMUL.BIAS.asl"
+        ].replace("CUBE_M32", "CUBE_M16")
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        direct = next(row for row in result["operation_signatures"]
+                      if row["mnemonic"] == "TMATMUL_BIAS" and row["form"] == "direct")
+        bundle = next(row for row in result["operation_signatures"]
+                      if row["mnemonic"] == "TMATMUL_BIAS" and row["form"] == "bundle")
+        self.assertEqual(direct["L0"], direct["L1"])
+        self.assertNotEqual(bundle["L0"], bundle["L1"])
+
+    def test_missing_bundle_owner_fails_closed(self) -> None:
+        baseline = _fixture()
+        candidate = dict(baseline)
+        del candidate["asl/block/execution/BSTART.VEC.asl"]
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("bundle owner" in error or "bundle contract root" in error
+                            for error in result["errors"]))
+
+    def test_complete_baseline_fixture_has_exact_authoritative_keys(self) -> None:
+        paths = source_paths(BASELINE_OBJECT, BASELINE_OBJECT)
+        source_map = _ref_texts(BASELINE_OBJECT, paths)
+        metadata, errors = _metadata_map(source_map)
+        self.assertFalse(errors)
+        inventory, errors = _inventory(metadata)
+        self.assertFalse(errors)
+        fixture, errors, payload = _load_baseline_fixture(inventory, BASELINE_OBJECT)
+        self.assertIsNotNone(payload)
+        self.assertFalse(errors)
+        self.assertIsNotNone(fixture)
+        self.assertEqual(len(_complete_fixture_keys(inventory)), 594)
+        self.assertEqual(len(fixture or {}), 234)
+
+    def test_real_receipt_has_no_empty_layout_bearing_sets_and_form_roots(self) -> None:
+        result = census(BASELINE_OBJECT, "working-tree")
+        self.assertTrue(result["pass"], result["errors"])
+        for signature in result["operation_signatures"]:
+            for side in ("L0", "L1"):
+                self.assertTrue(all(values for values in signature[side].values()),
+                                (signature["mnemonic"], signature["form"], side))
+        rows = result["reachability"]["after"]["operation_reachability"]
+        for mnemonic in ("TADD", "GMOV", "TMATMUL_BIAS"):
+            direct = next(row for row in rows if row["mnemonic"] == mnemonic and row["form"] == "direct")
+            bundle = next(row for row in rows if row["mnemonic"] == mnemonic and row["form"] == "bundle")
+            self.assertNotEqual(direct["roots"], bundle["roots"])
+            self.assertTrue(set(bundle["roots"]) > set(direct["roots"]))
+            self.assertNotEqual(direct["owner"], bundle["owner"])
 
     def test_real_candidate_records_gmov_and_bias_deltas_per_form(self) -> None:
         result = census("ef2d23cdee03e74057099dc69943e8b909809ce0", "HEAD")
