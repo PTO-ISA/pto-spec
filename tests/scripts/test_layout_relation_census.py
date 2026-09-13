@@ -34,10 +34,58 @@ class LayoutRelationCensusTest(unittest.TestCase):
         )
         self.assertFalse(result["pass"])
         self.assertTrue(
-            any("required Bias layout equality missing" in error for error in result["errors"])
+            any("unclassified layout delta" in error or "required Bias layout equality missing" in error for error in result["errors"])
         )
 
-    def test_real_candidate_records_gmov_and_bias_deltas_per_owner(self) -> None:
+    def test_bias_conditional_relation_mutation_is_rejected_end_to_end(self) -> None:
+        baseline = _fixture()
+        candidate = dict(baseline)
+        candidate["asl/tile/TMATMUL_BIAS.asl"] = candidate[
+            "asl/tile/TMATMUL_BIAS.asl"
+        ].replace("matching D and Local A when present", "matching D when present")
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(
+            any("required Bias conditional-A relation missing" in error for error in result["errors"])
+        )
+
+    def test_inventory_unknown_role_is_rejected_end_to_end(self) -> None:
+        baseline = _fixture()
+        candidate = dict(baseline)
+        candidate["asl/tile/TADD.asl"] = candidate["asl/tile/TADD.asl"].replace(
+            '"source1","role":"source-right"', '"source9","role":"unknown-layout-role"'
+        )
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("inventory changed" in error for error in result["errors"]))
+
+    def test_inventory_missing_role_is_rejected_end_to_end(self) -> None:
+        baseline = _fixture()
+        candidate = dict(baseline)
+        candidate["asl/tile/TADD.asl"] = candidate["asl/tile/TADD.asl"].replace(
+            ',{"field":"source1","role":"source-right"}', ""
+        )
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("inventory changed" in error for error in result["errors"]))
+
+    def test_duplicate_authoritative_owner_is_rejected_end_to_end(self) -> None:
+        baseline = _fixture()
+        candidate = dict(baseline)
+        candidate["asl/tile/TADD-duplicate.asl"] = candidate["asl/tile/TADD.asl"]
+        result = _census_texts(
+            baseline, candidate, "fixture-baseline", "fixture-candidate", enforce_closure=False
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("duplicate authoritative mnemonic owner" in error for error in result["errors"]))
+
+    def test_real_candidate_records_gmov_and_bias_deltas_per_form(self) -> None:
         result = census("ef2d23cdee03e74057099dc69943e8b909809ce0", "HEAD")
         self.assertTrue(result["pass"], result["errors"])
         self.assertRegex(result["candidate_head"], r"^[0-9a-f]{40}$")
@@ -52,30 +100,61 @@ class LayoutRelationCensusTest(unittest.TestCase):
         )
         changed = result["changed_records"]
         gmov = [row for row in changed if row["mnemonic"] == "GMOV"]
-        self.assertEqual(len(gmov), 1)
-        self.assertEqual(
-            {layout for layouts in gmov[0]["L0"].values() for layout in layouts},
-            {"RowMajor"},
-        )
-        self.assertEqual(
-            {layout for layouts in gmov[0]["L1"].values() for layout in layouts},
-            {"RowMajor", "CUBE_M16", "CUBE_M32"},
-        )
+        self.assertEqual({row["form"] for row in gmov}, {"direct", "bundle"})
+        for row in gmov:
+            self.assertEqual(set(row["L0"]), {"destination0", "source0"})
+            self.assertEqual(set(row["L1"]), {"destination0", "source0"})
+            self.assertEqual(set(row["L0"]["destination0"]), {"RowMajor"})
+            self.assertEqual(set(row["L1"]["destination0"]), {"RowMajor", "CUBE_M16", "CUBE_M32"})
+            self.assertEqual(set(row["L1"]["source0"]), {"RowMajor", "CUBE_M16", "CUBE_M32"})
+            self.assertEqual(row["R0"], row["R1"])
+            self.assertIn("destination0.layout == source0.layout", row["R1"])
+            self.assertNotIn("scalar0", row["L1"])
 
         bias = [row for row in changed if row["mnemonic"] in BIAS]
         self.assertEqual(len(bias), 8)
         self.assertEqual({row["mnemonic"] for row in bias}, set(BIAS))
         for row in bias:
-            self.assertEqual(
-                {layout for layouts in row["L0"].values() for layout in layouts},
-                {"RowMajor"},
-            )
-            self.assertEqual(
-                {layout for layouts in row["L1"].values() for layout in layouts},
-                {"CUBE_M16", "CUBE_M32"},
-            )
-            self.assertEqual(row["R0"], [])
-            self.assertEqual(row["R1"], ["Bias.layout == ML == D.layout"])
+            bias_role = "source2" if row["mnemonic"] in {"TMATMUL_BIAS", "TGEMV_BIAS"} else "source4"
+            self.assertEqual(set(row["L0"][bias_role]), {"RowMajor"})
+            self.assertEqual(set(row["L1"][bias_role]), {"CUBE_M16", "CUBE_M32"})
+            self.assertIn("Bias.layout == ML == D.layout", row["R1"])
+            self.assertIn("Local A present => A.layout == ML", row["R1"])
+            self.assertEqual(row["R0"], ["destination0.layout == source0.layout"])
+            self.assertNotIn("primary", " ".join(row["L1"]).lower())
+
+        relation_deltas = [row for row in result["delta"] if "relation" in row]
+        self.assertEqual(len(relation_deltas), 16)
+        self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in relation_deltas))
+        self.assertTrue(all(row["owner_decision"] != "none" for row in relation_deltas))
+        self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in result["delta"]))
+        self.assertTrue(all(row["owner_decision"] != "none" for row in result["delta"]))
+        self.assertEqual(
+            {row["relation"] for row in relation_deltas},
+            {"Bias.layout == ML == D.layout", "Local A present => A.layout == ML"},
+        )
 
         expected = set(BIAS) | set(result["exact_34"]) | {"GMOV"}
-        self.assertTrue({row["mnemonic"] for row in changed} <= expected)
+        self.assertEqual({row["mnemonic"] for row in changed}, expected)
+        self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
+        self.assertEqual(len(gmov), 2)
+        self.assertEqual(len(bias), 8)
+        exact = [row for row in changed if row["mnemonic"] in result["exact_34"]]
+        for row in exact:
+            self.assertTrue(all(set(values) == {"RowMajor"} for values in row["L0"].values()))
+            self.assertTrue(all(set(values) == {"RowMajor", "CUBE_M16", "CUBE_M32"} for values in row["L1"].values()))
+            self.assertEqual(row["R0"], row["R1"])
+            self.assertNotIn("scalar0", row["L1"])
+        self.assertEqual(result["inventory"], sorted(result["inventory"], key=lambda row: (row["mnemonic"], row["form"], row["role"])))
+        self.assertNotIn("operation", {row["role"] for row in result["inventory"]})
+        bias_bundle = [row for row in result["inventory"] if row["mnemonic"] == "TMATMUL_BIAS" and row["form"] == "bundle"]
+        self.assertTrue(bias_bundle)
+        self.assertTrue(all(row["owner"] == "asl/block/execution/BSTART.TMATMUL.BIAS.asl" for row in bias_bundle))
+        self.assertFalse(result["tile_location_normative_refs"])
+        changed_keys = {(row["mnemonic"], row["form"]) for row in changed}
+        for row in result["operation_signatures"]:
+            key = (row["mnemonic"], row["form"])
+            if row["mnemonic"] not in expected:
+                self.assertEqual(row["L0"], row["L1"])
+                self.assertEqual(row["R0"], row["R1"])
+                self.assertNotIn(key, changed_keys)
