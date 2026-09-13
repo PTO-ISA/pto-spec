@@ -38,18 +38,7 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Resolve the exact NDF revision
-        id: ndf-revision
-        run: echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore the NDF tool build
-        id: ndf-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: tools/ndf/target
-          key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
-
-      - name: Run script and NDF parity tests
+      - name: Run script tests
         run: ./scripts/check-pr --tooling
 
   validate:

@@ -34,7 +34,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/generate-readme-inventory --check",
                 "python3 scripts/manual_semantic_audit.py",
                 "git diff --check",
-                "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection",
+                "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection --exclude-module tests.scripts.test_ndf_compiler_graph_parity",
             ],
         )
         lowered = "\n".join(commands).lower()
@@ -85,17 +85,20 @@ class PullRequestCheckTest(unittest.TestCase):
         for command in result.stdout.splitlines():
             self.assertNotIn(command, workflow, command)
 
-    def test_pull_request_workflow_caches_only_the_ndf_tool_build(self) -> None:
+    def test_pull_request_workflow_has_no_cargo_dependent_steps(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
 
-        self.assertIn("path: tools/ndf/target", workflow)
-        for term in (
-            "runner.os",
-            "runner.arch",
-            "steps.ndf-revision.outputs.sha",
-            "hashFiles('tools/ndf/Cargo.lock')",
+        # The cargo-dependent NDF parity check lives in the full-validation
+        # lane, so the pull-request workflow must not build or cache Rust
+        # artifacts.
+        for forbidden in (
+            "cargo",
+            "tools/ndf/target",
+            "Cargo.lock",
+            "ndf-revision",
+            "ndf-cache",
         ):
-            self.assertIn(term, workflow)
+            self.assertNotIn(forbidden, workflow)
         for forbidden_path in (
             "build/decoders.asl",
             "build/validation-index.json",

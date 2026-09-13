@@ -29,7 +29,6 @@ def _expected_source_run_bodies() -> list[tuple[str, ...]]:
 
 def _expected_tooling_run_bodies() -> list[tuple[str, ...]]:
     return [
-        ('echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"',),
         (PR_TOOLING_COMMAND,),
     ]
 
@@ -58,26 +57,8 @@ def _expected_tooling_steps() -> list[dict[str, object]]:
     return [
         _checkout_step(),
         {
-            "name": "Resolve the exact NDF revision",
-            "id": "ndf-revision",
+            "name": "Run script tests",
             "run": bodies[0][0],
-        },
-        {
-            "name": "Restore the NDF tool build",
-            "id": "ndf-cache",
-            "uses": f"actions/cache@{CACHE_ACTION_SHA}",
-            "with": {
-                "path": "tools/ndf/target",
-                "key": (
-                    "ndf-${{ runner.os }}-${{ runner.arch }}-"
-                    "${{ steps.ndf-revision.outputs.sha }}-"
-                    "${{ hashFiles('tools/ndf/Cargo.lock') }}"
-                ),
-            },
-        },
-        {
-            "name": "Run script and NDF parity tests",
-            "run": bodies[1][0],
         },
     ]
 
@@ -205,49 +186,29 @@ def validate_pr_workflow(workflow: str) -> list[str]:
         errors.append("tooling-tests must execute the script unit tests exactly once")
     if source_lines != list(PR_GATES):
         errors.append("source-contract contains an unexpected active line or command order")
-    expected_tooling_lines = [
-        'echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"',
-        PR_TOOLING_COMMAND,
-    ]
+    expected_tooling_lines = [PR_TOOLING_COMMAND]
     if tooling_lines != expected_tooling_lines:
         errors.append("tooling-tests contains an unexpected active line or command order")
 
-    steps = _steps(tooling_tests)
+    # The cargo-dependent NDF parity check lives in the full-validation lane.
+    # The pull-request workflow must stay runnable without a Rust toolchain,
+    # so it must not derive, build, or cache the NDF compiler here.
     cache_steps = [
-        step for step in steps if step.get("uses") == f"actions/cache@{CACHE_ACTION_SHA}"
-    ]
-    if len(cache_steps) != 1:
-        errors.append("tooling-tests must use one commit-pinned NDF cache action")
-    else:
-        cache_with = _mapping(cache_steps[0].get("with"))
-        path = cache_with.get("path")
-        key = cache_with.get("key")
-        required_key_terms = (
-            "runner.os",
-            "runner.arch",
-            "steps.ndf-revision.outputs.sha",
-            "hashFiles('tools/ndf/Cargo.lock')",
-        )
-        if path != "tools/ndf/target" or not isinstance(key, str) or any(
-            term not in key for term in required_key_terms
-        ):
-            errors.append(
-                "tooling-tests NDF cache must contain only tools/ndf/target "
-                "and bind OS, architecture, submodule SHA, and Cargo.lock"
-            )
-    all_cache_steps = [
         step
         for step in all_steps
         if isinstance(step.get("uses"), str)
         and str(step["uses"]).startswith("actions/cache@")
     ]
-    if len(all_cache_steps) != 1:
-        errors.append("the NDF tool build must be the PR workflow's only cache")
+    if cache_steps:
+        errors.append(
+            "the PR workflow must not cache the cargo-dependent NDF tool build"
+        )
+    steps = _steps(tooling_tests)
     revision_steps = [step for step in steps if step.get("id") == "ndf-revision"]
-    if len(revision_steps) != 1 or _run_lines({"steps": revision_steps}) != [
-        'echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"'
-    ]:
-        errors.append("tooling-tests must derive the exact NDF submodule SHA")
+    if revision_steps:
+        errors.append(
+            "tooling-tests must not derive the NDF submodule SHA in the PR lane"
+        )
 
     if _flow_list(validate.get("needs")) != {"source-contract", "tooling-tests"}:
         errors.append("final PR gate must require both worker jobs")

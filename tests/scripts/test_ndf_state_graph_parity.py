@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
 import subprocess
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -60,55 +58,6 @@ class NdfStateGraphParityTest(unittest.TestCase):
         self.assertIn("  ndf:\n    path: tools/ndf\n    graph: false\n", manifest)
         self.assertIn(f"    revision: {NDF_REVISION}\n", lock)
         self.assertIn("    path: tools/ndf\n", lock)
-
-    def test_compiler_graph_matches_the_pto_metadata_inventory(self) -> None:
-        expected = expected_counts()
-        build = command(
-            "cargo",
-            "build",
-            "--manifest-path",
-            str(NDF_ROOT / "Cargo.toml"),
-            "--locked",
-            "--release",
-            "-p",
-            "ndf-cli",
-        )
-        self.assertEqual(build.returncode, 0, build.stderr)
-        binary = NDF_ROOT / "target" / "release" / "ndf"
-        with tempfile.TemporaryDirectory() as temporary:
-            index = Path(temporary) / "pto.sqlite"
-            built = command(
-                str(binary),
-                "build",
-                "--root",
-                str(REPOSITORY_ROOT),
-                "--output",
-                str(index),
-                "--format",
-                "json",
-            )
-            self.assertEqual(built.returncode, 0, built.stderr)
-            envelope = json.loads(built.stdout)
-            self.assertTrue(envelope["ok"], envelope)
-
-            actual: dict[str, int] = {}
-            for entity in expected:
-                queried = command(
-                    str(binary),
-                    "query",
-                    "--index",
-                    str(index),
-                    "--expression",
-                    f"attributes.pto_entity={entity}",
-                    "--format",
-                    "json",
-                )
-                self.assertEqual(queried.returncode, 0, queried.stderr)
-                result = json.loads(queried.stdout)
-                self.assertTrue(result["ok"], result)
-                actual[entity] = len(result["data"])
-
-        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":
