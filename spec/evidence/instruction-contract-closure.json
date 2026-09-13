@@ -14630,7 +14630,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -14807,9 +14807,9 @@
         ],
         "legality": [
           "The carrier selects exactly CUBE Function 17 and TileOperation_TGEMV_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
-          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
+          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). M is fixed to one and every Shared binding is illegal.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -15572,7 +15572,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
           "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -15749,9 +15749,9 @@
         ],
         "legality": [
           "The carrier selects exactly CUBE Function 21 and TileOperation_TGEMV_MX_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
           "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
-          "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
+          "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). M is fixed to one and every Shared binding is illegal.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -17162,7 +17162,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -17339,9 +17339,9 @@
         ],
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "A Shared primary must satisfy hardware-maintained whole-parent readiness and publication before payload access; fixed-quarter allocation or initialization masks are not a prerequisite. Any cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL interprets LB0 as Core-total group_M in 1..128; Shared A has exact physical valid shape [group_M,K] with physical index m*pitch+k (K-major) for TransA=0 or [K,group_M] with physical index k*pitch+m (M-major) for TransA=1; Shared B has exact physical valid shape [N,K] with physical index n*pitch+k (K-major, ordinary dense column-major/DN-equivalent) for TransB=0 or [K,N] with physical index k*pitch+n (N-major, ordinary dense row-major) for TransB=1; physical columns may be legally padded, and PE i uses valid_M=clamp(group_M-i*M_per_PE,0,M_per_PE) with M_per_PE 16 for group_M<=64 and 32 for group_M>=65. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
-          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
+          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -18110,7 +18110,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
           "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -18287,9 +18287,9 @@
         ],
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
           "A Shared primary must satisfy hardware-maintained whole-parent readiness and publication before payload access; fixed-quarter allocation or initialization masks are not a prerequisite. Any cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL interprets LB0 as Core-total group_M in 1..128; Shared A has exact physical valid shape [group_M,K] with physical index m*pitch+k (K-major) for TransA=0 or [K,group_M] with physical index k*pitch+m (M-major) for TransA=1; Shared B has exact physical valid shape [N,K] with physical index n*pitch+k (K-major, ordinary dense column-major/DN-equivalent) for TransB=0 or [K,N] with physical index k*pitch+n (N-major, ordinary dense row-major) for TransB=1; physical columns may be legally padded, and PE i uses valid_M=clamp(group_M-i*M_per_PE,0,M_per_PE) with M_per_PE 16 for group_M<=64 and 32 for group_M>=65. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
-          "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
+          "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -121799,7 +121799,7 @@
           "BSTART.GMOV U8; B.IOT T#1, mask=0101, size=1, ->T; B.IOR zero, a0; BSTOP"
         ],
         "exceptions": [
-          "Reject incompatible source/destination capacity, shape, type, layout, location, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, B.DIM, or B.IOS before effects.",
+          "Reject incompatible source/destination capacity, shape, type, or layout, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, any resolved B.DIM value other than one, or B.IOS before effects.",
           "A failed collective preflight allocates and writes no destination."
         ],
         "field_domains": [],
@@ -121807,7 +121807,7 @@
           "GMOV is TLSU Function 13 and has no standalone opcode.",
           "Exactly one terminating Local source-plus-destination B.IOT is required. Its destination TSize equals the source per-PE capacity.",
           "Any nonzero PE_MASK is legal; it selects destination writes but not rendezvous or source readiness. Mask zero is a strict no-op.",
-          "All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat."
+          "All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat. Local RowMajor, CUBE_M16, and CUBE_M32 forms preserve one selected layout; CUBE_N8 and Shared are illegal."
         ],
         "memory_effects": [
           "none; GMOV neither accesses global memory nor emits load, store, atomic, or fence events"
@@ -126100,7 +126100,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -126139,7 +126140,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TABS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -126160,7 +126161,7 @@
           "BSTART.VEC TABS, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
           "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
         ],
         "field_domains": [],
@@ -126168,8 +126169,8 @@
           "TABS is BSTART.VEC Mode 0 Function 15 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "Source and destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; the source valid region is fully defined.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -126228,7 +126229,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -126272,7 +126274,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TADD, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -126284,7 +126286,7 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol; an explicitly present zero dimension is illegal.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.",
           "The destination physical Rows are derived from TSize, Col, and DataType; Rows and Col are powers of two and contain ValidRow x ValidCol."
         ],
         "encoded_fields": [],
@@ -126301,7 +126303,7 @@
           "TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "B.DATR applicability allows only PadValueOrByteId as PadValue.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -126362,7 +126364,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -126407,7 +126410,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TADDS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -126420,13 +126423,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TADDS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TADDS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -126584,7 +126587,7 @@
           "TADDS is selected only by the TEPL raw carrier Mode 1 Function 0; canonical execution-engine assembly is BSTART.VEC TADDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -126647,7 +126650,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -126691,7 +126695,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TAND, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -126712,15 +126716,15 @@
           "BSTART.VEC TAND, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TAND is selected by TEPL carrier Mode 0 Function 6 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -126782,7 +126786,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -126827,7 +126832,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TANDS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -126840,13 +126845,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies zero and therefore clears every valid result element. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TANDS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TANDS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -127004,7 +127009,7 @@
           "TANDS is selected only by the TEPL raw carrier Mode 1 Function 6; canonical execution-engine assembly is BSTART.VEC TANDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -130516,7 +130521,7 @@
           "For ordinary layouts, source and destination have equal Row, Col, ValidRow, and ValidCol. For a CUBE_M16 or CUBE_M32 source, the destination preserves the same CUBE layout and ValidRow/ValidCol, while Row, Col, CELL count, capacity, and packing independently match the destination DataType.",
           "Every assigned Tile DataType is legal. Reserved five-bit DataType codes reject before effects; HiF4X2 is TCVT-only.",
           "Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.",
-          "A private CUBE source requires Canonicalize=1 and Layout=NORM. A CUBE_M16 or CUBE_M32 matrix source requires Canonicalize=0 and Layout=NORM; its destination remains a Matrix CUBE representation. An ordinary source requires Canonicalize=0.",
+          "Canonicalize=1 is reserved-illegal before effects. CUBE_M16 and CUBE_M32 sources with Canonicalize=0 preserve the source layout while the destination independently derives its geometry from the destination DataType. An ordinary source requires Canonicalize=0.",
           "The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.",
           "Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. Every other source-to-E8M0 pair rejects before destination allocation.",
           "The BSTART DataType is the source operation interpretation, not necessarily the ordinary source backing DataType. An ordinary non-packed source may differ only by same-width backing type; Matrix/CUBE sources retain exact backing/source-operation type equality. The destination backing type is the resolved B.DATR destination type."
@@ -130545,7 +130550,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "Snapshot the persistent source, convert every valid logical element under the resolved rounding and saturation controls, and write the corresponding logical coordinate in the destination layout.",
-          "Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the public representation, while CUBE_M16 and CUBE_M32 conversions retain the Matrix CUBE representation.",
+          "Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the resolved public layout, while CUBE_M16 and CUBE_M32 conversions retain the source CUBE layout.",
           "The source may alias the destination; execution observes the complete pre-execution source snapshot.",
           "For a supported E8M0 conversion, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.",
           "For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family."
@@ -130583,7 +130588,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -130627,7 +130633,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TDIV, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -130717,7 +130723,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -130762,7 +130769,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TDIVS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -130775,13 +130782,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TDIVS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.SFU TDIVS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -130939,7 +130946,7 @@
           "TDIVS is selected only by the TEPL raw carrier Mode 1 Function 3; canonical execution-engine assembly is BSTART.SFU TDIVS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -130999,7 +131006,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -131040,7 +131048,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TEXP, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -131052,13 +131060,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TEXP, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TEXP, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
@@ -131098,7 +131106,7 @@
           "TEXP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2.",
-          "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -131426,7 +131434,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -131475,7 +131484,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TFMA, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -131497,7 +131506,7 @@
           "BSTART.VEC TFMA, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK; B.IOT SrcAddend, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed or surplus bindings, B.IOR or B.IOS, unequal masks, missing or invalid dimensions, unsupported DataType, non-row-major layout, undefined source elements, mismatched descriptors, or invalid floating encodings raise Fault_TileLegality before effects.",
+          "Malformed or surplus bindings, B.IOR or B.IOS, unequal masks, missing or invalid dimensions, unsupported DataType, non-selected layout, undefined source elements, mismatched descriptors, or invalid floating encodings raise Fault_TileLegality before effects.",
           "An unrepresentable destination shape, unavailable renamed destination, insufficient per-PE TSize, or exhausted architectural Tile capacity raises Fault_TileAllocation before allocation.",
           "A signaling NaN, zero multiplied by infinity, infinity multiplied by zero, or an infinite product added to an opposite-signed infinity produces a quiet NaN and records floating invalid without a synchronous trap."
         ],
@@ -131506,8 +131515,8 @@
           "TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.",
           "Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.",
           "DataType is exactly one of FP16, FP32, or BF16.",
-          "All three sources and the destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; every valid source element is defined.",
-          "Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "All three sources and the destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; every valid source element is defined.",
+          "Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects."
         ],
         "memory_effects": [
@@ -132085,7 +132094,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -132102,9 +132111,9 @@
         "field_domains": [],
         "legality": [
           "The carrier selects exactly CUBE Function 17 and TileOperation_TGEMV_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
-          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
+          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). M is fixed to one and every Shared binding is illegal.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -132614,7 +132623,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
           "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -132631,9 +132640,9 @@
         "field_domains": [],
         "legality": [
           "The carrier selects exactly CUBE Function 21 and TileOperation_TGEMV_MX_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
           "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
-          "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
+          "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). M is fixed to one and every Shared binding is illegal.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -133007,7 +133016,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -133048,7 +133058,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TLOG, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -133060,13 +133070,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TLOG, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TLOG, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
@@ -133107,7 +133117,7 @@
           "TLOG retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -133546,7 +133556,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -133563,9 +133573,9 @@
         "field_domains": [],
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
           "A Shared primary must satisfy hardware-maintained whole-parent readiness and publication before payload access; fixed-quarter allocation or initialization masks are not a prerequisite. Any cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL interprets LB0 as Core-total group_M in 1..128; Shared A has exact physical valid shape [group_M,K] with physical index m*pitch+k (K-major) for TransA=0 or [K,group_M] with physical index k*pitch+m (M-major) for TransA=1; Shared B has exact physical valid shape [N,K] with physical index n*pitch+k (K-major, ordinary dense column-major/DN-equivalent) for TransB=0 or [K,N] with physical index k*pitch+n (N-major, ordinary dense row-major) for TransB=1; physical columns may be legally padded, and PE i uses valid_M=clamp(group_M-i*M_per_PE,0,M_per_PE) with M_per_PE 16 for group_M<=64 and 32 for group_M>=65. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
-          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
+          "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -133598,7 +133608,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Compute A[M x K] times B[K x N], then add one Local row-major 1xN private-result Bias into a new Local destination.",
+          "Compute A[M x K] times B[K x N], then add one Local resolved-M-layout 1xN private-result Bias into a new Local destination.",
           "After complete preflight, execute TMATMUL_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
           "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
@@ -133610,7 +133620,7 @@
       "mnemonic": "TMATMUL_BIAS",
       "ndf_clause": "PTO-INST-TILE-TMATMUL-BIAS",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
-      "summary": "Compute A[M x K] times B[K x N], then add one Local row-major 1xN private-result Bias into a new Local destination.",
+      "summary": "Compute A[M x K] times B[K x N], then add one Local resolved-M-layout 1xN private-result Bias into a new Local destination.",
       "surface": "tile"
     },
     {
@@ -134081,7 +134091,7 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
           "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
           "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
         ],
@@ -134098,9 +134108,9 @@
         "field_domains": [],
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
           "A Shared primary must satisfy hardware-maintained whole-parent readiness and publication before payload access; fixed-quarter allocation or initialization masks are not a prerequisite. Any cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL interprets LB0 as Core-total group_M in 1..128; Shared A has exact physical valid shape [group_M,K] with physical index m*pitch+k (K-major) for TransA=0 or [K,group_M] with physical index k*pitch+m (M-major) for TransA=1; Shared B has exact physical valid shape [N,K] with physical index n*pitch+k (K-major, ordinary dense column-major/DN-equivalent) for TransB=0 or [K,N] with physical index k*pitch+n (N-major, ordinary dense row-major) for TransB=1; physical columns may be legally padded, and PE i uses valid_M=clamp(group_M-i*M_per_PE,0,M_per_PE) with M_per_PE 16 for group_M<=64 and 32 for group_M>=65. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
-          "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
+          "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
           "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
@@ -134180,7 +134190,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -134224,7 +134235,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMAX, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -134245,7 +134256,7 @@
           "BSTART.VEC TMAX, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-selected layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
           "A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result."
         ],
         "field_domains": [],
@@ -134253,7 +134264,7 @@
           "TMAX is BSTART.VEC Mode 0 Function 11 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -134317,7 +134328,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -134362,7 +134374,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMAXS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -134375,13 +134387,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies the selected DataType all-zero encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TMAXS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TMAXS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -134539,7 +134551,7 @@
           "TMAXS is selected only by the TEPL raw carrier Mode 1 Function 11; canonical execution-engine assembly is BSTART.VEC TMAXS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -134602,7 +134614,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -134646,7 +134659,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMIN, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -134667,7 +134680,7 @@
           "BSTART.VEC TMIN, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-selected layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
           "A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result."
         ],
         "field_domains": [],
@@ -134675,7 +134688,7 @@
           "TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -134739,7 +134752,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -134784,7 +134798,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMINS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -134797,13 +134811,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies the selected DataType all-zero encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TMINS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TMINS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -134961,7 +134975,7 @@
           "TMINS is selected only by the TEPL raw carrier Mode 1 Function 12; canonical execution-engine assembly is BSTART.VEC TMINS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -135138,7 +135152,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135182,7 +135197,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMUL, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135270,7 +135285,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135315,7 +135331,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TMULS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135328,13 +135344,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TMULS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TMULS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -135492,7 +135508,7 @@
           "TMULS is selected only by the TEPL raw carrier Mode 1 Function 2; canonical execution-engine assembly is BSTART.VEC TMULS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -135552,7 +135568,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135591,7 +135608,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TNEG, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135612,7 +135629,7 @@
           "BSTART.VEC TNEG, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
           "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
         ],
         "field_domains": [],
@@ -135620,8 +135637,8 @@
           "TNEG is BSTART.VEC Mode 0 Function 17 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, S16, S8, FP32, FP16, or BF16.",
-          "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "Source and destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; the source valid region is fully defined.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -135677,7 +135694,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135716,7 +135734,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TNOT, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135737,7 +135755,7 @@
           "BSTART.VEC TNOT, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
           "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
         ],
         "field_domains": [],
@@ -135745,8 +135763,8 @@
           "TNOT is BSTART.VEC Mode 0 Function 16 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "Source and destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; the source valid region is fully defined.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "PE_MASK zero is a strict no-op before dimensions, source access, schema checks, or destination allocation."
         ],
         "memory_effects": [
@@ -135804,7 +135822,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135848,7 +135867,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TOR, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135869,15 +135888,15 @@
           "BSTART.VEC TOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TOR is selected by TEPL carrier Mode 0 Function 7 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -135939,7 +135958,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -135984,7 +136004,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TORS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -135997,13 +136017,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies zero and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TORS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TORS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -136161,7 +136181,7 @@
           "TORS is selected only by the TEPL raw carrier Mode 1 Function 7; canonical execution-engine assembly is BSTART.VEC TORS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -136648,7 +136668,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -136689,7 +136710,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TRECIP, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -136701,13 +136722,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TRECIP, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TRECIP, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
@@ -136748,7 +136769,7 @@
           "TRECIP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -136804,7 +136825,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -136843,7 +136865,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TRELU, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -136864,7 +136886,7 @@
           "BSTART.VEC TRELU, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
           "For TRELU, a signaling NaN publishes the profile quiet NaN and records the selected numeric-profile invalid condition only after complete legality preflight."
         ],
         "field_domains": [],
@@ -136872,8 +136894,8 @@
           "TRELU is BSTART.VEC Mode 0 Function 23 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of FP16, BF16, FP32, or S32.",
-          "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
-          "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "Source and destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; the source valid region is fully defined.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -136932,7 +136954,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -136976,7 +136999,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TREM, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -137066,7 +137089,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -137111,7 +137135,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TREMS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -137124,13 +137148,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TREMS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.SFU TREMS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -137288,7 +137312,7 @@
           "TREMS is selected only by the TEPL raw carrier Mode 1 Function 4; canonical execution-engine assembly is BSTART.SFU TREMS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -139856,7 +139880,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -139897,7 +139922,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TRSQRT, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -139909,13 +139934,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TRSQRT, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TRSQRT, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
@@ -139956,7 +139981,7 @@
           "TRSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -140591,7 +140616,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -140635,7 +140661,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSHL, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -140656,15 +140682,15 @@
           "BSTART.VEC TSHL, U8; B.DIM LB0=ValidCol; B.IOT Value, ShiftCount, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TSHL is selected by TEPL carrier Mode 0 Function 9 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies ordered value and shift-count sources plus one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -140726,7 +140752,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -140771,7 +140798,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSHLS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -140784,13 +140811,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies a zero shift count and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TSHLS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TSHLS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -140948,7 +140975,7 @@
           "TSHLS is selected only by the TEPL raw carrier Mode 1 Function 9; canonical execution-engine assembly is BSTART.VEC TSHLS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -141011,7 +141038,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -141055,7 +141083,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSHR, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -141076,15 +141104,15 @@
           "BSTART.VEC TSHR, U8; B.DIM LB0=ValidCol; B.IOT Value, ShiftCount, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TSHR is selected by TEPL carrier Mode 0 Function 10 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies ordered value and shift-count sources plus one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -141146,7 +141174,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -141191,7 +141220,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSHRS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -141204,13 +141233,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies a zero shift count and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TSHRS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TSHRS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -141368,7 +141397,7 @@
           "TSHRS is selected only by the TEPL raw carrier Mode 1 Function 10; canonical execution-engine assembly is BSTART.VEC TSHRS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -141565,7 +141594,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -141606,7 +141636,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TSQRT, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -141618,13 +141648,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TSQRT, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TSQRT, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
@@ -141664,7 +141694,7 @@
           "TSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -141975,7 +142005,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -142019,7 +142050,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSUB, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -142107,7 +142138,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -142152,7 +142184,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TSUBS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -142165,13 +142197,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TSUBS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TSUBS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -142329,7 +142361,7 @@
           "TSUBS is selected only by the TEPL raw carrier Mode 1 Function 1; canonical execution-engine assembly is BSTART.VEC TSUBS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
@@ -143120,7 +143152,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -143164,7 +143197,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TXOR, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -143185,15 +143218,15 @@
           "BSTART.VEC TXOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TXOR is selected by TEPL carrier Mode 0 Function 8 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
@@ -143255,7 +143288,8 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Layout"
             ],
             "pad_union": "pad-value"
           },
@@ -143300,7 +143334,7 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TXORS, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -143313,13 +143347,13 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+          "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "Omitted B.IOR supplies zero and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TXORS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
+          "BSTART.VEC TXORS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
@@ -143477,7 +143511,7 @@
           "TXORS is selected only by the TEPL raw carrier Mode 1 Function 8; canonical execution-engine assembly is BSTART.VEC TXORS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
+          "B.IOR is optional and, when present, only RegSrc0 may be nonzero. B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],

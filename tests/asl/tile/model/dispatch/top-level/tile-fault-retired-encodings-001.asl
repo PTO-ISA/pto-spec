@@ -19,7 +19,7 @@ func AssertRetiredEncoding(code: bits(12))
 begin
     ResetProfileState();
     ConfigureTile(0, 256, 1, 4, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x55);
     var operands = DefaultTileInstructionOperands();
     operands.destination0 = 0;

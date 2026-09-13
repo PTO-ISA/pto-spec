@@ -10,8 +10,7 @@ begin
         64,
         128,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         8192,
@@ -20,8 +19,7 @@ begin
         64,
         128,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     MarkTileValidRegionDefined(1);
     MarkTileValidRegionDefined(2);
     let started = ExecuteCommandInstruction(

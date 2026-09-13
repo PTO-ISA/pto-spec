@@ -19,8 +19,7 @@ begin
         2,
         3,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 2 looplimit 3 do
             WriteTileElement(1, row, column, Zeros{PTO_XLEN} + column);

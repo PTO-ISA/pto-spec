@@ -40,8 +40,7 @@ begin
         1,
         1,
         source_type,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         128,
@@ -50,8 +49,7 @@ begin
         1,
         1,
         index_type,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x1122334455667788);
     WriteTileElement(2, 0, 0, index_value);
     WritePEGPR(0, 3, Zeros{PTO_XLEN} + 0x100);

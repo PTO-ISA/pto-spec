@@ -11,11 +11,10 @@ func main() => integer
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_U16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_CUBE_M16, '1111');
     assert left_ready;
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 6);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
     let shared_tile_id = (Zeros{6} + 9) as SharedTileID;

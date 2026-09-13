@@ -94,7 +94,6 @@ begin
     _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type =
         TileDataType_FP64;
     _LocalGenerations[[slot]].parent_descriptor.layout = TileLayout_RowMajor;
-    _LocalGenerations[[slot]].parent_descriptor.location = TileLocation_Any;
     _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = 0;
     _LocalGenerations[[slot]].parent_descriptor.cube_n_repeat = 0;
     _LocalGenerations[[slot]].parent_descriptor.cube_cell_count = 0;
@@ -248,7 +247,6 @@ begin
            actual.data_type == expected.data_type &&
            actual.predicate_basis_type == expected.predicate_basis_type &&
            actual.layout == expected.layout &&
-           actual.location == expected.location &&
            actual.cube_k_repeat == expected.cube_k_repeat &&
            actual.cube_n_repeat == expected.cube_n_repeat &&
            actual.cube_cell_count == expected.cube_cell_count &&
@@ -405,7 +403,6 @@ begin
                 _LocalGenerations[[slot]].parent_descriptor.data_type = _Tiles[[destination]].data_type;
                 _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type = _Tiles[[destination]].predicate_basis_type;
                 _LocalGenerations[[slot]].parent_descriptor.layout = _Tiles[[destination]].layout;
-                _LocalGenerations[[slot]].parent_descriptor.location = _Tiles[[destination]].location;
                 _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = _Tiles[[destination]].cube_k_repeat;
                 _LocalGenerations[[slot]].parent_descriptor.cube_n_repeat = _Tiles[[destination]].cube_n_repeat;
                 _LocalGenerations[[slot]].parent_descriptor.cube_cell_count = _Tiles[[destination]].cube_cell_count;

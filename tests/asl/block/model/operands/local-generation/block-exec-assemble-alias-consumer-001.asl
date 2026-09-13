@@ -41,9 +41,9 @@ func main() => integer
 begin
     ResetProfileState();
     let left = ConfigureCubeTileForMask(0, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let right = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert left && right;
     InstallRelativeTileFixture(0, 0);
     InstallRelativeTileFixture(1, 1);

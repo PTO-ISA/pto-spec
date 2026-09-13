@@ -35,7 +35,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -91,7 +92,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -147,7 +149,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -203,7 +206,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -259,7 +263,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -315,7 +320,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -371,7 +377,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -427,7 +434,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -483,7 +491,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -539,7 +548,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -595,7 +605,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -651,7 +662,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -768,7 +780,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -816,7 +829,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -864,7 +878,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -912,7 +927,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -962,7 +978,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1012,7 +1029,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1062,7 +1080,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1112,7 +1131,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1162,7 +1182,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1334,7 +1355,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1395,7 +1417,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1452,7 +1475,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1509,7 +1533,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1566,7 +1591,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1623,7 +1649,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1680,7 +1707,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1737,7 +1765,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1794,7 +1823,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1851,7 +1881,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1908,7 +1939,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -1965,7 +1997,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },
@@ -2022,7 +2055,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Layout"
         ],
         "pad_union": "pad-value"
       },

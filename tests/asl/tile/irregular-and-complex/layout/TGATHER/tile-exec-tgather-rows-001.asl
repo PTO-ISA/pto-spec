@@ -5,13 +5,13 @@ begin
     ResetProfileState();
     ConfigureTile(
         40, 128, 4, 2, 3, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         41, 128, 2, 2, 2, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         42, 128, 2, 2, 2, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 
     for row = 0 to 2 looplimit 3 do
         for column = 0 to 1 looplimit 2 do

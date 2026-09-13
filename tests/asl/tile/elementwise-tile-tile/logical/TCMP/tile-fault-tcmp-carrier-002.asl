@@ -6,9 +6,9 @@ func RunTCMPCarrierFault(
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 2, 2, 1, 2, left_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 2, 2, 1, 2, right_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);

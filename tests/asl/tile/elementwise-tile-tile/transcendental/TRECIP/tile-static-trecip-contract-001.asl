@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: elementwise-tile-tile/transcendental
-    // block: BSTART.SFU TRECIP, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TRECIP, DataType | B.DATR PadValue, Layout (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000000010100') == 18;
     assert TileOperationOfIndex(18) == TileOperation_TRECIP;
     assert TileHandlerOfIndex(18) == TileHandler_ExecuteTileUnary;

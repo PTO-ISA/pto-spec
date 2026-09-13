@@ -30,10 +30,10 @@ begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(
         10, 128, 1, 8, TileDataType_E4M3,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let right_ready = ConfigureCubeTile(
         11, 128, 1, 8, TileDataType_E4M3,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert left_ready && right_ready;
     for column = 0 to 7 looplimit 8 do
         let left = Zeros{PTO_XLEN} + column + 1;

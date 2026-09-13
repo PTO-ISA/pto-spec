@@ -86,6 +86,19 @@ This accepted ADR is targeted to PTO ISA `0.58.5` and is a release-boundary
 record for the issue #167 NDF and ASL drift. Current semantic meaning remains
 owned by the affected ASL/NDF clauses and their generated projections.
 
+## 2026-09-13 amendment: unified Local TCVT closure
+
+`TCVT` M16/M32 conversion no longer depends on Matrix residency. With
+`Canonicalize=0`, the source CUBE layout is preserved while destination CELL
+geometry and capacity derive independently from destination dtype. Any
+`Canonicalize=1` form is reserved-illegal before source consumption or
+allocation; no encoding is reassigned. CUBE_N8 remains outside this contract.
+
+This amendment supersedes the former private/Matrix location boundary only;
+the current ASL/NDF owners and conversion profiles remain authoritative. The
+candidate dispatch baseline is `cbd64442b0585271fed2db633578b9fb1541e1d9`
+with durable provenance `fbdfc56bef714a98a080461d926d54dcfbaf851e`.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

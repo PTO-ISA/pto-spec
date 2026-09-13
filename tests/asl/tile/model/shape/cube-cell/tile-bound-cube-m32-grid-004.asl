@@ -6,7 +6,7 @@ begin
 
     let mx = ConfigureCubeTileForMask(
         1, 512, 33, 5, TileDataType_E8M0,
-        TileLayout_CUBE_M32, TileLocation_Matrix, '1000');
+        TileLayout_CUBE_M32, '1000');
     assert mx;
     assert _Tiles[[1]].rows == 64;
     assert _Tiles[[1]].columns == 8;
@@ -21,7 +21,7 @@ begin
 
     let hif = ConfigureCubeTileForMask(
         2, 512, 33, 2, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix, '1000');
+        TileLayout_CUBE_M32, '1000');
     assert hif;
     assert _Tiles[[2]].rows == 64;
     assert _Tiles[[2]].columns == 2;

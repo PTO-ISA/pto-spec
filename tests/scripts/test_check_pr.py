@@ -29,6 +29,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
                 "./scripts/check-model-closure-schema",
+                "./scripts/check-layout-relation-census",
                 "./scripts/check-release-workflow",
                 "./scripts/check-repository --structure-only",
                 "./scripts/generate-readme-inventory --check",
@@ -123,8 +124,17 @@ class PullRequestCheckTest(unittest.TestCase):
     def test_local_runner_executes_every_listed_source_command_once(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")
 
-        for index in range(9):
+        for index in range(10):
             self.assertEqual(checker.count(f"${{source_commands[{index}]}}"), 1)
+
+        self.assertIn(
+            'check_ui_step "Layout relation census" bash -c "${source_commands[4]}"',
+            checker,
+        )
+        self.assertIn(
+            'check_ui_step "Patch whitespace" bash -c "${source_commands[9]}"',
+            checker,
+        )
 
     def test_release_gate_projection_stays_in_release_lane(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")

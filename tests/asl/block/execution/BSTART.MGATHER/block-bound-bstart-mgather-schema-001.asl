@@ -23,7 +23,7 @@ end;
 func ConfigureSchemaIndex(data_type: TileDataType)
 begin
     ConfigureTile(0, 128, 1, 1, 1, 1, data_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
 end;
 

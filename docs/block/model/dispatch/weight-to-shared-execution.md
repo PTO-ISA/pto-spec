@@ -238,7 +238,6 @@ begin
     candidate.data_type = data_type;
     candidate.predicate_basis_type = data_type;
     candidate.layout = TileLayout_RowMajor;
-    candidate.location = TileLocation_Any;
     candidate.contents_defined = FALSE;
     candidate.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     candidate.packed_defined_elements = zero_packed_tile_elements;

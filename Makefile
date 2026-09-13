@@ -74,6 +74,7 @@ check-projections:
 	python3 scripts/generate-bundle-operation-matrix.py --check
 	./scripts/generate-bundle-command-totality --check
 	./scripts/generate-public-source-reconciliation --check
+	./scripts/check-layout-relation-census
 
 check-publication-hygiene:
 	python3 scripts/check-publication-hygiene

@@ -4,7 +4,7 @@ func ConfigureTileForMask(index: TileIndex,
                    rows: integer {0..65535}, columns: integer {0..65535},
                    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
                    data_type: TileDataType, layout: TileLayout,
-                   location: TileLocation, allocation_mask: bits(4))
+                   allocation_mask: bits(4))
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     assert TileCapacityIsLegal(capacity_bytes);
@@ -38,7 +38,6 @@ begin
     _Tiles[[index]].data_type = data_type;
     _Tiles[[index]].predicate_basis_type = data_type;
     _Tiles[[index]].layout = layout;
-    _Tiles[[index]].location = location;
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
@@ -87,7 +86,6 @@ begin
     _Tiles[[index]].data_type = TileDataType_U8;
     _Tiles[[index]].predicate_basis_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
-    _Tiles[[index]].location = TileLocation_Any;
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
@@ -116,12 +114,12 @@ end;
 func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
                    rows: integer {0..65535}, columns: integer {0..65535},
                    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
-                   data_type: TileDataType, layout: TileLayout, location: TileLocation)
+                   data_type: TileDataType, layout: TileLayout)
 begin
     // Direct one-level operations model the already-resolved current-PE
     // fragment and therefore charge one PE of capacity.
     ConfigureTileForMask(index, capacity_bytes, rows, columns,
-        valid_rows, valid_columns, data_type, layout, location, '0001');
+        valid_rows, valid_columns, data_type, layout, '0001');
     InstallRelativeTileFixture(index, index);
 end;
 
@@ -132,10 +130,9 @@ func ConfigureCubeTileForMask(
     valid_columns: integer {0..65535},
     data_type: TileDataType,
     layout: TileLayout,
-    location: TileLocation,
     allocation_mask: bits(4)) => boolean
 begin
-    if allocation_mask == Zeros{4} || location != TileLocation_Matrix ||
+    if allocation_mask == Zeros{4} ||
        !TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
            valid_columns, data_type, layout) then
         return FALSE;
@@ -171,7 +168,6 @@ begin
     _Tiles[[index]].data_type = data_type;
     _Tiles[[index]].predicate_basis_type = data_type;
     _Tiles[[index]].layout = layout;
-    _Tiles[[index]].location = location;
     _Tiles[[index]].cube_k_repeat = k_repeat;
     _Tiles[[index]].cube_n_repeat = n_repeat;
     _Tiles[[index]].cube_cell_count = cell_count;
@@ -185,11 +181,10 @@ func ConfigureCubeTile(
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
     data_type: TileDataType,
-    layout: TileLayout,
-    location: TileLocation) => boolean
+    layout: TileLayout) => boolean
 begin
     let configured = ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
-        valid_columns, data_type, layout, location, '0001');
+        valid_columns, data_type, layout, '0001');
     if configured then InstallRelativeTileFixture(index, index); end;
     return configured;
 end;
@@ -215,7 +210,6 @@ begin
     _Tiles[[index]].data_type = TileDataType_U8;
     _Tiles[[index]].predicate_basis_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
-    _Tiles[[index]].location = TileLocation_Any;
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
@@ -234,8 +228,7 @@ begin
     end;
     if !ConfigureCubeTileForMask(
            index, capacity_bytes, valid_rows, valid_columns,
-           TileDataType_U8, layout, TileLocation_Matrix,
-           allocation_mask) then
+           TileDataType_U8, layout, allocation_mask) then
         return FALSE;
     end;
     _Tiles[[index]].storage_kind = TileStorage_PredicateCell;

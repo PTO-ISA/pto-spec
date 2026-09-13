@@ -3,14 +3,14 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func TestTileExpansion()
 begin
     ConfigureTwoByTwo(11);
     ConfigureTile(12, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTwoByTwo(13);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 2);

@@ -70,8 +70,7 @@ begin
     let tile = _Tiles[[tile_index]];
     assert _BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert TileCubeDescriptorLegal(tile);
-    assert tile.layout == TileLayout_CUBE_M16 &&
-        tile.location == TileLocation_Matrix;
+    assert tile.layout == TileLayout_CUBE_M16;
     assert tile.valid_rows == 1 && tile.valid_columns == 32 &&
         tile.columns == 32;
     let first = TileLogicalLinearIndex(tile, 0, 0);

@@ -110,7 +110,7 @@ end;
 
 ```asm
 BSTART.VEC TADD, DataType
-B.DATR PadValue (optional)
+B.DATR PadValue, Layout (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -162,7 +162,7 @@ end;
 ## Defaults and encoded zero
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol; an explicitly present zero dimension is illegal.
-- Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.
+- Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.
 - The destination physical Rows are derived from TSize, Col, and DataType; Rows and Col are powers of two and contain ValidRow x ValidCol.
 
 ## Legality
@@ -170,7 +170,7 @@ end;
 - TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.
 - The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
-- B.DATR applicability allows only PadValueOrByteId as PadValue.
+- B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 
 ## State effects

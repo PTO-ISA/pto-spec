@@ -4,9 +4,9 @@ begin
     ResetProfileState();
     ConfigurePredicateTile(1, 128, 16, 2, 1, 2);
     ConfigureTile(2, 128, 8, 2, 1, 2, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(3, 128, 8, 2, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTilePredicateBit(1, 0, 0, TRUE);
     WriteTilePredicateBit(1, 0, 1, FALSE);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);

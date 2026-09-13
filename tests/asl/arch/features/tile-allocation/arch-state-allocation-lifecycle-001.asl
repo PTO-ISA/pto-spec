@@ -13,7 +13,7 @@ begin
     assert TileCoreAllocationBytes('1111', 128) == 512;
 
     ConfigureTile(5, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_ImplementationDefined, TileLocation_Any);
+        TileLayout_ImplementationDefined);
     assert _Tiles[[5]].allocated;
     assert !_Tiles[[5]].contents_defined;
     assert TileDescriptorConfigured(5);
@@ -21,7 +21,7 @@ begin
     assert !TileDescriptorLegal(5);
 
     ConfigureTile(5, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert !_Tiles[[5]].contents_defined;
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 9);
     assert _Tiles[[5]].contents_defined;

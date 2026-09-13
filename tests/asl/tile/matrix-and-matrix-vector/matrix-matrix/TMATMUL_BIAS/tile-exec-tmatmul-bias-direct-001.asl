@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TMATMUL-BIAS-EXEC-001","source":"asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl","requirements":["PTO-TMATMUL-BIAS-CONTRACT-001","PTO-INST-TILE-TMATMUL-BIAS"],"kind":"execution","summary":"TMATMUL_BIAS executes its direct 1x1 CUBE semantic handler","pass_condition":"the legal FP16 operands commit the expected FP32 result","related_sources":["asl/tile/model/legality/matrix-shape.asl","asl/tile/model/execution/cube.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TMATMUL-BIAS-EXEC-001","source":"asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl","requirements":["PTO-TMATMUL-BIAS-CONTRACT-001","PTO-INST-TILE-TMATMUL-BIAS"],"kind":"execution","summary":"TMATMUL_BIAS executes its direct 1x1 CUBE semantic handler","pass_condition":"the legal FP16 operands commit the expected FP32 result on both CUBE_M16 and CUBE_M32","related_sources":["asl/tile/model/legality/matrix-shape.asl","asl/tile/model/execution/cube.asl"]}
 func SelectTMATMUL_BIASFP16()
 begin
     InstallBundleOperationDescriptor(BundleOperationDescriptor {
@@ -16,21 +16,22 @@ begin
     });
 end;
 
-func main() => integer
+func RunTMATMULBias(layout: TileLayout) => boolean
 begin
     ResetProfileState();
     SelectTMATMUL_BIASFP16();
     let cube_configuration_1 = ConfigureCubeTile(1, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        layout);
     assert cube_configuration_1;
     let cube_configuration_2 = ConfigureCubeTile(2, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
     assert cube_configuration_2;
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let bias_configuration = ConfigureCubeTile(3, 128, 1, 1,
+        TileDataType_FP32, layout);
+    assert bias_configuration;
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     let cube_configuration_3 = ConfigureCubeTile(4, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        layout);
     assert cube_configuration_3;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);
@@ -39,5 +40,13 @@ begin
     TMATMUL_BIAS(4, 1, 2, 3);
     assert ReadTileElement(4, 0, 0) ==
         Zeros{PTO_XLEN} + 0x41300000;
+    return TRUE;
+end;
+
+func main() => integer
+begin
+    let m16 = RunTMATMULBias(TileLayout_CUBE_M16);
+    let m32 = RunTMATMULBias(TileLayout_CUBE_M32);
+    assert m16 && m32;
     return 0;
 end;

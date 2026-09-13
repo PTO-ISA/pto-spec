@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(10, 128, 1, 4, TileDataType_BF16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert source_ready;
     for column = 0 to 3 looplimit 4 do
         WriteTileElement(10, 0, column,

@@ -19,11 +19,11 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTileForMask(1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '0001');
+        TileLayout_RowMajor, '0001');
     ConfigureTileForMask(2, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '0001');
+        TileLayout_RowMajor, '0001');
 
     assert ResolveRelativeTileSource(0) == 0;
     PublishRelativeTileDestination(1);

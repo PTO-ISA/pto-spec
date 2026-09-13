@@ -3,11 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(10, 256, 8, 16, 2, 8,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(11, 256, 16, 8, 4, 8,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     MarkTileValidRegionDefined(10);
     MarkTileValidRegionDefined(11);
     InstallSharedTile((Zeros{6} + 40) as SharedTileID,

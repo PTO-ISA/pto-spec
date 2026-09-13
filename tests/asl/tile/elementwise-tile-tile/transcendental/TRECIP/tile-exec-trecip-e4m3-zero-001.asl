@@ -12,8 +12,7 @@ begin
                 1,
                 1,
                 TileDataType_E4M3,
-                TileLayout_RowMajor,
-                TileLocation_Any);
+                TileLayout_RowMajor);
         end;
         WriteTileElement(
             0,

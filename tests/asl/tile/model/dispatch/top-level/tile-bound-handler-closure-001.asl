@@ -3,7 +3,7 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func SelectTestCUBEDataType(data_type: bits(5))
@@ -66,17 +66,17 @@ begin
     // This closure test owns its matrix fixture. It must not inherit tiles
     // configured by TestTileMatmul when executed as an independent shard.
     ConfigureTile(5, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(6, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(7, 256, 2, 2, 2, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(28, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 0x4200);
@@ -91,7 +91,7 @@ begin
     WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 0x4000);
 
     ConfigureTile(61, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     SelectTestCUBEDataType('00100');
     TMATMUL_MX(7, 5, 0, 6, 0);

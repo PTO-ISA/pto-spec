@@ -3,26 +3,26 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(0, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+        TileDataType_U64, TileLayout_RowMajor, '1000');
     ConfigureTileForMask(1, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+        TileDataType_U64, TileLayout_RowMajor, '1000');
     ConfigureTileForMask(2, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+        TileDataType_U64, TileLayout_RowMajor, '1000');
     ConfigureTileForMask(3, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+        TileDataType_U64, TileLayout_RowMajor, '1000');
     assert TileCapacityInUseForPE(0) == 262144;
     assert TileCapacityInUseForPE(1) == 0;
     assert !LocalTileAllocationFits('1000', 128);
     assert LocalTileAllocationFits('0100', 65536);
 
     ConfigureTileForMask(4, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+        TileDataType_U64, TileLayout_RowMajor, '0100');
     ConfigureTileForMask(5, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+        TileDataType_U64, TileLayout_RowMajor, '0100');
     ConfigureTileForMask(6, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+        TileDataType_U64, TileLayout_RowMajor, '0100');
     ConfigureTileForMask(7, 65536, 8192, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+        TileDataType_U64, TileLayout_RowMajor, '0100');
     assert TileCapacityInUseForPE(0) == 262144;
     assert TileCapacityInUseForPE(1) == 262144;
     assert !LocalTileAllocationFits('1100', 128);

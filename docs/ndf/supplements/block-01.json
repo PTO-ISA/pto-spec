@@ -516,7 +516,7 @@
         "zh-CN": "带行偏置的 TGEMV"
       },
       "summary": {
-        "en": "This clause defines the Local-only TGEMV.BIAS form with M fixed to one and a Local row-major 1xN bias source. Shared operands and transpose are excluded, while one B.FPATR closes post-processing and successful outputs publish atomically after complete preflight.",
+        "en": "This clause defines the Local-only TGEMV.BIAS form with M fixed to one and a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present source. Shared operands and transpose are excluded, while one B.FPATR closes post-processing and successful outputs publish atomically after complete preflight.",
         "zh-CN": "本条款定义仅使用 Local 的 TGEMV.BIAS，M 固定为一，并读取一个 Local 行主序 1×N 偏置源。Shared 操作数和转置被排除；一条 B.FPATR 闭合后处理，完整预检后成功结果原子发布。"
       }
     },
@@ -672,7 +672,7 @@
         "zh-CN": "带行偏置的 TMATMUL"
       },
       "summary": {
-        "en": "This clause defines TMATMUL.BIAS with a Local row-major 1xN bias, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use group_M with the complete PE group; Shared physical valid shape, legal padded pitch, parent readiness, and all-PE metadata preflight precede payload and atomic output publication.",
+        "en": "This clause defines TMATMUL.BIAS with a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use group_M with the complete PE group; Shared physical valid shape, legal padded pitch, parent readiness, and all-PE metadata preflight precede payload and atomic output publication.",
         "zh-CN": "本条款定义 TMATMUL.BIAS：使用 Local 行主序 1×N 偏置、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用 group_M 与完整 PE 组；Shared physical valid shape、合法 padded pitch、父对象就绪及所有 PE metadata 预检先于 payload 与输出原子发布。"
       }
     },

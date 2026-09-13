@@ -162,6 +162,26 @@ The formal definition, generated catalog, documentation, and tests must derive
 their operation-specific type and operand schema from this contract rather
 than from a fixed generic Matrix arity.
 
+## 2026-09-13 amendment: resolved-M-layout Matrix Bias
+
+For the four Bias forms `TMATMUL_BIAS`, `TGEMV_BIAS`, `TMATMUL_MX_BIAS`, and
+`TGEMV_MX_BIAS`, Bias is a Local logical `1 x N` accumulator-typed source in
+the Matrix resolver's selected M layout (`CUBE_M16` or `CUBE_M32`). The Bias
+layout must equal the resolved M layout and D layout, and must equal Local A's
+layout when A is present. RowMajor or mixed-layout Bias is rejected before
+source snapshots, destination allocation, or payload effects. Broadcast uses
+the logical output column, including CUBE padding/tail boundaries.
+
+This amendment supersedes only the former RowMajor Bias auxiliary rule; all
+other Matrix types, dimensions, bindings, Shared readiness, preflight, and
+atomic publication remain unchanged. The owning ASL/NDF sources are
+`asl/tile/model/legality/matrix-operands.asl`,
+`asl/tile/model/legality/matrix-shape.asl`,
+`asl/tile/model/execution/cube.asl`, and the four direct/BSTART mnemonic
+contracts. It applies to the Issue #264/#267 candidate from `origin/main`
+`cbd64442b0585271fed2db633578b9fb1541e1d9` (durable provenance
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`) and has normative release impact.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

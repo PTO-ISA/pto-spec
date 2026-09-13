@@ -10,8 +10,7 @@ begin
         1,
         1,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     var result = _Tiles[[0]];
     result.payload[[0]] = Zeros{PTO_XLEN} + 9;

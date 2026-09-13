@@ -3,13 +3,13 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 16, 8, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
     let before = _Tiles[[0]];
     let before_mask = _TileAllocationMasks[[0]];
     let before_capacity = TileCapacityInUse();
     let configured = ConfigureCubeTile(0, 128, 13, 19,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     assert !configured;
     let after = _Tiles[[0]];
     assert after.allocated == before.allocated;
@@ -24,7 +24,6 @@ begin
     assert after.valid_columns == before.valid_columns;
     assert after.data_type == before.data_type;
     assert after.layout == before.layout;
-    assert after.location == before.location;
     assert after.payload[[0]] == before.payload[[0]];
     assert after.cube_k_repeat == before.cube_k_repeat;
     assert after.cube_n_repeat == before.cube_n_repeat;

@@ -1,8 +1,8 @@
 ---
 {
   "id": "ADR-CUBE-0013",
-  "title": "Private CUBE vector execution and CELL rearrangement",
-  "title_zh": "私有 CUBE 向量执行与 CELL 重排",
+  "title": "Local CUBE execution and CELL rearrangement",
+  "title_zh": "Local CUBE 执行与 CELL 重排",
   "status": "accepted",
   "authors": [
     "Codex"
@@ -166,3 +166,27 @@ outside scope.
 
 **中文。** CUBE_N8、Shared/混合布局、被排除的 compare/select/TCVT、归约、GM
 转换、predicate 及新数值转换不在范围内。
+
+## Amendment — 2026-09-13 (Issue #267)
+
+This amendment replaces the historical private/location wording with the
+current unified Local layout meaning and restores the exact-34 closure. The
+operative dispatch baseline is
+`ef2d23cdee03e74057099dc69943e8b909809ce0`; intermediate dispatch history is
+`cbd64442b0585271fed2db633578b9fb1541e1d9`; durable design provenance is
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`.
+
+The affected NDF owners are `PTO-TPACK-CONTRACT-001`,
+`PTO-TPERMUTE-CONTRACT-001`, `PTO-TSHUF-CONTRACT-001`,
+`PTO-TUNPACK-CONTRACT-001`, and the exact-34 elementwise instruction owners;
+affected units are `PTO-TILE-MODEL-DISPATCH-TOP-LEVEL`,
+`PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT`,
+`PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA`,
+`PTO-TILE-MODEL-STATE-ALLOCATION`, and the corresponding elementwise and
+CELL-rearrangement units. Local `RowMajor`/`CUBE_M16`/`CUBE_M32` is one layout
+model; `TileLocation`, Shared, mixed layouts, and CUBE_N8 remain outside this
+closure. Residuals: N/A at dispatch. Catalog, docs, AVS, matrix, and
+traceability projections are required to close against the amended owner.
+
+`release_impact: required` remains in force; this V1 amendment does not select
+a release identity.

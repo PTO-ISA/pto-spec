@@ -10,7 +10,7 @@ begin
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     let configured_1 = ConfigureCubeTileForMask(
         1, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+        TileLayout_CUBE_M32, '1111');
     assert configured_1;
     InstallRelativeTileFixture(1, 1);
     MarkTileValidRegionDefined(1);

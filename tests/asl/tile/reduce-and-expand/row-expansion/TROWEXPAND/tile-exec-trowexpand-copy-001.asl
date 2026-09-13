@@ -5,13 +5,13 @@ begin
     ConfigureTile(
         1, 128, 128, 1,
         2, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         WriteTileElement(1, row, 0, Zeros{PTO_XLEN} + 7);
     end;
     ConfigureTile(
         2, 128, 32, 4, 2, 3, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ExecuteTileExpand(
         TileExpand_COPY,
         TileAxis_Row,

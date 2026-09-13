@@ -696,7 +696,7 @@
         "zh-CN": "TGEMV_BIAS 矩阵向量偏置"
       },
       "summary": {
-        "en": "TGEMV_BIAS uses CUBE Function 17 to compute a Local matrix-vector result with one Local row-major 1-by-N bias source, with M fixed to one. Shared and transpose forms are excluded, one B.FPATR supplies postprocess operands and defaults, and successful output becomes visible only after complete preflight and source snapshots.",
+        "en": "TGEMV_BIAS uses CUBE Function 17 to compute a Local matrix-vector result with one Local bias source in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, with M fixed to one. Shared and transpose forms are excluded, one B.FPATR supplies postprocess operands and defaults, and successful output becomes visible only after complete preflight and source snapshots.",
         "zh-CN": "TGEMV_BIAS 使用 CUBE Function 17 计算带一个 Local 行优先 1×N 偏置源的矩阵向量结果，其中 M 固定为一。Shared 与转置形式不在范围内；一个 B.FPATR 提供后处理操作数和默认值，完整预检与源快照完成后，成功输出才可见。"
       }
     },
@@ -732,7 +732,7 @@
         "zh-CN": "TGEMV_MX_BIAS 缩放矩阵向量偏置"
       },
       "summary": {
-        "en": "TGEMV_MX_BIAS uses CUBE Function 21 for Local Matrix-MX vector multiplication with a Local row-major 1-by-N bias, with M fixed to one. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and the result publishes atomically after complete preflight and source snapshots.",
+        "en": "TGEMV_MX_BIAS uses CUBE Function 21 for Local Matrix-MX vector multiplication with a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, with M fixed to one. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and the result publishes atomically after complete preflight and source snapshots.",
         "zh-CN": "TGEMV_MX_BIAS 使用 CUBE Function 21 执行带 Local 行优先 1×N 偏置的 Matrix-MX 矩阵向量乘法，其中 M 固定为一。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，结果在完整预检和源快照后原子发布。"
       }
     },

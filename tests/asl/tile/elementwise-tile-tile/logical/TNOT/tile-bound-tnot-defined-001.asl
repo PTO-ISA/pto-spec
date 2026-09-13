@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 
     assert !InstructionContractOperandsLegal_TNOT(1, 0);
     assert !_Tiles[[1]].contents_defined;

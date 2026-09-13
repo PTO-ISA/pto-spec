@@ -179,7 +179,7 @@ begin
     if !found || !ConfigureCubeTileForMask(
            resolved, capacity_bytes, source_tile.valid_rows,
            source_tile.valid_columns, operation_type,
-           source_tile.layout, TileLocation_Matrix,
+           source_tile.layout,
            binding.pe_mask) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;

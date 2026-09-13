@@ -19,7 +19,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(0, 128, 1, 128, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '0111');
+        TileLayout_RowMajor, '0111');
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 9);
     let started = ExecuteCommandInstruction(GMOVReadinessStart(), 32);
     let tiles = ExecuteCommandInstruction(GMOVReadinessBinding(), 32);

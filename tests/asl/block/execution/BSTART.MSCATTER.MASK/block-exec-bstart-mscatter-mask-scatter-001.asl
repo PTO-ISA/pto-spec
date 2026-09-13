@@ -30,9 +30,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 4, 1, 3, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 8, 1, 3, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigurePredicateTile(3, 128, 1, 4, 1, 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x11);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x22);

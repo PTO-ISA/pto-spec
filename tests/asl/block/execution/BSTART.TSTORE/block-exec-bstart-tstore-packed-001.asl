@@ -28,7 +28,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 4, 2, 2, 2, TileDataType_U4X2,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
@@ -50,7 +50,7 @@ begin
     // place row one in the next byte and preserve both sibling high nibbles.
     ResetProfileState();
     ConfigureTile(0, 128, 2, 1, 2, 1, TileDataType_U4X2,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 7);
     _Memory[[0]] = Zeros{8} + 0xa0;

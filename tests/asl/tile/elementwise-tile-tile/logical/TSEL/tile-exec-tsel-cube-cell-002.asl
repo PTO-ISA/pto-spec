@@ -34,10 +34,10 @@ begin
         8, 128, 1, 2, TileDataType_FP32, TileLayout_CUBE_M32);
     let true_ready = ConfigureCubeTile(
         10, 256, 1, 2, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let false_ready = ConfigureCubeTile(
         11, 256, 1, 2, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert predicate_ready && true_ready && false_ready;
     InstallRelativeTileFixture(8, 8);
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);

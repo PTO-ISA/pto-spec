@@ -35,9 +35,9 @@ end;
 func Source()
 begin
     ConfigureTileForMask(1, 512, 64, 4, 1, 4,
-        TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any, '1100');
+        TileDataType_FP16, TileLayout_RowMajor, '1100');
     ConfigureTileForMask(2, 512, 64, 4, 1, 4,
-        TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any, '1100');
+        TileDataType_FP16, TileLayout_RowMajor, '1100');
     assert _Tiles[[1]].allocated && _Tiles[[2]].allocated;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);

@@ -4,7 +4,7 @@ func CheckCubeLoadPadding(pad_code: bits(2), expected: Word,
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(0, 128, 2, 3,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     assert configured;
     _BundleDataAttributesPresent = TRUE;
     _BundleDataAttributes.pad_value = pad_code;

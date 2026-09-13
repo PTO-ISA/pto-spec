@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(0, 128, 2, 16,
-        TileDataType_U4X2, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U4X2, TileLayout_CUBE_M16);
     assert configured;
     let base = Zeros{PTO_XLEN} + 0x600;
     _Memory[[0x600]] = Zeros{8} + 0x10;

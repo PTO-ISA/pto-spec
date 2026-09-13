@@ -28,7 +28,6 @@ begin
            _Tiles[[left]].valid_rows * _Tiles[[right]].valid_columns <=
                PTO_MODEL_TILE_ELEMENTS;
 end;
-
 pure func TileOrdinaryMatrixInputTypeSupported(
     data_type: TileDataType) => boolean
 begin
@@ -51,7 +50,6 @@ begin
            data_type == TileDataType_U8 ||
            data_type == TileDataType_U4X2;
 end;
-
 pure func TileOrdinaryMatrixInputTypesSameClass(
     left_type: TileDataType, right_type: TileDataType) => boolean
 begin
@@ -165,12 +163,15 @@ end;
 
 readonly func TileMatrixInfoBiasLegal(left: TileInfo, right: TileInfo,
                                       bias: TileIndex,
-                                      mx: boolean) => boolean
+                                      mx: boolean,
+                                      expected_layout: TileLayout) => boolean
 begin
-    if !TileSourceContentsDefined(bias) ||
+    if !TileElementwiseSourceContentsDefined(bias) ||
        _Tiles[[bias]].valid_rows != 1 ||
        _Tiles[[bias]].valid_columns != right.valid_columns ||
-       _Tiles[[bias]].layout != TileLayout_RowMajor then
+       _Tiles[[bias]].layout != expected_layout ||
+       (expected_layout != TileLayout_CUBE_M16 &&
+        expected_layout != TileLayout_CUBE_M32) then
         return FALSE;
     end;
     let left_type = TileDataTypeFromEncoding(
@@ -241,7 +242,6 @@ begin
     let left_scale_legal = !left_scale_present ||
         (((left_scale.layout == TileLayout_CUBE_M32 && TileCubeDescriptorLegal(left_scale)) ||
           (left_scale.layout == TileLayout_RowMajor &&
-           left_scale.location == TileLocation_Any &&
            TileInfoDescriptorLegal(left_scale))) &&
          left_scale.data_type == TileMXScaleCarrierType(left_type) &&
          left_scale.valid_rows == left.valid_rows &&
@@ -251,7 +251,6 @@ begin
            right_scale.valid_rows == right.valid_columns &&
            right_scale.valid_columns == right_groups) ||
           (right_scale.layout == TileLayout_RowMajor &&
-           right_scale.location == TileLocation_Any &&
            TileInfoDescriptorLegal(right_scale) &&
            right_scale.valid_rows == right_groups &&
            right_scale.valid_columns == right.valid_columns)) &&
@@ -301,10 +300,12 @@ end;
 readonly func TileMatrixBiasShapeLegal(left: TileIndex, right: TileIndex,
                                        bias: TileIndex) => boolean
 begin
-    return TileSourceContentsDefined(bias) &&
+    return TileElementwiseSourceContentsDefined(bias) &&
            _Tiles[[bias]].valid_rows == 1 &&
            _Tiles[[bias]].valid_columns == _Tiles[[right]].valid_columns &&
-           _Tiles[[bias]].layout == TileLayout_RowMajor;
+           _Tiles[[bias]].layout == _Tiles[[left]].layout &&
+           (_Tiles[[bias]].layout == TileLayout_CUBE_M16 ||
+            _Tiles[[bias]].layout == TileLayout_CUBE_M32);
 end;
 
 readonly func TileOrdinaryMatrixBiasLegal(left: TileIndex, right: TileIndex,

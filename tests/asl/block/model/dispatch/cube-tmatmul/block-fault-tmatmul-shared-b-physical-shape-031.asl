@@ -6,11 +6,9 @@ begin
         let b_valid_rows = if shape_case == 0 then 5 else 4;
         let b_valid_columns = if shape_case == 0 then 8 else 7;
         ConfigureTileForMask(10, 256, 8, 16, 2, 8,
-            TileDataType_U16, TileLayout_RowMajor,
-            TileLocation_Matrix, '1111');
+            TileDataType_U16, TileLayout_RowMajor, '1111');
         ConfigureTileForMask(11, 256, 16, 8, b_valid_rows,
-            b_valid_columns, TileDataType_U16, TileLayout_RowMajor,
-            TileLocation_Matrix, '1111');
+            b_valid_columns, TileDataType_U16, TileLayout_RowMajor, '1111');
         MarkTileValidRegionDefined(10);
         MarkTileValidRegionDefined(11);
         InstallSharedTile((Zeros{6} + 40) as SharedTileID,

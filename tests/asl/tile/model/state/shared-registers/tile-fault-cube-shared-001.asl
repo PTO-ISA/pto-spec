@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(0, 512, 16, 16,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     assert configured;
     let cube = _Tiles[[0]];
     assert !SharedTileUpdateCompatible(Zeros{6} as SharedTileID, cube, '0001');

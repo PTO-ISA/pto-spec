@@ -3,7 +3,7 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func SelectTestCUBEDataType(data_type: bits(5))
@@ -33,9 +33,9 @@ begin
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 6);
 
     ConfigureTile(55, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(56, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigurePredicateTile(57, 128, 1, 4, 1, 3);
     ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
@@ -67,9 +67,9 @@ begin
     assert masked_scatter_last == Zeros{PTO_XLEN} + 33;
 
     ConfigureTile(58, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(59, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(58, 0, 0, Zeros{PTO_XLEN} + 11);
     WriteTileElement(58, 0, 1, Zeros{PTO_XLEN} + 99);
     WriteTileElement(58, 0, 2, Zeros{PTO_XLEN} + 33);
@@ -93,16 +93,16 @@ begin
     assert cas_last == Zeros{PTO_XLEN} + 333;
 
     ConfigureTile(2, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(3, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTwoByTwo(4);
     ConfigureTile(5, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(6, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(7, 256, 1, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 0x4200);
@@ -116,20 +116,20 @@ begin
     ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 0x40000000);
     SelectTestCUBEDataType('00100');
     ConfigureTile(10, 256, 2, 2, 2, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     TMATMUL_MX_BIAS(10, 2, 5, 3, 6, 7);
     assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 0x41a80000;
     TMATMUL_MX_ACC(10, 10, 2, 5, 3, 6);
     assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 0x42200000;
 
     ConfigureTile(12, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(13, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(14, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(15, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 0x4200);
     WriteTileElement(14, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);

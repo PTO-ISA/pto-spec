@@ -76,7 +76,6 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, TilePad_Null);
-    result.location = TileLocation_Any;
     _Tiles[[destination]] = result;
 end;
 
@@ -109,7 +108,6 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, TilePad_Null);
-    result.location = TileLocation_Any;
     _Tiles[[destination]] = result;
 end;
 ```

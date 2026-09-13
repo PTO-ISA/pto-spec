@@ -3,13 +3,13 @@ func main() => integer
 begin
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_3 = ConfigureCubeTile(3, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_4 = ConfigureCubeTile(4, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x04030201);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x08070605);
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 0x00000000);
@@ -19,13 +19,13 @@ begin
     TPERMUTE(3, 1, 2, 4);
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x06020501;
     let configured_5 = ConfigureCubeTile(5, 128, 1, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_6 = ConfigureCubeTile(6, 128, 1, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_7 = ConfigureCubeTile(7, 128, 1, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_8 = ConfigureCubeTile(8, 128, 1, 8, TileDataType_U8,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x04030201);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 0x08070605);
     WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 0x14131211);
@@ -43,13 +43,13 @@ begin
     // fourth physical/padding byte is deliberately left undefined and is not
     // consulted by legality or execution.
     let configured_9 = ConfigureCubeTile(9, 128, 1, 3, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_10 = ConfigureCubeTile(10, 128, 1, 3, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_11 = ConfigureCubeTile(11, 128, 1, 3, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_12 = ConfigureCubeTile(12, 128, 1, 3, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(9, 0, 0, Zeros{PTO_XLEN} + 0x01);
     WriteTileElement(9, 0, 1, Zeros{PTO_XLEN} + 0x02);
     WriteTileElement(9, 0, 2, Zeros{PTO_XLEN} + 0x03);

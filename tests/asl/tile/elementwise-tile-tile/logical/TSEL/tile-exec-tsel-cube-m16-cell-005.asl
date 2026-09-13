@@ -33,10 +33,10 @@ begin
         8, 128, 2, 4, TileDataType_S16, TileLayout_CUBE_M16);
     let true_ready = ConfigureCubeTile(
         10, 128, 2, 4, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let false_ready = ConfigureCubeTile(
         11, 128, 2, 4, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert predicate_ready && true_ready && false_ready;
     InstallRelativeTileFixture(8, 8);
     for row = 0 to 1 looplimit 2 do

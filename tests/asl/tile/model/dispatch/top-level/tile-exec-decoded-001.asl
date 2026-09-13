@@ -3,7 +3,7 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func SelectTestCUBEDataType(data_type: bits(5))
@@ -70,13 +70,13 @@ begin
 
     let cube_left_ready = ConfigureCubeTile(
         4, 512, 2, 2, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let cube_right_ready = ConfigureCubeTile(
         5, 512, 2, 2, TileDataType_S16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
     let cube_destination_ready = ConfigureCubeTile(
         6, 512, 2, 2, TileDataType_S32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_left_ready && cube_right_ready && cube_destination_ready;
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 2);

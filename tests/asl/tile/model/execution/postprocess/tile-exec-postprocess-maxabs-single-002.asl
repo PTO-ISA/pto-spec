@@ -10,13 +10,13 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0,
         Zeros{PTO_XLEN} + 0xfffffffffffffffd);
 

@@ -24,7 +24,7 @@ begin
     ResetProfileState();
     ConfigurePredicateTile(1, 128, 16, 2, 1, 2);
     ConfigureTile(2, 128, 8, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTilePredicateBit(1, 0, 0, FALSE);
     WriteTilePredicateBit(1, 0, 1, TRUE);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);
@@ -49,7 +49,7 @@ begin
         8, 128, 1, 2, TileDataType_FP32, TileLayout_CUBE_M32);
     let source_ready = ConfigureCubeTile(
         10, 256, 1, 2, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert mask_ready && source_ready;
     InstallRelativeTileFixture(8, 8);
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN});

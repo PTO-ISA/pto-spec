@@ -9,8 +9,7 @@ begin
         1,
         2,
         TileDataType_FP32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         128,
@@ -19,8 +18,7 @@ begin
         1,
         2,
         TileDataType_FP32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 11);
 end;
@@ -51,8 +49,7 @@ begin
         1,
         2,
         TileDataType_FP32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
     assert !TileOperandsLegal_ExecuteTileSelectScalar(

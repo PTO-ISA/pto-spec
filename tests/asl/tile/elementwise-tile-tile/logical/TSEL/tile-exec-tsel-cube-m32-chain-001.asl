@@ -3,17 +3,17 @@ func main() => integer
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(10, 128, 1, 4, TileDataType_E4M3,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let right_ready = ConfigureCubeTile(11, 128, 1, 4, TileDataType_E4M3,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let predicate_ready = ConfigurePredicateCell(
         12, 128, 1, 4, TileDataType_U8, TileLayout_CUBE_M32);
     let true_ready = ConfigureCubeTile(13, 128, 1, 4, TileDataType_E4M3,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let false_ready = ConfigureCubeTile(14, 128, 1, 4, TileDataType_S8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let destination_ready = ConfigureCubeTile(15, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert left_ready && right_ready && predicate_ready && true_ready &&
         false_ready && destination_ready;
 

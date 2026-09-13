@@ -63,8 +63,7 @@ begin
                destination.valid_rows == valid_rows &&
                destination.valid_columns == valid_columns &&
                destination.data_type == data_type &&
-               destination.layout == layout &&
-               destination.location == TileLocation_Matrix && mask_legal;
+               destination.layout == layout && mask_legal;
     end;
     return TileDescriptorLegal(index) &&
            destination.storage_kind == TileStorage_Numeric &&
@@ -74,8 +73,7 @@ begin
            destination.valid_rows == valid_rows &&
            destination.valid_columns == valid_columns &&
            destination.data_type == data_type &&
-           destination.layout == layout &&
-           destination.location == TileLocation_Any && mask_legal;
+           destination.layout == layout && mask_legal;
 end;
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
 begin

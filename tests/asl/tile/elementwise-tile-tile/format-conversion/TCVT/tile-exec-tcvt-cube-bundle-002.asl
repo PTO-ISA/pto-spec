@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         1, 512, 16, 9, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert source_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(1, 15, 8, Zeros{PTO_XLEN} + 9);
@@ -40,7 +40,6 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[destination]].data_type == TileDataType_FP32;
     assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
-    assert _Tiles[[destination]].location == TileLocation_Matrix;
     assert _Tiles[[destination]].capacity_bytes == 1024;
     assert _Tiles[[destination]].rows == 16;
     assert _Tiles[[destination]].columns == 10;
