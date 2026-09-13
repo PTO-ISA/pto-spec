@@ -6,6 +6,7 @@ from scripts.layout_relation_census import (
     BASELINE_OBJECT,
     BIAS,
     _complete_fixture_keys,
+    _catalog_operand_rows,
     _census_texts,
     _fixture,
     _inventory,
@@ -140,8 +141,109 @@ class LayoutRelationCensusTest(unittest.TestCase):
         self.assertIsNotNone(payload)
         self.assertFalse(errors)
         self.assertIsNotNone(fixture)
-        self.assertEqual(len(_complete_fixture_keys(inventory)), 594)
+        raw_rows = _catalog_operand_rows(inventory)
+        raw_keys = _complete_fixture_keys(inventory)
+        self.assertEqual(len(raw_rows), len(set(raw_rows)))
+        self.assertEqual(len(raw_keys), len(set(raw_keys)))
+        self.assertEqual(len(raw_keys), 624)
+        self.assertEqual(len(payload["inventory"]), len(raw_rows))
+        self.assertEqual(
+            {(row["mnemonic"], row["form"], row["role"]) for row in payload["inventory"]},
+            set(raw_keys),
+        )
         self.assertEqual(len(fixture or {}), 234)
+
+        expected_roles = {
+            ("TCMP", "destination0"): "predicate",
+            ("TCMPS", "destination0"): "predicate",
+            ("TSEL", "source0"): "predicate",
+            ("TSELS", "source0"): "predicate",
+            ("MGATHER", "source0"): "indices",
+            ("MGATHER_MASK", "source0"): "indices",
+            ("MGATHER_MASK", "source1"): "mask",
+            ("MSCATTER", "source1"): "indices",
+            ("MSCATTER_MASK", "source1"): "indices",
+            ("MSCATTER_MASK", "source2"): "mask",
+            ("TPERMUTE", "source2"): "indices",
+            ("TCOLARGMIN", "destination0"): "index",
+            ("TCOLARGMAX", "destination0"): "index",
+            ("TROWARGMIN", "destination0"): "index",
+            ("TROWARGMAX", "destination0"): "index",
+        }
+        for mnemonic, field in expected_roles:
+            # Match by metadata mnemonic while retaining the exact catalog
+            # role text as evidence for predicate/mask/index inclusion.
+            owners = [
+                operand["role"]
+                for _path, meta in metadata
+                if meta.get("mnemonic") == mnemonic
+                for operand in meta["catalog_records"][0]["operands"]
+                if isinstance(operand, dict) and operand.get("field") == field
+            ]
+            self.assertTrue(owners, (mnemonic, field))
+            self.assertTrue(any(expected_roles[(mnemonic, field)] in role.lower() for role in owners),
+                            (mnemonic, field, owners))
+
+    def test_real_mgather_mask_relation_mutation_is_rejected(self) -> None:
+        paths = source_paths(BASELINE_OBJECT, "working-tree")
+        baseline = _ref_texts(BASELINE_OBJECT, paths)
+        candidate = _ref_texts("working-tree", paths)
+        path = "asl/tile/model/legality/memory-schema.asl"
+        removed = "           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&\n"
+        self.assertIn(removed, candidate[path])
+        candidate[path] = candidate[path].replace(removed, "", 1)
+        result = _census_texts(
+            baseline, candidate, BASELINE_OBJECT, "real-mutated-mgather-mask",
+            enforce_closure=False,
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("MGATHER_MASK" in error and "unclassified relation delta" in error
+                            for error in result["errors"]), result["errors"])
+
+    def test_real_tpermute_relation_mutation_is_rejected(self) -> None:
+        paths = source_paths(BASELINE_OBJECT, "working-tree")
+        baseline = _ref_texts(BASELINE_OBJECT, paths)
+        candidate = _ref_texts("working-tree", paths)
+        path = "asl/tile/model/legality/layout-rearrangement.asl"
+        removed = "       destination_tile.layout != left.layout ||\n"
+        self.assertIn(removed, candidate[path])
+        candidate[path] = candidate[path].replace(removed, "", 1)
+        result = _census_texts(
+            baseline, candidate, BASELINE_OBJECT, "real-mutated-tpermute",
+            enforce_closure=False,
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(any("TPERMUTE" in error and "unclassified relation delta" in error
+                            for error in result["errors"]), result["errors"])
+
+    def test_real_relation_spot_checks_are_unchanged(self) -> None:
+        result = census(BASELINE_OBJECT, "working-tree")
+        self.assertTrue(result["pass"], result["errors"])
+        signatures = {(row["mnemonic"], row["form"]): row for row in result["operation_signatures"]}
+        expected = {
+            ("MGATHER_MASK", "destination0"): {
+                "destination0.layout == source0.layout",
+                "destination0.layout == source1.layout",
+            },
+            ("TPERMUTE", "destination0"): {
+                "destination0.layout == source0.layout",
+                "destination0.layout == source1.layout",
+                "destination0.layout == source2.layout",
+            },
+            ("TSEL", "source0"): {"source0.layout == source1.layout"},
+            ("TSELS", "source0"): {"source0.layout == source1.layout"},
+            ("TCMP", "destination0"): {"destination0.layout == source0.layout"},
+            ("TCMPS", "destination0"): {"destination0.layout == source0.layout"},
+            ("TCOLARGMIN", "destination0"): {"destination0.layout == source0.layout"},
+            ("TCOLARGMAX", "destination0"): {"destination0.layout == source0.layout"},
+            ("TROWARGMIN", "destination0"): {"destination0.layout == source0.layout"},
+            ("TROWARGMAX", "destination0"): {"destination0.layout == source0.layout"},
+        }
+        for (mnemonic, role), relations in expected.items():
+            for form in ("direct", "bundle"):
+                self.assertTrue(relations <= set(signatures[(mnemonic, form)]["R1"]),
+                                (mnemonic, form, signatures[(mnemonic, form)]["R1"]))
+                self.assertEqual(signatures[(mnemonic, form)]["R0"], signatures[(mnemonic, form)]["R1"])
 
     def test_real_receipt_has_no_empty_layout_bearing_sets_and_form_roots(self) -> None:
         result = census(BASELINE_OBJECT, "working-tree")
