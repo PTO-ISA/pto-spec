@@ -34225,6 +34225,23 @@
   "isa": "PTO Instruction Set Architecture",
   "operand_field_count": 45,
   "operand_piece_count": 1839,
+  "reviewed_encoding_overlaps": [
+    {
+      "broad_form_id": "addtpc_32_e5aa0f0abca3",
+      "narrow_form_id": "setret_32_72003dcf3b59",
+      "reason": "narrow form occupies RegDst == 10, which the broad form excludes via its not-equal constraint"
+    },
+    {
+      "broad_form_id": "c_movi_16_2c84faf1bc72",
+      "narrow_form_id": "c_setret_16_335651ef6c27",
+      "reason": "narrow form occupies RegDst == 10, which the broad form excludes via its not-equal constraint"
+    },
+    {
+      "broad_form_id": "hl_addtpc_48_2e8e692eea09",
+      "narrow_form_id": "hl_setret_48_302bb793a800",
+      "reason": "narrow form occupies RegDst == 10, which the broad form excludes via its not-equal constraint"
+    }
+  ],
   "schema_version": 2,
   "semantic_handler_count": 72
 }
