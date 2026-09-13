@@ -119,9 +119,11 @@ class ExecutableModelComparisonTest(unittest.TestCase):
                 "docs/status/decisions/ADR-SCALAR-0005-addtpc-page-scaled-immediate.md",
                 row["evidence"],
             )
+        # Mirrors the fail-closed baseline enforced by
+        # scripts/generate-executable-model-comparison.
         self.assertEqual(
             evidence["summary"]["classification_counts"],
-            {"comparable-match": 517, "divergence": 114, "non-comparable": 37},
+            {"comparable-match": 517, "divergence": 123, "non-comparable": 38},
         )
 
     def test_published_missing_b_fpatr_is_an_explicit_divergence(self) -> None:

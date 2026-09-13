@@ -5261,39 +5261,39 @@
   "source_hashes": [
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "eba27cbc4915ee27edd475d320382047b424375342e242de43bda7688c24feb9"
+      "sha256": "970dcb1f50ad6f96ffcb1dc11243641842ec5de3fcdfd3d447aaf7af10d976f2"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "05752d689ec6b73fe008804fdea50a94eed2048c6b7d19f065b722e80a8767ef"
+      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "73c7f31c34b4adff92eef1152480c18c748c0facadc93077574a554f89485f5f"
+      "sha256": "cd1dd64da9a556fc9bc2974eb861528bab7fbb02f1f1de284a40172177e62e98"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "2df86181747660ba95dd1dff1d16c9b98896db686714424f32cfaa72974115e9"
+      "sha256": "428ac0bcfe5e1549c3d33f780640311471f371e6a7a584dace61354daa44b27c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
+      "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
+      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
-      "sha256": "fbb3e0d8a5cb7281cf9876d5f978ca83a5bf9d5355754bf50efa7151a562d627"
+      "sha256": "c73bed67955b9ad482963d5ac77faf3db46dd45357f4b4bcfaa7fd5d8b4a80bb"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
+      "sha256": "ed977fcd6bc708969fb58d3339551d2a10a964d2d2b9169f2ae812104db214dc"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "f39fefa01120a390dddf43ebd2d6ccb0dff49e900c33956ad2d74cf391ee3a92"
+      "sha256": "268a4dd20c0e6c56d2442b57cfca4072a41ee19630decfab8d305c9e2697c6fd"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -5345,7 +5345,7 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "5e501f8c7040c336e0102e24b702ba7769a4547e97213a8c42566fc677e60086"
+      "sha256": "546d47adc3d6e63840e314efc192fd8a25536cdd2775ab75a972f616cb526e71"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
@@ -5353,23 +5353,27 @@
     },
     {
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
-      "sha256": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2"
+      "sha256": "a617965d05dd3f4fd397ee00379d41d840b7d01fadde64434769ba8b5cf54b02"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "79cdbd2e308a414b0db71d430b6f508757b475273f4d881e0d877beeb7934e1b"
+      "sha256": "48a65eab1e5e5e4c93e24c5550ba6686f3254e06a81fd42a35203802399a5f7f"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
-      "sha256": "d871c4b700fd4c87298e7c818e9e9c8413e2bd34cf28228a31a27637d606e14b"
+      "sha256": "46b88915de8298327f7f7ff609bee7a561e70b7d5875ec5f792058dad29054db"
+    },
+    {
+      "path": "asl/block/model/dispatch/cube-accumulator-routing.asl",
+      "sha256": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b"
     },
     {
       "path": "asl/block/model/dispatch/cube-destination.asl",
-      "sha256": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd"
+      "sha256": "a674b9f48aa991947d2abe09575b9d3c14147fb7232da6d417948ed03455cc91"
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "513fbf21974f558b4d1ca1a6bafbeb8b40d5545ece88c429856acf58d64c234f"
+      "sha256": "c5693473e1aedc2d638b851d3e69af6b94a8854eb52b90638884321164f9dc1f"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -5377,27 +5381,23 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "b493165ab38fa4f0792d30cd67ef6319eab4a19db210627eead4ed92bacd613a"
+      "sha256": "8f3dc9a4f8349a5bf0468957e9a9d7004eb6439cc1a134133aa9e94dd1fc30a5"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "aaf512a844566338141515a0ca03a974b814bb429049bea0c6ee6771389de82c"
+      "sha256": "539ef9bc4f9445b65f89b9e8c19104daa57a9f64f7880298ae7a42b85f30cb7b"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "439f6dad32fa19dc00b47d36df0ad85354e28ffec9122199392d606a0ea0f96b"
+      "sha256": "13ee74cd7c8f8480fe74191a5ac4f38df137e8cc84f00fb69b1f0483f915ce98"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
-      "sha256": "5cc5f4dd6683bc84d262b63081b800191f4275709e5f027807a658b5ce69e4f1"
+      "sha256": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756"
     },
     {
       "path": "asl/block/model/dispatch/generation-schema.asl",
-      "sha256": "a1a4e348a9641229b73df1129fac3624d3fd96905eae4a835cdac4ee49f70e67"
-    },
-    {
-      "path": "asl/block/model/dispatch/histogram-schema.asl",
-      "sha256": "5954e97443dbfee83399475432bb504d7e6f2affb54c1c8b4f0643c719127ee6"
+      "sha256": "74782ef7d75d61280ec35d207d95dd14ffa53caa014a3ceb051654d45541c6ea"
     },
     {
       "path": "asl/block/model/dispatch/matrix-scale.asl",
@@ -5408,84 +5408,108 @@
       "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
-      "path": "asl/block/model/dispatch/quantization-schema.asl",
-      "sha256": "4ffadc99a63f4f2946c2e0faaae97329427dba5858e7adb1593e489ab1d06259"
+      "path": "asl/block/model/dispatch/predicate-destination.asl",
+      "sha256": "f88d9466e25443ae6a507e4a424995dc3becdf31a55e3bd39a3353ce7d564502"
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "d00dd8b782a9af6de6c689957cec0a289f1120daefdec922e771410c6621fb91"
+      "sha256": "b6641ea1899a45c2afc612befe15e01268bba38d3e8065d7a8825cd8cfc41957"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "0ceb74d729f28cef0b59abe67c03827372b17de1a70cb9aa4fa3c5e2930184b9"
+      "sha256": "8068b4c89c184199429068dfa961bee4107e9e1a3666b331b4215eb65d93d1ec"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "c5ee2d9ad4f3ee8fef2cee6f315ff589a5442fb7eecf0190facfae5db236c2a9"
+      "sha256": "f1153e5661d3783742e562c357e05c0a7667520657a076a6140b7b5627b6b81d"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf"
-    },
-    {
-      "path": "asl/block/model/dispatch/sorting-schema.asl",
-      "sha256": "996a280c5cc4425c9d5783e47dcaaceea30b0cbc5a4d5ce4a5d657c03cfdc4ed"
+      "sha256": "bdda4d257e8ed56e5f6e7ba8eb471580b6b3583da55f2b81a1ec963cc84d6632"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206"
+      "sha256": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9"
+    },
+    {
+      "path": "asl/block/model/dispatch/tcvt-destination.asl",
+      "sha256": "8aa2e388dadd1e135e9a743523da6ca2d2aaaeb57251ba7d7066d21732677532"
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "14dd4189864f1e2611946d7752caed2cbe86515187bc16228d74ecbf5057306e"
+      "sha256": "cc9d4eeac29ccffd0f648c68e65478611040cef44cfbdaea260e4d3468b4deac"
+    },
+    {
+      "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
+      "sha256": "25d13561c47c7e64614e3f0c4754730f16297eddc25bf15ff7058dc9fc3acebb"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "d6e82b83726802faf2fa66133d18e0f33b40bd4448b3af7d349edc905c091b30"
+      "sha256": "8c77039d15ad36e2cda9a29cb1e033e05694a54c31a29cc57c0d0aaa2c80bc5a"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "7cf701452bd5b31692bad2d2b6099f7b34963a6a1197dd1b98fd9b2512234f2c"
+      "sha256": "c02c0d31ccb9f9863df5cf26d24783f2a7a8487833185d458403be7d4bddd4b4"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "982233f0a7347697663ca0a6306dbc4467b935abeabd95e4b0a154d91ccb53d2"
+      "sha256": "6b4680e6bc57c50f4b6ad991bb007456f812db8e8e65cc251a8d7d642d9d4db1"
+    },
+    {
+      "path": "asl/block/model/dispatch/timg2col-execution.asl",
+      "sha256": "4e175d6fd5e6a210cf0727badd6fcd3b5890c8ff558fe61438c591b85a0c3a53"
+    },
+    {
+      "path": "asl/block/model/dispatch/timg2col-schema.asl",
+      "sha256": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
+      "sha256": "86c95845794d71c153d578a9162e17b7c5eff0defae2d39f3c4116e525e8a0df"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159"
+      "sha256": "dbe45d7f22a597d875847cf7d11fbb1df936322b393b96c51c2e39de43c91471"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "6bc7f9212605217e06b0d30afa5826467e4af4b23d9f0f52c22731a4a144dcff"
+      "sha256": "4a6585c8b2ef3322095efcd24f47bf797cf41ea85c9f335f46aabac5aaa65e00"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "17d4b63d3f34e5233a7df6a8f756bd2fc5365d155488eceb99dd13d5368d50a9"
+      "sha256": "103ba05dbec27408c8f8155acfbb4165c1bcfffd9247154314ea82156b76245f"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "fc450443978e981b8863221d0868702b2aae1b111875f30c4624c0362959f19a"
+      "sha256": "771c0a3abd13614b2b3a9f35b669d016d9cfbde8a7d80a6439cfb7fdf8e5856c"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "a8f6cad2b3463137d6cb98bb1c01d099d49cf127fbbb23d402b246737bdb46c5"
+      "sha256": "e24bd823094b1703a662d499ee8f06f751ba8422b321a31e8d69a220cc18e4e2"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
-      "sha256": "1dbf259ed8c369cd7a549563e9542a87123aa49d09b109e26ea00f66bab48bf5"
+      "sha256": "8a06138b384e26c9f71f86756c18f450d3aec25303f2e02f758bf78bcd1efb38"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter.asl",
-      "sha256": "65a7f31b640366ca43f586b4ba6918a5f95c13bd3a9c1fce32c53f1974b15f47"
+      "sha256": "dcbec05a8a64465f1723c95c7a18d5244d52876379ba3b7d9402ff7ca64080ef"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-prefetch.asl",
-      "sha256": "b107fe0e545c9d64e35e2689d91fd724a08d3a23981c06a0717d2a137630b6f9"
+      "sha256": "08d470dfc375c62c22219fb5158f24c42caa3410fdb284afd85eccd71e258275"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "9df548e07c24e683ff375e0cb33a0786432f19455633d4c167d32f2b25161f99"
+      "sha256": "bf9b29d428ad3e06c0a57aaf27c27a4b2986467f3f8b61579f3d876933b410b2"
+    },
+    {
+      "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
+      "sha256": "748f9077ae0d4c8e2f6c3e2f11f30d549b5eb4685b94f81f8d76363359a10e61"
+    },
+    {
+      "path": "asl/block/model/dispatch/weight-to-shared-schema.asl",
+      "sha256": "35a4a68557fa122603f26e9aa32a4b5c64982645c43e28afeb06101055cfc55f"
     },
     {
       "path": "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
@@ -5497,7 +5521,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
-      "sha256": "fac4a0023748f31bc1634fdd68eb1627b388ac41aaee0cb2a61e4a341d7e38b8"
+      "sha256": "5f1d64af375bdf62e97b9fd4ea3a46ac6ec718a366404685a173463a07e44a9f"
     }
   ],
   "open_parent_decisions": [
@@ -5513,8 +5537,8 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "command_form_count": 76,
-    "accepted_command_form_count": 73,
+    "command_form_count": 95,
+    "accepted_command_form_count": 92,
     "result_rule_count": 0,
     "parent_adr0086_complete": false,
     "cube_matrix_complete": false,
