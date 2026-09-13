@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         1, 128, 16, 1, TileDataType_FP32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert source_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 15, 0, Zeros{PTO_XLEN});

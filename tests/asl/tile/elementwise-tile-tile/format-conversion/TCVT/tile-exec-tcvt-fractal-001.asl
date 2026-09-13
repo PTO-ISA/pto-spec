@@ -10,8 +10,7 @@ begin
         32,
         64,
         TileDataType_U8,
-        TileLayout_ZN,
-        TileLocation_Any);
+        TileLayout_ZN);
     assert TileLinearIndex(_Tiles[[0]], 0, 0) == 0;
     assert TileLinearIndex(_Tiles[[0]], 1, 0) == 1;
     assert TileLinearIndex(_Tiles[[0]], 0, 1) == 16;
@@ -26,8 +25,7 @@ begin
         32,
         64,
         TileDataType_U8,
-        TileLayout_NZ,
-        TileLocation_Any);
+        TileLayout_NZ);
     assert TileLinearIndex(_Tiles[[1]], 0, 0) == 0;
     assert TileLinearIndex(_Tiles[[1]], 0, 1) == 1;
     assert TileLinearIndex(_Tiles[[1]], 1, 0) == 32;
@@ -42,8 +40,7 @@ begin
         16,
         64,
         TileDataType_U4X2,
-        TileLayout_ZN,
-        TileLocation_Any);
+        TileLayout_ZN);
     assert TileFractalInnerElements(_Tiles[[2]].data_type) == 64;
     assert TileLinearIndex(_Tiles[[2]], 0, 63) == 1008;
     return 0;

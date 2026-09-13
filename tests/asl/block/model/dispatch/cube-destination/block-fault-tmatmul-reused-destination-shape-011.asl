@@ -3,8 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
     assert configured;
     SetBundleTileBinding(0, TRUE, 1, 1, '1111',
         FALSE, FALSE, 0, 0, TRUE);

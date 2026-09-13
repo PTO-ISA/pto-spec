@@ -21,11 +21,11 @@ func TestMatrixPhysicalAccumulatorClasses()
 begin
     SelectTestCUBEDataType('00111');
     ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(47, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -34,25 +34,25 @@ begin
 
     SelectTestCUBEDataType('10011');
     ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_S8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_S8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
     ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     TMATMUL(47, 45, 46);
     assert _Tiles[[47]].data_type == TileDataType_S32;
 
     SelectTestCUBEDataType('11011');
     ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
     ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     TMATMUL(47, 45, 46);
     assert _Tiles[[47]].data_type == TileDataType_U32;
 end;

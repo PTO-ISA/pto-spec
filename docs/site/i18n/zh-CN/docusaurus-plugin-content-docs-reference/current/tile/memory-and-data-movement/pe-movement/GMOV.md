@@ -153,7 +153,7 @@ end;
 - GMOV is TLSU Function 13 and has no standalone opcode.
 - Exactly one terminating Local source-plus-destination B.IOT is required. Its destination TSize equals the source per-PE capacity.
 - Any nonzero PE_MASK is legal; it selects destination writes but not rendezvous or source readiness. Mask zero is a strict no-op.
-- All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat.
+- All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat. Local RowMajor, CUBE_M16, and CUBE_M32 forms preserve one selected layout; CUBE_N8 and Shared are illegal.
 
 ## State effects
 
@@ -173,7 +173,7 @@ end;
 
 ## Exceptions
 
-- Reject incompatible source/destination capacity, shape, type, layout, location, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, B.DIM, or B.IOS before effects.
+- Reject incompatible source/destination capacity, shape, type, or layout, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, any resolved B.DIM value other than one, or B.IOS before effects.
 - A failed collective preflight allocates and writes no destination.
 
 ## Examples

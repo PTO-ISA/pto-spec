@@ -12,7 +12,7 @@ begin
     ResetProfileState();
     let shared_tile_id = (Zeros{6} + 42) as SharedTileID;
     ConfigureTile(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
     let pending = AtomicUpdateSharedTileWithPublication(
         shared_tile_id, _Tiles[[0]], '1000', FALSE);

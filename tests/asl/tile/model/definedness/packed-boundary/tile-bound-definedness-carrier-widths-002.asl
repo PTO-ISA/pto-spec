@@ -16,7 +16,6 @@ begin
     tile.valid_columns = columns;
     tile.data_type = data_type;
     tile.layout = TileLayout_RowMajor;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;

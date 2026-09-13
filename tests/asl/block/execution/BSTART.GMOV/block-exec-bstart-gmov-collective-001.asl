@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-GMOV-COLLECTIVE-001","source":"asl/block/execution/BSTART.GMOV.asl","requirements":["PTO-BSTART-GMOV-COLLECTIVE-001","PTO-INST-TILE-GMOV","PTO-INST-BLOCK-BSTART-GMOV"],"kind":"execution","summary":"Decoded B.IOT PEMode=111 makes GMOV copy every selected Local fragment after a full Core4 preflight.","pass_condition":"The all-PE decoded mode copies the read-old snapshot, allocates all four destination fragments, and emits no memory event.","related_sources":["asl/block/model/dispatch/tlsu-gmov.asl","asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-GMOV-COLLECTIVE-001","source":"asl/block/execution/BSTART.GMOV.asl","requirements":["PTO-BSTART-GMOV-COLLECTIVE-001","PTO-INST-TILE-GMOV","PTO-INST-BLOCK-BSTART-GMOV"],"kind":"execution","summary":"Decoded B.IOT PEMode=111 preserves the RowMajor GMOV regression after a full Core4 preflight.","pass_condition":"The all-PE decoded mode copies the read-old RowMajor snapshot, allocates all four destination fragments, and emits no memory event.","related_sources":["asl/block/model/dispatch/tlsu-gmov.asl","asl/tile/model/memory/shared-movement.asl"]}
 pure func GMOVCollectiveStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00d11181;
@@ -28,12 +28,12 @@ end;
 func ConfigureGMOVCore4Source(mask: bits(4))
 begin
     ConfigureTileForMask(0, 128, 1, 128, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, mask);
+        TileLayout_RowMajor, mask);
     InstallRelativeTileFixture(0, 0);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
 end;
 
-func main() => integer
+func RunGMOV() => boolean
 begin
     ResetProfileState();
     ConfigureGMOVCore4Source('1111');
@@ -64,9 +64,15 @@ begin
     assert _Tiles[[destination]].valid_columns == 1;
     assert _Tiles[[destination]].data_type == _Tiles[[0]].data_type;
     assert _Tiles[[destination]].layout == _Tiles[[0]].layout;
-    assert _Tiles[[destination]].location == _Tiles[[0]].location;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();
+    return TRUE;
+end;
+
+func main() => integer
+begin
+    let regression = RunGMOV();
+    assert regression;
     return 0;
 end;

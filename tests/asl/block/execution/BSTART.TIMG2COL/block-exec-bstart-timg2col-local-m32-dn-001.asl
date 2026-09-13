@@ -65,8 +65,7 @@ begin
     assert completed && _LastFault == Fault_None;
     let tile = _Tiles[[_BundleTileBindings[[0]].destination]];
     assert TileCubeDescriptorLegal(tile);
-    assert tile.layout == TileLayout_CUBE_M32 &&
-        tile.location == TileLocation_Matrix;
+    assert tile.layout == TileLayout_CUBE_M32;
     assert tile.valid_rows == 17 && tile.valid_columns == 32;
     let first = TileLogicalLinearIndex(tile, 0, 0);
     let last = TileLogicalLinearIndex(tile, 16, 31);

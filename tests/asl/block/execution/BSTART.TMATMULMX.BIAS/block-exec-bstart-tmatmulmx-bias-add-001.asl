@@ -3,20 +3,17 @@ func main() => integer
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(1, 512, 1, 32,
-        TileDataType_E4M3, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_E4M3, TileLayout_CUBE_M16, '1111');
     let a_scale_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_E8M0, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_E8M0, TileLayout_CUBE_M32, '1111');
     let b_ready = ConfigureCubeTileForMask(3, 512, 32, 1,
-        TileDataType_E4M3, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_E4M3, TileLayout_CUBE_N8, '1111');
     let b_scale_ready = ConfigureCubeTileForMask(4, 128, 1, 1,
-        TileDataType_E8M0, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_E8M0, TileLayout_CUBE_M32, '1111');
     assert a_ready && a_scale_ready && b_ready && b_scale_ready;
-    ConfigureTile(5, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let bias_ready = ConfigureCubeTileForMask(5, 128, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+    assert bias_ready;
     for inner = 0 to 31 looplimit 32 do
         WriteTileElement(1, 0, inner, Zeros{PTO_XLEN} + 2);
         WriteTileElement(3, inner, 0, Zeros{PTO_XLEN} + 3);

@@ -28,7 +28,7 @@ end;
 func BundleTestConfigureTile(index: TileIndex, data_type: TileDataType)
 begin
     ConfigureTile(index, 256, 1, 1, 1, 1, data_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func TestBundleTileCommitRollback()

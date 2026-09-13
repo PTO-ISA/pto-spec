@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(1, 768, 13, 19,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     assert configured;
     var tile = _Tiles[[1]];
     for row = 0 to 12 do

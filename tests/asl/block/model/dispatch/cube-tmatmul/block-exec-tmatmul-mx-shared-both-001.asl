@@ -3,13 +3,13 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(10, 512, 4, 32, 1, 32, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(11, 128, 4, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(12, 512, 1, 32, 1, 32, TileDataType_E5M2,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(13, 128, 1, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     for row = 0 to 3 do
         for inner = 0 to 31 looplimit 32 do
             WriteTileElement(10, row, inner, Zeros{PTO_XLEN} + 2);

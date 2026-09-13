@@ -4,19 +4,19 @@ begin
     // Keep packed data and U64 index tiles on the same legal physical shape:
     // 16 rows x 16 power-of-two columns. Only the valid-column extent varies.
     ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U4X2,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func ConfigureIndexTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
     ConfigureTile(index, 2048, 1, 16, 1, columns, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func ConfigureByteTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
     ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func TestTlsuFaultPositionMatrix()

@@ -59,7 +59,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x11);
     PrepareExplicitSharedWriter(TRUE, FALSE, 2);
     assert ValidateBundleSharedGenerationRange(0, 0, 1, '0001', TRUE,
@@ -131,7 +131,7 @@ begin
 
     ClearBundleHeaderState();
     ConfigureTile(1, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x22);
     PrepareExplicitSharedWriter(FALSE, TRUE, 0);
     assert ValidateBundleSharedGenerationRange(0, 1, 7, '1000', TRUE,

@@ -32,10 +32,10 @@ begin
     ResetProfileState();
     let true_ready = ConfigureCubeTile(
         10, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let false_ready = ConfigureCubeTile(
         11, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert true_ready && false_ready;
     for column = 0 to 3 looplimit 4 do
         WriteTileElement(10, 0, column, Zeros{PTO_XLEN} + 10 + column);

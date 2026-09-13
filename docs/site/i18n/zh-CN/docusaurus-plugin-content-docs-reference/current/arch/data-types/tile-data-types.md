@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-data-types-purpose-scope role=purpose-scope -->
 ## 目的与范围
 
-本单元拥有 Tile 操作手、公开的五位数据类型命名空间、Tile 数据布局与存储布局枚举、填充值以及位置意图。
+本单元拥有 Tile 操作手、公开的五位数据类型命名空间、Tile 数据布局与存储布局枚举以及填充值。Portable Local tile 状态只记录布局；驻留位置不是架构字段。
 
 它构成已编码 `DataType` 字段与数值/Tile 执行归属单元所使用类型化值之间的边界。
 
@@ -24,7 +24,7 @@ This page is a generated reference view of the normative ASL unit.
 
 - `TileHand` 命名 `T`、`U`、`M` 和 `N`；`TileDataType` 包含 15 个浮点/缩放成员、五个有符号整数成员和五个无符号整数成员。
 - `TileDataTypeEncoding` 的类型为 `bits(5)`。编码 `0..14`、`16..20` 和 `24..28` 已分配；`15`、`21..23` 和 `29..31` 保留。
-- 本单元还分别定义面向转换的 `TileDataLayout`、物理 `TileLayout`、`TilePadValue` 和 `TileLocation` 命名空间。
+- 本单元还分别定义面向转换的 `TileDataLayout`、物理 `TileLayout` 和 `TilePadValue` 命名空间；portable Local 合法性基于布局而非驻留位置。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-rules-interactions role=rules-interactions -->
 ## 规则与交互
@@ -219,13 +219,6 @@ type TileLayout of enumeration {
     // generic execution rejects an opaque implementation layout.  No
     // assigned B.DATR Layout code maps to it.
     TileLayout_ImplementationDefined
-};
-
-type TileLocation of enumeration {
-    TileLocation_Vector,
-    TileLocation_Matrix,
-    TileLocation_Memory,
-    TileLocation_Any
 };
 ```
 <!-- GENERATED-ASL-END: unit -->

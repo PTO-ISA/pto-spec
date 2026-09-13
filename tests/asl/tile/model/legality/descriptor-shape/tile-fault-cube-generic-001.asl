@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(0, 512, 16, 16,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     assert configured;
     let tile = _Tiles[[0]];
     assert TileCubeDescriptorLegal(tile);

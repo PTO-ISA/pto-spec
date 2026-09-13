@@ -27,11 +27,11 @@ func PrepareDecodedTshufBundle()
 begin
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_3 = ConfigureCubeTile(3, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -47,13 +47,13 @@ func TestDecodedTpermuteNormalAndFault()
 begin
     ResetProfileState();
     let configured_5 = ConfigureCubeTile(1, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_6 = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_7 = ConfigureCubeTile(3, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_8 = ConfigureCubeTile(4, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x04030201);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x08070605);
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN});
@@ -86,13 +86,13 @@ begin
 
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_3 = ConfigureCubeTile(3, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_4 = ConfigureCubeTile(4, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x04030201);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x08070605);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0xaaaaaaaa);

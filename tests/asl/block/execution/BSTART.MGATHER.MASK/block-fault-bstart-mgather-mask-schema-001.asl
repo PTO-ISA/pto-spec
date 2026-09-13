@@ -20,7 +20,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigurePredicateTile(1, 128, 1, 1, 1, 1);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTilePredicateBit(1, 0, 0, TRUE);

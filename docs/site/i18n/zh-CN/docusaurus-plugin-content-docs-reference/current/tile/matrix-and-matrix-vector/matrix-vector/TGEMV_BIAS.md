@@ -159,16 +159,16 @@ end;
 - Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.
 - Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.
 - Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.
-- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.
+- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).
 - TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.
 - Omitted CCTRL selects 00: final D output and no transparent-cache hint.
 
 ## Legality
 
 - The carrier selects exactly CUBE Function 17 and TileOperation_TGEMV_BIAS.
-- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.
+- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).
 - TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.
-- AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.
+- AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is one Local logical 1xN accumulator-type source (FP32 for MX). M is fixed to one and every Shared binding is illegal.
 - Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
 - B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
 - For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.

@@ -14,11 +14,11 @@ end;
 func TestCubeExpansion()
 begin
     let source = ConfigureCubeTile(0, 4096, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let broadcast_ok = ConfigureCubeTile(1, 4096, 2, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let destination = ConfigureCubeTile(2, 4096, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     assert source && broadcast_ok && destination;
     assert _Tiles[[1]].columns > 1;
     FillTile(0, 2, 2, Zeros{PTO_XLEN} + 10);
@@ -30,15 +30,15 @@ begin
     assert ReadTileElement(2, 1, 1) == Zeros{PTO_XLEN} + 13;
 
     let mixed_destination = ConfigureCubeTile(3, 256, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     assert mixed_destination;
     assert !TileOperandsLegal_ExecuteTileExpand(
         TileExpand_ADD, TileAxis_Row, 3, 0, 1);
 
     let raw_source = ConfigureCubeTile(5, 128, 2, 1,
-        TileDataType_TF32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_TF32, TileLayout_CUBE_M16);
     let raw_destination = ConfigureCubeTile(6, 128, 2, 2,
-        TileDataType_TF32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_TF32, TileLayout_CUBE_M16);
     assert raw_source && raw_destination;
     FillTile(5, 2, 1, Zeros{PTO_XLEN} + 0x3f800001);
     assert !TileNumericEncodingValid(
@@ -50,7 +50,7 @@ begin
     assert ReadTileElement(6, 1, 1) == Zeros{PTO_XLEN} + 0x3f800001;
 
     let scalar_destination = ConfigureCubeTile(4, 4096, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     assert scalar_destination;
     assert TileOperandsLegal_ExecuteTileFillScalar(
         4, Zeros{PTO_XLEN} + 7);

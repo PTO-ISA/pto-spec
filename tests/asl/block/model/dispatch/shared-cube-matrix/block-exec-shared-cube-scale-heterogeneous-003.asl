@@ -4,17 +4,13 @@ begin
     ResetProfileState();
     // A is E4M3 with G_A=2 for K=64; B is HiF4X2 with G_B=1.
     ConfigureTileForMask(10, 128, 2, 64, 2, 64,
-        TileDataType_E4M3, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_E4M3, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(11, 128, 2, 2, 2, 2,
-        TileDataType_E8M0, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_E8M0, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(12, 128, 4, 64, 2, 64,
-        TileDataType_HiF4X2, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_HiF4X2, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(13, 128, 2, 1, 2, 1,
-        TileDataType_U32, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U32, TileLayout_RowMajor, '1111');
 
     for row = 0 to 1 looplimit 2 do
         for inner = 0 to 63 looplimit 64 do

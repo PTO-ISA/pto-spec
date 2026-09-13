@@ -3,11 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(1, 128, 8, 8, 1, 1,
-        TileDataType_FP16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(2, 128, 8, 8, 1, 1,
-        TileDataType_FP16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_RowMajor, '1111');
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     let left_before = _Tiles[[1]];

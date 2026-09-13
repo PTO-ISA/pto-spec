@@ -5,8 +5,7 @@ begin
     ResetProfileState();
     SelectMemoryEventAgent(1);
     ConfigureTileForMask(10, 128, 128, 1, 1, 1,
-        TileDataType_U8, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_RowMajor, '1111');
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 3);
     InstallSharedTile((Zeros{6} + 51) as SharedTileID,
         _Tiles[[10]], '1111');

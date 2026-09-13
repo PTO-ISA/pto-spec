@@ -3,12 +3,11 @@ func main() => integer
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTileForMask(1, 128, 2, 2,
-        TileDataType_U16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_CUBE_M16, '1111');
     assert left_ready;
     MarkTileValidRegionDefined(1);
     ConfigureTile(10, 128, 32, 2, 2, 2,
-        TileDataType_U16, TileLayout_RowMajor, TileLocation_Matrix);
+        TileDataType_U16, TileLayout_RowMajor);
     MarkTileValidRegionDefined(10);
     InstallSharedTile((Zeros{6} + 44) as SharedTileID, _Tiles[[10]], '1111');
     let left_before = _Tiles[[1]];

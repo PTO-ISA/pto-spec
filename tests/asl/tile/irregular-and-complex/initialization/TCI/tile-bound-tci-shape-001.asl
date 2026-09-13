@@ -10,8 +10,7 @@ begin
         1,
         2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -20,8 +19,7 @@ begin
         2,
         2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         128,
@@ -30,8 +28,7 @@ begin
         1,
         2,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         3,
         128,
@@ -40,8 +37,7 @@ begin
         1,
         2,
         TileDataType_U16,
-        TileLayout_ColumnMajor,
-        TileLocation_Any);
+        TileLayout_ColumnMajor);
 
     assert TileOperandsLegal_TCI(
         0,

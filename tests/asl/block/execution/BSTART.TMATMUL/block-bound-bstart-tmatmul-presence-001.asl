@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 4, 8, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 2, 8, 1, 1, TileDataType_FP64,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     var start: bits(64) = Zeros{64} + 0x00031181;

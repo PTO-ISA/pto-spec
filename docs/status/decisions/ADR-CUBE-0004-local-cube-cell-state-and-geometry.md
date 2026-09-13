@@ -56,6 +56,25 @@ temporary transfer hint and is not inferred from an instruction mnemonic.
 Shared Tiles remain ordinary two-dimensional descriptors. Shared layout state
 and Matrix operand roles are owned by separate decisions.
 
+## Amendment — 2026-09-13 (Issue #267)
+
+This amendment adopts the unified Local layout model for the CUBE CELL state.
+The operative dispatch baseline is
+`ef2d23cdee03e74057099dc69943e8b909809ce0`; intermediate dispatch history is
+`cbd64442b0585271fed2db633578b9fb1541e1d9`; durable design provenance is
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`.
+
+The affected NDF owner is `PTO-CUBE-CELL-STATE-001`, with affected units
+`PTO-TILE-MODEL-SHAPE-CUBE-CELL`, `PTO-TILE-MODEL-STATE-TYPES`,
+`PTO-TILE-MODEL-STATE-ALLOCATION`, and
+`PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE`. The persistent descriptor layout
+is the Local layout itself; no `TileLocation` or Vec-versus-Matrix residency
+state is carried. Residuals: N/A at dispatch. Generated catalogs, docs, AVS,
+matrix, and release traceability projections must remain closed to this owner.
+
+`release_impact: required` remains in force; this V1 amendment does not select
+a release identity.
+
 ## CELL geometry
 
 One CELL is exactly 128 bytes. Its logical geometry is derived from the layout

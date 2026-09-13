@@ -22,7 +22,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 8, 2, 1, 2, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 7);
     let legacy_started = ExecuteCommandInstruction(
@@ -43,7 +43,7 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         10, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert source_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN});
     MarkTileValidRegionDefined(10);

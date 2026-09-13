@@ -4,7 +4,7 @@ begin
     ResetProfileState();
 
     ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     let fp32_load_base = Zeros{PTO_XLEN} + 0x100;
     Store(fp32_load_base, 4, Zeros{PTO_XLEN} + 0x3f800000);
     Store(fp32_load_base + 4, 4, Zeros{PTO_XLEN} + 0x40000000);
@@ -32,7 +32,7 @@ begin
     assert fp32_stored11 == Zeros{PTO_XLEN} + 0x41000000;
 
     ConfigureTile(1, 128, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     let fp16_load_base = Zeros{PTO_XLEN} + 0x300;
     Store(fp16_load_base, 2, Zeros{PTO_XLEN} + 0x3c00);
     Store(fp16_load_base + 2, 2, Zeros{PTO_XLEN} + 0x4000);

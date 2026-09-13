@@ -16,9 +16,9 @@ begin
     _ExtendedSystemRegisters[[0x1f01]] = Ones{PTO_XLEN};
     _ExtendedSystemRegisters[[0xffb7]] = Ones{PTO_XLEN};
     ConfigureTile(0, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(63, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(63, 0, 0, Zeros{PTO_XLEN} + 2);
     BeginBundle(BundleKind_Standard, BundleTransfer_Direct,

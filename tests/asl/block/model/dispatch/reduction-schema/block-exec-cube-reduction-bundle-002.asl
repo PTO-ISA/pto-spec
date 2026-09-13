@@ -20,7 +20,7 @@ func PrepareCubeReduction(source_capacity: integer {128,4096})
 begin
     ResetProfileState();
     let configured = ConfigureCubeTile(1, source_capacity, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     assert configured;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);

@@ -32,9 +32,9 @@ begin
     let conversion_operation = DecodeTileOperation(TileDecode_TEPL, '000000011011')
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
     ConfigureTile(38, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     ConfigureTile(39, 256, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     var numeric_operands = DefaultTileInstructionOperands();
     numeric_operands.destination0 = 39;
     numeric_operands.source0 = 38;
@@ -50,9 +50,9 @@ begin
     assert explicit_rna.saturating;
 
     ConfigureTile(40, 2048, 128, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     ConfigureTile(41, 256, 128, 2, 1, 2, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 257);
     WriteTileElement(40, 0, 1, Zeros{PTO_XLEN} + 100);
     TCVT(41, 40, DefaultNumericExecutionControl());
@@ -60,9 +60,9 @@ begin
     assert ReadTileElement(41, 0, 1) == Zeros{PTO_XLEN} + 100;
 
     ConfigureTile(40, 256, 128, 2, 1, 2, TileDataType_S8,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     ConfigureTile(41, 512, 128, 2, 1, 2, TileDataType_S16,
-        TileLayout_RowMajor, TileLocation_Vector);
+        TileLayout_RowMajor);
     WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 0x80);
     WriteTileElement(40, 0, 1, Zeros{PTO_XLEN} + 0x7f);
     TCVT(41, 40, DefaultNumericExecutionControl());

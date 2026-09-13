@@ -72,7 +72,7 @@ begin
     // the remaining Local-only binding is incomplete.
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     let missing_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00010', Zeros{5} + 24), 32);

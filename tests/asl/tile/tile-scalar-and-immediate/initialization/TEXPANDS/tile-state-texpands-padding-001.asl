@@ -9,8 +9,7 @@ begin
         1,
         1,
         TileDataType_U64,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func main() => integer

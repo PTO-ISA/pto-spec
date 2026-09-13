@@ -176,7 +176,6 @@ type LocalGenerationParentDescriptor of record {
     data_type: TileDataType,
     predicate_basis_type: TileDataType,
     layout: TileLayout,
-    location: TileLocation,
     cube_k_repeat: integer {0..65535},
     cube_n_repeat: integer {0..8192},
     cube_cell_count: integer {0..16384},

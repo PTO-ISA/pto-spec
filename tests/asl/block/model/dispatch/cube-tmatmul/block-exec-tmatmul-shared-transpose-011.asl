@@ -7,8 +7,7 @@ begin
     ConfigureTileForMask(index, 128,
         DerivedTileRows(128, physical_columns, TileDataType_U16),
         physical_columns, physical_rows, physical_columns,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     if left then
         if transpose then
             WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 1);

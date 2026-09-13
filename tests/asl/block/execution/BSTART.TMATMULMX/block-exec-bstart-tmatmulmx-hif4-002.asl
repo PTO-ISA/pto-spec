@@ -4,17 +4,13 @@ func main() => integer
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_HiF4X2, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_HiF4X2, TileLayout_CUBE_M16, '1111');
     let a_scale_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_U32, TileLayout_CUBE_M32, '1111');
     let b_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_HiF4X2, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_HiF4X2, TileLayout_CUBE_N8, '1111');
     let b_scale_ready = ConfigureCubeTileForMask(4, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_U32, TileLayout_CUBE_M32, '1111');
     assert a_ready && a_scale_ready && b_ready && b_scale_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);

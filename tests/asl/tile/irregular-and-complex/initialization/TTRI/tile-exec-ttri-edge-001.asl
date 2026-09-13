@@ -10,8 +10,7 @@ begin
         2,
         3,
         TileDataType_FP16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -20,8 +19,7 @@ begin
         2,
         3,
         TileDataType_FP16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
 
     TTRI(0, FALSE, -65535);
     TTRI(1, TRUE, -65535);

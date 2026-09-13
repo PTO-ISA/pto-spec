@@ -18,12 +18,10 @@ end;
 func ConfigureDefinednessPrimaries()
 begin
     let cube_configuration_1 = ConfigureCubeTileForMask(1, 128, 2, 2,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     assert cube_configuration_1;
     let cube_configuration_2 = ConfigureCubeTileForMask(2, 128, 2, 2,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert cube_configuration_2;
 end;
 

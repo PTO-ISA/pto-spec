@@ -22,11 +22,9 @@ begin
     let source_valid_columns = if transpose then group_m else 1;
     ConfigureTileForMask(10, source_capacity, source_rows, source_columns,
         source_valid_rows, source_valid_columns, TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileLayout_RowMajor, '1111');
     ConfigureTileForMask(11, 128, 128, 1, 1, 1,
-        TileDataType_U8, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_RowMajor, '1111');
     for row = 0 to source_valid_rows - 1 looplimit 128 do
         for column = 0 to source_valid_columns - 1 looplimit 128 do
             let logical_row = if transpose then column else row;

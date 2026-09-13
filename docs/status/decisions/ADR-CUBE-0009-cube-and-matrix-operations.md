@@ -209,11 +209,12 @@ binding, participation, supplementary-field, preflight, and commit contract of
 `BSTART.TMATMUL`. It adds one Bias source after the left and right matrix
 sources.
 
-The Bias source valid shape MUST be exactly `1 x N`, its layout MUST be
-row-major, and its DataType MUST equal the result accumulator class selected by
-Decision 050 in ADR-CUBE-0009: `FP32`, `S32`, or `U32`. Its payload uses the same private CUBE result
-representation as that accumulator class. For every output row `i` and column
-`j`, `Bias[0,j]` is added once to the complete dot product for output `D[i,j]`.
+The Bias source valid shape MUST be exactly `1 x N`, its layout MUST equal the
+resolver-selected `ML` (`CUBE_M16` or `CUBE_M32`) and D's layout, and its
+DataType MUST equal the result accumulator class selected by Decision 050 in
+ADR-CUBE-0009: `FP32`, `S32`, or `U32`. Local A, when present, also uses `ML`.
+For every output row `i` and column `j`, `Bias[0,j]` is added once to the
+complete dot product for output `D[i,j]`.
 No row broadcast, scalar broadcast, full-matrix Bias, or Bias addition inside
 the K reduction is defined.
 
@@ -307,6 +308,23 @@ accumulator-type D output and may hint transparent-cache replacement with the
 identical published result; zero retains final post-processing. Cache state and
 hint handling cannot change results, faults, allocation, publication, source
 lifetime, or ordering.
+
+## 2026-09-13 amendment: unified Local layouts and Matrix Bias closure
+
+Local Tiles have one architectural storage model. `RowMajor`, `CUBE_M16`,
+`CUBE_M32`, and `CUBE_N8` are physical layouts, not Vec/Matrix residency;
+`TileLocation` is retired from portable Local state and legality. The exact
+four Matrix Bias operations now require `Bias.layout == ML == D.layout`, with
+`A.layout == ML` when Local A is present, where ML is the existing resolver's
+M16/M32 result. Bias remains a defined logical `1 x N` accumulator-typed
+column broadcast. RowMajor and mixed-layout Bias reject before effects.
+
+This amendment records the Issue #264/#267 frozen contract and supersedes the
+former location/RowMajor wording only. Current semantics remain owned by the
+affected ASL/NDF files and their generated projections. The candidate uses
+dispatch baseline `cbd64442b0585271fed2db633578b9fb1541e1d9` and durable
+provenance `fbdfc56bef714a98a080461d926d54dcfbaf851e`; normative release
+impact is required.
 
 ## Bilingual decision detail / 双语决策详述
 

@@ -1,12 +1,10 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-CUBE-AUX-007","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-LOCAL-MATRIX-001"],"kind":"execution","summary":"Local CUBE TMATMUL keeps Bias in an ordinary row-major auxiliary Tile","pass_condition":"ordinary FP32 Bias adds to CUBE A and B while a CUBE-form Bias rejects before destination allocation","related_sources":["asl/tile/model/legality/matrix-operands.asl","asl/tile/model/execution/cube.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-CUBE-AUX-007","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-LOCAL-MATRIX-001"],"kind":"execution","summary":"Local CUBE TMATMUL accepts matching-M-layout Bias and rejects a mismatched layout","pass_condition":"ordinary FP32 M16 Bias adds to CUBE A and B while a CUBE_N8 Bias rejects before destination allocation","related_sources":["asl/tile/model/legality/matrix-operands.asl","asl/tile/model/execution/cube.asl"]}
 func PrepareCubeBiasPrimaries()
 begin
     let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let b_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert a_ready && b_ready;
     let a_element = TileStorageIndex(_Tiles[[1]], 0, 0);
     let b_element = TileStorageIndex(_Tiles[[2]], 0, 0);
@@ -31,9 +29,9 @@ func main() => integer
 begin
     ResetProfileState();
     PrepareCubeBiasPrimaries();
-    ConfigureTileForMask(3, 128, 32, 1, 1, 1,
-        TileDataType_FP32, TileLayout_RowMajor,
-        TileLocation_Any, '1111');
+    let bias_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+    assert bias_ready;
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     StartCubeBiasBlock();
     AddBundleTileBinding(
@@ -51,8 +49,7 @@ begin
     ResetProfileState();
     PrepareCubeBiasPrimaries();
     let cube_bias = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP32, TileLayout_CUBE_N8, '1111');
     assert cube_bias;
     MarkTileValidRegionDefined(3);
     StartCubeBiasBlock();

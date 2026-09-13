@@ -10,8 +10,7 @@ begin
         1,
         2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -20,8 +19,7 @@ begin
         1,
         2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
 
     TCI(0, Ones{PTO_XLEN}, FALSE);
     TCI(1, Ones{PTO_XLEN}, TRUE);

@@ -3,16 +3,16 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func TestTileReduction()
 begin
     ConfigureTwoByTwo(8);
     ConfigureTile(9, 256, 2, 1, 2, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(10, 128, 1, 2, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(8, 1, 0, Zeros{PTO_XLEN} + 4);

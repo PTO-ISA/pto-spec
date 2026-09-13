@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+python3 scripts/layout_relation_census.py --self-test
+python3 scripts/layout_relation_census.py \
+    --baseline "${PTO_CENSUS_BASELINE:-origin/main}" \
+    --candidate "${PTO_CENSUS_CANDIDATE:-HEAD}" \
+    --output spec/evidence/layout-relation-census.json \
+    --check

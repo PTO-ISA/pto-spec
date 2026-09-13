@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     ConfigureTile(
         1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTileFeatureMapDescriptor(
         1, TileFeatureMapLayout_NC1HWC0,
         1, 1, 1, 1, 1, 1,
@@ -15,7 +15,7 @@ begin
 
     ConfigureTile(
         1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     assert !ReadTileFeatureMapDescriptor(1).valid;
     return 0;
 end;

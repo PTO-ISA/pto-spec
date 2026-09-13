@@ -33,7 +33,7 @@ begin
     // share rejection semantics and preserve the destination payload.
     ResetProfileState();
     ConfigureTile(2, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 99);
     var unknown_operands = DefaultTileInstructionOperands();
     unknown_operands.destination0 = 2;
@@ -46,11 +46,11 @@ begin
 
     ResetProfileState();
     ConfigureTile(0, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 99);
     var illegal_operands = DefaultTileInstructionOperands();

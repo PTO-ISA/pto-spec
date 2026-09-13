@@ -16,11 +16,11 @@ end;
 func TestCubeReduction()
 begin
     let source_ok = ConfigureCubeTile(0, 2048, 16, 2,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let sum_destination = ConfigureCubeTile(1, 128, 16, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let arg_destination = ConfigureCubeTile(2, 128, 16, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     assert source_ok && sum_destination && arg_destination;
     FillTile(0, 16, 2);
     assert TileReductionSourceCapacityLegal(0);
@@ -37,9 +37,9 @@ begin
         TileLayout_CUBE_M16, 17);
 
     let source_over_capacity = ConfigureCubeTile(5, 4096, 2, 2,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let destination_over_capacity = ConfigureCubeTile(6, 128, 2, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     assert source_over_capacity && destination_over_capacity;
     FillTile(5, 2, 2);
     assert !TileReductionSourceCapacityLegal(5);
@@ -49,18 +49,18 @@ begin
         TileReduction_SUM, TileAxis_Row, 6, 5);
 
     let source_m32_ok = ConfigureCubeTile(7, 128, 32, 1,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     let destination_m32_ok = ConfigureCubeTile(8, 128, 32, 1,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     assert source_m32_ok && destination_m32_ok;
     FillTile(7, 32, 1);
     assert TileOperandsLegal_ExecuteTileReduction(
         TileReduction_SUM, TileAxis_Row, 8, 7);
 
     let source_m32_too_tall = ConfigureCubeTile(9, 256, 33, 1,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     let destination_m32_too_tall = ConfigureCubeTile(10, 256, 33, 1,
-        TileDataType_U32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M32);
     assert source_m32_too_tall && destination_m32_too_tall;
     FillTile(9, 33, 1);
     assert !TileOperandsLegal_ExecuteTileReduction(

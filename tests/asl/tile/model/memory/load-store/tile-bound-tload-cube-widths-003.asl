@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let fp32_configured = ConfigureCubeTile(0, 256, 2, 2,
-        TileDataType_FP32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M32);
     assert fp32_configured;
     Store(Zeros{PTO_XLEN} + 0x100, 4,
         Zeros{PTO_XLEN} + 0x89abcdef);
@@ -14,7 +14,7 @@ begin
 
     ResetProfileState();
     let fp16_configured = ConfigureCubeTile(0, 256, 2, 5,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     assert fp16_configured;
     Store(Zeros{PTO_XLEN} + 0x212, 2, Zeros{PTO_XLEN} + 0xbeef);
     TLOAD(0, Zeros{PTO_XLEN} + 0x200, Zeros{PTO_XLEN} + 10);
@@ -24,7 +24,7 @@ begin
 
     ResetProfileState();
     let fp8_configured = ConfigureCubeTile(0, 256, 2, 9,
-        TileDataType_E4M3, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_E4M3, TileLayout_CUBE_N8);
     assert fp8_configured;
     Store(Zeros{PTO_XLEN} + 0x311, 1, Zeros{PTO_XLEN} + 0x7e);
     TLOAD(0, Zeros{PTO_XLEN} + 0x300, Zeros{PTO_XLEN} + 9);
@@ -34,7 +34,7 @@ begin
 
     ResetProfileState();
     let u4_configured = ConfigureCubeTile(0, 256, 2, 9,
-        TileDataType_U4X2, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_U4X2, TileLayout_CUBE_N8);
     assert u4_configured;
     Store(Zeros{PTO_XLEN} + 0x400, 1, Zeros{PTO_XLEN} + 0xba);
     TLOAD(0, Zeros{PTO_XLEN} + 0x400, Zeros{PTO_XLEN} + 5);

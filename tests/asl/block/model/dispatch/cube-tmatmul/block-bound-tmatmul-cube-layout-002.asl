@@ -3,13 +3,13 @@ func main() => integer
 begin
     ResetProfileState();
     let a_m16 = ConfigureCubeTile(0, 640, 13, 17,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     let a_m32 = ConfigureCubeTile(1, 1152, 13, 17,
-        TileDataType_FP16, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M32);
     let b_n8 = ConfigureCubeTile(2, 768, 17, 9,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     let c_m16 = ConfigureCubeTile(3, 640, 13, 9,
-        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M16);
     assert a_m16 && a_m32 && b_n8 && c_m16;
     MarkTileValidRegionDefined(0);
     MarkTileValidRegionDefined(1);

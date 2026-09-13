@@ -14,12 +14,10 @@ begin
             else 0x00531181;
 
         let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-            TileDataType_FP16, TileLayout_CUBE_M16,
-            TileLocation_Matrix, '1111');
+            TileDataType_FP16, TileLayout_CUBE_M16, '1111');
         assert a_ready;
         ConfigureTileForMask(2, 128, 32, 2, 1, 2,
-            TileDataType_FP16, TileLayout_RowMajor,
-            TileLocation_Matrix, '1111');
+            TileDataType_FP16, TileLayout_RowMajor, '1111');
         // Independent FP16 carriers keep all six selector paths on the same
         // Shared-B physical mapping; expected results below are FP32 encodings.
         WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
@@ -30,16 +28,14 @@ begin
 
         if uses_accumulator then
             let c_ready = ConfigureCubeTileForMask(3, 128, 1, 2,
-                TileDataType_FP32, TileLayout_CUBE_M16,
-                TileLocation_Matrix, '1111');
+                TileDataType_FP32, TileLayout_CUBE_M16, '1111');
             assert c_ready;
             WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
             WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 0x3f800000);
         end;
         if uses_bias then
             ConfigureTileForMask(4, 128, 16, 2, 1, 2,
-                TileDataType_FP32, TileLayout_RowMajor,
-                TileLocation_Matrix, '1111');
+                TileDataType_FP32, TileLayout_RowMajor, '1111');
             WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
             WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 0x40e00000);
         end;

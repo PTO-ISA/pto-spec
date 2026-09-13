@@ -11,15 +11,15 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 512, 1, 16, 1, 9, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(4, 128, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 512, 1, 16, 1, 9, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(3, 128, 1, 2, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for column = 0 to 8 looplimit 9 do
         WriteTileElement(0, 0, column,
             Zeros{PTO_XLEN} + column + 1);

@@ -5,22 +5,18 @@ func PrepareFP16ACC(c_scale_enabled: boolean,
                     scale_index: TileIndex)
 begin
     let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let b_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     let c_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
     assert a_ready && b_ready && c_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40800000);
     if include_scale then
         let scale_ready = ConfigureCubeTileForMask(scale_index, 128, 1, 1,
-            TileDataType_U8, TileLayout_CUBE_M32,
-            TileLocation_Matrix, '1111');
+            TileDataType_U8, TileLayout_CUBE_M32, '1111');
         assert scale_ready;
         WriteTileElement(scale_index, 0, 0, Zeros{PTO_XLEN} + 1);
         MarkTileValidRegionDefined(scale_index);
@@ -72,14 +68,11 @@ begin
 
     ResetProfileState();
     let local_a = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let local_b = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     let local_scale = ConfigureCubeTileForMask(4, 128, 1, 1,
-        TileDataType_U8, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_CUBE_M32, '1111');
     assert local_a && local_b && local_scale;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
@@ -102,17 +95,13 @@ begin
 
     ResetProfileState();
     let int_a = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_U16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_CUBE_M16, '1111');
     let int_b = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_U8, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_CUBE_N8, '1111');
     let int_c = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_U32, TileLayout_CUBE_M16, '1111');
     let int_scale = ConfigureCubeTileForMask(4, 128, 1, 1,
-        TileDataType_U8, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_CUBE_M32, '1111');
     assert int_a && int_b && int_c && int_scale;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});

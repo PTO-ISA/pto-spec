@@ -37,11 +37,11 @@ begin
         branch_type = Zeros{3}
     });
     let a_ready = ConfigureCubeTile(1, 128, 2, 3,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     let b_ready = ConfigureCubeTile(2, 128, 3, 2,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     let d_ready = ConfigureCubeTile(3, 128, 2, 2,
-        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M16);
     assert a_ready && b_ready && d_ready;
 
     WriteCubeStorageValue(1, 0, 0, UInt(CubeStorageFP16Value(1)));
@@ -64,7 +64,6 @@ begin
     assert _LastFault == Fault_None;
     let d = _Tiles[[3]];
     assert d.layout == TileLayout_CUBE_M16;
-    assert d.location == TileLocation_Matrix;
     assert d.payload[[TileStorageIndex(d, 0, 0)]] ==
         Zeros{PTO_XLEN} + 0x41b00000;
     assert d.payload[[TileStorageIndex(d, 0, 1)]] ==

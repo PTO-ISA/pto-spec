@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     ConfigureTile(
         1, 128, 4, 4, 2, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 2 looplimit 3 do
             WriteTileElement(1, row, column, Zeros{PTO_XLEN} + 0x8000000000000000);
@@ -13,13 +13,13 @@ begin
     ConfigureTile(
         2, 128, 16, 1,
         2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         WriteTileElement(2, row, 0, Zeros{PTO_XLEN} + 1);
     end;
     ConfigureTile(
         3, 128, 4, 4, 2, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ExecuteTileExpand(
         TileExpand_MAX,
         TileAxis_Row,

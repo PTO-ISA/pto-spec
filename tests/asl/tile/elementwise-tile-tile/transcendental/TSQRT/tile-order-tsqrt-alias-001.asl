@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1,
-        TileDataType_FP32, TileLayout_RowMajor, TileLocation_Any);
+        TileDataType_FP32, TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x80000000);
     InstructionContractExecute_TSQRT(0, 0);
     assert ReadTileElement(0, 0, 0) ==

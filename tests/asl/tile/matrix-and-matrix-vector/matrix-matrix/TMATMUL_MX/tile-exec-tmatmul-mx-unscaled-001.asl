@@ -21,13 +21,13 @@ begin
     ResetProfileState();
     SelectTMATMULMXFP16();
     let cube_configuration_1 = ConfigureCubeTile(1, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_1;
     let cube_configuration_2 = ConfigureCubeTile(2, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
     assert cube_configuration_2;
     let cube_configuration_3 = ConfigureCubeTile(3, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_3;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);

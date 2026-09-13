@@ -27,7 +27,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 256, 2, 128, 2, 128, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for column = 0 to 127 do
         WriteTileElement(0, 0, column, Zeros{PTO_XLEN} + 0x11);
         WriteTileElement(0, 1, column, Zeros{PTO_XLEN} + 0x22);

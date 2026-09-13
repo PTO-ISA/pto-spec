@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(7, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(7, 0, 0, Zeros{PTO_XLEN} + 0x55);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 7, 0, TRUE);
     FinalizeBundleTileAttempt(TileExecution_Executed);
