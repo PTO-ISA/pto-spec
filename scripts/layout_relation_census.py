@@ -1111,7 +1111,7 @@ def _operation_key_rows(inventory: dict[str, Any]) -> dict[tuple[str, str], dict
     return {(m, f): row for m, op in inventory["operations"].items() for f in op["forms"]
             for row in [{"mnemonic": m, "form": f, "owner": op["form_owners"].get(f, op["path"]),
                          "meta": op["meta"], "roles": op["roles"], "path": op["path"],
-                         "bundle_owner": op["form_owners"].get("bundle")}]} 
+                         "bundle_owner": op["form_owners"].get("bundle")}]}
 
 
 def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baseline: str, candidate: str,
