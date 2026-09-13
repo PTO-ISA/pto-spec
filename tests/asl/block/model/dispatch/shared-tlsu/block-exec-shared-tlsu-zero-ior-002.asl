@@ -94,7 +94,7 @@ begin
     // either the Shared destination or Local source lifetime changes.
     ResetProfileState();
     ConfigureTileForMask(0, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any, '1000');
+        TileLayout_RowMajor, '1000');
     InstallRelativeTileFixture(0, 0);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let invalid_publish_start = ExecuteCommandInstruction(

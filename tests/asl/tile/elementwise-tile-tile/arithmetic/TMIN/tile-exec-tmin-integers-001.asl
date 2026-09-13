@@ -3,7 +3,7 @@ func ConfigureTminIntegerTiles(data_type: TileDataType)
 begin
     for index = 0 to 2 looplimit 3 do
         ConfigureTile(index as TileIndex, 128, 1, 1, 1, 1,
-            data_type, TileLayout_RowMajor, TileLocation_Any);
+            data_type, TileLayout_RowMajor);
     end;
 end;
 

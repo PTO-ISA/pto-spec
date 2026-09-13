@@ -4,10 +4,10 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         0, 512, 16, 9, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let destination_ready = ConfigureCubeTile(
         1, 1024, 16, 9, TileDataType_FP32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert source_ready && destination_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(0, 15, 8, Zeros{PTO_XLEN} + 9);
@@ -26,7 +26,6 @@ begin
         1, 0, DefaultNumericExecutionControl());
     assert _LastFault == Fault_None;
     assert _Tiles[[1]].layout == TileLayout_CUBE_M16;
-    assert _Tiles[[1]].location == TileLocation_Matrix;
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0x34e00000;
     assert ReadTileElement(1, 15, 8) ==

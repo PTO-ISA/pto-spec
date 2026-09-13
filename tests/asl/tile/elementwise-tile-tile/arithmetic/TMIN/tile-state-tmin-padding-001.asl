@@ -3,7 +3,7 @@ func ConfigureTminPaddedTiles()
 begin
     for index = 0 to 2 looplimit 3 do
         ConfigureTile(index as TileIndex, 128, 8, 2, 1, 1,
-            TileDataType_S8, TileLayout_RowMajor, TileLocation_Any);
+            TileDataType_S8, TileLayout_RowMajor);
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 5);

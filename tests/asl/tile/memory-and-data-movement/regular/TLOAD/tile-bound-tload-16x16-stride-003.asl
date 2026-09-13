@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     let base_address = Zeros{PTO_XLEN} + 0x400;
     ConfigureTile(4, 1024, 16, 16, 16, 16, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 15 do
         for column = 0 to 15 do
             let element = row * 16 + column;

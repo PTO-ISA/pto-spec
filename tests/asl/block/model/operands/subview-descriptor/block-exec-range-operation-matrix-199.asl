@@ -10,13 +10,13 @@ begin
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     let configured_1 = ConfigureCubeTileForMask(
         1, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileLayout_CUBE_M16, '1111');
     assert configured_1;
     InstallRelativeTileFixture(1, 1);
     MarkTileValidRegionDefined(1);
     let configured_2 = ConfigureCubeTileForMask(
         2, 128, 1, 1, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileLayout_CUBE_N8, '1111');
     assert configured_2;
     InstallRelativeTileFixture(2, 2);
     MarkTileValidRegionDefined(2);

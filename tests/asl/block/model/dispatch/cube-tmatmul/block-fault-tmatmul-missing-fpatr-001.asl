@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     MarkTileValidRegionDefined(2);
     InstallSharedTile((Zeros{6} + 31) as SharedTileID, _Tiles[[2]], '1111');
     var start: bits(64) = Zeros{64} + 0x00031181;

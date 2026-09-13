@@ -24,11 +24,9 @@ func main() => integer
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(1, 128, 2, 3,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let b_ready = ConfigureCubeTileForMask(2, 128, 3, 2,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert a_ready && b_ready;
     WriteMatrixCubeValue(1, 0, 0, UInt(MatrixCubeFP16Value(1)));
     WriteMatrixCubeValue(1, 0, 1, UInt(MatrixCubeFP16Value(2)));
@@ -65,7 +63,6 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     let d = _Tiles[[destination]];
     assert d.layout == TileLayout_CUBE_M16;
-    assert d.location == TileLocation_Matrix;
     assert d.data_type == TileDataType_FP32;
     assert d.valid_rows == 2 && d.valid_columns == 2;
     assert d.rows == 16 && d.columns == 2;

@@ -13,7 +13,7 @@ begin
     ResetProfileState();
     let compare_source = ConfigureCubeTile(
         10, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let predicate_destination = ConfigurePredicateCell(
         0, 128, 1, 1, TileDataType_FP32, TileLayout_CUBE_M32);
     assert compare_source && predicate_destination;
@@ -34,13 +34,13 @@ begin
     ResetProfileState();
     let select_destination = ConfigureCubeTile(
         0, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let source_true = ConfigureCubeTile(
         10, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let source_false = ConfigureCubeTile(
         11, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert select_destination && source_true && source_false;
     _BundleOperation.data_type_valid = TRUE;
     _BundleOperation.data_type = Zeros{5} + 1;

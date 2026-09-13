@@ -81,7 +81,7 @@ begin
     // all-zero B.IOR is legal and equivalent to omission for this schema.
     ResetProfileState();
     ConfigureTile(0, 128, 16, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00010', Zeros{5} + 24), 32);

@@ -36,8 +36,7 @@ begin
     ResetProfileState();
     let status_before = NumericStatusFlags();
     let left_ready = ConfigureCubeTileForMask(0, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     assert left_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
 

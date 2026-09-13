@@ -29,10 +29,10 @@ begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(
         10, 128, 2, 4, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let right_ready = ConfigureCubeTile(
         11, 128, 2, 4, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert left_ready && right_ready;
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 3 looplimit 4 do

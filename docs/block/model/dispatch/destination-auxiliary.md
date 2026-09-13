@@ -44,13 +44,9 @@ end;
 
 func MarkBundleTIMG2COLDestinationsMatrix()
 begin
-    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
-        if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid then
-            _Tiles[[_BundleTileBindings[[binding]].destination]].location =
-                TileLocation_Matrix;
-        end;
-    end;
+    // Destination representation is established by the explicit layout
+    // contract; no execution-engine/location tag is materialized.
+    assert TRUE;
 end;
 
 func ConfigureBundleTileDestination(
@@ -62,11 +58,11 @@ func ConfigureBundleTileDestination(
 begin
     if tgpr2t then
         return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
-            valid_columns, data_type, layout, TileLocation_Matrix,
+            valid_columns, data_type, layout,
             allocation_mask);
     end;
     ConfigureTileForMask(index, capacity_bytes, valid_rows, columns,
-        valid_rows, valid_columns, data_type, layout, TileLocation_Any,
+        valid_rows, valid_columns, data_type, layout,
         allocation_mask);
     return TRUE;
 end;

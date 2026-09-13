@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(10, 128, 1, 2, TileDataType_E4M3,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let right_ready = ConfigureCubeTile(11, 128, 1, 2, TileDataType_E4M3,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert left_ready && right_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 0x80);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 0x01);

@@ -43,7 +43,6 @@ begin
            destination.valid_columns != source_tile.valid_columns ||
            destination.data_type != source_tile.data_type ||
            destination.layout != source_tile.layout ||
-           destination.location != TileLocation_Matrix ||
            (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
                binding.pe_mask then
             SetFault(Fault_TileLegality, ReadTPC());
@@ -75,7 +74,7 @@ begin
     let configured = ConfigureCubeTileForMask(
         resolved, capacity_bytes, source_tile.valid_rows,
         source_tile.valid_columns, source_tile.data_type,
-        source_tile.layout, TileLocation_Matrix, binding.pe_mask);
+        source_tile.layout, binding.pe_mask);
     if !configured then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;

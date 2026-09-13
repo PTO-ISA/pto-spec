@@ -1084,7 +1084,7 @@ nav:
               - "ADR-CUBE-0010: Local and Shared capacity pools with cooperative M-sharding": status/decisions/ADR-CUBE-0010-local-shared-capacity-and-cooperative-m-sharding.md
               - "ADR-CUBE-0011: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/ADR-CUBE-0011-cooperative-group-m-distribution.md
               - "ADR-CUBE-0012: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/ADR-CUBE-0012-matrix-scale-and-cscale.md
-              - "ADR-CUBE-0013: Private CUBE vector execution and CELL rearrangement": status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md
+              - "ADR-CUBE-0013: Local CUBE execution and CELL rearrangement": status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md
               - "ADR-CUBE-0014: Shared whole-parent readiness and single-issuer publication": status/decisions/ADR-CUBE-0014-shared-whole-parent-readiness.md
               - "ADR-CUBE-0015: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/ADR-CUBE-0015-shared-source-subview-per-pe.md
               - "ADR-CUBE-0016: Remove legacy Shared movement Functions": status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md

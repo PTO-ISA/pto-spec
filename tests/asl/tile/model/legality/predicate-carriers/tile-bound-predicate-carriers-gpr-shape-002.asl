@@ -4,16 +4,16 @@ begin
     ResetProfileState();
     let m32_max = ConfigureCubeTile(
         10, 128, 32, 2, TileDataType_S16,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let m32_over = ConfigureCubeTile(
         11, 256, 32, 3, TileDataType_S16,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let m16_max = ConfigureCubeTile(
         12, 128, 16, 4, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let m16_over = ConfigureCubeTile(
         13, 256, 16, 5, TileDataType_S16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert m32_max && m32_over && m16_max && m16_over;
     assert TileCubePredicateGPRShapeLegal(10);
     assert !TileCubePredicateGPRShapeLegal(11);

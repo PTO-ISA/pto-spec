@@ -159,7 +159,7 @@ end;
 func InstallPriorShared(shared_tile_id: SharedTileID) => Word
 begin
     ConfigureTile(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x77);
     InstallSharedTile(shared_tile_id, _Tiles[[0]], '0001');
     return ReadSharedTileWord(shared_tile_id, 0);

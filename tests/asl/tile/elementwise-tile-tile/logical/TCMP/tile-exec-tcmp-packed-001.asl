@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 8, 16, 1, 10,
-        TileDataType_U8, TileLayout_RowMajor, TileLocation_Any);
+        TileDataType_U8, TileLayout_RowMajor);
     ConfigureTile(1, 128, 8, 16, 1, 10,
-        TileDataType_S8, TileLayout_RowMajor, TileLocation_Any);
+        TileDataType_S8, TileLayout_RowMajor);
     ConfigurePredicateTile(2, 128, 8, 16, 1, 10);
     for column = 0 to 9 looplimit 10 do
         WriteTileElement(0, 0, column, Zeros{PTO_XLEN} + column);

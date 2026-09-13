@@ -9,8 +9,7 @@ begin
         1,
         1,
         TileDataType_U64,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -19,8 +18,7 @@ begin
         1,
         1,
         TileDataType_U64,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
 end;
 

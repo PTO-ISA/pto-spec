@@ -87,7 +87,7 @@ begin
            left.valid_rows == right.valid_rows &&
            left.valid_columns == right.valid_columns &&
            left.data_type == right.data_type &&
-           left.layout == right.layout && left.location == right.location &&
+           left.layout == right.layout &&
            left.cube_k_repeat == right.cube_k_repeat &&
            left.cube_n_repeat == right.cube_n_repeat &&
            left.cube_cell_count == right.cube_cell_count &&
@@ -148,7 +148,6 @@ begin
     assert SharedTilePublished(shared_tile_id);
     var tile = shared.tile;
     assert tile.contents_defined;
-    tile.location = TileLocation_Any;
     return tile;
 end;
 
@@ -240,7 +239,6 @@ begin
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
     tile.layout = layout;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
@@ -271,7 +269,6 @@ begin
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
     tile.layout = layout;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;

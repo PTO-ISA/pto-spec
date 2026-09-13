@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 
     let normal_scale = MatrixQuantParameter(
         Zeros{19} + 0x400, Zeros{PTO_XLEN}, 9);

@@ -21,11 +21,9 @@ begin
     ResetProfileState();
     SelectTMATMULMX('00100');
     let fp_left_ready = ConfigureCubeTile(1, 128, 1, 2,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     let fp_right_ready = ConfigureCubeTile(2, 128, 2, 2,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     assert fp_left_ready && fp_right_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});
@@ -48,18 +46,14 @@ begin
     ResetProfileState();
     SelectTMATMULMX('00111');
     let mx_left_ready = ConfigureCubeTile(1, 128, 1, 2,
-        TileDataType_E4M3, TileLayout_CUBE_M16,
-        TileLocation_Matrix);
+        TileDataType_E4M3, TileLayout_CUBE_M16);
     let mx_right_ready = ConfigureCubeTile(2, 128, 2, 2,
-        TileDataType_E4M3, TileLayout_CUBE_N8,
-        TileLocation_Matrix);
+        TileDataType_E4M3, TileLayout_CUBE_N8);
     assert mx_left_ready && mx_right_ready;
     let left_scale_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_E8M0, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1000');
+        TileDataType_E8M0, TileLayout_CUBE_M32, '1000');
     let right_scale_ready = ConfigureCubeTileForMask(4, 128, 2, 1,
-        TileDataType_E8M0, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1000');
+        TileDataType_E8M0, TileLayout_CUBE_M32, '1000');
     assert left_scale_ready && right_scale_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});

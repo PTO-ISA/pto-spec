@@ -105,7 +105,6 @@ begin
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
     result.packed_defined_elements = zero_packed_tile_elements;
-    result.location = TileLocation_Matrix;
     var result_payload: TilePayload = destination_tile.payload;
     let control = NumericExecutionControl {
         rounding_mode = DecodeBundleRoundingSelection(
@@ -152,14 +151,16 @@ begin
     assert bias_tile.allocated && bias_tile.contents_defined;
     assert bias_tile.valid_rows == 1;
     assert bias_tile.valid_columns == input.valid_columns;
-    assert bias_tile.layout == TileLayout_RowMajor;
+    assert bias_tile.layout == input.layout;
+    assert bias_tile.layout == TileLayout_CUBE_M16 ||
+           bias_tile.layout == TileLayout_CUBE_M32;
     var result = input;
     var result_payload = input.payload;
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         for column = 0 to input.valid_columns - 1 looplimit 65536 do
-            let result_element = TileStorageIndex(input,
+            let result_element = TileLogicalLinearIndex(input,
                 row as integer {0..65535}, column as integer {0..65535});
-            let bias_element = TileStorageIndex(bias_tile,
+            let bias_element = TileLogicalLinearIndex(bias_tile,
                 0, column as integer {0..65535});
             result_payload[[result_element]] = TileProfileMatrixBias(
                 input.payload[[result_element]], bias_payload[[bias_element]],
@@ -229,7 +230,6 @@ begin
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
     result.packed_defined_elements = zero_packed_tile_elements;
-    result.location = TileLocation_Matrix;
     var result_payload = destination_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do

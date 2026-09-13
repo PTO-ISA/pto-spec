@@ -6,13 +6,13 @@ begin
         8, 128, 1, 1, TileDataType_U16, TileLayout_CUBE_M32);
     let true_ready = ConfigureCubeTile(
         9, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let false_ready = ConfigureCubeTile(
         10, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let destination_ready = ConfigureCubeTile(
         11, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert mask_ready && true_ready && false_ready && destination_ready;
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(9, 0, 0, Zeros{PTO_XLEN} + 10);

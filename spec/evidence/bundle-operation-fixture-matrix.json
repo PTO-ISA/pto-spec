@@ -63,8 +63,9 @@
   "outcome_counts": {
     "cell-rearrangement-subview-pre-effect-fault": 8,
     "nonrollback-pre-effect-fault": 1,
-    "normal-success": 237,
+    "normal-success": 182,
     "predicate-role-pre-effect-fault": 2,
+    "preserved-cube-subview-pre-effect-fault": 55,
     "shared-stage3-fault": 61,
     "shared-stage3-success": 4
   },
@@ -94,6 +95,7 @@
       ],
       "decoded_start": "0x20019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -130,7 +132,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -150,6 +152,7 @@
       ],
       "decoded_start": "0x20019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -186,7 +189,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -206,6 +209,7 @@
       ],
       "decoded_start": "0x20019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -240,7 +244,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -260,6 +264,7 @@
       ],
       "decoded_start": "0x20119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -296,7 +301,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -316,6 +321,7 @@
       ],
       "decoded_start": "0x20119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -352,7 +358,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -372,6 +378,7 @@
       ],
       "decoded_start": "0x20119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -406,7 +413,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -426,6 +433,7 @@
       ],
       "decoded_start": "0x20219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -462,7 +470,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -482,6 +490,7 @@
       ],
       "decoded_start": "0x20219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -518,7 +527,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -538,6 +547,7 @@
       ],
       "decoded_start": "0x20219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -572,7 +582,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -592,6 +602,7 @@
       ],
       "decoded_start": "0x20319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -628,7 +639,7 @@
         "source0": "numerator",
         "source1": "denominator"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -648,6 +659,7 @@
       ],
       "decoded_start": "0x20319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -684,7 +696,7 @@
         "source0": "numerator",
         "source1": "denominator"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -704,6 +716,7 @@
       ],
       "decoded_start": "0x20319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -738,7 +751,7 @@
         "source0": "numerator",
         "source1": "denominator"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -758,6 +771,7 @@
       ],
       "decoded_start": "0x20419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -794,7 +808,7 @@
         "source0": "dividend",
         "source1": "divisor"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -814,6 +828,7 @@
       ],
       "decoded_start": "0x20419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -850,7 +865,7 @@
         "source0": "dividend",
         "source1": "divisor"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -870,6 +885,7 @@
       ],
       "decoded_start": "0x20419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -904,7 +920,7 @@
         "source0": "dividend",
         "source1": "divisor"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -924,6 +940,7 @@
       ],
       "decoded_start": "0xd8619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -960,7 +977,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -980,6 +997,7 @@
       ],
       "decoded_start": "0xd8619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1016,7 +1034,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1036,6 +1054,7 @@
       ],
       "decoded_start": "0xd8619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1070,7 +1089,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1090,6 +1109,7 @@
       ],
       "decoded_start": "0xd8719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1126,7 +1146,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1146,6 +1166,7 @@
       ],
       "decoded_start": "0xd8719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1182,7 +1203,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1202,6 +1223,7 @@
       ],
       "decoded_start": "0xd8719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1236,7 +1258,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1256,6 +1278,7 @@
       ],
       "decoded_start": "0xd8819181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1292,7 +1315,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1312,6 +1335,7 @@
       ],
       "decoded_start": "0xd8819181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1348,7 +1372,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1368,6 +1392,7 @@
       ],
       "decoded_start": "0xd8819181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1402,7 +1427,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1422,6 +1447,7 @@
       ],
       "decoded_start": "0xd8919181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1458,7 +1484,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1478,6 +1504,7 @@
       ],
       "decoded_start": "0xd8919181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1514,7 +1541,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1534,6 +1561,7 @@
       ],
       "decoded_start": "0xd8919181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1568,7 +1596,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1588,6 +1616,7 @@
       ],
       "decoded_start": "0xd8a19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1624,7 +1653,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1644,6 +1673,7 @@
       ],
       "decoded_start": "0xd8a19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1680,7 +1710,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1700,6 +1730,7 @@
       ],
       "decoded_start": "0xd8a19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1734,7 +1765,7 @@
         "source0": "value-source",
         "source1": "shift-count-source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1754,6 +1785,7 @@
       ],
       "decoded_start": "0x20b19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1790,7 +1822,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1810,6 +1842,7 @@
       ],
       "decoded_start": "0x20b19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1846,7 +1879,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1866,6 +1899,7 @@
       ],
       "decoded_start": "0x20b19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1900,7 +1934,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1920,6 +1954,7 @@
       ],
       "decoded_start": "0x20c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -1956,7 +1991,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -1976,6 +2011,7 @@
       ],
       "decoded_start": "0x20c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2012,7 +2048,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2032,6 +2068,7 @@
       ],
       "decoded_start": "0x20c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2066,7 +2103,7 @@
         "source0": "source-left",
         "source1": "source-right"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2109,11 +2146,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-037",
-      "row_assertion": "case_0037_normal_commit",
+      "row_assertion": "case_0037_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -2165,11 +2202,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-038",
-      "row_assertion": "case_0038_normal_commit",
+      "row_assertion": "case_0038_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -2251,6 +2288,7 @@
       ],
       "decoded_start": "0x20f19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2285,7 +2323,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2304,6 +2342,7 @@
       ],
       "decoded_start": "0x20f19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2336,7 +2375,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2355,6 +2394,7 @@
       ],
       "decoded_start": "0xd9019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2389,7 +2429,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2408,6 +2448,7 @@
       ],
       "decoded_start": "0xd9019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2440,7 +2481,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2459,6 +2500,7 @@
       ],
       "decoded_start": "0x21119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2493,7 +2535,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2512,6 +2554,7 @@
       ],
       "decoded_start": "0x21119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2544,7 +2587,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2563,6 +2606,7 @@
       ],
       "decoded_start": "0x21219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2597,7 +2641,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2616,6 +2660,7 @@
       ],
       "decoded_start": "0x21219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2648,7 +2693,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2667,6 +2712,7 @@
       ],
       "decoded_start": "0x21319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2701,7 +2747,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2720,6 +2766,7 @@
       ],
       "decoded_start": "0x21319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2752,7 +2799,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2771,6 +2818,7 @@
       ],
       "decoded_start": "0x21419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2805,7 +2853,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2824,6 +2872,7 @@
       ],
       "decoded_start": "0x21419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2856,7 +2905,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2875,6 +2924,7 @@
       ],
       "decoded_start": "0x21519181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2909,7 +2959,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2928,6 +2978,7 @@
       ],
       "decoded_start": "0x21519181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -2960,7 +3011,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -2979,6 +3030,7 @@
       ],
       "decoded_start": "0x21619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3013,7 +3065,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3032,6 +3084,7 @@
       ],
       "decoded_start": "0x21619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3064,7 +3117,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local floating source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3083,6 +3136,7 @@
       ],
       "decoded_start": "0x21719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3117,7 +3171,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3136,6 +3190,7 @@
       ],
       "decoded_start": "0x21719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3168,7 +3223,7 @@
       "fixture_role_kinds": {
         "source0": "source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3278,11 +3333,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-059",
-      "row_assertion": "case_0059_normal_commit",
+      "row_assertion": "case_0059_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -3340,11 +3395,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-060",
-      "row_assertion": "case_0060_normal_commit",
+      "row_assertion": "case_0060_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -3541,6 +3596,7 @@
       ],
       "decoded_start": "0x21c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3582,7 +3638,7 @@
         "source1": "multiplicand-right",
         "source2": "addend"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3603,6 +3659,7 @@
       ],
       "decoded_start": "0x21c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3644,7 +3701,7 @@
         "source1": "multiplicand-right",
         "source2": "addend"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3665,6 +3722,7 @@
       ],
       "decoded_start": "0x21c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3706,7 +3764,7 @@
         "source1": "multiplicand-right",
         "source2": "addend"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3727,6 +3785,7 @@
       ],
       "decoded_start": "0x21c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3766,7 +3825,7 @@
         "source1": "multiplicand-right",
         "source2": "addend"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3785,6 +3844,7 @@
       ],
       "decoded_start": "0x22019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3819,7 +3879,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3838,6 +3898,7 @@
       ],
       "decoded_start": "0x22019181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3870,7 +3931,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3889,6 +3950,7 @@
       ],
       "decoded_start": "0x22119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3923,7 +3985,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3942,6 +4004,7 @@
       ],
       "decoded_start": "0x22119181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -3974,7 +4037,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -3993,6 +4056,7 @@
       ],
       "decoded_start": "0x22219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4027,7 +4091,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4046,6 +4110,7 @@
       ],
       "decoded_start": "0x22219181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4078,7 +4143,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4097,6 +4162,7 @@
       ],
       "decoded_start": "0x22319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4131,7 +4197,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4150,6 +4216,7 @@
       ],
       "decoded_start": "0x22319181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4182,7 +4249,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4201,6 +4268,7 @@
       ],
       "decoded_start": "0x22419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4235,7 +4303,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4254,6 +4322,7 @@
       ],
       "decoded_start": "0x22419181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4286,7 +4355,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4305,6 +4374,7 @@
       ],
       "decoded_start": "0xda619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4339,7 +4409,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4358,6 +4428,7 @@
       ],
       "decoded_start": "0xda619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4390,7 +4461,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4409,6 +4480,7 @@
       ],
       "decoded_start": "0xda719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4443,7 +4515,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4462,6 +4534,7 @@
       ],
       "decoded_start": "0xda719181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4494,7 +4567,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4513,6 +4586,7 @@
       ],
       "decoded_start": "0xda819181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4547,7 +4621,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4566,6 +4640,7 @@
       ],
       "decoded_start": "0xda819181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4598,7 +4673,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4617,6 +4692,7 @@
       ],
       "decoded_start": "0xda919181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4651,7 +4727,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4670,6 +4746,7 @@
       ],
       "decoded_start": "0xda919181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4702,7 +4779,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4721,6 +4798,7 @@
       ],
       "decoded_start": "0xdaa19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4755,7 +4833,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4774,6 +4852,7 @@
       ],
       "decoded_start": "0xdaa19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4806,7 +4885,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4825,6 +4904,7 @@
       ],
       "decoded_start": "0x22b19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4859,7 +4939,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4878,6 +4958,7 @@
       ],
       "decoded_start": "0x22b19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4910,7 +4991,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4929,6 +5010,7 @@
       ],
       "decoded_start": "0x22c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -4963,7 +5045,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -4982,6 +5064,7 @@
       ],
       "decoded_start": "0x22c19181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -5014,7 +5097,7 @@
       "fixture_role_kinds": {
         "source0": "persistent Local numeric source"
       },
-      "datr_word": null,
+      "datr_word": "0x01f01fa3",
       "destination_size_code": 1
     },
     {
@@ -5217,11 +5300,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-095",
-      "row_assertion": "case_0095_normal_commit",
+      "row_assertion": "case_0095_exact_fault",
       "gpr_word": "0x00010013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5372,11 +5455,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-098",
-      "row_assertion": "case_0098_normal_commit",
+      "row_assertion": "case_0098_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5476,11 +5559,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-100",
-      "row_assertion": "case_0100_normal_commit",
+      "row_assertion": "case_0100_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5580,11 +5663,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-102",
-      "row_assertion": "case_0102_normal_commit",
+      "row_assertion": "case_0102_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5684,11 +5767,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-104",
-      "row_assertion": "case_0104_normal_commit",
+      "row_assertion": "case_0104_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5788,11 +5871,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-106",
-      "row_assertion": "case_0106_normal_commit",
+      "row_assertion": "case_0106_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5894,11 +5977,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-108",
-      "row_assertion": "case_0108_normal_commit",
+      "row_assertion": "case_0108_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -5950,11 +6033,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-109",
-      "row_assertion": "case_0109_normal_commit",
+      "row_assertion": "case_0109_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6060,11 +6143,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-111",
-      "row_assertion": "case_0111_normal_commit",
+      "row_assertion": "case_0111_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6116,11 +6199,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-112",
-      "row_assertion": "case_0112_normal_commit",
+      "row_assertion": "case_0112_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6226,11 +6309,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-114",
-      "row_assertion": "case_0114_normal_commit",
+      "row_assertion": "case_0114_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6282,11 +6365,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-115",
-      "row_assertion": "case_0115_normal_commit",
+      "row_assertion": "case_0115_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6392,11 +6475,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-117",
-      "row_assertion": "case_0117_normal_commit",
+      "row_assertion": "case_0117_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6448,11 +6531,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-118",
-      "row_assertion": "case_0118_normal_commit",
+      "row_assertion": "case_0118_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6558,11 +6641,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-120",
-      "row_assertion": "case_0120_normal_commit",
+      "row_assertion": "case_0120_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6614,11 +6697,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-121",
-      "row_assertion": "case_0121_normal_commit",
+      "row_assertion": "case_0121_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6724,11 +6807,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-123",
-      "row_assertion": "case_0123_normal_commit",
+      "row_assertion": "case_0123_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6780,11 +6863,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-124",
-      "row_assertion": "case_0124_normal_commit",
+      "row_assertion": "case_0124_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6891,11 +6974,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-126",
-      "row_assertion": "case_0126_normal_commit",
+      "row_assertion": "case_0126_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -6948,11 +7031,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-127",
-      "row_assertion": "case_0127_normal_commit",
+      "row_assertion": "case_0127_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7057,11 +7140,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-129",
-      "row_assertion": "case_0129_normal_commit",
+      "row_assertion": "case_0129_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7161,11 +7244,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-131",
-      "row_assertion": "case_0131_normal_commit",
+      "row_assertion": "case_0131_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7265,11 +7348,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-133",
-      "row_assertion": "case_0133_normal_commit",
+      "row_assertion": "case_0133_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7369,11 +7452,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-135",
-      "row_assertion": "case_0135_normal_commit",
+      "row_assertion": "case_0135_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7473,11 +7556,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-137",
-      "row_assertion": "case_0137_normal_commit",
+      "row_assertion": "case_0137_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7577,11 +7660,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-139",
-      "row_assertion": "case_0139_normal_commit",
+      "row_assertion": "case_0139_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7681,11 +7764,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-141",
-      "row_assertion": "case_0141_normal_commit",
+      "row_assertion": "case_0141_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7787,11 +7870,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-143",
-      "row_assertion": "case_0143_normal_commit",
+      "row_assertion": "case_0143_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7843,11 +7926,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-144",
-      "row_assertion": "case_0144_normal_commit",
+      "row_assertion": "case_0144_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -7953,11 +8036,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-146",
-      "row_assertion": "case_0146_normal_commit",
+      "row_assertion": "case_0146_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8009,11 +8092,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-147",
-      "row_assertion": "case_0147_normal_commit",
+      "row_assertion": "case_0147_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8119,11 +8202,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-149",
-      "row_assertion": "case_0149_normal_commit",
+      "row_assertion": "case_0149_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8175,11 +8258,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-150",
-      "row_assertion": "case_0150_normal_commit",
+      "row_assertion": "case_0150_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8285,11 +8368,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-152",
-      "row_assertion": "case_0152_normal_commit",
+      "row_assertion": "case_0152_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8341,11 +8424,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-153",
-      "row_assertion": "case_0153_normal_commit",
+      "row_assertion": "case_0153_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8451,11 +8534,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-155",
-      "row_assertion": "case_0155_normal_commit",
+      "row_assertion": "case_0155_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8507,11 +8590,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-156",
-      "row_assertion": "case_0156_normal_commit",
+      "row_assertion": "case_0156_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8617,11 +8700,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-158",
-      "row_assertion": "case_0158_normal_commit",
+      "row_assertion": "case_0158_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8673,11 +8756,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-159",
-      "row_assertion": "case_0159_normal_commit",
+      "row_assertion": "case_0159_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8784,11 +8867,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-161",
-      "row_assertion": "case_0161_normal_commit",
+      "row_assertion": "case_0161_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8841,11 +8924,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-162",
-      "row_assertion": "case_0162_normal_commit",
+      "row_assertion": "case_0162_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -8950,11 +9033,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-164",
-      "row_assertion": "case_0164_normal_commit",
+      "row_assertion": "case_0164_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -9054,11 +9137,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-166",
-      "row_assertion": "case_0166_normal_commit",
+      "row_assertion": "case_0166_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -9254,11 +9337,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-170",
-      "row_assertion": "case_0170_normal_commit",
+      "row_assertion": "case_0170_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -9310,11 +9393,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-171",
-      "row_assertion": "case_0171_normal_commit",
+      "row_assertion": "case_0171_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -9420,11 +9503,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-173",
-      "row_assertion": "case_0173_normal_commit",
+      "row_assertion": "case_0173_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -9476,11 +9559,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-174",
-      "row_assertion": "case_0174_normal_commit",
+      "row_assertion": "case_0174_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
@@ -15764,11 +15847,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-265",
-      "row_assertion": "case_0265_normal_commit",
+      "row_assertion": "case_0265_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
@@ -15822,11 +15905,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-266",
-      "row_assertion": "case_0266_normal_commit",
+      "row_assertion": "case_0266_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
@@ -15880,11 +15963,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-267",
-      "row_assertion": "case_0267_normal_commit",
+      "row_assertion": "case_0267_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
@@ -15938,11 +16021,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source3; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source3; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-268",
-      "row_assertion": "case_0268_normal_commit",
+      "row_assertion": "case_0268_exact_fault",
       "gpr_word": null,
       "fixture_data_type": 27,
       "fixture_role_data_types": {},

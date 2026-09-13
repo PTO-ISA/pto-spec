@@ -3,11 +3,11 @@ func main() => integer
 begin
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 4, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 4, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_3 = ConfigureCubeTile(3, 128, 4, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert configured_1 && configured_2 && configured_3;
     for row = 0 to 3 looplimit 4 do
         WriteTileElement(1, row, 0, Zeros{PTO_XLEN} + (row + 1));
@@ -48,11 +48,11 @@ begin
     assert !TileOperandsLegal_TSHUF(
         2, 1, 3, Zeros{PTO_XLEN} + 0x00000502);
     let configured_4 = ConfigureCubeTile(4, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_5 = ConfigureCubeTile(5, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_6 = ConfigureCubeTile(6, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 20);
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 30);
@@ -67,11 +67,11 @@ begin
     assert ReadTileElement(6, 1, 0) == Zeros{PTO_XLEN} + 10;
     assert ReadTileElement(6, 1, 1) == Zeros{PTO_XLEN} + 40;
     let configured_7 = ConfigureCubeTile(7, 128, 3, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_8 = ConfigureCubeTile(8, 128, 3, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_9 = ConfigureCubeTile(9, 128, 3, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(7, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(7, 1, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(7, 2, 0, Zeros{PTO_XLEN} + 3);
@@ -83,11 +83,11 @@ begin
     assert ReadTileElement(8, 1, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(8, 2, 0) == Zeros{PTO_XLEN} + 2;
     let configured_10 = ConfigureCubeTile(10, 128, 2, 2, TileDataType_U16,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_11 = ConfigureCubeTile(11, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_12 = ConfigureCubeTile(12, 128, 2, 2, TileDataType_U16,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 0x0102);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 0x0304);
     WriteTileElement(10, 1, 0, Zeros{PTO_XLEN} + 0x0506);
@@ -100,11 +100,11 @@ begin
     assert ReadTileElement(12, 1, 0) == Zeros{PTO_XLEN} + 0x0102;
     assert ReadTileElement(12, 1, 1) == Zeros{PTO_XLEN} + 0x0304;
     let configured_13 = ConfigureCubeTile(13, 128, 2, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_14 = ConfigureCubeTile(14, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_15 = ConfigureCubeTile(15, 128, 2, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(13, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(13, 0, 2, Zeros{PTO_XLEN} + 3);

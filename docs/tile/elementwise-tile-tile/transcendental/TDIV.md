@@ -110,7 +110,7 @@ end;
 
 ```asm
 BSTART.SFU TDIV, DataType
-B.DATR PadValue (optional)
+B.DATR PadValue, Layout (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)

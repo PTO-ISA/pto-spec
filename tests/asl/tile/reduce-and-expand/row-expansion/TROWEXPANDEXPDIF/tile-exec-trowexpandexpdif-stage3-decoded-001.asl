@@ -69,13 +69,13 @@ begin
         physical_rows, 2, source_type) as integer {0..262144};
     ConfigureTile(
         1, source_capacity, physical_rows, 2, 2, 2, source_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2, 256,
         if axis == TileAxis_Row then physical_rows else 1,
         broadcast_columns,
         broadcast_rows, broadcast_columns, source_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 1 looplimit 2 do
             WriteTileElement(

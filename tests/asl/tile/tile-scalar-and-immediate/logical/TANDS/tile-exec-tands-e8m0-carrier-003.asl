@@ -4,10 +4,10 @@ begin
     ResetProfileState();
     ConfigureTile(
         0, 128, 32, 4, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1, 128, 32, 4, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xaa);
 
     assert TileOperandsLegal_ExecuteTileScalar(

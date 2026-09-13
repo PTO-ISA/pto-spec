@@ -79,8 +79,7 @@ begin
            tile.valid_rows == valid_rows &&
            tile.valid_columns == valid_columns &&
            tile.data_type == data_type &&
-           tile.layout == TileLayout_RowMajor &&
-           tile.location == TileLocation_Any;
+           tile.layout == TileLayout_RowMajor;
 end;
 
 readonly func TileMatrixVectorQuantContentsLegal(

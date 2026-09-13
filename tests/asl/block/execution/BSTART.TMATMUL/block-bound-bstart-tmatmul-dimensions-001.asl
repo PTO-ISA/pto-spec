@@ -3,9 +3,9 @@ func RejectTMATMULDimension(dimension: BundleDimensionIndex, value: Word)
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 8, 8, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 8, 8, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     var start: bits(64) = Zeros{64} + 0x00031181;

@@ -28,6 +28,13 @@ SHARED_FIXTURE_ID = 16
 CELL_REARRANGEMENT_OPERATIONS = {
     "TPERMUTE", "TSHUF", "TPACK", "TUNPACK",
 }
+EXACT34_OPERATIONS = {
+    "TADD", "TAND", "TDIV", "TMAX", "TMIN", "TMUL", "TOR", "TREM",
+    "TSHL", "TSHR", "TSUB", "TXOR", "TABS", "TEXP", "TLOG", "TNEG",
+    "TNOT", "TRECIP", "TRELU", "TRSQRT", "TSQRT", "TADDS", "TANDS",
+    "TDIVS", "TMAXS", "TMINS", "TMULS", "TORS", "TREMS", "TSHLS",
+    "TSHRS", "TSUBS", "TXORS", "TFMA",
+}
 
 FIXTURE_RECIPES = {
     "TEPL": "cube-parent-local-view",
@@ -146,7 +153,8 @@ def datr_word(row: dict) -> int | None:
     dtype = fixture_data_type(row)
     contract = row.get("datr_contract", {})
     allowed = set(contract.get("allowed_nonzero_fields", []))
-    if "DataType" not in allowed:
+    if ("DataType" not in allowed and
+            row.get("name", row.get("operation")) not in EXACT34_OPERATIONS):
         # Omission preserves the BSTART source type.  Emitting an otherwise
         # zero B.DATR would make its zero DataType an explicit FP64 override.
         return None
@@ -157,8 +165,17 @@ def datr_word(row: dict) -> int | None:
     # B.DATR's fixed command discriminator includes bit 12 regardless of
     # which operation-owned union fields are nonzero.
     word = 0x00001023
-    encoded_dtype = dtype
-    word |= encoded_dtype << 20
+    if "DataType" in allowed:
+        word |= dtype << 20
+    elif row.get("name", row.get("operation")) in EXACT34_OPERATIONS:
+        # DTYPE_NONE preserves the typed BSTART operand while allowing the
+        # exact-34 bundle witness to select its physical Local layout.
+        word |= 31 << 20
+    if ("Layout" in allowed and
+            row.get("name", row.get("operation")) in EXACT34_OPERATIONS):
+        # Layout 31 is the existing CUBE_M16 selector.  M32 has independent
+        # direct/runtime coverage.
+        word |= 31 << 7
     return word
 
 
@@ -209,10 +226,9 @@ def fixture_recipe(row: dict) -> str:
 def cube_source_recipe(row: dict) -> dict[int, tuple[int, str]]:
     """Return the exact parent type/layout for each encoded Local source tile.
 
-    Role identity comes from the accepted operation catalog.  Auxiliary
-    sources are materialized as RowMajor by the normative subview carrier,
-    but their persistent CUBE parent still needs a schema-supported concrete
-    type and a harmless parent layout for the descriptor copy.
+    Role identity comes from the accepted operation catalog.  Every CUBE
+    parent retains its explicit physical layout through B.SUBVIEW; auxiliary
+    roles therefore use the layout already accepted by their owning schema.
     """
     name = row.get("name", row.get("operation"))
     if row["family"] != "CUBE" and name not in CELL_REARRANGEMENT_OPERATIONS:
@@ -455,10 +471,19 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
     elif (role_kind == "source" and
           row["name"] in CELL_REARRANGEMENT_OPERATIONS):
         # These TEPL handlers require persistent CUBE operands.  B.SUBVIEW is
-        # total and materializes a bounded RowMajor view for a non-CUBE decode
-        # family, so the selected handler rejects that source before effects.
+        # total and preserves the bounded CUBE view, so the selected handler
+        # retains its existing role/layout legality before effects.
         expected_fault = "Fault_TileLegality"
         outcome = "cell-rearrangement-subview-pre-effect-fault"
+    elif (role_kind == "source" and row["family"] == "TEPL" and
+          row["name"] not in EXACT34_OPERATIONS and
+          row["name"] not in {"TCVT", "TCMPS"}):
+        # These fixtures intentionally select a CUBE parent only for the
+        # B.SUBVIEW role.  The retired engine-selected conversion cannot make
+        # it RowMajor for a non-exact consumer, so ordinary layout legality
+        # rejects the preserved CUBE view before effects.
+        expected_fault = "Fault_TileLegality"
+        outcome = "preserved-cube-subview-pre-effect-fault"
     result_index = case_index + 1
     test_id = f"PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-{result_index:03d}"
     return {
@@ -612,36 +637,23 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
     if (row["family"] == "CUBE" or
             operation_name in CELL_REARRANGEMENT_OPERATIONS):
         source_recipe = cube_source_recipe(row)
-        selected_source = row["role"] if role_kind == "source" else None
-        auxiliary_roles = {"bias"}
         for field in sorted(
             row["fixture_role_data_types"], key=role_number
         ):
             tile = role_number(field) + 1
             role_dtype, role_layout = source_recipe[tile]
-            role_kind_name = row["fixture_role_kinds"][field]
-            if role_kind_name in auxiliary_roles and field != selected_source:
-                rows = row_major_rows(role_dtype, 1)
-                lines += [
-                    f"    ConfigureTileForMask({tile}, 128, {rows}, 1, 1, 1,",
-                    f"        {DATA_TYPE_NAMES[role_dtype]}, TileLayout_RowMajor,",
-                    "        TileLocation_Matrix, '1111');",
-                    f"    InstallRelativeTileFixture({tile}, {tile});",
-                    f"    MarkTileValidRegionDefined({tile});",
-                ]
-            else:
-                valid_columns = (
-                    source_valid_columns(row, field)
-                    if operation_name in CELL_REARRANGEMENT_OPERATIONS else 1
-                )
-                lines += [
-                    f"    let configured_{tile} = ConfigureCubeTileForMask(",
-                    f"        {tile}, 128, 1, {valid_columns}, {DATA_TYPE_NAMES[role_dtype]},",
-                    f"        {role_layout}, TileLocation_Matrix, '1111');",
-                    f"    assert configured_{tile};",
-                    f"    InstallRelativeTileFixture({tile}, {tile});",
-                    f"    MarkTileValidRegionDefined({tile});",
-                ]
+            valid_columns = (
+                source_valid_columns(row, field)
+                if operation_name in CELL_REARRANGEMENT_OPERATIONS else 1
+            )
+            lines += [
+                f"    let configured_{tile} = ConfigureCubeTileForMask(",
+                f"        {tile}, 128, 1, {valid_columns}, {DATA_TYPE_NAMES[role_dtype]},",
+                f"        {role_layout}, '1111');",
+                f"    assert configured_{tile};",
+                f"    InstallRelativeTileFixture({tile}, {tile});",
+                f"    MarkTileValidRegionDefined({tile});",
+            ]
     else:
         selected_source = row["role"] if role_kind == "source" else None
         selected_tile = (
@@ -669,38 +681,68 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         ordinary_rows = str(row_major_rows(dtype))
         ordinary_physical_columns = "4"
         ordinary_valid_rows = "1"
-        ordinary_location = (
-            "(if tile == 1 then TileLocation_Matrix else TileLocation_Any)"
-            if operation_name == "TIMG2COL" else "TileLocation_Any"
-        )
         predicate_source_ordinary = (
             operation_name in {"TSEL", "TSELS"} and
             selected_source != "source0"
         )
-        predicate_lines = (
-            [
-                "        if tile == 1 then",
-                "            ConfigurePredicateTileForMask(tile, 128,",
-                "                16, 4, 1, 4, '1111');",
-                f"        elsif tile == {selected_tile} then",
+        if operation_name in EXACT34_OPERATIONS:
+            # The exact-34 bundle witness selects M16 explicitly and every
+            # numeric Local role must match it.  The destination is allocated
+            # by the closed resolver, so only source-role tiles are seeded.
+            source_tiles = sorted(
+                role_number(field) + 1
+                for field in row["all_required_roles"]
+                if field.startswith("source")
+            )
+            if not source_tiles:
+                raise ValueError(f"{operation_name}: exact-34 fixture has no source")
+            exact_lines: list[str] = []
+            for position, tile in enumerate(source_tiles):
+                exact_lines.append(
+                    f"        {'if' if position == 0 else 'elsif'} tile == {tile} then"
+                )
+                exact_lines += [
+                    "            let configured =",
+                    "            ConfigureCubeTileForMask(tile, 128, 1,",
+                    f"                4, {DATA_TYPE_NAMES[dtype]}, TileLayout_CUBE_M16,",
+                    "                '1111');",
+                    "            assert configured;",
+                ]
+            exact_lines.append("        else")
+            exact_lines += [
+                "            ConfigureTileForMask(tile, 128,",
+                "                ordinary_rows_placeholder, source_physical_columns_placeholder, ordinary_valid_rows_placeholder,",
+                f"                source_valid_columns_placeholder, {local_dtype},",
+                "                TileLayout_RowMajor, '1111');",
+                "        end;",
             ]
-            if predicate_source_ordinary else
-            [f"        if tile == {selected_tile} then"]
-        )
+            predicate_lines = exact_lines
+        else:
+            predicate_lines = (
+                [
+                    "        if tile == 1 then",
+                    "            ConfigurePredicateTileForMask(tile, 128,",
+                    "                16, 4, 1, 4, '1111');",
+                    f"        elsif tile == {selected_tile} then",
+                ]
+                if predicate_source_ordinary else
+                [f"        if tile == {selected_tile} then"]
+            ) + [
+                "            let configured =",
+                f"            ConfigureCubeTileForMask(tile, 128, {selected_rows},",
+                f"                {selected_columns}, {local_dtype}, {selected_layout},",
+                "                '1111');",
+                "            assert configured;",
+                "        else",
+                "            ConfigureTileForMask(tile, 128,",
+                "                ordinary_rows_placeholder, source_physical_columns_placeholder, ordinary_valid_rows_placeholder,",
+                f"                source_valid_columns_placeholder, {local_dtype},",
+                "                TileLayout_RowMajor, '1111');",
+                "        end;",
+            ]
         lines += [
             "    for tile = 1 to 8 looplimit 8 do",
             *predicate_lines,
-            "            let configured =",
-            f"            ConfigureCubeTileForMask(tile, 128, {selected_rows},",
-            f"                {selected_columns}, {local_dtype}, {selected_layout},",
-            "                TileLocation_Matrix, '1111');",
-            "            assert configured;",
-            "        else",
-            "            ConfigureTileForMask(tile, 128,",
-            "                ordinary_rows_placeholder, source_physical_columns_placeholder, ordinary_valid_rows_placeholder,",
-            f"                source_valid_columns_placeholder, {local_dtype},",
-            f"                TileLayout_RowMajor, {ordinary_location}, '1111');",
-            "        end;",
             "        InstallRelativeTileFixture(tile, tile);",
             "        MarkTileValidRegionDefined(tile);",
             "    end;",
@@ -916,7 +958,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
         ]
     elif name == "TSTORE":
         lines = common + [
-            f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
+            f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor);",
             "    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
             "    MarkTileValidRegionDefined(0);",
             f"    InstallSharedTile({shared_id}, _Tiles[[0]], '1111');",
@@ -941,7 +983,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
         ]
     elif row["role_kind"] == "source":
         lines = common + [
-            f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
+            f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor);",
             "    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
             "    MarkTileValidRegionDefined(0);",
             f"    InstallSharedTile({shared_id}, _Tiles[[0]], '1111');",
@@ -972,7 +1014,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
         ]
     else:
         lines = common + [
-            f"    ConfigureTile(1, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
+            f"    ConfigureTile(1, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor);",
             "    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
             "    MarkTileValidRegionDefined(1);",
             f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
@@ -1076,6 +1118,7 @@ def build() -> tuple[dict, dict[Path, str]]:
         "normal-success", "shared-stage3-success", "shared-stage3-fault",
         "nonrollback-pre-effect-fault", "predicate-role-pre-effect-fault",
         "cell-rearrangement-subview-pre-effect-fault",
+        "preserved-cube-subview-pre-effect-fault",
     }:
         raise ValueError("matrix outcome classification is incomplete")
     evidence = {

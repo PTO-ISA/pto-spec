@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-CUBE-DESCRIPTOR-004","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"fault","summary":"CUBE TSTORE requires an exact persistent Matrix descriptor","pass_condition":"layout dtype valid-shape and location mismatches independently reject before GM events while preserving the source","related_sources":["asl/tile/model/legality/descriptor-shape.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-CUBE-DESCRIPTOR-004","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"fault","summary":"CUBE TSTORE requires an exact persistent CUBE descriptor","pass_condition":"layout dtype and valid-shape mismatches independently reject before GM events while preserving the source","related_sources":["asl/tile/model/legality/descriptor-shape.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
 pure func CubeDescriptorTStoreStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00111181;
@@ -26,11 +26,10 @@ end;
 func PrepareDescriptorSource(
     capacity: integer {128,256},
     rows: integer {2}, columns: integer {3,4},
-    data_type: TileDataType, layout: TileLayout,
-    corrupt_location: boolean)
+    data_type: TileDataType, layout: TileLayout)
 begin
     let configured = ConfigureCubeTileForMask(0, capacity, rows, columns,
-        data_type, layout, TileLocation_Matrix, '0001');
+        data_type, layout, '0001');
     assert configured;
     var tile = _Tiles[[0]];
     for row = 0 to rows - 1 do
@@ -44,18 +43,17 @@ begin
     end;
     tile.defined_valid_elements = (rows * columns) as integer {0..16384};
     tile.contents_defined = TRUE;
-    if corrupt_location then tile.location = TileLocation_Any; end;
     _Tiles[[0]] = tile;
 end;
 
 func DescriptorMismatchRejects(
     capacity: integer {128,256},
     columns: integer {3,4}, data_type: TileDataType,
-    layout: TileLayout, corrupt_location: boolean) => boolean
+    layout: TileLayout) => boolean
 begin
     ResetProfileState();
     PrepareDescriptorSource(
-        capacity, 2, columns, data_type, layout, corrupt_location);
+        capacity, 2, columns, data_type, layout);
     _Memory[[0]] = Zeros{8} + 0xa5;
     let start_status = ExecuteCommandInstruction(
         CubeDescriptorTStoreStart(), 32);
@@ -80,16 +78,13 @@ end;
 func main() => integer
 begin
     let layout = DescriptorMismatchRejects(
-        256, 3, TileDataType_FP16, TileLayout_CUBE_M32, FALSE);
+        256, 3, TileDataType_FP16, TileLayout_CUBE_M32);
     assert layout;
     let data_type = DescriptorMismatchRejects(
-        256, 3, TileDataType_FP32, TileLayout_CUBE_M16, FALSE);
+        256, 3, TileDataType_FP32, TileLayout_CUBE_M16);
     assert data_type;
     let shape = DescriptorMismatchRejects(
-        128, 4, TileDataType_FP16, TileLayout_CUBE_M16, FALSE);
+        128, 4, TileDataType_FP16, TileLayout_CUBE_M16);
     assert shape;
-    let location = DescriptorMismatchRejects(
-        128, 3, TileDataType_FP16, TileLayout_CUBE_M16, TRUE);
-    assert location;
     return 0;
 end;

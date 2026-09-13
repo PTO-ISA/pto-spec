@@ -10,8 +10,7 @@ begin
         1,
         10,
         TileDataType_S8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigurePredicateTile(1, 128, 8, 16, 1, 10);
     for column = 0 to 9 looplimit 10 do
         WriteTileElement(

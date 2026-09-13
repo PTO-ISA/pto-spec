@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 2, 1, 2, 1, TileDataType_TF32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 128, 2, 2, 2, 2, TileDataType_TF32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x3f800002);
     assert !TileNumericEncodingValid(
@@ -20,7 +20,7 @@ begin
     assert ReadTileElement(1, 1, 1) == Zeros{PTO_XLEN} + 0x3f800002;
 
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert TileOperandsLegal_ExecuteTileFillScalar(
         2, Zeros{PTO_XLEN} + 0xff);
     ExecuteTileFillScalar(2, Zeros{PTO_XLEN} + 0x1ff);

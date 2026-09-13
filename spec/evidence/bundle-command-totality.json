@@ -1377,14 +1377,14 @@
         "uimm11",
         "RegSrc",
         "LAST",
-        "ParentSizeCode"
+        "WriterSizeCode"
       ],
       "consumed_fields": [
         "INIT",
         "uimm11",
         "RegSrc",
         "LAST",
-        "ParentSizeCode"
+        "WriterSizeCode"
       ],
       "disposition": "executed",
       "effect_class": "bundle-range-assemble-modifier",
@@ -4409,8 +4409,7 @@
         "operand_fields": [
           "destination0",
           "address",
-          "scalar0",
-          "scalar1"
+          "scalar0"
         ],
         "operand_resolutions": [
           {
@@ -4432,21 +4431,13 @@
             "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
             "raw_value_policy": "XLEN Word",
             "slot": "RegSrc1"
-          },
-          {
-            "field": "scalar1",
-            "resolver": "B.IOR ordered GPR input slot for scalar1",
-            "default": "XLEN zero",
-            "raw_value_policy": "XLEN Word",
-            "slot": "RegSrc2"
           }
         ],
         "gpr_input_slots": {
           "address": "RegSrc0",
-          "scalar0": "RegSrc1",
-          "scalar1": "RegSrc2"
+          "scalar0": "RegSrc1"
         },
-        "gpr_input_count": 3,
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,

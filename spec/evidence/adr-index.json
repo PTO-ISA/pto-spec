@@ -9727,8 +9727,8 @@
       "target_releases": [
         "0.58.5"
       ],
-      "title": "Private CUBE vector execution and CELL rearrangement",
-      "title_zh": "\u79c1\u6709 CUBE \u5411\u91cf\u6267\u884c\u4e0e CELL \u91cd\u6392"
+      "title": "Local CUBE execution and CELL rearrangement",
+      "title_zh": "Local CUBE \u6267\u884c\u4e0e CELL \u91cd\u6392"
     },
     {
       "accepted": "2026-08-26",

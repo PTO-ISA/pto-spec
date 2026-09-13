@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     ConfigureTile(
         1, 128, 8, 4, 2, 3, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 2 looplimit 3 do
             WriteTileElement(1, row, column, Zeros{PTO_XLEN} + 0x40000000);
@@ -13,13 +13,13 @@ begin
     ConfigureTile(
         2, 128, 8, 4,
         1, 3, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for column = 0 to 2 looplimit 3 do
         WriteTileElement(2, 0, column, Zeros{PTO_XLEN} + 0x3f800000);
     end;
     ConfigureTile(
         3, 128, 8, 4, 2, 3, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     let (difference, -) = TileProfileBinaryWithFlags(
         TileBinary_SUB,
         TileDataType_FP32,

@@ -98,7 +98,6 @@ begin
            destination.valid_columns != valid_columns ||
            destination.data_type != data_type ||
            destination.layout != layout ||
-           destination.location != TileLocation_Matrix ||
            (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
                binding.pe_mask then
             SetFault(Fault_TileLegality, ReadTPC());
@@ -124,7 +123,7 @@ begin
     end;
     if !found || !ConfigureCubeTileForMask(
            destination, capacity_bytes, valid_rows, valid_columns,
-           data_type, layout, TileLocation_Matrix, binding.pe_mask) then
+           data_type, layout, binding.pe_mask) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;

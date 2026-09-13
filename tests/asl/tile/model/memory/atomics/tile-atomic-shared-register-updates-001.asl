@@ -8,7 +8,7 @@ begin
     let partial = (Zeros{6} + 62) as SharedTileID;
     let undefined = Zeros{6} as SharedTileID;
     ConfigureTile(0, 512, 1, 64, 1, 64, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for element = 0 to 63 do
         _Tiles[[0]].payload[[element]] = Zeros{PTO_XLEN} + element + 1;
         _Tiles[[0]].defined_elements[element] = '1';

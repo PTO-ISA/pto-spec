@@ -8,7 +8,7 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN});
     WriteGPR(3, Zeros{PTO_XLEN} + 8);
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
-    ConfigureTile(0, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(0, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);
     MarkTileValidRegionDefined(0);
     InstallSharedTile((Zeros{6} + 16) as SharedTileID, _Tiles[[0]], '1111');

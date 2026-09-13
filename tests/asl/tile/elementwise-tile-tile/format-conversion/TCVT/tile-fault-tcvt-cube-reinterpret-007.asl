@@ -11,10 +11,10 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         0, 128, 16, 1, TileDataType_FP16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let destination_ready = ConfigureCubeTile(
         1, 128, 16, 1, TileDataType_BF16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert source_ready && destination_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
     MarkTileValidRegionDefined(0);

@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     let source_configured = ConfigureCubeTile(
         1, 128, 1, 1, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let predicate_configured = ConfigurePredicateCell(
         2, 128, 1, 1, TileDataType_U8, TileLayout_CUBE_M32);
     assert source_configured && predicate_configured;

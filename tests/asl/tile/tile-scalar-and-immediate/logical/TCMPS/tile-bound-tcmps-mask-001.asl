@@ -9,8 +9,7 @@ begin
         1,
         2,
         TileDataType_U64,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 9);
 end;
@@ -36,8 +35,7 @@ begin
         1,
         2,
         TileDataType_U64,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     assert !TileOperandsLegal_ExecuteTileCompareScalar(
         1,
         0,

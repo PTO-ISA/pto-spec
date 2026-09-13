@@ -37,7 +37,7 @@ end;
 func InstallPriorWeightShared()
 begin
     ConfigureTile(0, 16384, 1024, 16, 1, 16, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for col = 0 to 15 looplimit 16 do
         let value = if col == 0 then 0x55 else 0xAA + col;
         WriteTileElement(0, 0, col, Zeros{PTO_XLEN} + value);

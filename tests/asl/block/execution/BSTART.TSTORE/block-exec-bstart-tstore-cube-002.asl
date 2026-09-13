@@ -29,8 +29,7 @@ func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTileForMask(0, 128, 2, 3,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '0001');
+        TileDataType_FP16, TileLayout_CUBE_M16, '0001');
     assert configured;
     InstallRelativeTileFixture(0, 0);
     var source_tile = _Tiles[[0]];

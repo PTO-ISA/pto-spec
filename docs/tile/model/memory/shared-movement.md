@@ -44,7 +44,6 @@ begin
     assert source_tile.allocated && source_tile.contents_defined;
     assert source_tile.capacity_bytes == capacity_bytes;
     var result = source_tile;
-    result.location = TileLocation_Any;
     return result;
 end;
 
@@ -130,7 +129,6 @@ begin
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
     tile.layout = layout;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;

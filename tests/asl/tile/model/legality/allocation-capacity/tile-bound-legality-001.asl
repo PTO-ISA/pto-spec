@@ -51,17 +51,17 @@ begin
     assert !TileStorageFitsCapacity(64, 1, TileDataType_U64, 256);
     assert TileStorageFitsCapacity(64, 1, TileDataType_U64, 512);
     ConfigureTile(19, 512, 64, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert _Tiles[[19]].capacity_bytes == 512;
     assert _Tiles[[19]].rows == 64 && _Tiles[[19]].valid_rows == 1;
     ReleaseTile(19);
 
     ConfigureTile(20, 256, 32, 1, 32, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(21, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(20, 512, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert TileCapacityInUseExcept(63) == 768;
     // SYSREG-EFFECT-WITNESS tile-capacity-profile-limit/limits-per-tile-and-aggregate-allocation
     assert TileCapacityInUseExcept(22) + 256 > TileCapacityLimitBytes();
@@ -81,12 +81,12 @@ begin
     assert SharedTileCapacityIsLegal(262144);
     for index = 0 to 3 do
         ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
-            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+            TileDataType_U64, TileLayout_RowMajor, '1000');
     end;
     assert LocalTileAllocationFits('0100', 65536);
     for index = 4 to 7 do
         ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
-            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+            TileDataType_U64, TileLayout_RowMajor, '0100');
     end;
     assert !LocalTileAllocationFits('1000', 128);
     assert !LocalTileAllocationFits('0100', 128);

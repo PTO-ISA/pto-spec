@@ -5,7 +5,7 @@ begin
     let slot: integer {0..63} = 5;
     ClearBundleLocalGenerationState(slot);
     ConfigureTileForMask(1, 256, 2, 64, 2, 64,
-        TileDataType_U8, TileLayout_RowMajor, TileLocation_Any, '1100');
+        TileDataType_U8, TileLayout_RowMajor, '1100');
     _LocalGenerations[[slot]].open = TRUE;
     _LocalGenerations[[slot]].participant_mask = '1100';
     _LocalGenerations[[slot]].parent_cell_count = 2;

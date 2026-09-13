@@ -11,8 +11,7 @@ begin
         1,
         2,
         TileDataType_FP32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTilePredicateBit(1, 0, 0, FALSE);
     WriteTilePredicateBit(1, 0, 1, TRUE);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);

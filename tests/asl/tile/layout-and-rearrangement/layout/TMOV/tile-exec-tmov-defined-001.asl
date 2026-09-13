@@ -4,10 +4,10 @@ begin
     ResetProfileState();
     ConfigureTile(
         1, 128, 32, 4, 1, 2, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2, 128, 32, 4, 1, 2, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
     TMOV(2, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 7;

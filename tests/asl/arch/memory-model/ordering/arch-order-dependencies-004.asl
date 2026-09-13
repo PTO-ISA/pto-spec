@@ -3,7 +3,7 @@ func TestTileMemoryEventOrdering()
 begin
     ResetProfileState();
     ConfigureTile(4, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     StopMemoryEventCapture();
     Store(Zeros{PTO_XLEN} + 320, 8, Zeros{PTO_XLEN} + 0x55);
     StartMemoryEventCapture(0);
@@ -27,9 +27,9 @@ begin
     StopMemoryEventCapture();
 
     ConfigureTile(5, 128, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(6, 128, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 21);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 22);
     WriteTileElement(6, 0, 0, Zeros{PTO_XLEN});

@@ -58,7 +58,6 @@ begin
         return FALSE;
     end;
     var candidate = _Tiles[[binding.source0]];
-    candidate.location = TileLocation_Any;
     return SharedTileUpdateCompatible(
         BundleSharedBindingId(0), candidate, shared_mask);
 end;

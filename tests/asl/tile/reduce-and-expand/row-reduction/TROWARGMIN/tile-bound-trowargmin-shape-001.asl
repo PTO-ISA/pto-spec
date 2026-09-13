@@ -10,8 +10,7 @@ begin
         2,
         3,
         TileDataType_S8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 2 looplimit 3 do
             WriteTileElement(
@@ -29,8 +28,7 @@ begin
         2,
         1,
         TileDataType_U32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         128,
@@ -39,8 +37,7 @@ begin
         2,
         1,
         TileDataType_S16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         3,
         128,
@@ -49,8 +46,7 @@ begin
         2,
         1,
         TileDataType_S32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
 
     assert TileOperandsLegal_ExecuteTileReduction(
         TileReduction_ARGMIN,

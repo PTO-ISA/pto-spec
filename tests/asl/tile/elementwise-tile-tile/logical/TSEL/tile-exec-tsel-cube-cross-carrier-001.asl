@@ -5,9 +5,9 @@ begin
     let mask_ready = ConfigurePredicateCell(1, 128, 1, 2, TileDataType_U8,
         TileLayout_CUBE_M32);
     let true_ready = ConfigureCubeTile(2, 128, 1, 2, TileDataType_E4M3,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let false_ready = ConfigureCubeTile(3, 128, 1, 2, TileDataType_S8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert mask_ready && true_ready && false_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});

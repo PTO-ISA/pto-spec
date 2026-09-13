@@ -13,7 +13,7 @@ begin
     // The one-level PTO model represents the four peer-resolved Local source
     // fragments as one Core4 snapshot.  Full allocation and complete payload
     // definedness are therefore the formal rendezvous/readiness witness.
-    return TileSourceContentsDefined(source) &&
+    return TileElementwiseSourceContentsDefined(source) &&
            _TileAllocationMasks[[source]] == '1111';
 end;
 
@@ -72,15 +72,14 @@ begin
             return FALSE;
         end;
     end;
+    // GMOV has no dimensions that describe a new shape: the destination
+    // carries the resolved peer source shape while B.DATR.Layout selects its
+    // physical representation.
     if !ResolveBundleTileDestinationsWithShapeAndType(
-           TRUE,
-           _Tiles[[binding.source0]].valid_rows,
+           TRUE, _Tiles[[binding.source0]].valid_rows,
            _Tiles[[binding.source0]].valid_columns,
-           _Tiles[[binding.source0]].columns,
-           TRUE,
-           _Tiles[[binding.source0]].data_type) then
-        return FALSE;
-    end;
+           _Tiles[[binding.source0]].columns, TRUE,
+           _Tiles[[binding.source0]].data_type) then return FALSE; end;
     let destination = _BundleTileBindings[[0]].destination;
     let source = binding.source0;
     if !TileOperandsLegal_GMOV(destination, source, Zeros{PTO_XLEN}) then

@@ -10,8 +10,7 @@ begin
             1,
             1,
             data_type,
-            TileLayout_RowMajor,
-            TileLocation_Any);
+            TileLayout_RowMajor);
     end;
     WriteTileElement(
         0,

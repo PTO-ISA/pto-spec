@@ -104,7 +104,7 @@ end;
 
 ```asm
 BSTART.VEC TMIN, DataType
-B.DATR PadValue (optional)
+B.DATR PadValue, Layout (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -178,7 +178,7 @@ end;
 - TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
 - DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
-- Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
+- B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 
@@ -201,7 +201,7 @@ end;
 
 ## Exceptions
 
-- Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.
+- Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-selected layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.
 - A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result.
 
 ## Examples

@@ -10,8 +10,7 @@ begin
         128,
         128,
         TileDataType_U4X2,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     MarkTileValidRegionDefined(0);
     assert _Tiles[[0]].defined_valid_elements == 16384;
     assert TileElementDefined(0, 127, 127);

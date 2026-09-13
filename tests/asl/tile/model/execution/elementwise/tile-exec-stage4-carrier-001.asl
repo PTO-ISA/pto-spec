@@ -16,7 +16,7 @@ begin
 
     for index = 0 to 2 looplimit 3 do
         ConfigureTile(index as TileIndex, 128, 1, 1, 1, 1,
-            TileDataType_U32, TileLayout_RowMajor, TileLocation_Any);
+            TileDataType_U32, TileLayout_RowMajor);
     end;
     let invalid_left = Zeros{PTO_XLEN} + 0x3f800001;
     let invalid_right = Zeros{PTO_XLEN} + 0x00ff00f0;
@@ -29,7 +29,7 @@ begin
         Zeros{PTO_XLEN} + 0x00800000;
 
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert TileOperandsLegal_ExecuteTileScalar(
         TileBinary_XOR, 3, 0, Zeros{PTO_XLEN} + 0xffffffff);
     ExecuteTileScalar(TileBinary_XOR, 3, 0,
@@ -39,9 +39,9 @@ begin
 
     ConfigurePredicateTile(4, 128, 32, 1, 1, 1);
     ConfigureTile(5, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(6, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTilePredicateBit(4, 0, 0, TRUE);
     WriteTileElement(5, 0, 0, invalid_left);
     assert TileOperandsLegal_ExecuteTileSelectScalar(
@@ -51,7 +51,7 @@ begin
 
     for index = 7 to 8 looplimit 2 do
         ConfigureTile(index as TileIndex, 128, 1, 1, 1, 1,
-            TileDataType_TF32, TileLayout_RowMajor, TileLocation_Any);
+            TileDataType_TF32, TileLayout_RowMajor);
     end;
     WriteTileElement(8, 0, 0, invalid_left);
     assert !InstructionContractOperandsLegal_TRELU(7, 8);
