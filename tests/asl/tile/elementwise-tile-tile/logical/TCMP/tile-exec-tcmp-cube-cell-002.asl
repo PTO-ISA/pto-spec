@@ -47,6 +47,7 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let tiles = ExecuteCommandInstruction(
         TCMPCellTiles(Zeros{6} + 10, Zeros{6} + 11), 32);
     assert tiles == CommandExecution_Executed;

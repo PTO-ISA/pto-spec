@@ -26,6 +26,9 @@ begin
 
     let started = ExecuteCommandInstruction(SourceBackingTMOVStart(), 32);
     assert started == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);
 

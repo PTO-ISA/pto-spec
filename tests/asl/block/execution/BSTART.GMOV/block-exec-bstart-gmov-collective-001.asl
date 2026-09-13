@@ -54,6 +54,17 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     assert destination == 1;
     assert _TileAllocationMasks[[destination]] == '1111';
+    assert _Tiles[[destination]].capacity_bytes == _Tiles[[0]].capacity_bytes;
+    assert _Tiles[[destination]].rows == _Tiles[[0]].rows;
+    assert _Tiles[[destination]].columns == _Tiles[[0]].columns;
+    assert _Tiles[[destination]].columns == 128;
+    assert _Tiles[[destination]].valid_rows == _Tiles[[0]].valid_rows;
+    assert _Tiles[[destination]].valid_rows == 1;
+    assert _Tiles[[destination]].valid_columns == _Tiles[[0]].valid_columns;
+    assert _Tiles[[destination]].valid_columns == 1;
+    assert _Tiles[[destination]].data_type == _Tiles[[0]].data_type;
+    assert _Tiles[[destination]].layout == _Tiles[[0]].layout;
+    assert _Tiles[[destination]].location == _Tiles[[0]].location;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();

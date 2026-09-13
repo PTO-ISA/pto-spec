@@ -38,6 +38,8 @@ begin
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding) ==
         TileDataType_FP32;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         FALSE,
         0,
@@ -78,7 +80,7 @@ begin
     assert !SelectedBundleClosedTSELSchemaLegal(22);
 
     ConfigureTSELSchema();
-    _Tiles[[3]].data_type = TileDataType_U32;
+    _Tiles[[3]].data_type = TileDataType_U16;
     assert !SelectedBundleClosedTSELSchemaLegal(22);
     return 0;
 end;

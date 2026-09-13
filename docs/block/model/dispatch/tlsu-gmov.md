@@ -89,7 +89,15 @@ begin
             return FALSE;
         end;
     end;
-    if !ResolveBundleTileDestinations() then return FALSE; end;
+    if !ResolveBundleTileDestinationsWithShapeAndType(
+           TRUE,
+           _Tiles[[binding.source0]].valid_rows,
+           _Tiles[[binding.source0]].valid_columns,
+           _Tiles[[binding.source0]].columns,
+           TRUE,
+           _Tiles[[binding.source0]].data_type) then
+        return FALSE;
+    end;
     let destination = _BundleTileBindings[[0]].destination;
     let source = binding.source0;
     if !TileOperandsLegal_GMOV(destination, source, Zeros{PTO_XLEN}) then

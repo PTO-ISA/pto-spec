@@ -49,6 +49,7 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let sources = ExecuteCommandInstruction(
         TCMPGPRSources(Zeros{6} + 10, Zeros{6} + 11), 32);
     let destination = ExecuteCommandInstruction(

@@ -43,6 +43,9 @@ begin
     let explicit_start_status = ExecuteCommandInstruction(
         TStoreStrideStart(), 32);
     assert explicit_start_status == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let explicit_source_status = ExecuteCommandInstruction(
         TStoreStrideSource(), 32);
     assert explicit_source_status == CommandExecution_Executed;
@@ -61,6 +64,9 @@ begin
     let omitted_start_status = ExecuteCommandInstruction(
         TStoreStrideStart(), 32);
     assert omitted_start_status == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let omitted_source_status = ExecuteCommandInstruction(
         TStoreStrideSource(), 32);
     assert omitted_source_status == CommandExecution_Executed;
@@ -76,6 +82,8 @@ begin
     let zero_start_status = ExecuteCommandInstruction(
         TStoreStrideStart(), 32);
     assert zero_start_status == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let zero_source_status = ExecuteCommandInstruction(
         TStoreStrideSource(), 32);

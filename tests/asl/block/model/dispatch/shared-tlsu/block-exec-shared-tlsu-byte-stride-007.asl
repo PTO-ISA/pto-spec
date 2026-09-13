@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"Canonical Shared TSTORE uses per-PE explicit or omitted byte row strides.","pass_condition":"Function 1 derives a dense pitch for all PEs and honors explicit and omitted pitches for one selected consumer across two rows.","related_sources":["asl/tile/model/memory/shared-movement.asl","asl/block/execution/BSTART.TSTORE.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"Canonical Shared TSTORE uses per-PE explicit or omitted byte row strides with an explicit store shape.","pass_condition":"Function 1 derives a dense pitch from explicit LB2 for all PEs and honors explicit and omitted B.IOR pitches for one selected consumer across two rows.","related_sources":["asl/tile/model/memory/shared-movement.asl","asl/block/execution/BSTART.TSTORE.asl"]}
 pure func SharedByteStrideStart(function: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -48,10 +48,13 @@ begin
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
     InstallSharedTile((Zeros{6} + 7) as SharedTileID, _Tiles[[0]], '1111');
 
-    // Function 1 with no B.IOR/LB2 inherits two physical U64 columns and
-    // therefore uses a dense sixteen-byte row pitch.
+    // Function 1 with no B.IOR derives a dense sixteen-byte row pitch from
+    // the explicit two-column store shape.
     let full_start = ExecuteCommandInstruction(
         SharedByteStrideStart('00001'), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let full_source = ExecuteCommandInstruction(
         SharedByteStrideSource(Zeros{6} + 7, '111'), 32);
     assert full_start == CommandExecution_Executed;
@@ -66,6 +69,9 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN} + 24);
     let partial_start = ExecuteCommandInstruction(
         SharedByteStrideStart('00001'), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let partial_source = ExecuteCommandInstruction(
         SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     let partial_ior = ExecuteCommandInstruction(
@@ -78,7 +84,7 @@ begin
     AssertSharedByteStrideStore(
         Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 24);
 
-    // Function 1 omission uses the same descriptor-derived dense byte pitch.
+    // Function 1 B.IOR omission uses the same dense byte pitch.
     ResetBundleControlState();
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 8, 8, Zeros{PTO_XLEN});
@@ -86,6 +92,9 @@ begin
     Store(Zeros{PTO_XLEN} + 24, 8, Zeros{PTO_XLEN});
     let omitted_start = ExecuteCommandInstruction(
         SharedByteStrideStart('00001'), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let omitted_source = ExecuteCommandInstruction(
         SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     assert omitted_start == CommandExecution_Executed;

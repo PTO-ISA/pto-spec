@@ -6606,6 +6606,8 @@
         "block_composition": [
           "BSTART.MGATHER.ADD DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -6614,7 +6616,8 @@
           "BSTART.MGATHER.ADD DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -6892,6 +6895,8 @@
         "block_composition": [
           "BSTART.MGATHER.AND DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -6900,7 +6905,8 @@
           "BSTART.MGATHER.AND DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -7177,10 +7183,10 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.CAS DataType",
-          "B.DATR PadValue, Layout (optional)",
           "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional)",
-          "B.DIM LB2=Col (optional)",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
+          "B.DATR PadValue, Layout (optional)",
           "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
           "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, StrideGPR, zero, ->zero",
@@ -7191,7 +7197,8 @@
         ],
         "defaults": [
           "DataType is always encoded and selects the transfer, comparison, replacement, and destination element type.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults."
+          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -7484,6 +7491,8 @@
         "block_composition": [
           "BSTART.MGATHER.DEC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -7492,7 +7501,8 @@
           "BSTART.MGATHER.DEC DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -7770,6 +7780,8 @@
         "block_composition": [
           "BSTART.MGATHER.EXCH DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -7778,7 +7790,8 @@
           "BSTART.MGATHER.EXCH DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -8056,6 +8069,8 @@
         "block_composition": [
           "BSTART.MGATHER.INC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -8064,7 +8079,8 @@
           "BSTART.MGATHER.INC DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -8647,6 +8663,8 @@
         "block_composition": [
           "BSTART.MGATHER.MAX DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -8655,7 +8673,8 @@
           "BSTART.MGATHER.MAX DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -8933,6 +8952,8 @@
         "block_composition": [
           "BSTART.MGATHER.MIN DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -8941,7 +8962,8 @@
           "BSTART.MGATHER.MIN DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -9219,6 +9241,8 @@
         "block_composition": [
           "BSTART.MGATHER.OR DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -9227,7 +9251,8 @@
           "BSTART.MGATHER.OR DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -9505,6 +9530,8 @@
         "block_composition": [
           "BSTART.MGATHER.XOR DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -9513,7 +9540,8 @@
           "BSTART.MGATHER.XOR DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -10094,6 +10122,8 @@
         "block_composition": [
           "BSTART.MSCATTER.ADD DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -10102,7 +10132,8 @@
           "BSTART.MSCATTER.ADD DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -10380,6 +10411,8 @@
         "block_composition": [
           "BSTART.MSCATTER.AND DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -10388,7 +10421,8 @@
           "BSTART.MSCATTER.AND DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -10666,6 +10700,8 @@
         "block_composition": [
           "BSTART.MSCATTER.DEC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -10674,7 +10710,8 @@
           "BSTART.MSCATTER.DEC DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -10952,6 +10989,8 @@
         "block_composition": [
           "BSTART.MSCATTER.INC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -10960,7 +10999,8 @@
           "BSTART.MSCATTER.INC DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -11542,6 +11582,8 @@
         "block_composition": [
           "BSTART.MSCATTER.MAX DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -11550,7 +11592,8 @@
           "BSTART.MSCATTER.MAX DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -11828,6 +11871,8 @@
         "block_composition": [
           "BSTART.MSCATTER.MIN DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -11836,7 +11881,8 @@
           "BSTART.MSCATTER.MIN DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -12114,6 +12160,8 @@
         "block_composition": [
           "BSTART.MSCATTER.OR DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -12122,7 +12170,8 @@
           "BSTART.MSCATTER.OR DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -12400,6 +12449,8 @@
         "block_composition": [
           "BSTART.MSCATTER.POPC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -12408,7 +12459,8 @@
           "BSTART.MSCATTER.POPC DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -12687,6 +12739,8 @@
         "block_composition": [
           "BSTART.MSCATTER.XOR DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -12695,7 +12749,8 @@
           "BSTART.MSCATTER.XOR DataType"
         ],
         "defaults": [
-          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise."
+          "PE_MASK=0000 is a strict no-effect case; B.IOR and valid dimensions are required otherwise.",
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
         ],
         "encoded_fields": [
           {
@@ -122260,6 +122315,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.ADD DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -122268,6 +122326,7 @@
           "MGATHER_ADD <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -122280,7 +122339,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -122400,6 +122460,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.AND DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -122408,6 +122471,7 @@
           "MGATHER_AND <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -122420,7 +122484,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -122553,6 +122618,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.CAS DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
           "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
@@ -122562,6 +122630,7 @@
           "MGATHER_CAS <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64."
         ],
         "encoded_fields": [],
@@ -122574,7 +122643,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "mgather.cas uses raw U16/U32/U64 carriers; U128 and all non-U types are rejected."
+          "mgather.cas uses raw U16/U32/U64 carriers; U128 and all non-U types are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One atomic compare-and-swap per valid request."
@@ -122702,6 +122772,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.DEC DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -122710,6 +122783,7 @@
           "MGATHER_DEC <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -122722,7 +122796,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -122842,6 +122917,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.EXCH DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -122850,6 +122928,7 @@
           "MGATHER_EXCH <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -122862,7 +122941,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -122982,6 +123062,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.INC DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -122990,6 +123073,7 @@
           "MGATHER_INC <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -123002,7 +123086,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -123527,6 +123612,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.MAX DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -123535,6 +123623,7 @@
           "MGATHER_MAX <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -123547,7 +123636,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -123667,6 +123757,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.MIN DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -123675,6 +123768,7 @@
           "MGATHER_MIN <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -123687,7 +123781,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -123807,6 +123902,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.OR DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -123815,6 +123913,7 @@
           "MGATHER_OR <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -123827,7 +123926,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -123947,6 +124047,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MGATHER.XOR DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -123955,6 +124058,7 @@
           "MGATHER_XOR <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -123967,7 +124071,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -124465,6 +124570,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.ADD DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -124473,6 +124581,7 @@
           "MSCATTER_ADD <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -124485,7 +124594,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -124593,6 +124703,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.AND DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -124601,6 +124714,7 @@
           "MSCATTER_AND <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -124613,7 +124727,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -124721,6 +124836,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.DEC DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -124729,6 +124847,7 @@
           "MSCATTER_DEC <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -124741,7 +124860,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -124849,6 +124969,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.INC DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -124857,6 +124980,7 @@
           "MSCATTER_INC <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -124869,7 +124993,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125376,6 +125501,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.MAX DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -125384,6 +125512,7 @@
           "MSCATTER_MAX <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -125396,7 +125525,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125504,6 +125634,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.MIN DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -125512,6 +125645,7 @@
           "MSCATTER_MIN <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -125524,7 +125658,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125632,6 +125767,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.OR DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -125640,6 +125778,7 @@
           "MSCATTER_OR <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -125652,7 +125791,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125750,6 +125890,8 @@
         "block_composition": [
           "BSTART.MSCATTER.POPC DataType",
           "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -125758,6 +125900,7 @@
           "MSCATTER_POPC <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -125771,7 +125914,8 @@
         "field_domains": [],
         "legality": [
           "GM-only; Shared, vector, packed, and U128 forms are rejected.",
-          "The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden."
+          "The body binds one terminating Local B.IOT carrying only IndexTile; ValueTile and destination fields are forbidden.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -125875,6 +126019,9 @@
       "contract": {
         "block_composition": [
           "BSTART.MSCATTER.XOR DataType",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional, default 1)",
+          "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
           "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
@@ -125883,6 +126030,7 @@
           "MSCATTER_XOR <bundle operands>"
         ],
         "defaults": [
+          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
           "GM indexed operation uses byte-displacement addresses and complete preflight."
         ],
         "encoded_fields": [],
@@ -125895,7 +126043,8 @@
         ],
         "field_domains": [],
         "legality": [
-          "GM-only; Shared, vector, packed, and U128 forms are rejected."
+          "GM-only; Shared, vector, packed, and U128 forms are rejected.",
+          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
         ],
         "memory_effects": [
           "One intrinsic atomic RMW per valid request."
@@ -132717,7 +132866,8 @@
           "datr_contract": {
             "allowed_nonzero_fields": [
               "PadValueOrByteId",
-              "Layout"
+              "Layout",
+              "DataType"
             ],
             "pad_union": "pad-value"
           },
@@ -141571,7 +141721,8 @@
           "datr_contract": {
             "allowed_nonzero_fields": [
               "PadValueOrByteId",
-              "Layout"
+              "Layout",
+              "DataType"
             ],
             "pad_union": "pad-value"
           },

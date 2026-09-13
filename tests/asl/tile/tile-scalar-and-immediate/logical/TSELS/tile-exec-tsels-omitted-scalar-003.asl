@@ -33,6 +33,8 @@ begin
         Zeros{PTO_XLEN} + 0x0ba19181, 32);
     assert legacy_started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(
         TRUE, 0, 1, '0001', TRUE, TRUE, 1, 2, TRUE);
     let legacy_completed = ExecuteBundleTileOperation();
@@ -60,6 +62,7 @@ begin
     assert cube_started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let cube_bound = ExecuteCommandInstruction(
         TSELSCubeBinding(Zeros{6} + 8, Zeros{6} + 10), 32);
     assert cube_bound == CommandExecution_Executed;

@@ -20,6 +20,8 @@ begin
     assert started == CommandExecution_Executed;
     SetBundleControlAttributeState(FALSE, atomic, FALSE, FALSE, FALSE, FALSE);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 3, 0, TRUE);

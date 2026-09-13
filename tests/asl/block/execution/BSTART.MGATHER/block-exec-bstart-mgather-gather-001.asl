@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type through explicit DTYPE_NONE, applies dimension defaults, and pads the destination.","pass_condition":"Explicit B.DATR DTYPE_NONE with Max padding preserves the U8 BSTART type while two logical indices load the expected addresses and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type through explicit DTYPE_NONE, uses an explicit logical shape, and pads the destination.","pass_condition":"Explicit B.DATR DTYPE_NONE with Max padding preserves the U8 BSTART type while two logical indices load the expected addresses and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func GatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -49,6 +49,8 @@ begin
     let attributed = ExecuteCommandInstruction(GatherMaxPad(), 32);
     assert attributed == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     let tiles = ExecuteCommandInstruction(GatherBinding('001'), 32);
     assert tiles == CommandExecution_Executed;

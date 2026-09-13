@@ -20,6 +20,7 @@ begin
         Zeros{5} + 27, Zeros{5}, Zeros{2}, Zeros{3}, Zeros{3},
         FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 4);
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
     BindBundleSharedIO((Zeros{6} + 40) as SharedTileID, 0, '1111');
