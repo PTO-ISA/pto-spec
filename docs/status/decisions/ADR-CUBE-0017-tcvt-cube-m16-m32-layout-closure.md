@@ -46,9 +46,10 @@
 
 ## Context
 
-Issue #167 closes the TCVT destination-layout contract for Local `CUBE_M16`
-and `CUBE_M32` sources. The former private/Matrix representation boundary is
-superseded by the 2026-09-13 amendment below; no encoding changes.
+Issue #167 closes the TCVT destination-layout contract for Matrix `CUBE_M16`
+and `CUBE_M32` sources. The implementation is based on the frozen issue
+contract at baseline `52befcc1d6be2907708381b930a4eaf0242c204c` and keeps the
+existing private CUBE representation boundary separate.
 
 ## Decision
 
@@ -59,9 +60,9 @@ count, required bytes, and minimum legal TSize are independently derived from
 the destination `DataType`; the destination TSize may differ from the source
 TSize.
 
-The CUBE M-format path requires `Layout=NORM` and `Canonicalize=0` and has no
-residency requirement. `Canonicalize=1` is reserved-illegal before effects.
-`CUBE_N8` is outside this decision.
+The CUBE M-format path requires Matrix location, `Layout=NORM`, and
+`Canonicalize=0`. Private CUBE canonicalization remains a separate
+`Canonicalize=1` representation boundary. `CUBE_N8` is outside this decision.
 For this path LB0 and LB1 must equal the source `ValidCol` and `ValidRow`;
 LB1 omission still selects one row. LB2 must be omitted because CUBE physical
 columns are derived independently for each DataType and TSize. Any mismatch or
@@ -111,12 +112,12 @@ CELL 几何与容量。M-format 路径需要显式表示边界。
 
 ### Detailed decision / 详细决策
 
-**English.** With NORM layout and Canonicalize=0, M16 maps to
+**English.** With Matrix location, NORM layout, and Canonicalize=0, M16 maps to
 M16 and M32 to M32. Valid rows and columns persist, but destination geometry,
 CELL count, required bytes, and minimum TSize derive from destination dtype.
 LB0/LB1 must match the source and LB2 is absent; legality precedes allocation.
 
-**中文。** 在 NORM 布局且 Canonicalize=0 时，M16 映射到 M16，
+**中文。** 在 Matrix location、NORM 布局且 Canonicalize=0 时，M16 映射到 M16，
 M32 映射到 M32。有效行列保持不变，但目标几何、CELL 数、所需字节与最小 TSize
 由目标 dtype 派生。LB0/LB1 必须匹配源，LB2 必须省略，合法性检查先于分配。
 

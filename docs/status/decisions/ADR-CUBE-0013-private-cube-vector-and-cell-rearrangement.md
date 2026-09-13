@@ -42,12 +42,12 @@
 }
 ---
 
-# ADR-CUBE-0013: Local CUBE execution and CELL rearrangement
+# ADR-CUBE-0013: Private CUBE vector execution and CELL rearrangement
 
 ## Context
 
 Issue #151 was accepted by the architecture owner on 2026-08-25. This record
-keeps one coherent decision for unified Local CUBE layout execution and the
+keeps one coherent decision for private Local CUBE vector execution and the
 four CELL rearrangement operations, and establishes accepted ADR ownership for
 their four contract clauses and instruction subjects. Current normative
 meaning remains in the accepted ASL contracts and their generated projections.
@@ -125,7 +125,7 @@ release validation and V2 evidence are not claimed by this decision.
 
 ### Why this decision / 为什么做出此决策
 
-**English.** Local CUBE data needs selected logical element-wise execution
+**English.** Private CUBE data needs selected logical element-wise execution
 and a small set of operations that intentionally observe raw CELL order. The
 legacy partial and movement selectors did not provide that coherent boundary.
 
@@ -149,7 +149,7 @@ pack 与 unpack。decode、控制、绑定、故障类别和零 mask 行为遵�
 #### English
 
 - Retired six legacy selectors without aliases.
-- Enabled 34 logical-coordinate operations on Local M16/M32 CUBE data.
+- Enabled 34 logical-coordinate operations on private M16/M32 CUBE data.
 - Added four exact raw-CELL rearrangement operation contracts.
 
 #### 中文

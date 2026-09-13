@@ -132,10 +132,9 @@ Bias and MX scale operands remain ordinary Local Tiles. They retain their
 operation-owned dtype, shape, layout, definedness, and alias rules and are not
 repacked into a CUBE layout.
 
-Bias is exactly one resolved-M-layout 1 x N accumulator-type source matching
-D (and Local A when present). MX scales retain their E8M0 row-major shapes
-derived independently for A and B. Supplying an ordinary auxiliary Tile does
-not make an ordinary primary Tile legal.
+Bias is exactly one row-major 1 x N accumulator-type source. MX scales retain
+their E8M0 row-major shapes derived independently for A and B. Supplying an
+ordinary auxiliary Tile does not make an ordinary primary Tile legal.
 
 ## TGEMV
 

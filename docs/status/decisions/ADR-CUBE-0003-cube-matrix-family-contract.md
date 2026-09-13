@@ -112,9 +112,7 @@ power of two.  `TGEMV` fixes `M=1`, permits an explicit `LB0` only when its
 resolved value is one, and is Local-only.  The left operand is `M x K`, the
 right operand is `K x N`, and the result and explicit accumulator are
 `M x N`.  Bias is exactly one Local row-major `1 x N` private-accumulator
-source and is added after the complete K reduction. The former RowMajor Bias
-exception is superseded by the 2026-09-13 amendment below; current Bias uses
-the resolver-selected M layout.
+source and is added after the complete K reduction.
 
 Ordinary operations accept the exact floating, signed, and unsigned input
 sets defined by the Matrix legality owner.  The two input types may differ
