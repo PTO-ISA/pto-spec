@@ -280,7 +280,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "Reject incompatible source/destination capacity, shape, type, layout, location, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, B.DIM, or B.IOS before effects.",
+        "Reject incompatible source/destination capacity, shape, type, or layout, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, any resolved B.DIM value other than one, or B.IOS before effects.",
         "A failed collective preflight allocates and writes no destination."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -33968,7 +33968,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
         "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -35378,7 +35378,7 @@
       "mnemonic": "TABS",
       "physical_bundle": [
         "BSTART.VEC TABS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -35400,7 +35400,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -35568,7 +35569,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol; an explicitly present zero dimension is illegal.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null respectively.",
         "The destination physical Rows are derived from TSize, Col, and DataType; Rows and Col are powers of two and contain ValidRow x ValidCol."
       ],
       "destinations": [
@@ -37225,7 +37226,7 @@
       "mnemonic": "TADD",
       "physical_bundle": [
         "BSTART.VEC TADD, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -37250,7 +37251,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -37441,7 +37443,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -39092,7 +39094,7 @@
       "mnemonic": "TADDS",
       "physical_bundle": [
         "BSTART.VEC TADDS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -39118,7 +39120,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -39329,8 +39332,8 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -40965,7 +40968,7 @@
       "mnemonic": "TAND",
       "physical_bundle": [
         "BSTART.VEC TAND, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -40990,7 +40993,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -41181,7 +41185,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies zero and therefore clears every valid result element. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -42832,7 +42836,7 @@
       "mnemonic": "TANDS",
       "physical_bundle": [
         "BSTART.VEC TANDS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -42858,7 +42862,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -81932,7 +81937,7 @@
       "mnemonic": "TDIV",
       "physical_bundle": [
         "BSTART.SFU TDIV, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -81957,7 +81962,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -82148,7 +82154,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -83799,7 +83805,7 @@
       "mnemonic": "TDIVS",
       "physical_bundle": [
         "BSTART.SFU TDIVS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -83825,7 +83831,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -84015,7 +84022,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
       ],
       "destinations": [
@@ -85446,7 +85453,7 @@
       "mnemonic": "TEXP",
       "physical_bundle": [
         "BSTART.SFU TEXP, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -85468,7 +85475,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -87288,7 +87296,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed or surplus bindings, B.IOR or B.IOS, unequal masks, missing or invalid dimensions, unsupported DataType, non-row-major layout, undefined source elements, mismatched descriptors, or invalid floating encodings raise Fault_TileLegality before effects.",
+        "Malformed or surplus bindings, B.IOR or B.IOS, unequal masks, missing or invalid dimensions, unsupported DataType, non-selected layout, undefined source elements, mismatched descriptors, or invalid floating encodings raise Fault_TileLegality before effects.",
         "An unrepresentable destination shape, unavailable renamed destination, insufficient per-PE TSize, or exhausted architectural Tile capacity raises Fault_TileAllocation before allocation.",
         "A signaling NaN, zero multiplied by infinity, infinity multiplied by zero, or an infinite product added to an opposite-signed infinity produces a quiet NaN and records floating invalid without a synchronous trap."
       ],
@@ -89142,7 +89150,7 @@
       "mnemonic": "TFMA",
       "physical_bundle": [
         "BSTART.VEC TFMA, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -89168,7 +89176,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -98366,7 +98375,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
         "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -109994,7 +110003,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
         "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -122089,7 +122098,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
       ],
       "destinations": [
@@ -123521,7 +123530,7 @@
       "mnemonic": "TLOG",
       "physical_bundle": [
         "BSTART.SFU TLOG, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -123543,7 +123552,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -143208,7 +143218,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
         "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -174053,7 +174063,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
         "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -184538,7 +184548,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-selected layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
         "A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -186174,7 +186184,7 @@
       "mnemonic": "TMAX",
       "physical_bundle": [
         "BSTART.VEC TMAX, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -186199,7 +186209,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -186390,7 +186401,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies the selected DataType all-zero encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -188041,7 +188052,7 @@
       "mnemonic": "TMAXS",
       "physical_bundle": [
         "BSTART.VEC TMAXS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -188067,7 +188078,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -188278,7 +188290,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-row-major layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, unsupported DataType, non-selected layout, invalid source encoding, or invalid destination capacity raises Fault_TileLegality before effects.",
         "A signaling NaN reports the selected numeric profile invalid condition without changing the deterministic selected result."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -189914,7 +189926,7 @@
       "mnemonic": "TMIN",
       "physical_bundle": [
         "BSTART.VEC TMIN, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -189939,7 +189951,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -190130,7 +190143,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies the selected DataType all-zero encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -191781,7 +191794,7 @@
       "mnemonic": "TMINS",
       "physical_bundle": [
         "BSTART.VEC TMINS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -191807,7 +191820,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -195103,7 +195117,7 @@
       "mnemonic": "TMUL",
       "physical_bundle": [
         "BSTART.VEC TMUL, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -195128,7 +195142,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -195319,7 +195334,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -196970,7 +196985,7 @@
       "mnemonic": "TMULS",
       "physical_bundle": [
         "BSTART.VEC TMULS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -196996,7 +197011,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -197207,7 +197223,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
         "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -198617,7 +198633,7 @@
       "mnemonic": "TNEG",
       "physical_bundle": [
         "BSTART.VEC TNEG, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -198639,7 +198655,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -198828,7 +198845,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
         "This operation introduces no memory fault and reports no floating invalid condition solely from its value transform."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -200238,7 +200255,7 @@
       "mnemonic": "TNOT",
       "physical_bundle": [
         "BSTART.VEC TNOT, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -200260,7 +200277,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -200449,8 +200467,8 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -202085,7 +202103,7 @@
       "mnemonic": "TOR",
       "physical_bundle": [
         "BSTART.VEC TOR, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -202110,7 +202128,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -202301,7 +202320,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies zero and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -203952,7 +203971,7 @@
       "mnemonic": "TORS",
       "physical_bundle": [
         "BSTART.VEC TORS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -203978,7 +203997,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -208588,7 +208608,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
       ],
       "destinations": [
@@ -210020,7 +210040,7 @@
       "mnemonic": "TRECIP",
       "physical_bundle": [
         "BSTART.SFU TRECIP, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -210042,7 +210062,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -210231,7 +210252,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-row-major layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched source state, unsupported DataType, non-selected layout, or invalid floating source encoding raises Fault_TileLegality before effects; an unrepresentable destination shape or insufficient TSize capacity raises Fault_TileAllocation before allocation.",
         "For TRELU, a signaling NaN publishes the profile quiet NaN and records the selected numeric-profile invalid condition only after complete legality preflight."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -211641,7 +211662,7 @@
       "mnemonic": "TRELU",
       "physical_bundle": [
         "BSTART.VEC TRELU, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -211663,7 +211684,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -213488,7 +213510,7 @@
       "mnemonic": "TREM",
       "physical_bundle": [
         "BSTART.SFU TREM, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -213513,7 +213535,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -213704,7 +213727,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -215355,7 +215378,7 @@
       "mnemonic": "TREMS",
       "physical_bundle": [
         "BSTART.SFU TREMS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -215381,7 +215404,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -240996,7 +241020,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
       ],
       "destinations": [
@@ -242428,7 +242452,7 @@
       "mnemonic": "TRSQRT",
       "physical_bundle": [
         "BSTART.SFU TRSQRT, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -242450,7 +242474,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -256385,8 +256410,8 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -258021,7 +258046,7 @@
       "mnemonic": "TSHL",
       "physical_bundle": [
         "BSTART.VEC TSHL, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -258046,7 +258071,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -258237,7 +258263,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies a zero shift count and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -259888,7 +259914,7 @@
       "mnemonic": "TSHLS",
       "physical_bundle": [
         "BSTART.VEC TSHLS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -259914,7 +259940,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -260125,8 +260152,8 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -261761,7 +261788,7 @@
       "mnemonic": "TSHR",
       "physical_bundle": [
         "BSTART.VEC TSHR, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -261786,7 +261813,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -261977,7 +262005,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies a zero shift count and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -263628,7 +263656,7 @@
       "mnemonic": "TSHRS",
       "physical_bundle": [
         "BSTART.VEC TSHRS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -263654,7 +263682,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -265779,7 +265808,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "The selected numeric profile supplies the operation-fixed approximation, rounding, exceptional result, and exact NV/DZ/OF/UF/NX status vector."
       ],
       "destinations": [
@@ -267210,7 +267239,7 @@
       "mnemonic": "TSQRT",
       "physical_bundle": [
         "BSTART.SFU TSQRT, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -267232,7 +267261,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -270497,7 +270527,7 @@
       "mnemonic": "TSUB",
       "physical_bundle": [
         "BSTART.VEC TSUB, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -270522,7 +270552,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -270713,7 +270744,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies scalar zero. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -272364,7 +272395,7 @@
       "mnemonic": "TSUBS",
       "physical_bundle": [
         "BSTART.VEC TSUBS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -272390,7 +272421,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -276073,8 +276105,8 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-row-major layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
-        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal before source snapshots or destination allocation."
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -277709,7 +277741,7 @@
       "mnemonic": "TXOR",
       "physical_bundle": [
         "BSTART.VEC TXOR, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -277734,7 +277766,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },
@@ -277925,7 +277958,7 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
         "Omitted B.IOR supplies zero and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
@@ -279576,7 +279609,7 @@
       "mnemonic": "TXORS",
       "physical_bundle": [
         "BSTART.VEC TXORS, DataType",
-        "B.DATR PadValue (optional)",
+        "B.DATR PadValue, Layout (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -279602,7 +279635,8 @@
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
           "allowed_nonzero_fields": [
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "Layout"
           ],
           "pad_union": "pad-value"
         },

@@ -97,10 +97,9 @@ state. Older bridge and pipe-management wording did not match that contract.
   data attributes.
 - Each tile register has a `TileInfo` descriptor. Allocation or reconfiguration
   makes its contents undefined until an architectural write defines them.
-- A Tile descriptor carries one persistent Local layout selected by its owning
-  contract. Portable Local operations use the unified RowMajor, `CUBE_M16`,
-  and `CUBE_M32` layout model where accepted; `TileLocation` and a
-  Vec-versus-Matrix residency split are not architectural state.
+- An implementation-defined layout may be recorded in `TileInfo`, but the
+  portable generic indexing operation rejects that layout. A profile-specific
+  operation must define any access to it.
 - Aggregate tile capacity is bounded by the read-only `TILE_CAPACITY` system
   register. PTO v0 sets that register to 256 KiB; the ASL verification model
   supports values up to that bound.
