@@ -7,9 +7,119 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "HEAD",
+  "candidate_head": "80151ac077f41b92861decd73cdd52f0bc76eb54",
+  "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "ef2d23cdee03e74057099dc69943e8b909809ce0",
   "changed_records": [
+    {
+      "L0": {
+        "destination0": [
+          "RowMajor"
+        ],
+        "scalar0": [
+          "RowMajor"
+        ],
+        "source0": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "scalar0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ]
+      },
+      "R0": [],
+      "R1": [],
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "relation_deltas": [],
+      "tuple_deltas": [
+        [
+          "GMOV",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "scalar0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "scalar0",
+          "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "scalar0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "scalar0",
+          "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ]
+      ]
+    },
     {
       "L0": {
         "destination0": [
@@ -961,6 +1071,554 @@
     },
     {
       "L0": {
+        "operation": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "operation": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "operation",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "destination0": [
+          "RowMajor"
+        ],
+        "source0": [
+          "RowMajor"
+        ],
+        "source1": [
+          "RowMajor"
+        ],
+        "source2": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source2": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "bundle",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_BIAS",
+          "direct",
+          "source2",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "operation": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "operation": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "operation",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "destination0": [
+          "RowMajor"
+        ],
+        "source0": [
+          "RowMajor"
+        ],
+        "source1": [
+          "RowMajor"
+        ],
+        "source2": [
+          "RowMajor"
+        ],
+        "source3": [
+          "RowMajor"
+        ],
+        "source4": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source2": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source3": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source4": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source3",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source3",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source3",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source4",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source4",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "bundle",
+          "source4",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source3",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source3",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source3",
+          "RowMajor"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source4",
+          "CUBE_M16"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source4",
+          "CUBE_M32"
+        ],
+        [
+          "TGEMV_MX_BIAS",
+          "direct",
+          "source4",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
         "destination0": [
           "RowMajor"
         ],
@@ -1033,6 +1691,554 @@
           "direct",
           "source0",
           "CUBE_M32"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "operation": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "operation": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "operation",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "destination0": [
+          "RowMajor"
+        ],
+        "source0": [
+          "RowMajor"
+        ],
+        "source1": [
+          "RowMajor"
+        ],
+        "source2": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source2": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "bundle",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_BIAS",
+          "direct",
+          "source2",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "operation": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "operation": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "operation",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "operation",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {
+        "destination0": [
+          "RowMajor"
+        ],
+        "source0": [
+          "RowMajor"
+        ],
+        "source1": [
+          "RowMajor"
+        ],
+        "source2": [
+          "RowMajor"
+        ],
+        "source3": [
+          "RowMajor"
+        ],
+        "source4": [
+          "RowMajor"
+        ]
+      },
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source2": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source3": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ],
+        "source4": [
+          "CUBE_M16",
+          "CUBE_M32"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "relation_deltas": [
+        "Bias.layout == ML == D.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source3",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source3",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source3",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source4",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source4",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "bundle",
+          "source4",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source1",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source2",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source2",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source3",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source3",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source3",
+          "RowMajor"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source4",
+          "CUBE_M16"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source4",
+          "CUBE_M32"
+        ],
+        [
+          "TMATMUL_MX_BIAS",
+          "direct",
+          "source4",
+          "RowMajor"
         ]
       ]
     },
@@ -3512,6 +4718,150 @@
   ],
   "delta": [
     {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "scalar0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "scalar0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "scalar0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "scalar0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
       "classification": "exact-34 Local layout restoration (ADR-CUBE-0013)",
       "mnemonic": "TABS",
       "owner": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
@@ -4760,6 +6110,798 @@
       ]
     },
     {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "bundle",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "operation",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_BIAS",
+        "direct",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source3",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source3",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source3",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source4",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source4",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "bundle",
+        "source4",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "operation",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source3",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source3",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source3",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source4",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source4",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TGEMV_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TGEMV_MX_BIAS",
+        "direct",
+        "source4",
+        "RowMajor"
+      ]
+    },
+    {
       "classification": "exact-34 Local layout restoration (ADR-CUBE-0013)",
       "mnemonic": "TLOG",
       "owner": "asl/tile/elementwise-tile-tile/transcendental/TLOG.asl",
@@ -4853,6 +6995,798 @@
         "direct",
         "source0",
         "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "bundle",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "operation",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_BIAS",
+        "direct",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source3",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source3",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source3",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source4",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source4",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "bundle",
+        "source4",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "operation",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "operation",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source2",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source2",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source3",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source3",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source3",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source4",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source4",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)",
+      "mnemonic": "TMATMUL_MX_BIAS",
+      "owner": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
+      "owner_decision": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+      "tuple": [
+        "TMATMUL_MX_BIAS",
+        "direct",
+        "source4",
+        "RowMajor"
       ]
     },
     {
@@ -8062,7 +10996,7 @@
     "TFMA"
   ],
   "operative_baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
-  "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e5",
+  "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
   "pass": true,
   "reachability": {
     "after": {

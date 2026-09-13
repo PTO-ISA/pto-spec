@@ -155,8 +155,8 @@ def _layout_set(mnemonic: str, meta: dict[str, Any], text: str, helper_text: str
         return ALLOWED_LAYOUTS if "Layout" in fields else {"RowMajor"}
     if mnemonic == "GMOV":
         return ALLOWED_LAYOUTS if "TileElementwiseSourceContentsDefined" in helper_text else {"RowMajor"}
-    if mnemonic in BIAS and ("resolved M layout ML" in searchable or RELATION_RE.search(helper_text)):
-        return {"CUBE_M16", "CUBE_M32"}
+    if mnemonic in BIAS:
+        return {"CUBE_M16", "CUBE_M32"} if RELATION_RE.search(helper_text) else {"RowMajor"}
     if "NORM" in words or "row-major" in searchable.lower():
         words.add("RowMajor")
     return words & (ALLOWED_LAYOUTS | {"CUBE_N8", "ColumnMajor", "ZN", "NZ"})
@@ -188,7 +188,7 @@ def _authorized_tuple_delta(mnemonic: str, item: tuple[Any, ...]) -> str | None:
         return "exact-34 Local layout restoration (ADR-CUBE-0013)"
     if mnemonic == "GMOV" and layout in {"CUBE_M16", "CUBE_M32"}:
         return "GMOV Local M-layout extension (ADR-MEM-0009)"
-    if mnemonic in BIAS and role.lower() in {"bias", "source2", "operation"} and layout in ALLOWED_LAYOUTS:
+    if mnemonic in BIAS and layout in ALLOWED_LAYOUTS:
         return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
     return None
 
@@ -295,6 +295,13 @@ def _helper_snapshot(source_map: dict[str, str], metadata: list[tuple[str, dict[
             "operation_reachability": operation_reachability}, errors, index
 
 
+def _operation_helper_text(snapshot: dict[str, Any], definitions: dict[str, list[dict[str, Any]]], owner: str) -> str:
+    """Return only the authoritative helper bodies reachable from one owner."""
+    rows = [row for row in snapshot["operation_reachability"] if row["owner"] == owner]
+    names = {name for row in rows for name in row["common_helpers"]}
+    return "\n".join(item["body"] for name in sorted(names) for item in definitions.get(name, []))
+
+
 def _metadata_map(source_map: dict[str, str]) -> tuple[list[tuple[str, dict[str, Any]]], list[str]]:
     result, errors = [], []
     for path, content in sorted(source_map.items()):
@@ -360,9 +367,6 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     errors.extend(e)
     after_helpers, e, after_defs = _helper_snapshot(after_map, after_meta)
     errors.extend(e)
-    helper_text = "TileElementwiseSourceContentsDefined" if "TileElementwiseSourceContentsDefined" in after_helpers["helpers"] else ""
-    if any(item.get("relations") for defs in after_helpers["helpers"].values() for item in defs):
-        helper_text += " Bias.layout == ML == D.layout"
     changed_records, deltas = [], []
     for path in sorted(set(before_by_path) | set(after_by_path)):
         old_meta, new_meta = before_by_path.get(path), after_by_path.get(path)
@@ -373,8 +377,10 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         if old_mnemonic != new_mnemonic:
             errors.append(f"mnemonic owner changed: {path}")
             continue
-        old_sig = operation_signature(old_mnemonic, old_meta, before_map.get(path, ""), helper_text)
-        new_sig = operation_signature(new_mnemonic, new_meta, after_map.get(path, ""), helper_text)
+        old_helper_text = _operation_helper_text(before_helpers, before_defs, path)
+        new_helper_text = _operation_helper_text(after_helpers, after_defs, path)
+        old_sig = operation_signature(old_mnemonic, old_meta, before_map.get(path, ""), old_helper_text)
+        new_sig = operation_signature(new_mnemonic, new_meta, after_map.get(path, ""), new_helper_text)
         old_tuples, new_tuples = set(map(tuple, old_sig["tuples"])), set(map(tuple, new_sig["tuples"]))
         for item in sorted(old_tuples ^ new_tuples):
             classification = _authorized_tuple_delta(new_mnemonic, item)
@@ -399,23 +405,32 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         for path, meta in after_meta:
             mnemonic = BLOCK_BIAS.get(meta["mnemonic"], meta["mnemonic"])
             if mnemonic in exact_after:
+                helper_text = _operation_helper_text(after_helpers, after_defs, path)
                 exact_after[mnemonic].append(_layout_set(mnemonic, meta, after_map.get(path, ""), helper_text))
         for mnemonic, values in exact_after.items():
             if not values or any(value != ALLOWED_LAYOUTS for value in values):
                 errors.append(f"exact-34 layout closure missing for {mnemonic}")
-        for mnemonic in BIAS:
-            if "Bias.layout == ML == D.layout" not in helper_text:
-                errors.append(f"required Bias layout equality missing for {mnemonic}")
+        for path, meta in after_meta:
+            mnemonic = BLOCK_BIAS.get(meta["mnemonic"], meta["mnemonic"])
+            if mnemonic in BIAS:
+                helper_text = _operation_helper_text(after_helpers, after_defs, path)
+                if not _relations(mnemonic, after_map.get(path, ""), helper_text):
+                    errors.append(f"required Bias layout equality missing for {mnemonic} ({path})")
         gmov = [{"layouts": sorted(set(LAYOUT_RE.findall(item["body"])))} for item in after_defs.get("TileOperandsLegal_GMOV", [])]
-        gmov_layouts = set().union(*(set(x["layouts"]) for x in gmov)) if gmov else set()
-        if not gmov or not gmov_layouts <= ALLOWED_LAYOUTS:
+        gmov_paths = [path for path, meta in after_meta
+                      if BLOCK_BIAS.get(meta["mnemonic"], meta["mnemonic"]) == "GMOV"]
+        gmov_text = "\n".join(_operation_helper_text(after_helpers, after_defs, path)
+                               for path in gmov_paths)
+        gmov_layouts = set(LAYOUT_RE.findall(gmov_text))
+        if not gmov_paths or gmov_layouts != ALLOWED_LAYOUTS:
             errors.append("GMOV common-helper layout closure missing")
     location_refs = sorted(path for path, text in after_map.items() if path.endswith(".asl") and re.search(r"TileLocation|\.location", text))
     if location_refs:
         errors.append("portable normative TileLocation residue: " + ", ".join(location_refs))
     return {"schema": "pto.layout-relation-census.v2", "baseline": baseline, "operative_baseline": baseline, "candidate": candidate,
-            "candidate_head": candidate_head, "candidate_only_authorized_against": baseline,
-            "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e5",
+            "candidate_head": candidate_head, "candidate_identity": "immutable-asl-tree",
+            "candidate_only_authorized_against": baseline,
+            "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
             "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9", "source_path_count": len(after_map),
             "exact_34": EXACT_34, "bias_operations": list(BIAS), "reachability": {"before": before_helpers, "after": after_helpers},
             "common_helper_deltas": sorted(helper_deltas, key=lambda x: x["name"]), "changed_records": sorted(changed_records, key=lambda x: (x["mnemonic"], x["owner"])),
@@ -425,10 +440,12 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
 
 def census(baseline: str, candidate: str) -> dict[str, Any]:
     paths = source_paths(baseline, candidate)
-    # Keep the receipt reproducible after its own evidence commit: HEAD is the
-    # checked reference, while the parent packet records its resolved SHA.
+    # The receipt is committed in the candidate tree, so use the immutable ASL
+    # tree object as its identity rather than a self-referential commit SHA.
+    candidate_identity = (git("rev-parse", f"{candidate}:asl").strip()
+                          if candidate != "working-tree" else "working-tree")
     return _census_texts(_ref_texts(baseline, paths), _ref_texts(candidate, paths),
-                         _resolved_ref(baseline), candidate, candidate)
+                         _resolved_ref(baseline), candidate, candidate_identity)
 
 
 def _fixture() -> dict[str, str]:

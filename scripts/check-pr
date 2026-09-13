@@ -29,11 +29,12 @@ run_source_checks() {
     check_ui_step "Decoder partition" bash -c "${source_commands[1]}"
     check_ui_step "Release event schema" bash -c "${source_commands[2]}"
     check_ui_step "Model closure schema" bash -c "${source_commands[3]}"
-    check_ui_step "Release workflow" bash -c "${source_commands[4]}"
-    check_ui_step "Repository structure and projections" bash -c "${source_commands[5]}"
-    check_ui_step "README development inventory" bash -c "${source_commands[6]}"
-    check_ui_step "Formal review field completeness" bash -c "${source_commands[7]}"
-    check_ui_step "Patch whitespace" bash -c "${source_commands[8]}"
+    check_ui_step "Layout relation census" bash -c "${source_commands[4]}"
+    check_ui_step "Release workflow" bash -c "${source_commands[5]}"
+    check_ui_step "Repository structure and projections" bash -c "${source_commands[6]}"
+    check_ui_step "README development inventory" bash -c "${source_commands[7]}"
+    check_ui_step "Formal review field completeness" bash -c "${source_commands[8]}"
+    check_ui_step "Patch whitespace" bash -c "${source_commands[9]}"
 }
 
 run_tooling_checks() {
