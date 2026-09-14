@@ -230,6 +230,31 @@ begin
         end;
         return TRUE;
     end;
+    if decoded == TileOperation_TCI &&
+       (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
+        CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
+        // CUBE TCI uses the second physical B.IOR source as a packed raw
+        // Step2D word rather than as the RowMajor boolean direction.
+        if !_BundleScalarBindings[[0]].valid ||
+           _BundleScalarBindings[[0]].source0 >= PTO_ABSOLUTE_GPR_COUNT ||
+           _BundleScalarBindings[[0]].source1 >= PTO_ABSOLUTE_GPR_COUNT then
+            return FALSE;
+        end;
+        let participation_mask = _BundleTileBindings[[0]].pe_mask;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            if participation_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                let step2d = ReadPEAbsoluteGPROperand(
+                    pe as MemoryAgentId, _BundleScalarBindings[[0]].source1);
+                let row_step = SInt(step2d[63:32]);
+                let column_step = SInt(step2d[31:0]);
+                if (row_step != -1 && row_step != 0 && row_step != 1) ||
+                   (column_step != -1 && column_step != 0 && column_step != 1) then
+                    return FALSE;
+                end;
+            end;
+        end;
+        return TRUE;
+    end;
     if _BundleScalarBindings[[1]].valid then return FALSE; end;
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     let input_count = BundleOperationGPRInputCount(operation);
@@ -292,6 +317,20 @@ end;
 readonly func BundleOperationScalarBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TCI &&
+       (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
+        CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
+        // CUBE TCI has exactly one canonical B.IOR: two absolute GPR
+        // selectors, an explicit zero source2, and an explicit zero dst.
+        return _BundleScalarBindings[[0]].valid &&
+               !_BundleScalarBindings[[1]].valid &&
+               _BundleScalarBindings[[0]].source_count == 3 &&
+               _BundleScalarBindings[[0]].destination == 0 &&
+               _BundleScalarBindings[[0]].source0 < PTO_ABSOLUTE_GPR_COUNT &&
+               _BundleScalarBindings[[0]].source1 < PTO_ABSOLUTE_GPR_COUNT &&
+               _BundleScalarBindings[[0]].source2 == 0;
+    end;
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     if BundleWeightTLOADSelected() then
         return !_BundleScalarBindings[[1]].valid &&

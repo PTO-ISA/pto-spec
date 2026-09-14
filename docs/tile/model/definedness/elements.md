@@ -91,20 +91,19 @@ begin
     if !TileLayoutIsCube(tile.layout) then
         return TileLinearIndex(tile, row, column);
     end;
-    assert TileCubeDescriptorShapeLegal(tile.capacity_bytes,
-        tile.valid_rows, tile.valid_columns, tile.data_type, tile.layout);
+    assert TileCubeDescriptorShapeLegalWithColumns(tile.capacity_bytes,
+        tile.valid_rows, tile.valid_columns, tile.columns,
+        tile.data_type, tile.layout);
     assert tile.rows == TileCubeStorageRows(
         tile.layout, tile.valid_rows, tile.data_type);
-    assert tile.columns == TileCubeStorageColumns(
-        tile.layout, tile.valid_columns, tile.data_type);
-    assert tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
-        tile.valid_rows, tile.valid_columns, tile.data_type);
-    assert tile.cube_n_repeat == TileCubeNRepeat(tile.layout,
-        tile.valid_rows, tile.valid_columns, tile.data_type);
-    assert tile.cube_cell_count == TileCubeCellCount(tile.layout,
-        tile.valid_rows, tile.valid_columns, tile.data_type);
-    assert tile.cube_storage_bytes == TileCubeRequiredBytes(tile.layout,
-        tile.valid_rows, tile.valid_columns, tile.data_type);
+    assert tile.cube_k_repeat == TileCubeKRepeatForColumns(tile.layout,
+        tile.valid_rows, tile.columns, tile.data_type);
+    assert tile.cube_n_repeat == TileCubeNRepeatForColumns(tile.layout,
+        tile.valid_rows, tile.columns, tile.data_type);
+    assert tile.cube_cell_count == TileCubeCellCountForColumns(tile.layout,
+        tile.valid_rows, tile.columns, tile.data_type);
+    assert tile.cube_storage_bytes == TileCubeRequiredBytesForColumns(
+        tile.layout, tile.valid_rows, tile.columns, tile.data_type);
     return TileCubePayloadIndex(tile, row, column);
 end;
 readonly func TileLogicalLinearIndex(tile: TileInfo,

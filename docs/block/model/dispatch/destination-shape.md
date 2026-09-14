@@ -41,6 +41,30 @@ readonly func BundleDestinationPhysicalColumns(shape_source_valid: boolean,
                                                => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB2);
+    if !_BundleDimensionPresent[[index]] && _BundleOperation.valid then
+        let decoded = DecodeTileOperation(
+            BundleTileDecodeFamily(_BundleOperation.operation_class),
+            BundleOperationDecodeCode(_BundleOperation));
+        if decoded != PTO_TILE_OPERATION_COUNT &&
+           TileOperationOfIndex(
+               decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+               TileOperation_TCI &&
+           (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
+            CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
+            let (type_valid, data_type) = ResolveBundleEffectiveDataType();
+            if type_valid then
+                let cell_columns = TileCubeCellColumns(
+                    CurrentBundleTileLayout(), data_type);
+                if cell_columns != 0 then
+                    return TileCubeAlignedExtent(
+                        BundleDestinationValidColumns(shape_source_valid,
+                            shape_source),
+                        cell_columns as integer {1..65535});
+                end;
+            end;
+        end;
+        return BundleDestinationValidColumns(shape_source_valid, shape_source);
+    end;
     if UInt(_BundleDimensions[[index]]) <= 65535 then
         return UInt(_BundleDimensions[[index]]) as integer {0..65535};
     end;
@@ -50,7 +74,7 @@ readonly func BundleReusedDestinationDescriptorMatches(
     binding: BundleTileBindingIndex, capacity_bytes: integer {0..262144},
     valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
     columns: integer {0..65535}, data_type: TileDataType,
-    layout: TileLayout, cube: boolean) => boolean
+    layout: TileLayout, cube: boolean, exact_cube_columns: boolean) => boolean
 begin
     let index = _BundleTileBindings[[binding]].destination;
     let destination = _Tiles[[index]];
@@ -62,6 +86,7 @@ begin
                destination.capacity_bytes == capacity_bytes &&
                destination.valid_rows == valid_rows &&
                destination.valid_columns == valid_columns &&
+               (!exact_cube_columns || destination.columns == columns) &&
                destination.data_type == data_type &&
                destination.layout == layout && mask_legal;
     end;
@@ -233,15 +258,31 @@ begin
                 _BundleTileBindings[[binding]].destination_reused_by_generation;
             let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
                 destination_layout == TileLayout_CUBE_M32;
+            let exact_cube_columns = cube_destination &&
+                decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                TileOperationOfIndex(
+                    decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+                    TileOperation_TCI;
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
-            let shape_legal = if cube_destination then
+            let shape_legal = if exact_cube_columns then
+                TileCubeDescriptorShapeLegalWithColumns(capacity_bytes,
+                    valid_rows, auxiliary_valid_columns, auxiliary_columns,
+                    destination_type, destination_layout)
+            else if cube_destination then
                 TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
                     auxiliary_valid_columns, destination_type,
                     destination_layout)
             else
                 TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
                     valid_rows, auxiliary_valid_columns, destination_type);
+            if exact_cube_columns &&
+               !TileCubeGeometryLegalWithColumns(valid_rows,
+                   auxiliary_valid_columns, auxiliary_columns,
+                   destination_type, destination_layout) then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
             if !shape_legal ||
                (!cube_destination && rows * auxiliary_columns >
                    TileLogicalElementCapacity(capacity_bytes,
@@ -253,7 +294,8 @@ begin
             if reused && !BundleReusedDestinationDescriptorMatches(
                    binding as BundleTileBindingIndex, capacity_bytes,
                    valid_rows, auxiliary_valid_columns, auxiliary_columns,
-                   destination_type, destination_layout, cube_destination) then
+                   destination_type, destination_layout, cube_destination,
+                   exact_cube_columns) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
@@ -304,11 +346,16 @@ begin
                     TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
                     destination_layout == TileLayout_CUBE_M16 ||
                     destination_layout == TileLayout_CUBE_M32;
+                let exact_cube_columns = tgpr2t &&
+                    decoded_operation != PTO_TILE_OPERATION_COUNT &&
+                    TileOperationOfIndex(
+                        decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+                        TileOperation_TCI;
                 if !ConfigureBundleTileDestination(resolved[[binding]],
                         capacity_bytes, valid_rows, auxiliary_columns,
                         auxiliary_valid_columns, destination_type,
                         destination_layout, _BundleTileBindings[[binding]].pe_mask,
-                        tgpr2t) then
+                        tgpr2t, exact_cube_columns) then
                     SetFault(Fault_TileAllocation, ReadTPC());
                     return FALSE;
                 end;
@@ -439,7 +486,8 @@ begin
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
-    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
+    let columns = BundleDestinationPhysicalColumns(FALSE, 0)
+        as integer {1..65535};
     return ResolveBundleTileDestinationsWithShape(TRUE, valid_rows, valid_columns, columns);
 end;
 ```

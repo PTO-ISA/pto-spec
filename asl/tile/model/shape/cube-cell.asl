@@ -113,20 +113,29 @@ pure func TileCubeKRepeat(layout: TileLayout,
                           data_type: TileDataType)
     => integer {0..65535}
 begin
+    return TileCubeKRepeatForColumns(layout, valid_rows,
+        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
+end;
+
+pure func TileCubeKRepeatForColumns(layout: TileLayout,
+                                    valid_rows: integer {0..65535},
+                                    columns: integer {0..65535},
+                                    data_type: TileDataType)
+    => integer {0..65535}
+begin
     let cell_rows = TileCubeCellRows(layout, data_type);
     let cell_columns = TileCubeCellColumns(layout, data_type);
-    if cell_rows == 0 || cell_columns == 0 then return 0; end;
+    if cell_rows == 0 || columns == 0 then return 0; end;
+    if cell_columns == 0 then return 0; end;
     if layout == TileLayout_CUBE_N8 then
         let storage_rows = TileCubeStorageRows(layout, valid_rows, data_type);
         if storage_rows == 0 then return 0; end;
         let row_divisor = cell_rows as integer {1..32};
         return (storage_rows DIVRM row_divisor) as integer {1..65535};
     end;
-    let storage_columns = TileCubeStorageColumns(
-        layout, valid_columns, data_type);
-    if storage_columns == 0 then return 0; end;
     let column_divisor = cell_columns as integer {1..16};
-    return (storage_columns DIVRM column_divisor) as integer {1..65535};
+    if columns MOD column_divisor != 0 then return 0; end;
+    return (columns DIVRM column_divisor) as integer {1..65535};
 end;
 
 pure func TileCubeNRepeat(layout: TileLayout,
@@ -135,8 +144,18 @@ pure func TileCubeNRepeat(layout: TileLayout,
                           data_type: TileDataType)
     => integer {0..8192}
 begin
+    return TileCubeNRepeatForColumns(layout, valid_rows,
+        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
+end;
+
+pure func TileCubeNRepeatForColumns(layout: TileLayout,
+                                    valid_rows: integer {0..65535},
+                                    columns: integer {0..65535},
+                                    data_type: TileDataType)
+    => integer {0..8192}
+begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) || valid_columns == 0 then
+       !TileCubeDataTypeSupported(data_type) || columns == 0 then
         return 0;
     end;
     if layout == TileLayout_CUBE_M32 then
@@ -146,10 +165,8 @@ begin
         return (storage_rows DIVRM 32) as integer {1..2048};
     end;
     if layout != TileLayout_CUBE_N8 then return 1; end;
-    let storage_columns = TileCubeStorageColumns(
-        layout, valid_columns, data_type);
-    if storage_columns == 0 then return 0; end;
-    return (storage_columns DIVRM 8) as integer {1..8192};
+    if columns MOD 8 != 0 then return 0; end;
+    return (columns DIVRM 8) as integer {1..8192};
 end;
 
 pure func TileCubeCellCount(layout: TileLayout,
@@ -158,10 +175,20 @@ pure func TileCubeCellCount(layout: TileLayout,
                             data_type: TileDataType)
     => integer {0..16384}
 begin
-    let k_repeat = TileCubeKRepeat(
-        layout, valid_rows, valid_columns, data_type);
-    let n_repeat = TileCubeNRepeat(
-        layout, valid_rows, valid_columns, data_type);
+    return TileCubeCellCountForColumns(layout, valid_rows,
+        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
+end;
+
+pure func TileCubeCellCountForColumns(layout: TileLayout,
+                                      valid_rows: integer {0..65535},
+                                      columns: integer {0..65535},
+                                      data_type: TileDataType)
+    => integer {0..16384}
+begin
+    let k_repeat = TileCubeKRepeatForColumns(
+        layout, valid_rows, columns, data_type);
+    let n_repeat = TileCubeNRepeatForColumns(
+        layout, valid_rows, columns, data_type);
     if k_repeat == 0 || n_repeat == 0 then return 0; end;
     let cells: integer = k_repeat * n_repeat;
     if cells > 16384 then return 0; end;
@@ -172,16 +199,26 @@ readonly func TileCubeStorageElements(layout: TileLayout,
                                   valid_rows: integer {0..65535},
                                   valid_columns: integer {0..65535},
                                   data_type: TileDataType)
-    => integer {0..16384}
+    => integer {0..32768}
 begin
-    let cells = TileCubeCellCount(
-        layout, valid_rows, valid_columns, data_type);
+    return TileCubeStorageElementsForColumns(layout, valid_rows,
+        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
+end;
+
+readonly func TileCubeStorageElementsForColumns(
+    layout: TileLayout,
+    valid_rows: integer {0..65535},
+    columns: integer {0..65535},
+    data_type: TileDataType) => integer {0..32768}
+begin
+    let cells = TileCubeCellCountForColumns(
+        layout, valid_rows, columns, data_type);
     let cell_rows = TileCubeCellRows(layout, data_type);
     let cell_columns = TileCubeCellColumns(layout, data_type);
     if cells == 0 || cell_rows == 0 || cell_columns == 0 then return 0; end;
     let elements: integer = cells * cell_rows * cell_columns;
     if elements > PTO_MODEL_TILE_ELEMENTS then return 0; end;
-    return elements as integer {1..16384};
+    return elements as integer {1..32768};
 end;
 
 pure func TileCubeRequiredBytes(layout: TileLayout,
@@ -190,8 +227,18 @@ pure func TileCubeRequiredBytes(layout: TileLayout,
                                 data_type: TileDataType)
     => integer {0..262144}
 begin
-    let cells = TileCubeCellCount(
-        layout, valid_rows, valid_columns, data_type);
+    return TileCubeRequiredBytesForColumns(layout, valid_rows,
+        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
+end;
+
+pure func TileCubeRequiredBytesForColumns(
+    layout: TileLayout,
+    valid_rows: integer {0..65535},
+    columns: integer {0..65535},
+    data_type: TileDataType) => integer {0..262144}
+begin
+    let cells = TileCubeCellCountForColumns(
+        layout, valid_rows, columns, data_type);
     if cells == 0 then return 0; end;
     let required: integer = cells * PTO_TILE_CELL_BYTES;
     if required > 262144 then return 0; end;
@@ -205,24 +252,53 @@ readonly func TileCubeDescriptorShapeLegal(
     data_type: TileDataType,
     layout: TileLayout) => boolean
 begin
-    if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) ||
-       !TileCapacityIsLegal(capacity_bytes) ||
-       valid_rows == 0 || valid_columns == 0 then
+    return TileCubeDescriptorShapeLegalWithColumns(
+        capacity_bytes, valid_rows, valid_columns,
+        TileCubeStorageColumns(layout, valid_columns, data_type),
+        data_type, layout);
+end;
+
+readonly func TileCubeDescriptorShapeLegalWithColumns(
+    capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    columns: integer {0..65535},
+    data_type: TileDataType,
+    layout: TileLayout) => boolean
+begin
+    if !TileCapacityIsLegal(capacity_bytes) ||
+       !TileCubeGeometryLegalWithColumns(valid_rows, valid_columns,
+           columns, data_type, layout) then
         return FALSE;
     end;
+    let required_bytes = TileCubeRequiredBytesForColumns(
+        layout, valid_rows, columns, data_type);
+    return required_bytes != 0 && required_bytes <= capacity_bytes;
+end;
+
+readonly func TileCubeGeometryLegalWithColumns(
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    columns: integer {0..65535},
+    data_type: TileDataType,
+    layout: TileLayout) => boolean
+begin
+    if !TileLayoutIsCube(layout) ||
+       !TileCubeDataTypeSupported(data_type) ||
+       valid_rows == 0 ||
+       valid_columns == 0 || columns == 0 || columns < valid_columns then
+        return FALSE;
+    end;
+    let cell_columns = TileCubeCellColumns(layout, data_type);
+    if cell_columns == 0 then return FALSE; end;
+    let column_quantum = cell_columns as integer {1..65535};
+    if columns MOD column_quantum != 0 then return FALSE; end;
     let storage_rows = TileCubeStorageRows(layout, valid_rows, data_type);
-    let storage_columns = TileCubeStorageColumns(
-        layout, valid_columns, data_type);
-    let storage_elements = TileCubeStorageElements(
-        layout, valid_rows, valid_columns, data_type);
-    let required_bytes = TileCubeRequiredBytes(
-        layout, valid_rows, valid_columns, data_type);
+    let storage_columns = columns;
+    let storage_elements = TileCubeStorageElementsForColumns(
+        layout, valid_rows, columns, data_type);
     return storage_rows != 0 && storage_columns != 0 &&
-           storage_elements != 0 && required_bytes != 0 &&
-           valid_rows <= storage_rows &&
-           valid_columns <= storage_columns &&
-           required_bytes <= capacity_bytes;
+           storage_elements != 0 && valid_rows <= storage_rows;
 end;
 
 pure func TileCubeCellElementIndex(
@@ -265,7 +341,11 @@ begin
     assert row < tile.rows && column < tile.columns;
     let cell_rows = TileCubeCellRows(tile.layout, tile.data_type);
     let cell_columns = TileCubeCellColumns(tile.layout, tile.data_type);
-    let k_repeat = TileCubeKRepeat(tile.layout, tile.valid_rows,
+    let k_repeat = if tile.layout == TileLayout_CUBE_M16 ||
+        tile.layout == TileLayout_CUBE_M32 then
+        TileCubeKRepeatForColumns(tile.layout, tile.valid_rows,
+            tile.columns, tile.data_type)
+    else TileCubeKRepeat(tile.layout, tile.valid_rows,
         tile.valid_columns, tile.data_type);
     assert cell_rows != 0 && cell_columns != 0 && k_repeat != 0;
     let row_divisor = cell_rows as integer {1..32};

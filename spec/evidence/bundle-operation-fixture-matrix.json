@@ -9218,6 +9218,7 @@
       ],
       "decoded_start": "0x8e619181",
       "decoded_attributes": [
+        "B.DATR",
         "B.DIM"
       ],
       "decoded_operand_commands": [
@@ -9247,7 +9248,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {},
-      "datr_word": null,
+      "datr_word": "0x01101023",
       "destination_size_code": 1
     },
     {
