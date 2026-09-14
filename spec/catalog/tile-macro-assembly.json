@@ -43038,9 +43038,10 @@
         }
       ],
       "defaults": [
-        "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; an explicit LB1 must also equal one. Omitted LB2 selects Col equal to ValidCol.",
+        "RowMajor retains the existing defaults: LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; an explicit LB1 must also equal one. Omitted LB2 selects Col equal to ValidCol.",
         "Omitted B.IOR selects start zero and ascending direction. An explicitly present all-zero B.IOR is a distinct descriptor with the same operand values.",
-        "Omitted B.DATR selects the operation defaults. A present B.DATR is legal only when every encoded field is zero. Physical padding is always Null."
+        "CUBE is selected only by explicit B.DATR Layout=CUBE_M32 (29) or CUBE_M16 (31); its present B.DATR must use DataType=DTYPE_NONE, Pad=0, CMode=0, RMode=0, Sat=0, and Canonicalize=0.",
+        "CUBE omitted LB2 selects Col=align_up(ValidCol, TileCubeCellColumns(Layout, DataType)); explicit Col is never rounded. CUBE requires one canonical B.IOR with StartGPR, packed Step2DGPR, zero, and ->zero. Physical padding is always Null."
       ],
       "destinations": [
         {
@@ -43060,9 +43061,9 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "Malformed bindings, B.IOS, unsupported DataType, non-row-major layout, missing or invalid dimensions, direction other than zero or one, or a nonzero inapplicable B.DATR field raises Fault_TileLegality before allocation.",
-        "An unrepresentable shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before allocation.",
-        "PE_MASK zero completes as a strict no-op before every validation or effect."
+        "RowMajor keeps the existing Fault_TileLegality rules for malformed bindings, B.IOS, unsupported DataType, non-row-major layout, missing or invalid dimensions, direction other than zero or one, and nonzero inapplicable B.DATR fields.",
+        "CUBE malformed command/B.IOR structure raises Fault_BundleControl; invalid selectors, tuple, dimensions, steps, alignment, or representability raise Fault_TileLegality; a legal CUBE geometry with insufficient explicit TSize or exhausted Tile capacity raises Fault_TileAllocation. All reject before allocation/publication.",
+        "PE_MASK zero completes as a strict no-op before every validation, GPR read, descriptor check, allocation, fault, and payload effect."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -43228,7 +43229,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c579effaec46a5cf1603884c665877a32b6ce89b29ccc9612d83a7c6710729e9",
+                "fold_signature_sha256": "387767bbdd1b9c0d7aa1e537cfaf38b190c1cf57abcad8d9750f0dcd46527597",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -43280,7 +43281,7 @@
                     "field": "Start",
                     "optional": true,
                     "ordinal": 0,
-                    "role": "typed sequence start",
+                    "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                     "size": null,
                     "syntax": "Start=0",
                     "value_style": null
@@ -43294,7 +43295,7 @@
                     "field": "Direction",
                     "optional": true,
                     "ordinal": 1,
-                    "role": "ascending or descending direction",
+                    "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                     "size": null,
                     "syntax": "Direction=ascending",
                     "value_style": null
@@ -43315,7 +43316,7 @@
                   "field": "Start",
                   "optional": true,
                   "ordinal": 0,
-                  "role": "typed sequence start",
+                  "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                   "size": null,
                   "syntax": "Start=0",
                   "value_style": null
@@ -43329,7 +43330,7 @@
                   "field": "Direction",
                   "optional": true,
                   "ordinal": 1,
-                  "role": "ascending or descending direction",
+                  "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                   "size": null,
                   "syntax": "Direction=ascending",
                   "value_style": null
@@ -43497,7 +43498,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "aaf30fddb4c68608c3779b906c1c0a4988238f5f53ef9399fb79510dd6b11f98",
+                "fold_signature_sha256": "f36e3b8dc93a5d3bf0f99e484c5faabf69f0c885ce339b5606b74e40b896b952",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -43549,7 +43550,7 @@
                     "field": "Start",
                     "optional": true,
                     "ordinal": 0,
-                    "role": "typed sequence start",
+                    "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                     "size": null,
                     "syntax": "Start=0",
                     "value_style": null
@@ -43563,7 +43564,7 @@
                     "field": "Direction",
                     "optional": true,
                     "ordinal": 1,
-                    "role": "ascending or descending direction",
+                    "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                     "size": null,
                     "syntax": "Direction=ascending",
                     "value_style": null
@@ -43584,7 +43585,7 @@
                   "field": "Start",
                   "optional": true,
                   "ordinal": 0,
-                  "role": "typed sequence start",
+                  "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                   "size": null,
                   "syntax": "Start=0",
                   "value_style": null
@@ -43598,7 +43599,7 @@
                   "field": "Direction",
                   "optional": true,
                   "ordinal": 1,
-                  "role": "ascending or descending direction",
+                  "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                   "size": null,
                   "syntax": "Direction=ascending",
                   "value_style": null
@@ -43814,7 +43815,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "9615cd2a9628100259d13acf02700e87436f8de541f2e8bc3d16e12f4321cfcf",
+                "fold_signature_sha256": "39d75ad260f466b1be21730cf889b79d7e3e5cbf6ff0352608a10433d5bf995d",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -43866,7 +43867,7 @@
                     "field": "Start",
                     "optional": true,
                     "ordinal": 0,
-                    "role": "typed sequence start",
+                    "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                     "size": null,
                     "syntax": "Start=0",
                     "value_style": null
@@ -43880,7 +43881,7 @@
                     "field": "Direction",
                     "optional": true,
                     "ordinal": 1,
-                    "role": "ascending or descending direction",
+                    "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                     "size": null,
                     "syntax": "Direction=ascending",
                     "value_style": null
@@ -43901,7 +43902,7 @@
                   "field": "Start",
                   "optional": true,
                   "ordinal": 0,
-                  "role": "typed sequence start",
+                  "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                   "size": null,
                   "syntax": "Start=0",
                   "value_style": null
@@ -43915,7 +43916,7 @@
                   "field": "Direction",
                   "optional": true,
                   "ordinal": 1,
-                  "role": "ascending or descending direction",
+                  "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                   "size": null,
                   "syntax": "Direction=ascending",
                   "value_style": null
@@ -44131,7 +44132,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "04cbe4b44ef8854a86a874387d5f0d7b806ac8767d3232d37c147903b5e83215",
+                "fold_signature_sha256": "832aba99527ae6226d806ccdaed20b94ec60a06732d577a5c148d2de23afd7f1",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -44183,7 +44184,7 @@
                     "field": "Start",
                     "optional": true,
                     "ordinal": 0,
-                    "role": "typed sequence start",
+                    "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                     "size": null,
                     "syntax": "Start=0",
                     "value_style": null
@@ -44197,7 +44198,7 @@
                     "field": "Direction",
                     "optional": true,
                     "ordinal": 1,
-                    "role": "ascending or descending direction",
+                    "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                     "size": null,
                     "syntax": "Direction=ascending",
                     "value_style": null
@@ -44218,7 +44219,7 @@
                   "field": "Start",
                   "optional": true,
                   "ordinal": 0,
-                  "role": "typed sequence start",
+                  "role": "typed sequence start from RowMajor/CUBE RegSrc0",
                   "size": null,
                   "syntax": "Start=0",
                   "value_style": null
@@ -44232,7 +44233,7 @@
                   "field": "Direction",
                   "optional": true,
                   "ordinal": 1,
-                  "role": "ascending or descending direction",
+                  "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
                   "size": null,
                   "syntax": "Direction=ascending",
                   "value_style": null
@@ -44605,7 +44606,7 @@
               "field": "Start",
               "optional": true,
               "ordinal": 0,
-              "role": "typed sequence start",
+              "role": "typed sequence start from RowMajor/CUBE RegSrc0",
               "size": null,
               "syntax": "Start=0",
               "value_style": null
@@ -44619,7 +44620,7 @@
               "field": "Direction",
               "optional": true,
               "ordinal": 1,
-              "role": "ascending or descending direction",
+              "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
               "size": null,
               "syntax": "Direction=ascending",
               "value_style": null
@@ -44632,11 +44633,12 @@
       "mnemonic": "TCI",
       "physical_bundle": [
         "BSTART.SFU TCI, S32|S16|U32|U16",
-        "B.DATR all-zero (optional)",
+        "B.DATR RowMajor all-zero (optional), or explicit CUBE_M32/CUBE_M16 tuple",
         "B.DIM LB0=ValidCol",
-        "B.DIM LB1=ValidRow (optional, default 1; when present must equal 1)",
-        "B.DIM LB2=Col (optional, default ValidCol)",
-        "B.IOR Start, Direction (optional; omission selects 0 and ascending)",
+        "B.DIM LB1=ValidRow (RowMajor optional, default 1; when present must equal 1; CUBE required positive)",
+        "B.DIM LB2=Col (RowMajor optional, default ValidCol; CUBE optional; omitted aligns ValidCol to the cell-column quantum)",
+        "RowMajor: B.IOR Start, Direction (optional; omission selects 0 and ascending)",
+        "CUBE: exactly one B.IOR StartGPR, Step2DGPR, zero, ->zero",
         "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
         "BSTOP"
       ],
@@ -44654,7 +44656,10 @@
         ],
         "command_mnemonic": "BSTART.TEPL",
         "datr_contract": {
-          "allowed_nonzero_fields": [],
+          "allowed_nonzero_fields": [
+            "DataType",
+            "Layout"
+          ],
           "pad_union": "must-zero"
         },
         "engine": "SFU",
@@ -44672,11 +44677,11 @@
           },
           {
             "field": "scalar0",
-            "role": "typed sequence start"
+            "role": "typed sequence start from RegSrc0"
           },
           {
             "field": "flag0",
-            "role": "ascending or descending direction"
+            "role": "RowMajor direction from RegSrc1 or CUBE packed Step2D from RegSrc1"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -44690,11 +44695,11 @@
         },
         {
           "field": "scalar0",
-          "role": "typed sequence start"
+          "role": "typed sequence start from RowMajor/CUBE RegSrc0"
         },
         {
           "field": "flag0",
-          "role": "ascending or descending direction"
+          "role": "RowMajor direction or CUBE packed Step2D from RegSrc1"
         }
       ],
       "source": "asl/tile/irregular-and-complex/initialization/TCI.asl",
@@ -44708,7 +44713,7 @@
           "field": "Start",
           "optional": true,
           "ordinal": 0,
-          "role": "typed sequence start",
+          "role": "typed sequence start from RowMajor/CUBE RegSrc0",
           "size": null,
           "syntax": "Start=0",
           "value_style": null
@@ -44722,7 +44727,7 @@
           "field": "Direction",
           "optional": true,
           "ordinal": 1,
-          "role": "ascending or descending direction",
+          "role": "RowMajor direction or CUBE packed Step2D from RegSrc1",
           "size": null,
           "syntax": "Direction=ascending",
           "value_style": null
