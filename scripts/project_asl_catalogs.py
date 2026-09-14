@@ -23,6 +23,7 @@ CATALOG_PATHS = (
     Path("spec/catalog/command-forms.json"),
     Path("spec/catalog/tile-operations.json"),
     Path("spec/catalog/extension-encoding-reservations.json"),
+    Path("spec/catalog/system-registers.json"),
 )
 
 SURFACE_CATALOG = {
@@ -32,7 +33,7 @@ SURFACE_CATALOG = {
 }
 
 PROJECTION_CATALOGS = frozenset(
-    (*SURFACE_CATALOG.values(), "extension-encoding-reservations")
+    (*SURFACE_CATALOG.values(), "extension-encoding-reservations", "system-registers")
 )
 
 
@@ -244,11 +245,29 @@ def project_catalogs(
         "schema_version": reservation_envelope["schema_version"],
     }
 
+    sysreg_envelope = envelopes["system-registers"]
+    sysreg_registers = sysreg_envelope["registers"]
+    sysreg_traps = sysreg_envelope["trap_numbers"]
+    if not isinstance(sysreg_registers, list) or not isinstance(sysreg_traps, list):
+        raise ValueError("system-registers registers/trap_numbers must be arrays")
+    system_registers = {
+        "system_register_address_bits": sysreg_envelope["system_register_address_bits"],
+        "system_register_file_index_bits": sysreg_envelope["system_register_file_index_bits"],
+        "isa": sysreg_envelope["isa"],
+        "register_definition_count": len(sysreg_registers),
+        "registers": sysreg_registers,
+        "behavior_classes": sysreg_envelope["behavior_classes"],
+        "schema_version": sysreg_envelope["schema_version"],
+        "trap_count": len(sysreg_traps),
+        "trap_numbers": sysreg_traps,
+    }
+
     return {
         CATALOG_PATHS[0]: _render(scalar),
         CATALOG_PATHS[1]: _render(command),
         CATALOG_PATHS[2]: _render(tile),
         CATALOG_PATHS[3]: _render(vector_reservations),
+        CATALOG_PATHS[4]: _render(system_registers),
     }
 
 
