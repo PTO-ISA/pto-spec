@@ -5425,7 +5425,9 @@
         "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
         "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
-        "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TSTORE"
       ],
       "amendments": [
         {
@@ -5534,6 +5536,22 @@
           "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
           "date": "2026-09-14",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/288"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-DATR-FIELDS-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TLOAD",
+            "PTO-TILE-TSTORE",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+          "date": "2026-09-14",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/284"
         }
       ],
       "approvers": [

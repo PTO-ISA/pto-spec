@@ -1999,11 +1999,18 @@
         "PTO-AVS-TILE-TESTMATRIXNUMERICCONTRACTLEGALITY-BOUNDARY-001",
         "PTO-AVS-TILE-TESTMATRIXPHYSICALACCUMULATORCLASSES-EXECUTION-001",
         "PTO-AVS-TILE-TEXPANDS-CUBE-LAYOUT-002",
+        "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003",
         "PTO-AVS-TILE-TLOAD-CUBE-001",
         "PTO-AVS-TILE-TLOAD-CUBE-M16-B4-005",
         "PTO-AVS-TILE-TLOAD-CUBE-PAD-004",
         "PTO-AVS-TILE-TLOAD-CUBE-WIDTHS-003",
-        "PTO-AVS-TILE-TSTORE-CUBE-002"
+        "PTO-AVS-TILE-TLOAD-DIRECT-001",
+        "PTO-AVS-TILE-TLOAD-SHARED-PARENT-002",
+        "PTO-AVS-TILE-TLOAD-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-CUBE-002",
+        "PTO-AVS-TILE-TSTORE-DIRECT-001",
+        "PTO-AVS-TILE-TSTORE-PRECISE-001",
+        "PTO-AVS-TILE-TSTORE-STATIC-001"
       ],
       "unit_ids": [
         "PTO-ARCH-DISPATCH-TOP-LEVEL",
@@ -2050,7 +2057,9 @@
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
-        "PTO-TILE-TCVT"
+        "PTO-TILE-TCVT",
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TSTORE"
       ],
       "validated_commit": null
     },
@@ -24241,7 +24250,7 @@
   "sources": {
     "adr_records": {
       "count": 111,
-      "sha256": "6b68833a258986b3250fa88ca979e9f805989d6b43112bb702ee5ab932e63f53"
+      "sha256": "af008a3d3a26065855b1dda79a548a26979bf5f8b1b3c0ce23cf8937713c885a"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -24249,7 +24258,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "fd894b2b86b45ee60db6a034057b640f457c3dc820e978c25b1d34b3c9b403ed",
+      "sha256": "13e8b6526d1443c559542c47b43b3334dd21ff19fa95d23320a76b7828bc8df1",
       "test_count": 3927,
       "unit_count": 893
     }

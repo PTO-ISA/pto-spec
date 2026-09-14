@@ -91,7 +91,9 @@
     "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
     "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
     "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
-    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+    "PTO-TILE-TLOAD",
+    "PTO-TILE-TSTORE"
   ],
   "resolves": [],
   "supersedes": [
@@ -226,6 +228,22 @@
         "PTO-BLOCK-FRET-RA",
         "PTO-BLOCK-FRET-STK",
         "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    },
+    {
+      "date": "2026-09-14",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/284",
+      "affected_ndf": [
+        "PTO-B-DATR-FIELDS-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
       ]
     }
   ]
@@ -458,6 +476,15 @@ byte count is the encoded value shifted left by three, so the encoding supplies
 only multiples of eight and a field's declared `width` always equals the sum of
 its piece widths. Recorded for issue
 [#288](https://github.com/PTO-ISA/pto-spec/issues/288).
+
+## Decision 020: ordinary TLOAD/TSTORE consume the pad-value role
+
+Ordinary and Shared `TLOAD`/`TSTORE` declare `PadValueOrByteId` in their
+operation contract as a pad-value field, so per Decision 007 they consume the
+pad-value role and MAY accept a non-zero encoded value (including `Null`).
+Legality for these operations is decided solely by the contract-generated
+field applicability table; no additional zero-only rule applies. Recorded for
+issue [#284](https://github.com/PTO-ISA/pto-spec/issues/284).
 
 ## Lifecycle corrections
 
