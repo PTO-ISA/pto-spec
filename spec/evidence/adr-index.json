@@ -2369,6 +2369,7 @@
     {
       "accepted": "2026-09-09",
       "affected_ndf": [
+        "PTO-B-HINT-LIFECYCLE-001",
         "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
         "PTO-PROFILE-LINX-PEID-SSR-001",
         "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
@@ -2383,11 +2384,30 @@
         "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
         "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
         "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-B-HINT",
         "PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
         "PTO-SCALAR-MODEL-AGU-MEMORY",
         "PTO-SCALAR-MODEL-SYS-REGISTERS",
         "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-HINT-LIFECYCLE-001",
+            "PTO-PROFILE-LINX-RUNTIME-COMPAT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+          "date": "2026-09-15",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/286"
+        }
       ],
       "approvers": [
         "zhoubot"

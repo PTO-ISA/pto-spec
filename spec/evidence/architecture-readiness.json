@@ -12094,6 +12094,7 @@
       ],
       "blockers": [],
       "ndf_ids": [
+        "PTO-B-HINT-LIFECYCLE-001",
         "PTO-PROFILE-HOST-MEMORY-001",
         "PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001",
         "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
@@ -12130,6 +12131,13 @@
         "PTO-AVS-ARCH-REFERENCE-PROFILE-MATRIX-015",
         "PTO-AVS-ARCH-TESTTILEALLOCATIONSTATE-STATE-TRANSITION-001",
         "PTO-AVS-ARCH-TILE-SIZECODE-MAP-002",
+        "PTO-AVS-BLOCK-B-HINT-DECODE-001",
+        "PTO-AVS-BLOCK-B-HINT-DUPLICATE-001",
+        "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
+        "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
         "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
         "PTO-AVS-BLOCK-CMD-HEADER-001",
         "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
@@ -12159,6 +12167,7 @@
         "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
         "PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT",
         "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-BLOCK-B-HINT",
         "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
         "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
         "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
@@ -24232,7 +24241,7 @@
   "sources": {
     "adr_records": {
       "count": 111,
-      "sha256": "aac3126f43a76fe997fee66d97ba6e7cf98b63bcba79b180654f342b0f52aa59"
+      "sha256": "6b68833a258986b3250fa88ca979e9f805989d6b43112bb702ee5ab932e63f53"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -24240,7 +24249,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f35f832dcc7c260f57583b4bf530336a20ca50667293f03edff6a597211df0a1",
+      "sha256": "fd894b2b86b45ee60db6a034057b640f457c3dc820e978c25b1d34b3c9b403ed",
       "test_count": 3927,
       "unit_count": 893
     }

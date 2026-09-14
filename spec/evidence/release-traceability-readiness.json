@@ -926,6 +926,7 @@
         "ADR-BLOCK-0012",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
+        "ADR-GOV-0011",
         "ADR-TILE-0004"
       ],
       "tests": [
@@ -18275,9 +18276,9 @@
     "asl/block/lifecycle/MCOPY.asl": "db49373a481ffb30922c7a852a3f01e4bdb0442c39292fe8d48375f55cb520b9",
     "asl/block/lifecycle/MSET.asl": "94242606a278bdfa0ebc148e452dc2b5bc5fe2591b1964c8c37ed510dec7ac62",
     "asl/block/model/commit/effects.asl": "82d2d3a6d38bbdaec075181aae86cbffb5f9bc2c3852d764bad7f0497d40d7a5",
-    "asl/block/model/commit/validation.asl": "f86d9d1b211af16f485c07ddce90087119bea7292562ae9f2e85e5461616f8cb",
+    "asl/block/model/commit/validation.asl": "162c2df37208d9e2976a2ed56c59014101fdea66130cfb52f00777bcd00d635f",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "a617965d05dd3f4fd397ee00379d41d840b7d01fadde64434769ba8b5cf54b02",
-    "asl/block/model/dispatch/commands.asl": "1914392282939e9f0535b55a931954fe0c44b9b386c0144788cf8db3385ab1f9",
+    "asl/block/model/dispatch/commands.asl": "60ed5f3c9ef8adb6b516920b6502ce5c1cbef7b352ffa1e934fb9a40d23764a9",
     "asl/block/model/dispatch/comparison-schema.asl": "46b88915de8298327f7f7ff609bee7a561e70b7d5875ec5f792058dad29054db",
     "asl/block/model/dispatch/cube-accumulator-routing.asl": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b",
     "asl/block/model/dispatch/cube-destination.asl": "a674b9f48aa991947d2abe09575b9d3c14147fb7232da6d417948ed03455cc91",
@@ -19168,9 +19169,9 @@
     "docs/block/lifecycle/MCOPY.md": "04780dd1cb12e9df66f9496e39eaafeb53b55b9520485731cfcdba95d50c8dda",
     "docs/block/lifecycle/MSET.md": "f719c51552a8c1616e4f909dfca16da56282b5932642441bdfaa48d0b629d185",
     "docs/block/model/commit/effects.md": "219534b49b786dc883ae1cb37bcbaf18a6fbe39b2f7cad1229b72a9e4267dda4",
-    "docs/block/model/commit/validation.md": "8e951e77d2e0cb6f4de00e67cde54a6408fe47e5c98335b5167b4dce1886db6a",
+    "docs/block/model/commit/validation.md": "fac9c36f842292aca7fe11c9cdb61131b21ec0cdcc82dc28c0566bead713cf8a",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "f6efe8d76e6b2119f552a4d76e12b733329a0f3e9c97f1770bf173a60f3d3061",
-    "docs/block/model/dispatch/commands.md": "2c9f83ea1970037c787d8609dc051873b0327c38838b6e7bffb4e8a34c98d8d8",
+    "docs/block/model/dispatch/commands.md": "3f2255f5aa6fd06bba55961d5729affc80076852c1b3e9683ae4835e798b014c",
     "docs/block/model/dispatch/comparison-schema.md": "ed3c2536c79f40466b3b2500d36a76bbe3e779832dc146a7a09860ba22e9e221",
     "docs/block/model/dispatch/cube-accumulator-routing.md": "66e2db9aa55ed4b0059f6b49770143d986d0fc629d25da106094cf4b83b6f3cf",
     "docs/block/model/dispatch/cube-destination.md": "d763a6c2e0fe191fa15f3e8cb81006894da5c8e4c42c7ea0580e65c6c74776e3",
@@ -19909,7 +19910,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "d44161e5546ee443dcc4036084787ae6f0f8b54525232d379717a818eca3c8ff",
+    "spec/evidence/adr-index.json": "7c5b17aa7bc3a447296da4055130852f35ff43cc12d5b699dd1fa55e2a582ab6",
     "spec/evidence/instruction-contract-closure.json": "14143f8044e57bd4630a4c9356ce33e2e89ab9df7fe316a112f86871c3acb246",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -67334,6 +67335,7 @@
         "ADR-BLOCK-0012",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
+        "ADR-GOV-0011",
         "ADR-TILE-0004"
       ],
       "semantic_tests": [
