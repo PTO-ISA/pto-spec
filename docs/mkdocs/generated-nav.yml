@@ -110,7 +110,6 @@ nav:
           - C.BSTART: block/encoding/C.BSTART.md
           - XB: block/encoding/XB.md
       - Execution:
-          - BSTART.CALL: block/execution/BSTART.CALL.md
           - BSTART.FP: block/execution/BSTART.FP.md
           - BSTART.GMOV: block/execution/BSTART.GMOV.md
           - BSTART.ICALL: block/execution/BSTART.ICALL.md

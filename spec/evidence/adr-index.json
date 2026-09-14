@@ -604,7 +604,6 @@
         "PTO-BLOCK-ESAVE-RESERVED-001",
         "PTO-BLOCK-MSET-FILL-001",
         "PTO-BLOCK-XB-RESERVED-001",
-        "PTO-BSTART-CALL-DECISION-BINDING-001",
         "PTO-BSTART-DECISION-BINDING-001",
         "PTO-BSTART-FP-CONTROL-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",
@@ -769,7 +768,6 @@
         "PTO-BLOCK-B-IOS",
         "PTO-BLOCK-B-IOT",
         "PTO-BLOCK-BSTART",
-        "PTO-BLOCK-BSTART-CALL",
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-GMOV",
         "PTO-BLOCK-BSTART-ICALL",
@@ -991,7 +989,6 @@
         "PTO-BLOCK-MSET-FILL-001",
         "PTO-BLOCK-XB-RESERVED-001",
         "PTO-BSE-DECISION-BINDING-001",
-        "PTO-BSTART-CALL-DECISION-BINDING-001",
         "PTO-BSTART-DECISION-BINDING-001",
         "PTO-BSTART-FP-CONTROL-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",
@@ -1322,7 +1319,6 @@
         "PTO-BLOCK-B-IOS",
         "PTO-BLOCK-B-IOT",
         "PTO-BLOCK-BSTART",
-        "PTO-BLOCK-BSTART-CALL",
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-GMOV",
         "PTO-BLOCK-BSTART-ICALL",
@@ -4744,7 +4740,6 @@
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-BARG-CONTINUATION-001",
-        "PTO-BSTART-CALL-DECISION-BINDING-001",
         "PTO-BSTART-FP-CONTROL-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",
         "PTO-BSTART-ICALL-DECISION-BINDING-001",
@@ -4780,7 +4775,6 @@
       ],
       "affected_units": [
         "PTO-BLOCK-B-IOR",
-        "PTO-BLOCK-BSTART-CALL",
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-GMOV",
         "PTO-BLOCK-BSTART-ICALL",
@@ -5664,7 +5658,6 @@
       "accepted": "2026-08-21",
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
-        "PTO-BSTART-CALL-DECISION-BINDING-001",
         "PTO-BSTART-DECISION-BINDING-001",
         "PTO-BSTART-FP-CONTROL-001",
         "PTO-BSTART-ICALL-DECISION-BINDING-001",
@@ -5681,7 +5674,6 @@
       "affected_units": [
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
         "PTO-BLOCK-BSTART",
-        "PTO-BLOCK-BSTART-CALL",
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-ICALL",
         "PTO-BLOCK-BSTART-STD",
@@ -5692,7 +5684,27 @@
         "PTO-BLOCK-C-BSTART-STD",
         "PTO-BLOCK-C-BSTART-SYS",
         "PTO-BLOCK-C-BSTOP",
-        "PTO-BLOCK-L-BSTOP"
+        "PTO-BLOCK-L-BSTOP",
+        "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-BSTART-FP-CONTROL-001",
+            "PTO-BSTART-STD-CONTROL-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-BSTART-FP",
+            "PTO-BLOCK-BSTART-STD",
+            "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+          "date": "2026-09-14",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/285"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -7265,7 +7277,6 @@
         "PTO-BLOCK-ESAVE-RESERVED-001",
         "PTO-BLOCK-MSET-FILL-001",
         "PTO-BLOCK-XB-RESERVED-001",
-        "PTO-BSTART-CALL-DECISION-BINDING-001",
         "PTO-BSTART-DECISION-BINDING-001",
         "PTO-BSTART-FP-CONTROL-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",
@@ -7327,7 +7338,6 @@
         "PTO-BLOCK-B-IOS",
         "PTO-BLOCK-B-IOT",
         "PTO-BLOCK-BSTART",
-        "PTO-BLOCK-BSTART-CALL",
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-GMOV",
         "PTO-BLOCK-BSTART-ICALL",

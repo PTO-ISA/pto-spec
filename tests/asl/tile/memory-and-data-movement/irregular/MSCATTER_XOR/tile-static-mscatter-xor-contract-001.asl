@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: memory-and-data-movement/irregular
-    // block: BSTART.MSCATTER.XOR DataType | B.IOT IndexTile, ValueTile, mask=PE_MASK, <last> | B.IOR BaseGPR, zero, zero, ->zero | BSTOP
+    // block: BSTART.MSCATTER.XOR DataType | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1) | B.DIM LB2=ValidCol | B.IOT IndexTile, ValueTile, mask=PE_MASK, <last> | B.IOR BaseGPR, zero, zero, ->zero | BSTOP
     assert DecodeTileOperation(TileDecode_TLSU, '000000011010') == 115;
     assert TileOperationOfIndex(115) == TileOperation_MSCATTER_XOR;
     assert TileHandlerOfIndex(115) == TileHandler_GM_RED_VALUE;

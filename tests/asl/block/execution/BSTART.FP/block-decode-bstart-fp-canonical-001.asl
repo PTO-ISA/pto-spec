@@ -27,5 +27,10 @@ begin
     assert CommandHandlerOfForm(21) == CommandHandler_ExecuteBundleStart;
     assert InstructionContractMatches_BSTART_FP(CommandOperationOfForm(21));
     assert InstructionContractHandler_BSTART_FP() == CommandHandler_ExecuteBundleStart;
+    assert DecodeCommandForm('0000000000000000000000000000000000000000000000000100000100000001', 32) == 15;
+    assert CommandOperationOfForm(15) == CommandOperation_bstart_fp_32_dd7bc8dd694c;
+    assert CommandHandlerOfForm(15) == CommandHandler_ExecuteBundleStart;
+    assert InstructionContractMatches_BSTART_FP(CommandOperationOfForm(15));
+    assert InstructionContractHandler_BSTART_FP() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

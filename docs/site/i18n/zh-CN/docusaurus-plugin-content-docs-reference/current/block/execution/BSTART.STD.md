@@ -79,6 +79,7 @@ BSTART.STD DIRECT, <label>
 | bstart_std_32_816dfa76cc4a | L32 | 32 | 0x00007001 / 0xffffffff | [] |
 | bstart_std_32_986b7ee2cf6a | L32 | 32 | 0x00005001 / 0xffffffff | [] |
 | bstart_std_32_c1de85e06878 | L32 | 32 | 0x00002001 / 0x00007fff | [] |
+| bstart_std_32_b05390d367cf | L32 | 32 | 0x00004001 / 0x00007fff | [] |
 
 ### Fields
 
@@ -87,6 +88,7 @@ BSTART.STD DIRECT, <label>
 | bstart_std_32_1ef99c4cedcb | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 | bstart_std_32_441ad677fffe | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 | bstart_std_32_c1de85e06878 | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
+| bstart_std_32_b05390d367cf | simm17 | 17 | signed | [{"instruction_lsb":15,"value_lsb":0,"width":17}] |
 
 ## Encoding class
 
@@ -102,6 +104,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | bstart_std_32_1ef99c4cedcb | simm17 | 17 | 0–131071 | none | none | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
 | bstart_std_32_441ad677fffe | simm17 | 17 | 0 | none | 1–131071 | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
 | bstart_std_32_c1de85e06878 | simm17 | 17 | 0–131071 | none | none | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
+| bstart_std_32_b05390d367cf | simm17 | 17 | 0–131071 | none | none | 17-bit signed bundle target displacement | Encoded zero supplies a zero displacement or zero immediate value. |
 
 - `bstart_std_32_441ad677fffe.simm17` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -121,6 +124,7 @@ begin
            (operation == CommandOperation_bstart_std_32_441ad677fffe) ||
            (operation == CommandOperation_bstart_std_32_816dfa76cc4a) ||
            (operation == CommandOperation_bstart_std_32_986b7ee2cf6a) ||
+           (operation == CommandOperation_bstart_std_32_b05390d367cf) ||
            (operation == CommandOperation_bstart_std_32_c1de85e06878);
 end;
 ```
@@ -162,9 +166,9 @@ end;
 
 ## Legality
 
-- Exactly FALL, DIRECT, COND, IND, and RET are accepted.
+- Exactly FALL, DIRECT, COND, CALL, IND, and RET are accepted.
 - The FALL form accepts only simm17=0; every nonzero FALL payload is extension-reserved.
-- Bare CALL and ICALL forms are deleted.
+- Bare ICALL forms are deleted.
 
 ## State effects
 
@@ -183,7 +187,7 @@ end;
 
 ## Exceptions
 
-- A nonzero FALL simm17, deleted bare CALL/ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.
+- A nonzero FALL simm17, deleted bare ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.
 - IND without an active retiring Standard or Floating BARG raises Fault_BundleControl before effects.
 - If predecessor commit fails, the old block and continuation remain authoritative and no standard block is installed.
 

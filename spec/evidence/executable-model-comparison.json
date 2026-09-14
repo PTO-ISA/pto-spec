@@ -9754,8 +9754,8 @@
       ],
       "independent_status": "executable-subset",
       "index": 15,
-      "mnemonic": "BSTART.CALL",
-      "pto_command_disposition": "executed",
+      "mnemonic": "BSTART.FP",
+      "pto_command_disposition": "unknown",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
@@ -9763,7 +9763,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_call_32_9404418d1ae5",
+      "stable_id": "bstart_fp_32_dd7bc8dd694c",
       "surface": "command"
     },
     {
@@ -11668,6 +11668,30 @@
       ],
       "semantic_handler": "ExecuteBundleStart",
       "stable_id": "bstart_timg2col_32_7a0f8d6c3e21",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "spec/evidence/release-traceability-readiness.json",
+        "docs/status/decisions/ADR-TILE-0004-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "executable-subset",
+      "index": 95,
+      "mnemonic": "BSTART.STD",
+      "pto_command_disposition": "unknown",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_std_32_b05390d367cf",
       "surface": "command"
     },
     {
@@ -14782,7 +14806,7 @@
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 95,
+    "command_forms": 96,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 77,
@@ -14790,7 +14814,7 @@
     },
     "direct_tile_operations": 117,
     "scalar_forms": 466,
-    "total_rows": 678
+    "total_rows": 679
   },
   "snapshot": {
     "content_hashes": {
@@ -14909,20 +14933,20 @@
   "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
-      "comparable-match": 517,
+      "comparable-match": 518,
       "divergence": 123,
       "non-comparable": 38
     },
     "independent_status_counts": {
       "decode-only": 17,
-      "executable-subset": 518,
+      "executable-subset": 519,
       "header-manifest": 21,
       "missing": 51,
       "selector-manifest": 71
     },
-    "row_count": 678,
+    "row_count": 679,
     "surface_counts": {
-      "command": 95,
+      "command": 96,
       "direct-tile": 117,
       "scalar": 466
     },

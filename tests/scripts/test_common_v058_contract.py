@@ -259,13 +259,9 @@ class CommonV058ContractTest(unittest.TestCase):
             record.mnemonic: record for record in load_instruction_index(ROOT)
         }
 
+        self.assertNotIn("BSTART.CALL", records)
+
         expectations = {
-            "BSTART.CALL": (
-                "Atomically",
-                "direct-call BARG",
-                "independent return target",
-                "to ra",
-            ),
             "BSTART.ICALL": (
                 "Atomically",
                 "BARG.BPCN",
