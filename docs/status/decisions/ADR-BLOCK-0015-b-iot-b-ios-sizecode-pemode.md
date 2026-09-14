@@ -85,7 +85,23 @@
   "legacy_ids": [
     "ADR-0096"
   ],
-  "release_boundary": true
+  "release_boundary": true,
+  "amendments": [
+    {
+      "date": "2026-09-14",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/289",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOT"
+      ]
+    }
+  ]
 }
 ---
 
@@ -138,6 +154,16 @@ Core allocation remains `popcount(decoded_mask) * per-PE capacity`, with a
 256 KiB aggregate bound. Fixed PE identities, mask immutability, ordering,
 defaults, mixed Local/Shared mask equality, aliasing, rollback, and trap
 contracts remain unchanged.
+
+## Amendment 2026-09-14: source-only B.IOT forms fix bits 7..8 to zero
+
+The two source-only `B.IOT` forms previously left instruction bits 7..8
+neither fixed by the form mask nor assigned to any field. Those bits are the
+2-bit `DstTile` field in the destination forms. The source-only forms now fix
+bits 7..8 to zero through the form mask; a non-zero value is reserved and
+rejects with `Fault_IllegalInstruction`, consistent with the family's reserved
+wording. Recorded for issue
+[#289](https://github.com/PTO-ISA/pto-spec/issues/289).
 
 ## Consequences
 
