@@ -83,7 +83,7 @@ FEXIT [RegDst0 ~ RegDstn], sp!, uimm
 | --- | --- | ---: | --- | --- |
 | fexit_32_37b663f2a34d | DstBegin | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | fexit_32_37b663f2a34d | DstEnd | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
-| fexit_32_37b663f2a34d | uimm | 15 | unsigned | [{"instruction_lsb":25,"value_lsb":3,"width":7},{"instruction_lsb":7,"value_lsb":10,"width":5}] |
+| fexit_32_37b663f2a34d | uimm | 12 | unsigned | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
 
 ## Encoding class
 
@@ -98,7 +98,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | fexit_32_37b663f2a34d | DstBegin | 5 | 2–23 | none | 0–1, 24–31 | first register in the inclusive R2..R23 ring range | Encoded zero is outside the callee-save ring and is reserved. |
 | fexit_32_37b663f2a34d | DstEnd | 5 | 2–23 | none | 0–1, 24–31 | last register in the inclusive R2..R23 ring range | Encoded zero is outside the callee-save ring and is reserved. |
-| fexit_32_37b663f2a34d | uimm | 15 | 0–32767 | none | none | frame byte count, encoded in multiples of eight | Encoded zero is a real zero-byte frame size and is illegal for every nonempty range. |
+| fexit_32_37b663f2a34d | uimm | 12 | 0–4095 | none | none | frame byte count, encoded in multiples of eight | Encoded zero is a real zero-byte frame size and is illegal for every nonempty range. |
 
 - `fexit_32_37b663f2a34d.DstBegin` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `fexit_32_37b663f2a34d.DstEnd` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -155,7 +155,7 @@ end;
 ## Defaults and encoded zero
 
 - The inclusive register range is the ring R2..R23. Singleton, full-ring, and wraparound ranges are assigned.
-- uimm is always present and represents a byte count in multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.
+- uimm is always present and encodes the frame byte count scaled by eight: the semantic byte count is the encoded value shifted left by three, so the encoding supplies only multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.
 
 ## Legality
 

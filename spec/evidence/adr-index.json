@@ -5378,6 +5378,7 @@
         "PTO-BLOCK-FRET-RA",
         "PTO-BLOCK-FRET-STK",
         "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
         "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
         "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
@@ -5488,6 +5489,31 @@
           "baseline": "ab6d11c7b7eeb59c84ff116d5fed201276144252",
           "date": "2026-09-12",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/274"
+        },
+        {
+          "affected_ndf": [
+            "PTO-FENTRY-RESTARTABLE-FRAME-001",
+            "PTO-FEXIT-RESTARTABLE-FRAME-001",
+            "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+            "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+            "PTO-INST-BLOCK-FENTRY",
+            "PTO-INST-BLOCK-FEXIT",
+            "PTO-INST-BLOCK-FRET-RA",
+            "PTO-INST-BLOCK-FRET-STK"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-FENTRY",
+            "PTO-BLOCK-FEXIT",
+            "PTO-BLOCK-FRET-RA",
+            "PTO-BLOCK-FRET-STK",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+          "date": "2026-09-14",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/288"
         }
       ],
       "approvers": [
