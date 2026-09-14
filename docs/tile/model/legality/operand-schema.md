@@ -371,17 +371,6 @@ begin
            tile.valid_columns >= 1 &&
            tile.columns >= tile.valid_columns;
 end;
-readonly func TileOperandsLegal_TCICube(destination: TileIndex, start: Word, step2d: Word) => boolean
-begin
-    let tile = _Tiles[[destination]];
-    let row_step = SInt(step2d[63:32]); let column_step = SInt(step2d[31:0]);
-    return TileCubeDescriptorLegal(tile) && TileTCIDataTypeSupported(tile.data_type) &&
-           tile.storage_kind == TileStorage_Numeric && tile.location == TileLocation_Matrix &&
-           (tile.layout == TileLayout_CUBE_M16 || tile.layout == TileLayout_CUBE_M32) &&
-           tile.valid_rows >= 1 && tile.valid_columns >= 1 &&
-           (row_step == -1 || row_step == 0 || row_step == 1) &&
-           (column_step == -1 || column_step == 0 || column_step == 1);
-end;
 readonly func TileOperandsLegal_TTRI(
     destination: TileIndex, upper: boolean,
     diagonal: integer {-65535..65535}) => boolean
@@ -496,19 +485,30 @@ begin
     return source_tile.layout == CurrentBundleTileSourceLayout() &&
            destination_tile.layout == CurrentBundleTileLayout();
 end;
-readonly func TileOperandsLegal_TRESHAPE(destination: TileIndex, source: TileIndex) => boolean
+readonly func TileOperandsLegal_TRESHAPE(destination: TileIndex, source: TileIndex) => boolean begin
+    return TileDescriptorLegal(destination) && TileDescriptorLegal(source) &&
+           _Tiles[[destination]].rows * _Tiles[[destination]].columns == _Tiles[[source]].rows * _Tiles[[source]].columns &&
+           _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns == _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
+           _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
+end;
+readonly func TileOperandsLegal_TINTERLEAVE(destination: TileIndex, source_even: TileIndex, source_odd: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(destination) && TileDescriptorLegal(source) && _Tiles[[destination]].rows * _Tiles[[destination]].columns == _Tiles[[source]].rows * _Tiles[[source]].columns && _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns == _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns && _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
+    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source_even) || !TileDescriptorLegal(source_odd) then return FALSE; end;
+    let extent: integer = _Tiles[[source_even]].valid_rows * _Tiles[[source_even]].valid_columns;
+    return extent <= PTO_MODEL_TILE_ELEMENTS DIV 2 && extent == _Tiles[[source_odd]].valid_rows * _Tiles[[source_odd]].valid_columns &&
+           _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns == extent * 2 &&
+           _Tiles[[destination]].data_type == _Tiles[[source_even]].data_type && _Tiles[[destination]].data_type == _Tiles[[source_odd]].data_type &&
+           _Tiles[[destination]].layout == _Tiles[[source_even]].layout && _Tiles[[destination]].layout == _Tiles[[source_odd]].layout;
 end;
-readonly func TileOperandsLegal_TINTERLEAVE(destination: TileIndex, source_even: TileIndex, source_odd: TileIndex) => boolean begin
-    if !TileDescriptorLegal(destination) || !TileDescriptorLegal(source_even) || !TileDescriptorLegal(source_odd) then return FALSE; end; let extent: integer = _Tiles[[source_even]].valid_rows * _Tiles[[source_even]].valid_columns;
-    return extent <= PTO_MODEL_TILE_ELEMENTS DIV 2 && extent == _Tiles[[source_odd]].valid_rows * _Tiles[[source_odd]].valid_columns && _Tiles[[destination]].valid_rows * _Tiles[[destination]].valid_columns == extent * 2 && _Tiles[[destination]].data_type == _Tiles[[source_even]].data_type && _Tiles[[destination]].data_type == _Tiles[[source_odd]].data_type && _Tiles[[destination]].layout == _Tiles[[source_even]].layout && _Tiles[[destination]].layout == _Tiles[[source_odd]].layout;
-end;
-readonly func TileOperandsLegal_TDEINTERLEAVE(destination_even: TileIndex, destination_odd: TileIndex, source: TileIndex) => boolean begin
+readonly func TileOperandsLegal_TDEINTERLEAVE(destination_even: TileIndex, destination_odd: TileIndex, source: TileIndex) => boolean
+begin
     if destination_even == destination_odd then return FALSE; end;
     if !TileDescriptorLegal(destination_even) || !TileDescriptorLegal(destination_odd) || !TileDescriptorLegal(source) then return FALSE; end;
     let extent: integer = _Tiles[[destination_even]].valid_rows * _Tiles[[destination_even]].valid_columns;
-    return extent <= PTO_MODEL_TILE_ELEMENTS DIV 2 && extent == _Tiles[[destination_odd]].valid_rows * _Tiles[[destination_odd]].valid_columns && _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns == extent * 2 && _Tiles[[destination_even]].data_type == _Tiles[[source]].data_type && _Tiles[[destination_odd]].data_type == _Tiles[[source]].data_type && _Tiles[[destination_even]].layout == _Tiles[[source]].layout && _Tiles[[destination_odd]].layout == _Tiles[[source]].layout;
+    return extent <= PTO_MODEL_TILE_ELEMENTS DIV 2 && extent == _Tiles[[destination_odd]].valid_rows * _Tiles[[destination_odd]].valid_columns &&
+           _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns == extent * 2 &&
+           _Tiles[[destination_even]].data_type == _Tiles[[source]].data_type && _Tiles[[destination_odd]].data_type == _Tiles[[source]].data_type &&
+           _Tiles[[destination_even]].layout == _Tiles[[source]].layout && _Tiles[[destination_odd]].layout == _Tiles[[source]].layout;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
