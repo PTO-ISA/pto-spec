@@ -1895,21 +1895,6 @@
     },
     {
       "executable": false,
-      "id": "PTO-BSTART-CALL-DECISION-BINDING-001",
-      "owners": [
-        "asl/block/execution/BSTART.CALL.asl"
-      ],
-      "readiness_subjects": [
-        "ADR-BLOCK-0005",
-        "ADR-BLOCK-0014",
-        "ADR-GOV-0004",
-        "ADR-GOV-0005",
-        "ADR-TILE-0004"
-      ],
-      "tests": []
-    },
-    {
-      "executable": false,
       "id": "PTO-BSTART-DECISION-BINDING-001",
       "owners": [
         "asl/block/lifecycle/BSTART.asl"
@@ -2776,6 +2761,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-DEFAULT-001",
+        "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-STATIC-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIMENSIONS-001",
         "PTO-AVS-TILE-TCVT-CUBE-LB2-001"
       ]
@@ -4593,20 +4579,6 @@
         "PTO-AVS-BLOCK-BSTART-BPCN-ALIGN-001",
         "PTO-AVS-BLOCK-BSTART-COND-SETC-001",
         "PTO-AVS-BLOCK-BSTART-DECODE-001"
-      ]
-    },
-    {
-      "executable": true,
-      "id": "PTO-INST-BLOCK-BSTART-CALL",
-      "owners": [
-        "asl/block/execution/BSTART.CALL.asl"
-      ],
-      "readiness_subjects": [],
-      "tests": [
-        "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-DECODE-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-FUSED-FORMS-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-ROLLBACK-001"
       ]
     },
     {
@@ -18210,8 +18182,7 @@
     "asl/block/encoding/C.BSTART.SYS.asl": "268614cb9e1a723132786f3022224857edd27a373929a9e8f1cd1245f7d4cdea",
     "asl/block/encoding/C.BSTART.asl": "4600633e766837dfc7880ed8d7b7e2daddaa3ea5b2e8f9d632501b9a7ca5f47e",
     "asl/block/encoding/XB.asl": "e615c2624999b018a3f5454ff53869c70606540339df9e88d958ec6cdae3439a",
-    "asl/block/execution/BSTART.CALL.asl": "6f7a737c4a18660892bf07c4d98a170551b89b1c4be625b822311fbd48cb1c09",
-    "asl/block/execution/BSTART.FP.asl": "1d631451a1f87d3c3af76098884051691a1aa9f7c9719f75fb37f6f6244d3530",
+    "asl/block/execution/BSTART.FP.asl": "15d63b0499fa2db1a6b198e623bf40bc247ab9dd53eb88133af0a0cf5f714172",
     "asl/block/execution/BSTART.GMOV.asl": "12973d8998b068ac8d2c5cefd97b21e073b568146c3c4b8b4988205d66c01f8c",
     "asl/block/execution/BSTART.ICALL.asl": "5bc8047a23da2ba23a5834959d1219a3a38a4a50b8ab9174a4b96d8b93c28f7f",
     "asl/block/execution/BSTART.MGATHER.ADD.asl": "d4b206259834e702cb35761f87807f98a5aa473c9fe7cff1853792a061b5879f",
@@ -18238,7 +18209,7 @@
     "asl/block/execution/BSTART.MSCATTER.XOR.asl": "2febb3f0d9868832f65f2a46d75eee6f2748cdfce88634df2610b6962991bc46",
     "asl/block/execution/BSTART.MSCATTER.asl": "a2f44a041861bd05cbb3b3dd86ebb5d5794de22dbfee23a477020fb713299425",
     "asl/block/execution/BSTART.SFU.asl": "93a27fe7ee288851500cd662aefe79916eba772ddf7a4d0fb74f75c3b62bb513",
-    "asl/block/execution/BSTART.STD.asl": "2b8f84056fbd9918cd87c037f18ac880af22acba0f07853f2828bd6f6e8e7c8b",
+    "asl/block/execution/BSTART.STD.asl": "55560ebf55049073f079ae9e799f8d0c4a3c4371203c9f791d58c114a138993f",
     "asl/block/execution/BSTART.SYS.asl": "d80b051b98b73f54e450dee1579e5f4b452ac0cf7ee53d80abf9aa207d05935f",
     "asl/block/execution/BSTART.TEPL.asl": "989b116fe7f8e9cdc26ddaeb65e9520f2d207d3850f678d02aeb199294b1e770",
     "asl/block/execution/BSTART.TGEMV.ACC.asl": "e3e0067c1e94dd11089aaa9f7c3395ee80a18b54bc8dd92df4a74c109ed2b200",
@@ -18283,7 +18254,7 @@
     "asl/block/model/dispatch/cube-accumulator-routing.asl": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b",
     "asl/block/model/dispatch/cube-destination.asl": "a674b9f48aa991947d2abe09575b9d3c14147fb7232da6d417948ed03455cc91",
     "asl/block/model/dispatch/cube-tmatmul.asl": "c5693473e1aedc2d638b851d3e69af6b94a8854eb52b90638884321164f9dc1f",
-    "asl/block/model/dispatch/decode.asl": "dd1dff7f347f2ec090bf34984a2541be7568bb1f24ae5e4716c8b715ca8852a9",
+    "asl/block/model/dispatch/decode.asl": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8",
     "asl/block/model/dispatch/descriptor-legality.asl": "8f3dc9a4f8349a5bf0468957e9a9d7004eb6439cc1a134133aa9e94dd1fc30a5",
     "asl/block/model/dispatch/destination-auxiliary.asl": "539ef9bc4f9445b65f89b9e8c19104daa57a9f64f7880298ae7a42b85f30cb7b",
     "asl/block/model/dispatch/destination-shape.asl": "13ee74cd7c8f8480fe74191a5ac4f38df137e8cc84f00fb69b1f0483f915ce98",
@@ -19103,8 +19074,7 @@
     "docs/block/encoding/C.BSTART.SYS.md": "310cebf0c29495af26809fd4b024540856cd36438d7e97bf17aeea431a272d70",
     "docs/block/encoding/C.BSTART.md": "0834a3f9dbaa701494fc7047db14e1200f69b9d49630b5f6058d8b9ea82bf384",
     "docs/block/encoding/XB.md": "63d5403062d712bbb118b0ce83c322327a4c48a37bc3ae0e52c689542ee83b7d",
-    "docs/block/execution/BSTART.CALL.md": "9473678106991af9667ae590a6a7da5945dfa198328f47b8f32b54cc464a2e09",
-    "docs/block/execution/BSTART.FP.md": "a8faf99a688d410722a625cea36443f30fc18c9c763509eb6ae4c39f2e77f8dd",
+    "docs/block/execution/BSTART.FP.md": "96bef3074e76e670cbd91b238618a185ec46dca3eab6155c4bcdd0c88e464c32",
     "docs/block/execution/BSTART.GMOV.md": "b05f7f2f911882254a9e6ea2615af8d6a5581377b18267ca66440252058aaba0",
     "docs/block/execution/BSTART.ICALL.md": "7773d64b02e0e9adb77f19314e74c411db4a08adc8956dd37354ea9b9f40d89a",
     "docs/block/execution/BSTART.MGATHER.ADD.md": "d1e1dcc8ba1589b785338e13b8ad13916cd56b21af0766986ad055ca1fbca33b",
@@ -19131,7 +19101,7 @@
     "docs/block/execution/BSTART.MSCATTER.XOR.md": "389df16ad2c7f9f00c717efe486547a91038ca6a56fc921a60f79677f5376143",
     "docs/block/execution/BSTART.MSCATTER.md": "feb2c7572b3c7f83c7d5d21f659aee29c75407a05abaef068626a2fa3ef8d0ce",
     "docs/block/execution/BSTART.SFU.md": "87161c5a2a0a08e4ba7148ddab9a365a7eff0f34a72df335408710deed5e066f",
-    "docs/block/execution/BSTART.STD.md": "c441a759da5a57ba8f5e1586f62926558f409b11434efb1a252f1eeca4aaa400",
+    "docs/block/execution/BSTART.STD.md": "0a88c466b286361ffafd6f76099d01903fed6caaf13df464f74e4a174ad8a7ba",
     "docs/block/execution/BSTART.SYS.md": "05402fbe0b52a30a9fb9129a3636ea115229b6458fba83fc58cd521d96e29932",
     "docs/block/execution/BSTART.TEPL.md": "9b2bfc73f32517bdb85466b450e36cb78219915f1d666551e7847b4e1ea11310",
     "docs/block/execution/BSTART.TGEMV.ACC.md": "d308157f70acb0b57d5ed6c0317d073481a999f19d7fb5cad90faf513e94dd67",
@@ -19176,7 +19146,7 @@
     "docs/block/model/dispatch/cube-accumulator-routing.md": "66e2db9aa55ed4b0059f6b49770143d986d0fc629d25da106094cf4b83b6f3cf",
     "docs/block/model/dispatch/cube-destination.md": "d763a6c2e0fe191fa15f3e8cb81006894da5c8e4c42c7ea0580e65c6c74776e3",
     "docs/block/model/dispatch/cube-tmatmul.md": "08b80ecef63aa4b8b92c8f8011f01d9a0009c9e91ec7db8f76fa44f1e06150cc",
-    "docs/block/model/dispatch/decode.md": "bd34ab72e5dd6eec73399291013e4d8bad99252d4aa13d2575940cae4796aaf3",
+    "docs/block/model/dispatch/decode.md": "e13866d0e563a72be84e395c6646f560e9510b41a57752bcc6c02ed3d72391c0",
     "docs/block/model/dispatch/descriptor-legality.md": "0173573b0c4be7b92ec38fba24aa08dd374acf3381b59cdfe0e11d5054cb033a",
     "docs/block/model/dispatch/destination-auxiliary.md": "24e8e7019f81e601e39cfe5615b70e910c2d04b9a1d3bf07ae30788e8271f111",
     "docs/block/model/dispatch/destination-shape.md": "ecd5005db25b320792f5710d9a7fec0648b47ea647f9016c6c2ec308067a17cc",
@@ -19910,8 +19880,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "b95e1b91da3314f3a7796b2df3e58171b3ce50d20918af580ad479bce8353711",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "5e1cdee8da38a95f24bcf3630517c65a329c3b7250d95f3359b9267babc094e3",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "5d0dc5bc99c2eeab418f364a7112410c3322566f06e179175b76198849cda425",
-    "spec/evidence/adr-index.json": "96a2a80303ec09798891c07916979b18fc04563bfdcc718be65aa21f1d4f43c4",
-    "spec/evidence/instruction-contract-closure.json": "14143f8044e57bd4630a4c9356ce33e2e89ab9df7fe316a112f86871c3acb246",
+    "spec/evidence/adr-index.json": "b590d742495ea5f888284f95369f4d30bd6d8153ad8125517598f999d2d7486f",
+    "spec/evidence/instruction-contract-closure.json": "d3a8f940ae566d788d7dc29854df8214c7981c11e4f1ab6b1b83abe1497a5120",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -20182,12 +20152,8 @@
     "tests/asl/block/encoding/C.BSTART/block-exec-c-bstart-target-001.asl": "59ee59e9346b813a63ae376933cc0c1074cba3d9c37fe25949411bf6ab8c34c5",
     "tests/asl/block/encoding/XB/block-decode-xb-canonical-001.asl": "cf52da47044fa4ab98c0c2860d847eefef778cce489006e0138cca37544656df",
     "tests/asl/block/encoding/XB/block-fault-xb-reserved-001.asl": "2910fb963cd08c6b003ce54d4505211d335a0f41d9f34f3b68605353bb6476ea",
-    "tests/asl/block/execution/BSTART.CALL/block-bound-bstart-call-fused-forms-001.asl": "ab001227f0d9f974e11ecdfefc173ea09f986660ccebaf685a70a716f6532ea4",
-    "tests/asl/block/execution/BSTART.CALL/block-decode-bstart-call-canonical-001.asl": "6593ffab34da459057a8d7e49d7a44ea9cd31bc7de4a2d622f0625fc847dbeab",
-    "tests/asl/block/execution/BSTART.CALL/block-fault-bstart-call-rollback-001.asl": "dc892599471500b5c9122a755832d9d82c7c8b9d7050373c01172da726f4e21d",
-    "tests/asl/block/execution/BSTART.CALL/block-state-bstart-call-atomic-001.asl": "22a6c785f8ec01dfcf8b1b559d5c6cc1464f2c6c5d767d46756194fba2493433",
-    "tests/asl/block/execution/BSTART.FP/block-decode-bstart-fp-canonical-001.asl": "2c02e993a26d3562a6c1502fc2764fb790931a77d193eb084ab38efdea814c7b",
-    "tests/asl/block/execution/BSTART.FP/block-fault-bstart-fp-deleted-001.asl": "316cf4a36355516a996f71827accedcf8d7134e17dc1147355cb7ea214a0bdbe",
+    "tests/asl/block/execution/BSTART.FP/block-decode-bstart-fp-canonical-001.asl": "710b7e0c5574b4e7e67c8b77b4ad88530fe89fa2938883f9016d6c5201a2574c",
+    "tests/asl/block/execution/BSTART.FP/block-fault-bstart-fp-deleted-001.asl": "2fae4c39dbb0ebd9e15fb7e5f64a326ba88619420fe612635fff56ff326754b5",
     "tests/asl/block/execution/BSTART.FP/block-state-bstart-fp-barg-commit-001.asl": "fcdc47414df530e2ebc7e0d48659dffb3025e08ee47dbc85fa3f3fc3b6597ac9",
     "tests/asl/block/execution/BSTART.GMOV/block-bound-bstart-gmov-peer-001.asl": "e783513e218ab06681b3a31b3791b036c573fddb174370124d329cc363c31b78",
     "tests/asl/block/execution/BSTART.GMOV/block-bound-bstart-gmov-zero-001.asl": "f8c66d62acefdd85631764fb9edb65a590fe2d357985e3499ecfa2c3e5ec0bc3",
@@ -20280,8 +20246,8 @@
     "tests/asl/block/execution/BSTART.SFU/block-decode-bstart-sfu-canonical-001.asl": "82a7a1a8825c303bbb9c7e214ab4044effc5ee715320ecd9b3ed5165d24c4397",
     "tests/asl/block/execution/BSTART.SFU/block-fault-bstart-sfu-alias-rollback-001.asl": "acf6efc6558b4bd38525964f60f3b089b9e99fccf88519f780dce630d13aa546",
     "tests/asl/block/execution/BSTART.SFU/block-state-bstart-sfu-alias-commit-001.asl": "aa1ff63195fac47fe6c42029c24a3cb919de28f7348101f8367f3cc927667691",
-    "tests/asl/block/execution/BSTART.STD/block-decode-bstart-std-canonical-001.asl": "5558946e8e44fe726cf1c31f57e9cf11715672e36e7f4dab287001c5bb23650e",
-    "tests/asl/block/execution/BSTART.STD/block-fault-bstart-std-deleted-001.asl": "f6a0a13dc4e009f05440b7665be4f278bce96c288bb3c5daa413fbf7f5010ab4",
+    "tests/asl/block/execution/BSTART.STD/block-decode-bstart-std-canonical-001.asl": "d4b191aff20c55532d6bcbbf9127f3c5c5ae42128959df9cb05779069e6cf531",
+    "tests/asl/block/execution/BSTART.STD/block-fault-bstart-std-deleted-001.asl": "72f3397230d9cfc62cc524f5f80bd81707f4b3a1b52567cfeb827d199af70011",
     "tests/asl/block/execution/BSTART.STD/block-state-bstart-std-barg-commit-001.asl": "038ed18305d51f126cbe2d47a5398a3cc78b98c579380d24da2a3532c91466b2",
     "tests/asl/block/execution/BSTART.SYS/block-decode-bstart-sys-canonical-001.asl": "f6b3d0d323a3d0bae3c8ec2d1775a5f3e1cbb383e6d9ccc4f67b503a383bc546",
     "tests/asl/block/execution/BSTART.SYS/block-fault-bstart-sys-reserved-001.asl": "faf6b27debf19d566f55fdf3e19c723ed5df31e2498ee567048413bd7c34fd79",
@@ -20500,7 +20466,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-layout-014.asl": "81f7fb6d6b6c5e7a0f5c2b1a7bd6387f846ff91ce0dcfdf61b1bd33928e18926",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-state-tmatmul-shared-readonly-018.asl": "1152100fe23a3e401aca681d72ae0a6c1c7d47669115111230ce9704e05c8fc0",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-static-cube-tmatmul-contract-001.asl": "45dce0bd4f7e68978b491c70631580891c1bc1a65490fc7966fbb6186a80ac5f",
-    "tests/asl/block/model/dispatch/decode/block-exec-decoded-start-and-stop-001.asl": "6f9220d1e9ade9730c4bf07cb984a739492bc55bef32f148d949b9a69b0275f5",
+    "tests/asl/block/model/dispatch/decode/block-exec-decoded-start-and-stop-001.asl": "1b98fa0c5920c65de66e39fcac6a3c8f3f4fd8ce2b388c64d93b779f23b79f93",
     "tests/asl/block/model/dispatch/decode/block-static-decode-contract-001.asl": "378ed1194c042a7d965504ede70407bd9c2f969d4f9db5eff21418a26f7bf8d0",
     "tests/asl/block/model/dispatch/descriptor-legality/block-exec-descriptor-legality-dtype-none-001.asl": "834aeaaf71481c359e60e3b7ea80799c372cdda55edc55df140a28ac780c3b32",
     "tests/asl/block/model/dispatch/descriptor-legality/block-fault-assemble-output-structure-001.asl": "95c6d994e0fc93d13737154b32e63c80d539cb72cd3da377eb4a700f50aae597",
@@ -20942,7 +20908,7 @@
     "tests/asl/block/model/operands/weight-to-shared-parameters/block-static-weight-to-shared-parameters-contract-001.asl": "3187b5874b8b9f021357cb78d81200252b0b9c167cb59b5a307df7ec1882d375",
     "tests/asl/block/model/schema/attributes/block-static-attributes-contract-001.asl": "f25561c665ffcc421fab0ebbbcdf852fe21b57a68782d6d699467d4c3dd3ad13",
     "tests/asl/block/model/schema/dimensions/block-state-dimension-default-one-001.asl": "ec1e8a0f2200ad2db268be364f6cda48a6309328ae0302e4dc5922be733b7dbe",
-    "tests/asl/block/model/schema/dimensions/block-static-dimensions-contract-001.asl": "98b8c25d9972099cfcf7396a5802599b57a286d3eb37cee0fa83079ca28bb37b",
+    "tests/asl/block/model/schema/dimensions/block-static-dimensions-contract-001.asl": "892406b35511f8a3cdcbc4039d26fe6a539f9497d8acf07a434e4c2b834f5907",
     "tests/asl/block/model/schema/header/block-static-header-contract-001.asl": "ab129b48c9f63f7208bd711f360d76b2b96fb081024facc9994356f08641f074",
     "tests/asl/block/model/schema/profile-encoding/block-static-profile-encoding-contract-001.asl": "91781361b3eb5f380164bac2138b91f398e9952d494b73acbfbc33c74275d299",
     "tests/asl/block/model/schema/profile-encoding/block-static-profile-encoding-pemode-001.asl": "fb428ed725bbc5b9b04a4d5eaf9e88167fe845228c1a3e820e4b4e99ee43fa1f",
@@ -23512,56 +23478,56 @@
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-exec-mgather-bytes-001.asl": "3a68a06827601298448031edcf701820c3d3b6e47f823b3600217088d9c8b6b3",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-static-mgather-contract-001.asl": "6afcab933250dcf540f005e395e4141d9977ee3c9860c1f87d41803d3b5f5e67",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_ADD/tile-exec-mgather-add-semantic-001.asl": "c6ba692257b9ffc011ac9f21a4d9e7de43fe836fd44d117ed05d9b37b509b9f1",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_ADD/tile-static-mgather-add-contract-001.asl": "930a142e5bab521117e71d4cfe91d03f188b95670bd58130ff0375bf47bab13f",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_ADD/tile-static-mgather-add-contract-001.asl": "85838268d0542b8088d05d308344a2fe7d1c774fa243aec47a011200491f9cd4",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_AND/tile-exec-mgather-and-semantic-001.asl": "cbb341f2a2e482cbb1ccb146ddf353f8c809a0356f5eff54d40aa287af627ef6",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_AND/tile-static-mgather-and-contract-001.asl": "87d66b01236a2b58fa912e35d718a3fefaffa203e811f584f59f859e5c065471",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_AND/tile-static-mgather-and-contract-001.asl": "79418ad842d8803656bdcadc86437df4578c1cb7566c57dc0bd7ee461d1a8496",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-atomic-mgather-cas-rmw-001.asl": "64a7c2a56482c8d63672faf3be6340eb97dafe2969f95ea7224ba98e23039a27",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-exec-mgather-cas-semantic-001.asl": "936d03fb3190e4ace6eeae8a1d3c3f095ae32d6885abc88f98fdc73c54bb449b",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-static-mgather-cas-contract-001.asl": "9337353371a2b514703863aa58ed4e70f0eaf9ed6979501b07643fe311bcd474",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-static-mgather-cas-contract-001.asl": "3ec1d137a84509805e6ee6e41c002bcafb754bb94ad3a697d420e87ad22ee8e7",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_DEC/tile-exec-mgather-dec-semantic-001.asl": "6965f265d0c2d72d33f360f2f66d5f35a411fcc082ed64c918d900a8f5ba8629",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_DEC/tile-static-mgather-dec-contract-001.asl": "5dbd42466f163f4e30ea55f9d1d81b2ce7dc424c9544dd92639deef1256eb5c8",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_DEC/tile-static-mgather-dec-contract-001.asl": "9adf0a143d8bf01d62a930d7bd66781cb66cfb550d8685b154141f6aea5e7cec",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_EXCH/tile-exec-mgather-exch-semantic-001.asl": "a104e944990168af681e939bc98bad277c04a192f6b140c5999a70ab1e57a6bf",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_EXCH/tile-static-mgather-exch-contract-001.asl": "e34852c43894f1514ac70e577e9d33f93d11b2bb1e98e78d6cecf2650fd55894",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_EXCH/tile-static-mgather-exch-contract-001.asl": "0d96f75eabdba9836395d30cf64af77ad4c7ebe861ef2ab22f6131cf6088a2d1",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_INC/tile-exec-mgather-inc-semantic-001.asl": "47c4961b1d64dd2eb59b42740739905af4e5e2b5cd521f3bcd43db783047dda7",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_INC/tile-static-mgather-inc-contract-001.asl": "fa019ac22e700a17b3ad102af89fe4540f4ca63fb10a4d686d8f70340797bda6",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_INC/tile-static-mgather-inc-contract-001.asl": "952f8ebf0bb8ea2a510a8afd92b407d8f9b902383c4b6cc7732478e5ff1fc40b",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MASK/tile-exec-mgather-mask-lanes-001.asl": "05e1feaeca5ff3d2afcbe1bbcf942422fc7f310a41cee5beb9b6f04147c49a59",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MASK/tile-static-mgather-mask-contract-001.asl": "89171e4670f3ed89a2cfcf0dcf792edd63e0dc57ae8cf8e440b8d565a04b7046",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MAX/tile-exec-mgather-max-semantic-001.asl": "c1a767cd65841639a5d97491c89f9af50067b2d753566fdde8075093714c3de1",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MAX/tile-static-mgather-max-contract-001.asl": "b46ee572035e7e8177104489c05ca33580f45fdea3b8fbb454a097eb3d4f718b",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MAX/tile-static-mgather-max-contract-001.asl": "4c58ed639bcfda97852430b8df70a4e48bba639253776d9e04700efe962cf6ae",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MIN/tile-exec-mgather-min-semantic-001.asl": "1172d385f2c41ab9fb581fd3a763d50ec9fd8f37ddcfb1ba33533ca398d66f68",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MIN/tile-static-mgather-min-contract-001.asl": "a51d0753b7dc9a7522faaeccb7a184cd6f17bfd9ac393ca54a0707282a1b5c1b",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MIN/tile-static-mgather-min-contract-001.asl": "1a2b408d4cffdf16fe227bcfb0220d3d8d1ebb175ac98942d8c200ed982d3c1a",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_OR/tile-exec-mgather-or-semantic-001.asl": "703145f3f8e6eb84abf9308ed018f05db547e30956a10319e7f97ecb7fa495ea",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_OR/tile-static-mgather-or-contract-001.asl": "496b23495b2d66d061add0f1a86c986aebed679ce468cc8344b9b7e25b6d89fe",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_OR/tile-static-mgather-or-contract-001.asl": "030ebf5c6034ab4ae8e59353e0d9d16710e0b1536ac9081465c5e783f2b57e18",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_XOR/tile-exec-mgather-xor-semantic-001.asl": "8c26f792a5fb67722d6bd42301a40428f8e290bca30f46560bc42492d55bd5b0",
-    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_XOR/tile-static-mgather-xor-contract-001.asl": "13e30c632a273a8194daf396c4180ca6221e50e29c9f53f6a1de7dfd77564a4c",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_XOR/tile-static-mgather-xor-contract-001.asl": "a6a73f099b56c5c0269ab77a7568a1a6e63a4502c7efe3af87c0feaa210319b6",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-exec-mscatter-bytes-001.asl": "9a9a1e1a4c959ba5ec7c7bf6769a50fdf17cac637341ed0b54c8fb5a4fcf8a5b",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-static-mscatter-contract-001.asl": "8100c931fd338de346ba9d28f4261db15e7fb46e70722bdf2f9b4dc098d52eb4",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_ADD/tile-exec-mscatter-add-semantic-001.asl": "3c75809921624ad0b1b7bb1c3bab9c57ba688f21a2124047822de7d1ae277278",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_ADD/tile-static-mscatter-add-contract-001.asl": "5a6e4e3da6911a1ab2d762c337ccc9f282e1640f69b4c23a815bb4ed07d9fe3b",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_ADD/tile-static-mscatter-add-contract-001.asl": "d5625e040dfd2e9e8727b4f385a6f38b10221fa926a6027c3bb29195dd310293",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_AND/tile-exec-mscatter-and-semantic-001.asl": "b12452d71619cfcc74ad7c7864dbd4437885ac8c227f79ac1a7a4cc6ff237fab",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_AND/tile-static-mscatter-and-contract-001.asl": "1f0f3707e0d6a677dc7e6d573eb9a5d78cf33bcc0da6286d0369e5d2fd48d95f",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_AND/tile-static-mscatter-and-contract-001.asl": "63bfe06d8aec3c89a79d6cf62a205c0eb083dc8fce3732ac1a3371fb87160fab",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_DEC/tile-exec-mscatter-dec-semantic-001.asl": "af25ea7c2154027a706591830fe5706b54091ac897af2b21f38e65c146044e1f",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_DEC/tile-static-mscatter-dec-contract-001.asl": "b2d371596e9cb92da225aef59eb3a09dfed15c9d644b55a92861ff00f969a681",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_DEC/tile-static-mscatter-dec-contract-001.asl": "016cd4cb109ecb116c1c13ead9290fef8ef54059af41b9b0743dd8fb0b46f34f",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_INC/tile-exec-mscatter-inc-semantic-001.asl": "66679ad9bc26d9b2f686aea73c62a42a31714341ca6d9c65e7ebd53ac832d0e1",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_INC/tile-static-mscatter-inc-contract-001.asl": "e10f82c12205f9d5c9a058f3773b06523e204905514409b783677a20aae2cbec",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_INC/tile-static-mscatter-inc-contract-001.asl": "d560d9b67c8edec278157dcc26dd4c9bb99dd682179b775c1c20fbba53cc1e63",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-exec-mscatter-mask-lanes-001.asl": "0fb9caf9912fedbf88d8b67a3359309881152b132b79870302c1393bffb1af94",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-static-mscatter-mask-contract-001.asl": "eca615778d8c4ad33ea77abfde6b83a7e44dc5b33242fc61dc85123a42f9c5b8",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX/tile-exec-mscatter-max-semantic-001.asl": "e61af358bb7f652548d56b502fb42995e2cfbb62015206c25fe21b7e5ec6aedf",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX/tile-static-mscatter-max-contract-001.asl": "c4ef83d04b1f19fb0475bf3d8ea47ded59558e6aa1808548389adfc6140ed48b",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX/tile-static-mscatter-max-contract-001.asl": "2c927242243a5453c407d67c8a926c2a5d35762b97bbfeb4e1b11082c54e34e9",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MIN/tile-exec-mscatter-min-semantic-001.asl": "53ee5848e8fac8dd9a157be0120160017de7abea4fa04fd750e8cac6c391133b",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MIN/tile-static-mscatter-min-contract-001.asl": "bfb0cfae39bbef85fcce79fbccde77247d3ca710df114f09ce579f91e079bb97",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MIN/tile-static-mscatter-min-contract-001.asl": "b9a498ee48954c52c82503a363b3d75aa406b6811da1bfedbaa890798252863f",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_OR/tile-exec-mscatter-or-semantic-001.asl": "da871ee17edc618779d11ea7bcc21fdbfa5748467908685c03f5d02987c05066",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_OR/tile-static-mscatter-or-contract-001.asl": "cba92c0c3354188b57db86db93b93f4c7f77a8be591ac61494df9eb9bbbf3489",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_OR/tile-static-mscatter-or-contract-001.asl": "facdbabf177b41a561f78dda6e11150abae265cca812e0ac9c734c6203cf98ae",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC/tile-exec-mscatter-popc-semantic-001.asl": "60b91edf1fc032e5ee67cf35a13160ec16ba208372609fc27fe551b89d082011",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC/tile-static-mscatter-popc-contract-001.asl": "555d997054ed4d3dfb0490b3abb9df2b2c7d745a7aae16607ec0b812389d52ae",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC/tile-static-mscatter-popc-contract-001.asl": "693804e13a0061296d8722ce607568a970619582e9d9fb6826a4e58d794aa35a",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR/tile-exec-mscatter-xor-semantic-001.asl": "95954ea8bf69632bb3311119980936c31b2f743ec1d2dbc5de8dffd26d1efefb",
-    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR/tile-static-mscatter-xor-contract-001.asl": "192992901ca7720f49dd26cc5cda48f9d66a06500106d6d1dffdff1c28afa8e4",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR/tile-static-mscatter-xor-contract-001.asl": "6b549671a1c95424fe160d94afb4c80a448a3486bda92b2d5170b204fe9568d8",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-exec-gmov-copy-001.asl": "b8127ce000396df0a9f32c1a8a1c31a172625f4d359fd0254e24aa3bdfa87e1e",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-static-gmov-contract-001.asl": "148cc4b39fc9530b1e6464c4dd27ed614ffb4c4ab77ef495461535f23ca9c740",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-bound-tload-16x16-stride-003.asl": "ac46b7d01b326059317e981d98eeb92623ba6f178c6ec5d07417a0836f9219da",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-direct-001.asl": "04cbcc92cfcbe1f32c9eba0f886529b0b21d713bb7e2c8bdf69a092283673eee",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-shared-parent-002.asl": "dd5595d47a2c4b72a379d544f09f7db0b13c53c907af3773a58a61ef66874e05",
-    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-static-tload-contract-001.asl": "a0720c2897f1a20118a3f607cf4c7c5164b6991e0b5f12d3d6581b1340870dc5",
+    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-static-tload-contract-001.asl": "591a5b9f01e73ab242c1354e96e8a2e588c400aebffb8d98bf2637cc10a92325",
     "tests/asl/tile/memory-and-data-movement/regular/TPREFETCH/tile-exec-tprefetch-requests-001.asl": "7f01ebd44fbf50ff90ed5d40f886ae4bf55da818bdd9c42e69119f5ae9f9adbc",
     "tests/asl/tile/memory-and-data-movement/regular/TPREFETCH/tile-static-tprefetch-contract-001.asl": "e93037ef82ebc0570aa4b522ede424e5eca18961aa08411a38fbc7f1352849c9",
     "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl": "738d80dfdc91fe0c130edcd8b0b9c34dd52abb4455e2342cd668eb7819ca43f1",
@@ -23841,19 +23807,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "55f54fdd33b573b06e45c7ebc1a013ea26da18689ee5a26fa822ab28e71934d4"
   },
   "summary": {
-    "documentation_page_count": 893,
-    "executable_requirement_count": 667,
-    "mnemonic_count": 663,
+    "documentation_page_count": 892,
+    "executable_requirement_count": 666,
+    "mnemonic_count": 662,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1078,
+    "requirement_count": 1076,
     "status": "closed",
-    "test_count": 3927,
+    "test_count": 3923,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 893
+    "unit_count": 892
   },
   "tests": [
     {
@@ -34113,46 +34079,6 @@
       "source": "asl/block/lifecycle/BSTART.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
-      "kind": "state-transition",
-      "path": "tests/asl/block/execution/BSTART.CALL/block-state-bstart-call-atomic-001.asl",
-      "requirements": [
-        "PTO-INST-BLOCK-BSTART-CALL"
-      ],
-      "sha256": "22a6c785f8ec01dfcf8b1b559d5c6cc1464f2c6c5d767d46756194fba2493433",
-      "source": "asl/block/execution/BSTART.CALL.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-BSTART-CALL-DECODE-001",
-      "kind": "decode-positive",
-      "path": "tests/asl/block/execution/BSTART.CALL/block-decode-bstart-call-canonical-001.asl",
-      "requirements": [
-        "PTO-INST-BLOCK-BSTART-CALL"
-      ],
-      "sha256": "6593ffab34da459057a8d7e49d7a44ea9cd31bc7de4a2d622f0625fc847dbeab",
-      "source": "asl/block/execution/BSTART.CALL.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-BSTART-CALL-FUSED-FORMS-001",
-      "kind": "boundary",
-      "path": "tests/asl/block/execution/BSTART.CALL/block-bound-bstart-call-fused-forms-001.asl",
-      "requirements": [
-        "PTO-INST-BLOCK-BSTART-CALL"
-      ],
-      "sha256": "ab001227f0d9f974e11ecdfefc173ea09f986660ccebaf685a70a716f6532ea4",
-      "source": "asl/block/execution/BSTART.CALL.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-BSTART-CALL-ROLLBACK-001",
-      "kind": "fault",
-      "path": "tests/asl/block/execution/BSTART.CALL/block-fault-bstart-call-rollback-001.asl",
-      "requirements": [
-        "PTO-INST-BLOCK-BSTART-CALL"
-      ],
-      "sha256": "dc892599471500b5c9122a755832d9d82c7c8b9d7050373c01172da726f4e21d",
-      "source": "asl/block/execution/BSTART.CALL.asl"
-    },
-    {
       "id": "PTO-AVS-BLOCK-BSTART-COND-SETC-001",
       "kind": "state-transition",
       "path": "tests/asl/block/lifecycle/BSTART/block-state-bstart-cond-setc-001.asl",
@@ -34179,7 +34105,7 @@
       "requirements": [
         "PTO-INST-BLOCK-BSTART-FP"
       ],
-      "sha256": "2c02e993a26d3562a6c1502fc2764fb790931a77d193eb084ab38efdea814c7b",
+      "sha256": "710b7e0c5574b4e7e67c8b77b4ad88530fe89fa2938883f9016d6c5201a2574c",
       "source": "asl/block/execution/BSTART.FP.asl"
     },
     {
@@ -34189,7 +34115,7 @@
       "requirements": [
         "PTO-INST-BLOCK-BSTART-FP"
       ],
-      "sha256": "316cf4a36355516a996f71827accedcf8d7134e17dc1147355cb7ea214a0bdbe",
+      "sha256": "2fae4c39dbb0ebd9e15fb7e5f64a326ba88619420fe612635fff56ff326754b5",
       "source": "asl/block/execution/BSTART.FP.asl"
     },
     {
@@ -34729,7 +34655,7 @@
       "requirements": [
         "PTO-INST-BLOCK-BSTART-STD"
       ],
-      "sha256": "5558946e8e44fe726cf1c31f57e9cf11715672e36e7f4dab287001c5bb23650e",
+      "sha256": "d4b191aff20c55532d6bcbbf9127f3c5c5ae42128959df9cb05779069e6cf531",
       "source": "asl/block/execution/BSTART.STD.asl"
     },
     {
@@ -34739,7 +34665,7 @@
       "requirements": [
         "PTO-INST-BLOCK-BSTART-STD"
       ],
-      "sha256": "f6a0a13dc4e009f05440b7665be4f278bce96c288bb3c5daa413fbf7f5010ab4",
+      "sha256": "72f3397230d9cfc62cc524f5f80bd81707f4b3a1b52567cfeb827d199af70011",
       "source": "asl/block/execution/BSTART.STD.asl"
     },
     {
@@ -36595,8 +36521,10 @@
       "id": "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/schema/dimensions/block-static-dimensions-contract-001.asl",
-      "requirements": [],
-      "sha256": "98b8c25d9972099cfcf7396a5802599b57a286d3eb37cee0fa83079ca28bb37b",
+      "requirements": [
+        "PTO-BUNDLE-DIMENSION-DEFAULT-001"
+      ],
+      "sha256": "892406b35511f8a3cdcbc4039d26fe6a539f9497d8acf07a434e4c2b834f5907",
       "source": "asl/block/model/schema/dimensions.asl"
     },
     {
@@ -41021,7 +40949,7 @@
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/decode/block-exec-decoded-start-and-stop-001.asl",
       "requirements": [],
-      "sha256": "6f9220d1e9ade9730c4bf07cb984a739492bc55bef32f148d949b9a69b0275f5",
+      "sha256": "1b98fa0c5920c65de66e39fcac6a3c8f3f4fd8ce2b388c64d93b779f23b79f93",
       "source": "asl/block/model/dispatch/decode.asl"
     },
     {
@@ -57556,7 +57484,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-ADD"
       ],
-      "sha256": "930a142e5bab521117e71d4cfe91d03f188b95670bd58130ff0375bf47bab13f",
+      "sha256": "85838268d0542b8088d05d308344a2fe7d1c774fa243aec47a011200491f9cd4",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_ADD.asl"
     },
     {
@@ -57576,7 +57504,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-AND"
       ],
-      "sha256": "87d66b01236a2b58fa912e35d718a3fefaffa203e811f584f59f859e5c065471",
+      "sha256": "79418ad842d8803656bdcadc86437df4578c1cb7566c57dc0bd7ee461d1a8496",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_AND.asl"
     },
     {
@@ -57617,7 +57545,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-CAS"
       ],
-      "sha256": "9337353371a2b514703863aa58ed4e70f0eaf9ed6979501b07643fe311bcd474",
+      "sha256": "3ec1d137a84509805e6ee6e41c002bcafb754bb94ad3a697d420e87ad22ee8e7",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl"
     },
     {
@@ -57637,7 +57565,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-DEC"
       ],
-      "sha256": "5dbd42466f163f4e30ea55f9d1d81b2ce7dc424c9544dd92639deef1256eb5c8",
+      "sha256": "9adf0a143d8bf01d62a930d7bd66781cb66cfb550d8685b154141f6aea5e7cec",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_DEC.asl"
     },
     {
@@ -57657,7 +57585,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-EXCH"
       ],
-      "sha256": "e34852c43894f1514ac70e577e9d33f93d11b2bb1e98e78d6cecf2650fd55894",
+      "sha256": "0d96f75eabdba9836395d30cf64af77ad4c7ebe861ef2ab22f6131cf6088a2d1",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_EXCH.asl"
     },
     {
@@ -57677,7 +57605,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-INC"
       ],
-      "sha256": "fa019ac22e700a17b3ad102af89fe4540f4ca63fb10a4d686d8f70340797bda6",
+      "sha256": "952f8ebf0bb8ea2a510a8afd92b407d8f9b902383c4b6cc7732478e5ff1fc40b",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_INC.asl"
     },
     {
@@ -57717,7 +57645,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-MAX"
       ],
-      "sha256": "b46ee572035e7e8177104489c05ca33580f45fdea3b8fbb454a097eb3d4f718b",
+      "sha256": "4c58ed639bcfda97852430b8df70a4e48bba639253776d9e04700efe962cf6ae",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_MAX.asl"
     },
     {
@@ -57737,7 +57665,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-MIN"
       ],
-      "sha256": "a51d0753b7dc9a7522faaeccb7a184cd6f17bfd9ac393ca54a0707282a1b5c1b",
+      "sha256": "1a2b408d4cffdf16fe227bcfb0220d3d8d1ebb175ac98942d8c200ed982d3c1a",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_MIN.asl"
     },
     {
@@ -57757,7 +57685,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-OR"
       ],
-      "sha256": "496b23495b2d66d061add0f1a86c986aebed679ce468cc8344b9b7e25b6d89fe",
+      "sha256": "030ebf5c6034ab4ae8e59353e0d9d16710e0b1536ac9081465c5e783f2b57e18",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_OR.asl"
     },
     {
@@ -57787,7 +57715,7 @@
       "requirements": [
         "PTO-INST-TILE-MGATHER-XOR"
       ],
-      "sha256": "13e30c632a273a8194daf396c4180ca6221e50e29c9f53f6a1de7dfd77564a4c",
+      "sha256": "a6a73f099b56c5c0269ab77a7568a1a6e63a4502c7efe3af87c0feaa210319b6",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_XOR.asl"
     },
     {
@@ -58375,7 +58303,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-ADD"
       ],
-      "sha256": "5a6e4e3da6911a1ab2d762c337ccc9f282e1640f69b4c23a815bb4ed07d9fe3b",
+      "sha256": "d5625e040dfd2e9e8727b4f385a6f38b10221fa926a6027c3bb29195dd310293",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_ADD.asl"
     },
     {
@@ -58395,7 +58323,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-AND"
       ],
-      "sha256": "1f0f3707e0d6a677dc7e6d573eb9a5d78cf33bcc0da6286d0369e5d2fd48d95f",
+      "sha256": "63bfe06d8aec3c89a79d6cf62a205c0eb083dc8fce3732ac1a3371fb87160fab",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_AND.asl"
     },
     {
@@ -58426,7 +58354,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-DEC"
       ],
-      "sha256": "b2d371596e9cb92da225aef59eb3a09dfed15c9d644b55a92861ff00f969a681",
+      "sha256": "016cd4cb109ecb116c1c13ead9290fef8ef54059af41b9b0743dd8fb0b46f34f",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_DEC.asl"
     },
     {
@@ -58446,7 +58374,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-INC"
       ],
-      "sha256": "e10f82c12205f9d5c9a058f3773b06523e204905514409b783677a20aae2cbec",
+      "sha256": "d560d9b67c8edec278157dcc26dd4c9bb99dd682179b775c1c20fbba53cc1e63",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_INC.asl"
     },
     {
@@ -58486,7 +58414,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-MAX"
       ],
-      "sha256": "c4ef83d04b1f19fb0475bf3d8ea47ded59558e6aa1808548389adfc6140ed48b",
+      "sha256": "2c927242243a5453c407d67c8a926c2a5d35762b97bbfeb4e1b11082c54e34e9",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX.asl"
     },
     {
@@ -58506,7 +58434,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-MIN"
       ],
-      "sha256": "bfb0cfae39bbef85fcce79fbccde77247d3ca710df114f09ce579f91e079bb97",
+      "sha256": "b9a498ee48954c52c82503a363b3d75aa406b6811da1bfedbaa890798252863f",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MIN.asl"
     },
     {
@@ -58526,7 +58454,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-OR"
       ],
-      "sha256": "cba92c0c3354188b57db86db93b93f4c7f77a8be591ac61494df9eb9bbbf3489",
+      "sha256": "facdbabf177b41a561f78dda6e11150abae265cca812e0ac9c734c6203cf98ae",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_OR.asl"
     },
     {
@@ -58546,7 +58474,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-POPC"
       ],
-      "sha256": "555d997054ed4d3dfb0490b3abb9df2b2c7d745a7aae16607ec0b812389d52ae",
+      "sha256": "693804e13a0061296d8722ce607568a970619582e9d9fb6826a4e58d794aa35a",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC.asl"
     },
     {
@@ -58576,7 +58504,7 @@
       "requirements": [
         "PTO-INST-TILE-MSCATTER-XOR"
       ],
-      "sha256": "192992901ca7720f49dd26cc5cda48f9d66a06500106d6d1dffdff1c28afa8e4",
+      "sha256": "6b549671a1c95424fe160d94afb4c80a448a3486bda92b2d5170b204fe9568d8",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR.asl"
     },
     {
@@ -60825,7 +60753,7 @@
       "requirements": [
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "a0720c2897f1a20118a3f607cf4c7c5164b6991e0b5f12d3d6581b1340870dc5",
+      "sha256": "591a5b9f01e73ab242c1354e96e8a2e588c400aebffb8d98bf2637cc10a92325",
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
     },
     {
@@ -65678,39 +65606,6 @@
       "classification": [
         "execution"
       ],
-      "documentation": "docs/block/execution/BSTART.CALL.md",
-      "id": "PTO-BLOCK-BSTART-CALL",
-      "instruction_contract": {
-        "artifact": "spec/evidence/instruction-contract-closure.json",
-        "mnemonic": "BSTART.CALL",
-        "ndf_clause": "PTO-INST-BLOCK-BSTART-CALL"
-      },
-      "mnemonic": "BSTART.CALL",
-      "readiness_subjects": [
-        "ADR-BLOCK-0005",
-        "ADR-BLOCK-0014",
-        "ADR-GOV-0004",
-        "ADR-GOV-0005",
-        "ADR-TILE-0004"
-      ],
-      "semantic_tests": [
-        "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-FUSED-FORMS-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-ROLLBACK-001"
-      ],
-      "source": "asl/block/execution/BSTART.CALL.asl",
-      "surface": "block",
-      "tests": [
-        "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-DECODE-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-FUSED-FORMS-001",
-        "PTO-AVS-BLOCK-BSTART-CALL-ROLLBACK-001"
-      ]
-    },
-    {
-      "classification": [
-        "execution"
-      ],
       "documentation": "docs/block/execution/BSTART.FP.md",
       "id": "PTO-BLOCK-BSTART-FP",
       "instruction_contract": {
@@ -68170,6 +68065,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
+        "ADR-BLOCK-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004"
       ],

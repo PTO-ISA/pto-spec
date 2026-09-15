@@ -830,13 +830,17 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             f"expected {expected_row_count}, got {summary['row_count']}"
         )
     if summary["classification_counts"] != {
-        "comparable-match": 517,
+        "comparable-match": 518,
         "divergence": 123,
         "non-comparable": 38,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
         )
+    accepted_abi_breaks = [
+        row for row in rows if row.get("abi_change_acceptance") is not None
+    ]
+    accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
     if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 53}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "

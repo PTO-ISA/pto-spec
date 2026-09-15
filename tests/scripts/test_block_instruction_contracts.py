@@ -24,7 +24,7 @@ class BlockInstructionContractsTest(unittest.TestCase):
             unit for unit in units if unit.surface == "block" and unit.mnemonic is not None
         ]
 
-        self.assertEqual(len(block_units), 80)
+        self.assertEqual(len(block_units), 79)
         for unit in block_units:
             contract = resolve_instruction_contract(unit, domains)
             self.assertIsNotNone(contract)

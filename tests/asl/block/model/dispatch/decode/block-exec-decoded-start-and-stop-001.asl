@@ -36,16 +36,15 @@ begin
     ResetBundleControlState();
     ClearFault();
     WriteTPC(Zeros{PTO_XLEN} + 0x300);
-    var call: bits(64) = Zeros{64} + 0x50160002;
-    call[15:4] = Zeros{12} + 4;
-    call[26:22] = Zeros{5} + 3;
+    var call: bits(64) = Zeros{64} + 0x00004001;
+    call[31:15] = Zeros{17} + 2;
     let call_status = ExecuteCommandInstruction(call, 32);
     assert call_status == CommandExecution_Executed;
     assert _LastFault == Fault_None;
     assert _BARG.transfer_type == BundleTransfer_Call;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x304;
-    assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x308;
-    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x308;
+    assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x304;
+    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x304;
 end;
 func main() => integer
 begin

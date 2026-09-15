@@ -5385,149 +5385,6 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "BSTART.CALL <br_label>, <rt_label>, ->ra",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0xf83f000f",
-              "match": "0x50160002",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 4,
-                  "value_lsb": 0,
-                  "width": 12
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            },
-            {
-              "name": "uimm5",
-              "pieces": [
-                {
-                  "instruction_lsb": 22,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "unsigned",
-              "width": 5
-            }
-          ],
-          "form_id": "bstart_call_32_9404418d1ae5",
-          "length_bits": 32,
-          "mnemonic": "BSTART.CALL",
-          "semantic_family": "BBD",
-          "semantic_group": "BSTART",
-          "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Atomically retires the old block, installs a direct-call BARG, and writes the independent return target to ra.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "execution"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "BSTART.CALL <br_label>, <rt_label>, ->ra"
-        ],
-        "defaults": [
-          "simm12 and uimm5 are both present; encoded zero is a real zero displacement for that field."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "bstart_call_32_9404418d1ae5",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed bundle target displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "uimm5",
-            "form_id": "bstart_call_32_9404418d1ae5",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "unsigned return-address displacement",
-            "signedness": "unsigned",
-            "width": 5,
-            "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "BSTART.CALL <br_label>, <rt_label>, ->ra"
-        ],
-        "exceptions": [
-          "An odd call target raises Fault_InstructionPC before retiring-block effects.",
-          "Decode, applicability, target, or retiring-commit failure preserves ra and the retiring BARG and installs no candidate BARG."
-        ],
-        "field_domains": [],
-        "legality": [
-          "All bit patterns not excluded by the form decode are assigned by this instruction contract."
-        ],
-        "memory_effects": [
-          "Any memory effects of the retiring block complete before the call BARG and ra are published; BSTART.CALL itself performs no memory access."
-        ],
-        "operands": [
-          {
-            "field": "simm12",
-            "role": "12-bit signed bundle target displacement"
-          },
-          {
-            "field": "uimm5",
-            "role": "unsigned return-address displacement"
-          }
-        ],
-        "ordering": [
-          "Validate both targets, successfully commit the retiring block, then atomically install the new STD BARG and write ra."
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "Installs BARG.BPC=P, BlockType=STD, BPCN=call_target, TYPE=DIRECT, TAKEN=1, and writes return_target to ra.",
-          "The call target is selected only when the new block later commits."
-        ]
-      },
-      "documentation": "docs/block/execution/BSTART.CALL.md",
-      "engine": null,
-      "mnemonic": "BSTART.CALL",
-      "ndf_clause": "PTO-INST-BLOCK-BSTART-CALL",
-      "source": "asl/block/execution/BSTART.CALL.asl",
-      "summary": "Atomically retires the old block, installs a direct-call BARG, and writes the independent return target to ra.",
-      "surface": "block"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
           "asm": "BSTART.FP RET",
           "constraints": [],
           "encoding": [
@@ -5683,6 +5540,41 @@
           "semantic_handler": "ExecuteBundleStart",
           "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
           "status": "accepted"
+        },
+        {
+          "asm": "BSTART.FP CALL, <label>",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x00007fff",
+              "match": "0x00004101",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "simm17",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 17
+                }
+              ],
+              "signedness": "signed",
+              "width": 17
+            }
+          ],
+          "form_id": "bstart_fp_32_dd7bc8dd694c",
+          "length_bits": 32,
+          "mnemonic": "BSTART.FP",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Split",
+          "semantic_handler": "ExecuteBundleStart",
+          "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+          "status": "accepted"
         }
       ],
       "classification": [
@@ -5759,6 +5651,23 @@
             "signedness": "signed",
             "width": 17,
             "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                131071
+              ]
+            ],
+            "field": "simm17",
+            "form_id": "bstart_fp_32_dd7bc8dd694c",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "17-bit signed bundle target displacement",
+            "signedness": "signed",
+            "width": 17,
+            "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -5770,15 +5679,15 @@
           "BSTART.FP RET"
         ],
         "exceptions": [
-          "A nonzero FALL simm17, deleted bare CALL/ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.",
+          "A nonzero FALL simm17, deleted bare ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.",
           "IND without an active retiring Standard or Floating BARG raises Fault_BundleControl before effects.",
           "If predecessor commit fails, the old block and continuation remain authoritative and no FP block is installed."
         ],
         "field_domains": [],
         "legality": [
-          "Exactly FALL, DIRECT, COND, IND, and RET are accepted.",
+          "Exactly FALL, DIRECT, COND, CALL, IND, and RET are accepted.",
           "The FALL form accepts only simm17=0; every nonzero FALL payload is extension-reserved.",
-          "Bare CALL and ICALL forms are deleted."
+          "Bare ICALL forms are deleted."
         ],
         "memory_effects": [
           "none"
@@ -13292,6 +13201,41 @@
           "semantic_handler": "ExecuteBundleStart",
           "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
           "status": "accepted"
+        },
+        {
+          "asm": "BSTART.STD CALL, <label>",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x00007fff",
+              "match": "0x00004001",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "simm17",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 17
+                }
+              ],
+              "signedness": "signed",
+              "width": 17
+            }
+          ],
+          "form_id": "bstart_std_32_b05390d367cf",
+          "length_bits": 32,
+          "mnemonic": "BSTART.STD",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Split",
+          "semantic_handler": "ExecuteBundleStart",
+          "semantic_summary": "Closes the current bundle, initializes the next bundle descriptor, and selects its transfer and execution kind.",
+          "status": "accepted"
         }
       ],
       "classification": [
@@ -13368,6 +13312,23 @@
             "signedness": "signed",
             "width": 17,
             "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                131071
+              ]
+            ],
+            "field": "simm17",
+            "form_id": "bstart_std_32_b05390d367cf",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "17-bit signed bundle target displacement",
+            "signedness": "signed",
+            "width": 17,
+            "zero_meaning": "Encoded zero supplies a zero displacement or zero immediate value."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -13379,15 +13340,15 @@
           "BSTART.STD RET"
         ],
         "exceptions": [
-          "A nonzero FALL simm17, deleted bare CALL/ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.",
+          "A nonzero FALL simm17, deleted bare ICALL encoding, reserved BrType, odd target, or unsupported form raises before predecessor retirement or new BARG effects.",
           "IND without an active retiring Standard or Floating BARG raises Fault_BundleControl before effects.",
           "If predecessor commit fails, the old block and continuation remain authoritative and no standard block is installed."
         ],
         "field_domains": [],
         "legality": [
-          "Exactly FALL, DIRECT, COND, IND, and RET are accepted.",
+          "Exactly FALL, DIRECT, COND, CALL, IND, and RET are accepted.",
           "The FALL form accepts only simm17=0; every nonzero FALL payload is extension-reserved.",
-          "Bare CALL and ICALL forms are deleted."
+          "Bare ICALL forms are deleted."
         ],
         "memory_effects": [
           "none"
@@ -143519,8 +143480,8 @@
   ],
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
-    "encoded_form_count": 561,
-    "mnemonic_count": 663,
+    "encoded_form_count": 562,
+    "mnemonic_count": 662,
     "placeholder_count": 0,
     "selector_operation_count": 117,
     "status": "closed",

@@ -21,7 +21,6 @@
   ],
   "affected_ndf": [
     "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
-    "PTO-BSTART-CALL-DECISION-BINDING-001",
     "PTO-BSTART-DECISION-BINDING-001",
     "PTO-BSTART-FP-CONTROL-001",
     "PTO-BSTART-ICALL-DECISION-BINDING-001",
@@ -38,7 +37,6 @@
   "affected_units": [
     "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
     "PTO-BLOCK-BSTART",
-    "PTO-BLOCK-BSTART-CALL",
     "PTO-BLOCK-BSTART-FP",
     "PTO-BLOCK-BSTART-ICALL",
     "PTO-BLOCK-BSTART-STD",
@@ -49,7 +47,8 @@
     "PTO-BLOCK-C-BSTART-STD",
     "PTO-BLOCK-C-BSTART-SYS",
     "PTO-BLOCK-C-BSTOP",
-    "PTO-BLOCK-L-BSTOP"
+    "PTO-BLOCK-L-BSTOP",
+    "PTO-BLOCK-MODEL-DISPATCH-DECODE"
   ],
   "resolves": [],
   "supersedes": [
@@ -61,6 +60,25 @@
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "not-required",
+  "amendments": [
+    {
+      "date": "2026-09-14",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/285",
+      "affected_ndf": [
+        "PTO-BSTART-FP-CONTROL-001",
+        "PTO-BSTART-STD-CONTROL-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-BSTART-FP",
+        "PTO-BLOCK-BSTART-STD",
+        "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+      ]
+    }
+  ],
   "legacy_ids": [
     "PRD-031",
     "PRD-032",
@@ -269,3 +287,22 @@ The record closes the public `BSTART`, fused call/indirect-call, FP, STD, SYS, c
 The ADR defines entry-form ownership and reservations, not new machine-body execution semantics. Predicate-register state remains separate, and selected continuation state follows ADR-BLOCK-0009.
 
 本 ADR 定义进入形式归属与保留，不新增机器 Body 执行语义。谓词寄存器状态保持独立，所选 continuation 状态遵循 ADR-BLOCK-0009。
+
+## Amendment 2026-09-14: 32-bit `BSTART.FP CALL` / `BSTART.STD CALL` accepted; unreachable `BSTART.CALL` retired
+
+Issue: https://github.com/PTO-ISA/pto-spec/issues/285
+
+`BSTART.FP` and `BSTART.STD` each accept one new 32-bit `CALL` form with the
+upstream `simm17@bit15` layout: `BSTART.FP CALL, <label>` at
+mask/match `0x00007fff/0x00004101` and `BSTART.STD CALL, <label>` at
+`0x00007fff/0x00004001`. Both execute through `ExecuteBundleStart` with
+`BundleTransfer_Call`; the return target is the sequential fallthrough, which
+is written to `ra` (GPR 10) and `_ReturnAddress` when the bundle begins.
+
+The fused `BSTART.CALL <br_label>, <rt_label>, ->ra` instruction is retired:
+no reachable encoder or toolchain emitted it, and its decision-binding clause
+`PTO-BSTART-CALL-DECISION-BINDING-001` leaves the active release with its
+owning unit `PTO-BLOCK-BSTART-CALL`. Compilers that targeted the retired
+encoding move to the accepted FP/STD `CALL` forms; the compiler-side change
+follows this architecture decision. Bare `BSTART.ICALL` words remain deleted
+and MUST still raise `Fault_IllegalInstruction` before any state effect.
