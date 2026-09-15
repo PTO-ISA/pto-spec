@@ -2,7 +2,7 @@
 func ConfigureOneElementMemoryTile(index: TileIndex)
 begin
     ConfigureTile(index, 256, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func TestProductionTileEventExtraction()

@@ -6,10 +6,10 @@ begin
         1, 128, 1, 1, TileDataType_FP32, TileLayout_CUBE_M32);
     let true_configured = ConfigureCubeTile(
         2, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let destination_configured = ConfigureCubeTile(
         3, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert predicate_configured && true_configured && destination_configured;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 10);

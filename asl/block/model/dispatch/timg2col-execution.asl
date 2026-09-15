@@ -297,8 +297,7 @@ begin
         if !found || !ConfigureCubeTileForMask(
                destination, capacity, pe_valid_row, valid_col, data_type,
                if output == BundleTIMG2COLOutput_LocalM16 then
-                   TileLayout_CUBE_M16 else TileLayout_CUBE_M32,
-               TileLocation_Matrix, BundleTIMG2COLPEBit()) then
+                   TileLayout_CUBE_M16 else TileLayout_CUBE_M32, BundleTIMG2COLPEBit()) then
             SetFault(Fault_TileAllocation, ReadTPC());
             return FALSE;
         end;
@@ -321,7 +320,6 @@ begin
         candidate.data_type = data_type;
         candidate.predicate_basis_type = data_type;
         candidate.layout = TileLayout_RowMajor;
-        candidate.location = TileLocation_Any;
     end;
     for row = 0 to rows_to_write - 1 looplimit 128 do
         for col = 0 to valid_col - 1 looplimit 65535 do

@@ -3,11 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(10, 128, 8, 8, 2, 8,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(11, 256, 16, 8, 4, 8,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 7 looplimit 8 do
             WriteTileElement(10, row, column, Zeros{PTO_XLEN} + 1);

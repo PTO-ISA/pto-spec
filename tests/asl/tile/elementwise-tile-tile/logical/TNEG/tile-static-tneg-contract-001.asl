@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: elementwise-tile-tile/logical
-    // block: BSTART.VEC TNEG, DataType | B.DATR PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.VEC TNEG, DataType | B.DATR PadValue, Layout (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000000010001') == 15;
     assert TileOperationOfIndex(15) == TileOperation_TNEG;
     assert TileHandlerOfIndex(15) == TileHandler_ExecuteTileUnary;

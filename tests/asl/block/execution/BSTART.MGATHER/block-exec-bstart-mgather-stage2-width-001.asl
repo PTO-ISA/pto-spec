@@ -37,8 +37,7 @@ begin
         1,
         1,
         index_type,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, index_value);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);
     let started = ExecuteCommandInstruction(
@@ -126,8 +125,7 @@ begin
         2,
         1,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -136,8 +134,7 @@ begin
         2,
         1,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x31);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x42);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);

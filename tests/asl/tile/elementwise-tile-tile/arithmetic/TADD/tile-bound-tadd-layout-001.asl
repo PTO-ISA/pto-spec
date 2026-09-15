@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     for index = 0 to 2 looplimit 3 do
         ConfigureTile(index as TileIndex, 128, 2, 8, 1, 1,
-            TileDataType_U64, TileLayout_ColumnMajor, TileLocation_Any);
+            TileDataType_U64, TileLayout_ColumnMajor);
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);

@@ -8,7 +8,7 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN});
     WriteGPR(3, Zeros{PTO_XLEN} + 8);
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
-    ConfigureTile(1, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(1, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x2a);
     MarkTileValidRegionDefined(1);
     let started = ExecuteCommandInstruction(Zeros{64} + 0x20211181, 32);

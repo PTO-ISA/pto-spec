@@ -6,14 +6,11 @@ func RunAccumulatorTypeCase(input_type: TileDataType,
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(4, 128, 1, 1,
-        input_type, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        input_type, TileLayout_CUBE_M16, '1111');
     let b_ready = ConfigureCubeTileForMask(5, 128, 1, 1,
-        input_type, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        input_type, TileLayout_CUBE_N8, '1111');
     let c_ready = ConfigureCubeTileForMask(6, 128, 1, 1,
-        accumulator_type, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        accumulator_type, TileLayout_CUBE_M16, '1111');
     assert a_ready && b_ready && c_ready;
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} +
         (if input_type == TileDataType_FP16 then 0x4000 else 2));

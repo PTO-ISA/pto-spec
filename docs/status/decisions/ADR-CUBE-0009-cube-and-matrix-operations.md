@@ -308,6 +308,23 @@ identical published result; zero retains final post-processing. Cache state and
 hint handling cannot change results, faults, allocation, publication, source
 lifetime, or ordering.
 
+## 2026-09-13 amendment: unified Local layouts and Matrix Bias closure
+
+Local Tiles have one architectural storage model. `RowMajor`, `CUBE_M16`,
+`CUBE_M32`, and `CUBE_N8` are physical layouts, not Vec/Matrix residency;
+`TileLocation` is retired from portable Local state and legality. The exact
+four Matrix Bias operations now require `Bias.layout == ML == D.layout`, with
+`A.layout == ML` when Local A is present, where ML is the existing resolver's
+M16/M32 result. Bias remains a defined logical `1 x N` accumulator-typed
+column broadcast. RowMajor and mixed-layout Bias reject before effects.
+
+This amendment records the Issue #264/#267 frozen contract and supersedes the
+former location/RowMajor wording only. Current semantics remain owned by the
+affected ASL/NDF files and their generated projections. The candidate uses
+dispatch baseline `cbd64442b0585271fed2db633578b9fb1541e1d9` and durable
+provenance `fbdfc56bef714a98a080461d926d54dcfbaf851e`; normative release
+impact is required.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

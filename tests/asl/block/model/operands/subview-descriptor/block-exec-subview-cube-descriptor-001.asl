@@ -42,9 +42,9 @@ func main() => integer
 begin
     ResetProfileState();
     let source0_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let source1_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert source0_ready && source1_ready;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
@@ -85,9 +85,9 @@ begin
     // through the same ordinary dispatch/binding/preflight/commit path.
     ResetProfileState();
     let m32_source_ready = ConfigureCubeTileForMask(1, 256, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M32, '1111');
     let n8_source_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert m32_source_ready && n8_source_ready;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
@@ -128,13 +128,13 @@ begin
     // layout, repeat boundary, clipped tail, and encoded size extreme has an
     // exact observable without granting the helper architectural ownership.
     let m16 = ConfigureCubeTileForMask(3, 256, 1, 8,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let m32 = ConfigureCubeTileForMask(4, 256, 1, 4,
-        TileDataType_FP16, TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M32, '1111');
     let n8 = ConfigureCubeTileForMask(5, 512, 16, 16,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     let n8_tail = ConfigureCubeTileForMask(6, 512, 10, 9,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert m16 && m32 && n8 && n8_tail;
     let m16_interior = BundleCubeSubviewDescriptorOf(3, Zeros{PTO_XLEN} + 1, 1);
     assert m16_interior.valid && m16_interior.origin_row == 0 &&
@@ -172,9 +172,9 @@ begin
     // and out-of-bounds Local CUBE parents.
     ResetProfileState();
     let zero_parent = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let zero_right = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert zero_parent && zero_right;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
@@ -197,9 +197,9 @@ begin
 
     ResetProfileState();
     let oob_parent = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let oob_right = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert oob_parent && oob_right;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);

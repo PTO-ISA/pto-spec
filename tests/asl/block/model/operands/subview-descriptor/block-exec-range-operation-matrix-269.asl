@@ -13,13 +13,13 @@ begin
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
                 4, TileDataType_U8, TileLayout_CUBE_M16,
-                TileLocation_Matrix, '1111');
+                '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
                 32, 4, 1,
                 4, TileDataType_U8,
-                TileLayout_RowMajor, TileLocation_Any, '1111');
+                TileLayout_RowMajor, '1111');
         end;
         InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);

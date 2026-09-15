@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-data-types-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns tile hands, the public five-bit data-type namespace, tile data-layout and storage-layout enums, pad values, and location intent.
+This unit owns tile hands, the public five-bit data-type namespace, tile data-layout and storage-layout enums, and pad values. Portable Local tile state records layout only; residency is not an architectural field.
 
 It is the boundary between encoded `DataType` fields and the typed values consumed by numeric and tile execution owners.
 
@@ -24,7 +24,7 @@ It is the boundary between encoded `DataType` fields and the typed values consum
 
 - `TileHand` names `T`, `U`, `M`, and `N`; `TileDataType` contains 15 floating/scale members, five signed integer members, and five unsigned integer members.
 - `TileDataTypeEncoding` is `bits(5)`. Codes `0..14`, `16..20`, and `24..28` are assigned; `15`, `21..23`, and `29..31` are reserved.
-- The unit separately defines transformation-oriented `TileDataLayout`, physical `TileLayout`, `TilePadValue`, and `TileLocation` namespaces.
+- The unit separately defines transformation-oriented `TileDataLayout`, physical `TileLayout`, and `TilePadValue` namespaces; portable Local legality is layout-based rather than residency-based.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-rules-interactions role=rules-interactions -->
 ## Rules and interactions
@@ -219,13 +219,6 @@ type TileLayout of enumeration {
     // generic execution rejects an opaque implementation layout.  No
     // assigned B.DATR Layout code maps to it.
     TileLayout_ImplementationDefined
-};
-
-type TileLocation of enumeration {
-    TileLocation_Vector,
-    TileLocation_Matrix,
-    TileLocation_Memory,
-    TileLocation_Any
 };
 ```
 <!-- GENERATED-ASL-END: unit -->

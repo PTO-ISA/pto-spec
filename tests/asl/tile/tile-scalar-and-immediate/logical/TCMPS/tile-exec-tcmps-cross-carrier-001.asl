@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 8, 2, 1, 2, TileDataType_E3M2,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x7f);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x01);
     WriteGPR(2, Zeros{PTO_XLEN} + 0x7f);

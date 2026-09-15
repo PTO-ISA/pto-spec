@@ -3,9 +3,9 @@ func main() => integer
 begin
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x44332211);
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 0x88776655);
     TUNPACK(2, 1, Zeros{PTO_XLEN} + 0x00000201);
@@ -15,9 +15,9 @@ begin
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0x00000044;
     assert !TileOperandsLegal_TUNPACK(2, 1, Zeros{PTO_XLEN} + 0x00000500);
     let configured_3 = ConfigureCubeTile(3, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_4 = ConfigureCubeTile(4, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x44332211);
     WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 0x88776655);
     WriteTileElement(3, 1, 0, Zeros{PTO_XLEN} + 0x44332211);

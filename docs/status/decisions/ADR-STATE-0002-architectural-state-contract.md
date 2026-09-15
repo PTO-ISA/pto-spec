@@ -106,6 +106,28 @@ state. Older bridge and pipe-management wording did not match that contract.
 - Pipe state is not architectural. PTO models allocation, definedness, and
   handoff through scalar queues, bundle bindings, and `TileInfo`.
 
+## Amendment — 2026-09-13 (Issue #267)
+
+This amendment accepts the unified Local layout state described by Issue #267
+and the frozen dispatch contract. The operative dispatch baseline is
+`ef2d23cdee03e74057099dc69943e8b909809ce0`; `cbd64442b0585271fed2db633578b9fb1541e1d9`
+is retained as intermediate dispatch history, with durable design provenance
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`.
+
+The affected NDF owners are `PTO-ARCH-STATE-CLOSURE-001`,
+`PTO-TILE-MODEL-STATE-TYPES`, `PTO-TILE-MODEL-STATE-ALLOCATION`,
+`PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE`,
+`PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT`, and
+`PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA`; affected units are the corresponding
+architecture state, Local allocation, descriptor, dtype/layout, operand
+schema, predicate-carrier, matrix-primary, Shared-register, and bundle-state
+units. `TileLocation` is retired from portable descriptor state. Residuals:
+N/A at dispatch. Catalog, documentation, AVS, matrix, and traceability
+projections are required to close against the amended owners.
+
+`release_impact: required` remains in force; this V1 amendment does not select
+a release identity.
+
 ## Consequences
 
 - The accepted direct Tile catalog contains 109 operations: 87 use the

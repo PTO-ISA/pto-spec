@@ -24,17 +24,17 @@ begin
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
     let left_ready = ConfigureCubeTile(40, 512, 1, 32,
-        TileDataType_E4M3, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_E4M3, TileLayout_CUBE_M16);
     let right_ready = ConfigureCubeTile(41, 512, 32, 1,
-        TileDataType_E5M2, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_E5M2, TileLayout_CUBE_N8);
     ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(43, 256, 1, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     let destination_ready = ConfigureCubeTile(44, 512, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M16);
     let accumulated_ready = ConfigureCubeTile(45, 512, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M16);
     assert left_ready && right_ready && destination_ready && accumulated_ready;
     for inner = 0 to 31 do
         WriteTileElement(40, 0, inner as integer {0..65535},
@@ -53,10 +53,10 @@ begin
     assert ReadTileElement(45, 0, 0) == Zeros{PTO_XLEN} + 64;
 
     ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert !TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
     ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     assert !TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
     SelectTestCUBEDataType('00100');
     assert !TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);

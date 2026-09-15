@@ -5,9 +5,9 @@ begin
     let source_capacity = TileStorageBytes(16, 8, source_type)
         as integer {0..262144};
     ConfigureTile(0, source_capacity, 16, 8, 1, 1, source_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(1, 128, 16, 8, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     return TileOperandsLegal_TCVT(
         1, 0, DefaultNumericExecutionControl());
@@ -32,7 +32,7 @@ begin
 
     ResetProfileState();
     ConfigureTile(0, 1024, 16, 8, 1, 1, TileDataType_FP64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3ff0000000000000);
     let started = ExecuteCommandInstruction(
         Zeros{PTO_XLEN} + 0x01b19181, 32);

@@ -184,7 +184,6 @@ begin
     return tile.allocated &&
            tile.storage_kind == TileStorage_PredicateCell &&
            tile.data_type == TileDataType_U8 &&
-           tile.location == TileLocation_Matrix &&
            TileCubePredicateDataTypeSupported(tile.predicate_basis_type) &&
            TileCubeDescriptorShapeLegal(
                tile.capacity_bytes, tile.valid_rows, tile.valid_columns,

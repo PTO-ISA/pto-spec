@@ -12,7 +12,7 @@ begin
 
     for index = 0 to 3 do
         ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
-            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+            TileDataType_U64, TileLayout_RowMajor, '1000');
     end;
     assert TileCapacityInUseForPE(0) == 262144;
     assert SharedTileCapacityInUse() == 262144;
@@ -20,7 +20,7 @@ begin
 
     for index = 4 to 7 do
         ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
-            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+            TileDataType_U64, TileLayout_RowMajor, '0100');
     end;
     assert !LocalTileAllocationFits('0100', 128);
     assert TileCapacityInUseForPE(1) == 262144;

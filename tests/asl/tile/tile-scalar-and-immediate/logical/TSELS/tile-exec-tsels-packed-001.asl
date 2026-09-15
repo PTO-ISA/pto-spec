@@ -11,8 +11,7 @@ begin
         1,
         2,
         TileDataType_S32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2,
         128,
@@ -21,8 +20,7 @@ begin
         1,
         2,
         TileDataType_TF32,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     // The two predicates share byte zero.  This pattern distinguishes packed
     // bit access from incorrectly treating payload words as one mask per
     // logical element.

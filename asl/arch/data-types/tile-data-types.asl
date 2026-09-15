@@ -157,10 +157,3 @@ type TileLayout of enumeration {
     // assigned B.DATR Layout code maps to it.
     TileLayout_ImplementationDefined
 };
-
-type TileLocation of enumeration {
-    TileLocation_Vector,
-    TileLocation_Matrix,
-    TileLocation_Memory,
-    TileLocation_Any
-};

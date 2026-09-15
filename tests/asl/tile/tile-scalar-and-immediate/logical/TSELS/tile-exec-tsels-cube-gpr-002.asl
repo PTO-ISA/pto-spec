@@ -33,7 +33,7 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         10, 128, 1, 4, TileDataType_U8,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert source_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 11);

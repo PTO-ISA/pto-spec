@@ -11,8 +11,7 @@ begin
     ConfigureTileForMask(index, 256,
         DerivedTileRows(256, physical_pitch, TileDataType_U16),
         physical_pitch, physical_rows, physical_columns,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     for row = 0 to physical_rows - 1 looplimit 8 do
         for column = 0 to physical_columns - 1 looplimit 8 do
             let logical_row = if left then

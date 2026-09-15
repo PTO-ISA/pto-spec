@@ -92,12 +92,12 @@ readonly func SelectedBundleTileScalarElementwiseSourceLegal(
     source: TileIndex,
     data_type: TileDataType) => boolean
 begin
-    return TileDescriptorLegal(source) &&
+    return TileElementwiseDescriptorLegal(source) &&
            _Tiles[[source]].storage_kind == TileStorage_Numeric &&
            TileCarrierWidthCompatible(_Tiles[[source]].data_type, data_type) &&
            TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
            SelectedBundleComparisonSourceContentsDefined(source) &&
-           TileSourceEncodingsValid(source) &&
+           TileElementwiseSourceEncodingsValid(source) &&
            SelectedBundleComparisonShapeMatches(source);
 end;
 

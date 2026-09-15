@@ -154,7 +154,7 @@ begin
         return TileElementwiseShapeAndTypeMatch(destination, source) &&
                _Tiles[[destination]].data_type == operation_type &&
                TileVecScalarIntegerDataTypeSupported(operation_type) &&
-               _Tiles[[source]].layout == TileLayout_RowMajor &&
+               TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
                TileElementwiseSourceContentsDefined(source);
     end;
     if !TileElementwiseShapeMatch(destination, source) ||
@@ -429,7 +429,11 @@ begin
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)
         else source_tile.data_type;
-    if source_tile.location == TileLocation_Matrix &&
+    // CUBE M-layout sources are private matrix operands: their backing type
+    // must match the operation type. An ordinary source backing type MAY
+    // differ only for a same-width non-packed carrier.
+    if (source_tile.layout == TileLayout_CUBE_M16 ||
+        source_tile.layout == TileLayout_CUBE_M32) &&
        source_tile.data_type != source_operation_type then
         return FALSE;
     end;
@@ -460,8 +464,6 @@ begin
         // minimum legal TSize, to change.
         return !CurrentBundleCanonicalize() &&
                CurrentBundleDataLayout() == TileDataLayout_NORM &&
-               source_tile.location == TileLocation_Matrix &&
-               destination_tile.location == TileLocation_Matrix &&
                destination_tile.layout == source_tile.layout &&
                TileCubeDescriptorShapeLegal(
                    source_tile.capacity_bytes, source_tile.valid_rows,
@@ -477,15 +479,8 @@ begin
     if TileLayoutIsCube(destination_tile.layout) then
         return FALSE;
     end;
-    let private_cube_source =
-        source_tile.location == TileLocation_Matrix;
-    if private_cube_source != CurrentBundleCanonicalize() then
+    if CurrentBundleCanonicalize() then
         return FALSE;
-    end;
-    if private_cube_source then
-        return CurrentBundleDataLayout() == TileDataLayout_NORM &&
-               source_tile.layout == TileLayout_RowMajor &&
-               destination_tile.layout == TileLayout_RowMajor;
     end;
     return source_tile.layout == CurrentBundleTileSourceLayout() &&
            destination_tile.layout == CurrentBundleTileLayout();

@@ -3,7 +3,7 @@
 func ConfigureTwoByTwo(index: TileIndex)
 begin
     ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func AssertTwoByTwoTileEquals(index: TileIndex, expected: Word)
@@ -78,7 +78,7 @@ begin
     ConfigureTwoByTwo(11);
     ConfigureTwoByTwo(12);
     ConfigureTile(13, 256, 2, 4, 2, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ExecuteTileFillScalar(10, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(11, Zeros{PTO_XLEN} + 1);
     ExecuteTileFillScalar(12, Zeros{PTO_XLEN} + 0x66);

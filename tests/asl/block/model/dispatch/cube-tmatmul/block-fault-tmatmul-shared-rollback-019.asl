@@ -6,7 +6,7 @@ begin
     ConfigureTileForMask(index, 128,
         DerivedTileRows(128, columns, TileDataType_U16),
         columns, rows, columns, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Matrix, '1111');
+        TileLayout_RowMajor, '1111');
     MarkTileValidRegionDefined(index);
     InstallSharedTile(shared_tile_id as SharedTileID, _Tiles[[index]], '1111');
 end;

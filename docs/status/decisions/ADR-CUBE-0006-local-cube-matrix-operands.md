@@ -181,6 +181,23 @@ The accepted ASL, generated documentation, and independent decoded tests prove:
 8. dtype/layout/shape/definedness failures before effects; and
 9. unchanged Matrix instruction encodings.
 
+## 2026-09-13 amendment: Bias follows the resolved M layout
+
+The Matrix resolver produces `ML` as `CUBE_M16` or `CUBE_M32`. For exactly
+the four Bias forms, D and Bias use `ML`, and Local A, when present, uses
+`ML` as well. Bias remains Local, fully defined, accumulator-typed (FP32 for
+MX), and logically `1 x N`; its payload is broadcast by logical output
+column. RowMajor Bias, M16/M32 mismatch, malformed CUBE geometry, wrong shape
+or type, undefined elements, and insufficient capacity reject before effects.
+This replaces the prior RowMajor auxiliary exception and does not broaden
+any primary A/B/C/D or scale contract.
+
+The authoritative implementation is the Matrix legality/execution ASL and
+the direct/BSTART Bias mnemonic contracts. This amendment is part of the
+Issue #264/#267 candidate at dispatch baseline
+`cbd64442b0585271fed2db633578b9fb1541e1d9`, with durable provenance
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`; release impact is required.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

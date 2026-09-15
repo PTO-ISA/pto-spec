@@ -43,17 +43,15 @@ readonly func TileOperandsLegal_GMOV(
     destination: TileIndex, source: TileIndex, peer_tid: Word) => boolean
 begin
     return UInt(peer_tid) < 4 &&
-           TileDescriptorLegal(destination) &&
-           TileSourceContentsDefined(source) &&
-           TileLogicalShapeMatch(destination, source) &&
+           TileElementwiseDescriptorLegal(destination) &&
+           TileElementwiseSourceContentsDefined(source) &&
+           TileElementwiseShapeMatch(destination, source) &&
+           TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
+           TileElementwiseLayoutSupported(_Tiles[[destination]].layout) &&
            TileCarrierOrPackedBaselineDataTypeSupported(
                _Tiles[[source]].data_type) &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
-           _Tiles[[destination]].layout == _Tiles[[source]].layout &&
-           _Tiles[[destination]].location != TileLocation_Memory &&
-           _Tiles[[destination]].location != TileLocation_Matrix &&
-           _Tiles[[source]].location != TileLocation_Memory &&
-           _Tiles[[source]].location != TileLocation_Matrix;
+           _Tiles[[destination]].layout == _Tiles[[source]].layout;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

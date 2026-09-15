@@ -29,9 +29,9 @@ func PrepareCubeExpansion(broadcast_layout: TileLayout)
 begin
     ResetProfileState();
     let source = ConfigureCubeTile(1, 128, 2, 2,
-        TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U8, TileLayout_CUBE_M16);
     let broadcast = ConfigureCubeTile(2, 128, 2, 1,
-        TileDataType_U8, broadcast_layout, TileLocation_Matrix);
+        TileDataType_U8, broadcast_layout);
     assert source && broadcast;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 20);
@@ -54,7 +54,7 @@ func PrepareCubeCopy()
 begin
     ResetProfileState();
     let source = ConfigureCubeTile(1, 128, 2, 1,
-        TileDataType_TF32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_TF32, TileLayout_CUBE_M16);
     assert source;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 0x3f800002);

@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 256, 1, 32, 1, 17, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for column = 0 to 16 looplimit 17 do
         WriteTileElement(1, 0, column as integer {0..65535},
             Zeros{PTO_XLEN} + column);

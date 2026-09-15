@@ -23,8 +23,7 @@ begin
         2,
         1,
         data_type,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -33,8 +32,7 @@ begin
         2,
         1,
         index_type,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     let started = ExecuteCommandInstruction(
         TgatherStage2Start(TileDataTypeToEncoding(data_type)),
         32);

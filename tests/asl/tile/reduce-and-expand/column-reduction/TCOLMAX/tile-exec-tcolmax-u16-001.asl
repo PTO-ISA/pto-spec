@@ -5,13 +5,11 @@ begin
     ConfigureTile(
         0, 128, 2, 2, 2, 2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1, 128, 1, 2, 1, 2,
         TileDataType_U16,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     let u16_all_ones = Zeros{PTO_XLEN} + 0xffff;
     WriteTileElement(0, 0, 0, u16_all_ones);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);

@@ -14,12 +14,10 @@ begin
 
     ResetProfileState();
     let cube_configuration_1 = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     assert cube_configuration_1;
     let cube_configuration_2 = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert cube_configuration_2;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);

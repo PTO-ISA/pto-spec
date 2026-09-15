@@ -661,6 +661,33 @@ generated block recipe to match this record's already accepted index-only
 body schema: there is no ValueTile and no destination. This is a projection
 correction and does not introduce a new architectural decision.
 
+## 2026-09-13 amendment: GMOV Local M-layout peer copies
+
+`GMOV` retains its existing peer-copy, readiness, publication, mask, peer
+addressing, dtype, and encoding rules. In addition to RowMajor, a Local
+`CUBE_M16` or `CUBE_M32` source may be copied to a same-layout Local
+destination by the existing `B.DATR.Layout` selector. All resolved `B.DIM`
+values must equal one (omission remains effective one), Shared and CUBE_N8
+remain illegal, and no conversion or new peer semantics are introduced.
+Payload bytes and definedness are preserved. Core4 source readiness and peer
+preflight precede destination effects, and zero mask remains a strict no-op.
+
+Breaking disclosure (confirmed 2026-09-15): the pre-amendment legality check
+accepted any `TileDescriptorLegal` non-CUBE layout, so ColumnMajor, NZ, and
+ZN same-layout peer copies were technically legal, though no AVS point or
+contract sentence ever pinned them. The complete Local GMOV layout set is
+now exactly `{RowMajor, CUBE_M16, CUBE_M32}`; ColumnMajor/NZ/ZN peer copies
+are rejected. This narrows GMOV only — TMOV/TLOAD/TSTORE ordinary-layout
+behavior is unchanged.
+
+The authoritative owners are `PTO-TILE-GMOV`,
+`PTO-GMOV-CORE4-PEER-001`, `PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV`, and
+`PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT`. This amendment is part of the
+Issue #264/#267 candidate at dispatch baseline
+`cbd64442b0585271fed2db633578b9fb1541e1d9` with durable provenance
+`fbdfc56bef714a98a080461d926d54dcfbaf851e`; normative release impact is
+required.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

@@ -21,8 +21,7 @@ begin
         1,
         2,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1,
         128,
@@ -31,8 +30,7 @@ begin
         1,
         1,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 20);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 20);
     ExecuteTileReduction(

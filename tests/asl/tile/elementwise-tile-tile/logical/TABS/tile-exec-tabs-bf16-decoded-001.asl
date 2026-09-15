@@ -12,7 +12,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_BF16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0xbf80);
 
     let started = ExecuteCommandInstruction(TabsDecodedStart(), 32);

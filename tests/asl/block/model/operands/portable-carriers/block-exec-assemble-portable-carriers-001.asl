@@ -70,9 +70,9 @@ end;
 func Source()
 begin
     let left = ConfigureCubeTileForMask(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let right = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert left && right;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
@@ -264,7 +264,7 @@ begin
 
     ResetProfileState();
     ConfigureTileForMask(1, 128, 1, 1, 1, 1,
-        TileDataType_U8, TileLayout_RowMajor, TileLocation_Any, '1111');
+        TileDataType_U8, TileLayout_RowMajor, '1111');
     InstallRelativeTileFixture(1, 1);
     assert _Tiles[[1]].allocated;
     let store_start = ExecuteCommandInstruction(StoreStart(), 32);

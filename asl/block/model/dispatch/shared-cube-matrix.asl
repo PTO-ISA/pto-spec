@@ -287,7 +287,6 @@ begin
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
     tile.layout = TileLayout_RowMajor;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
@@ -350,7 +349,6 @@ begin
     tile.data_type = scale_type;
     tile.predicate_basis_type = scale_type;
     tile.layout = TileLayout_RowMajor;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
@@ -433,7 +431,6 @@ begin
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
     tile.layout = TileLayout_RowMajor;
-    tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;

@@ -4,13 +4,13 @@ begin
     ResetProfileState();
     ConfigureTile(
         0, 256, 64, 1, 64, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1, 128, 128, 1, 64, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2, 512, 128, 1, 64, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     MarkTileValidRegionDefined(0);
     MarkTileValidRegionDefined(2);
 
@@ -25,7 +25,7 @@ begin
     ResetProfileState();
     ConfigureTile(
         1, 256, 64, 1, 64, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     MarkTileValidRegionDefined(1);
     let capacity_before = TileCapacityInUse();
     let started = ExecuteCommandInstruction(

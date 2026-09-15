@@ -30,10 +30,10 @@ begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(
         10, 256, 1, 2, TileDataType_S32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let right_ready = ConfigureCubeTile(
         11, 256, 1, 2, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert left_ready && right_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 2);

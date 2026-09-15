@@ -3,21 +3,21 @@
 func ConfigureTwoByTwoLeft(index: TileIndex, data_type: TileDataType)
 begin
     let cube_configuration_1 = ConfigureCubeTile(index, 128, 2, 2, data_type,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_1;
 end;
 
 func ConfigureTwoByTwoRight(index: TileIndex, data_type: TileDataType)
 begin
     let cube_configuration_2 = ConfigureCubeTile(index, 128, 2, 2, data_type,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
     assert cube_configuration_2;
 end;
 
 func ConfigureTwoByTwoDestination(index: TileIndex, data_type: TileDataType)
 begin
     let cube_configuration_3 = ConfigureCubeTile(index, 128, 2, 2, data_type,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_3;
 end;
 
@@ -64,7 +64,7 @@ begin
     assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 50;
 
     ConfigureTile(26, 256, 1, 2, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(26, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(26, 0, 1, Zeros{PTO_XLEN} + 2);
     TMATMUL_BIAS(7, 5, 6, 26);
@@ -75,10 +75,10 @@ begin
 
     // Local CUBE Matrix logical dimensions may be arbitrary positive values.
     let cube_configuration_4 = ConfigureCubeTile(30, 128, 3, 3, TileDataType_U16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_4;
     let cube_configuration_5 = ConfigureCubeTile(31, 128, 3, 3, TileDataType_U16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
     assert cube_configuration_5;
     MarkTileValidRegionDefined(30);
     MarkTileValidRegionDefined(31);
@@ -89,14 +89,14 @@ begin
     assert !TileMatrixInfoShapeLegal(zero_m, _Tiles[[6]]);
 
     let cube_configuration_6 = ConfigureCubeTile(27, 128, 2, 1, TileDataType_U16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileLayout_CUBE_N8);
 
     assert cube_configuration_6;
     let cube_configuration_7 = ConfigureCubeTile(29, 128, 1, 2, TileDataType_U16,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_7;
     let cube_configuration_8 = ConfigureCubeTile(28, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     assert cube_configuration_8;
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);

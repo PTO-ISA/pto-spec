@@ -3,9 +3,9 @@
 func TestTileMemoryCompletionAndRestart()
 begin
     ConfigureTile(14, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(15, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     Store(Zeros{PTO_XLEN} + 1024, 8, Zeros{PTO_XLEN} + 0x11);
     Store(Zeros{PTO_XLEN} + 1032, 8, Zeros{PTO_XLEN} + 0x22);
     Store(Zeros{PTO_XLEN} + 1040, 8, Zeros{PTO_XLEN} + 0x33);
@@ -64,9 +64,9 @@ begin
     assert ReadTileElement(14, 0, 2) == Zeros{PTO_XLEN} + 0x33;
 
     ConfigureTile(16, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(17, 256, 1, 4, 1, 3, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(16, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(16, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(16, 0, 2, Zeros{PTO_XLEN} + 3);

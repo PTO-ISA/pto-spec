@@ -4,9 +4,9 @@ begin
     ResetProfileState();
     ConfigurePredicateTile(0, 128, 16, 8, 1, 4);
     ConfigureTile(1, 128, 16, 8, 1, 4,
-        TileDataType_U8, TileLayout_RowMajor, TileLocation_Any);
+        TileDataType_U8, TileLayout_RowMajor);
     ConfigureTile(2, 128, 16, 8, 1, 4,
-        TileDataType_U8, TileLayout_RowMajor, TileLocation_Any);
+        TileDataType_U8, TileLayout_RowMajor);
     for column = 0 to 3 looplimit 4 do
         WriteTilePredicateBit(0, 0, column, column MOD 2 == 0);
         WriteTileElement(1, 0, column, Zeros{PTO_XLEN} + 10 + column);

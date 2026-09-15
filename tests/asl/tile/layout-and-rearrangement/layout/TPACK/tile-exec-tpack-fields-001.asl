@@ -3,11 +3,11 @@ func main() => integer
 begin
     ResetProfileState();
     let configured_1 = ConfigureCubeTile(1, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_2 = ConfigureCubeTile(2, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     let configured_3 = ConfigureCubeTile(3, 128, 2, 1, TileDataType_U32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     for row = 0 to 1 looplimit 2 do
         WriteTileElement(1, row, 0, Zeros{PTO_XLEN} + 0x00001234);
         WriteTileElement(2, row, 0, Zeros{PTO_XLEN} + 0x00abcdef);
@@ -22,11 +22,11 @@ begin
     TPACK(3, 1, 2, Zeros{PTO_XLEN} + 0x00000101);
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x0000ef34;
     let configured_4 = ConfigureCubeTile(4, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_5 = ConfigureCubeTile(5, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     let configured_6 = ConfigureCubeTile(6, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileLayout_CUBE_M16);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 1 looplimit 2 do
             WriteTileElement(4, row, column, Zeros{PTO_XLEN} + 0x00001234);

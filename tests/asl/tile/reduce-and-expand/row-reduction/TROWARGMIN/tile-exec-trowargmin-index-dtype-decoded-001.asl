@@ -19,8 +19,7 @@ begin
         2,
         3,
         TileDataType_U8,
-        TileLayout_RowMajor,
-        TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 2);

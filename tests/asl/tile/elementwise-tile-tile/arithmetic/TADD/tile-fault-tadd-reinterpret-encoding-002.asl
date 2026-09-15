@@ -4,13 +4,13 @@ begin
     ResetProfileState();
     ConfigureTile(
         0, 128, 8, 4, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         1, 128, 8, 4, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         2, 128, 8, 4, 1, 1, TileDataType_TF32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
 

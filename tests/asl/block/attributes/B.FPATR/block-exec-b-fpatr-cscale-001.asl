@@ -4,17 +4,13 @@ func RunCScaleControl(cctrl: bits(2)) => Word
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(1, 128, 2, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let b_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     let c_ready = ConfigureCubeTileForMask(3, 128, 2, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
     let scale_ready = ConfigureCubeTileForMask(4, 128, 2, 1,
-        TileDataType_U8, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_U8, TileLayout_CUBE_M32, '1111');
     assert a_ready && b_ready && c_ready && scale_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN});
@@ -60,7 +56,6 @@ begin
     assert _Tiles[[4]].valid_columns == 1;
     assert _Tiles[[4]].data_type == TileDataType_U8;
     assert _Tiles[[4]].layout == TileLayout_CUBE_M32;
-    assert _Tiles[[4]].location == TileLocation_Matrix;
     assert TileMatrixLocalCScaleSchemaLegal(4, 2);
     assert BundleMatrixLocalMathematicalSourcesLegal(
         2, TileDataType_FP16, TileDataType_FP16,

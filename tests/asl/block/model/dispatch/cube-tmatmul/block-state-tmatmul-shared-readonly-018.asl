@@ -4,8 +4,7 @@ func PrepareReadonlyShared(index: TileIndex, shared_tile_id: bits(6),
 begin
     let valid_rows = 1;
     ConfigureTileForMask(index, 128, 64, 1, valid_rows, 1,
-        TileDataType_U16, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+        TileDataType_U16, TileLayout_RowMajor, '1111');
     for row = 0 to valid_rows - 1 do
         WriteTileElement(index, row, 0, Zeros{PTO_XLEN} + value);
     end;

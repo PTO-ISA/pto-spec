@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(4, 256, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     Store(Zeros{PTO_XLEN} + 0x200, 8, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 0x208, 8, Zeros{PTO_XLEN} + 2);
     Store(Zeros{PTO_XLEN} + 0x220, 8, Zeros{PTO_XLEN} + 3);

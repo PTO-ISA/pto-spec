@@ -49,7 +49,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-SCALAR-0001](docs/status/decisions/ADR-SCALAR-0001-scalar-bitfield-and-reverse-bounds.md): Scalar bitfield and byte-reversal bounds
 
 ### Tile
-- [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
+- [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Local CUBE execution and CELL rearrangement
 
 ## Release 0.58.5.0
 

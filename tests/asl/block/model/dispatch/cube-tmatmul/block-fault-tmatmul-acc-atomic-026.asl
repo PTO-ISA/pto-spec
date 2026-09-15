@@ -3,14 +3,11 @@ func main() => integer
 begin
     ResetProfileState();
     let a_ready = ConfigureCubeTileForMask(4, 128, 32, 1,
-        TileDataType_FP16, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M32, '1111');
     let b_ready = ConfigureCubeTileForMask(5, 256, 1, 16,
-        TileDataType_FP16, TileLayout_CUBE_N8,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     let c_ready = ConfigureCubeTileForMask(6, 2048, 32, 16,
-        TileDataType_FP32, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '1111');
+        TileDataType_FP32, TileLayout_CUBE_M32, '1111');
     assert a_ready && b_ready && c_ready;
     MarkTileValidRegionDefined(4);
     MarkTileValidRegionDefined(5);

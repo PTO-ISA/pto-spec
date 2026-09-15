@@ -10,7 +10,7 @@ begin
         TileElementBytes(data_type)) as integer {0..262144};
     ConfigureTile(index, capacity_bytes, rows, physical_columns, rows, columns,
         data_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
 end;
 
 func FillTeplTile(index: TileIndex, seed: integer {0..65535})

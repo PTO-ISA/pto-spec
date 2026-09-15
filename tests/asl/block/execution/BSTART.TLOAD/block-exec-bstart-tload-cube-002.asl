@@ -51,7 +51,6 @@ begin
     let tile = _Tiles[[destination]];
     assert _BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert tile.layout == TileLayout_CUBE_M16;
-    assert tile.location == TileLocation_Matrix;
     assert tile.rows == 16 && tile.columns == 4;
     assert tile.valid_rows == 2 && tile.valid_columns == 3;
     assert tile.payload[[TileStorageIndex(tile, 0, 0)]] ==

@@ -30,7 +30,7 @@ begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
         10, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileLayout_CUBE_M32);
     assert source_ready;
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     MarkTileValidRegionDefined(10);

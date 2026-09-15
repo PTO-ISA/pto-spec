@@ -1,16 +1,14 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-BIAS-SHAPE-001","source":"asl/block/execution/BSTART.TMATMUL.BIAS.asl","requirements":["PTO-TMATMUL-BIAS-CONTRACT-001"],"kind":"boundary","summary":"TMATMUL.BIAS accepts only a row-major 1xN Bias of the result type.","pass_condition":"Scalar 1x1, column Mx1, full MxN, wrong-layout, and input-typed Bias descriptors all reject before destination allocation.","related_sources":["asl/tile/model/legality/matrix-shape.asl"]}
-func RejectBias(rows: integer {1..16}, columns: integer {1..16},
-                valid_rows: integer {1..16},
-                valid_columns: integer {1..16},
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-BIAS-SHAPE-001","source":"asl/block/execution/BSTART.TMATMUL.BIAS.asl","requirements":["PTO-TMATMUL-BIAS-CONTRACT-001"],"kind":"boundary","summary":"TMATMUL.BIAS accepts only a resolved-M-layout 1xN Bias of the result type.","pass_condition":"Scalar 1x1, column Mx1, full MxN, mismatched CUBE_N8, and input-typed Bias descriptors all reject before destination allocation.","related_sources":["asl/tile/model/legality/matrix-shape.asl"]}
+func RejectBias(valid_rows: integer {1..16}, valid_columns: integer {1..16},
                 data_type: TileDataType, layout: TileLayout)
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 8, 8, 2, 2, TileDataType_S16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 16, 8, 2, 2, TileDataType_S8,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(3, 128, rows, columns, valid_rows, valid_columns,
-        data_type, layout, TileLocation_Matrix);
+    ConfigureCubeTile(1, 128, 2, 2, TileDataType_S16,
+        TileLayout_CUBE_M16);
+    ConfigureCubeTile(2, 128, 2, 2, TileDataType_S8,
+        TileLayout_CUBE_N8);
+    ConfigureCubeTile(3, 512, valid_rows, valid_columns,
+        data_type, layout);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -37,10 +35,10 @@ end;
 
 func main() => integer
 begin
-    RejectBias(4, 8, 1, 1, TileDataType_S32, TileLayout_RowMajor);
-    RejectBias(4, 8, 2, 1, TileDataType_S32, TileLayout_RowMajor);
-    RejectBias(4, 8, 2, 2, TileDataType_S32, TileLayout_RowMajor);
-    RejectBias(4, 8, 1, 2, TileDataType_S32, TileLayout_ColumnMajor);
-    RejectBias(8, 8, 1, 2, TileDataType_S16, TileLayout_RowMajor);
+    RejectBias(1, 1, TileDataType_S32, TileLayout_CUBE_M16);
+    RejectBias(2, 1, TileDataType_S32, TileLayout_CUBE_M16);
+    RejectBias(2, 2, TileDataType_S32, TileLayout_CUBE_M16);
+    RejectBias(1, 2, TileDataType_S32, TileLayout_CUBE_N8);
+    RejectBias(1, 2, TileDataType_S16, TileLayout_CUBE_M16);
     return 0;
 end;

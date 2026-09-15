@@ -11,11 +11,11 @@ begin
         branch_type_valid = FALSE, branch_type = Zeros{3}
     });
     let a_ready = ConfigureCubeTile(1, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_M16);
     let b_ready = ConfigureCubeTile(2, 128, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+        TileDataType_FP16, TileLayout_CUBE_N8);
     let c_ready = ConfigureCubeTile(3, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_FP32, TileLayout_CUBE_M16);
     assert a_ready && b_ready && c_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);

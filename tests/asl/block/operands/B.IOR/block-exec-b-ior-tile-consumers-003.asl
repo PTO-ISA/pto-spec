@@ -106,7 +106,7 @@ begin
     // destination allocation or mutation.
     ResetProfileState();
     ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 99);
     let ttri_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x067, Zeros{5} + 24), 32);

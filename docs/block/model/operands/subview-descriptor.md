@@ -57,8 +57,8 @@ readonly func BundleCubeSubviewDescriptorOf(
 begin
     let empty = EmptyBundleSubviewDescriptor(parent_index);
     let parent = _Tiles[[parent_index]];
-    if !parent.allocated || parent.location != TileLocation_Matrix ||
-       !TileLayoutIsCube(parent.layout) || parent.valid_rows == 0 ||
+    if !parent.allocated || !TileLayoutIsCube(parent.layout) ||
+       parent.valid_rows == 0 ||
        parent.valid_columns == 0 || parent.cube_cell_count == 0 then
         return empty;
     end;
@@ -303,105 +303,14 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-    // The CUBE parent is the architectural source of the CELL-order view.
-    // A non-CUBE Tile handler consumes the bounded view in its ordinary
-    // row-major operand representation; CUBE handlers retain the CUBE view
-    // so their matrix legality and CELL geometry remain authoritative.
-    let operation_is_cube = _BundleOperation.valid &&
-        BundleTileDecodeFamily(_BundleOperation.operation_class) ==
-            TileDecode_CUBE;
-    // Matrix bias operands retain the existing handler contract: the
-    // primary matrix sources remain CUBE views, while the bias source is a
-    // bounded RowMajor view.  The parent is still always the accepted CUBE
-    // fixture; only the materialized representation follows the authoritative
-    // bias legality rule.
-    var source_ordinal: integer {0..7} = 0;
-    for prior = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 64 do
-        if _BundleTileBindings[[prior]].valid then
-            if prior < binding then
-                if _BundleTileBindings[[prior]].source0_valid then
-                    source_ordinal = (source_ordinal + 1) as integer {0..7};
-                end;
-                if _BundleTileBindings[[prior]].source1_valid then
-                    source_ordinal = (source_ordinal + 1) as integer {0..7};
-                end;
-            elsif prior == binding && source_select &&
-                  _BundleTileBindings[[prior]].source0_valid then
-                source_ordinal = (source_ordinal + 1) as integer {0..7};
-            end;
-        end;
-    end;
-    let operation_kind = if _BundleOperation.valid then
-        TileOperationOfIndex(
-            DecodeTileOperation(
-                BundleTileDecodeFamily(_BundleOperation.operation_class),
-                BundleOperationDecodeCode(_BundleOperation))
-                as integer {0..PTO_TILE_OPERATION_COUNT-1})
-        else TileOperation_TADD;
-    let bias_source =
-        (operation_kind == TileOperation_TMATMUL_BIAS && source_ordinal == 2) ||
-        (operation_kind == TileOperation_TGEMV_BIAS && source_ordinal == 2) ||
-        (operation_kind == TileOperation_TMATMUL_MX_BIAS && source_ordinal == 4) ||
-        (operation_kind == TileOperation_TGEMV_MX_BIAS && source_ordinal == 4);
-    let row_major_auxiliary = bias_source;
-    if operation_is_cube && !row_major_auxiliary then
-        if !ConfigureCubeTileForMask(materialized_index,
-                descriptor.capacity_bytes, descriptor.valid_rows,
-                descriptor.valid_columns, _Tiles[[parent]].data_type,
-                _Tiles[[parent]].layout, TileLocation_Matrix, mask) then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
-        end;
-    else
-        let row_broadcast =
-            (operation_kind == TileOperation_TROWEXPAND &&
-             source_ordinal == 0) ||
-            ((operation_kind == TileOperation_TROWEXPANDADD ||
-              operation_kind == TileOperation_TROWEXPANDSUB ||
-              operation_kind == TileOperation_TROWEXPANDMUL ||
-              operation_kind == TileOperation_TROWEXPANDDIV ||
-              operation_kind == TileOperation_TROWEXPANDMAX ||
-              operation_kind == TileOperation_TROWEXPANDMIN ||
-              operation_kind == TileOperation_TROWEXPANDEXPDIF) &&
-             source_ordinal == 1);
-        assert descriptor.valid_columns >= 1;
-        var row_major_columns: integer {1..65535} =
-            if row_broadcast then 1
-            else descriptor.valid_columns as integer {1..65535};
-        let physical_columns_raw = UInt(_BundleDimensions[[2]]);
-        if !row_broadcast &&
-           physical_columns_raw >= descriptor.valid_columns &&
-           physical_columns_raw <= 65535 then
-            row_major_columns =
-                physical_columns_raw as integer {1..65535};
-        elsif !row_broadcast then
-            var candidate: integer = 1;
-            for exponent = 0 to 15 do
-                if candidate < descriptor.valid_columns then
-                    candidate = candidate * 2;
-                end;
-            end;
-            if candidate > 65535 then
-                SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
-            end;
-            row_major_columns = candidate as integer {1..65535};
-        end;
-        let row_major_rows = DerivedTileRows(descriptor.capacity_bytes,
-            row_major_columns, _Tiles[[parent]].data_type);
-        if row_major_rows == 0 ||
-           !TileDescriptorShapeLegal(descriptor.capacity_bytes,
-               row_major_columns, descriptor.valid_rows,
-               descriptor.valid_columns, _Tiles[[parent]].data_type) then
-            SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
-        end;
-        ConfigureTileForMask(materialized_index, descriptor.capacity_bytes,
-            row_major_rows, row_major_columns, descriptor.valid_rows,
+    // SUBVIEW preserves the parent's physical Local layout.  No consumer
+    // engine or operand role may request an implicit conversion.
+    if !ConfigureCubeTileForMask(materialized_index,
+            descriptor.capacity_bytes, descriptor.valid_rows,
             descriptor.valid_columns, _Tiles[[parent]].data_type,
-            TileLayout_RowMajor,
-            (if operation_is_cube then TileLocation_Matrix
-             else TileLocation_Any), mask);
+            _Tiles[[parent]].layout, mask) then
+        SetFault(Fault_TileAllocation, ReadTPC());
+        return FALSE;
     end;
     for row = 0 to descriptor.valid_rows - 1 looplimit 65536 do
         for column = 0 to descriptor.valid_columns - 1 looplimit 65536 do
@@ -420,7 +329,7 @@ begin
     // follows the parent validity proven by the descriptor preflight.  Keep
     // undefined parent regions undefined; a fully defined parent publishes
     // the copied valid view as a normal readable Tile source.
-    if TileSourceContentsDefined(parent) then
+    if TileElementwiseSourceContentsDefined(parent) then
         MarkTileValidRegionDefined(materialized_index as TileIndex);
     end;
     if source_select then

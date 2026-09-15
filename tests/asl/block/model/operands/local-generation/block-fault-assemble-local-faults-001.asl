@@ -47,9 +47,9 @@ end;
 func BeginSource()
 begin
     let source = ConfigureCubeTileForMask(1, 256, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_M16, '1111');
     let source1 = ConfigureCubeTileForMask(2, 256, 1, 1,
-        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
+        TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert source && source1;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);

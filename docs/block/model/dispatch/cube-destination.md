@@ -110,7 +110,6 @@ begin
                        destination.valid_columns != n ||
                        destination.data_type != output_type ||
                        destination.layout != primary_layout ||
-                       destination.location != TileLocation_Matrix ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
                            allocation_mask then
@@ -155,7 +154,6 @@ begin
                        destination.valid_columns != auxiliary_columns ||
                        destination.data_type != accumulator_type ||
                        destination.layout != TileLayout_RowMajor ||
-                       destination.location != TileLocation_Any ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
                            allocation_mask then
@@ -180,8 +178,7 @@ begin
                 if destination_ordinal == 0 then
                     let configured = ConfigureCubeTileForMask(
                         resolved[[binding]], capacity_bytes, m, n,
-                        output_type, primary_layout,
-                        TileLocation_Matrix, allocation_mask);
+                        output_type, primary_layout, allocation_mask);
                     assert configured;
                 else
                     let row_auxiliary =
@@ -200,8 +197,7 @@ begin
                     ConfigureTileForMask(
                         resolved[[binding]], capacity_bytes,
                         m, auxiliary_columns, m, auxiliary_columns,
-                        accumulator_type, TileLayout_RowMajor,
-                        TileLocation_Any, allocation_mask);
+                        accumulator_type, TileLayout_RowMajor, allocation_mask);
                 end;
                 _BundleTileBindings[[binding]].destination =
                     resolved[[binding]];

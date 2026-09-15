@@ -4,7 +4,7 @@ func TestBundleTileUndersizedAllocation()
 begin
     ResetProfileState();
     ConfigureTile(16, 1024, 128, 1, 128, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     for row = 0 to 127 do
         WriteTileElement(16, row as integer {0..65535}, 0,
             Zeros{PTO_XLEN} + row);

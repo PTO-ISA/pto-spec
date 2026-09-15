@@ -38,7 +38,11 @@ begin
     let source = BundleTileSourceIndex(0, FALSE);
     let source_operation_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if _Tiles[[source]].location == TileLocation_Matrix &&
+    // CUBE M-layout sources are private matrix operands: their backing type
+    // must match the operation type. An ordinary source backing type MAY
+    // differ only for a same-width non-packed carrier.
+    if (_Tiles[[source]].layout == TileLayout_CUBE_M16 ||
+        _Tiles[[source]].layout == TileLayout_CUBE_M32) &&
        _Tiles[[source]].data_type != source_operation_type then
         return FALSE;
     end;
@@ -68,7 +72,6 @@ begin
                UInt(_BundleDimensions[[2]]) == 1 &&
                !CurrentBundleCanonicalize() &&
                CurrentBundleDataLayout() == TileDataLayout_NORM &&
-               _Tiles[[source]].location == TileLocation_Matrix &&
                TileCubeDescriptorShapeLegal(
                    _Tiles[[source]].capacity_bytes,
                    _Tiles[[source]].valid_rows,
@@ -93,14 +96,8 @@ begin
         return FALSE;
     end;
 
-    let private_cube_source =
-        _Tiles[[source]].location == TileLocation_Matrix;
-    if private_cube_source != CurrentBundleCanonicalize() then
+    if CurrentBundleCanonicalize() then
         return FALSE;
-    end;
-    if private_cube_source then
-        return CurrentBundleDataLayout() == TileDataLayout_NORM &&
-               source_layout == TileLayout_RowMajor;
     end;
     return source_layout == CurrentBundleTileSourceLayout();
 end;

@@ -471,7 +471,8 @@ begin
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(
-               left, right, bias, TileMatrixFunctionUsesMX(function));
+               left, right, bias, TileMatrixFunctionUsesMX(function),
+               primary_layout);
     if TileMatrixFunctionUsesAccumulator(function) &&
        BundleTMATMULAccumulatorPrefetchHint(cctrl) then
         TileProfileInternalAccumulatorPrefetchHint(

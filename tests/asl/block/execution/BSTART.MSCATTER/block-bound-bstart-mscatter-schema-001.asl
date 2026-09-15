@@ -4,9 +4,9 @@ func ConfigureScatterSchema(source_type: TileDataType,
                             include_ior: boolean)
 begin
     ConfigureTile(1, 128, 1, 1, 1, 1, source_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 1, 1, 1, index_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x77);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     var start: bits(64) = Zeros{64} + 0x00511181;

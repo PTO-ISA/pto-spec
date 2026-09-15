@@ -28,7 +28,7 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U4X2,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xf);
     Store(Zeros{PTO_XLEN} + 0x10f, 1, Zeros{PTO_XLEN} + 0xa5);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);

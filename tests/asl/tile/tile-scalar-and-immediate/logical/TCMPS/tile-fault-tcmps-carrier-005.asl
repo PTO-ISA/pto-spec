@@ -5,7 +5,7 @@ func RunTCMPSCarrierFault(
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 2, 2, 1, 2, source_type,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteGPR(2, Zeros{PTO_XLEN} + 1);

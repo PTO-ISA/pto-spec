@@ -5,13 +5,13 @@ begin
     ResetProfileState();
     ConfigureTile(
         40, 128, 2, 1, 2, 1, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         41, 128, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     ConfigureTile(
         42, 128, 1, 1, 1, 1, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
+        TileLayout_RowMajor);
     WriteTileElement(40, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(40, 1, 0, Zeros{PTO_XLEN} + 8);
     WriteTileElement(41, 0, 0, Zeros{PTO_XLEN} + 4294967295);
