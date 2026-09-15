@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-overview-purpose-scope role=purpose-scope -->
 ## 用途与范围
 
-PTO 在这里被定义为一种 64 位架构：`PTO_XLEN` 为 `64`，当前架构标识的版本为 `0`。
+PTO 在这里被定义为一种 64 位架构：`PTO_XLEN` 为 `64`，架构标识是记录在 `specification.toml`（`[release].architecture_version`）中的发布架构版本；规范 ASL 不携带版本字面量。
 
 这个入口刻意保持精简。它建立顶层所有权、状态闭包、完成与事件、Tile 容量以及发布验证契约，同时把具体指令行为留给可达的 ASL 所有者。
 
@@ -108,7 +108,9 @@ Local 与 Shared Tile 分配使用彼此独立的容量池。单个 `B.IOT` Loca
 // every independent AVS result, coverage, projections, and release-evidence checks.
 // NDF-END: PTO-RELEASE-VERIFICATION
 
-constant PTO_ARCHITECTURE_VERSION = 0;
+// The architecture identity is the release architecture version owned by
+// specification.toml ([release].architecture_version). Normative ASL remains
+// release-version neutral, so this unit declares no version literal.
 constant PTO_XLEN = 64;
 ```
 <!-- GENERATED-ASL-END: unit -->

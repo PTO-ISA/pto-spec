@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-overview-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-PTO is defined here as a 64-bit architecture: `PTO_XLEN` is `64`, and the current architecture identity is version `0`.
+PTO is defined here as a 64-bit architecture: `PTO_XLEN` is `64`, and the architecture identity is the release architecture version recorded in `specification.toml` (`[release].architecture_version`); normative ASL carries no version literal.
 
 This entry point deliberately stays small. It establishes the top-level ownership, state-closure, completion-and-event, tile-capacity, and release-verification contracts while leaving instruction behavior to the reachable ASL owners.
 
@@ -108,7 +108,9 @@ For a release question, compare every result with the same immutable commit. A p
 // every independent AVS result, coverage, projections, and release-evidence checks.
 // NDF-END: PTO-RELEASE-VERIFICATION
 
-constant PTO_ARCHITECTURE_VERSION = 0;
+// The architecture identity is the release architecture version owned by
+// specification.toml ([release].architecture_version). Normative ASL remains
+// release-version neutral, so this unit declares no version literal.
 constant PTO_XLEN = 64;
 ```
 <!-- GENERATED-ASL-END: unit -->
