@@ -182,13 +182,12 @@ func ConfigureCubeTileForMask(
     valid_columns: integer {0..65535},
     data_type: TileDataType,
     layout: TileLayout,
-    location: TileLocation,
     allocation_mask: bits(4)) => boolean
 begin
     return ConfigureCubeTileForMaskWithColumns(index, capacity_bytes,
         valid_rows,
         TileCubeStorageColumns(layout, valid_columns, data_type),
-        valid_columns, data_type, layout, location, allocation_mask);
+        valid_columns, data_type, layout, allocation_mask);
 end;
 
 func ConfigureCubeTile(

@@ -212,16 +212,6 @@ begin
     return cells as integer {1..16384};
 end;
 
-readonly func TileCubeStorageElements(layout: TileLayout,
-                                  valid_rows: integer {0..65535},
-                                  valid_columns: integer {0..65535},
-                                  data_type: TileDataType)
-    => integer {0..32768}
-begin
-    return TileCubeStorageElementsForColumns(layout, valid_rows,
-        TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
-end;
-
 readonly func TileCubeStorageElementsForColumns(
     layout: TileLayout,
     valid_rows: integer {0..65535},

@@ -47,7 +47,6 @@ end;
 readonly func TileCubeDescriptorLegal(tile: TileInfo) => boolean
 begin
     if !tile.allocated || tile.storage_kind != TileStorage_Numeric ||
-       tile.location != TileLocation_Matrix ||
        !TileCubeDescriptorShapeLegalWithColumns(tile.capacity_bytes,
            tile.valid_rows, tile.valid_columns, tile.columns,
            tile.data_type, tile.layout) then

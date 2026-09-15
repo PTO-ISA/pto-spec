@@ -50,7 +50,6 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[destination]].data_type == data_type;
     assert _Tiles[[destination]].layout == layout;
-    assert _Tiles[[destination]].location == TileLocation_Matrix;
     assert _Tiles[[destination]].valid_rows == valid_rows;
     assert _Tiles[[destination]].valid_columns == valid_columns;
     assert _Tiles[[destination]].columns == columns;

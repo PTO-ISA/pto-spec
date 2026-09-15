@@ -44,7 +44,7 @@ begin
         if exact_cube_columns then
             return ConfigureCubeTileForMaskWithColumns(index,
                 capacity_bytes, valid_rows, columns, valid_columns,
-                data_type, layout, TileLocation_Matrix, allocation_mask);
+                data_type, layout, allocation_mask);
         end;
         return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
             valid_columns, data_type, layout,

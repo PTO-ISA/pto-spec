@@ -67,7 +67,7 @@ begin
     let tile = _Tiles[[destination]];
     let row_step = SInt(step2d[63:32]); let column_step = SInt(step2d[31:0]);
     return TileCubeDescriptorLegal(tile) && TileTCIDataTypeSupported(tile.data_type) &&
-           tile.storage_kind == TileStorage_Numeric && tile.location == TileLocation_Matrix &&
+           tile.storage_kind == TileStorage_Numeric &&
            (tile.layout == TileLayout_CUBE_M16 || tile.layout == TileLayout_CUBE_M32) &&
            tile.valid_rows >= 1 && tile.valid_columns >= 1 &&
            (row_step == -1 || row_step == 0 || row_step == 1) &&
@@ -77,9 +77,9 @@ func TCICube(destination: TileIndex, start: Word, step2d: Word)
 begin
     var result = _Tiles[[destination]];
     assert result.allocated;
-    assert result.location == TileLocation_Matrix;
     assert (result.layout == TileLayout_CUBE_M16 ||
             result.layout == TileLayout_CUBE_M32);
+    assert result.valid_rows >= 1 && result.valid_columns >= 1;
     assert TileTCIDataTypeSupported(result.data_type);
     let row_step = SInt(step2d[63:32]);
     let column_step = SInt(step2d[31:0]);
@@ -112,7 +112,6 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, TilePad_Null);
-    result.location = TileLocation_Matrix;
     _Tiles[[destination]] = result;
 end;
 
