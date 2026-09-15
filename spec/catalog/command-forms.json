@@ -4089,17 +4089,17 @@
           "pieces": [
             {
               "instruction_lsb": 25,
-              "value_lsb": 3,
+              "value_lsb": 0,
               "width": 7
             },
             {
               "instruction_lsb": 7,
-              "value_lsb": 10,
+              "value_lsb": 7,
               "width": 5
             }
           ],
           "signedness": "unsigned",
-          "width": 15
+          "width": 12
         }
       ],
       "form_id": "fentry_32_a47584ec13b6",
@@ -4210,17 +4210,17 @@
           "pieces": [
             {
               "instruction_lsb": 25,
-              "value_lsb": 3,
+              "value_lsb": 0,
               "width": 7
             },
             {
               "instruction_lsb": 7,
-              "value_lsb": 10,
+              "value_lsb": 7,
               "width": 5
             }
           ],
           "signedness": "unsigned",
-          "width": 15
+          "width": 12
         }
       ],
       "form_id": "fexit_32_37b663f2a34d",
@@ -4331,17 +4331,17 @@
           "pieces": [
             {
               "instruction_lsb": 25,
-              "value_lsb": 3,
+              "value_lsb": 0,
               "width": 7
             },
             {
               "instruction_lsb": 7,
-              "value_lsb": 10,
+              "value_lsb": 7,
               "width": 5
             }
           ],
           "signedness": "unsigned",
-          "width": 15
+          "width": 12
         }
       ],
       "form_id": "fret_ra_32_659c886221c1",
@@ -4431,17 +4431,17 @@
           "pieces": [
             {
               "instruction_lsb": 25,
-              "value_lsb": 3,
+              "value_lsb": 0,
               "width": 7
             },
             {
               "instruction_lsb": 7,
-              "value_lsb": 10,
+              "value_lsb": 7,
               "width": 5
             }
           ],
           "signedness": "unsigned",
-          "width": 15
+          "width": 12
         }
       ],
       "form_id": "fret_stk_32_4fe246bd8241",

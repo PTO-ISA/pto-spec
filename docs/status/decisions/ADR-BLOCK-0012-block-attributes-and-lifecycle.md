@@ -64,6 +64,7 @@
     "PTO-BLOCK-FRET-RA",
     "PTO-BLOCK-FRET-STK",
     "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
     "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
@@ -200,6 +201,31 @@
         "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
+      ]
+    },
+    {
+      "date": "2026-09-14",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/288",
+      "affected_ndf": [
+        "PTO-FENTRY-RESTARTABLE-FRAME-001",
+        "PTO-FEXIT-RESTARTABLE-FRAME-001",
+        "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+        "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+        "PTO-INST-BLOCK-FENTRY",
+        "PTO-INST-BLOCK-FEXIT",
+        "PTO-INST-BLOCK-FRET-RA",
+        "PTO-INST-BLOCK-FRET-STK"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-FENTRY",
+        "PTO-BLOCK-FEXIT",
+        "PTO-BLOCK-FRET-RA",
+        "PTO-BLOCK-FRET-STK",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
       ]
     }
   ]
@@ -423,6 +449,15 @@ Dimension presence is retained only to reject duplicate writes and to preserve
 in-flight state across trap recovery. Tile operation legality and execution
 consume the effective LB values and MUST NOT distinguish an omitted dimension
 from an explicitly encoded value one.
+
+## Decision 019: frame `uimm` is a twelve-bit encoded field scaled by eight
+
+`FENTRY`, `FEXIT`, `FRET.RA`, and `FRET.STK` encode their frame byte count in a
+twelve-bit unsigned field whose two pieces tile value bits 0..11. The semantic
+byte count is the encoded value shifted left by three, so the encoding supplies
+only multiples of eight and a field's declared `width` always equals the sum of
+its piece widths. Recorded for issue
+[#288](https://github.com/PTO-ISA/pto-spec/issues/288).
 
 ## Lifecycle corrections
 

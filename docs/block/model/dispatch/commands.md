@@ -420,22 +420,22 @@ begin
             ExecuteFENTRY(
                 CommandDecodedReg5(instruction, form, CommandField_SrcBegin),
                 CommandDecodedReg5(instruction, form, CommandField_SrcEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm));
+                LSL(CommandDecodedWord(instruction, form, CommandField_uimm), 3));
         when CommandHandler_ExecuteFrameExit =>
             ExecuteFEXIT(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm));
+                LSL(CommandDecodedWord(instruction, form, CommandField_uimm), 3));
         when CommandHandler_ExecuteFrameReturnAddress =>
             ExecuteFRETRA(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm));
+                LSL(CommandDecodedWord(instruction, form, CommandField_uimm), 3));
         when CommandHandler_ExecuteFrameReturnStack =>
             ExecuteFRETSTK(
                 CommandDecodedReg5(instruction, form, CommandField_DstBegin),
                 CommandDecodedReg5(instruction, form, CommandField_DstEnd),
-                CommandDecodedWord(instruction, form, CommandField_uimm));
+                LSL(CommandDecodedWord(instruction, form, CommandField_uimm), 3));
         when CommandHandler_ExecuteQueueMove =>
             let flags = CommandDecodedQueueMoveFlags(instruction, form);
             let capacity_source = if flags[3] == '1' then
