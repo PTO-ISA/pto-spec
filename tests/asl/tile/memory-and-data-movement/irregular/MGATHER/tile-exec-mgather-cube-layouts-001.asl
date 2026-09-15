@@ -178,20 +178,93 @@ begin
     StopMemoryEventCapture();
 end;
 
-func CubeLayoutMismatch()
+func LayoutMismatchCUBEM32Index()
 begin
     ResetProfileState();
-    let destination_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
-    let index_ready = ConfigureCubeTile(1, 256, 1, 1, TileDataType_S32,
-        TileLayout_CUBE_M32, TileLocation_Matrix);
-    let value_ready = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U32,
-        TileLayout_CUBE_M16, TileLocation_Matrix);
-    assert destination_ready && index_ready && value_ready;
+    let destination_ready = ConfigureCubeTile(0, 128, 1, 1,
+        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let index_ready = ConfigureCubeTile(1, 128, 1, 1,
+        TileDataType_S32, TileLayout_CUBE_M32, TileLocation_Matrix);
+    let value_ready = ConfigureCubeTile(2, 128, 1, 1,
+        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let mask_ready = ConfigureCubeTile(3, 128, 1, 1,
+        TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let expected_ready = ConfigureCubeTile(4, 128, 1, 1,
+        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let replacement_ready = ConfigureCubeTile(5, 128, 1, 1,
+        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert destination_ready && index_ready && value_ready && mask_ready &&
+           expected_ready && replacement_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 9);
+    Store(Zeros{PTO_XLEN} + 0x200, 4, Zeros{PTO_XLEN} + 0x55);
+    StartMemoryEventCapture(0);
+    assert !TileOperandsLegal_MGATHER(0, Zeros{PTO_XLEN} + 0x200, 1);
+    assert !TileOperandsLegal_MSCATTER(Zeros{PTO_XLEN} + 0x200, 0, 1);
+    assert !TileOperandsLegal_MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x200,
+        1, 3, TilePad_Null);
+    assert !TileOperandsLegal_MSCATTER_MASK(
+        Zeros{PTO_XLEN} + 0x200, 0, 1, 3);
+    assert !TileOperandsLegal_MGATHER_CAS(0, Zeros{PTO_XLEN} + 0x200,
+        1, 4, 5, TilePad_Null);
     assert !TileOperandsLegal_GM_ATOM_VALUE(
-        GMAtomic_ADD, 0, Zeros{PTO_XLEN}, 1, 2, TilePad_Null);
+        GMAtomic_ADD, 0, Zeros{PTO_XLEN} + 0x200, 1, 2, TilePad_Null);
+    assert !TileOperandsLegal_GM_ATOM_CAS(
+        GMAtomic_CAS, 0, Zeros{PTO_XLEN} + 0x200, 1, 4, 5, TilePad_Null);
+    assert _MemoryEventCount == 0;
+    let unchanged = LoadUnsigned(Zeros{PTO_XLEN} + 0x200, 4);
+    assert unchanged == Zeros{PTO_XLEN} + 0x55;
+    StopMemoryEventCapture();
+end;
+
+func LayoutMismatchRowMajorData()
+begin
+    ResetProfileState();
+    var destination_ready = TRUE;
+    let index_ready = ConfigureCubeTile(1, 128, 1, 1,
+        TileDataType_S32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    var value_ready = TRUE;
+    var mask_ready = TRUE;
+    var expected_ready = TRUE;
+    var replacement_ready = TRUE;
+    ConfigureTile(0, 128, 1, 1, 1, 1,
+        TileDataType_U32, TileLayout_RowMajor);
+    ConfigureTile(2, 128, 1, 1, 1, 1,
+        TileDataType_U32, TileLayout_RowMajor);
+    ConfigureTile(3, 128, 1, 1, 1, 1,
+        TileDataType_U8, TileLayout_RowMajor);
+    ConfigureTile(4, 128, 1, 1, 1, 1,
+        TileDataType_U32, TileLayout_RowMajor);
+    ConfigureTile(5, 128, 1, 1, 1, 1,
+        TileDataType_U32, TileLayout_RowMajor);
+    assert destination_ready && index_ready && value_ready && mask_ready &&
+           expected_ready && replacement_ready;
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 9);
+    Store(Zeros{PTO_XLEN} + 0x204, 4, Zeros{PTO_XLEN} + 0x66);
+    StartMemoryEventCapture(0);
+    assert !TileOperandsLegal_MGATHER(0, Zeros{PTO_XLEN} + 0x200, 1);
+    assert !TileOperandsLegal_MSCATTER(Zeros{PTO_XLEN} + 0x200, 0, 1);
+    assert !TileOperandsLegal_MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x200,
+        1, 3, TilePad_Null);
+    assert !TileOperandsLegal_MSCATTER_MASK(
+        Zeros{PTO_XLEN} + 0x200, 0, 1, 3);
+    assert !TileOperandsLegal_MGATHER_CAS(0, Zeros{PTO_XLEN} + 0x200,
+        1, 4, 5, TilePad_Null);
+    assert !TileOperandsLegal_GM_ATOM_VALUE(
+        GMAtomic_ADD, 0, Zeros{PTO_XLEN} + 0x200, 1, 2, TilePad_Null);
+    assert !TileOperandsLegal_GM_ATOM_CAS(
+        GMAtomic_CAS, 0, Zeros{PTO_XLEN} + 0x200, 1, 4, 5, TilePad_Null);
+    assert _MemoryEventCount == 0;
+    let unchanged = LoadUnsigned(Zeros{PTO_XLEN} + 0x204, 4);
+    assert unchanged == Zeros{PTO_XLEN} + 0x66;
+    StopMemoryEventCapture();
 end;
 
 func main() => integer
@@ -212,6 +285,7 @@ begin
     CubePopc(TileLayout_CUBE_M32, Zeros{PTO_XLEN} + 0x440);
     CubeHeterogeneousDescriptors(TileLayout_CUBE_M16, Zeros{PTO_XLEN} + 0x480);
     CubeHeterogeneousDescriptors(TileLayout_CUBE_M32, Zeros{PTO_XLEN} + 0x4c0);
-    CubeLayoutMismatch();
+    LayoutMismatchCUBEM32Index();
+    LayoutMismatchRowMajorData();
     return 0;
 end;
