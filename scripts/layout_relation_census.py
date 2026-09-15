@@ -81,6 +81,36 @@ HISTORICAL_BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-
 # explicit so a generic helper cannot gain a non-portable layout by merely
 # becoming reachable through the bundle dispatcher.
 LOCATION_RETIREMENT_LAYOUT_HELPERS = {"BundleCubeSubviewDescriptorOf"}
+# ADR-TILE-0010 (2026-09-15 amendment, Issue #233) authorizes the explicit
+# physical-column decomposition of the CUBE geometry helpers: TCI
+# CUBE_M16/CUBE_M32 expresses the physical column count independently of
+# ValidCol, so each original wrapper delegates to a ``*ForColumns`` or
+# ``*WithColumns`` variant that takes the physical columns directly.  The
+# ``TileCubeStorageElements`` wrapper is retired because its only callers
+# moved to the decomposed variant.
+TCI_PHYSICAL_COLUMN_HELPERS = {
+    "TileCubeCellCountForColumns",
+    "TileCubeDescriptorShapeLegalWithColumns",
+    "TileCubeGeometryLegalWithColumns",
+    "TileCubeKRepeatForColumns",
+    "TileCubeNRepeatForColumns",
+    "TileCubeRequiredBytesForColumns",
+    "TileCubeStorageElements",
+    "TileCubeStorageElementsForColumns",
+}
+TCI_PHYSICAL_COLUMN_CLASSIFICATION = (
+    "TCI explicit physical-column decomposition "
+    "(ADR-TILE-0010 2026-09-15 amendment, Issue #233)"
+)
+# TileCubePayloadIndex is the shared CUBE cell-payload indexer whose CUBE_N8
+# branch is inherited unchanged from the frozen baseline.  The amendment
+# authorizes only its M16/M32 k_repeat sourcing from the physical column
+# count; any growth of the non-portable layout set still fails closed.
+TCI_PAYLOAD_INDEX_HELPERS = {"TileCubePayloadIndex"}
+TCI_PAYLOAD_INDEX_CLASSIFICATION = (
+    "TCI CUBE physical-column payload indexing "
+    "(ADR-TILE-0010 2026-09-15 amendment, Issue #233)"
+)
 
 
 def git(*args: str) -> str:
@@ -1276,6 +1306,10 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
+            if name in TCI_PHYSICAL_COLUMN_HELPERS:
+                rows.append({"name": name, "classification": TCI_PHYSICAL_COLUMN_CLASSIFICATION,
+                             "before": old_defs, "after": new_defs})
+                continue
             errors.append(f"common-helper definition set changed: {name}")
             rows.append({"name": name, "classification": "UNCLASSIFIED", "before": old_defs, "after": new_defs})
             continue
@@ -1287,12 +1321,18 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
+            payload_index_inherited = (
+                name in TCI_PAYLOAD_INDEX_HELPERS and
+                (set(new["layouts"]) - ALLOWED_LAYOUTS) <= (set(old["layouts"]) - ALLOWED_LAYOUTS))
             if (set(new["layouts"]) - ALLOWED_LAYOUTS and
-                    name not in LOCATION_RETIREMENT_LAYOUT_HELPERS):
+                    name not in LOCATION_RETIREMENT_LAYOUT_HELPERS and
+                    not payload_index_inherited):
                 errors.append(f"unauthorized common-helper layout change: {name}: {new['layouts']}")
                 classification = None
             elif name in LOCATION_RETIREMENT_LAYOUT_HELPERS and classification is None:
                 classification = "TileLocation retirement"
+            elif name in TCI_PAYLOAD_INDEX_HELPERS and classification is None:
+                classification = TCI_PAYLOAD_INDEX_CLASSIFICATION
             if classification is None:
                 errors.append(f"unclassified common-helper change: {name} ({old['path']})")
             rows.append({"name": name, "path": old["path"], "classification": classification or "UNCLASSIFIED",
