@@ -101,7 +101,9 @@ make pr-check
 ```
 
 See [Getting started](docs/development/getting-started.md) for environment setup,
-the full formal-validation prerequisites, and troubleshooting. The
+the full formal-validation prerequisites (which add OCaml/opam, the pinned
+ASLRef fork, and the Rust toolchain for the NDF parity check), and
+troubleshooting. The
 [repository layout](docs/development/repository-layout.md) maps each source,
 generated projection, and executable evidence surface to its owner.
 

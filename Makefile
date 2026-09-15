@@ -102,6 +102,7 @@ release-evidence-check:
 	./scripts/generate-release-gate-readiness --check
 	python3 scripts/check-mnemonic-explanations --require-complete
 	./scripts/check-release-closure
+	./scripts/run-python-tests --module tests.scripts.test_ndf_compiler_graph_parity
 	./scripts/check-binary-closure --release
 	./scripts/check-release-manifest
 

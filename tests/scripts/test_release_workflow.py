@@ -58,16 +58,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Resolve the exact NDF revision
-        id: ndf-revision
-        run: echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - name: Restore the NDF tool build
-        id: ndf-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
-        with:
-          path: tools/ndf/target
-          key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
-      - name: Run script and NDF parity tests
+      - name: Run script tests
         run: ./scripts/check-pr --tooling
   validate:
     name: PR / validate
@@ -337,13 +328,30 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         errors = validate_pr_workflow(duplicated)
         self.assertTrue(any("exactly once" in error and "check-pr --source" in error for error in errors), errors)
 
-    def test_pr_workflow_requires_narrow_ndf_cache(self) -> None:
+    def test_pr_workflow_rejects_a_cargo_dependent_cache(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          path: tools/ndf/target\n",
-            "          path: build\n",
+            "      - name: Validate source, projection, and publication contracts\n",
+            "      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n"
+            "        with:\n"
+            "          path: tools/ndf/target\n"
+            "          key: ndf-tool-build\n"
+            "      - name: Validate source, projection, and publication contracts\n",
+            1,
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("NDF cache" in error for error in errors), errors)
+        self.assertTrue(any("must not cache" in error for error in errors), errors)
+
+    def test_pr_workflow_rejects_an_ndf_revision_step(self) -> None:
+        workflow = VALID_PR_WORKFLOW.replace(
+            "      - name: Run script tests\n",
+            "      - name: Resolve the exact NDF revision\n"
+            "        id: ndf-revision\n"
+            "        run: echo \"sha=$(git -C tools/ndf rev-parse HEAD)\" >> \"$GITHUB_OUTPUT\"\n"
+            "      - name: Run script tests\n",
+            1,
+        )
+        errors = validate_pr_workflow(workflow)
+        self.assertTrue(any("PR lane" in error for error in errors), errors)
 
     def test_pr_workflow_rejects_an_additional_cache(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
@@ -356,12 +364,12 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
             1,
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("only cache" in error for error in errors), errors)
+        self.assertTrue(any("must not cache" in error for error in errors), errors)
 
     def test_pr_workflow_requires_every_action_to_use_the_exact_pin(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
-            "actions/cache@v4",
+            "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            "actions/checkout@v6",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("commit-pinned" in error for error in errors), errors)
@@ -423,9 +431,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_duplicate_uses_keys(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n",
-            "        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n"
-            "        uses: actions/cache@v4\n",
+            "        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803\n",
+            "        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803\n"
+            "        uses: actions/checkout@v6\n",
             1,
         )
         errors = validate_pr_workflow(workflow)
@@ -433,8 +441,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_malformed_uses(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
-            "[actions/cache@v4]",
+            "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            "[actions/checkout@v6]",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(
@@ -448,8 +456,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_unrecognized_action(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
-            "attacker/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+            "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            "attacker/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("malformed or unrecognized uses" in error for error in errors), errors)
@@ -529,8 +537,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_false_condition(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n",
-            "      - name: Run script and NDF parity tests\n"
+            "      - name: Run script tests\n",
+            "      - name: Run script tests\n"
             "        if: false\n",
         )
         errors = validate_pr_workflow(workflow)
@@ -549,8 +557,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_continue_on_error(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n",
-            "      - name: Run script and NDF parity tests\n"
+            "      - name: Run script tests\n",
+            "      - name: Run script tests\n"
             "        continue-on-error: true\n",
         )
         errors = validate_pr_workflow(workflow)
@@ -569,8 +577,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_nonexecuting_shell(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n",
-            "      - name: Run script and NDF parity tests\n"
+            "      - name: Run script tests\n",
+            "      - name: Run script tests\n"
             "        shell: echo {0}\n",
         )
         errors = validate_pr_workflow(workflow)
@@ -602,33 +610,23 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact job mapping" in error for error in errors), errors)
 
-    def test_tooling_cache_cannot_precede_revision(self) -> None:
-        revision = (
-            "      - name: Resolve the exact NDF revision\n"
-            "        id: ndf-revision\n"
-            "        run: echo \"sha=$(git -C tools/ndf rev-parse HEAD)\" >> \"$GITHUB_OUTPUT\"\n"
+    def test_tooling_steps_cannot_be_reordered(self) -> None:
+        checkout_start = VALID_PR_WORKFLOW.index("  tooling-tests:\n")
+        tests_start = VALID_PR_WORKFLOW.index(
+            "      - name: Run script tests\n", checkout_start
         )
-        cache = (
-            "      - name: Restore the NDF tool build\n"
-            "        id: ndf-cache\n"
-            "        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n"
-            "        with:\n"
-            "          path: tools/ndf/target\n"
-            "          key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}\n"
-        )
-        workflow = VALID_PR_WORKFLOW.replace(revision + cache, cache + revision)
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
-
-    def test_tooling_cache_cannot_follow_tests(self) -> None:
-        cache_start = VALID_PR_WORKFLOW.index("      - name: Restore the NDF tool build\n")
-        tests_start = VALID_PR_WORKFLOW.index("      - name: Run script and NDF parity tests\n")
         finish_start = VALID_PR_WORKFLOW.index("  validate:\n")
-        cache = VALID_PR_WORKFLOW[cache_start:tests_start]
         workflow = (
-            VALID_PR_WORKFLOW[:cache_start]
-            + VALID_PR_WORKFLOW[tests_start:finish_start]
-            + cache
+            VALID_PR_WORKFLOW[:checkout_start]
+            + VALID_PR_WORKFLOW[tests_start:finish_start].replace(
+                "      - name: Check out repository\n"
+                "        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803\n"
+                "        with:\n"
+                "          fetch-depth: 0\n"
+                "          submodules: recursive\n",
+                "",
+                1,
+            )
             + VALID_PR_WORKFLOW[finish_start:]
         )
         errors = validate_pr_workflow(workflow)
