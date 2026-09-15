@@ -981,7 +981,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x0007f07f",
+          "mask": "0x0007f1ff",
           "match": "0x00004013",
           "width_bits": 32
         }
@@ -1205,7 +1205,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0xfc07f07f",
+          "mask": "0xfc07f1ff",
           "match": "0x00005013",
           "width_bits": 32
         }

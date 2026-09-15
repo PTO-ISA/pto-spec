@@ -5759,6 +5759,22 @@
         "PTO-TILE-MODEL-STATE-TYPES",
         "PTO-TILE-TLOAD"
       ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-IOT-STREAM-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-IOT"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+          "date": "2026-09-14",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/289"
+        }
+      ],
       "approvers": [
         "zhoubot"
       ],

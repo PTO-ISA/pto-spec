@@ -75,9 +75,9 @@ B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
 | b_iot_32_10db6db84f5d | L32 | 32 | 0x00005013 / 0xfc00707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
-| b_iot_32_2c07e7177fad | L32 | 32 | 0x00004013 / 0x0007f07f | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
+| b_iot_32_2c07e7177fad | L32 | 32 | 0x00004013 / 0x0007f1ff | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
 | b_iot_32_8b8bce6bffe8 | L32 | 32 | 0x00004013 / 0x0000707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
-| b_iot_32_c11eb189dd83 | L32 | 32 | 0x00005013 / 0xfc07f07f | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
+| b_iot_32_c11eb189dd83 | L32 | 32 | 0x00005013 / 0xfc07f1ff | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
 | b_iot_32_efa0fe3fe49a | L32 | 32 | 0x00006013 / 0xfff0707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
 
 ### Fields
@@ -238,7 +238,7 @@ end;
 ## Legality
 
 - The three-bit PEMode field accepts all eight encodings and the common profile decoder expands them exactly to the fixed four-PE semantic mask table.
-- Source-only forms require SizeCode=0. Destination forms require SizeCode=1..10; codes 11..15 are reserved for Local B.IOT.
+- Source-only forms require SizeCode=0 and fix instruction bits 7..8 to zero; a non-zero value in those bits is reserved. Destination forms require SizeCode=1..10; codes 11..15 are reserved for Local B.IOT.
 - PEMode=000 is accepted as the strict no-effect source-bearing encoding; a nonzero decoded mask is a four-PE predicate shared by every effective binding in the block.
 - A participating B.IOT is legal only after BSTART and before the block body. At most four effective Local bindings are accepted in encoded order.
 - The selected operation schema determines ordered Local source and destination roles and must agree with the form fields and SizeCode role.
