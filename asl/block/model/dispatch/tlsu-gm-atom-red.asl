@@ -73,7 +73,8 @@ begin
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !BundleGMAtomRedDataTypeLegal(function, data_type) ||
        !IndexedTLSUNumericContentsDefined(binding.source0) ||
-       (!popc && !IndexedTLSUNumericContentsDefined(binding.source1)) then
+       (!popc && (!IndexedTLSUNumericContentsDefined(binding.source1) ||
+           _Tiles[[binding.source1]].data_type != data_type)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;

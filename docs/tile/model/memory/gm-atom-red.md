@@ -265,6 +265,8 @@ readonly func TileOperandsLegal_GM_RED_VALUE(
 begin
     return IndexedTLSUNumericContentsDefined(indices) &&
            IndexedTLSUNumericContentsDefined(value) &&
+           GMReductionOperationDataTypeLegal(
+               operation, _Tiles[[value]].data_type) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
                _Tiles[[indices]].data_type) &&
            _Tiles[[indices]].valid_rows == _Tiles[[value]].valid_rows &&
