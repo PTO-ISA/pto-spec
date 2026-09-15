@@ -2,11 +2,17 @@
 func main() => integer
 begin
     ResetProfileState();
-    let source = ConfigureCubeTileForMaskWithPhysical(0, 4096, 16, 16,
+    let source = ConfigureCubeTileForMaskWithPhysical(0, 512, 16, 16,
         4, 8, TileDataType_U8, TileLayout_CUBE_M16, '0001');
     let destination = ConfigureCubeTileForMaskWithPhysical(1, 1024, 16, 8,
         1, 8, TileDataType_U32, TileLayout_CUBE_M16, '0001');
     assert source && destination;
+    let capacity_before = TileCapacityInUseForPE(0);
+    let undersized = ConfigureCubeTileForMaskWithPhysical(2, 128, 16, 4,
+        1, 8, TileDataType_U32, TileLayout_CUBE_M16, '0001');
+    assert !undersized;
+    assert !_Tiles[[2]].allocated;
+    assert TileCapacityInUseForPE(0) == capacity_before;
     for row = 0 to 3 looplimit 4 do
         for column = 0 to 7 looplimit 8 do
             WriteTileElement(0, row as integer {0..65535},
@@ -16,7 +22,9 @@ begin
     end;
     ExecuteTileReduction(TileReduction_ARGMAX, TileAxis_Column, 1, 0);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 3;
-    assert !TileCubeDescriptorShapeAndPhysicalLegal(256, 16, 8, 1, 8,
+    assert _Tiles[[1]].data_type == TileDataType_U32;
+    assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 8;
+    assert !TileCubeDescriptorShapeAndPhysicalLegal(128, 16, 4, 1, 8,
         TileDataType_U32, TileLayout_CUBE_M16);
     return 0;
 end;

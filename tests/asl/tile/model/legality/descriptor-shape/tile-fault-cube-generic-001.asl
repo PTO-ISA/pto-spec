@@ -15,5 +15,17 @@ begin
     assert !TileGenericIndexingPermitted(tile);
     assert !TileDescriptorLegal(0);
     assert !TileSourceContentsDefined(0);
+
+    let m32_configured = ConfigureCubeTileForMaskWithPhysical(1, 4096,
+        64, 32, 1, 16, TileDataType_FP16, TileLayout_CUBE_M32,
+        TileLocation_Matrix, '0001');
+    assert m32_configured;
+    let m32_tile = _Tiles[[1]];
+    assert TileCubeDescriptorLegal(m32_tile);
+    assert m32_tile.rows == 64 && m32_tile.columns == 32;
+    assert m32_tile.valid_rows == 1 && m32_tile.valid_columns == 16;
+    assert m32_tile.cube_k_repeat == 16 && m32_tile.cube_n_repeat == 2;
+    assert m32_tile.cube_cell_count == 32 &&
+           m32_tile.cube_storage_bytes == 4096;
     return 0;
 end;
