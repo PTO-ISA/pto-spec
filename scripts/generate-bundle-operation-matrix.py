@@ -470,11 +470,15 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         outcome = "predicate-role-pre-effect-fault"
     elif (role_kind == "source" and
           row["name"] in CELL_REARRANGEMENT_OPERATIONS):
-        # These TEPL handlers require persistent CUBE operands.  B.SUBVIEW is
-        # total and preserves the bounded CUBE view, so the selected handler
-        # retains its existing role/layout legality before effects.
-        expected_fault = "Fault_TileLegality"
-        outcome = "cell-rearrangement-subview-pre-effect-fault"
+        # These TEPL handlers require CUBE_M16/M32 operands.  B.SUBVIEW is
+        # total and preserves the bounded CUBE view, so the preserved view
+        # now satisfies the handler's role/layout legality and the operation
+        # commits through normal dispatch.  (Before the preserve-CUBE
+        # SUBVIEW change, the materialized RowMajor view was rejected with
+        # Fault_TileLegality; the commit outcome is the accepted issue
+        # #264/#267 behavior and is disclosed in the ADR-CUBE-0013 and
+        # ADR-CUBE-0017 amendments.)
+        outcome = "cell-rearrangement-subview-preserved-commit"
     elif (role_kind == "source" and row["family"] == "TEPL" and
           row["name"] not in EXACT34_OPERATIONS and
           row["name"] not in {"TCVT", "TCMPS"}):
@@ -1117,7 +1121,7 @@ def build() -> tuple[dict, dict[Path, str]]:
     if set(outcome_counts) != {
         "normal-success", "shared-stage3-success", "shared-stage3-fault",
         "nonrollback-pre-effect-fault", "predicate-role-pre-effect-fault",
-        "cell-rearrangement-subview-pre-effect-fault",
+        "cell-rearrangement-subview-preserved-commit",
         "preserved-cube-subview-pre-effect-fault",
     }:
         raise ValueError("matrix outcome classification is incomplete")

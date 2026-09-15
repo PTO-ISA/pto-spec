@@ -190,3 +190,12 @@ traceability projections are required to close against the amended owner.
 
 `release_impact: required` remains in force; this V1 amendment does not select
 a release identity.
+
+Observable behavior disclosure (2026-09-15): because `B.SUBVIEW` now preserves
+the bounded CUBE view, a CUBE_M16/CUBE_M32 parent viewed through `B.SUBVIEW`
+satisfies the CELL-rearrangement handlers' CUBE_M16/M32 operand legality, and
+TPERMUTE/TSHUF/TPACK/TUNPACK source roles through `B.SUBVIEW` commit through
+normal dispatch. Before this closure the materialized RowMajor view was
+rejected with `Fault_TileLegality` before effects; the generated operation
+matrix expectation model records the corrected commit outcome (cases
+0253-0255, 0257-0258, 0260-0261, 0263).

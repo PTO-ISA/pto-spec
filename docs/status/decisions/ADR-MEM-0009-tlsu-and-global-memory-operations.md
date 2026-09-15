@@ -672,6 +672,14 @@ remain illegal, and no conversion or new peer semantics are introduced.
 Payload bytes and definedness are preserved. Core4 source readiness and peer
 preflight precede destination effects, and zero mask remains a strict no-op.
 
+Breaking disclosure (confirmed 2026-09-15): the pre-amendment legality check
+accepted any `TileDescriptorLegal` non-CUBE layout, so ColumnMajor, NZ, and
+ZN same-layout peer copies were technically legal, though no AVS point or
+contract sentence ever pinned them. The complete Local GMOV layout set is
+now exactly `{RowMajor, CUBE_M16, CUBE_M32}`; ColumnMajor/NZ/ZN peer copies
+are rejected. This narrows GMOV only — TMOV/TLOAD/TSTORE ordinary-layout
+behavior is unchanged.
+
 The authoritative owners are `PTO-TILE-GMOV`,
 `PTO-GMOV-CORE4-PEER-001`, `PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV`, and
 `PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT`. This amendment is part of the

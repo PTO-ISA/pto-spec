@@ -5002,13 +5002,13 @@
     }
   ],
   "authoritative_inventory_key": "(mnemonic, direct-or-bundle form, catalog Tile operand/destination role; layout_bearing is explicit)",
-  "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+  "baseline": "577e7b06422d87ec09c925401b477b4e524eded3",
   "baseline_binding": {
     "complete": true,
-    "fixture": "spec/evidence/layout-relation-census-baseline-ef2d23cdee03e74057099dc69943e8b909809ce0.json",
-    "fixture_sha256": "847dc4fb756b757e96db06da982937fdb6f9e5b1250937bc36b943631f063e00",
+    "fixture": "spec/evidence/layout-relation-census-baseline-577e7b06422d87ec09c925401b477b4e524eded3.json",
+    "fixture_sha256": "dad8fa686c7d03f3cb1f90be60a925bb10d76cb7ff7a0260d005c68950a4a3f5",
     "method": "complete immutable fixture cross-checked against authoritative baseline inventory",
-    "object": "ef2d23cdee03e74057099dc69943e8b909809ce0"
+    "object": "577e7b06422d87ec09c925401b477b4e524eded3"
   },
   "bias_operations": [
     "TMATMUL_BIAS",
@@ -5017,17 +5017,23 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "80151ac077f41b92861decd73cdd52f0bc76eb54",
+  "candidate_head": "6d90ddf4e342f527573112ad3b2d43ce6b4c2e81",
   "candidate_identity": "immutable-asl-tree",
-  "candidate_only_authorized_against": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+  "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
     {
       "L0": {
         "destination0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ],
         "source0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ]
       },
       "L1": {
@@ -5068,6 +5074,24 @@
         [
           "GMOV",
           "bundle",
+          "destination0",
+          "ColumnMajor"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "destination0",
+          "NZ"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "destination0",
+          "ZN"
+        ],
+        [
+          "GMOV",
+          "bundle",
           "source0",
           "CUBE_M16"
         ],
@@ -5076,16 +5100,40 @@
           "bundle",
           "source0",
           "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "source0",
+          "ColumnMajor"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "source0",
+          "NZ"
+        ],
+        [
+          "GMOV",
+          "bundle",
+          "source0",
+          "ZN"
         ]
       ]
     },
     {
       "L0": {
         "destination0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ],
         "source0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ]
       },
       "L1": {
@@ -5126,6 +5174,24 @@
         [
           "GMOV",
           "direct",
+          "destination0",
+          "ColumnMajor"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "destination0",
+          "NZ"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "destination0",
+          "ZN"
+        ],
+        [
+          "GMOV",
+          "direct",
           "source0",
           "CUBE_M16"
         ],
@@ -5134,6 +5200,24 @@
           "direct",
           "source0",
           "CUBE_M32"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "source0",
+          "ColumnMajor"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "source0",
+          "NZ"
+        ],
+        [
+          "GMOV",
+          "direct",
+          "source0",
+          "ZN"
         ]
       ]
     },
@@ -10322,7 +10406,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "836d177031afa4e155a07b4491c65a4b11582cd654e2fc07be67d9772e449fd5",
+      "after_sha256": "4da58b90ec732e563fe658a27c94b8d681c35084f6c9af97da5d808ab962a3ac",
       "before_layouts": [
         "RowMajor"
       ],
@@ -10745,6 +10829,45 @@
       ]
     },
     {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "destination0",
+        "ColumnMajor"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "destination0",
+        "NZ"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "destination0",
+        "ZN"
+      ]
+    },
+    {
       "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
       "form": "bundle",
       "mnemonic": "GMOV",
@@ -10768,6 +10891,45 @@
         "bundle",
         "source0",
         "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "source0",
+        "ColumnMajor"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "source0",
+        "NZ"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "bundle",
+      "mnemonic": "GMOV",
+      "owner": "asl/block/execution/BSTART.GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "bundle",
+        "source0",
+        "ZN"
       ]
     },
     {
@@ -10797,6 +10959,45 @@
       ]
     },
     {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "destination0",
+        "ColumnMajor"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "destination0",
+        "NZ"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "destination0",
+        "ZN"
+      ]
+    },
+    {
       "classification": "GMOV Local M-layout extension (ADR-MEM-0009)",
       "form": "direct",
       "mnemonic": "GMOV",
@@ -10820,6 +11021,45 @@
         "direct",
         "source0",
         "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "source0",
+        "ColumnMajor"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "source0",
+        "NZ"
+      ]
+    },
+    {
+      "classification": "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)",
+      "form": "direct",
+      "mnemonic": "GMOV",
+      "owner": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "owner_decision": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+      "tuple": [
+        "GMOV",
+        "direct",
+        "source0",
+        "ZN"
       ]
     },
     {
@@ -19140,10 +19380,16 @@
     {
       "L0": {
         "destination0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ],
         "source0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ]
       },
       "L1": {
@@ -19170,10 +19416,16 @@
     {
       "L0": {
         "destination0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ],
         "source0": [
-          "RowMajor"
+          "ColumnMajor",
+          "NZ",
+          "RowMajor",
+          "ZN"
         ]
       },
       "L1": {
@@ -28070,7 +28322,7 @@
       "mnemonic": "TXORS"
     }
   ],
-  "operative_baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+  "operative_baseline": "577e7b06422d87ec09c925401b477b4e524eded3",
   "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
   "pass": true,
   "reachability": {
@@ -28850,7 +29102,7 @@
               "RowMajor"
             ],
             "path": "asl/tile/model/legality/matrix-operands.asl",
-            "sha256": "836d177031afa4e155a07b4491c65a4b11582cd654e2fc07be67d9772e449fd5"
+            "sha256": "4da58b90ec732e563fe658a27c94b8d681c35084f6c9af97da5d808ab962a3ac"
           }
         ],
         "BundleMatrixPostProcessSourceCount": [
@@ -35229,7 +35481,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/legality/operand-schema.asl",
-            "sha256": "f3b4e02188dea3ab0b1ad447fbe22920ff22c437755d66f0d4a47379602e170b"
+            "sha256": "7f4f8ec5b083c7844c49506086ed604bd7d39a83e679f689ffaf24988eb96c9f"
           }
         ],
         "TileOperandsLegal_TFMA": [
@@ -186477,6 +186729,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 893,
+  "source_path_count": 892,
   "tile_location_normative_refs": []
 }

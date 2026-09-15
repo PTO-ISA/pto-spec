@@ -4,9 +4,16 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
+# Default to the generator's frozen architectural baseline fixture so the
+# receipt stays valid as origin/main advances; PTO_CENSUS_BASELINE overrides.
+baseline_args=()
+if [[ -n "${PTO_CENSUS_BASELINE:-}" ]]; then
+    baseline_args=(--baseline "$PTO_CENSUS_BASELINE")
+fi
+
 python3 scripts/layout_relation_census.py --self-test
 python3 scripts/layout_relation_census.py \
-    --baseline "${PTO_CENSUS_BASELINE:-origin/main}" \
+    ${baseline_args[@]+"${baseline_args[@]}"} \
     --candidate "${PTO_CENSUS_CANDIDATE:-HEAD}" \
     --output spec/evidence/layout-relation-census.json \
     --check

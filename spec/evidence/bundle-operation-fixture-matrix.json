@@ -61,7 +61,7 @@
     "rollback-safe": 199
   },
   "outcome_counts": {
-    "cell-rearrangement-subview-pre-effect-fault": 8,
+    "cell-rearrangement-subview-preserved-commit": 8,
     "nonrollback-pre-effect-fault": 1,
     "normal-success": 182,
     "predicate-role-pre-effect-fault": 2,
@@ -15094,11 +15094,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-253",
-      "row_assertion": "case_0253_exact_fault",
+      "row_assertion": "case_0253_normal_commit",
       "gpr_word": null,
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15164,11 +15164,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-254",
-      "row_assertion": "case_0254_exact_fault",
+      "row_assertion": "case_0254_normal_commit",
       "gpr_word": null,
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15234,11 +15234,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-255",
-      "row_assertion": "case_0255_exact_fault",
+      "row_assertion": "case_0255_normal_commit",
       "gpr_word": null,
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15367,11 +15367,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-257",
-      "row_assertion": "case_0257_exact_fault",
+      "row_assertion": "case_0257_normal_commit",
       "gpr_word": "0x00010013",
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15429,11 +15429,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-258",
-      "row_assertion": "case_0258_exact_fault",
+      "row_assertion": "case_0258_normal_commit",
       "gpr_word": "0x00010013",
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15551,11 +15551,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-260",
-      "row_assertion": "case_0260_exact_fault",
+      "row_assertion": "case_0260_normal_commit",
       "gpr_word": "0x00010013",
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15613,11 +15613,11 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-261",
-      "row_assertion": "case_0261_exact_fault",
+      "row_assertion": "case_0261_normal_commit",
       "gpr_word": "0x00010013",
       "fixture_data_type": 25,
       "fixture_role_data_types": {
@@ -15733,11 +15733,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": "Fault_TileLegality",
-      "outcome": "cell-rearrangement-subview-pre-effect-fault",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
+      "expected_fault": null,
+      "outcome": "cell-rearrangement-subview-preserved-commit",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-263",
-      "row_assertion": "case_0263_exact_fault",
+      "row_assertion": "case_0263_normal_commit",
       "gpr_word": "0x00010013",
       "fixture_data_type": 25,
       "fixture_role_data_types": {

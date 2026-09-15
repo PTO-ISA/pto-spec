@@ -99,6 +99,13 @@ the current ASL/NDF owners and conversion profiles remain authoritative. The
 candidate dispatch baseline is `cbd64442b0585271fed2db633578b9fb1541e1d9`
 with durable provenance `fbdfc56bef714a98a080461d926d54dcfbaf851e`.
 
+Clarification (2026-09-15): the backing-type equality check is scoped to
+CUBE_M16/CUBE_M32 sources, which are private matrix operands. An ordinary
+source backing type MAY differ from the operation type only for a same-width
+non-packed carrier (for example an E8M0-backed ordinary source reinterpreted
+as U8); this retains the pre-unification acceptance and is pinned by
+`PTO-AVS-TILE-TCVT-BUNDLE-001`.
+
 ## Bilingual decision detail / 双语决策详述
 
 ### Why this decision / 为什么做出此决策

@@ -127,6 +127,9 @@ begin
             _Tiles[[BundleMatrixSourceAt(0)]].layout
         else if m <= 16 then TileLayout_CUBE_M16
         else if m <= 32 then TileLayout_CUBE_M32
+        // Defensive default only: no legal bias or accumulator bundle can
+        // reach this fallback, because those schemas require the resolved
+        // ML to be CUBE_M16/CUBE_M32.
         else TileLayout_RowMajor;
 
     if TileMatrixFunctionUsesAccumulator(function) then

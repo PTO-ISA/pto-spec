@@ -261,7 +261,7 @@ class LayoutRelationCensusTest(unittest.TestCase):
             self.assertNotEqual(direct["owner"], bundle["owner"])
 
     def test_real_candidate_records_gmov_and_bias_deltas_per_form(self) -> None:
-        result = census("ef2d23cdee03e74057099dc69943e8b909809ce0", "HEAD")
+        result = census(BASELINE_OBJECT, "HEAD")
         self.assertTrue(result["pass"], result["errors"])
         self.assertRegex(result["candidate_head"], r"^[0-9a-f]{40}$")
         self.assertEqual(result["candidate_identity"], "immutable-asl-tree")
@@ -271,7 +271,7 @@ class LayoutRelationCensusTest(unittest.TestCase):
         )
         self.assertEqual(
             result["candidate_only_authorized_against"],
-            "ef2d23cdee03e74057099dc69943e8b909809ce0",
+            BASELINE_OBJECT,
         )
         changed = result["changed_records"]
         gmov = [row for row in changed if row["mnemonic"] == "GMOV"]
@@ -279,12 +279,27 @@ class LayoutRelationCensusTest(unittest.TestCase):
         for row in gmov:
             self.assertEqual(set(row["L0"]), {"destination0", "source0"})
             self.assertEqual(set(row["L1"]), {"destination0", "source0"})
-            self.assertEqual(set(row["L0"]["destination0"]), {"RowMajor"})
+            # The live baseline accepted every ordinary non-CUBE layout through
+            # the generic descriptor check; ADR-MEM-0009 retires ColumnMajor,
+            # NZ, and ZN peer copies and keeps exactly RowMajor + CUBE M.
+            self.assertEqual(
+                set(row["L0"]["destination0"]),
+                {"RowMajor", "ColumnMajor", "NZ", "ZN"},
+            )
             self.assertEqual(set(row["L1"]["destination0"]), {"RowMajor", "CUBE_M16", "CUBE_M32"})
             self.assertEqual(set(row["L1"]["source0"]), {"RowMajor", "CUBE_M16", "CUBE_M32"})
             self.assertEqual(row["R0"], row["R1"])
             self.assertIn("destination0.layout == source0.layout", row["R1"])
             self.assertNotIn("scalar0", row["L1"])
+        gmov_retirements = [
+            row for row in result["delta"]
+            if row.get("mnemonic") == "GMOV"
+            and row["classification"] == "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)"
+        ]
+        self.assertEqual(
+            len(gmov_retirements),
+            2 * 2 * 3,  # direct+bundle forms, two roles, three retired layouts
+        )
 
         bias = [row for row in changed if row["mnemonic"] in BIAS]
         self.assertEqual(len(bias), 8)

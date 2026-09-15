@@ -67,8 +67,15 @@ BUNDLE_PIPELINE_ROOTS = (
     "ResolveBundleTileDestinationsForOperation",
     "ConfigureBundleTileDestination",
 )
-BASELINE_OBJECT = "ef2d23cdee03e74057099dc69943e8b909809ce0"
-BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-baseline-ef2d23cdee03e74057099dc69943e8b909809ce0.json"
+BASELINE_OBJECT = "577e7b06422d87ec09c925401b477b4e524eded3"
+BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-baseline-577e7b06422d87ec09c925401b477b4e524eded3.json"
+# Prior exact-object fixture kept only as a derivation seed for the exact-34
+# and Bias families (see _generate_baseline_fixture).  GMOV is deliberately
+# NOT seeded: its frozen {RowMajor} value was an extraction artifact, and the
+# ADR-MEM-0009 breaking disclosure (2026-09-15) records the true live
+# baseline {ColumnMajor, NZ, RowMajor, ZN} with the ordinary-layout
+# retirements classified explicitly.
+HISTORICAL_BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-baseline-ef2d23cdee03e74057099dc69943e8b909809ce0.json"
 # This helper's CUBE_N8 branch is the accepted SUBVIEW representation
 # closure; it was introduced as part of TileLocation retirement.  It is kept
 # explicit so a generic helper cannot gain a non-portable layout by merely
@@ -408,11 +415,11 @@ def _historical_baseline_fixture() -> dict[str, Any] | None:
     authoritative baseline object below and are required to be complete.
     """
     try:
-        text = git("show", f"HEAD:{BASELINE_FIXTURE_PATH.relative_to(ROOT).as_posix()}")
+        text = git("show", f"HEAD:{HISTORICAL_BASELINE_FIXTURE_PATH.relative_to(ROOT).as_posix()}")
         payload = json.loads(text)
     except (subprocess.CalledProcessError, json.JSONDecodeError, OSError):
         return None
-    return payload if isinstance(payload, dict) and payload.get("object") == BASELINE_OBJECT else None
+    return payload if isinstance(payload, dict) and payload.get("object") else None
 
 
 def _generate_baseline_fixture() -> str:
@@ -448,13 +455,16 @@ def _generate_baseline_fixture() -> str:
             # every relation found by the complete authoritative traversal.
             # This is a complete fixture, not a success allowlist: its exact
             # raw key set is validated by _load_baseline_fixture.
-            # The frozen contract deliberately changes only the exact-34,
-            # GMOV, and Bias families.  For those affected owners retain the
-            # previously validated baseline values; every independent family
-            # is derived afresh so newly traversed predicate/index/mask roles
-            # cannot inherit the old lexical census's false widening.
+            # The frozen contract deliberately changes only the exact-34 and
+            # Bias families.  For those affected owners retain the previously
+            # validated baseline values; every independent family is derived
+            # afresh so newly traversed predicate/index/mask roles cannot
+            # inherit the old lexical census's false widening.  GMOV is also
+            # derived afresh: its historical frozen {RowMajor} value was an
+            # extraction artifact, and the ADR-MEM-0009 breaking disclosure
+            # records the true live baseline {ColumnMajor, NZ, RowMajor, ZN}.
             prior = (historical_signatures.get((mnemonic, form), {})
-                     if mnemonic in set(EXACT_34) | set(BIAS) | {"GMOV"} else {})
+                     if mnemonic in set(EXACT_34) | set(BIAS) else {})
             merged_layouts = dict(prior.get("L0", {})) if isinstance(prior.get("L0"), dict) else {}
             for role, values in model.get("layouts", {}).items():
                 if role not in merged_layouts:
@@ -1213,6 +1223,13 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
     if mnemonic == "GMOV" and role in {"source0", "destination0"} and layout in LOCAL_CUBE_LAYOUTS:
         if layout in new_model.get("contract_layouts", {}).get(role, []) and layout not in old_values:
             return "GMOV Local M-layout extension (ADR-MEM-0009)"
+    if mnemonic == "GMOV" and role in {"source0", "destination0"} and layout in {"ColumnMajor", "NZ", "ZN"}:
+        # ADR-MEM-0009 (2026-09-13 amendment, breaking disclosure 2026-09-15)
+        # retires the untested ordinary-layout peer copies left over from the
+        # generic descriptor check; the complete Local GMOV layout set is
+        # exactly {RowMajor, CUBE_M16, CUBE_M32}.
+        if layout in old_values and layout not in new_values:
+            return "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)"
     if mnemonic in BIAS and layout in ALLOWED_LAYOUTS and role == new_model.get("bias_role"):
         if layout in new_values and layout not in old_values and layout in new_model.get("contract_layouts", {}).get(role, []):
             return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
@@ -1599,7 +1616,10 @@ def self_test() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--baseline", default="origin/main")
+    # The census compares the candidate against the frozen architectural
+    # baseline fixture by default so the receipt stays valid as origin/main
+    # advances; PTO_CENSUS_BASELINE may override for diagnostics.
+    parser.add_argument("--baseline", default=BASELINE_OBJECT)
     parser.add_argument("--candidate", default="HEAD")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--check", action="store_true")
