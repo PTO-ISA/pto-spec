@@ -8,7 +8,7 @@ begin
         1, 8, TileDataType_U32, TileLayout_CUBE_M16, '0001');
     assert source && destination;
     let capacity_before = TileCapacityInUseForPE(0);
-    let undersized = ConfigureCubeTileForMaskWithPhysical(2, 128, 16, 4,
+    let undersized = ConfigureCubeTileForMaskWithPhysical(2, 128, 16, 8,
         1, 8, TileDataType_U32, TileLayout_CUBE_M16, '0001');
     assert !undersized;
     assert !_Tiles[[2]].allocated;

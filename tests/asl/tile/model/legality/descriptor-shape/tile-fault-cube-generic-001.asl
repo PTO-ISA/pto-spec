@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-GENERIC-001","source":"asl/tile/model/legality/descriptor-shape.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"fault","summary":"CUBE descriptors retain physical geometry independently from valid geometry","pass_condition":"an M16 FP16 descriptor with physical slack passes CUBE legality, preserves physical metadata, and remains unavailable to generic indexing","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-GENERIC-001","source":"asl/tile/model/legality/descriptor-shape.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"fault","summary":"CUBE descriptors retain physical geometry independently from valid geometry","pass_condition":"M16 and M32 FP16 descriptors with physical slack pass CUBE legality and preserve exact physical metadata while remaining unavailable to generic indexing","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/tile/model/definedness/elements.asl"]}
 func main() => integer
 begin
     ResetProfileState();
