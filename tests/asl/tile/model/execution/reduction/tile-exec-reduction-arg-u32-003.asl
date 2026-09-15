@@ -24,7 +24,7 @@ begin
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 3;
     assert _Tiles[[1]].data_type == TileDataType_U32;
     assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 8;
-    assert !TileCubeDescriptorShapeAndPhysicalLegal(128, 16, 4, 1, 8,
+    assert !TileCubeDescriptorShapeAndPhysicalLegal(128, 16, 8, 1, 8,
         TileDataType_U32, TileLayout_CUBE_M16);
     return 0;
 end;
