@@ -191,6 +191,7 @@ def project_catalogs(
         "isa": scalar_envelope["isa"],
         "operand_field_count": scalar_fields,
         "operand_piece_count": scalar_pieces,
+        "reviewed_encoding_overlaps": scalar_envelope["reviewed_encoding_overlaps"],
         "schema_version": scalar_envelope["schema_version"],
         "semantic_handler_count": _handler_count(scalar_forms),
     }
