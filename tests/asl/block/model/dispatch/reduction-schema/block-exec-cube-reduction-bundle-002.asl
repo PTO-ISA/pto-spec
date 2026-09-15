@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002","source":"asl/block/model/dispatch/reduction-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWSUM-CONTRACT-001"],"kind":"execution","summary":"A decoded direct-layout B.DATR drives CUBE reduction schema validation, destination allocation, execution, and atomic capacity rejection.","pass_condition":"a CUBE_M16 TROWSUM bundle allocates and publishes an M16 destination, while an oversized reduction source faults before destination allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/reduction.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002","source":"asl/block/model/dispatch/reduction-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWSUM-CONTRACT-001"],"kind":"execution","summary":"A decoded direct-layout B.DATR drives CUBE reduction schema validation, destination allocation, execution, and atomic publication for a source above 2 KiB.","pass_condition":"CUBE_M16 TROWSUM bundles allocate and publish the exact reduced shape for both 128-byte and 4096-byte sources.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/reduction.asl"]}
 pure func CubeReductionStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -61,9 +61,11 @@ begin
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN};
 
     PrepareCubeReduction(4096);
-    let rejected = ExecuteBundleTileOperation();
-    assert !rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert !_Tiles[[0]].allocated;
+    let expanded = ExecuteBundleTileOperation();
+    assert expanded;
+    assert _LastFault == Fault_None;
+    let expanded_destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[expanded_destination]].columns == 2;
+    assert _Tiles[[expanded_destination]].rows == 16;
     return 0;
 end;

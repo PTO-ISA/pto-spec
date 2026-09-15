@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-REDUCTION-CUBE-001","source":"asl/tile/model/execution/reduction.asl","requirements":["PTO-TROWARGMAX-CONTRACT-001","PTO-TROWSUM-CONTRACT-001"],"kind":"execution","summary":"CUBE_M16 reductions use logical coordinates, return U32 arg indices, and enforce operation-specific row and source-capacity bounds.","pass_condition":"M16 16-row sum and argmax execute with logical results, M16 17-row and 2049-byte-capacity sources reject, and M32 32-row/33-row boundaries are distinguished.","related_sources":["asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/shape/cube-cell.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-REDUCTION-CUBE-001","source":"asl/tile/model/execution/reduction.asl","requirements":["PTO-TROWARGMAX-CONTRACT-001","PTO-TROWSUM-CONTRACT-001"],"kind":"execution","summary":"CUBE_M16 reductions use logical coordinates, return U32 arg indices, and accept legal source capacity above 2 KiB.","pass_condition":"M16 sum and argmax execute from a 4096-byte source, M16 17-row valid geometry rejects, and M32 32-row/33-row valid-row boundaries remain distinguished.","related_sources":["asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/shape/cube-cell.asl"]}
 func FillTile(index: TileIndex, rows: integer {1..65535},
               columns: integer {1..65535})
 begin
@@ -23,7 +23,6 @@ begin
         TileDataType_U32, TileLayout_CUBE_M16);
     assert source_ok && sum_destination && arg_destination;
     FillTile(0, 16, 2);
-    assert TileReductionSourceCapacityLegal(0);
     ExecuteTileReduction(TileReduction_SUM, TileAxis_Row, 1, 0);
     ExecuteTileReduction(TileReduction_ARGMAX, TileAxis_Row, 2, 0);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 3;
@@ -42,10 +41,7 @@ begin
         TileDataType_U32, TileLayout_CUBE_M16);
     assert source_over_capacity && destination_over_capacity;
     FillTile(5, 2, 2);
-    assert !TileReductionSourceCapacityLegal(5);
-    _Tiles[[5]].capacity_bytes = 2049;
-    assert !TileReductionSourceCapacityLegal(5);
-    assert !TileOperandsLegal_ExecuteTileReduction(
+    assert TileOperandsLegal_ExecuteTileReduction(
         TileReduction_SUM, TileAxis_Row, 6, 5);
 
     let source_m32_ok = ConfigureCubeTile(7, 128, 32, 1,

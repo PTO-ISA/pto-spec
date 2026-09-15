@@ -80,11 +80,6 @@ begin
            left_tile.layout == right_tile.layout;
 end;
 
-readonly func TileReductionSourceCapacityLegal(index: TileIndex) => boolean
-begin
-    return _Tiles[[index]].capacity_bytes <= 2048;
-end;
-
 readonly func TileOperandsLegal_ExecuteTileFillScalar(
     destination: TileIndex, scalar: Word) => boolean
 begin
@@ -128,8 +123,7 @@ begin
            source_tile.layout, source_tile.valid_rows) ||
        !TileReductionAndExpansionRowLimitLegal(
            destination_tile.layout, destination_tile.valid_rows) ||
-       !source_type_legal ||
-       !TileReductionSourceCapacityLegal(source) then
+           !source_type_legal then
         return FALSE;
     end;
 
@@ -142,11 +136,35 @@ begin
     end;
 
     if axis == TileAxis_Row then
-        return destination_tile.valid_rows == source_tile.valid_rows &&
-               destination_tile.valid_columns == 1;
+        if destination_tile.valid_rows != source_tile.valid_rows ||
+           destination_tile.valid_columns != 1 then
+            return FALSE;
+        end;
+        if source_tile.layout == TileLayout_RowMajor then
+            return destination_tile.rows == DerivedTileRows(
+                       destination_tile.capacity_bytes, 1,
+                       destination_tile.data_type) &&
+                   destination_tile.columns == 1;
+        end;
+        return destination_tile.rows == TileCubeStorageRows(
+                   destination_tile.layout, source_tile.valid_rows,
+                   destination_tile.data_type) &&
+               destination_tile.columns == source_tile.columns;
     end;
-    return destination_tile.valid_rows == 1 &&
-           destination_tile.valid_columns == source_tile.valid_columns;
+    if destination_tile.valid_rows != 1 ||
+       destination_tile.valid_columns != source_tile.valid_columns then
+        return FALSE;
+    end;
+    if source_tile.layout == TileLayout_RowMajor then
+        return destination_tile.rows == DerivedTileRows(
+                   destination_tile.capacity_bytes, source_tile.columns,
+                   destination_tile.data_type) &&
+               destination_tile.columns == source_tile.columns;
+    end;
+    return destination_tile.rows == source_tile.rows &&
+           destination_tile.columns == TileCubeStorageColumns(
+               destination_tile.layout, source_tile.valid_columns,
+               destination_tile.data_type);
 end;
 
 pure func TileExpandExpdifTypePairLegal(

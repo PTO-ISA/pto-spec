@@ -62,8 +62,9 @@ begin
         return FALSE;
     end;
     if TileLayoutIsCube(tile.layout) then
-        return tile.rows == TileCubeStorageRows(
-                   tile.layout, valid_rows, tile.data_type) &&
+        return TileCubeDescriptorLegal(tile) &&
+               tile.valid_rows == valid_rows &&
+               tile.valid_columns == valid_columns &&
                tile.columns == TileCubeStorageColumns(
                    tile.layout, columns, tile.data_type);
     end;

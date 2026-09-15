@@ -246,14 +246,25 @@ begin
                 TileOperationOfIndex(
                     decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                     TileOperation_TCI;
+            let source_geometry = if shape_source_valid then
+                _Tiles[[shape_source]] else _Tiles[[0]];
+            let physical_rows = if cube_destination then
+                if reduction_operation && !reduction_row then source_geometry.rows
+                else TileCubeStorageRows(destination_layout, valid_rows,
+                    destination_type)
+            else 0;
+            let physical_columns = if cube_destination then
+                if exact_cube_columns then auxiliary_columns
+                else if reduction_operation && reduction_row then
+                    source_geometry.columns
+                else TileCubeStorageColumns(destination_layout,
+                    auxiliary_valid_columns, destination_type)
+            else auxiliary_columns;
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
-            let shape_legal = if exact_cube_columns then
-                TileCubeDescriptorShapeLegalWithColumns(capacity_bytes,
-                    valid_rows, auxiliary_valid_columns, auxiliary_columns,
-                    destination_type, destination_layout)
-            else if cube_destination then
-                TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
+            let shape_legal = if cube_destination then
+                TileCubeDescriptorShapeAndPhysicalLegal(capacity_bytes,
+                    physical_rows, physical_columns, valid_rows,
                     auxiliary_valid_columns, destination_type,
                     destination_layout)
             else
@@ -334,8 +345,26 @@ begin
                     TileOperationOfIndex(
                         decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                         TileOperation_TCI;
+                let source_geometry = if shape_source_valid then
+                    _Tiles[[shape_source]] else _Tiles[[0]];
+                let physical_rows = if destination_layout == TileLayout_CUBE_M16 ||
+                    destination_layout == TileLayout_CUBE_M32 then
+                    if reduction_operation && !reduction_row then
+                        source_geometry.rows
+                    else TileCubeStorageRows(destination_layout, valid_rows,
+                        destination_type)
+                else 0;
+                let physical_columns = if destination_layout == TileLayout_CUBE_M16 ||
+                    destination_layout == TileLayout_CUBE_M32 then
+                    if exact_cube_columns then auxiliary_columns
+                    else if reduction_operation && reduction_row then
+                        source_geometry.columns
+                    else TileCubeStorageColumns(destination_layout,
+                        auxiliary_valid_columns, destination_type)
+                else auxiliary_columns;
                 if !ConfigureBundleTileDestination(resolved[[binding]],
-                        capacity_bytes, valid_rows, auxiliary_columns,
+                        capacity_bytes, physical_rows, physical_columns,
+                        valid_rows, auxiliary_columns,
                         auxiliary_valid_columns, destination_type,
                         destination_layout, _BundleTileBindings[[binding]].pe_mask,
                         tgpr2t, exact_cube_columns) then

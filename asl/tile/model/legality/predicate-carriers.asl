@@ -168,25 +168,18 @@ begin
            tile.storage_kind == TileStorage_PredicateCell &&
            tile.data_type == TileDataType_U8 &&
            TileCubePredicateDataTypeSupported(tile.predicate_basis_type) &&
-           TileCubeDescriptorShapeLegal(
-               tile.capacity_bytes, tile.valid_rows, tile.valid_columns,
+           TileCubeDescriptorShapeAndPhysicalLegal(
+               tile.capacity_bytes, tile.rows, tile.columns,
+               tile.valid_rows, tile.valid_columns,
                tile.data_type, tile.layout) &&
-           tile.rows == TileCubeStorageRows(
-               tile.layout, tile.valid_rows, tile.data_type) &&
-           tile.columns == TileCubeStorageColumns(
-               tile.layout, tile.valid_columns, tile.data_type) &&
-           tile.cube_k_repeat == TileCubeKRepeat(
-               tile.layout, tile.valid_rows, tile.valid_columns,
-               tile.data_type) &&
-           tile.cube_n_repeat == TileCubeNRepeat(
-               tile.layout, tile.valid_rows, tile.valid_columns,
-               tile.data_type) &&
-           tile.cube_cell_count == TileCubeCellCount(
-               tile.layout, tile.valid_rows, tile.valid_columns,
-               tile.data_type) &&
-           tile.cube_storage_bytes == TileCubeRequiredBytes(
-               tile.layout, tile.valid_rows, tile.valid_columns,
-               tile.data_type) &&
+           tile.cube_k_repeat == TileCubePhysicalKRepeat(
+               tile.layout, tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_n_repeat == TileCubePhysicalNRepeat(
+               tile.layout, tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_cell_count == TileCubePhysicalCellCount(
+               tile.layout, tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_storage_bytes == TileCubePhysicalRequiredBytes(
+               tile.layout, tile.rows, tile.columns, tile.data_type) &&
            tile.cube_storage_bytes <= tile.capacity_bytes;
 end;
 
