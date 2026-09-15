@@ -111,7 +111,7 @@ end;
 ## Block composition
 
 ```asm
-Standalone scalar return-address materialization. Fused BSTART.CALL and BSTART.ICALL define call formation separately.
+Standalone scalar return-address materialization. Each BSTART variant's DIRECT form can fuse with C.SETRET into a distinct per-variant call instruction; the accepted BSTART.FP CALL and BSTART.STD CALL forms define call formation separately.
 ```
 
 ## Operation
