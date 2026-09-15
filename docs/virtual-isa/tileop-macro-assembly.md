@@ -148,24 +148,24 @@ Destination metavariables likewise become physical binding operands. A Local des
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `MGATHER` | `TLSU` | `MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>` |
+| `MGATHER` | `TLSU` | `MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->DstTile<Size>` |
 | `MGATHER_ADD` | `TLSU` | `MGATHER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_AND` | `TLSU` | `MGATHER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_CAS` | `TLSU` | `MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>` |
+| `MGATHER_CAS` | `TLSU` | `MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>` |
 | `MGATHER_DEC` | `TLSU` | `MGATHER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_EXCH` | `TLSU` | `MGATHER_EXCH <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_INC` | `TLSU` | `MGATHER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MGATHER_MASK` | `TLSU` | `MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>` |
+| `MGATHER_MASK` | `TLSU` | `MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->DstTile<Size>` |
 | `MGATHER_MAX` | `TLSU` | `MGATHER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_MIN` | `TLSU` | `MGATHER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_OR` | `TLSU` | `MGATHER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `MGATHER_XOR` | `TLSU` | `MGATHER_XOR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `MSCATTER` | `TLSU` | `MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1` |
+| `MSCATTER` | `TLSU` | `MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_ADD` | `TLSU` | `MSCATTER_ADD <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_AND` | `TLSU` | `MSCATTER_AND <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_DEC` | `TLSU` | `MSCATTER_DEC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_INC` | `TLSU` | `MSCATTER_INC <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
-| `MSCATTER_MASK` | `TLSU` | `MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2` |
+| `MSCATTER_MASK` | `TLSU` | `MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, PredicateTile2` |
 | `MSCATTER_MAX` | `TLSU` | `MSCATTER_MAX <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_MIN` | `TLSU` | `MSCATTER_MIN <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
 | `MSCATTER_OR` | `TLSU` | `MSCATTER_OR <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1` |
