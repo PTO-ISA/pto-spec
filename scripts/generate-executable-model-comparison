@@ -729,6 +729,11 @@ def required_toolchain_checks(snapshot_root: Path) -> list[dict[str, Any]]:
 def build(snapshot_root: Path) -> dict[str, Any]:
     snapshot = load_snapshot(snapshot_root)
     rows, summary = build_rows(snapshot)
+    tile_operations = load_json(ROOT / "spec/catalog/tile-operations.json")["operations"]
+    tile_breakdown = {
+        family: sum(1 for row in tile_operations if row["family"] == family)
+        for family in ("TEPL", "TLSU", "CUBE")
+    }
     coverage = snapshot["coverage"]
     gates = gate_summary(snapshot_root)
     toolchain_checks = required_toolchain_checks(snapshot_root)
@@ -738,6 +743,10 @@ def build(snapshot_root: Path) -> dict[str, Any]:
     can_close = (
         clean_snapshot_metadata(snapshot_root)["worktree_clean"] and not failed_gates
     )
+    accepted_abi_breaks = [
+        row for row in rows if row.get("abi_change_acceptance") is not None
+    ]
+    accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
     data = {
         "schema": "pto.executable-model-comparison.v1",
         "target": "S5-T3",
@@ -760,16 +769,16 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             "required_toolchain_checks": toolchain_checks,
         },
         "scope": {
-            "scalar_forms": 466,
+            "scalar_forms": len(load_json(ROOT / "spec/catalog/scalar-forms.json")["forms"]),
             "command_forms": len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"]),
-            "direct_tile_operations": 107,
+            "direct_tile_operations": len(tile_operations),
             "total_rows": len(rows),
-            "direct_tile_breakdown": {"TEPL": 85, "TLSU": 10, "CUBE": 12},
+            "direct_tile_breakdown": tile_breakdown,
         },
         "model_limits": [
             {
                 "id": "accepted-0.58.0-abi-break",
-                "disposition": "The immutable independent snapshot predates the accepted command-encoding, compact TEPL-selector ABI, and completed TLOAD/TSTORE operand schema. The retained matrix preserves 8 command encoding divergences and 62 active direct-tile ABI divergences instead of relabeling them as exact matches.",
+                "disposition": f"The immutable independent snapshot predates the accepted command-encoding, compact TEPL-selector ABI, and completed TLOAD/TSTORE operand schema. The retained matrix preserves {accepted_abi_break_counts['command']} command encoding divergences and {accepted_abi_break_counts['direct-tile']} active direct-tile ABI divergences instead of relabeling them as exact matches.",
             },
             {
                 "id": "reg5-flat-model-mismatch",
@@ -781,11 +790,11 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "bundle-bridge-operand-boundary",
-                "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 108 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
+                "disposition": f"PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All {len(tile_operations)} direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
             },
             {
                 "id": "tepl-selector-boundary",
-                "disposition": "PTO defines 85 active TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
+                "disposition": f"PTO defines {tile_breakdown['TEPL']} active TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
                 "id": "tlsu-and-cube-manifest-boundary",
@@ -810,21 +819,25 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 649:
-        raise SystemExit(f"expected 649 rows, got {summary['row_count']}")
+    expected_row_count = (
+        len(load_json(ROOT / "spec/catalog/scalar-forms.json")["forms"])
+        + len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"])
+        + len(tile_operations)
+    )
+    if summary["row_count"] != expected_row_count:
+        raise SystemExit(
+            "comparison rows do not cover the authoritative catalogs: "
+            f"expected {expected_row_count}, got {summary['row_count']}"
+        )
     if summary["classification_counts"] != {
         "comparable-match": 517,
-        "divergence": 94,
+        "divergence": 123,
         "non-comparable": 38,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
         )
-    accepted_abi_breaks = [
-        row for row in rows if row.get("abi_change_acceptance") is not None
-    ]
-    accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
-    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 62}):
+    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 53}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "
             f"{dict(sorted(accepted_abi_break_counts.items()))}"
