@@ -61,10 +61,10 @@ begin
     let mask = binding.source1;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if !TileSourceContentsDefined(indices) ||
-       !TilePredicateValuesLegal(mask) ||
-       !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
-       !IndexedTLSUTransferDataTypeLegal(data_type) ||
+    if !IndexedTLSUNumericContentsDefined(indices) ||
+       !IndexedTLSUPredicateValuesLegal(mask) ||
+       !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
+       !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) ||
        _Tiles[[indices]].layout != CurrentBundleTileLayout() ||
        _Tiles[[mask]].layout != CurrentBundleTileLayout() then
         SetFault(Fault_TileLegality, ReadTPC());
@@ -73,33 +73,30 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    if _Tiles[[indices]].valid_rows != valid_rows ||
-       _Tiles[[indices]].valid_columns != valid_columns ||
+    if !IndexedTLSUDataShapeMatchesIndex(
+           valid_rows, valid_columns,
+           _Tiles[[indices]].valid_rows, _Tiles[[indices]].valid_columns,
+           data_type) ||
        _Tiles[[mask]].valid_rows != valid_rows ||
-       _Tiles[[mask]].valid_columns != valid_columns then
+       _Tiles[[mask]].valid_columns != _Tiles[[indices]].valid_columns ||
+       !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
+           valid_rows, valid_columns, columns) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
-    let row_stride_elements = ReadPEAbsoluteGPROperand(
-        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
-    if UInt(row_stride_elements) < valid_columns then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
     if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
            valid_columns, columns, TRUE, data_type) then return FALSE; end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER_MASK(destination, Zeros{PTO_XLEN},
-           row_stride_elements, indices, mask, pad_value) then
+           indices, mask, pad_value) then
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    MGATHER_MASK(destination, base_address, row_stride_elements,
-        indices, mask, pad_value);
+    MGATHER_MASK(destination, base_address, indices, mask, pad_value);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

@@ -1,75 +1,83 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","surface":"tile","classification":["model","memory","gather-scatter"],"depends_on":["PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
 func MGATHER(destination: TileIndex, base_address: Word,
-             row_stride_elements: Word, indices: TileIndex,
-             pad_value: TilePadValue)
+             indices: TileIndex, pad_value: TilePadValue)
 begin
     let destination_tile = _Tiles[[destination]];
     let index_tile = _Tiles[[indices]];
-    assert destination_tile.allocated;
-    assert index_tile.allocated && index_tile.contents_defined;
-    assert destination_tile.valid_rows == index_tile.valid_rows;
-    assert destination_tile.valid_columns == index_tile.valid_columns;
-    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
-    assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
-    let index_payload = index_tile.payload;
+    assert IndexedTLSUNumericDescriptorLegal(destination);
+    assert IndexedTLSUNumericContentsDefined(indices);
+    assert IndexedTLSUDataShapeMatchesIndex(
+        destination_tile.valid_rows, destination_tile.valid_columns,
+        index_tile.valid_rows, index_tile.valid_columns,
+        destination_tile.data_type);
+    assert destination_tile.layout == index_tile.layout;
+    assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
+    assert IndexedTLSUOrdinaryTransferDataTypeLegal(destination_tile.data_type);
     var translated_addresses: TilePayload;
-    var result_payload = destination_tile.payload;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let destination_element = TileLinearIndex(destination_tile,
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, destination_tile.data_type);
+            let address = TileMemoryByteDisplacementAddress(base_address,
+                index_tile.payload[[index_element]], index_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
-            translated_addresses[[destination_element]] =
-                probe.translated_address;
+            translated_addresses[[index_element]] = probe.translated_address;
         end;
     end;
+    var result = destination_tile;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+            let element = TileLogicalLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            result_payload[[element]] = TilePadValueForDataType(
-                pad_value, destination_tile.data_type);
+            result = TileInfoWithLogicalElementAndDefined(result, element,
+                TilePadValueForDataType(pad_value, destination_tile.data_type),
+                TRUE);
         end;
     end;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
+            let raw = LoadTranslatedUnsigned(
+                translated_addresses[[index_element]],
                 TileMemoryElementBytes(destination_tile.data_type));
-            RecordLoadEvent(translated_addresses[[element]],
+            RecordLoadEvent(translated_addresses[[index_element]],
                 TileMemoryElementBytes(destination_tile.data_type), raw,
                 CurrentBundleMemoryOrder());
-            result_payload[[element]] = DecodeTileMemoryElementRaw(
-                raw, destination_tile.data_type, FALSE);
+            let first_column = if TileDataTypeIsFourBit(
+                destination_tile.data_type) then 2 * column else column;
+            let first = TileLogicalLinearIndex(result,
+                row as integer {0..65535},
+                first_column as integer {0..65535});
+            result = TileInfoWithLogicalElementAndDefined(result, first,
+                DecodeTileMemoryElementRaw(
+                    raw, destination_tile.data_type, FALSE), TRUE);
+            if TileDataTypeIsFourBit(destination_tile.data_type) then
+                let second = TileLogicalLinearIndex(result,
+                    row as integer {0..65535},
+                    (first_column + 1) as integer {0..65535});
+                result = TileInfoWithLogicalElementAndDefined(result, second,
+                    DecodeTileMemoryElementRaw(
+                        raw, destination_tile.data_type, TRUE), TRUE);
+            end;
         end;
     end;
-    _Tiles[[destination]].payload = result_payload;
+    _Tiles[[destination]] = result;
     MarkTilePhysicalRegionDefined(destination);
 end;
 
-func MGATHER(destination: TileIndex, base_address: Word,
-             row_stride_elements: Word, indices: TileIndex)
+func MGATHER(destination: TileIndex, base_address: Word, indices: TileIndex)
 begin
-    MGATHER(destination, base_address, row_stride_elements, indices,
-        TilePad_Null);
+    MGATHER(destination, base_address, indices, TilePad_Null);
 end;
 
-func CommitScatterLanes(source_tile: TileInfo,
-                        source_payload: TilePayload,
-                        lane_order: ScatterLaneOrder,
-                        lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS},
-                        original_addresses: TilePayload,
-                        translated_addresses: TilePayload,
-                        high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS))
+func CommitIndexedScatterTransactions(
+    data_type: TileDataType, lane_order: ScatterLaneOrder,
+    lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS},
+    original_addresses: TilePayload,
+    translated_addresses: TilePayload, values: TilePayload)
 begin
     // Duplicate-address lanes have an implementation-defined winner.  B.CATR
     // atomic makes the whole block non-interleavable, but does not select an
@@ -97,60 +105,73 @@ begin
             commit_order[[position]] = selected_element;
             let element = UInt(commit_order[[position]]) as
                 ModelTileElementIndex;
-            let stored_value = StoreTileMemoryElement(
-                original_addresses[[element]], translated_addresses[[element]],
-                source_tile.data_type, high_nibbles[element] == '1',
-                source_payload[[element]]);
+            var stored_value = values[[element]];
+            if TileDataTypeIsFourBit(data_type) then
+                StoreTranslated(original_addresses[[element]],
+                    translated_addresses[[element]], 1, stored_value);
+            else
+                stored_value = StoreTileMemoryElement(
+                    original_addresses[[element]],
+                    translated_addresses[[element]], data_type, FALSE,
+                    values[[element]]);
+            end;
             RecordStoreEvent(translated_addresses[[element]],
-                TileMemoryElementBytes(source_tile.data_type), stored_value,
+                TileMemoryElementBytes(data_type), stored_value,
                 CurrentBundleMemoryOrder());
         end;
     end;
 end;
 
-func MSCATTER(base_address: Word, row_stride_elements: Word,
-              source: TileIndex, indices: TileIndex)
+func MSCATTER(base_address: Word, source: TileIndex, indices: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
-    assert source_tile.allocated && source_tile.contents_defined;
-    assert index_tile.allocated && index_tile.contents_defined;
-    assert source_tile.valid_rows == index_tile.valid_rows;
-    assert source_tile.valid_columns == index_tile.valid_columns;
+    assert IndexedTLSUNumericContentsDefined(source);
+    assert IndexedTLSUNumericContentsDefined(indices);
+    assert IndexedTLSUDataShapeMatchesIndex(
+        source_tile.valid_rows, source_tile.valid_columns,
+        index_tile.valid_rows, index_tile.valid_columns,
+        source_tile.data_type);
     assert source_tile.layout == index_tile.layout;
-    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
-    assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
-    let source_payload = source_tile.payload;
-    let index_payload = index_tile.payload;
+    assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
+    assert IndexedTLSUOrdinaryTransferDataTypeLegal(source_tile.data_type);
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
-    var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+    var values: TilePayload;
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, source_tile.data_type);
+            let address = TileMemoryByteDisplacementAddress(base_address,
+                index_tile.payload[[index_element]], index_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 source_tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
-            original_addresses[[source_element]] = address;
-            translated_addresses[[source_element]] = probe.translated_address;
-            high_nibbles[source_element] = '0';
-            lane_order[[lane_count]] =
-                NaturalToWord(source_element as integer {0..262144});
+            original_addresses[[index_element]] = address;
+            translated_addresses[[index_element]] = probe.translated_address;
+            let first_column = if TileDataTypeIsFourBit(source_tile.data_type)
+                then 2 * column else column;
+            let first = TileLogicalLinearIndex(source_tile,
+                row as integer {0..65535},
+                first_column as integer {0..65535});
+            values[[index_element]] = TileReadLogicalElement(
+                source_tile, first);
+            if TileDataTypeIsFourBit(source_tile.data_type) then
+                let second = TileLogicalLinearIndex(source_tile,
+                    row as integer {0..65535},
+                    (first_column + 1) as integer {0..65535});
+                values[[index_element]][7:4] =
+                    TileReadLogicalElement(source_tile, second)[3:0];
+            end;
+            lane_order[[lane_count]] = NaturalToWord(index_element);
             lane_count = (lane_count + 1) as
                 integer {0..PTO_MODEL_TILE_ELEMENTS};
         end;
     end;
-    CommitScatterLanes(source_tile, source_payload, lane_order, lane_count,
-        original_addresses, translated_addresses, high_nibbles);
+    CommitIndexedScatterTransactions(source_tile.data_type, lane_order,
+        lane_count, original_addresses, translated_addresses, values);
 end;
 
 type CorePEPrefetchAddresses of array [[PTO_MODEL_MEMORY_AGENTS]] of TilePayload;
@@ -239,132 +260,147 @@ begin
 end;
 
 func MGATHER_MASK(destination: TileIndex, base_address: Word,
-                  row_stride_elements: Word, indices: TileIndex,
-                  mask: TileIndex, pad_value: TilePadValue)
+                  indices: TileIndex, mask: TileIndex,
+                  pad_value: TilePadValue)
 begin
     let destination_tile = _Tiles[[destination]];
     let index_tile = _Tiles[[indices]];
     let mask_tile = _Tiles[[mask]];
-    assert destination_tile.allocated;
-    assert index_tile.allocated && index_tile.contents_defined;
-    assert mask_tile.allocated && mask_tile.contents_defined;
-    assert destination_tile.valid_rows == index_tile.valid_rows;
-    assert destination_tile.valid_columns == index_tile.valid_columns;
-    assert destination_tile.valid_rows == mask_tile.valid_rows;
-    assert destination_tile.valid_columns == mask_tile.valid_columns;
+    assert IndexedTLSUNumericDescriptorLegal(destination);
+    assert IndexedTLSUNumericContentsDefined(indices);
+    assert IndexedTLSUPredicateValuesLegal(mask);
+    assert IndexedTLSUDataShapeMatchesIndex(
+        destination_tile.valid_rows, destination_tile.valid_columns,
+        index_tile.valid_rows, index_tile.valid_columns,
+        destination_tile.data_type);
+    assert index_tile.valid_rows == mask_tile.valid_rows;
+    assert index_tile.valid_columns == mask_tile.valid_columns;
     assert destination_tile.layout == index_tile.layout;
     assert destination_tile.layout == mask_tile.layout;
-    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
-    assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
-    assert TilePredicateValuesLegal(mask);
-    let index_payload = index_tile.payload;
+    assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
+    assert IndexedTLSUOrdinaryTransferDataTypeLegal(destination_tile.data_type);
     var translated_addresses: TilePayload;
     var active_lanes: bits(PTO_MODEL_TILE_ELEMENTS) =
         Zeros{PTO_MODEL_TILE_ELEMENTS};
-    var result_payload = destination_tile.payload;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let destination_element = TileLinearIndex(destination_tile,
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if ReadTilePredicateBit(
-                mask,
+            if ReadIndexedTLSUPredicate(mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryIndexedStridedAddress(
-                    base_address, index_payload[[index_element]],
-                    index_tile.data_type, index_tile.valid_columns,
-                    row_stride_elements, destination_tile.data_type);
+                let address = TileMemoryByteDisplacementAddress(base_address,
+                    index_tile.payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     destination_tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
-                translated_addresses[[destination_element]] =
-                    probe.translated_address;
-                active_lanes[destination_element] = '1';
+                translated_addresses[[index_element]] = probe.translated_address;
+                active_lanes[index_element] = '1';
             end;
         end;
     end;
+    var result = destination_tile;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+            let element = TileLogicalLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            result_payload[[element]] = TilePadValueForDataType(
-                pad_value, destination_tile.data_type);
+            result = TileInfoWithLogicalElementAndDefined(result, element,
+                TilePadValueForDataType(pad_value, destination_tile.data_type),
+                TRUE);
         end;
     end;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            if active_lanes[element] == '1' then
-                let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
+            if active_lanes[index_element] == '1' then
+                let raw = LoadTranslatedUnsigned(
+                    translated_addresses[[index_element]],
                     TileMemoryElementBytes(destination_tile.data_type));
-                RecordLoadEvent(translated_addresses[[element]],
+                RecordLoadEvent(translated_addresses[[index_element]],
                     TileMemoryElementBytes(destination_tile.data_type), raw,
                     CurrentBundleMemoryOrder());
-                result_payload[[element]] = DecodeTileMemoryElementRaw(
-                    raw, destination_tile.data_type, FALSE);
+                let first_column = if TileDataTypeIsFourBit(
+                    destination_tile.data_type) then 2 * column else column;
+                let first = TileLogicalLinearIndex(result,
+                    row as integer {0..65535},
+                    first_column as integer {0..65535});
+                result = TileInfoWithLogicalElementAndDefined(result, first,
+                    DecodeTileMemoryElementRaw(
+                        raw, destination_tile.data_type, FALSE), TRUE);
+                if TileDataTypeIsFourBit(destination_tile.data_type) then
+                    let second = TileLogicalLinearIndex(result,
+                        row as integer {0..65535},
+                        (first_column + 1) as integer {0..65535});
+                    result = TileInfoWithLogicalElementAndDefined(result, second,
+                        DecodeTileMemoryElementRaw(
+                            raw, destination_tile.data_type, TRUE), TRUE);
+                end;
             end;
         end;
     end;
-    _Tiles[[destination]].payload = result_payload;
+    _Tiles[[destination]] = result;
     MarkTilePhysicalRegionDefined(destination);
 end;
 
-func MSCATTER_MASK(base_address: Word, row_stride_elements: Word,
-                   source: TileIndex, indices: TileIndex, mask: TileIndex)
+func MSCATTER_MASK(base_address: Word, source: TileIndex,
+                   indices: TileIndex, mask: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
     let mask_tile = _Tiles[[mask]];
-    assert source_tile.allocated && source_tile.contents_defined;
-    assert index_tile.allocated && index_tile.contents_defined;
-    assert mask_tile.allocated && mask_tile.contents_defined;
-    assert source_tile.valid_rows == index_tile.valid_rows;
-    assert source_tile.valid_columns == index_tile.valid_columns;
-    assert source_tile.valid_rows == mask_tile.valid_rows;
-    assert source_tile.valid_columns == mask_tile.valid_columns;
+    assert IndexedTLSUNumericContentsDefined(source);
+    assert IndexedTLSUNumericContentsDefined(indices);
+    assert IndexedTLSUPredicateValuesLegal(mask);
+    assert IndexedTLSUDataShapeMatchesIndex(
+        source_tile.valid_rows, source_tile.valid_columns,
+        index_tile.valid_rows, index_tile.valid_columns,
+        source_tile.data_type);
+    assert index_tile.valid_rows == mask_tile.valid_rows;
+    assert index_tile.valid_columns == mask_tile.valid_columns;
     assert source_tile.layout == index_tile.layout;
     assert source_tile.layout == mask_tile.layout;
-    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
-    assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
-    assert TilePredicateValuesLegal(mask);
-    let source_payload = source_tile.payload;
-    let index_payload = index_tile.payload;
+    assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
+    assert IndexedTLSUOrdinaryTransferDataTypeLegal(source_tile.data_type);
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
-    var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
-    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+    var values: TilePayload;
+    for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if ReadTilePredicateBit(
-                mask,
+            if ReadIndexedTLSUPredicate(mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryIndexedStridedAddress(
-                    base_address, index_payload[[index_element]],
-                    index_tile.data_type, index_tile.valid_columns,
-                    row_stride_elements, source_tile.data_type);
+                let address = TileMemoryByteDisplacementAddress(base_address,
+                    index_tile.payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     source_tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;
-                original_addresses[[source_element]] = address;
-                translated_addresses[[source_element]] =
-                    probe.translated_address;
-                high_nibbles[source_element] = '0';
-                lane_order[[lane_count]] =
-                    NaturalToWord(source_element as integer {0..262144});
+                original_addresses[[index_element]] = address;
+                translated_addresses[[index_element]] = probe.translated_address;
+                let first_column = if TileDataTypeIsFourBit(
+                    source_tile.data_type) then 2 * column else column;
+                let first = TileLogicalLinearIndex(source_tile,
+                    row as integer {0..65535},
+                    first_column as integer {0..65535});
+                values[[index_element]] = TileReadLogicalElement(
+                    source_tile, first);
+                if TileDataTypeIsFourBit(source_tile.data_type) then
+                    let second = TileLogicalLinearIndex(source_tile,
+                        row as integer {0..65535},
+                        (first_column + 1) as integer {0..65535});
+                    values[[index_element]][7:4] =
+                        TileReadLogicalElement(source_tile, second)[3:0];
+                end;
+                lane_order[[lane_count]] = NaturalToWord(index_element);
                 lane_count = (lane_count + 1) as
                     integer {0..PTO_MODEL_TILE_ELEMENTS};
             end;
         end;
     end;
-    CommitScatterLanes(source_tile, source_payload, lane_order, lane_count,
-        original_addresses, translated_addresses, high_nibbles);
+    CommitIndexedScatterTransactions(source_tile.data_type, lane_order,
+        lane_count, original_addresses, translated_addresses, values);
 end;

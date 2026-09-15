@@ -72,20 +72,25 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !BundleGMAtomRedDataTypeLegal(function, data_type) ||
-       !TileSourceContentsDefined(binding.source0) ||
-       (!popc && !TileSourceContentsDefined(binding.source1)) then
+       !IndexedTLSUNumericContentsDefined(binding.source0) ||
+       (!popc && !IndexedTLSUNumericContentsDefined(binding.source1)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+    let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     if _Tiles[[binding.source0]].valid_rows != valid_rows ||
-       _Tiles[[binding.source0]].valid_columns != valid_columns then
+       _Tiles[[binding.source0]].valid_columns != valid_columns ||
+       _Tiles[[binding.source0]].layout != CurrentBundleTileLayout() ||
+       !IndexedTLSUMemoryIndexDataTypeLegal(
+           _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     if !popc && (_Tiles[[binding.source1]].valid_rows != valid_rows ||
-       _Tiles[[binding.source1]].valid_columns != valid_columns) then
+       _Tiles[[binding.source1]].valid_columns != valid_columns ||
+       _Tiles[[binding.source1]].layout != CurrentBundleTileLayout()) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -97,14 +102,18 @@ begin
             let second = _BundleTileBindings[[1]];
             if !second.destination_valid || !second.source0_valid ||
                second.source1_valid || !second.last ||
-               !TileSourceContentsDefined(second.source0) then
+               !IndexedTLSUNumericContentsDefined(second.source0) ||
+               _Tiles[[second.source0]].layout !=
+                   CurrentBundleTileLayout() then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
             destination = second.destination;
         end;
-        if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
-               valid_columns, valid_columns, TRUE, data_type) then return FALSE; end;
+        if !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
+               valid_rows, valid_columns, columns) ||
+           !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
+               valid_columns, columns, TRUE, data_type) then return FALSE; end;
         if cas then
             destination = _BundleTileBindings[[1]].destination;
         else

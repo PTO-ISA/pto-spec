@@ -2,24 +2,25 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor);
     ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(2, 128, 1, 2, 1, 2);
+    ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U8,
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTilePredicateBit(2, 0, 0, TRUE);
-    WriteTilePredicateBit(2, 0, 1, FALSE);
-    Store(Zeros{PTO_XLEN} + 0x280, 1, Zeros{PTO_XLEN} + 0x62);
-    Store(Zeros{PTO_XLEN} + 0x281, 1, Zeros{PTO_XLEN} + 0x73);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 0x280, 4, Zeros{PTO_XLEN} + 0x62626262626262);
+    Store(Zeros{PTO_XLEN} + 0x284, 4, Zeros{PTO_XLEN} + 0x73737373);
 
     StartMemoryEventCapture(0);
     MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x280,
-        Zeros{PTO_XLEN} + 2, 1, 2, TilePad_Zero);
+        1, 2, TilePad_Zero);
 
     assert _MemoryEventCount == 1;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x62;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x62626262;
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN};
     StopMemoryEventCapture();
     return 0;

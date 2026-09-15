@@ -48,46 +48,44 @@ begin
     let binding = _BundleTileBindings[[0]];
     if !binding.destination_valid || !binding.source0_valid ||
        binding.source1_valid || !binding.last ||
-       !TileSourceContentsDefined(binding.source0) ||
-       !IndexedTLSUIndexDataTypeLegal(
+       !IndexedTLSUNumericContentsDefined(binding.source0) ||
+       !IndexedTLSUMemoryIndexDataTypeLegal(
            _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if !IndexedTLSUTransferDataTypeLegal(data_type) then
+    if !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    if _Tiles[[binding.source0]].valid_rows != valid_rows ||
-       _Tiles[[binding.source0]].valid_columns != valid_columns then
+    if !IndexedTLSUDataShapeMatchesIndex(
+           valid_rows, valid_columns,
+           _Tiles[[binding.source0]].valid_rows,
+           _Tiles[[binding.source0]].valid_columns, data_type) ||
+       _Tiles[[binding.source0]].layout != CurrentBundleTileLayout() ||
+       !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
+           valid_rows, valid_columns, columns) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
-    let row_stride_elements = ReadPEAbsoluteGPROperand(
-        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
-    if UInt(row_stride_elements) < valid_columns then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
     if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
            valid_columns, columns, TRUE, data_type) then return FALSE; end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},
-           row_stride_elements, binding.source0, pad_value) then
+           binding.source0, pad_value) then
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    MGATHER(destination, base_address, row_stride_elements,
-        binding.source0, pad_value);
+    MGATHER(destination, base_address, binding.source0, pad_value);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

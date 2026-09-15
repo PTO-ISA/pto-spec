@@ -1,6 +1,6 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
 func MGATHER_CAS(destination: TileIndex, base_address: Word,
-                 row_stride_elements: Word, indices: TileIndex,
+                 indices: TileIndex,
                  expected: TileIndex, replacement: TileIndex,
                  pad_value: TilePadValue)
 begin
@@ -8,14 +8,13 @@ begin
     let index_tile = _Tiles[[indices]];
     let expected_payload = _Tiles[[expected]].payload;
     let replacement_payload = _Tiles[[replacement]].payload;
-    assert destination_tile.allocated;
-    assert index_tile.allocated && index_tile.contents_defined;
-    assert _Tiles[[expected]].allocated && _Tiles[[expected]].contents_defined;
-    assert _Tiles[[replacement]].allocated &&
-        _Tiles[[replacement]].contents_defined;
+    assert IndexedTLSUNumericDescriptorLegal(destination);
+    assert IndexedTLSUNumericContentsDefined(indices);
+    assert IndexedTLSUNumericContentsDefined(expected);
+    assert IndexedTLSUNumericContentsDefined(replacement);
     assert destination_tile.valid_rows == index_tile.valid_rows;
     assert destination_tile.valid_columns == index_tile.valid_columns;
-    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
+    assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     let index_payload = index_tile.payload;
     var original_addresses: TilePayload;
@@ -25,21 +24,19 @@ begin
     var replacement_values: TilePayload;
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
-    var result_payload = destination_tile.payload;
+    var result = destination_tile;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let destination_element = TileLinearIndex(destination_tile,
+            let destination_element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let expected_element = TileLinearIndex(_Tiles[[expected]],
+            let expected_element = TileStorageIndex(_Tiles[[expected]],
                 row as integer {0..65535}, column as integer {0..65535});
-            let replacement_element = TileLinearIndex(_Tiles[[replacement]],
+            let replacement_element = TileStorageIndex(_Tiles[[replacement]],
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, destination_tile.data_type);
+            let address = TileMemoryByteDisplacementAddress(base_address,
+                index_payload[[index_element]], index_tile.data_type);
             let read_probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
@@ -66,10 +63,11 @@ begin
     end;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+            let element = TileLogicalLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            result_payload[[element]] = TilePadValueForDataType(
-                pad_value, destination_tile.data_type);
+            result = TileInfoWithLogicalElementAndDefined(result, element,
+                TilePadValueForDataType(pad_value, destination_tile.data_type),
+                TRUE);
         end;
     end;
     // Duplicate addresses are serialized in an implementation-defined order.
@@ -98,7 +96,8 @@ begin
                 TileMemoryElementBytes(destination_tile.data_type));
             let old_value = DecodeTileMemoryElementRaw(
                 old_raw, destination_tile.data_type, FALSE);
-            result_payload[[element]] = old_value;
+            result = TileInfoWithLogicalElementAndDefined(result,
+                element as PackedTileElementIndex, old_value, TRUE);
             let succeeds = NormalizeMemoryAccessValue(old_value,
                 TileMemoryElementBytes(destination_tile.data_type)) ==
                 NormalizeMemoryAccessValue(expected_values[[element]],
@@ -116,15 +115,15 @@ begin
                 TileMemoryElementBytes(destination_tile.data_type), old_raw,
                 write_value, CurrentBundleMemoryOrder(), succeeds);
     end;
-    _Tiles[[destination]].payload = result_payload;
+    _Tiles[[destination]] = result;
     MarkTilePhysicalRegionDefined(destination);
 end;
 
 func MGATHER_CAS(destination: TileIndex, base_address: Word,
-                 row_stride_elements: Word, indices: TileIndex,
+                 indices: TileIndex,
                  expected: TileIndex,
                  replacement: TileIndex)
 begin
-    MGATHER_CAS(destination, base_address, row_stride_elements, indices,
-        expected, replacement, TilePad_Null);
+    MGATHER_CAS(destination, base_address, indices, expected, replacement,
+        TilePad_Null);
 end;

@@ -230,6 +230,57 @@ begin
     return TRUE;
 end;
 
+readonly func IndexedTLSUPredicateDescriptorLegal(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if tile.data_type != TileDataType_U8 ||
+       !IndexedTLSULayoutSupported(tile.layout) then
+        return FALSE;
+    end;
+    if tile.layout == TileLayout_RowMajor then
+        return tile.storage_kind == TileStorage_Numeric &&
+               TileDescriptorLegal(index);
+    end;
+    if tile.storage_kind == TileStorage_PredicateCell then
+        return TilePredicateCellDescriptorLegal(index) &&
+               tile.rows == (if tile.layout == TileLayout_CUBE_M16 then
+                   16 else 32);
+    end;
+    return tile.storage_kind == TileStorage_Numeric &&
+           TileCubeDescriptorLegal(tile) &&
+           tile.rows == (if tile.layout == TileLayout_CUBE_M16 then
+               16 else 32);
+end;
+
+readonly func IndexedTLSUPredicateValuesLegal(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !IndexedTLSUPredicateDescriptorLegal(index) ||
+       !tile.contents_defined then return FALSE; end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
+                column as integer {0..65535});
+            let value = TileReadLogicalElement(tile, element)[7:0];
+            if value != '00000000' && value != '00000001' then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func ReadIndexedTLSUPredicate(
+    index: TileIndex, row: integer {0..65535},
+    column: integer {0..65535}) => boolean
+begin
+    let tile = _Tiles[[index]];
+    assert IndexedTLSUPredicateValuesLegal(index);
+    let element = TileLogicalLinearIndex(tile, row, column);
+    return TileReadLogicalElement(tile, element)[0] == '1';
+end;
+
 func PredicateCellWithPadding(
     tile: TileInfo, pad_value: TilePadValue) => TileInfo
 begin

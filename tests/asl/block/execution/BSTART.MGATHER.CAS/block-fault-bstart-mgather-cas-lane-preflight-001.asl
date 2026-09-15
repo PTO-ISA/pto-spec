@@ -29,7 +29,7 @@ pure func FaultCasIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STRIDE-002","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-INST-TILE-MGATHER"],"kind":"boundary","summary":"MGATHER rejects a GM row stride smaller than ValidCol before effects.","pass_condition":"ValidCol two with stride one raises TileLegality without destination allocation or memory events.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/legality/memory-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STRIDE-002","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER"],"kind":"boundary","summary":"MGATHER rejects a nonzero legacy stride selector before effects.","pass_condition":"A nonzero RegSrc1 selector raises TileLegality without destination allocation or memory events.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/legality/memory-schema.asl"]}
 pure func UndersizedStrideGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;

@@ -6,10 +6,11 @@ begin
         TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 2, 1, 1, TileDataType_U32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(3, 128, 1, 2, 1, 1);
+    ConfigureTile(3, 128, 1, 2, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
-    WriteTilePredicateBit(3, 0, 0, TRUE);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
     var start: bits(64) = Zeros{64} + 0x00711181;
     start[31:27] = Zeros{5} + 28;
     let started = ExecuteCommandInstruction(start, 32);
@@ -19,7 +20,7 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 3, 0, TRUE);
-    SetBundleScalarBinding(0, 0, 0, 4, 0, 2);
+    SetBundleScalarBinding(0, 0, 0, 0, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert !completed;

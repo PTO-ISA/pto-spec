@@ -20,7 +20,7 @@ pure func PackedMaskGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -29,11 +29,12 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(1, 128, 1, 2, 1, 2);
+    ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U8,
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTilePredicateBit(1, 0, 0, TRUE);
-    WriteTilePredicateBit(1, 0, 1, TRUE);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x200);
     let started = ExecuteCommandInstruction(PackedMaskGatherStart(), 32);
     assert started == CommandExecution_Executed;

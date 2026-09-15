@@ -38,7 +38,7 @@ begin
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     let tiles = ExecuteCommandInstruction(DuplicateScatterBinding(), 32);
     assert tiles == CommandExecution_Executed;
-    SetBundleScalarBinding(0, 0, 2, 4, 0, 2);
+    SetBundleScalarBinding(0, 0, 2, 0, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert completed;

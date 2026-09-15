@@ -1995,10 +1995,9 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects PadValue=Null and Layout=NORM. An explicit encoded PadValue is used for every physical destination element outside ValidRow x ValidCol.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -2018,9 +2017,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, shape mismatch, non-power-of-two physical Col, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before allocation, memory events, or destination effects.",
-        "Every valid-region address is probed before the first event or destination update; any access fault leaves the destination unallocated and produces no partial event or payload effect.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -2186,7 +2183,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "dfad9d9c6e5f7191c57a84a11595704432bb4787abfb000d1444052780b9bf46",
+                "fold_signature_sha256": "4cee2a47bb04360c04435bc8529753df14f7e6051a5bced0f210a08769bb9b5e",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2211,18 +2208,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2268,7 +2253,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -2282,7 +2267,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2317,7 +2302,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -2331,7 +2316,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2499,7 +2484,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "94cfad7509b873948347af8675e5067d35d1ad2fdb71f97bd76bae0c77b22486",
+                "fold_signature_sha256": "834e9c37d86585e5beb41e445cdc37c60320b20b71b734d63ef2a368270293ca",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2524,18 +2509,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2581,7 +2554,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -2595,7 +2568,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2630,7 +2603,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -2644,7 +2617,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2860,7 +2833,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d94b2a2f05917f48feeb30606faf4bcff765018ea8ef00540c663457304d16f2",
+                "fold_signature_sha256": "a6798c29a8712140d29c88e3d24609d5b88b3baf68d82c4b7e3188d8743f1041",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2885,18 +2858,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2942,7 +2903,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -2956,7 +2917,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2991,7 +2952,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -3005,7 +2966,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3221,7 +3182,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd49cce222ff6d619ca40de6b9d74d221f9e8eccafa2171cc2346d089bcd7c8f",
+                "fold_signature_sha256": "b726ec3ce7bac1ab8a2c1734def55b47e72da54c2ad3cbd124899660c679db5d",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -3246,18 +3207,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -3303,7 +3252,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -3317,7 +3266,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -3352,7 +3301,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -3366,7 +3315,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3502,18 +3451,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -3825,7 +3762,7 @@
               "field": "RowStrideGPR",
               "optional": false,
               "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
+              "role": "base-address; byte-displacement indices",
               "size": null,
               "syntax": "RowStrideGPR",
               "value_style": null
@@ -3839,7 +3776,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 2,
-              "role": "indices",
+              "role": "base-address",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -3857,7 +3794,7 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -3867,9 +3804,6 @@
           },
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -3905,10 +3839,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           }
@@ -3927,12 +3857,8 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "indices"
+          "role": "byte-displacement indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
@@ -3960,7 +3886,7 @@
           "field": "RowStrideGPR",
           "optional": false,
           "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
+          "role": "base-address; byte-displacement indices",
           "size": null,
           "syntax": "RowStrideGPR",
           "value_style": null
@@ -3974,7 +3900,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 2,
-          "role": "indices",
+          "role": "base-address",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -8149,8 +8075,9 @@
         }
       ],
       "defaults": [
-        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
-        "Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -8170,7 +8097,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "Unsupported operation/type tuples raise Fault_TileLegality before effects."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -8336,7 +8263,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1c31cca0842124a6721e2e1adfc00c64f99ce8863751fd93dfd0b0ca78df7b9b",
+                "fold_signature_sha256": "eaadbfb58d913501511843df68f8e21314d03bacffc4fb4f1b92e1c99a05d748",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8434,7 +8361,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; expected; replacement",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -8448,7 +8375,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8462,7 +8389,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "expected",
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -8476,7 +8403,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 4,
-                    "role": "replacement",
+                    "role": "expected",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -8511,7 +8438,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; expected; replacement",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -8525,7 +8452,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -8539,7 +8466,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "expected",
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -8553,7 +8480,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 4,
-                  "role": "replacement",
+                  "role": "expected",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -8721,7 +8648,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "60ff6c97fdd83706811dbe019895f0cd2a8f9c176fc5e7526e61687638d841dc",
+                "fold_signature_sha256": "de2062d8c4cf8103d6243a3dfeaa22606a58092b19505c4d78080c453d0ce197",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8819,7 +8746,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; expected; replacement",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -8833,7 +8760,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8847,7 +8774,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "expected",
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -8861,7 +8788,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 4,
-                    "role": "replacement",
+                    "role": "expected",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -8896,7 +8823,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; expected; replacement",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -8910,7 +8837,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -8924,7 +8851,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "expected",
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -8938,7 +8865,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 4,
-                  "role": "replacement",
+                  "role": "expected",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -9154,7 +9081,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3df15c36dd24d9d8ccce776bbddc3bf24d8bca7fb66efa2cbeb2fd587f1075cf",
+                "fold_signature_sha256": "f462eb0c0fda0d75b34dfb9bff5936b0d31a6cacb5362348b7c12bab90a76cec",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9252,7 +9179,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; expected; replacement",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -9266,7 +9193,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9280,7 +9207,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "expected",
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -9294,7 +9221,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 4,
-                    "role": "replacement",
+                    "role": "expected",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -9329,7 +9256,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; expected; replacement",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -9343,7 +9270,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9357,7 +9284,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "expected",
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -9371,7 +9298,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 4,
-                  "role": "replacement",
+                  "role": "expected",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -9587,7 +9514,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d7f7b629b7f5363f0daff2a299538bba295f1a12cff2152fa64c5cb7fa0c8eeb",
+                "fold_signature_sha256": "7bde1ce4c8722081d7dde19329c80861f7969a41befccb40bbd248940e23fb08",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9685,7 +9612,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; expected; replacement",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -9699,7 +9626,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9713,7 +9640,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "expected",
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -9727,7 +9654,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 4,
-                    "role": "replacement",
+                    "role": "expected",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -9762,7 +9689,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; expected; replacement",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -9776,7 +9703,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9790,7 +9717,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "expected",
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -9804,7 +9731,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 4,
-                  "role": "replacement",
+                  "role": "expected",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -10331,7 +10258,7 @@
               "field": "RowStrideGPR",
               "optional": false,
               "ordinal": 1,
-              "role": "GM row stride in elements",
+              "role": "base-address; byte-displacement indices; expected; replacement",
               "size": null,
               "syntax": "RowStrideGPR",
               "value_style": null
@@ -10345,7 +10272,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 2,
-              "role": "indices",
+              "role": "base-address",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -10359,7 +10286,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 3,
-              "role": "expected",
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -10373,7 +10300,7 @@
               "field": "SrcTile2",
               "optional": false,
               "ordinal": 4,
-              "role": "replacement",
+              "role": "expected",
               "size": null,
               "syntax": "SrcTile2",
               "value_style": null
@@ -10391,7 +10318,7 @@
         "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
         "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -10447,10 +10374,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           },
@@ -10477,12 +10400,8 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source1",
@@ -10518,7 +10437,7 @@
           "field": "RowStrideGPR",
           "optional": false,
           "ordinal": 1,
-          "role": "GM row stride in elements",
+          "role": "base-address; byte-displacement indices; expected; replacement",
           "size": null,
           "syntax": "RowStrideGPR",
           "value_style": null
@@ -10532,7 +10451,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 2,
-          "role": "indices",
+          "role": "base-address",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -10546,7 +10465,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 3,
-          "role": "expected",
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -10560,7 +10479,7 @@
           "field": "SrcTile2",
           "optional": false,
           "ordinal": 4,
-          "role": "replacement",
+          "role": "expected",
           "size": null,
           "syntax": "SrcTile2",
           "value_style": null
@@ -16812,10 +16731,9 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects PadValue=Null and Layout=NORM. PadValue is written to disabled valid lanes and every physical destination element outside ValidRow x ValidCol.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -16835,9 +16753,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, packed four-bit transfer DataType, or invalid dimensions, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before destination allocation, memory events, or memory reads.",
-        "Only enabled-lane addresses are generated and probed. Every enabled lane is preflighted before the first load; any enabled-lane fault leaves the destination unallocated and produces no partial event or payload effect. Disabled lanes cannot fault from their ignored IndexTile value.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -17003,7 +16919,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "68fa278a767f5d4e97752144105eb31ed2bcb79775e2e444f8d84e7969cbe3ee",
+                "fold_signature_sha256": "5da35cd6cefdc99879615cc1c000a106e58642c1b69bf94d2812a689d4e71879",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17028,18 +16944,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17097,7 +17001,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -17111,7 +17015,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17125,7 +17029,7 @@
                     "field": "PredicateTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17160,7 +17064,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -17174,7 +17078,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17188,7 +17092,7 @@
                   "field": "PredicateTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -17356,7 +17260,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b021335ac24afba7760bcf5965369c43475b885e45598d1668de8eb4561a3157",
+                "fold_signature_sha256": "5af87fb0e807c41f71514462997febdbd77319a3e5a5709bcc8d9154fc419ddb",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17381,18 +17285,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17450,7 +17342,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -17464,7 +17356,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17478,7 +17370,7 @@
                     "field": "PredicateTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17513,7 +17405,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -17527,7 +17419,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17541,7 +17433,7 @@
                   "field": "PredicateTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -17757,7 +17649,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3c5493fcef4f9445c902e69e187d7d2db09186a9f057c411e824f9570efbfeab",
+                "fold_signature_sha256": "1e7d62508477c926f4dac6f58e683d2969d6a897aa1082ac6867baf97218c795",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17782,18 +17674,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17851,7 +17731,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -17865,7 +17745,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17879,7 +17759,7 @@
                     "field": "PredicateTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17914,7 +17794,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -17928,7 +17808,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17942,7 +17822,7 @@
                   "field": "PredicateTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -18158,7 +18038,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ab2a05b5f93affc80560cfbaa588ca88a1a0c2e459101611c7e07cf343e5faed",
+                "fold_signature_sha256": "bc123460fa4851421387adfd54e1adf5e4c419a7a6fc38ea247bdc723017abd7",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -18183,18 +18063,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -18252,7 +18120,7 @@
                     "field": "RowStrideGPR",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "RowStrideGPR",
                     "value_style": null
@@ -18266,7 +18134,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "role": "base-address",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -18280,7 +18148,7 @@
                     "field": "PredicateTile1",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "role": "base-address; byte-displacement indices; U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -18315,7 +18183,7 @@
                   "field": "RowStrideGPR",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "RowStrideGPR",
                   "value_style": null
@@ -18329,7 +18197,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "role": "base-address",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -18343,7 +18211,7 @@
                   "field": "PredicateTile1",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "role": "base-address; byte-displacement indices; U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -18479,18 +18347,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -18865,7 +18721,7 @@
               "field": "RowStrideGPR",
               "optional": false,
               "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
+              "role": "base-address; byte-displacement indices; U8 PredicateTile",
               "size": null,
               "syntax": "RowStrideGPR",
               "value_style": null
@@ -18879,7 +18735,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 2,
-              "role": "logical linear element indices",
+              "role": "base-address",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -18893,7 +18749,7 @@
               "field": "PredicateTile1",
               "optional": false,
               "ordinal": 3,
-              "role": "exact zero-or-one predicate mask",
+              "role": "base-address; byte-displacement indices; U8 PredicateTile",
               "size": null,
               "syntax": "PredicateTile1",
               "value_style": null
@@ -18911,7 +18767,7 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -18921,9 +18777,6 @@
           },
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -18963,10 +18816,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           },
@@ -18989,16 +18838,12 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source1",
-          "role": "exact zero-or-one predicate mask"
+          "role": "U8 PredicateTile"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
@@ -19026,7 +18871,7 @@
           "field": "RowStrideGPR",
           "optional": false,
           "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
+          "role": "base-address; byte-displacement indices; U8 PredicateTile",
           "size": null,
           "syntax": "RowStrideGPR",
           "value_style": null
@@ -19040,7 +18885,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 2,
-          "role": "logical linear element indices",
+          "role": "base-address",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -19054,7 +18899,7 @@
           "field": "PredicateTile1",
           "optional": false,
           "ordinal": 3,
-          "role": "exact zero-or-one predicate mask",
+          "role": "base-address; byte-displacement indices; U8 PredicateTile",
           "size": null,
           "syntax": "PredicateTile1",
           "value_style": null
@@ -27341,17 +27186,14 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects Layout=NORM. PadValueOrByteId and every other B.DATR field must remain zero.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, undefined source, source DataType mismatch, non-integer IndexTile, shape or layout mismatch, invalid dimensions, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before memory events or writes.",
-        "Every valid-region address is generated and probed before the first store or event; any access fault produces no partial memory or event effect.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -27443,18 +27285,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -27763,7 +27593,7 @@
               "field": "RowStrideGPR",
               "optional": false,
               "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
+              "role": "base-address; source data; byte-displacement indices",
               "size": null,
               "syntax": "RowStrideGPR",
               "value_style": null
@@ -27777,7 +27607,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 2,
-              "role": "source data",
+              "role": "base-address",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -27791,7 +27621,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 3,
-              "role": "logical linear element indices",
+              "role": "source data",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -27809,16 +27639,13 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
         "arguments": [
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -27849,16 +27676,12 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source"
           },
           {
             "field": "source1",
-            "role": "logical-linear-element-indices"
+            "role": "byte-displacement-indices"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -27871,16 +27694,12 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source data"
         },
         {
           "field": "source1",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
@@ -27908,7 +27727,7 @@
           "field": "RowStrideGPR",
           "optional": false,
           "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
+          "role": "base-address; source data; byte-displacement indices",
           "size": null,
           "syntax": "RowStrideGPR",
           "value_style": null
@@ -27922,7 +27741,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 2,
-          "role": "source data",
+          "role": "base-address",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -27936,7 +27755,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 3,
-          "role": "logical linear element indices",
+          "role": "source data",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -30343,17 +30162,14 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects Layout=NORM; every other B.DATR field must remain zero.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR or LB0, malformed or unterminated B.IOT stream, undefined source, source DataType mismatch, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, invalid dimensions, or packed transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before effects.",
-        "Only exact-one lanes generate addresses. Every enabled address is probed before the first store or event; an enabled-lane fault produces no partial write or event, while a disabled lane cannot fault from its ignored index.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -30445,18 +30261,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -30828,7 +30632,7 @@
               "field": "RowStrideGPR",
               "optional": false,
               "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
+              "role": "base-address; source data; byte-displacement indices; U8 PredicateTile",
               "size": null,
               "syntax": "RowStrideGPR",
               "value_style": null
@@ -30842,7 +30646,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 2,
-              "role": "source data",
+              "role": "base-address",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -30856,7 +30660,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 3,
-              "role": "logical linear element indices",
+              "role": "source data",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -30870,7 +30674,7 @@
               "field": "PredicateTile2",
               "optional": false,
               "ordinal": 4,
-              "role": "exact zero-or-one predicate mask",
+              "role": "base-address; source data; byte-displacement indices; U8 PredicateTile",
               "size": null,
               "syntax": "PredicateTile2",
               "value_style": null
@@ -30889,16 +30693,13 @@
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK",
         "B.IOT MaskTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
         "arguments": [
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -30933,16 +30734,12 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source"
           },
           {
             "field": "source1",
-            "role": "logical-linear-element-indices"
+            "role": "byte-displacement-indices"
           },
           {
             "field": "source2",
@@ -30959,20 +30756,16 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source data"
         },
         {
           "field": "source1",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source2",
-          "role": "exact zero-or-one predicate mask"
+          "role": "U8 PredicateTile"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
@@ -31000,7 +30793,7 @@
           "field": "RowStrideGPR",
           "optional": false,
           "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
+          "role": "base-address; source data; byte-displacement indices; U8 PredicateTile",
           "size": null,
           "syntax": "RowStrideGPR",
           "value_style": null
@@ -31014,7 +30807,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 2,
-          "role": "source data",
+          "role": "base-address",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -31028,7 +30821,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 3,
-          "role": "logical linear element indices",
+          "role": "source data",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -31042,7 +30835,7 @@
           "field": "PredicateTile2",
           "optional": false,
           "ordinal": 4,
-          "role": "exact zero-or-one predicate mask",
+          "role": "base-address; source data; byte-displacement indices; U8 PredicateTile",
           "size": null,
           "syntax": "PredicateTile2",
           "value_style": null

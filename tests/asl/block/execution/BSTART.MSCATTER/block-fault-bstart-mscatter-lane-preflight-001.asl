@@ -21,7 +21,7 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, TRUE);
-    SetBundleScalarBinding(0, 0, 2, 4, 0, 2);
+    SetBundleScalarBinding(0, 0, 2, 0, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert !completed;

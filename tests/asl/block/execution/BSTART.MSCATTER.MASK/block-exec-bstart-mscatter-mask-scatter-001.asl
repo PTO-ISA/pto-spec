@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MSCATTER-MASK-SCHEMA-001","PTO-MSCATTER-MASK-PREDICATE-001","PTO-INST-TILE-MSCATTER-MASK","PTO-INST-BLOCK-BSTART-MSCATTER-MASK"],"kind":"execution","summary":"MSCATTER.MASK writes exact-one lanes at logical element indices and ignores disabled addresses.","pass_condition":"Two enabled lanes write signed logical element indices, one disabled invalid displacement creates no check or event, and all sources persist.","related_sources":["asl/block/model/dispatch/tlsu-mscatter-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-MSCATTER-MASK-PREDICATE-001","PTO-BSTART-MSCATTER-MASK-SCHEMA-001","PTO-INST-TILE-MSCATTER-MASK","PTO-INST-BLOCK-BSTART-MSCATTER-MASK"],"kind":"execution","summary":"MSCATTER.MASK writes exact-one lanes at byte displacements and ignores disabled addresses.","pass_condition":"Two enabled lanes write signed byte displacements, one disabled invalid displacement creates no check or event, and all sources persist.","related_sources":["asl/block/model/dispatch/tlsu-mscatter-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func MaskScatterStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00711181;
@@ -33,16 +33,17 @@ begin
         TileLayout_RowMajor);
     ConfigureTile(2, 128, 1, 8, 1, 3, TileDataType_S32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(3, 128, 1, 4, 1, 3);
+    ConfigureTile(3, 128, 1, 4, 1, 3, TileDataType_U8,
+        TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x11);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x22);
     WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x33);
     WriteTileElement(2, 0, 0, Ones{PTO_XLEN} - 1);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 5000);
     WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 4);
-    WriteTilePredicateBit(3, 0, 0, TRUE);
-    WriteTilePredicateBit(3, 0, 1, FALSE);
-    WriteTilePredicateBit(3, 0, 2, TRUE);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(3, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(3, 0, 2, Zeros{PTO_XLEN} + 1);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x202);
     let started = ExecuteCommandInstruction(
         MaskScatterStart(Zeros{5} + 27), 32);
@@ -55,7 +56,7 @@ begin
     assert first == CommandExecution_Executed;
     let last = ExecuteCommandInstruction(MaskScatterLast(Zeros{6} + 3), 32);
     assert last == CommandExecution_Executed;
-    SetBundleScalarBinding(0, 0, 2, 4, 0, 2);
+    SetBundleScalarBinding(0, 0, 2, 0, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert completed;

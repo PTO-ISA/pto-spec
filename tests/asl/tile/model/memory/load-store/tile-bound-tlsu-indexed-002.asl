@@ -40,7 +40,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x181, 1, Zeros{PTO_XLEN} + 0x43);
     StartMemoryEventCapture(1);
     MGATHER(3, Zeros{PTO_XLEN} + 0x180,
-        Zeros{PTO_XLEN} + 3, 4);
+        4);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x181;
@@ -61,7 +61,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x190, 1, Zeros{PTO_XLEN} + 0xa9);
     StartMemoryEventCapture(1);
     MSCATTER(Zeros{PTO_XLEN} + 0x190,
-        Zeros{PTO_XLEN} + 3, 5, 4);
+        5, 4);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
@@ -157,7 +157,7 @@ begin
     ClearFault();
     StartMemoryEventCapture(2);
     MSCATTER(Zeros{PTO_XLEN} + 4094,
-        Zeros{PTO_XLEN} + 3, 15, 14);
+        15, 14);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();

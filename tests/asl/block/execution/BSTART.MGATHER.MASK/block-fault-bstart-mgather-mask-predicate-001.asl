@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-PRED-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-MGATHER-MASK-PREDICATE-001"],"kind":"fault","summary":"MGATHER.MASK requires packed predicate storage for MaskTile.","pass_condition":"A fully defined ordinary numeric Tile containing value one raises TileLegality before destination allocation, address checks, memory events, or payload effects.","related_sources":["asl/tile/model/definedness/elements.asl","asl/block/model/dispatch/tlsu-mgather-mask.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-PRED-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-MGATHER-MASK-PREDICATE-001"],"kind":"fault","summary":"MGATHER.MASK rejects the legacy packed predicate carrier for MaskTile.","pass_condition":"A fully defined legacy packed predicate Tile raises TileLegality before destination allocation, address checks, memory events, or payload effects.","related_sources":["asl/tile/model/definedness/elements.asl","asl/block/model/dispatch/tlsu-mgather-mask.asl"]}
 pure func PredicateGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00611181;
@@ -20,7 +20,7 @@ pure func PredicateGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -29,10 +29,9 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor);
+    ConfigurePredicateTile(1, 128, 1, 1, 1, 1);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(1, 0, 0, TRUE);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x200);
     let started = ExecuteCommandInstruction(PredicateGatherStart(), 32);
     assert started == CommandExecution_Executed;

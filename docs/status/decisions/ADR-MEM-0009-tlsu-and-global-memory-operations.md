@@ -721,3 +721,9 @@ The decision-scoped record consolidates the operative TLSU rules: distinct TMOV 
 This record owns the listed TLSU and GM-operation decisions but does not replace their detailed ASL/NDF contracts. Other Tile families, unsupported packed indexed transfers, and new conflict-ordering rules remain outside scope unless separately decided.
 
 本记录拥有所列 TLSU 与 GM 操作决策，但不替代其详细 ASL/NDF 契约。其他 Tile 指令族、不支持的打包索引传输和新的冲突顺序规则均不在范围内，除非另行决策。
+
+## Accepted amendment: issue #301 indexed TLSU byte displacement and CUBE layout closure
+
+Issue [#301](https://github.com/PTO-ISA/pto-spec/issues/301) amends the indexed TLSU contract without changing the owning decision family. Indexed ordinary, masked, CAS, and atomic/RMW gather/scatter operations use one `BaseGPR` plus a signed or unsigned byte displacement from an `S32`, `U32`, `S64`, or `U64` Local IndexTile. There is no element-size scaling, logical-row decomposition, row stride, or tensor-pitch lookup. `B.IOR` is BaseGPR-only for this family: `RegSrc0` carries the base and `RegSrc1`, `RegSrc2`, and `RegDst` encode zero.
+
+`ROWMAJOR`, `CUBE_M16`, and `CUBE_M32` are supported as one indexed layout class while retaining independent physical descriptors, capacities, `LB2`, and `TSize`; `CUBE_N8` remains excluded. Ordinary Local U8 `PredicateTile` masks use one physical U8 element per logical predicate and canonical values `0x00` or `0x01`, independent of producer datatype. Ordinary packed-four-bit gather/scatter uses one index per byte and maps the byte to two adjacent nibbles; packed atomics remain unsupported. Existing arithmetic, duplicate ordering, precise preflight/fault, padding, TCI, and `PE_MASK` semantics are unchanged.

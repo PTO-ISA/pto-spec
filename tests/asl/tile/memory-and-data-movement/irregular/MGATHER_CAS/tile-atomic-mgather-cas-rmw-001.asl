@@ -11,7 +11,7 @@ begin
     ConfigureTile(3, 128, 1, 2, 1, 2, TileDataType_U16,
         TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 7);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 9);
@@ -21,7 +21,7 @@ begin
 
     StartMemoryEventCapture(0);
     MGATHER_CAS(0, Zeros{PTO_XLEN} + 0x300,
-        Zeros{PTO_XLEN} + 2, 1, 2, 3);
+        1, 2, 3);
 
     assert _MemoryEventCount == 2;
     let replaced = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 2);

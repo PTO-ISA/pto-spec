@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl`
 
-GM indexed atomic compare-and-swap with observed-old destination.
+atomic compare-and-swap gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-CAS}
 
@@ -71,14 +71,58 @@ MGATHER_CAS <bundle operands>
 
 This operation has no standalone opcode.
 
+## Field value dispositions
+
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| scalar0 | GM row stride in elements |
-| source0 | indices |
+| source0 | byte-displacement indices |
 | source1 | expected |
 | source2 | replacement |
 
@@ -102,7 +146,7 @@ B.DIM LB1=ValidRow (optional, default 1)
 B.DIM LB2=ValidCol
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, RowStrideGPR, zero, ->zero
+B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
 
@@ -123,32 +167,38 @@ end;
 
 ## Defaults and encoded zero
 
-- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
-- Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64.
+- B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
+- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
-- mgather.cas uses raw U16/U32/U64 carriers; U128 and all non-U types are rejected.
-- ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol.
+- Only U16, U32, and U64 transfer DataTypes are accepted; packed four-bit and every other existing unsupported atomic DataType remain illegal.
+- Index, Expected, Replacement, and destination have equal logical valid shape and layout class.
+- ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.
+- Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.
+- B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 
 ## State effects
 
-- Returns observed old values in the destination.
+- The complete physical destination region is initialized to PadValue before active valid results are published.
+- On success the full physical destination region is defined; a failing attempt publishes no destination.
 
 ## Memory effects and ordering
 
 ### Memory effects
 
-- One atomic compare-and-swap per valid request.
+- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.
+- All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue.
 
 ### Ordering
 
-- Duplicate addresses serialize in implementation-defined order.
+- Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged.
 
 ## Exceptions
 
-- Unsupported operation/type tuples raise Fault_TileLegality before effects.
+- Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects.
 
 ## Examples
 
-- BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, RowStrideGPR, zero, ->zero; BSTOP
+- BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
