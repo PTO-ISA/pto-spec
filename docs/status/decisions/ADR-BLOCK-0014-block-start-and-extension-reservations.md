@@ -32,6 +32,7 @@
     "PTO-C-BSTART-STD-CONTROL-001",
     "PTO-C-BSTART-SYS-CONTROL-001",
     "PTO-C-BSTOP-DECISION-BINDING-001",
+    "PTO-C-SETRET-DECISION-BINDING-001",
     "PTO-L-BSTOP-DECISION-BINDING-001"
   ],
   "affected_units": [
@@ -48,7 +49,8 @@
     "PTO-BLOCK-C-BSTART-SYS",
     "PTO-BLOCK-C-BSTOP",
     "PTO-BLOCK-L-BSTOP",
-    "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+    "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+    "PTO-SCALAR-C-SETRET"
   ],
   "resolves": [],
   "supersedes": [
@@ -76,6 +78,20 @@
         "PTO-BLOCK-BSTART-FP",
         "PTO-BLOCK-BSTART-STD",
         "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "baseline": "44a7565c7c45d9557537053d4ba92d50f05d2435",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/285",
+      "affected_ndf": [
+        "PTO-C-SETRET-DECISION-BINDING-001"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-C-SETRET"
       ]
     }
   ],
@@ -306,3 +322,13 @@ owning unit `PTO-BLOCK-BSTART-CALL`. Compilers that targeted the retired
 encoding move to the accepted FP/STD `CALL` forms; the compiler-side change
 follows this architecture decision. Bare `BSTART.ICALL` words remain deleted
 and MUST still raise `Fault_IllegalInstruction` before any state effect.
+
+## Amendment 2026-09-15: C.SETRET call-formation prose names the per-variant DIRECT fusion
+
+Issue: https://github.com/PTO-ISA/pto-spec/issues/285
+
+The `C.SETRET` block-composition contract no longer names the retired fused
+`BSTART.CALL`. Each BSTART variant's `DIRECT` form can fuse with `C.SETRET`
+into a distinct per-variant call instruction; call formation is defined
+separately by the accepted `BSTART.FP CALL` and `BSTART.STD CALL` forms.
+Prose alignment only; no encoding, legality, or operation change.

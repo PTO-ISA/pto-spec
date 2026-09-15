@@ -2131,6 +2131,7 @@
         "PTO-C-BSTART-STD-CONTROL-001",
         "PTO-C-BSTART-SYS-CONTROL-001",
         "PTO-C-BSTOP-DECISION-BINDING-001",
+        "PTO-C-SETRET-DECISION-BINDING-001",
         "PTO-L-BSTOP-DECISION-BINDING-001"
       ],
       "released_versions": [],
@@ -2189,7 +2190,11 @@
         "PTO-AVS-BLOCK-L-BSTOP-DECODE-001",
         "PTO-AVS-BLOCK-L-BSTOP-EXEC-001",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-DECODE-STATIC-001",
-        "PTO-AVS-BLOCK-TESTDECODEDBUNDLESTARTANDSTOP-EXECUTION-001"
+        "PTO-AVS-BLOCK-TESTDECODEDBUNDLESTARTANDSTOP-EXECUTION-001",
+        "PTO-AVS-SCALAR-C-SETRET-BOUND-001",
+        "PTO-AVS-SCALAR-C-SETRET-DECODE-001",
+        "PTO-AVS-SCALAR-C-SETRET-WRAP-001",
+        "PTO-AVS-SCALAR-C-SETRET-ZERO-001"
       ],
       "unit_ids": [
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
@@ -2205,7 +2210,8 @@
         "PTO-BLOCK-C-BSTART-SYS",
         "PTO-BLOCK-C-BSTOP",
         "PTO-BLOCK-L-BSTOP",
-        "PTO-BLOCK-MODEL-DISPATCH-DECODE"
+        "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+        "PTO-SCALAR-C-SETRET"
       ],
       "validated_commit": null
     },
@@ -24223,15 +24229,15 @@
   "sources": {
     "adr_records": {
       "count": 111,
-      "sha256": "a01cd7b84b45d4f52d6077f1d55a1d1998b619d42f64dab306db4165dd2f866b"
+      "sha256": "b6c9548677784c59e8a500ea918f9bfe46e483d1fbe43598b164d63d6eb62d7c"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "d3a8f940ae566d788d7dc29854df8214c7981c11e4f1ab6b1b83abe1497a5120"
+      "sha256": "147fb1c62b0c9b1bde64acdf1f2aa476142519792e17e784c38667d7f46b5604"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "3ec64f977e90b1ee96bd1ef3344af7427b050cde80f0e0383a829b4bb51d0294",
+      "sha256": "ebff9763353d4510815e2f0f636879e2ae4599179102200ceb5ca5a97b3509ab",
       "test_count": 3923,
       "unit_count": 892
     }

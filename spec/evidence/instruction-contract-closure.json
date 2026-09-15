@@ -4050,7 +4050,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0x0007f07f",
+              "mask": "0x0007f1ff",
               "match": "0x00004013",
               "width_bits": 32
             }
@@ -4274,7 +4274,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xfc07f07f",
+              "mask": "0xfc07f1ff",
               "match": "0x00005013",
               "width_bits": 32
             }
@@ -4878,7 +4878,7 @@
         "field_domains": [],
         "legality": [
           "The three-bit PEMode field accepts all eight encodings and the common profile decoder expands them exactly to the fixed four-PE semantic mask table.",
-          "Source-only forms require SizeCode=0. Destination forms require SizeCode=1..10; codes 11..15 are reserved for Local B.IOT.",
+          "Source-only forms require SizeCode=0 and fix instruction bits 7..8 to zero; a non-zero value in those bits is reserved. Destination forms require SizeCode=1..10; codes 11..15 are reserved for Local B.IOT.",
           "PEMode=000 is accepted as the strict no-effect source-bearing encoding; a nonzero decoded mask is a four-PE predicate shared by every effective binding in the block.",
           "A participating B.IOT is legal only after BSTART and before the block body. At most four effective Local bindings are accepted in encoded order.",
           "The selected operation schema determines ordered Local source and destination roles and must agree with the form fields and SizeCode role.",
@@ -20602,17 +20602,17 @@
               "pieces": [
                 {
                   "instruction_lsb": 25,
-                  "value_lsb": 3,
+                  "value_lsb": 0,
                   "width": 7
                 },
                 {
                   "instruction_lsb": 7,
-                  "value_lsb": 10,
+                  "value_lsb": 7,
                   "width": 5
                 }
               ],
               "signedness": "unsigned",
-              "width": 15
+              "width": 12
             }
           ],
           "form_id": "fentry_32_a47584ec13b6",
@@ -20637,7 +20637,7 @@
         ],
         "defaults": [
           "The inclusive register range is the ring R2..R23. Singleton, full-ring, and wraparound ranges are assigned.",
-          "uimm is always present and represents a byte count in multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
+          "uimm is always present and encodes the frame byte count scaled by eight: the semantic byte count is the encoded value shifted left by three, so the encoding supplies only multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
           "The source range is snapshotted before sp changes, so a range containing sp stores the caller sp."
         ],
         "encoded_fields": [
@@ -20697,7 +20697,7 @@
             "assigned_ranges": [
               [
                 0,
-                32767
+                4095
               ]
             ],
             "field": "uimm",
@@ -20707,7 +20707,7 @@
             "reserved_ranges": [],
             "role": "frame byte count, encoded in multiples of eight",
             "signedness": "unsigned",
-            "width": 15,
+            "width": 12,
             "zero_meaning": "Encoded zero is a real zero-byte frame size and is illegal for every nonempty range."
           }
         ],
@@ -20863,17 +20863,17 @@
               "pieces": [
                 {
                   "instruction_lsb": 25,
-                  "value_lsb": 3,
+                  "value_lsb": 0,
                   "width": 7
                 },
                 {
                   "instruction_lsb": 7,
-                  "value_lsb": 10,
+                  "value_lsb": 7,
                   "width": 5
                 }
               ],
               "signedness": "unsigned",
-              "width": 15
+              "width": 12
             }
           ],
           "form_id": "fexit_32_37b663f2a34d",
@@ -20898,7 +20898,7 @@
         ],
         "defaults": [
           "The inclusive register range is the ring R2..R23. Singleton, full-ring, and wraparound ranges are assigned.",
-          "uimm is always present and represents a byte count in multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register."
+          "uimm is always present and encodes the frame byte count scaled by eight: the semantic byte count is the encoded value shifted left by three, so the encoding supplies only multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register."
         ],
         "encoded_fields": [
           {
@@ -20957,7 +20957,7 @@
             "assigned_ranges": [
               [
                 0,
-                32767
+                4095
               ]
             ],
             "field": "uimm",
@@ -20967,7 +20967,7 @@
             "reserved_ranges": [],
             "role": "frame byte count, encoded in multiples of eight",
             "signedness": "unsigned",
-            "width": 15,
+            "width": 12,
             "zero_meaning": "Encoded zero is a real zero-byte frame size and is illegal for every nonempty range."
           }
         ],
@@ -21122,17 +21122,17 @@
               "pieces": [
                 {
                   "instruction_lsb": 25,
-                  "value_lsb": 3,
+                  "value_lsb": 0,
                   "width": 7
                 },
                 {
                   "instruction_lsb": 7,
-                  "value_lsb": 10,
+                  "value_lsb": 7,
                   "width": 5
                 }
               ],
               "signedness": "unsigned",
-              "width": 15
+              "width": 12
             }
           ],
           "form_id": "fret_ra_32_659c886221c1",
@@ -21157,7 +21157,7 @@
         ],
         "defaults": [
           "The inclusive register range is the ring R2..R23. Singleton, full-ring, and wraparound ranges are assigned.",
-          "uimm is always present and represents a byte count in multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
+          "uimm is always present and encodes the frame byte count scaled by eight: the semantic byte count is the encoded value shifted left by three, so the encoding supplies only multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
           "The return target is the architectural ra value snapshotted before any restored register can overwrite ra."
         ],
         "encoded_fields": [
@@ -21217,7 +21217,7 @@
             "assigned_ranges": [
               [
                 0,
-                32767
+                4095
               ]
             ],
             "field": "uimm",
@@ -21227,7 +21227,7 @@
             "reserved_ranges": [],
             "role": "frame byte count, encoded in multiples of eight",
             "signedness": "unsigned",
-            "width": 15,
+            "width": 12,
             "zero_meaning": "Encoded zero is a real zero-byte frame size and is illegal for every nonempty range."
           }
         ],
@@ -21362,17 +21362,17 @@
               "pieces": [
                 {
                   "instruction_lsb": 25,
-                  "value_lsb": 3,
+                  "value_lsb": 0,
                   "width": 7
                 },
                 {
                   "instruction_lsb": 7,
-                  "value_lsb": 10,
+                  "value_lsb": 7,
                   "width": 5
                 }
               ],
               "signedness": "unsigned",
-              "width": 15
+              "width": 12
             }
           ],
           "form_id": "fret_stk_32_4fe246bd8241",
@@ -21397,7 +21397,7 @@
         ],
         "defaults": [
           "The inclusive register range is the ring R2..R23. Singleton, full-ring, and wraparound ranges are assigned.",
-          "uimm is always present and represents a byte count in multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
+          "uimm is always present and encodes the frame byte count scaled by eight: the semantic byte count is the encoded value shifted left by three, so the encoding supplies only multiples of eight; encoded zero is real zero and is illegal because every assigned range contains at least one register.",
           "The range must begin at architectural ra (R10); stack slot zero supplies both restored ra and the return target."
         ],
         "encoded_fields": [
@@ -21457,7 +21457,7 @@
             "assigned_ranges": [
               [
                 0,
-                32767
+                4095
               ]
             ],
             "field": "uimm",
@@ -21467,7 +21467,7 @@
             "reserved_ranges": [],
             "role": "frame byte count, encoded in multiples of eight",
             "signedness": "unsigned",
-            "width": 15,
+            "width": 12,
             "zero_meaning": "Encoded zero is a real zero-byte frame size and is illegal for every nonempty range."
           }
         ],
@@ -29306,7 +29306,7 @@
       ],
       "contract": {
         "block_composition": [
-          "Standalone scalar return-address materialization. Fused BSTART.CALL and BSTART.ICALL define call formation separately."
+          "Standalone scalar return-address materialization. Each BSTART variant's DIRECT form can fuse with C.SETRET into a distinct per-variant call instruction; the accepted BSTART.FP CALL and BSTART.STD CALL forms define call formation separately."
         ],
         "canonical_assembly": [
           "c.setret uimm, ->ra"
