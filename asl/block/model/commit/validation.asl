@@ -45,9 +45,11 @@ begin
 end;
 
 // A TRACE hint selects the active direct block boundary. The Linx runtime
-// compatibility profile completes that block at the following PC without
-// opening a replacement bundle; the portable profile keeps the ordinary
-// TRACE boundary lifecycle owned by the dispatch command handler.
+// compatibility profile records the boundary kind as a marker of the active
+// block; the marker takes effect only when that block commits at its own
+// boundary, so the hint never completes the block itself and cannot re-drive
+// an active frame template. The portable profile keeps the ordinary TRACE
+// boundary lifecycle owned by the dispatch command handler.
 readonly func LinxTraceBoundaryHintApplies(
     hint_trace: boolean, instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
@@ -60,12 +62,21 @@ end;
 
 func ExecuteLinxTraceBoundaryHint(
     instruction: bits(64),
-    length_bits: integer {16,32,48,64}) => CommandExecutionStatus
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => CommandExecutionStatus
 begin
-    if !CompleteBundleAt(
-        ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8))) then
-        return CommandExecution_Rejected;
-    end;
+    // Marker only: the trace boundary starts at the active block and takes
+    // effect when that block commits at its own boundary. The hint does not
+    // complete the block and has no memory effects, so an active frame
+    // template keeps its saved state until its own commit.
     _LastBundleHintPayload = instruction;
+    _BundleHint.present = TRUE;
+    _BundleHint.trace = TRUE;
+    _BundleHint.trace_end =
+        CommandDecodedBool(instruction, form, CommandField_B_E);
+    _BundleHint.branch_valid = FALSE;
+    _BundleHint.branch_likely = FALSE;
+    _BundleHint.temperature = Zeros{2};
+    _BundleHint.prefetch_size = Zeros{12};
+    BundleTransformHint();
     return CommandExecution_Executed;
 end;

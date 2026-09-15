@@ -13,6 +13,7 @@
   "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
   "target_releases": ["unassigned"],
   "affected_ndf": [
+    "PTO-B-HINT-LIFECYCLE-001",
     "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
     "PTO-PROFILE-LINX-PEID-SSR-001",
     "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
@@ -27,6 +28,7 @@
     "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
     "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
     "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-B-HINT",
     "PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL",
     "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
     "PTO-SCALAR-MODEL-AGU-MEMORY",
@@ -40,7 +42,24 @@
   "release_impact": "required",
   "release_boundary": false,
   "interface_change": true,
-  "amendments": [],
+  "amendments": [
+    {
+      "date": "2026-09-15",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/286",
+      "affected_ndf": [
+        "PTO-B-HINT-LIFECYCLE-001",
+        "PTO-PROFILE-LINX-RUNTIME-COMPAT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    }
+  ],
   "legacy_ids": []
 }
 ---
@@ -224,3 +243,21 @@ layout remain runtime responsibilities.
 **中文。** 本 ADR 仅负责配置选择、兼容行为适用条件和宿主绑定要求；它不改变指令编码、
 通用 ACRC 服务语义、内存顺序、精确故障、Tile 行为或可移植默认值。宿主进程终止方式与
 稀疏内存具体布局仍由运行时负责。
+
+## Amendment 2026-09-15: TRACE boundary hint is a commit-time marker, not a mid-block commit
+
+Issue: https://github.com/PTO-ISA/pto-spec/issues/286
+
+The hosted TRACE boundary compatibility path no longer completes the active
+block at the following PC. Under the named profile, `B.HINT TRACE.{begin,end}`
+starts at the active block and only records its boundary kind as hint marker
+state; the marker takes effect when that block commits at its own boundary.
+The hint never drives a bundle commit itself, has no memory effects, and
+cannot re-drive an active frame template, so a return address saved by
+`FENTRY` survives a `B.HINT TRACE.end` executed inside the frame and
+`FRET.STK` observes the saved value. Single-block execution semantics is
+preserved and the portable profile's ordinary TRACE lifecycle is unchanged.
+
+**中文。** 兼容配置下的 TRACE 边界提示改为从本块开始、仅记录边界类型标记，
+标记随该块自身提交生效；提示不再在下一条 PC 处额外提交块，无内存副作用，
+不会重新驱动活跃的 frame 模板，单块执行语义与可移植配置的 TRACE 生命周期均不变。
