@@ -2774,7 +2774,8 @@
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-DEFAULT-001",
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-STATIC-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIMENSIONS-001",
-        "PTO-AVS-TILE-TCVT-CUBE-LB2-001"
+        "PTO-AVS-TILE-TCVT-CUBE-LB2-001",
+        "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001"
       ]
     },
     {
@@ -14346,6 +14347,7 @@
         "PTO-AVS-BLOCK-TTRI-SCHEMA-001",
         "PTO-AVS-TILE-TTRI-BUNDLE-001",
         "PTO-AVS-TILE-TTRI-EDGE-001",
+        "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001",
         "PTO-AVS-TILE-TTRI-ORIENT-001",
         "PTO-AVS-TILE-TTRI-SHAPE-001",
         "PTO-AVS-TILE-TTRI-STATIC-001",
@@ -14559,7 +14561,8 @@
         "PTO-AVS-TILE-MGATHER-BYTES-001",
         "PTO-AVS-TILE-MGATHER-CUBE-LAYOUTS-001",
         "PTO-AVS-TILE-MGATHER-CUBE-PHYSICAL-SLACK-002",
-        "PTO-AVS-TILE-MGATHER-PACKED-001"
+        "PTO-AVS-TILE-MGATHER-PACKED-001",
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002"
       ]
     },
     {
@@ -16166,7 +16169,8 @@
       "tests": [
         "PTO-AVS-TILE-TCI-CUBE-001",
         "PTO-AVS-TILE-TCI-CUBE-FAULT-001",
-        "PTO-AVS-TILE-TCI-CUBE-SHAPE-001"
+        "PTO-AVS-TILE-TCI-CUBE-SHAPE-001",
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002"
       ]
     },
     {
@@ -17270,6 +17274,7 @@
         "ADR-TILE-0009"
       ],
       "tests": [
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
         "PTO-AVS-TILE-TMULS-CUBE-M16-M32-001",
         "PTO-AVS-TILE-TMULS-REINTERPRET-002"
       ]
@@ -17566,6 +17571,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
         "PTO-AVS-TILE-TROWEXPANDADD-TYPED-001"
       ]
     },
@@ -18297,7 +18303,7 @@
     "asl/block/model/dispatch/destination-auxiliary.asl": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4",
     "asl/block/model/dispatch/destination-shape.asl": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae",
     "asl/block/model/dispatch/expansion-schema.asl": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756",
-    "asl/block/model/dispatch/generation-schema.asl": "e485cd8402f5c65391dbaf9a844dccafc10b4175aba75e8b1542e4830c7edb8c",
+    "asl/block/model/dispatch/generation-schema.asl": "feadde0ca1dce3b46b49c9ba7768bcad3a9f99443413b3b1fe7a631bb90e7cea",
     "asl/block/model/dispatch/matrix-scale.asl": "b6ec56e602786648e5e764aafef07837029b84b9595707d389bd1b998cab4505",
     "asl/block/model/dispatch/numeric-control.asl": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7",
     "asl/block/model/dispatch/predicate-destination.asl": "a06441c22690f69100ca62972b7732bdc6c7dfd81c43407b5668d302cb7ba17b",
@@ -19189,7 +19195,7 @@
     "docs/block/model/dispatch/destination-auxiliary.md": "1f657dc0e6fe830bdda9c800de6a58b7bc5452f54fcb506fe28fc18185d47157",
     "docs/block/model/dispatch/destination-shape.md": "61dc7d3fc6959f4536f44165a012882afe0b743476ef5b792725a3b4eca73a92",
     "docs/block/model/dispatch/expansion-schema.md": "224e74b3be6fce636d3ff37191d078b26924a75ba41d4217371012e5d7b81872",
-    "docs/block/model/dispatch/generation-schema.md": "31f82f95a26f2c53181201152232a5f0c6b1211bf416a4a91e7ebef5466f62f5",
+    "docs/block/model/dispatch/generation-schema.md": "f705368f25c7bec0acd2f1f5546739ea056896c5a8cf27f1558297d6f7d3b74a",
     "docs/block/model/dispatch/matrix-scale.md": "4478ae7b790c580883c284e9b9527e0360a5b5e0aca4eb66510788403bba4a6d",
     "docs/block/model/dispatch/numeric-control.md": "e8073153b0f0cbe830b19833c349ae28f9c5929250311de3b6b1836c89a21169",
     "docs/block/model/dispatch/predicate-destination.md": "953e54f060b59c6607e3edb4db27fa07832a707109900a19e433f1c50d125c46",
@@ -23458,6 +23464,7 @@
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-bound-tci-shape-001.asl": "80712229a58647cf0f2edc1e091252fc963d51f4a6486d9a0ad7a3aa22b63691",
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-exec-tci-bundle-001.asl": "2762a58f7156a7d036744900ed894a937475e3d62d5b2ed28545d95629497376",
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-exec-tci-cube-001.asl": "80101b6342a31429de9e6884c60d17bbcc756b06ae87806d776340fdddaa722b",
+    "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-exec-tci-sparsefa-address-pipeline-002.asl": "57c0cdfe884f218686e3b6575be827b9a14227c9b4fdc9b0d8153c35ad32852b",
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-exec-tci-wrap-001.asl": "161014b2bb7819de71fffb9b56213f58bb7a6718c5846f46f6cb4f540d2ffe63",
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-fault-tci-cube-001.asl": "2b1196a5670ca2a6ea2d937deb1bd171773b35bc0eeacf6d6ac47c4617a13e95",
     "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-fault-tci-cube-shape-001.asl": "3b85f066de95f5f4dab63b9bf6524d3a4597e04a61d681a61307723c60183dac",
@@ -23467,6 +23474,7 @@
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-bound-ttri-shape-001.asl": "840dd6ab7ef1d8b69036e2d67980f2ac919b13b7e5d7d8afd14bd81915f0393c",
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-exec-ttri-bundle-001.asl": "1413eaa2ca314955616d61bec296076c35a65bd7098a22cb99d97a3b972b4d4b",
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-exec-ttri-edge-001.asl": "0bc82925fa3a03595fb4a5cc6befab2c14ae0cd388ec26dd7e4460dbf92ff063",
+    "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-exec-ttri-lb2-default-001.asl": "db430b71fa784680d6bd73b885d00846947a0cf974a7645b6ab760f3936e5e47",
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-exec-ttri-typed-001.asl": "85974cf6aeaecb289f7f539679beac055b729b64d6ca7465e996fcd163092a79",
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-fault-ttri-orient-001.asl": "017065b5d32a46215f9bf42dd46f0f6e4b7e4d65485573436baf45c363b53ee5",
     "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-static-ttri-contract-001.asl": "b3b0ccee45560cd0d162c00b67f8065f03482a028d9d5bf04e6e403afe8d34a5",
@@ -23875,7 +23883,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1076,
     "status": "closed",
-    "test_count": 3946,
+    "test_count": 3948,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -59328,6 +59336,19 @@
       "source": "asl/tile/irregular-and-complex/initialization/TCI.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-exec-tci-sparsefa-address-pipeline-002.asl",
+      "requirements": [
+        "PTO-TCI-CONTRACT-001",
+        "PTO-TMULS-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001"
+      ],
+      "sha256": "57c0cdfe884f218686e3b6575be827b9a14227c9b4fdc9b0d8153c35ad32852b",
+      "source": "asl/tile/irregular-and-complex/initialization/TCI.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TCI-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/irregular-and-complex/initialization/TCI/tile-static-tci-contract-001.asl",
@@ -63534,6 +63555,17 @@
         "PTO-INST-TILE-TTRI"
       ],
       "sha256": "0bc82925fa3a03595fb4a5cc6befab2c14ae0cd388ec26dd7e4460dbf92ff063",
+      "source": "asl/tile/irregular-and-complex/initialization/TTRI.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/irregular-and-complex/initialization/TTRI/tile-exec-ttri-lb2-default-001.asl",
+      "requirements": [
+        "PTO-INST-TILE-TTRI",
+        "PTO-BUNDLE-DIMENSION-DEFAULT-001"
+      ],
+      "sha256": "db430b71fa784680d6bd73b885d00846947a0cf974a7645b6ab760f3936e5e47",
       "source": "asl/tile/irregular-and-complex/initialization/TTRI.asl"
     },
     {
@@ -87312,6 +87344,7 @@
         "PTO-AVS-TILE-TCI-DIM-REQUIRED-001",
         "PTO-AVS-TILE-TCI-DIRECTION-001",
         "PTO-AVS-TILE-TCI-SHAPE-001",
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
         "PTO-AVS-TILE-TCI-WRAP-001"
       ],
       "source": "asl/tile/irregular-and-complex/initialization/TCI.asl",
@@ -87324,6 +87357,7 @@
         "PTO-AVS-TILE-TCI-DIM-REQUIRED-001",
         "PTO-AVS-TILE-TCI-DIRECTION-001",
         "PTO-AVS-TILE-TCI-SHAPE-001",
+        "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
         "PTO-AVS-TILE-TCI-STATIC-001",
         "PTO-AVS-TILE-TCI-WRAP-001"
       ]
@@ -87354,6 +87388,7 @@
       "semantic_tests": [
         "PTO-AVS-TILE-TTRI-BUNDLE-001",
         "PTO-AVS-TILE-TTRI-EDGE-001",
+        "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001",
         "PTO-AVS-TILE-TTRI-ORIENT-001",
         "PTO-AVS-TILE-TTRI-SHAPE-001",
         "PTO-AVS-TILE-TTRI-TYPED-001"
@@ -87363,6 +87398,7 @@
       "tests": [
         "PTO-AVS-TILE-TTRI-BUNDLE-001",
         "PTO-AVS-TILE-TTRI-EDGE-001",
+        "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001",
         "PTO-AVS-TILE-TTRI-ORIENT-001",
         "PTO-AVS-TILE-TTRI-SHAPE-001",
         "PTO-AVS-TILE-TTRI-STATIC-001",
