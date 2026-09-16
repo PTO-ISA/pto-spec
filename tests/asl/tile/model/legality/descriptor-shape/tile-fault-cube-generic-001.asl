@@ -18,7 +18,7 @@ begin
 
     let m32_configured = ConfigureCubeTileForMaskWithPhysical(1, 4096,
         64, 32, 1, 16, TileDataType_FP16, TileLayout_CUBE_M32,
-        TileLocation_Matrix, '0001');
+        '0001');
     assert m32_configured;
     let m32_tile = _Tiles[[1]];
     assert TileCubeDescriptorLegal(m32_tile);
