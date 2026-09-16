@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "01b5456161fca7727705220a9fc225141f562094",
+  "candidate_head": "f368fad98a01e52d0e9bf674d3fa98dc661fbb96",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17091,7 +17091,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "3afe68a7721f3b195842769f752b97c229daa892cd3ede1730b96abe82d01ef2",
+      "after_sha256": "8e413248d49ebe5bc2953f13a2512dc6d3972c7f1648eae126daff0a92210166",
       "before_layouts": [],
       "before_sha256": "e7b32f291681bc386dd9ead00fec76c0be95b98574defacb09dadab99ac7cb49",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -50868,7 +50868,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/tile/model/definedness/elements.asl",
-            "sha256": "3afe68a7721f3b195842769f752b97c229daa892cd3ede1730b96abe82d01ef2"
+            "sha256": "8e413248d49ebe5bc2953f13a2512dc6d3972c7f1648eae126daff0a92210166"
           }
         ],
         "TilePayloadNonzero": [
