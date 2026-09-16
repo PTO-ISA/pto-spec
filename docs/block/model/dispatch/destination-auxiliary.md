@@ -51,6 +51,8 @@ end;
 
 func ConfigureBundleTileDestination(
     index: TileIndex, capacity_bytes: integer {0..262144},
+    physical_rows: integer {0..65535},
+    physical_columns: integer {0..65535},
     valid_rows: integer {0..65535}, columns: integer {0..65535},
     valid_columns: integer {0..65535}, data_type: TileDataType,
     layout: TileLayout, allocation_mask: bits(4), tgpr2t: boolean,
@@ -58,14 +60,9 @@ func ConfigureBundleTileDestination(
     => boolean
 begin
     if tgpr2t then
-        if exact_cube_columns then
-            return ConfigureCubeTileForMaskWithColumns(index,
-                capacity_bytes, valid_rows, columns, valid_columns,
-                data_type, layout, allocation_mask);
-        end;
-        return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
-            valid_columns, data_type, layout,
-            allocation_mask);
+        return ConfigureCubeTileForMaskWithPhysical(index, capacity_bytes,
+            physical_rows, physical_columns, valid_rows, valid_columns,
+            data_type, layout, allocation_mask);
     end;
     ConfigureTileForMask(index, capacity_bytes, valid_rows, columns,
         valid_rows, valid_columns, data_type, layout,

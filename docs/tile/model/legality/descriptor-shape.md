@@ -47,22 +47,19 @@ end;
 readonly func TileCubeDescriptorLegal(tile: TileInfo) => boolean
 begin
     if !tile.allocated || tile.storage_kind != TileStorage_Numeric ||
-       !TileCubeDescriptorShapeLegalWithColumns(tile.capacity_bytes,
-           tile.valid_rows, tile.valid_columns, tile.columns,
+       !TileCubeDescriptorShapeAndPhysicalLegal(tile.capacity_bytes,
+           tile.rows, tile.columns, tile.valid_rows, tile.valid_columns,
            tile.data_type, tile.layout) then
         return FALSE;
     end;
-    return tile.rows == TileCubeStorageRows(
-               tile.layout, tile.valid_rows, tile.data_type) &&
-           tile.cube_k_repeat == TileCubeKRepeatForColumns(tile.layout,
-               tile.valid_rows, tile.columns, tile.data_type) &&
-           tile.cube_n_repeat == TileCubeNRepeatForColumns(
-               tile.layout, tile.valid_rows, tile.columns,
-               tile.data_type) &&
-           tile.cube_cell_count == TileCubeCellCountForColumns(tile.layout,
-               tile.valid_rows, tile.columns, tile.data_type) &&
-           tile.cube_storage_bytes == TileCubeRequiredBytesForColumns(tile.layout,
-               tile.valid_rows, tile.columns, tile.data_type) &&
+    return tile.cube_k_repeat == TileCubePhysicalKRepeat(tile.layout,
+               tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_n_repeat == TileCubePhysicalNRepeat(
+               tile.layout, tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_cell_count == TileCubePhysicalCellCount(tile.layout,
+               tile.rows, tile.columns, tile.data_type) &&
+           tile.cube_storage_bytes == TileCubePhysicalRequiredBytes(tile.layout,
+               tile.rows, tile.columns, tile.data_type) &&
            tile.cube_storage_bytes <= tile.capacity_bytes;
 end;
 

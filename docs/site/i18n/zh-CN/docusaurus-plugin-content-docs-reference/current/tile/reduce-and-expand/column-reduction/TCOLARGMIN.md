@@ -186,9 +186,9 @@ end;
 - TCOLARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 29; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.
 - The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
-- The destination DataType is U32 regardless of source DataType.
-- The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The reduction source allocated capacity is at most 2048 bytes and is checked before the source snapshot or destination allocation.
-- The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol; its physical geometry is derived from the selected layout and capacity.
+- The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source column. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.
+- The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.
+- The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects

@@ -79,7 +79,6 @@ begin
            source_tile.layout == CurrentBundleTileLayout() &&
            TileReductionAndExpansionRowLimitLegal(
                source_tile.layout, source_tile.valid_rows) &&
-           TileReductionSourceCapacityLegal(source) &&
            TileReductionAndExpansionSourceLegal(source) &&
            source_tile.data_type == data_type &&
            source_tile.valid_rows > 0 &&

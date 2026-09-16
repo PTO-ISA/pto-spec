@@ -22,13 +22,37 @@
     "PTO-CUBE-CELL-STATE-001"
   ],
   "affected_units": [
-    "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/102",
   "release_impact": "required",
+  "release_boundary": false,
+  "interface_change": true,
+  "amendments": [
+    {
+      "date": "2026-09-15",
+      "baseline": "02dcd04b82510e209780d00d29a6cdfedaf1aaf0",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/311",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-STATE-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+      ]
+    }
+  ],
   "legacy_ids": [
     "ADR-0069"
   ]

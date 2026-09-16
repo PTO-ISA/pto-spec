@@ -112,12 +112,14 @@
     "PTO-TILE-TEXPANDS",
     "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
     "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
     "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
     "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
-    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
+    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+    "PTO-TILE-MODEL-EXECUTION-REDUCTION"
   ],
   "resolves": [],
   "supersedes": [],
@@ -125,6 +127,49 @@
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/228",
   "release_impact": "required",
   "interface_change": true,
+  "amendments": [
+    {
+      "date": "2026-09-15",
+      "baseline": "02dcd04b82510e209780d00d29a6cdfedaf1aaf0",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/311",
+      "affected_ndf": [
+        "PTO-TROWSUM-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-TROWSUM",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN"
+      ]
+    }
+  ],
   "legacy_ids": [
     "ADR-0111"
   ],
