@@ -5,12 +5,18 @@ func ConfigureTailPair(valid_columns: integer {1,3,5},
 begin
     // Choose capacities that give both sides the same physical row count
     // under the ordinary TCVT shape contract despite their different widths.
-    ConfigureTile(0,
-        if source_type == TileDataType_FP32 then 4096 else 512,
-        32, 8, 1, valid_columns, source_type, TileLayout_RowMajor);
-    ConfigureTile(1,
-        if destination_type == TileDataType_FP32 then 4096 else 512,
-        32, 8, 1, valid_columns, destination_type, TileLayout_RowMajor);
+    let source_capacity = if source_type == TileDataType_FP32 then 4096
+        else 512;
+    let destination_capacity = if destination_type == TileDataType_FP32
+        then 4096 else 512;
+    let source_rows = DerivedTileRows(source_capacity, 8, source_type);
+    let destination_rows = DerivedTileRows(destination_capacity, 8,
+        destination_type);
+    assert source_rows == 128 && destination_rows == 128;
+    ConfigureTile(0, source_capacity, source_rows, 8, 2, valid_columns,
+        source_type, TileLayout_RowMajor);
+    ConfigureTile(1, destination_capacity, destination_rows, 8, 2,
+        valid_columns, destination_type, TileLayout_RowMajor);
 end;
 
 func SetTailPad(pad_value: bits(2))
@@ -34,6 +40,15 @@ begin
     if valid_columns == 5 then
         WriteTileElement(0, 0, 3, Zeros{PTO_XLEN} + 0x40000000);
         WriteTileElement(0, 0, 4, Zeros{PTO_XLEN} + 0x40400000);
+    end;
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x3f000000);
+    if valid_columns >= 3 then
+        WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 0x3f800000);
+        WriteTileElement(0, 1, 2, Zeros{PTO_XLEN} + 0x3fc00000);
+    end;
+    if valid_columns == 5 then
+        WriteTileElement(0, 1, 3, Zeros{PTO_XLEN} + 0x40000000);
+        WriteTileElement(0, 1, 4, Zeros{PTO_XLEN} + 0x40400000);
     end;
     let pad_code = if pad == TilePad_Zero then '00'
         else if pad == TilePad_Max then '01' else '10';
@@ -76,6 +91,15 @@ begin
         WriteTileElement(0, 0, 3, Zeros{PTO_XLEN} + 0x40000000);
         WriteTileElement(0, 0, 4, Zeros{PTO_XLEN} + 0x40400000);
     end;
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x3f000000);
+    if valid_columns >= 3 then
+        WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 0x3f800000);
+        WriteTileElement(0, 1, 2, Zeros{PTO_XLEN} + 0x3fc00000);
+    end;
+    if valid_columns == 5 then
+        WriteTileElement(0, 1, 3, Zeros{PTO_XLEN} + 0x40000000);
+        WriteTileElement(0, 1, 4, Zeros{PTO_XLEN} + 0x40400000);
+    end;
     SetTailPad('11');
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
@@ -93,6 +117,11 @@ begin
     WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(0, 0, 3, Zeros{PTO_XLEN} + 4);
     WriteTileElement(0, 0, 4, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 2, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 1, 3, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(0, 1, 4, Zeros{PTO_XLEN} + 5);
     // The physical tail lane is neither valid nor defined. Its payload is
     // deliberately a nonzero nibble to prove widening does not inspect it.
     let tail = TileLogicalLinearIndex(_Tiles[[0]], 0, 5);
@@ -106,6 +135,7 @@ begin
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x3f000000;
     assert ReadTileElement(1, 0, 4) == Zeros{PTO_XLEN} + 0x40a00000;
     assert !TileElementDefined(1, 0, 5);
+    assert !TileElementDefined(1, 1, 5);
 end;
 
 func ConfigureOddPhysicalPair(source_type: TileDataType,
@@ -115,10 +145,14 @@ begin
         else 384;
     let destination_capacity = if destination_type == TileDataType_FP32
         then 2560 else 384;
-    ConfigureTile(0, source_capacity, 2, 5, 2, 3, source_type,
+    let source_rows = DerivedTileRows(source_capacity, 5, source_type);
+    let destination_rows = DerivedTileRows(destination_capacity, 5,
+        destination_type);
+    assert source_rows == 128 && destination_rows == 128;
+    ConfigureTile(0, source_capacity, source_rows, 5, 2, 3, source_type,
         TileLayout_RowMajor);
-    ConfigureTile(1, destination_capacity, 2, 5, 2, 3, destination_type,
-        TileLayout_RowMajor);
+    ConfigureTile(1, destination_capacity, destination_rows, 5, 2, 3,
+        destination_type, TileLayout_RowMajor);
 end;
 
 func RunOddPhysicalNarrowing()

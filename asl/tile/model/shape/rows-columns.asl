@@ -43,7 +43,13 @@ begin
     end;
     let capacity_bits: integer = capacity_bytes * 8;
     let row_bits: integer = columns * TileElementBits(data_type);
-    if row_bits == 0 || capacity_bits MOD row_bits != 0 then return 0; end;
+    if row_bits == 0 then return 0; end;
+    // Legacy power-of-two columns retain the exact capacity contract. The
+    // explicitly admitted odd ordinary FP shapes use the complete rows that
+    // fit, leaving unused capacity as the descriptor tail.
+    if IsNonzeroPowerOfTwo(columns) && capacity_bits MOD row_bits != 0 then
+        return 0;
+    end;
     let rows: integer = capacity_bits DIVRM row_bits;
     if rows == 0 || rows > 65535 then return 0; end;
     return rows as integer {0..65535};
