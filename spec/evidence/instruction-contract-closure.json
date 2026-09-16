@@ -648,11 +648,13 @@
                 12,
                 13,
                 14,
+                15,
                 16,
                 17,
                 18,
                 19,
                 20,
+                21,
                 24,
                 25,
                 26,
@@ -889,11 +891,7 @@
             "assigned_ranges": [
               [
                 0,
-                14
-              ],
-              [
-                16,
-                20
+                21
               ],
               [
                 24,
@@ -910,11 +908,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
-                15
-              ],
-              [
-                21,
+                22,
                 23
               ],
               [
@@ -1209,7 +1203,7 @@
         ],
         "legality": [
           "B.DATR may appear at most once, after BSTART and before the block body.",
-          "DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.",
+          "DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.",
           "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.",
           "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
@@ -13652,11 +13646,13 @@
                 12,
                 13,
                 14,
+                15,
                 16,
                 17,
                 18,
                 19,
                 20,
+                21,
                 24,
                 25,
                 26,
@@ -13741,11 +13737,7 @@
             "assigned_ranges": [
               [
                 0,
-                14
-              ],
-              [
-                16,
-                20
+                21
               ],
               [
                 24,
@@ -13758,11 +13750,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
-                15
-              ],
-              [
-                21,
+                22,
                 23
               ],
               [
@@ -13949,7 +13937,7 @@
         "legality": [
           "Mode:Function is a seven-bit selector with Mode in bits 6:5 and Function in bits 4:0.",
           "Only assigned TEPL-carried operations are legal; unassigned selector holes reject before effects.",
-          "DataType accepts 0..14, 16..20, and 24..28; 15, 21..23, and 29..31 are reserved.",
+          "DataType accepts 0..14, 15..21, and 24..28; 22, 23, and 29..31 are reserved.",
           "BSTART.TEPL is compatibility input only; canonical output uses the operation's VEC or SFU alias."
         ],
         "memory_effects": [

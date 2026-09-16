@@ -219,16 +219,6 @@ begin
        ReferenceCommonConversionTypeSupported(destination_type) then
         return ReferenceCommonConvert(
             value, source_type, destination_type, control);
-    elsif HardwareTCVTTypePairSupported(source_type, destination_type) &&
-          (source_type == TileDataType_E2M1X2 ||
-           source_type == TileDataType_E1M2X2 ||
-           destination_type == TileDataType_E2M1X2 ||
-           destination_type == TileDataType_E1M2X2 ||
-           source_type == TileDataType_E6M2 ||
-           destination_type == TileDataType_E6M2 ||
-           source_type == TileDataType_RCPE6M2) then
-        return ReferenceTCVTConvert(
-            value, source_type, destination_type, control);
     elsif destination_type == TileDataType_E8M0 then
         return ReferenceFloatToE8M0(value, source_type, control);
     elsif !TileDataTypeIsFloating(destination_type) then

@@ -59,6 +59,9 @@ begin
     if candidate_distance < best_distance then return TRUE;
     elsif candidate_distance > best_distance then return FALSE;
     end;
+    if candidate == 0.0 && best == 0.0 && target < 0.0 then
+        return candidate_code >= 8 && best_code < 8;
+    end;
     if mode == NumericRound_RNE then
         return candidate_code MOD 2 == 0 && best_code MOD 2 != 0;
     elsif mode == NumericRound_RNA then
@@ -109,10 +112,12 @@ begin
                 else candidate >= 0.0 && candidate <= value;
         end;
         if eligible then
-            var better = !best_set;
-            if best_set then
-                if control.rounding_mode == NumericRound_RTP then
-                    better = candidate < best_value;
+                var better = !best_set;
+                if best_set then
+                    if control.rounding_mode == NumericRound_RTP then
+                        better = candidate < best_value ||
+                            (candidate == best_value && value < 0.0 &&
+                             code >= 8 && best_code < 8);
                 elsif control.rounding_mode == NumericRound_RTM then
                     better = candidate > best_value;
                 elsif control.rounding_mode == NumericRound_RTZ ||
@@ -120,7 +125,7 @@ begin
                     better = if negative then
                         candidate < best_value ||
                         (candidate == best_value &&
-                         candidate_code >= 8 && best_code < 8)
+                         code >= 8 && best_code < 8)
                         else candidate > best_value;
                 else
                     better = ReferencePacked4CandidateBetter(

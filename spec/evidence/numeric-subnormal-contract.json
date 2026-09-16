@@ -2376,7 +2376,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cf76a0e3709883c4cc100fd76796820216cc193418d2ec6563da857ddf00b762"
+      "sha256": "4ddaa5f38b88649763c80443e0b0c739765b252f4574e098db87b4f40bf5ab52"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
@@ -2440,7 +2440,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "d8111e6ebc6ed087b5eeccc911e42f2923279265433cacfc533f30085fd0db32"
+      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
     },
     {
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",

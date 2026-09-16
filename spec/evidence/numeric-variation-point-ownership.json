@@ -7269,7 +7269,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "923b887256a6c3cff323c2eb2371af34eecc224dbabe95ffd3f7a16e0806672b"
+      "sha256": "014352e90d17b362a568e3618c131aad091f66adbd52f897f74ada233af60363"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",

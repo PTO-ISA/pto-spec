@@ -1939,7 +1939,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "91e05c771339f8852bbe20ddec6430cbeb385819cf32c3840f1f085fc7e60c74"
+      "sha256": "30d42b6246fc982f2bb092174a462a017769c5e31f73af2c94390f8e205a91a1"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -1999,7 +1999,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "d8111e6ebc6ed087b5eeccc911e42f2923279265433cacfc533f30085fd0db32"
+      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -2099,7 +2099,7 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "8f3dc9a4f8349a5bf0468957e9a9d7004eb6439cc1a134133aa9e94dd1fc30a5"
+      "sha256": "0cee1102eff132c5220fb6a6ba20f9978bd98e37f576c8a6aa053b16b2a3641b"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",

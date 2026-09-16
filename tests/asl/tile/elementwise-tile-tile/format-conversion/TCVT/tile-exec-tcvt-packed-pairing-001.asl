@@ -26,12 +26,12 @@ func main() => integer
 begin
     ResetProfileState();
     let tile = PairingTile();
-    let row0_col4 = TilePackedLinearIndex(tile, 0, 4);
-    let row1_col0 = TilePackedLinearIndex(tile, 1, 0);
-    assert TilePackedLinearIndex(tile, 0, 0) == 0;
-    assert TilePackedLinearIndex(tile, 0, 1) == 1;
-    assert TilePackedLinearIndex(tile, 0, 2) == 2;
-    assert TilePackedLinearIndex(tile, 0, 3) == 3;
+    let row0_col4 = TCVTPackedLogicalIndex(tile, 0, 4);
+    let row1_col0 = TCVTPackedLogicalIndex(tile, 1, 0);
+    assert TCVTPackedLogicalIndex(tile, 0, 0) == 0;
+    assert TCVTPackedLogicalIndex(tile, 0, 1) == 1;
+    assert TCVTPackedLogicalIndex(tile, 0, 2) == 2;
+    assert TCVTPackedLogicalIndex(tile, 0, 3) == 3;
     assert row0_col4 == 4;
     assert row1_col0 == 6;
     assert row0_col4 MOD 2 == 0;
@@ -39,20 +39,20 @@ begin
     assert row0_col4 + 1 != row1_col0;
 
     var packed = TileInfoWithLogicalElement(tile,
-        TilePackedLinearIndex(tile, 0, 0), Zeros{PTO_XLEN} + 1);
+        TCVTPackedLogicalIndex(tile, 0, 0), Zeros{PTO_XLEN} + 1);
     packed = TileInfoWithLogicalElement(packed,
-        TilePackedLinearIndex(tile, 0, 1), Zeros{PTO_XLEN} + 2);
+        TCVTPackedLogicalIndex(tile, 0, 1), Zeros{PTO_XLEN} + 2);
     packed = TileInfoWithLogicalElement(packed,
-        TilePackedLinearIndex(tile, 0, 2), Zeros{PTO_XLEN} + 3);
+        TCVTPackedLogicalIndex(tile, 0, 2), Zeros{PTO_XLEN} + 3);
     packed = TileInfoWithLogicalElement(packed,
-        TilePackedLinearIndex(tile, 0, 3), Zeros{PTO_XLEN} + 4);
+        TCVTPackedLogicalIndex(tile, 0, 3), Zeros{PTO_XLEN} + 4);
     packed = TileInfoWithLogicalElement(packed, row0_col4,
         Zeros{PTO_XLEN} + 5);
     packed = TileInfoWithLogicalElement(packed, row1_col0,
         Zeros{PTO_XLEN} + 6);
     assert packed.payload[[0]] == Zeros{PTO_XLEN} + 0x654321;
     assert TileReadLogicalElement(packed,
-        TilePackedLinearIndex(packed, 0, 1)) ==
+        TCVTPackedLogicalIndex(packed, 0, 1)) ==
         Zeros{PTO_XLEN} + 2;
     assert TileReadLogicalElement(packed, row1_col0) ==
         Zeros{PTO_XLEN} + 6;

@@ -208,25 +208,9 @@ begin
     assert row < tile.rows && column < tile.columns;
     var index: integer = 0;
     if tile.layout == TileLayout_RowMajor then
-        if PackedTileDataTypeIsFourBit(tile.data_type) then
-            // X2 pairing is along the logical column axis.  Include the
-            // per-row odd-tail carrier before flattening so the first lane
-            // of the next row can never become the mate of the prior row's
-            // final lane.
-            let pair_columns = (tile.columns + 1) DIVRM 2;
-            index = (row * pair_columns + (column DIVRM 2)) * 2 +
-                    (column MOD 2);
-        else
-            index = row * tile.columns + column;
-        end;
+        index = row * tile.columns + column;
     elsif tile.layout == TileLayout_ColumnMajor then
-        if PackedTileDataTypeIsFourBit(tile.data_type) then
-            let pair_columns = (tile.columns + 1) DIVRM 2;
-            index = (pair_columns * row + (column DIVRM 2)) * 2 +
-                    (column MOD 2);
-        else
-            index = column * tile.rows + row;
-        end;
+        index = column * tile.rows + row;
     else
         let inner_elements = (256 DIV PackedTileElementBits(tile.data_type))
             as integer {4,8,16,32,64};
