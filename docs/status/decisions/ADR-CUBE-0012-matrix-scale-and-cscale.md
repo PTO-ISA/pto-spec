@@ -108,6 +108,20 @@
         "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
         "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
       ]
+    },
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-CUBE-HIF4-SCALE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE"
+      ]
     }
   ]
 }
@@ -244,3 +258,17 @@ shape，并允许合法 padded major pitch；primary 与 scale 按同侧控制�
 capacity 或 view 任一不符，都在 allocation/effects 前以 `Fault_TileLegality` 拒绝。
 parent-level `whole_parent_ready && published` 仍是就绪门槛。Local scale CELL、
 HiF4 scale word、CScale、MX 分组/carrier 规则及 ADR-CUBE-0015 均不变。
+
+## 2026-09-16 accepted amendment: shared E6M2 format ownership
+
+The E6M2 field in the existing HiF4 U32 scale word and standalone Tile
+DataType E6M2 share one exact decoder and value classification. Allocating
+standalone E6M2 and RCPE6M2 does not change the HiF4 scale-word bit layout,
+E1_8/E1_16 meaning, group size, CELL layout, Matrix/MX legality, or complete
+HiF4 quantization behavior. `HiF4X2` remains a Matrix-MX payload, not a
+standalone TCVT type.
+
+既有 HiF4 U32 scale word 中的 E6M2 字段与独立 Tile DataType E6M2 共用一个精确
+decoder 与值分类。分配独立 E6M2/RCPE6M2 不改变 HiF4 scale-word 位布局、
+E1_8/E1_16 含义、group size、CELL layout、Matrix/MX 合法性或完整 HiF4 量化行为。
+`HiF4X2` 继续作为 Matrix-MX payload，而不是独立 TCVT 类型。

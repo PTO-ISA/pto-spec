@@ -37,6 +37,23 @@
   "legacy_ids": [
     "PD-02-SC2",
     "ADR-0043"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+        "PTO-NUMERIC-FORMAT-DESCRIPTOR-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES"
+      ]
+    }
   ]
 }
 ---
@@ -153,3 +170,14 @@ still establish every supported tuple, result, rejection, and conformance
 claim.
 
 **中文。** 这些绑定不推导操作合法性、特殊值、舍入、标志或转换行为。
+
+## 2026-09-16 accepted amendment: catalog-only scale identities
+
+E6M2 and RCPE6M2 are accepted architectural Tile DataType identities for the
+Issue #254 conversion profiles. Neither gains a public PTO element-type alias
+or implied A2/A3/A5 availability. Target support and every operation/type tuple
+remain explicit profile decisions; width equality creates no additional use.
+
+E6M2 与 RCPE6M2 被接受为 Issue #254 转换 profile 使用的架构 Tile DataType
+标识。二者均不获得公开 PTO element-type alias，也不隐含 A2/A3/A5 可用性。目标
+支持及每个 operation/type 组合仍须由明确 profile 决定；宽度相等不扩展用途。

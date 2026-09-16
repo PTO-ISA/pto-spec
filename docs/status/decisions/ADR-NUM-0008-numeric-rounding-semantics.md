@@ -46,6 +46,22 @@
   "legacy_ids": [
     "PD-03",
     "ADR-0047"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TCVT"
+      ]
+    }
   ]
 }
 ---
@@ -293,3 +309,16 @@ unsupported operation/type pairs legal or import similarly named backend
 rounding controls.
 
 **中文。** 未启用饱和时的越界结果及无关数值问题仍由各自决策负责。
+
+## 2026-09-16 accepted amendment: scale-conversion rounding points
+
+TCVT FP16/BF16-to-E6M2 accepts only RNE and RNA and rounds once to the E6M2
+destination. E6M2-to-FP16 and RCPE6M2-to-FP16/BF16 accept RNE and RNA where a
+destination result is inexact. RCPE6M2 first denotes the exact mathematical
+reciprocal of the E6M2 code and then rounds once to the destination; an
+intermediate BF16 or FP16 rounding is not architectural.
+
+TCVT 的 FP16/BF16-to-E6M2 仅接受 RNE 与 RNA，并对 E6M2 目标舍入一次。
+E6M2-to-FP16 以及 RCPE6M2-to-FP16/BF16 在结果不精确时接受 RNE 与 RNA。
+RCPE6M2 先表示 E6M2 code 的精确数学倒数，再向目标舍入一次；中间 BF16 或 FP16
+舍入不是架构行为。

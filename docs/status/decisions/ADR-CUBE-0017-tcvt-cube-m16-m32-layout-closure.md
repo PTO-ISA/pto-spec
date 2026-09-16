@@ -29,6 +29,7 @@
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
     "PTO-TILE-MODEL-NUMERIC-FORMATS",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
     "PTO-TILE-TCVT"
   ],
   "resolves": [],
@@ -38,6 +39,25 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0110"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-TCVT"
+      ]
+    }
   ]
 }
 ---
@@ -149,3 +169,18 @@ opcodes remain outside this ADR. Current meaning stays with affected ASL/NDF.
 
 **中文。** CUBE_N8、私有 canonicalization、pair DataType 与 pair opcode 不在
 本 ADR 范围；当前语义仍由相关 ASL/NDF 持有。
+
+## 2026-09-16 accepted amendment: packed logical-column pairing
+
+For E2M1X2 and E1M2X2 TCVT, CUBE_M16 and CUBE_M32 use the same logical pair
+definition as RowMajor: `(r,2k)` and `(r,2k+1)`. Physical CELL order never
+redefines a pair. Odd valid-column tails are legal, preserve the current CUBE
+layout and valid shape, and derive destination physical geometry through the
+current destination-DataType envelope model. This amendment does not restore
+the retired valid-derived-only CUBE helpers or add a pair opcode.
+
+E2M1X2/E1M2X2 TCVT 的 CUBE_M16 与 CUBE_M32 使用和 RowMajor 相同的逻辑 pair：
+`(r,2k)` 与 `(r,2k+1)`；物理 CELL 顺序不得重新定义 pair。奇数有效列尾合法，
+保持当前 CUBE layout 与 valid shape，并由现有 destination-DataType envelope 模型
+派生目标物理几何。本修订不恢复已移除的仅由 valid 区域派生的 CUBE helper，也不
+增加 pair opcode。

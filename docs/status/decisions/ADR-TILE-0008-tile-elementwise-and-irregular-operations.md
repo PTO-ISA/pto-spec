@@ -188,6 +188,7 @@
     "PTO-TILE-MODEL-EXECUTION-UNARY",
     "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
     "PTO-TILE-MODEL-NUMERIC-FORMATS",
+    "PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY",
     "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
@@ -491,6 +492,26 @@
         "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
         "PTO-TILE-TCMP",
         "PTO-TILE-TSEL"
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-TCVT"
       ]
     }
   ],
@@ -1633,3 +1654,21 @@ The numbered decisions close binary arithmetic, division/remainder, bitwise and 
 This record governs only the listed selectors and their stated carrier interfaces. It does not authorize additional types, operands, layouts, auxiliary results, or semantics for selectors not named in the decisions.
 
 本记录仅管理所列 selector 及其声明的载体接口；不授权额外类型、操作数、布局、辅助结果，也不为未列 selector 推断语义。
+
+## 2026-09-16 accepted amendment: TCVT packed pairs and scale legality
+
+Decision 080 is amended for Issue #254. TCVT no longer treats every assigned
+Tile DataType as a legal source and destination, and `HiF4X2` is no longer a
+TCVT type. E2M1X2 and E1M2X2 pack `(r,2k)` in the low nibble and
+`(r,2k+1)` in the high nibble without crossing rows. An odd terminal lane is
+legal `[valid | padding]`; the absent lane is not read, decoded, or included in
+numeric status. E6M2 has only the accepted FP16/BF16 conversion pairs.
+RCPE6M2 is source-only for FP16/BF16 and may bind only E6M2 or RCPE6M2 backing
+codes. `Canonicalize=1` remains reserved-illegal.
+
+Issue #254 修订 Decision 080。TCVT 不再把每个已分配 Tile DataType 自动视为合法
+源和目标，`HiF4X2` 不再属于 TCVT。E2M1X2/E1M2X2 把 `(r,2k)` 放入低 nibble、
+`(r,2k+1)` 放入高 nibble，且不得跨行。奇数尾 lane 作为合法
+`[valid | padding]`；缺失 lane 不读取、不解码且不贡献数值状态。E6M2 仅接受已
+声明的 FP16/BF16 转换对。RCPE6M2 仅作为 FP16/BF16 的源，并且只允许 E6M2 或
+RCPE6M2 backing code。`Canonicalize=1` 继续保留非法。

@@ -64,6 +64,25 @@
   "legacy_ids": [
     "PD-05-SC1",
     "ADR-0048"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+        "PTO-NUMERIC-FORMAT-DESCRIPTOR-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2",
+        "PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION",
+        "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"
+      ]
+    }
   ]
 }
 ---
@@ -278,3 +297,16 @@ separate accepted rules that consume the classifier for a precisely stated
 operation and type.
 
 **中文。** 分类本身不使类型组合合法，也不选择操作结果、拒绝、标志或配置绑定。
+
+## 2026-09-16 accepted amendment: packed FP4 and scale classification
+
+E2M1X2 classifies each logical nibble as OCP E2M1: it has signed zero and the
+`0.5` encoding is subnormal. E6M2 has finite positive normals for raw codes
+`0x00..0xfe`, no zero, signed zero, subnormal, or infinity, and quiet NaN at
+`0xff`. RCPE6M2 uses the same class partition while interpreting each finite
+code as the exact reciprocal of its E6M2 value.
+
+E2M1X2 的每个逻辑 nibble 按 OCP E2M1 分类：具有 signed zero，且 `0.5` 编码为
+subnormal。E6M2 的 `0x00..0xfe` 是有限正 normal，没有 zero、signed zero、
+subnormal 或 infinity，`0xff` 为 quiet NaN。RCPE6M2 使用相同类别划分，但把每个
+有限 code 解释为对应 E6M2 值的精确倒数。
