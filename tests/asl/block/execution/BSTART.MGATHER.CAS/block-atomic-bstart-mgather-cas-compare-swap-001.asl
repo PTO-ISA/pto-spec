@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed logical-index CAS operations and publishes observed old values.","pass_condition":"Four unique U16 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed byte-displacement CAS operations and publishes observed old values.","pass_condition":"Four unique U16 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
 pure func CasStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00811181;
@@ -31,7 +31,7 @@ pure func CasIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -45,16 +45,16 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_S16,
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_S32,
         TileLayout_RowMajor);
     ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U16,
         TileLayout_RowMajor);
     ConfigureTile(2, 128, 2, 4, 2, 2, TileDataType_U16,
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 6);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 99);
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 30);

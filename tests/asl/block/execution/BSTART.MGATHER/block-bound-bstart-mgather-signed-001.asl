@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements select logical elements before the GM base.","pass_condition":"With ValidCol and stride two, S32 indices -2 and -1 address the two U16 elements immediately before the base.","related_sources":["asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements select byte displacements before the GM base.","pass_condition":"S32 byte displacements -4 and -2 address the two U16 elements immediately before the base.","related_sources":["asl/tile/model/memory/addressing.asl"]}
 pure func SignedGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -19,7 +19,7 @@ pure func SignedGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -28,8 +28,8 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S32,
         TileLayout_RowMajor);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffe);
-    WriteTileElement(0, 0, 1, Ones{PTO_XLEN});
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffc);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0xfffffffe);
     Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 0x2211);
     Store(Zeros{PTO_XLEN} + 0x102, 2, Zeros{PTO_XLEN} + 0x4433);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x104);

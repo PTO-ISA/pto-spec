@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-MGATHER-MASK-PREDICATE-001","PTO-MGATHER-MASK-PUBLICATION-001","PTO-INST-TILE-MGATHER-MASK","PTO-INST-BLOCK-BSTART-MGATHER-MASK"],"kind":"execution","summary":"MGATHER.MASK loads only exact-one lanes and pads every other physical destination element.","pass_condition":"Signed logical element indices load two U16 elements, a disabled invalid index produces no event or fault, and Max fills both the disabled valid lane and the complete non-valid physical region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-MGATHER-MASK-PREDICATE-001","PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-MGATHER-MASK-PUBLICATION-001","PTO-INST-TILE-MGATHER-MASK","PTO-INST-BLOCK-BSTART-MGATHER-MASK"],"kind":"execution","summary":"MGATHER.MASK loads only exact-one lanes and pads every other physical destination element.","pass_condition":"Signed byte displacements load two U16 elements, a disabled invalid index produces no event or fault, and Max fills both the disabled valid lane and the complete non-valid physical region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func MaskGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00611181;
@@ -20,7 +20,7 @@ pure func MaskGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -36,13 +36,14 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 4, 1, 3, TileDataType_S32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(1, 128, 1, 4, 1, 3);
+    ConfigureTile(1, 128, 1, 4, 1, 3, TileDataType_U8,
+        TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x7fff);
-    WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 3);
-    WriteTilePredicateBit(1, 0, 0, TRUE);
-    WriteTilePredicateBit(1, 0, 1, FALSE);
-    WriteTilePredicateBit(1, 0, 2, TRUE);
+    WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 6);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 0x106, 2, Zeros{PTO_XLEN} + 33);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);

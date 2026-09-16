@@ -1102,6 +1102,33 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 ],
             )
 
+    def test_indexed_tlsu_macros_are_base_only(self) -> None:
+        for mnemonic in (
+            "MGATHER",
+            "MGATHER_CAS",
+            "MGATHER_MASK",
+            "MSCATTER",
+            "MSCATTER_MASK",
+        ):
+            form = self.by_name[mnemonic]["forms"][0]
+            self.assertNotIn("RowStrideGPR", form["macro_format"], mnemonic)
+            self.assertNotIn("row stride", form["macro_format"].lower(), mnemonic)
+            scalar_bindings = [
+                binding
+                for binding in form["expansion"]["operand_bindings"]
+                if binding["binding_kind"] == "scalar-binding"
+            ]
+            self.assertEqual(len(scalar_bindings), 1, mnemonic)
+            self.assertEqual(scalar_bindings[0]["field"], "macro_source0")
+            self.assertEqual(
+                [member["slot"] for member in scalar_bindings[0]["members"]],
+                ["RegSrc0"],
+            )
+            self.assertEqual(
+                [member["physical_role"] for member in scalar_bindings[0]["members"]],
+                ["address"],
+            )
+
     def test_tgemv_prints_fixed_m_as_a_constraint(self) -> None:
         for mnemonic in (
             "TGEMV",

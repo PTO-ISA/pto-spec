@@ -36,9 +36,9 @@ begin
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+            let element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
+            let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
                 index_tile.payload[[index_element]], index_tile.data_type);
@@ -53,11 +53,11 @@ begin
             original_addresses[[element]] = address;
             translated_addresses[[element]] = read_probe.translated_address;
             write_translated_addresses[[element]] = write_probe.translated_address;
-            let value_element = TileLinearIndex(value_tile,
+            let value_element = TileStorageIndex(value_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let expected_element = TileLinearIndex(expected_tile,
+            let expected_element = TileStorageIndex(expected_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let replacement_element = TileLinearIndex(replacement_tile,
+            let replacement_element = TileStorageIndex(replacement_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             values[[element]] = value_tile.payload[[value_element]];
             expecteds[[element]] = expected_tile.payload[[expected_element]];
@@ -69,7 +69,7 @@ begin
     var result = destination_tile.payload;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(destination_tile,
+            let element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             result[[element]] = TilePadValueForDataType(pad_value, data_type);
         end;
@@ -168,7 +168,7 @@ begin
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(index_tile,
+            let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
                 index_tile.payload[[element]], index_tile.data_type);
@@ -183,7 +183,7 @@ begin
             original_addresses[[element]] = address;
             translated_addresses[[element]] = read_probe.translated_address;
             write_translated_addresses[[element]] = write_probe.translated_address;
-            let value_element = TileLinearIndex(value_tile,
+            let value_element = TileStorageIndex(value_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             values[[element]] = value_tile.payload[[value_element]];
             lane_order[[lane_count]] = NaturalToWord(element);
@@ -231,7 +231,7 @@ begin
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(index_tile,
+            let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
                 index_tile.payload[[element]], index_tile.data_type);

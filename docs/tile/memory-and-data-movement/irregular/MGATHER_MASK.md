@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl`
 
-Gather enabled GM elements addressed by logical linear element indices and pad disabled destination lanes.
+Masked gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-MASK}
 
@@ -132,58 +132,14 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 **Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
 
-### B.IOR.RegSrc1 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
-
-Selects one absolute architectural GPR for B.IOR input or output binding.
-
-**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
-
-| Code | Disposition | Meaning |
-| ---: | --- | --- |
-| 0 | assigned | zero |
-| 1 | assigned | sp |
-| 2 | assigned | a0 |
-| 3 | assigned | a1 |
-| 4 | assigned | a2 |
-| 5 | assigned | a3 |
-| 6 | assigned | a4 |
-| 7 | assigned | a5 |
-| 8 | assigned | a6 |
-| 9 | assigned | a7 |
-| 10 | assigned | ra |
-| 11 | assigned | s0 |
-| 12 | assigned | s1 |
-| 13 | assigned | s2 |
-| 14 | assigned | s3 |
-| 15 | assigned | s4 |
-| 16 | assigned | s5 |
-| 17 | assigned | s6 |
-| 18 | assigned | s7 |
-| 19 | assigned | s8 |
-| 20 | assigned | x0 |
-| 21 | assigned | x1 |
-| 22 | assigned | x2 |
-| 23 | assigned | x3 |
-| 24 | reserved | future extension |
-| 25 | reserved | future extension |
-| 26 | reserved | future extension |
-| 27 | reserved | future extension |
-| 28 | reserved | future extension |
-| 29 | reserved | future extension |
-| 30 | reserved | future extension |
-| 31 | reserved | future extension |
-
-**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
-
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| scalar0 | per-PE private-GPR GM row stride in elements |
-| source0 | logical linear element indices |
-| source1 | exact zero-or-one predicate mask |
+| source0 | byte-displacement indices |
+| source1 | U8 PredicateTile |
 
 ## Decode
 
@@ -205,7 +161,7 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, StrideGPR, zero, ->zero
+B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
 
@@ -218,7 +174,7 @@ begin
     return TileHandler_MGATHER_MASK;
 end;
 
-pure func InstructionContractUsesLogicalElementIndices_MGATHER_MASK()
+pure func InstructionContractUsesByteDisplacements_MGATHER_MASK()
     => boolean
 begin
     return TRUE;
@@ -246,49 +202,39 @@ end;
 
 ## Defaults and encoded zero
 
-- B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.
-- LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.
-- Omitted B.DATR selects PadValue=Null and Layout=NORM. PadValue is written to disabled valid lanes and every physical destination element outside ValidRow x ValidCol.
-- Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling.
+- B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
+- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
-- MGATHER_MASK is selected only by BSTART.MGATHER.MASK function 6 in the TLSU selector space; it has no standalone opcode.
-- Exactly one terminating Local B.IOT supplies IndexTile, MaskTile, destination, TSize, and PE_MASK. B.IOS and additional Tile bindings are not accepted.
-- IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Each logical element is interpreted as a signed or unsigned logical linear element index.
-- MaskTile must be allocated and fully defined. Its logical shape and layout must match IndexTile and destination; every valid element is exactly zero or one.
-- Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.
-- Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region contains ValidRow x ValidCol.
-- B.IOT PE_MASK=0000 is a strict no-op before schema, GPR, source, predicate, dimension, allocation, address, or fault checks.
-- B.DATR applicability allows only PadValueOrByteId as PadValue and Layout.
-- The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects.
+- PredicateTile is an ordinary Local U8 predicate carrier with one 0x00 or 0x01 element per indexed transaction; every other value rejects before effects.
+- PredicateTile valid shape equals IndexTile valid shape and its producer DataType does not constrain the transfer DataType.
+- Packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and one predicate controls the complete byte pair.
+- ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.
+- Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.
+- B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 
 ## State effects
 
-- Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.
-- Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.
-- On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically.
+- The complete physical destination region is initialized to PadValue before active valid results are published.
+- On success the full physical destination region is defined; a failing attempt publishes no destination.
 
 ## Memory effects and ordering
 
 ### Memory effects
 
-- For each valid coordinate whose MaskTile value is one, load one transfer-typed element from the address obtained by splitting the logical linear index by ValidCol, applying row_stride_elements to the row, and scaling the resulting element offset by the transfer element size.
-- A valid coordinate whose mask is zero performs no address generation, translation, permission check, memory access, or memory event and receives PadValue.
-- After complete enabled-lane preflight, publish enabled loads, disabled-lane padding, and all non-valid physical padding atomically.
+- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue.
 
 ### Ordering
 
-- Enabled-lane loads participate in the PTO memory-order domain through the block aq/rl attributes.
-- No additional lane or inter-PE issue order is guaranteed.
-- Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight.
+- Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged.
 
 ## Exceptions
 
-- A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, packed four-bit transfer DataType, or invalid dimensions, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before destination allocation, memory events, or memory reads.
-- Only enabled-lane addresses are generated and probed. Every enabled lane is preflighted before the first load; any enabled-lane fault leaves the destination unallocated and produces no partial event or payload effect. Disabled lanes cannot fault from their ignored IndexTile value.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
+- Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects.
 
 ## Examples
 
-- BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP
+- BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP

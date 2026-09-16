@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER preserves full-width logical indices and accepts narrower integer IndexTiles","pass_condition":"U64 and S16 logical indices execute at their encoded widths, an upper-half U64 index is scaled by the U64 transfer width without truncation, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER preserves full-width byte displacements and signed integer IndexTiles","pass_condition":"U64 and S32 byte displacements execute at their encoded widths, an upper-half U64 displacement is not scaled or truncated, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MscatterStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -22,7 +22,7 @@ pure func MscatterStage2IOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 3;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -89,10 +89,10 @@ begin
     assert ReadTileElement(1, 0, 0) == source_value;
     StopMemoryEventCapture();
 
-    // The upper half of a U64 logical index is architectural and the element
-    // offset is scaled by the U64 transfer width rather than truncated.
+    // The upper half of a U64 displacement is architectural and is not scaled
+    // or truncated.
     let full_width_index = Zeros{PTO_XLEN} + 0x0000000100000000;
-    let full_width_address = Zeros{PTO_XLEN} + 0x0000000800000100;
+    let full_width_address = Zeros{PTO_XLEN} + 0x0000000100000100;
     PrepareMscatterStage2(
         TileDataType_U64,
         TileDataType_U64,
@@ -112,8 +112,8 @@ begin
 
     PrepareMscatterStage2(
         TileDataType_U64,
-        TileDataType_S16,
-        Zeros{PTO_XLEN},
+        TileDataType_S32,
+        Zeros{PTO_XLEN} - 8,
         Zeros{5} + 24);
     Store(target, 8, Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef);
     StartMemoryEventCapture(0);
@@ -121,7 +121,7 @@ begin
     assert narrow_completed;
     assert _LastFault == Fault_None;
     assert _MemoryEventCount == 1;
-    let stored_with_narrow_index = LoadUnsigned(target, 8);
+    let stored_with_narrow_index = LoadUnsigned(target - 8, 8);
     assert stored_with_narrow_index == source_value;
     StopMemoryEventCapture();
 

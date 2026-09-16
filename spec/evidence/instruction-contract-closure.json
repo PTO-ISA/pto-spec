@@ -3039,7 +3039,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Input & Output",
           "semantic_handler": "BindBundleScalarIO",
-          "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one as row stride and indexed TLSU uses it as GM row stride in elements.",
+          "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.",
           "status": "accepted"
         }
       ],
@@ -3057,7 +3057,7 @@
           "The complete BSTART operation schema determines whether B.IOR is consumed and the number and roles of its GPR inputs and output.",
           "When B.IOR is omitted, every consumed input or output uses its operation-defined default. An explicitly encoded selector zero names the architectural zero GPR and is not omission.",
           "For TLOAD and TSTORE, omission supplies GM base zero and a dense byte row stride derived from the resolved column count and DataType; explicit RegSrc1=zero supplies a zero stride.",
-          "MGATHER, MSCATTER, MGATHER.MASK, MSCATTER.MASK, and MGATHER.CAS require explicit B.IOR: RegSrc0 is the GM base address and RegSrc1 is a nonzero GM row stride in elements no smaller than ValidCol.",
+          "All indexed TLSU forms require explicit B.IOR with RegSrc0 as the GM base address; RegSrc1, RegSrc2, and RegDst encode zero.",
           "Matrix postprocess B.IOR slots follow the complete B.FPATR schema: scalar QuantParam then scalar LReLUParam, with omitted consumed slots reading the zero GPR."
         ],
         "encoded_fields": [
@@ -3634,7 +3634,7 @@
           "Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.",
           "RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.",
           "Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.",
-          "Indexed TLSU consumes RegSrc0 and RegSrc1. RegSrc2 and RegDst must be zero, and the consuming operation rejects a RegSrc1 value smaller than ValidCol before memory or destination effects."
+          "Indexed TLSU consumes RegSrc0 as BaseGPR. RegSrc1, RegSrc2, and RegDst must be zero before memory or destination effects."
         ],
         "memory_effects": [
           "none"
@@ -3671,7 +3671,7 @@
       "mnemonic": "B.IOR",
       "ndf_clause": "PTO-INST-BLOCK-B-IOR",
       "source": "asl/block/operands/B.IOR.asl",
-      "summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one as row stride and indexed TLSU uses it as GM row stride in elements.",
+      "summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.",
       "surface": "block"
     },
     {
@@ -6201,7 +6201,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Begins a strided indexed TLSU gather block.",
+          "semantic_summary": "gather using explicit byte displacements.",
           "status": "accepted"
         }
       ],
@@ -6216,15 +6216,16 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "BSTART.MGATHER DataType"
         ],
         "defaults": [
-          "DataType is always encoded; its accepted values select the transfer element type and reserved encodings are rejected.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [
           {
@@ -6263,147 +6264,144 @@
             "role": "tile element data type selector",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero selects FP64."
+            "zero_meaning": "Encoded zero supplies numeric zero for the tile element data type selector."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.",
-          "At bundle completion, malformed MGATHER composition, packed four-bit transfer types, non-integer indices, invalid dimensions, or access faults are rejected before any destination or partial memory-event effect."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
             "assigned": [
               {
-                "meaning": "FP64",
+                "meaning": "zero",
                 "value": 0
               },
               {
-                "meaning": "FP32",
+                "meaning": "sp",
                 "value": 1
               },
               {
-                "meaning": "TF32",
+                "meaning": "a0",
                 "value": 2
               },
               {
-                "meaning": "HF32",
+                "meaning": "a1",
                 "value": 3
               },
               {
-                "meaning": "FP16",
+                "meaning": "a2",
                 "value": 4
               },
               {
-                "meaning": "BF16",
+                "meaning": "a3",
                 "value": 5
               },
               {
-                "meaning": "HiF8",
+                "meaning": "a4",
                 "value": 6
               },
               {
-                "meaning": "E4M3",
+                "meaning": "a5",
                 "value": 7
               },
               {
-                "meaning": "E5M2",
+                "meaning": "a6",
                 "value": 8
               },
               {
-                "meaning": "E3M2",
+                "meaning": "a7",
                 "value": 9
               },
               {
-                "meaning": "E2M3",
+                "meaning": "ra",
                 "value": 10
               },
               {
-                "meaning": "E2M1X2",
+                "meaning": "s0",
                 "value": 11
               },
               {
-                "meaning": "E1M2X2",
+                "meaning": "s1",
                 "value": 12
               },
               {
-                "meaning": "E8M0",
+                "meaning": "s2",
                 "value": 13
               },
               {
-                "meaning": "HiF4X2",
+                "meaning": "s3",
                 "value": 14
               },
               {
-                "meaning": "S64",
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
                 "value": 16
               },
               {
-                "meaning": "S32",
+                "meaning": "s6",
                 "value": 17
               },
               {
-                "meaning": "S16",
+                "meaning": "s7",
                 "value": 18
               },
               {
-                "meaning": "S8",
+                "meaning": "s8",
                 "value": 19
               },
               {
-                "meaning": "S4X2",
+                "meaning": "x0",
                 "value": 20
               },
               {
-                "meaning": "U64",
-                "value": 24
+                "meaning": "x1",
+                "value": 21
               },
               {
-                "meaning": "U32",
-                "value": 25
+                "meaning": "x2",
+                "value": 22
               },
               {
-                "meaning": "U16",
-                "value": 26
-              },
-              {
-                "meaning": "U8",
-                "value": 27
-              },
-              {
-                "meaning": "U4X2",
-                "value": 28
+                "meaning": "x3",
+                "value": 23
               }
             ],
-            "field": "DataType",
-            "id": "PTO-FIELD-BLOCK-DATATYPE",
-            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
             "reserved": [
-              15,
-              21,
-              22,
-              23,
+              24,
+              25,
+              26,
+              27,
+              28,
               29,
               30,
               31
             ],
-            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
-            "source": "asl/arch/data-types/tile-data-types.asl",
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
-            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "bstart_mgather_32_c9defbf18276.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.",
-          "Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 before allocation because MGATHER carries no nibble selector.",
-          "The body must complete the exact MGATHER schema documented by PTO-TILE-MGATHER; no B.IOS or additional Tile source is accepted.",
-          "B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero."
+          "Non-packed transfer shapes match IndexTile; packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and rejects incomplete pairs.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed gather atomically after full preflight."
+          "Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "All valid addresses are preflighted before the first architectural effect."
         ],
         "operands": [
           {
@@ -6416,16 +6414,16 @@
           },
           {
             "field": "B.IOR.RegSrc1",
-            "role": "per-PE private-GPR GM row stride in elements"
+            "role": "per-PE private-GPR zero selector"
           }
         ],
         "ordering": [
-          "none"
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Closes any preceding block, initializes a new TileMemory descriptor, and selects TLSU function 4 with the encoded transfer DataType.",
-          "No destination is allocated until the completed block passes schema, dimension, source, and access checks."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/block/execution/BSTART.MGATHER.md",
@@ -6433,7 +6431,7 @@
       "mnemonic": "BSTART.MGATHER",
       "ndf_clause": "PTO-INST-BLOCK-BSTART-MGATHER",
       "source": "asl/block/execution/BSTART.MGATHER.asl",
-      "summary": "Begins a strided indexed TLSU gather block.",
+      "summary": "gather using explicit byte displacements.",
       "surface": "block"
     },
     {
@@ -7082,7 +7080,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Begins an atomic compare-and-swap strided indexed TLSU gather block.",
+          "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
           "status": "accepted"
         }
       ],
@@ -7098,16 +7096,16 @@
           "B.DATR PadValue, Layout (optional)",
           "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
           "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "BSTART.MGATHER.CAS DataType"
         ],
         "defaults": [
-          "DataType is always encoded and selects the transfer, comparison, replacement, and destination element type.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.",
-          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [
           {
@@ -7146,149 +7144,145 @@
             "role": "transfer, comparison, replacement, and destination element type",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero selects FP64."
+            "zero_meaning": "Encoded zero supplies numeric zero for the transfer, comparison, replacement, and destination element type."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.",
-          "At bundle completion, malformed two-command B.IOT composition, missing B.IOR or LB0, packed transfer types, non-integer indices, mismatched source type or shape, invalid dimensions, or any read/write access fault is rejected before destination allocation, atomic events, or memory writes."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
             "assigned": [
               {
-                "meaning": "FP64",
+                "meaning": "zero",
                 "value": 0
               },
               {
-                "meaning": "FP32",
+                "meaning": "sp",
                 "value": 1
               },
               {
-                "meaning": "TF32",
+                "meaning": "a0",
                 "value": 2
               },
               {
-                "meaning": "HF32",
+                "meaning": "a1",
                 "value": 3
               },
               {
-                "meaning": "FP16",
+                "meaning": "a2",
                 "value": 4
               },
               {
-                "meaning": "BF16",
+                "meaning": "a3",
                 "value": 5
               },
               {
-                "meaning": "HiF8",
+                "meaning": "a4",
                 "value": 6
               },
               {
-                "meaning": "E4M3",
+                "meaning": "a5",
                 "value": 7
               },
               {
-                "meaning": "E5M2",
+                "meaning": "a6",
                 "value": 8
               },
               {
-                "meaning": "E3M2",
+                "meaning": "a7",
                 "value": 9
               },
               {
-                "meaning": "E2M3",
+                "meaning": "ra",
                 "value": 10
               },
               {
-                "meaning": "E2M1X2",
+                "meaning": "s0",
                 "value": 11
               },
               {
-                "meaning": "E1M2X2",
+                "meaning": "s1",
                 "value": 12
               },
               {
-                "meaning": "E8M0",
+                "meaning": "s2",
                 "value": 13
               },
               {
-                "meaning": "HiF4X2",
+                "meaning": "s3",
                 "value": 14
               },
               {
-                "meaning": "S64",
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
                 "value": 16
               },
               {
-                "meaning": "S32",
+                "meaning": "s6",
                 "value": 17
               },
               {
-                "meaning": "S16",
+                "meaning": "s7",
                 "value": 18
               },
               {
-                "meaning": "S8",
+                "meaning": "s8",
                 "value": 19
               },
               {
-                "meaning": "S4X2",
+                "meaning": "x0",
                 "value": 20
               },
               {
-                "meaning": "U64",
-                "value": 24
+                "meaning": "x1",
+                "value": 21
               },
               {
-                "meaning": "U32",
-                "value": 25
+                "meaning": "x2",
+                "value": 22
               },
               {
-                "meaning": "U16",
-                "value": 26
-              },
-              {
-                "meaning": "U8",
-                "value": 27
-              },
-              {
-                "meaning": "U4X2",
-                "value": 28
+                "meaning": "x3",
+                "value": 23
               }
             ],
-            "field": "DataType",
-            "id": "PTO-FIELD-BLOCK-DATATYPE",
-            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
             "reserved": [
-              15,
-              21,
-              22,
-              23,
+              24,
+              25,
+              26,
+              27,
+              28,
               29,
               30,
               31
             ],
-            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
-            "source": "asl/arch/data-types/tile-data-types.asl",
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
-            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "bstart_mgather_cas_32_fd8c8a3b720a.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.",
-          "Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MGATHER.CAS carries no nibble selector.",
-          "The body must complete the exact two-B.IOT Local schema documented by PTO-TILE-MGATHER-CAS. B.IOS and extra bindings are not accepted.",
-          "PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, address, and fault checks.",
-          "B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero."
+          "Only U16, U32, and U64 transfer DataTypes are accepted; packed four-bit and every other existing unsupported atomic DataType remain illegal.",
+          "Index, Expected, Replacement, and destination have equal logical valid shape and layout class.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "The start itself performs no memory access. BSTOP or the next BSTART performs the fully preflighted per-lane atomic compare-and-swap sequence.",
-          "Duplicate-address lanes are legal and serialize in an implementation-defined order; each lane still supplies one atomic event."
+          "Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.",
+          "All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue."
         ],
         "operands": [
           {
@@ -7301,16 +7295,16 @@
           },
           {
             "field": "B.IOR.RegSrc1",
-            "role": "per-PE private-GPR GM row stride in elements"
+            "role": "per-PE private-GPR zero selector"
           }
         ],
         "ordering": [
-          "Each valid lane is one atomic read-modify-write under the block aq/rl attributes. No fixed order is defined between duplicate-address lanes or between PEs."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Closes any preceding block, initializes a TileMemory descriptor, and selects TLSU function 8 with the encoded transfer DataType.",
-          "No destination is allocated until the completed block passes schema, source, dimension, and complete access preflight."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/block/execution/BSTART.MGATHER.CAS.md",
@@ -7318,7 +7312,7 @@
       "mnemonic": "BSTART.MGATHER.CAS",
       "ndf_clause": "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
       "source": "asl/block/execution/BSTART.MGATHER.CAS.asl",
-      "summary": "Begins an atomic compare-and-swap strided indexed TLSU gather block.",
+      "summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "surface": "block"
     },
     {
@@ -8256,7 +8250,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Begins a predicate-masked strided indexed TLSU gather block.",
+          "semantic_summary": "Masked gather using explicit byte displacements.",
           "status": "accepted"
         }
       ],
@@ -8271,15 +8265,16 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "BSTART.MGATHER.MASK DataType"
         ],
         "defaults": [
-          "DataType is always encoded and selects the transfer and destination element type.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [
           {
@@ -8318,149 +8313,146 @@
             "role": "transfer and destination element type",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero selects FP64."
+            "zero_meaning": "Encoded zero supplies numeric zero for the transfer and destination element type."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.",
-          "At bundle completion, malformed B.IOT composition, missing B.IOR or LB0, packed transfer types, non-integer indices, predicate values other than zero or one, source shape or layout mismatch, invalid dimensions, zero or undersized row stride, or any enabled-lane access fault is rejected before destination allocation, memory events, or memory reads."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
             "assigned": [
               {
-                "meaning": "FP64",
+                "meaning": "zero",
                 "value": 0
               },
               {
-                "meaning": "FP32",
+                "meaning": "sp",
                 "value": 1
               },
               {
-                "meaning": "TF32",
+                "meaning": "a0",
                 "value": 2
               },
               {
-                "meaning": "HF32",
+                "meaning": "a1",
                 "value": 3
               },
               {
-                "meaning": "FP16",
+                "meaning": "a2",
                 "value": 4
               },
               {
-                "meaning": "BF16",
+                "meaning": "a3",
                 "value": 5
               },
               {
-                "meaning": "HiF8",
+                "meaning": "a4",
                 "value": 6
               },
               {
-                "meaning": "E4M3",
+                "meaning": "a5",
                 "value": 7
               },
               {
-                "meaning": "E5M2",
+                "meaning": "a6",
                 "value": 8
               },
               {
-                "meaning": "E3M2",
+                "meaning": "a7",
                 "value": 9
               },
               {
-                "meaning": "E2M3",
+                "meaning": "ra",
                 "value": 10
               },
               {
-                "meaning": "E2M1X2",
+                "meaning": "s0",
                 "value": 11
               },
               {
-                "meaning": "E1M2X2",
+                "meaning": "s1",
                 "value": 12
               },
               {
-                "meaning": "E8M0",
+                "meaning": "s2",
                 "value": 13
               },
               {
-                "meaning": "HiF4X2",
+                "meaning": "s3",
                 "value": 14
               },
               {
-                "meaning": "S64",
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
                 "value": 16
               },
               {
-                "meaning": "S32",
+                "meaning": "s6",
                 "value": 17
               },
               {
-                "meaning": "S16",
+                "meaning": "s7",
                 "value": 18
               },
               {
-                "meaning": "S8",
+                "meaning": "s8",
                 "value": 19
               },
               {
-                "meaning": "S4X2",
+                "meaning": "x0",
                 "value": 20
               },
               {
-                "meaning": "U64",
-                "value": 24
+                "meaning": "x1",
+                "value": 21
               },
               {
-                "meaning": "U32",
-                "value": 25
+                "meaning": "x2",
+                "value": 22
               },
               {
-                "meaning": "U16",
-                "value": 26
-              },
-              {
-                "meaning": "U8",
-                "value": 27
-              },
-              {
-                "meaning": "U4X2",
-                "value": 28
+                "meaning": "x3",
+                "value": 23
               }
             ],
-            "field": "DataType",
-            "id": "PTO-FIELD-BLOCK-DATATYPE",
-            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
             "reserved": [
-              15,
-              21,
-              22,
-              23,
+              24,
+              25,
+              26,
+              27,
+              28,
               29,
               30,
               31
             ],
-            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
-            "source": "asl/arch/data-types/tile-data-types.asl",
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
-            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "bstart_mgather_mask_32_5573241cd944.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.",
-          "Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MGATHER.MASK carries no nibble selector.",
-          "The body must complete the exact single-B.IOT Local schema documented by PTO-TILE-MGATHER-MASK. B.IOS and extra bindings are not accepted.",
-          "PE_MASK=0000 is a strict no-op before all schema, GPR, source, predicate, dimension, allocation, address, and fault checks.",
-          "B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero."
+          "PredicateTile is an ordinary Local U8 predicate carrier with one 0x00 or 0x01 element per indexed transaction; every other value rejects before effects.",
+          "PredicateTile valid shape equals IndexTile valid shape and its producer DataType does not constrain the transfer DataType.",
+          "Packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and one predicate controls the complete byte pair.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "The start itself performs no memory access. BSTOP or the next BSTART preflights and loads only lanes whose exact predicate value is one.",
-          "Disabled lanes perform no memory-side operation and receive PadValue together with every non-valid physical destination coordinate."
+          "Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue."
         ],
         "operands": [
           {
@@ -8473,16 +8465,16 @@
           },
           {
             "field": "B.IOR.RegSrc1",
-            "role": "per-PE private-GPR GM row stride in elements"
+            "role": "per-PE private-GPR zero selector"
           }
         ],
         "ordering": [
-          "Enabled loads use the block aq/rl attributes and PTO memory-order domain. No additional lane or inter-PE issue order is defined."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Closes any preceding block, initializes a TileMemory descriptor, and selects TLSU function 6 with the encoded transfer DataType.",
-          "No destination is allocated until the completed block passes schema, predicate, source, dimension, and enabled-address preflight."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/block/execution/BSTART.MGATHER.MASK.md",
@@ -8490,7 +8482,7 @@
       "mnemonic": "BSTART.MGATHER.MASK",
       "ndf_clause": "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
       "source": "asl/block/execution/BSTART.MGATHER.MASK.asl",
-      "summary": "Begins a predicate-masked strided indexed TLSU gather block.",
+      "summary": "Masked gather using explicit byte displacements.",
       "surface": "block"
     },
     {
@@ -9717,7 +9709,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Begins a strided indexed TLSU scatter block.",
+          "semantic_summary": "scatter using explicit byte displacements.",
           "status": "accepted"
         }
       ],
@@ -9732,15 +9724,16 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT DataTile, IndexTile, mask=PE_MASK, <last>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "BSTART.MSCATTER DataType"
         ],
         "defaults": [
-          "DataType is always encoded and selects the memory transfer type.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [
           {
@@ -9779,147 +9772,144 @@
             "role": "memory transfer element type selector",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero selects FP64."
+            "zero_meaning": "Encoded zero supplies numeric zero for the memory transfer element type selector."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.",
-          "Malformed composition, source/type/shape/layout mismatch, packed transfer types, or access faults reject the complete block before any store or event effect."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
             "assigned": [
               {
-                "meaning": "FP64",
+                "meaning": "zero",
                 "value": 0
               },
               {
-                "meaning": "FP32",
+                "meaning": "sp",
                 "value": 1
               },
               {
-                "meaning": "TF32",
+                "meaning": "a0",
                 "value": 2
               },
               {
-                "meaning": "HF32",
+                "meaning": "a1",
                 "value": 3
               },
               {
-                "meaning": "FP16",
+                "meaning": "a2",
                 "value": 4
               },
               {
-                "meaning": "BF16",
+                "meaning": "a3",
                 "value": 5
               },
               {
-                "meaning": "HiF8",
+                "meaning": "a4",
                 "value": 6
               },
               {
-                "meaning": "E4M3",
+                "meaning": "a5",
                 "value": 7
               },
               {
-                "meaning": "E5M2",
+                "meaning": "a6",
                 "value": 8
               },
               {
-                "meaning": "E3M2",
+                "meaning": "a7",
                 "value": 9
               },
               {
-                "meaning": "E2M3",
+                "meaning": "ra",
                 "value": 10
               },
               {
-                "meaning": "E2M1X2",
+                "meaning": "s0",
                 "value": 11
               },
               {
-                "meaning": "E1M2X2",
+                "meaning": "s1",
                 "value": 12
               },
               {
-                "meaning": "E8M0",
+                "meaning": "s2",
                 "value": 13
               },
               {
-                "meaning": "HiF4X2",
+                "meaning": "s3",
                 "value": 14
               },
               {
-                "meaning": "S64",
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
                 "value": 16
               },
               {
-                "meaning": "S32",
+                "meaning": "s6",
                 "value": 17
               },
               {
-                "meaning": "S16",
+                "meaning": "s7",
                 "value": 18
               },
               {
-                "meaning": "S8",
+                "meaning": "s8",
                 "value": 19
               },
               {
-                "meaning": "S4X2",
+                "meaning": "x0",
                 "value": 20
               },
               {
-                "meaning": "U64",
-                "value": 24
+                "meaning": "x1",
+                "value": 21
               },
               {
-                "meaning": "U32",
-                "value": 25
+                "meaning": "x2",
+                "value": 22
               },
               {
-                "meaning": "U16",
-                "value": 26
-              },
-              {
-                "meaning": "U8",
-                "value": 27
-              },
-              {
-                "meaning": "U4X2",
-                "value": 28
+                "meaning": "x3",
+                "value": 23
               }
             ],
-            "field": "DataType",
-            "id": "PTO-FIELD-BLOCK-DATATYPE",
-            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
             "reserved": [
-              15,
-              21,
-              22,
-              23,
+              24,
+              25,
+              26,
+              27,
+              28,
               29,
               30,
               31
             ],
-            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
-            "source": "asl/arch/data-types/tile-data-types.asl",
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
-            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "bstart_mscatter_32_0f0ba08bd798.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.",
-          "Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MSCATTER carries no nibble selector.",
-          "The body must complete the exact MSCATTER schema documented by PTO-TILE-MSCATTER; no B.IOS or destination is accepted.",
-          "B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero."
+          "Non-packed transfer shapes match IndexTile; packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and rejects incomplete pairs.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed scatter only after full preflight."
+          "Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "All valid addresses are preflighted before the first architectural effect."
         ],
         "operands": [
           {
@@ -9932,11 +9922,11 @@
           },
           {
             "field": "B.IOR.RegSrc1",
-            "role": "per-PE private-GPR GM row stride in elements"
+            "role": "per-PE private-GPR zero selector"
           }
         ],
         "ordering": [
-          "The start defines no ordering. B.CATR attributes apply when the completed block commits."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -9949,7 +9939,7 @@
       "mnemonic": "BSTART.MSCATTER",
       "ndf_clause": "PTO-INST-BLOCK-BSTART-MSCATTER",
       "source": "asl/block/execution/BSTART.MSCATTER.asl",
-      "summary": "Begins a strided indexed TLSU scatter block.",
+      "summary": "scatter using explicit byte displacements.",
       "surface": "block"
     },
     {
@@ -11176,7 +11166,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteBundleStart",
-          "semantic_summary": "Begins a predicate-masked strided indexed TLSU scatter block.",
+          "semantic_summary": "Masked scatter using explicit byte displacements.",
           "status": "accepted"
         }
       ],
@@ -11192,15 +11182,16 @@
           "B.DIM LB2=Col (optional)",
           "B.IOT DataTile, IndexTile, mask=PE_MASK",
           "B.IOT MaskTile, mask=PE_MASK, <last>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "BSTART.MSCATTER.MASK DataType"
         ],
         "defaults": [
-          "DataType is always encoded and selects the memory transfer type.",
-          "The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [
           {
@@ -11239,147 +11230,146 @@
             "role": "memory transfer element type selector",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero selects FP64."
+            "zero_meaning": "Encoded zero supplies numeric zero for the memory transfer element type selector."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.MSCATTER.MASK DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK; B.IOT MaskTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MSCATTER.MASK DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK; B.IOT MaskTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.",
-          "Malformed composition, invalid predicate values, type/shape/layout mismatch, packed transfer types, or enabled-lane access faults reject before any store or event."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
             "assigned": [
               {
-                "meaning": "FP64",
+                "meaning": "zero",
                 "value": 0
               },
               {
-                "meaning": "FP32",
+                "meaning": "sp",
                 "value": 1
               },
               {
-                "meaning": "TF32",
+                "meaning": "a0",
                 "value": 2
               },
               {
-                "meaning": "HF32",
+                "meaning": "a1",
                 "value": 3
               },
               {
-                "meaning": "FP16",
+                "meaning": "a2",
                 "value": 4
               },
               {
-                "meaning": "BF16",
+                "meaning": "a3",
                 "value": 5
               },
               {
-                "meaning": "HiF8",
+                "meaning": "a4",
                 "value": 6
               },
               {
-                "meaning": "E4M3",
+                "meaning": "a5",
                 "value": 7
               },
               {
-                "meaning": "E5M2",
+                "meaning": "a6",
                 "value": 8
               },
               {
-                "meaning": "E3M2",
+                "meaning": "a7",
                 "value": 9
               },
               {
-                "meaning": "E2M3",
+                "meaning": "ra",
                 "value": 10
               },
               {
-                "meaning": "E2M1X2",
+                "meaning": "s0",
                 "value": 11
               },
               {
-                "meaning": "E1M2X2",
+                "meaning": "s1",
                 "value": 12
               },
               {
-                "meaning": "E8M0",
+                "meaning": "s2",
                 "value": 13
               },
               {
-                "meaning": "HiF4X2",
+                "meaning": "s3",
                 "value": 14
               },
               {
-                "meaning": "S64",
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
                 "value": 16
               },
               {
-                "meaning": "S32",
+                "meaning": "s6",
                 "value": 17
               },
               {
-                "meaning": "S16",
+                "meaning": "s7",
                 "value": 18
               },
               {
-                "meaning": "S8",
+                "meaning": "s8",
                 "value": 19
               },
               {
-                "meaning": "S4X2",
+                "meaning": "x0",
                 "value": 20
               },
               {
-                "meaning": "U64",
-                "value": 24
+                "meaning": "x1",
+                "value": 21
               },
               {
-                "meaning": "U32",
-                "value": 25
+                "meaning": "x2",
+                "value": 22
               },
               {
-                "meaning": "U16",
-                "value": 26
-              },
-              {
-                "meaning": "U8",
-                "value": 27
-              },
-              {
-                "meaning": "U4X2",
-                "value": 28
+                "meaning": "x3",
+                "value": 23
               }
             ],
-            "field": "DataType",
-            "id": "PTO-FIELD-BLOCK-DATATYPE",
-            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
             "reserved": [
-              15,
-              21,
-              22,
-              23,
+              24,
+              25,
+              26,
+              27,
+              28,
               29,
               30,
               31
             ],
-            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
-            "source": "asl/arch/data-types/tile-data-types.asl",
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
-            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "bstart_mscatter_mask_32_2a33eed646f7.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.",
-          "Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because no nibble selector is encoded.",
-          "The body must complete the exact two-B.IOT schema documented by PTO-TILE-MSCATTER-MASK; no B.IOS or destination is accepted.",
-          "B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero."
+          "PredicateTile is an ordinary Local U8 predicate carrier with one 0x00 or 0x01 element per indexed transaction; every other value rejects before effects.",
+          "PredicateTile valid shape equals IndexTile valid shape and its producer DataType does not constrain the transfer DataType.",
+          "Packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and one predicate controls the complete byte pair.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "The start itself performs no memory access. BSTOP or the next BSTART commits only exact-one lanes after complete enabled-lane preflight."
+          "Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault."
         ],
         "operands": [
           {
@@ -11392,11 +11382,11 @@
           },
           {
             "field": "B.IOR.RegSrc1",
-            "role": "per-PE private-GPR GM row stride in elements"
+            "role": "per-PE private-GPR zero selector"
           }
         ],
         "ordering": [
-          "The start defines no ordering. B.CATR attributes apply when the completed block commits."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -11409,7 +11399,7 @@
       "mnemonic": "BSTART.MSCATTER.MASK",
       "ndf_clause": "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
       "source": "asl/block/execution/BSTART.MSCATTER.MASK.asl",
-      "summary": "Begins a predicate-masked strided indexed TLSU scatter block.",
+      "summary": "Masked scatter using explicit byte displacements.",
       "surface": "block"
     },
     {
@@ -121818,9 +121808,6 @@
               "operand": "address"
             },
             {
-              "operand": "scalar0"
-            },
-            {
               "operand": "source0"
             },
             {
@@ -121855,21 +121842,17 @@
               "role": "base-address"
             },
             {
-              "field": "scalar0",
-              "role": "GM row stride in elements"
-            },
-            {
               "field": "source0",
               "role": "indices"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
           "semantic_handler": "MGATHER",
+          "semantic_summary": "gather using explicit byte displacements.",
           "state_effects": [
             "operand:destination0:destination",
             "operand:address:base-address",
-            "operand:scalar0:gm-row-stride-elements",
-            "operand:source0:logical-linear-element-indices",
+            "operand:source0:byte-displacement-indices",
             "runtime:CurrentBundlePadValue:physical-padding"
           ]
         }
@@ -121886,27 +121869,24 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "MGATHER <bundle operands>"
         ],
         "defaults": [
-          "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-          "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-          "Omitted B.DATR selects PadValue=Null and Layout=NORM. An explicit encoded PadValue is used for every physical destination element outside ValidRow x ValidCol.",
-          "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, shape mismatch, non-power-of-two physical Col, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before allocation, memory events, or destination effects.",
-          "Every valid-region address is probed before the first event or destination update; any access fault leaves the destination unallocated and produces no partial event or payload effect.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
@@ -122025,138 +122005,17 @@
             "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
             "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          },
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc1",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "MGATHER is selected only by BSTART.MGATHER function 4 in the TLSU selector space; it has no standalone opcode.",
-          "Exactly one Local B.IOT binding supplies IndexTile and one destination, uses L=1, and carries the common PE_MASK and destination TSize. B.IOS is not accepted.",
-          "IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region, and every element is interpreted as a signed or unsigned logical linear element index.",
-          "The transfer DataType may be any accepted BSTART.MGATHER DataType except E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2, whose missing nibble selector makes them reserved for indexed TLSU transfer.",
-          "Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region must contain ValidRow x ValidCol.",
-          "B.IOT PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, and memory checks.",
-          "B.DATR applicability allows only PadValueOrByteId as PadValue and Layout.",
-          "The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects."
+          "Non-packed transfer shapes match IndexTile; packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and rejects incomplete pairs.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "For every valid destination coordinate, load one transfer-typed element from BaseGPR plus ((floor(index / ValidCol) * row_stride_elements) + (index mod ValidCol)) times the transfer element size.",
-          "Probe the complete valid region before recording memory events. After successful preflight, publish the loaded valid region and pad every remaining physical destination coordinate atomically."
+          "Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "All valid addresses are preflighted before the first architectural effect."
         ],
         "operands": [
           {
@@ -122168,23 +122027,17 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "per-PE private-GPR GM row stride in elements"
-          },
-          {
             "field": "source0",
-            "role": "indices"
+            "role": "byte-displacement indices"
           }
         ],
         "ordering": [
-          "Selected lanes contribute load events in destination row/column order using the block memory-order attributes; no cross-PE request order is guaranteed.",
-          "Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.",
-          "Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.",
-          "On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER.md",
@@ -122192,7 +122045,7 @@
       "mnemonic": "MGATHER",
       "ndf_clause": "PTO-INST-TILE-MGATHER",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
-      "summary": "Gather GM elements addressed by signed or unsigned logical linear element indices into a newly allocated Local Tile.",
+      "summary": "gather using explicit byte displacements.",
       "surface": "tile"
     },
     {
@@ -122544,10 +122397,6 @@
               "role": "base-address"
             },
             {
-              "field": "scalar0",
-              "role": "GM row stride in elements"
-            },
-            {
               "field": "source0",
               "role": "indices"
             },
@@ -122562,10 +122411,10 @@
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
           "semantic_handler": "GM_ATOM_CAS",
+          "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
           "state_effects": [
             "operand:destination0:destination",
             "operand:address:base-address",
-            "operand:scalar0:GM row stride in elements",
             "operand:source0:indices",
             "operand:source1:expected",
             "operand:source2:replacement"
@@ -122584,31 +122433,154 @@
           "B.DIM LB2=ValidCol",
           "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
           "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "MGATHER_CAS <bundle operands>"
         ],
         "defaults": [
-          "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
-          "Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, RowStrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "Unsupported operation/type tuples raise Fault_TileLegality before effects."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
-        "field_domains": [],
+        "field_domains": [
+          {
+            "assigned": [
+              {
+                "meaning": "zero",
+                "value": 0
+              },
+              {
+                "meaning": "sp",
+                "value": 1
+              },
+              {
+                "meaning": "a0",
+                "value": 2
+              },
+              {
+                "meaning": "a1",
+                "value": 3
+              },
+              {
+                "meaning": "a2",
+                "value": 4
+              },
+              {
+                "meaning": "a3",
+                "value": 5
+              },
+              {
+                "meaning": "a4",
+                "value": 6
+              },
+              {
+                "meaning": "a5",
+                "value": 7
+              },
+              {
+                "meaning": "a6",
+                "value": 8
+              },
+              {
+                "meaning": "a7",
+                "value": 9
+              },
+              {
+                "meaning": "ra",
+                "value": 10
+              },
+              {
+                "meaning": "s0",
+                "value": 11
+              },
+              {
+                "meaning": "s1",
+                "value": 12
+              },
+              {
+                "meaning": "s2",
+                "value": 13
+              },
+              {
+                "meaning": "s3",
+                "value": 14
+              },
+              {
+                "meaning": "s4",
+                "value": 15
+              },
+              {
+                "meaning": "s5",
+                "value": 16
+              },
+              {
+                "meaning": "s6",
+                "value": 17
+              },
+              {
+                "meaning": "s7",
+                "value": 18
+              },
+              {
+                "meaning": "s8",
+                "value": 19
+              },
+              {
+                "meaning": "x0",
+                "value": 20
+              },
+              {
+                "meaning": "x1",
+                "value": 21
+              },
+              {
+                "meaning": "x2",
+                "value": 22
+              },
+              {
+                "meaning": "x3",
+                "value": 23
+              }
+            ],
+            "field": "B.IOR.RegSrc0",
+            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
+            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
+            "reserved": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
+            "source": "asl/block/operands/B.IOR.asl",
+            "width": 5,
+            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
+          }
+        ],
         "legality": [
-          "mgather.cas uses raw U16/U32/U64 carriers; U128 and all non-U types are rejected.",
-          "ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol."
+          "Only U16, U32, and U64 transfer DataTypes are accepted; packed four-bit and every other existing unsupported atomic DataType remain illegal.",
+          "Index, Expected, Replacement, and destination have equal logical valid shape and layout class.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "One atomic compare-and-swap per valid request."
+          "Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.",
+          "All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue."
         ],
         "operands": [
           {
@@ -122620,12 +122592,8 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
-            "role": "indices"
+            "role": "byte-displacement indices"
           },
           {
             "field": "source1",
@@ -122637,11 +122605,12 @@
           }
         ],
         "ordering": [
-          "Duplicate addresses serialize in implementation-defined order."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Returns observed old values in the destination."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
@@ -122649,7 +122618,7 @@
       "mnemonic": "MGATHER_CAS",
       "ndf_clause": "PTO-INST-TILE-MGATHER-CAS",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl",
-      "summary": "GM indexed atomic compare-and-swap with observed-old destination.",
+      "summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "surface": "tile"
     },
     {
@@ -123100,9 +123069,6 @@
               "operand": "address"
             },
             {
-              "operand": "scalar0"
-            },
-            {
               "operand": "source0"
             },
             {
@@ -123140,10 +123106,6 @@
               "role": "base-address"
             },
             {
-              "field": "scalar0",
-              "role": "GM row stride in elements"
-            },
-            {
               "field": "source0",
               "role": "indices"
             },
@@ -123154,11 +123116,11 @@
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
           "semantic_handler": "MGATHER_MASK",
+          "semantic_summary": "Masked gather using explicit byte displacements.",
           "state_effects": [
             "operand:destination0:destination",
             "operand:address:base-address",
-            "operand:scalar0:gm-row-stride-elements",
-            "operand:source0:logical-linear-element-indices",
+            "operand:source0:byte-displacement-indices",
             "operand:source1:exact-predicate-mask",
             "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
           ]
@@ -123176,27 +123138,24 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "MGATHER_MASK <bundle operands>"
         ],
         "defaults": [
-          "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-          "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-          "Omitted B.DATR selects PadValue=Null and Layout=NORM. PadValue is written to disabled valid lanes and every physical destination element outside ValidRow x ValidCol.",
-          "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, packed four-bit transfer DataType, or invalid dimensions, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before destination allocation, memory events, or memory reads.",
-          "Only enabled-lane addresses are generated and probed. Every enabled lane is preflighted before the first load; any enabled-lane fault leaves the destination unallocated and produces no partial event or payload effect. Disabled lanes cannot fault from their ignored IndexTile value.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
@@ -123315,140 +123274,19 @@
             "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
             "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          },
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc1",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "MGATHER_MASK is selected only by BSTART.MGATHER.MASK function 6 in the TLSU selector space; it has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies IndexTile, MaskTile, destination, TSize, and PE_MASK. B.IOS and additional Tile bindings are not accepted.",
-          "IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Each logical element is interpreted as a signed or unsigned logical linear element index.",
-          "MaskTile must be allocated and fully defined. Its logical shape and layout must match IndexTile and destination; every valid element is exactly zero or one.",
-          "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.",
-          "Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region contains ValidRow x ValidCol.",
-          "B.IOT PE_MASK=0000 is a strict no-op before schema, GPR, source, predicate, dimension, allocation, address, or fault checks.",
-          "B.DATR applicability allows only PadValueOrByteId as PadValue and Layout.",
-          "The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects."
+          "PredicateTile is an ordinary Local U8 predicate carrier with one 0x00 or 0x01 element per indexed transaction; every other value rejects before effects.",
+          "PredicateTile valid shape equals IndexTile valid shape and its producer DataType does not constrain the transfer DataType.",
+          "Packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and one predicate controls the complete byte pair.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "For each valid coordinate whose MaskTile value is one, load one transfer-typed element from the address obtained by splitting the logical linear index by ValidCol, applying row_stride_elements to the row, and scaling the resulting element offset by the transfer element size.",
-          "A valid coordinate whose mask is zero performs no address generation, translation, permission check, memory access, or memory event and receives PadValue.",
-          "After complete enabled-lane preflight, publish enabled loads, disabled-lane padding, and all non-valid physical padding atomically."
+          "Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue."
         ],
         "operands": [
           {
@@ -123460,28 +123298,21 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "per-PE private-GPR GM row stride in elements"
-          },
-          {
             "field": "source0",
-            "role": "logical linear element indices"
+            "role": "byte-displacement indices"
           },
           {
             "field": "source1",
-            "role": "exact zero-or-one predicate mask"
+            "role": "U8 PredicateTile"
           }
         ],
         "ordering": [
-          "Enabled-lane loads participate in the PTO memory-order domain through the block aq/rl attributes.",
-          "No additional lane or inter-PE issue order is guaranteed.",
-          "Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.",
-          "Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.",
-          "On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically."
+          "The complete physical destination region is initialized to PadValue before active valid results are published.",
+          "On success the full physical destination region is defined; a failing attempt publishes no destination."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER_MASK.md",
@@ -123489,7 +123320,7 @@
       "mnemonic": "MGATHER_MASK",
       "ndf_clause": "PTO-INST-TILE-MGATHER-MASK",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
-      "summary": "Gather enabled GM elements addressed by logical linear element indices and pad disabled destination lanes.",
+      "summary": "Masked gather using explicit byte displacements.",
       "surface": "tile"
     },
     {
@@ -124082,9 +123913,6 @@
               "operand": "address"
             },
             {
-              "operand": "scalar0"
-            },
-            {
               "operand": "source0"
             },
             {
@@ -124114,25 +123942,21 @@
               "role": "base-address"
             },
             {
-              "field": "scalar0",
-              "role": "GM row stride in elements"
-            },
-            {
               "field": "source0",
               "role": "source"
             },
             {
               "field": "source1",
-              "role": "logical-linear-element-indices"
+              "role": "byte-displacement-indices"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
           "semantic_handler": "MSCATTER",
+          "semantic_summary": "scatter using explicit byte displacements.",
           "state_effects": [
             "operand:address:base-address",
-            "operand:scalar0:gm-row-stride-elements",
             "operand:source0:source",
-            "operand:source1:logical-linear-element-indices"
+            "operand:source1:byte-displacement-indices"
           ]
         }
       ],
@@ -124148,27 +123972,24 @@
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
           "B.IOT DataTile, IndexTile, mask=PE_MASK, <last>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "MSCATTER <bundle operands>"
         ],
         "defaults": [
-          "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-          "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-          "Omitted B.DATR selects Layout=NORM. PadValueOrByteId and every other B.DATR field must remain zero.",
-          "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "A missing B.IOR, missing LB0, malformed B.IOT, undefined source, source DataType mismatch, non-integer IndexTile, shape or layout mismatch, invalid dimensions, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before memory events or writes.",
-          "Every valid-region address is generated and probed before the first store or event; any access fault produces no partial memory or event effect.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
@@ -124287,139 +124108,17 @@
             "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
             "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          },
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc1",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "MSCATTER is selected only by BSTART.MSCATTER function 5 in the TLSU selector space; it has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies DataTile and IndexTile with no destination or TSize. B.IOS and additional Tile bindings are not accepted.",
-          "DataTile and IndexTile must be allocated and fully defined. DataTile DataType must equal the BSTART transfer DataType. IndexTile must use S32, U32, S64, or U64, and every element is interpreted as a signed or unsigned logical linear element index.",
-          "DataTile physical Col equals resolved LB2. Both sources have resolved ValidRow x ValidCol and selected Layout; IndexTile may use a different physical shape outside that valid rectangle.",
-          "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.",
-          "B.IOT PE_MASK=0000 is a strict no-op before schema, GPR, source, dimension, address, permission, event, or memory checks.",
-          "B.DATR applicability allows only Layout.",
-          "The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects."
+          "Non-packed transfer shapes match IndexTile; packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and rejects incomplete pairs.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "For every valid coordinate, store the corresponding DataTile element to BaseGPR plus ((floor(index / ValidCol) * row_stride_elements) + (index mod ValidCol)) times the transfer element size.",
-          "Only ValidRow x ValidCol is written; source physical elements outside the valid rectangle have no memory effect.",
-          "All valid-lane addresses are preflighted before stores. Duplicate or overlapping target addresses have an implementation-defined final winner."
+          "Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "All valid addresses are preflighted before the first architectural effect."
         ],
         "operands": [
           {
@@ -124427,22 +124126,16 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "per-PE private-GPR GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source data"
           },
           {
             "field": "source1",
-            "role": "logical linear element indices"
+            "role": "byte-displacement indices"
           }
         ],
         "ordering": [
-          "No lane or inter-PE issue order is architecturally guaranteed.",
-          "B.CATR.atomic=1 makes the complete block memory effect non-interleavable but does not define an internal lane order or a duplicate-address winner.",
-          "Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": false,
         "state_effects": [
@@ -124455,7 +124148,7 @@
       "mnemonic": "MSCATTER",
       "ndf_clause": "PTO-INST-TILE-MSCATTER",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
-      "summary": "Scatter the valid source region to GM using signed or unsigned logical linear element indices.",
+      "summary": "scatter using explicit byte displacements.",
       "surface": "tile"
     },
     {
@@ -125000,9 +124693,6 @@
               "operand": "address"
             },
             {
-              "operand": "scalar0"
-            },
-            {
               "operand": "source0"
             },
             {
@@ -125035,16 +124725,12 @@
               "role": "base-address"
             },
             {
-              "field": "scalar0",
-              "role": "GM row stride in elements"
-            },
-            {
               "field": "source0",
               "role": "source"
             },
             {
               "field": "source1",
-              "role": "logical-linear-element-indices"
+              "role": "byte-displacement-indices"
             },
             {
               "field": "source2",
@@ -125053,11 +124739,11 @@
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
           "semantic_handler": "MSCATTER_MASK",
+          "semantic_summary": "Masked scatter using explicit byte displacements.",
           "state_effects": [
             "operand:address:base-address",
-            "operand:scalar0:gm-row-stride-elements",
             "operand:source0:source",
-            "operand:source1:logical-linear-element-indices",
+            "operand:source1:byte-displacement-indices",
             "operand:source2:exact-predicate-mask"
           ]
         }
@@ -125075,27 +124761,24 @@
           "B.DIM LB2=Col (optional)",
           "B.IOT DataTile, IndexTile, mask=PE_MASK",
           "B.IOT MaskTile, mask=PE_MASK, <last>",
-          "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+          "B.IOR BaseGPR, zero, zero, ->zero",
           "BSTOP"
         ],
         "canonical_assembly": [
           "MSCATTER_MASK <bundle operands>"
         ],
         "defaults": [
-          "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-          "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-          "Omitted B.DATR selects Layout=NORM; every other B.DATR field must remain zero.",
-          "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+          "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+          "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+          "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.MSCATTER.MASK DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK; B.IOT MaskTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP"
+          "BSTART.MSCATTER.MASK DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK; B.IOT MaskTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "A missing B.IOR or LB0, malformed or unterminated B.IOT stream, undefined source, source DataType mismatch, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, invalid dimensions, or packed transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before effects.",
-          "Only exact-one lanes generate addresses. Every enabled address is probed before the first store or event; an enabled-lane fault produces no partial write or event, while a disabled lane cannot fault from its ignored index.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+          "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
         ],
         "field_domains": [
           {
@@ -125214,139 +124897,19 @@
             "source": "asl/block/operands/B.IOR.asl",
             "width": 5,
             "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
-          },
-          {
-            "assigned": [
-              {
-                "meaning": "zero",
-                "value": 0
-              },
-              {
-                "meaning": "sp",
-                "value": 1
-              },
-              {
-                "meaning": "a0",
-                "value": 2
-              },
-              {
-                "meaning": "a1",
-                "value": 3
-              },
-              {
-                "meaning": "a2",
-                "value": 4
-              },
-              {
-                "meaning": "a3",
-                "value": 5
-              },
-              {
-                "meaning": "a4",
-                "value": 6
-              },
-              {
-                "meaning": "a5",
-                "value": 7
-              },
-              {
-                "meaning": "a6",
-                "value": 8
-              },
-              {
-                "meaning": "a7",
-                "value": 9
-              },
-              {
-                "meaning": "ra",
-                "value": 10
-              },
-              {
-                "meaning": "s0",
-                "value": 11
-              },
-              {
-                "meaning": "s1",
-                "value": 12
-              },
-              {
-                "meaning": "s2",
-                "value": 13
-              },
-              {
-                "meaning": "s3",
-                "value": 14
-              },
-              {
-                "meaning": "s4",
-                "value": 15
-              },
-              {
-                "meaning": "s5",
-                "value": 16
-              },
-              {
-                "meaning": "s6",
-                "value": 17
-              },
-              {
-                "meaning": "s7",
-                "value": 18
-              },
-              {
-                "meaning": "s8",
-                "value": 19
-              },
-              {
-                "meaning": "x0",
-                "value": 20
-              },
-              {
-                "meaning": "x1",
-                "value": 21
-              },
-              {
-                "meaning": "x2",
-                "value": 22
-              },
-              {
-                "meaning": "x3",
-                "value": 23
-              }
-            ],
-            "field": "B.IOR.RegSrc1",
-            "id": "PTO-FIELD-BLOCK-GPR-SELECTOR",
-            "rejection": "Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.",
-            "reserved": [
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31
-            ],
-            "role": "Selects one absolute architectural GPR for B.IOR input or output binding.",
-            "source": "asl/block/operands/B.IOR.asl",
-            "width": 5,
-            "zero_meaning": "Code zero names the architectural zero GPR; it never means an omitted B.IOR field."
           }
         ],
         "legality": [
-          "MSCATTER_MASK is selected only by BSTART.MSCATTER.MASK function 7 in the TLSU selector space; it has no standalone opcode.",
-          "Exactly two Local B.IOT records supply DataTile plus IndexTile and then MaskTile with the sole last marker. Neither record has a destination or TSize; B.IOS and additional bindings are illegal.",
-          "All three sources are allocated and fully defined, share ValidRow x ValidCol and Layout, and persist after execution. DataTile DataType equals BSTART DataType; IndexTile uses S32, U32, S64, or U64 logical linear element indices; MaskTile valid elements are exactly zero or one.",
-          "DataTile physical Col equals LB2. IndexTile and MaskTile may use different physical shapes outside the common valid rectangle.",
-          "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 reject because the block carries no nibble selector.",
-          "PE_MASK is common across both B.IOT records. PE_MASK=0000 is a strict no-op before schema, predicate, GPR, address, permission, event, or memory checks.",
-          "B.DATR applicability allows only Layout.",
-          "The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects."
+          "PredicateTile is an ordinary Local U8 predicate carrier with one 0x00 or 0x01 element per indexed transaction; every other value rejects before effects.",
+          "PredicateTile valid shape equals IndexTile valid shape and its producer DataType does not constrain the transfer DataType.",
+          "Packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and one predicate controls the complete byte pair.",
+          "ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.",
+          "Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.",
+          "B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero."
         ],
         "memory_effects": [
-          "For each valid coordinate whose MaskTile value is one, store the corresponding DataTile element to the address obtained by splitting the logical linear index by ValidCol, applying row_stride_elements to the row, and scaling the resulting element offset by the transfer element size.",
-          "A zero mask value performs no address generation, translation, permission check, store, or memory event. Physical source elements outside ValidRow x ValidCol also have no effect.",
-          "All enabled lanes are preflighted before stores. Duplicate or overlapping enabled targets have an implementation-defined final winner."
+          "Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.",
+          "A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault."
         ],
         "operands": [
           {
@@ -125354,26 +124917,20 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "per-PE private-GPR GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source data"
           },
           {
             "field": "source1",
-            "role": "logical linear element indices"
+            "role": "byte-displacement indices"
           },
           {
             "field": "source2",
-            "role": "exact zero-or-one predicate mask"
+            "role": "U8 PredicateTile"
           }
         ],
         "ordering": [
-          "Enabled stores participate in the common memory-order domain; no lane or inter-PE issue order is guaranteed.",
-          "B.CATR.atomic=1 makes the complete block effect non-interleavable but does not define an internal enabled-lane order or duplicate-address winner.",
-          "Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight."
+          "Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged."
         ],
         "standalone_opcode": false,
         "state_effects": [
@@ -125386,7 +124943,7 @@
       "mnemonic": "MSCATTER_MASK",
       "ndf_clause": "PTO-INST-TILE-MSCATTER-MASK",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
-      "summary": "Scatter exact-one source lanes to GM using signed or unsigned logical linear element indices.",
+      "summary": "Masked scatter using explicit byte displacements.",
       "surface": "tile"
     },
     {

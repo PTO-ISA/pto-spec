@@ -5,6 +5,7 @@ import unittest
 from scripts.layout_relation_census import (
     BASELINE_OBJECT,
     BIAS,
+    INDEXED_TLSU,
     _complete_fixture_keys,
     _catalog_operand_rows,
     _census_texts,
@@ -12,6 +13,8 @@ from scripts.layout_relation_census import (
     _inventory,
     _load_baseline_fixture,
     _metadata_map,
+    _narrow_indexed_tlsu_layout_helper,
+    _remove_relation_from_readonly_function,
     census,
     source_paths,
     _ref_texts,
@@ -190,15 +193,34 @@ class LayoutRelationCensusTest(unittest.TestCase):
         candidate = _ref_texts("working-tree", paths)
         path = "asl/tile/model/legality/memory-schema.asl"
         removed = "           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&\n"
-        self.assertIn(removed, candidate[path])
-        candidate[path] = candidate[path].replace(removed, "", 1)
+        candidate[path] = _remove_relation_from_readonly_function(
+            candidate[path], "TileOperandsLegal_MGATHER_MASK", removed
+        )
         result = _census_texts(
             baseline, candidate, BASELINE_OBJECT, "real-mutated-mgather-mask",
             enforce_closure=False,
         )
         self.assertFalse(result["pass"])
-        self.assertTrue(any("MGATHER_MASK" in error and "unclassified relation delta" in error
+        self.assertTrue(any("indexed TLSU same-layout relation closure missing for "
+                            "MGATHER_MASK/direct" in error
                             for error in result["errors"]), result["errors"])
+
+    def test_real_indexed_layout_domain_narrowing_is_rejected(self) -> None:
+        paths = source_paths(BASELINE_OBJECT, "working-tree")
+        baseline = _ref_texts(BASELINE_OBJECT, paths)
+        candidate = _ref_texts("working-tree", paths)
+        path = "asl/tile/model/legality/indexed-layout.asl"
+        candidate[path] = _narrow_indexed_tlsu_layout_helper(candidate[path])
+        result = _census_texts(
+            baseline, candidate, BASELINE_OBJECT,
+            "real-mutated-indexed-layout", enforce_closure=True,
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(
+            any("indexed TLSU layout closure missing" in error
+                for error in result["errors"]),
+            result["errors"],
+        )
 
     def test_real_tpermute_relation_mutation_is_rejected(self) -> None:
         paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -314,17 +336,24 @@ class LayoutRelationCensusTest(unittest.TestCase):
             self.assertNotIn("primary", " ".join(row["L1"]).lower())
 
         relation_deltas = [row for row in result["delta"] if "relation" in row]
-        self.assertEqual(len(relation_deltas), 16)
+        bias_relation_deltas = [
+            row for row in relation_deltas if row["mnemonic"] in BIAS
+        ]
+        indexed_relation_deltas = [
+            row for row in relation_deltas if row["mnemonic"] in INDEXED_TLSU
+        ]
+        self.assertEqual(len(bias_relation_deltas), 16)
+        self.assertTrue(indexed_relation_deltas)
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in relation_deltas))
         self.assertTrue(all(row["owner_decision"] != "none" for row in relation_deltas))
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in result["delta"]))
         self.assertTrue(all(row["owner_decision"] != "none" for row in result["delta"]))
         self.assertEqual(
-            {row["relation"] for row in relation_deltas},
+            {row["relation"] for row in bias_relation_deltas},
             {"Bias.layout == ML == D.layout", "Local A present => A.layout == ML"},
         )
 
-        expected = set(BIAS) | set(result["exact_34"]) | {"GMOV"}
+        expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV"}
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)

@@ -1,14 +1,13 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-PRED-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-MSCATTER-MASK-PREDICATE-001"],"kind":"boundary","summary":"MSCATTER.MASK requires packed predicate storage for MaskTile.","pass_condition":"A fully defined ordinary numeric Tile containing value one raises TileLegality before address generation, events, or writes.","related_sources":["asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-PRED-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-MSCATTER-MASK-PREDICATE-001"],"kind":"boundary","summary":"MSCATTER.MASK rejects the legacy packed predicate carrier for MaskTile.","pass_condition":"A fully defined legacy packed predicate Tile raises TileLegality before address generation, events, or writes.","related_sources":["asl/tile/model/definedness/elements.asl"]}
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor);
+    ConfigurePredicateTile(1, 128, 1, 1, 1, 1);
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor);
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x44);
+    WriteTilePredicateBit(1, 0, 0, TRUE);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
     var start: bits(64) = Zeros{64} + 0x00711181;
@@ -19,7 +18,7 @@ begin
     WritePEGPR(0, 4, Zeros{PTO_XLEN} + 1);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 3, 0, TRUE);
-    SetBundleScalarBinding(0, 0, 0, 4, 0, 2);
+    SetBundleScalarBinding(0, 0, 0, 0, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert !completed;

@@ -2,29 +2,30 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor);
     ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(2, 128, 1, 2, 1, 2);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x35);
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x46);
+    ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U8,
+        TileLayout_RowMajor);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x35353535);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x46464646);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTilePredicateBit(2, 0, 0, TRUE);
-    WriteTilePredicateBit(2, 0, 1, FALSE);
-    Store(Zeros{PTO_XLEN} + 0x2c0, 1, Zeros{PTO_XLEN} + 0xaa);
-    Store(Zeros{PTO_XLEN} + 0x2c1, 1, Zeros{PTO_XLEN} + 0xbb);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 0x2c0, 4, Zeros{PTO_XLEN} + 0xaaaaaaaa);
+    Store(Zeros{PTO_XLEN} + 0x2c4, 4, Zeros{PTO_XLEN} + 0xbbbbbbbb);
 
     StartMemoryEventCapture(0);
     MSCATTER_MASK(Zeros{PTO_XLEN} + 0x2c0,
-        Zeros{PTO_XLEN} + 2, 0, 1, 2);
+        0, 1, 2);
 
     assert _MemoryEventCount == 1;
-    let enabled = LoadUnsigned(Zeros{PTO_XLEN} + 0x2c0, 1);
-    let disabled = LoadUnsigned(Zeros{PTO_XLEN} + 0x2c1, 1);
-    assert enabled == Zeros{PTO_XLEN} + 0x35;
-    assert disabled == Zeros{PTO_XLEN} + 0xbb;
+    let enabled = LoadUnsigned(Zeros{PTO_XLEN} + 0x2c0, 4);
+    let disabled = LoadUnsigned(Zeros{PTO_XLEN} + 0x2c4, 4);
+    assert enabled == Zeros{PTO_XLEN} + 0x35353535;
+    assert disabled == Zeros{PTO_XLEN} + 0xbbbbbbbb;
     StopMemoryEventCapture();
     return 0;
 end;

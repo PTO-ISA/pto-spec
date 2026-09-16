@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type through explicit DTYPE_NONE, uses an explicit logical shape, and pads the destination.","pass_condition":"Explicit B.DATR DTYPE_NONE with Max padding preserves the U8 BSTART type while two logical indices load the expected addresses and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type through explicit DTYPE_NONE, uses byte displacements, and pads the destination.","pass_condition":"Explicit B.DATR DTYPE_NONE with Max padding preserves the U8 BSTART type while two byte displacements load the expected addresses and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func GatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -21,7 +21,7 @@ pure func GatherIOR(register: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = register;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 

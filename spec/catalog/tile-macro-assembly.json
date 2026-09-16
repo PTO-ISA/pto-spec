@@ -1995,10 +1995,9 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects PadValue=Null and Layout=NORM. An explicit encoded PadValue is used for every physical destination element outside ValidRow x ValidCol.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -2018,9 +2017,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, shape mismatch, non-power-of-two physical Col, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before allocation, memory events, or destination effects.",
-        "Every valid-region address is probed before the first event or destination update; any access fault leaves the destination unallocated and produces no partial event or payload effect.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -2186,7 +2183,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "dfad9d9c6e5f7191c57a84a11595704432bb4787abfb000d1444052780b9bf46",
+                "fold_signature_sha256": "e0f3bf4945ae63e0605cfdf8680e0deeba49c30dbd9e1c69d330daae15413fed",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2211,18 +2208,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2260,20 +2245,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -2281,8 +2252,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2291,7 +2262,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -2309,20 +2280,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -2330,8 +2287,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2499,7 +2456,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "94cfad7509b873948347af8675e5067d35d1ad2fdb71f97bd76bae0c77b22486",
+                "fold_signature_sha256": "8ae7e7c0200e12ca6609aafe029eee4d6043fa1b3b998175620c680b3540cec5",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2524,18 +2481,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2573,20 +2518,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -2594,8 +2525,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2604,7 +2535,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -2622,20 +2553,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -2643,8 +2560,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2860,7 +2777,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d94b2a2f05917f48feeb30606faf4bcff765018ea8ef00540c663457304d16f2",
+                "fold_signature_sha256": "de8155eaf7a69a8b38e5dfab0b0e07f4cb470d107f0e918042cf5a02ea56a967",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2885,18 +2802,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -2934,20 +2839,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -2955,8 +2846,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2965,7 +2856,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -2983,20 +2874,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -3004,8 +2881,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3221,7 +3098,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd49cce222ff6d619ca40de6b9d74d221f9e8eccafa2171cc2346d089bcd7c8f",
+                "fold_signature_sha256": "4a5dd5ddff60ba3b68b5bc0bdc3101c21803b9c4809efbcc1b86cc7550fd6f26",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -3246,18 +3123,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -3295,20 +3160,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -3316,8 +3167,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -3326,7 +3177,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -3344,20 +3195,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -3365,8 +3202,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3507,18 +3344,6 @@
                 "kind": "operand-member",
                 "members": [
                   {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
                     "command": "B.IOT",
                     "command_group": 0,
                     "field": "SrcTile0",
@@ -3632,8 +3457,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "393102e317973fe7a9b1e7260205e42c518d4882a02a4e07658f57a4bb3d6963",
-            "form_id": "pto0586-mgather-3001229cd30ab57c",
+            "fold_signature_sha256": "17577a7add62a5c08720a430c3115225478283536fba1503931acc1c83f50e06",
+            "form_id": "pto0586-mgather-db2c07e5a708a2c1",
             "header": {
               "command": "BSTART.MGATHER",
               "family": "TLSU",
@@ -3678,25 +3503,6 @@
                 ],
                 "role_kind": "source",
                 "syntax": "[BaseGPR]"
-              },
-              {
-                "binding_kind": "scalar-binding",
-                "command": "B.IOR",
-                "field": "RowStrideGPR",
-                "members": [
-                  {
-                    "command_group": 0,
-                    "condition": null,
-                    "default": null,
-                    "eligible_modifiers": [],
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1",
-                    "syntax": "RowStrideGPR"
-                  }
-                ],
-                "role_kind": "source",
-                "syntax": "RowStrideGPR"
               },
               {
                 "binding_kind": "tile-source-binding",
@@ -3759,14 +3565,6 @@
                     "optional": false,
                     "physical_role": "address",
                     "slot": "RegSrc0"
-                  },
-                  {
-                    "condition": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1"
                   }
                 ]
               },
@@ -3800,7 +3598,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
+          "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -3817,20 +3615,6 @@
               "value_style": null
             },
             {
-              "binding_kind": "scalar-binding",
-              "condition": null,
-              "configuration_kind": null,
-              "constraint": null,
-              "default": null,
-              "field": "RowStrideGPR",
-              "optional": false,
-              "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
-              "size": null,
-              "syntax": "RowStrideGPR",
-              "value_style": null
-            },
-            {
               "binding_kind": "tile-source-binding",
               "condition": null,
               "configuration_kind": null,
@@ -3838,8 +3622,8 @@
               "default": null,
               "field": "SrcTile0",
               "optional": false,
-              "ordinal": 2,
-              "role": "indices",
+              "ordinal": 1,
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -3848,7 +3632,7 @@
           "spelling": "MGATHER"
         }
       ],
-      "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, ->DstTile<Size>",
+      "macro_format": "MGATHER <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, ->DstTile<Size>",
       "mnemonic": "MGATHER",
       "physical_bundle": [
         "BSTART.MGATHER DataType",
@@ -3857,7 +3641,7 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -3867,9 +3651,6 @@
           },
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -3905,10 +3686,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           }
@@ -3927,12 +3704,8 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "indices"
+          "role": "byte-displacement indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
@@ -3952,20 +3725,6 @@
           "value_style": null
         },
         {
-          "binding_kind": "scalar-binding",
-          "condition": null,
-          "configuration_kind": null,
-          "constraint": null,
-          "default": null,
-          "field": "RowStrideGPR",
-          "optional": false,
-          "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
-          "size": null,
-          "syntax": "RowStrideGPR",
-          "value_style": null
-        },
-        {
           "binding_kind": "tile-source-binding",
           "condition": null,
           "configuration_kind": null,
@@ -3973,8 +3732,8 @@
           "default": null,
           "field": "SrcTile0",
           "optional": false,
-          "ordinal": 2,
-          "role": "indices",
+          "ordinal": 1,
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -8149,8 +7908,9 @@
         }
       ],
       "defaults": [
-        "LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.",
-        "Function 8 preserves the 0x00811181 binary carrier; mgather.cas is legal only for U16, U32, and U64."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -8170,7 +7930,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "Unsupported operation/type tuples raise Fault_TileLegality before effects."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -8336,7 +8096,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1c31cca0842124a6721e2e1adfc00c64f99ce8863751fd93dfd0b0ca78df7b9b",
+                "fold_signature_sha256": "c95de4f26bc6143f1844ce90dae630f55bdc9f2c11925eaca4e37c86fdd7f6c8",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8426,20 +8186,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -8447,8 +8193,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8461,7 +8207,7 @@
                     "default": null,
                     "field": "SrcTile1",
                     "optional": false,
-                    "ordinal": 3,
+                    "ordinal": 2,
                     "role": "expected",
                     "size": null,
                     "syntax": "SrcTile1",
@@ -8475,7 +8221,7 @@
                     "default": null,
                     "field": "SrcTile2",
                     "optional": false,
-                    "ordinal": 4,
+                    "ordinal": 3,
                     "role": "replacement",
                     "size": null,
                     "syntax": "SrcTile2",
@@ -8485,7 +8231,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -8503,20 +8249,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -8524,8 +8256,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -8538,7 +8270,7 @@
                   "default": null,
                   "field": "SrcTile1",
                   "optional": false,
-                  "ordinal": 3,
+                  "ordinal": 2,
                   "role": "expected",
                   "size": null,
                   "syntax": "SrcTile1",
@@ -8552,7 +8284,7 @@
                   "default": null,
                   "field": "SrcTile2",
                   "optional": false,
-                  "ordinal": 4,
+                  "ordinal": 3,
                   "role": "replacement",
                   "size": null,
                   "syntax": "SrcTile2",
@@ -8721,7 +8453,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "60ff6c97fdd83706811dbe019895f0cd2a8f9c176fc5e7526e61687638d841dc",
+                "fold_signature_sha256": "e34ad0a62dd4ff13c212b55f0fc8db634b434332e93828e3edf5748c459f063a",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8811,20 +8543,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -8832,8 +8550,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8846,7 +8564,7 @@
                     "default": null,
                     "field": "SrcTile1",
                     "optional": false,
-                    "ordinal": 3,
+                    "ordinal": 2,
                     "role": "expected",
                     "size": null,
                     "syntax": "SrcTile1",
@@ -8860,7 +8578,7 @@
                     "default": null,
                     "field": "SrcTile2",
                     "optional": false,
-                    "ordinal": 4,
+                    "ordinal": 3,
                     "role": "replacement",
                     "size": null,
                     "syntax": "SrcTile2",
@@ -8870,7 +8588,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -8888,20 +8606,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -8909,8 +8613,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -8923,7 +8627,7 @@
                   "default": null,
                   "field": "SrcTile1",
                   "optional": false,
-                  "ordinal": 3,
+                  "ordinal": 2,
                   "role": "expected",
                   "size": null,
                   "syntax": "SrcTile1",
@@ -8937,7 +8641,7 @@
                   "default": null,
                   "field": "SrcTile2",
                   "optional": false,
-                  "ordinal": 4,
+                  "ordinal": 3,
                   "role": "replacement",
                   "size": null,
                   "syntax": "SrcTile2",
@@ -9154,7 +8858,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3df15c36dd24d9d8ccce776bbddc3bf24d8bca7fb66efa2cbeb2fd587f1075cf",
+                "fold_signature_sha256": "291695d5d54ed6099f08381c3d28c5c8c1c49a4b5a0c57ae945e6da320d45272",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9244,20 +8948,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -9265,8 +8955,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9279,7 +8969,7 @@
                     "default": null,
                     "field": "SrcTile1",
                     "optional": false,
-                    "ordinal": 3,
+                    "ordinal": 2,
                     "role": "expected",
                     "size": null,
                     "syntax": "SrcTile1",
@@ -9293,7 +8983,7 @@
                     "default": null,
                     "field": "SrcTile2",
                     "optional": false,
-                    "ordinal": 4,
+                    "ordinal": 3,
                     "role": "replacement",
                     "size": null,
                     "syntax": "SrcTile2",
@@ -9303,7 +8993,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -9321,20 +9011,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -9342,8 +9018,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9356,7 +9032,7 @@
                   "default": null,
                   "field": "SrcTile1",
                   "optional": false,
-                  "ordinal": 3,
+                  "ordinal": 2,
                   "role": "expected",
                   "size": null,
                   "syntax": "SrcTile1",
@@ -9370,7 +9046,7 @@
                   "default": null,
                   "field": "SrcTile2",
                   "optional": false,
-                  "ordinal": 4,
+                  "ordinal": 3,
                   "role": "replacement",
                   "size": null,
                   "syntax": "SrcTile2",
@@ -9587,7 +9263,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d7f7b629b7f5363f0daff2a299538bba295f1a12cff2152fa64c5cb7fa0c8eeb",
+                "fold_signature_sha256": "22502cdf5f4cc0dc40746aae6cbc3cdec8b2e4282f1e725c48b82bc818948311",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9677,20 +9353,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -9698,8 +9360,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9712,7 +9374,7 @@
                     "default": null,
                     "field": "SrcTile1",
                     "optional": false,
-                    "ordinal": 3,
+                    "ordinal": 2,
                     "role": "expected",
                     "size": null,
                     "syntax": "SrcTile1",
@@ -9726,7 +9388,7 @@
                     "default": null,
                     "field": "SrcTile2",
                     "optional": false,
-                    "ordinal": 4,
+                    "ordinal": 3,
                     "role": "replacement",
                     "size": null,
                     "syntax": "SrcTile2",
@@ -9736,7 +9398,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -9754,20 +9416,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -9775,8 +9423,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9789,7 +9437,7 @@
                   "default": null,
                   "field": "SrcTile1",
                   "optional": false,
-                  "ordinal": 3,
+                  "ordinal": 2,
                   "role": "expected",
                   "size": null,
                   "syntax": "SrcTile1",
@@ -9803,7 +9451,7 @@
                   "default": null,
                   "field": "SrcTile2",
                   "optional": false,
-                  "ordinal": 4,
+                  "ordinal": 3,
                   "role": "replacement",
                   "size": null,
                   "syntax": "SrcTile2",
@@ -10046,8 +9694,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "0f89e9557acde2dfa72e9cb01511319902c563d69b261daeb82689820c463ba9",
-            "form_id": "pto0586-mgather-cas-fa0f119d7e7dd234",
+            "fold_signature_sha256": "4a39324afbc5a39122a3ba6b43d8898f790dd3e8324dd30243a186965c36497f",
+            "form_id": "pto0586-mgather-cas-0c4c8068983b5d5a",
             "header": {
               "command": "BSTART.MGATHER.CAS",
               "family": "TLSU",
@@ -10108,25 +9756,6 @@
                 ],
                 "role_kind": "source",
                 "syntax": "[BaseGPR]"
-              },
-              {
-                "binding_kind": "scalar-binding",
-                "command": "B.IOR",
-                "field": "RowStrideGPR",
-                "members": [
-                  {
-                    "command_group": 0,
-                    "condition": null,
-                    "default": null,
-                    "eligible_modifiers": [],
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1",
-                    "syntax": "RowStrideGPR"
-                  }
-                ],
-                "role_kind": "source",
-                "syntax": "RowStrideGPR"
               },
               {
                 "binding_kind": "tile-source-binding",
@@ -10237,14 +9866,6 @@
                     "optional": false,
                     "physical_role": "address",
                     "slot": "RegSrc0"
-                  },
-                  {
-                    "condition": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1"
                   }
                 ]
               },
@@ -10306,7 +9927,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+          "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -10323,20 +9944,6 @@
               "value_style": null
             },
             {
-              "binding_kind": "scalar-binding",
-              "condition": null,
-              "configuration_kind": null,
-              "constraint": null,
-              "default": null,
-              "field": "RowStrideGPR",
-              "optional": false,
-              "ordinal": 1,
-              "role": "GM row stride in elements",
-              "size": null,
-              "syntax": "RowStrideGPR",
-              "value_style": null
-            },
-            {
               "binding_kind": "tile-source-binding",
               "condition": null,
               "configuration_kind": null,
@@ -10344,8 +9951,8 @@
               "default": null,
               "field": "SrcTile0",
               "optional": false,
-              "ordinal": 2,
-              "role": "indices",
+              "ordinal": 1,
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -10358,7 +9965,7 @@
               "default": null,
               "field": "SrcTile1",
               "optional": false,
-              "ordinal": 3,
+              "ordinal": 2,
               "role": "expected",
               "size": null,
               "syntax": "SrcTile1",
@@ -10372,7 +9979,7 @@
               "default": null,
               "field": "SrcTile2",
               "optional": false,
-              "ordinal": 4,
+              "ordinal": 3,
               "role": "replacement",
               "size": null,
               "syntax": "SrcTile2",
@@ -10382,7 +9989,7 @@
           "spelling": "MGATHER_CAS"
         }
       ],
-      "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
+      "macro_format": "MGATHER_CAS <ValidRow=1, ValidCol=1, DataType, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, SrcTile2, ->DstTile<Size>",
       "mnemonic": "MGATHER_CAS",
       "physical_bundle": [
         "BSTART.MGATHER.CAS DataType",
@@ -10391,7 +9998,7 @@
         "B.DIM LB2=ValidCol",
         "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
         "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, RowStrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -10447,10 +10054,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           },
@@ -10477,12 +10080,8 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source1",
@@ -10510,20 +10109,6 @@
           "value_style": null
         },
         {
-          "binding_kind": "scalar-binding",
-          "condition": null,
-          "configuration_kind": null,
-          "constraint": null,
-          "default": null,
-          "field": "RowStrideGPR",
-          "optional": false,
-          "ordinal": 1,
-          "role": "GM row stride in elements",
-          "size": null,
-          "syntax": "RowStrideGPR",
-          "value_style": null
-        },
-        {
           "binding_kind": "tile-source-binding",
           "condition": null,
           "configuration_kind": null,
@@ -10531,8 +10116,8 @@
           "default": null,
           "field": "SrcTile0",
           "optional": false,
-          "ordinal": 2,
-          "role": "indices",
+          "ordinal": 1,
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -10545,7 +10130,7 @@
           "default": null,
           "field": "SrcTile1",
           "optional": false,
-          "ordinal": 3,
+          "ordinal": 2,
           "role": "expected",
           "size": null,
           "syntax": "SrcTile1",
@@ -10559,7 +10144,7 @@
           "default": null,
           "field": "SrcTile2",
           "optional": false,
-          "ordinal": 4,
+          "ordinal": 3,
           "role": "replacement",
           "size": null,
           "syntax": "SrcTile2",
@@ -16812,10 +16397,9 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects PadValue=Null and Layout=NORM. PadValue is written to disabled valid lanes and every physical destination element outside ValidRow x ValidCol.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [
         {
@@ -16835,9 +16419,7 @@
       ],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, packed four-bit transfer DataType, or invalid dimensions, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before destination allocation, memory events, or memory reads.",
-        "Only enabled-lane addresses are generated and probed. Every enabled lane is preflighted before the first load; any enabled-lane fault leaves the destination unallocated and produces no partial event or payload effect. Disabled lanes cannot fault from their ignored IndexTile value.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -17003,7 +16585,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "68fa278a767f5d4e97752144105eb31ed2bcb79775e2e444f8d84e7969cbe3ee",
+                "fold_signature_sha256": "5fea0345961089929c32fa997bf122db13256f42bc864ead37755de64a4c9919",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17028,18 +16610,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17089,20 +16659,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -17110,8 +16666,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17124,8 +16680,8 @@
                     "default": null,
                     "field": "PredicateTile1",
                     "optional": false,
-                    "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "ordinal": 2,
+                    "role": "U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17134,7 +16690,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -17152,20 +16708,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -17173,8 +16715,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17187,8 +16729,8 @@
                   "default": null,
                   "field": "PredicateTile1",
                   "optional": false,
-                  "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "ordinal": 2,
+                  "role": "U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -17356,7 +16898,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b021335ac24afba7760bcf5965369c43475b885e45598d1668de8eb4561a3157",
+                "fold_signature_sha256": "e2b176afcebc48789d10d2548f2117d36ee9b53871b56ae2d557ddaef6897e29",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17381,18 +16923,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17442,20 +16972,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -17463,8 +16979,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17477,8 +16993,8 @@
                     "default": null,
                     "field": "PredicateTile1",
                     "optional": false,
-                    "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "ordinal": 2,
+                    "role": "U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17487,7 +17003,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -17505,20 +17021,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -17526,8 +17028,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17540,8 +17042,8 @@
                   "default": null,
                   "field": "PredicateTile1",
                   "optional": false,
-                  "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "ordinal": 2,
+                  "role": "U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -17757,7 +17259,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3c5493fcef4f9445c902e69e187d7d2db09186a9f057c411e824f9570efbfeab",
+                "fold_signature_sha256": "8bcfa88b26662d574e1c6074d65c5749a2b18dfea71def938d57d3a35ff513d6",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17782,18 +17284,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -17843,20 +17333,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -17864,8 +17340,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17878,8 +17354,8 @@
                     "default": null,
                     "field": "PredicateTile1",
                     "optional": false,
-                    "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "ordinal": 2,
+                    "role": "U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -17888,7 +17364,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -17906,20 +17382,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -17927,8 +17389,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17941,8 +17403,8 @@
                   "default": null,
                   "field": "PredicateTile1",
                   "optional": false,
-                  "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "ordinal": 2,
+                  "role": "U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -18158,7 +17620,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ab2a05b5f93affc80560cfbaa588ca88a1a0c2e459101611c7e07cf343e5faed",
+                "fold_signature_sha256": "6d3be5938d9e5c886e854d993c1b860d8b4b92940db97dbc33f27f583e616abb",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -18183,18 +17645,6 @@
                       }
                     ],
                     "physical_role": "address"
-                  },
-                  {
-                    "kind": "operand-member",
-                    "members": [
-                      {
-                        "command": "B.IOR",
-                        "command_group": 0,
-                        "field": "RowStrideGPR",
-                        "slot": "RegSrc1"
-                      }
-                    ],
-                    "physical_role": "scalar0"
                   },
                   {
                     "kind": "operand-member",
@@ -18244,20 +17694,6 @@
                     "value_style": null
                   },
                   {
-                    "binding_kind": "scalar-binding",
-                    "condition": null,
-                    "configuration_kind": null,
-                    "constraint": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "ordinal": 1,
-                    "role": "per-PE private-GPR GM row stride in elements",
-                    "size": null,
-                    "syntax": "RowStrideGPR",
-                    "value_style": null
-                  },
-                  {
                     "binding_kind": "tile-source-binding",
                     "condition": null,
                     "configuration_kind": null,
@@ -18265,8 +17701,8 @@
                     "default": null,
                     "field": "SrcTile0",
                     "optional": false,
-                    "ordinal": 2,
-                    "role": "logical linear element indices",
+                    "ordinal": 1,
+                    "role": "byte-displacement indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -18279,8 +17715,8 @@
                     "default": null,
                     "field": "PredicateTile1",
                     "optional": false,
-                    "ordinal": 3,
-                    "role": "exact zero-or-one predicate mask",
+                    "ordinal": 2,
+                    "role": "U8 PredicateTile",
                     "size": null,
                     "syntax": "PredicateTile1",
                     "value_style": null
@@ -18289,7 +17725,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -18307,20 +17743,6 @@
                   "value_style": null
                 },
                 {
-                  "binding_kind": "scalar-binding",
-                  "condition": null,
-                  "configuration_kind": null,
-                  "constraint": null,
-                  "default": null,
-                  "field": "RowStrideGPR",
-                  "optional": false,
-                  "ordinal": 1,
-                  "role": "per-PE private-GPR GM row stride in elements",
-                  "size": null,
-                  "syntax": "RowStrideGPR",
-                  "value_style": null
-                },
-                {
                   "binding_kind": "tile-source-binding",
                   "condition": null,
                   "configuration_kind": null,
@@ -18328,8 +17750,8 @@
                   "default": null,
                   "field": "SrcTile0",
                   "optional": false,
-                  "ordinal": 2,
-                  "role": "logical linear element indices",
+                  "ordinal": 1,
+                  "role": "byte-displacement indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -18342,8 +17764,8 @@
                   "default": null,
                   "field": "PredicateTile1",
                   "optional": false,
-                  "ordinal": 3,
-                  "role": "exact zero-or-one predicate mask",
+                  "ordinal": 2,
+                  "role": "U8 PredicateTile",
                   "size": null,
                   "syntax": "PredicateTile1",
                   "value_style": null
@@ -18484,18 +17906,6 @@
                 "kind": "operand-member",
                 "members": [
                   {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
                     "command": "B.IOT",
                     "command_group": 0,
                     "field": "SrcTile0",
@@ -18626,8 +18036,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "0bf7aa0365954ad68363338cd0ceb6a394f91428c6eec1e817071f455cd299de",
-            "form_id": "pto0586-mgather-mask-923a88e5c046bc5b",
+            "fold_signature_sha256": "c86d680d25ce8e5d8ce39d7e8a7566646c601bfa9c14c88092d1c55cd7eafb28",
+            "form_id": "pto0586-mgather-mask-3b8160a98b1fc501",
             "header": {
               "command": "BSTART.MGATHER.MASK",
               "family": "TLSU",
@@ -18680,25 +18090,6 @@
                 ],
                 "role_kind": "source",
                 "syntax": "[BaseGPR]"
-              },
-              {
-                "binding_kind": "scalar-binding",
-                "command": "B.IOR",
-                "field": "RowStrideGPR",
-                "members": [
-                  {
-                    "command_group": 0,
-                    "condition": null,
-                    "default": null,
-                    "eligible_modifiers": [],
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1",
-                    "syntax": "RowStrideGPR"
-                  }
-                ],
-                "role_kind": "source",
-                "syntax": "RowStrideGPR"
               },
               {
                 "binding_kind": "tile-source-binding",
@@ -18785,14 +18176,6 @@
                     "optional": false,
                     "physical_role": "address",
                     "slot": "RegSrc0"
-                  },
-                  {
-                    "condition": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1"
                   }
                 ]
               },
@@ -18840,7 +18223,7 @@
               }
             ]
           },
-          "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
+          "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -18857,20 +18240,6 @@
               "value_style": null
             },
             {
-              "binding_kind": "scalar-binding",
-              "condition": null,
-              "configuration_kind": null,
-              "constraint": null,
-              "default": null,
-              "field": "RowStrideGPR",
-              "optional": false,
-              "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
-              "size": null,
-              "syntax": "RowStrideGPR",
-              "value_style": null
-            },
-            {
               "binding_kind": "tile-source-binding",
               "condition": null,
               "configuration_kind": null,
@@ -18878,8 +18247,8 @@
               "default": null,
               "field": "SrcTile0",
               "optional": false,
-              "ordinal": 2,
-              "role": "logical linear element indices",
+              "ordinal": 1,
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -18892,8 +18261,8 @@
               "default": null,
               "field": "PredicateTile1",
               "optional": false,
-              "ordinal": 3,
-              "role": "exact zero-or-one predicate mask",
+              "ordinal": 2,
+              "role": "U8 PredicateTile",
               "size": null,
               "syntax": "PredicateTile1",
               "value_style": null
@@ -18902,7 +18271,7 @@
           "spelling": "MGATHER_MASK"
         }
       ],
-      "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, PredicateTile1, ->DstTile<Size>",
+      "macro_format": "MGATHER_MASK <ValidRow=1, ValidCol=1, DataType, PadValue?, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, PredicateTile1, ->DstTile<Size>",
       "mnemonic": "MGATHER_MASK",
       "physical_bundle": [
         "BSTART.MGATHER.MASK DataType",
@@ -18911,7 +18280,7 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
@@ -18921,9 +18290,6 @@
           },
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -18963,10 +18329,6 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "indices"
           },
@@ -18989,16 +18351,12 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source1",
-          "role": "exact zero-or-one predicate mask"
+          "role": "U8 PredicateTile"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
@@ -19018,20 +18376,6 @@
           "value_style": null
         },
         {
-          "binding_kind": "scalar-binding",
-          "condition": null,
-          "configuration_kind": null,
-          "constraint": null,
-          "default": null,
-          "field": "RowStrideGPR",
-          "optional": false,
-          "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
-          "size": null,
-          "syntax": "RowStrideGPR",
-          "value_style": null
-        },
-        {
           "binding_kind": "tile-source-binding",
           "condition": null,
           "configuration_kind": null,
@@ -19039,8 +18383,8 @@
           "default": null,
           "field": "SrcTile0",
           "optional": false,
-          "ordinal": 2,
-          "role": "logical linear element indices",
+          "ordinal": 1,
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -19053,8 +18397,8 @@
           "default": null,
           "field": "PredicateTile1",
           "optional": false,
-          "ordinal": 3,
-          "role": "exact zero-or-one predicate mask",
+          "ordinal": 2,
+          "role": "U8 PredicateTile",
           "size": null,
           "syntax": "PredicateTile1",
           "value_style": null
@@ -27341,17 +26685,14 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects Layout=NORM. PadValueOrByteId and every other B.DATR field must remain zero.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR, missing LB0, malformed B.IOT, undefined source, source DataType mismatch, non-integer IndexTile, shape or layout mismatch, invalid dimensions, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before memory events or writes.",
-        "Every valid-region address is generated and probed before the first store or event; any access fault produces no partial memory or event effect.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -27443,18 +26784,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -27570,8 +26899,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "bbe7befe8bd849be70013e9ee3c2d0e5e15ce97b750e8ec01fbd88cc6a59466f",
-            "form_id": "pto0586-mscatter-8dea10f722ca4f2e",
+            "fold_signature_sha256": "9be37b7943effbcf8b9918713e25a0a9763dc7810cfe6c87cf0bc60e6266cba4",
+            "form_id": "pto0586-mscatter-c97ab4e39250a014",
             "header": {
               "command": "BSTART.MSCATTER",
               "family": "TLSU",
@@ -27616,25 +26945,6 @@
                 ],
                 "role_kind": "source",
                 "syntax": "[BaseGPR]"
-              },
-              {
-                "binding_kind": "scalar-binding",
-                "command": "B.IOR",
-                "field": "RowStrideGPR",
-                "members": [
-                  {
-                    "command_group": 0,
-                    "condition": null,
-                    "default": null,
-                    "eligible_modifiers": [],
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1",
-                    "syntax": "RowStrideGPR"
-                  }
-                ],
-                "role_kind": "source",
-                "syntax": "RowStrideGPR"
               },
               {
                 "binding_kind": "tile-source-binding",
@@ -27697,14 +27007,6 @@
                     "optional": false,
                     "physical_role": "address",
                     "slot": "RegSrc0"
-                  },
-                  {
-                    "condition": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1"
                   }
                 ]
               },
@@ -27738,7 +27040,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
+          "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -27755,20 +27057,6 @@
               "value_style": null
             },
             {
-              "binding_kind": "scalar-binding",
-              "condition": null,
-              "configuration_kind": null,
-              "constraint": null,
-              "default": null,
-              "field": "RowStrideGPR",
-              "optional": false,
-              "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
-              "size": null,
-              "syntax": "RowStrideGPR",
-              "value_style": null
-            },
-            {
               "binding_kind": "tile-source-binding",
               "condition": null,
               "configuration_kind": null,
@@ -27776,7 +27064,7 @@
               "default": null,
               "field": "SrcTile0",
               "optional": false,
-              "ordinal": 2,
+              "ordinal": 1,
               "role": "source data",
               "size": null,
               "syntax": "SrcTile0",
@@ -27790,8 +27078,8 @@
               "default": null,
               "field": "SrcTile1",
               "optional": false,
-              "ordinal": 3,
-              "role": "logical linear element indices",
+              "ordinal": 2,
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -27800,7 +27088,7 @@
           "spelling": "MSCATTER"
         }
       ],
-      "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1",
+      "macro_format": "MSCATTER <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1",
       "mnemonic": "MSCATTER",
       "physical_bundle": [
         "BSTART.MSCATTER DataType",
@@ -27809,16 +27097,13 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
         "arguments": [
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -27849,16 +27134,12 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source"
           },
           {
             "field": "source1",
-            "role": "logical-linear-element-indices"
+            "role": "byte-displacement-indices"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -27871,16 +27152,12 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source data"
         },
         {
           "field": "source1",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
@@ -27900,20 +27177,6 @@
           "value_style": null
         },
         {
-          "binding_kind": "scalar-binding",
-          "condition": null,
-          "configuration_kind": null,
-          "constraint": null,
-          "default": null,
-          "field": "RowStrideGPR",
-          "optional": false,
-          "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
-          "size": null,
-          "syntax": "RowStrideGPR",
-          "value_style": null
-        },
-        {
           "binding_kind": "tile-source-binding",
           "condition": null,
           "configuration_kind": null,
@@ -27921,7 +27184,7 @@
           "default": null,
           "field": "SrcTile0",
           "optional": false,
-          "ordinal": 2,
+          "ordinal": 1,
           "role": "source data",
           "size": null,
           "syntax": "SrcTile0",
@@ -27935,8 +27198,8 @@
           "default": null,
           "field": "SrcTile1",
           "optional": false,
-          "ordinal": 3,
-          "role": "logical linear element indices",
+          "ordinal": 2,
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -30343,17 +29606,14 @@
         }
       ],
       "defaults": [
-        "B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.",
-        "LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.",
-        "Omitted B.DATR selects Layout=NORM; every other B.DATR field must remain zero.",
-        "Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling."
+        "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
+        "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.",
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
       "exceptions": [
-        "A missing B.IOR or LB0, malformed or unterminated B.IOT stream, undefined source, source DataType mismatch, non-integer IndexTile, mask value other than zero or one, shape or layout mismatch, invalid dimensions, or packed transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before effects.",
-        "Only exact-one lanes generate addresses. Every enabled address is probed before the first store or event; an enabled-lane fault produces no partial write or event, while a disabled lane cannot fault from its ignored index.",
-        "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
+        "Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -30445,18 +29705,6 @@
                   }
                 ],
                 "physical_role": "address"
-              },
-              {
-                "kind": "operand-member",
-                "members": [
-                  {
-                    "command": "B.IOR",
-                    "command_group": 0,
-                    "field": "RowStrideGPR",
-                    "slot": "RegSrc1"
-                  }
-                ],
-                "physical_role": "scalar0"
               },
               {
                 "kind": "operand-member",
@@ -30589,8 +29837,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "09f8647707176194e65568863f0a5946ec0488ff8f441d61cd334c553951738a",
-            "form_id": "pto0586-mscatter-mask-3b79cbff878c2c9c",
+            "fold_signature_sha256": "faa4faf29215f8908b2a3014c72658838737c46185bc9b962599e7ac7206fc39",
+            "form_id": "pto0586-mscatter-mask-c564adfb5304a0bd",
             "header": {
               "command": "BSTART.MSCATTER.MASK",
               "family": "TLSU",
@@ -30643,25 +29891,6 @@
                 ],
                 "role_kind": "source",
                 "syntax": "[BaseGPR]"
-              },
-              {
-                "binding_kind": "scalar-binding",
-                "command": "B.IOR",
-                "field": "RowStrideGPR",
-                "members": [
-                  {
-                    "command_group": 0,
-                    "condition": null,
-                    "default": null,
-                    "eligible_modifiers": [],
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1",
-                    "syntax": "RowStrideGPR"
-                  }
-                ],
-                "role_kind": "source",
-                "syntax": "RowStrideGPR"
               },
               {
                 "binding_kind": "tile-source-binding",
@@ -30748,14 +29977,6 @@
                     "optional": false,
                     "physical_role": "address",
                     "slot": "RegSrc0"
-                  },
-                  {
-                    "condition": null,
-                    "default": null,
-                    "field": "RowStrideGPR",
-                    "optional": false,
-                    "physical_role": "scalar0",
-                    "slot": "RegSrc1"
                   }
                 ]
               },
@@ -30803,7 +30024,7 @@
               }
             ]
           },
-          "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
+          "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, PredicateTile2",
           "sources": [
             {
               "binding_kind": "scalar-binding",
@@ -30820,20 +30041,6 @@
               "value_style": null
             },
             {
-              "binding_kind": "scalar-binding",
-              "condition": null,
-              "configuration_kind": null,
-              "constraint": null,
-              "default": null,
-              "field": "RowStrideGPR",
-              "optional": false,
-              "ordinal": 1,
-              "role": "per-PE private-GPR GM row stride in elements",
-              "size": null,
-              "syntax": "RowStrideGPR",
-              "value_style": null
-            },
-            {
               "binding_kind": "tile-source-binding",
               "condition": null,
               "configuration_kind": null,
@@ -30841,7 +30048,7 @@
               "default": null,
               "field": "SrcTile0",
               "optional": false,
-              "ordinal": 2,
+              "ordinal": 1,
               "role": "source data",
               "size": null,
               "syntax": "SrcTile0",
@@ -30855,8 +30062,8 @@
               "default": null,
               "field": "SrcTile1",
               "optional": false,
-              "ordinal": 3,
-              "role": "logical linear element indices",
+              "ordinal": 2,
+              "role": "byte-displacement indices",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -30869,8 +30076,8 @@
               "default": null,
               "field": "PredicateTile2",
               "optional": false,
-              "ordinal": 4,
-              "role": "exact zero-or-one predicate mask",
+              "ordinal": 3,
+              "role": "U8 PredicateTile",
               "size": null,
               "syntax": "PredicateTile2",
               "value_style": null
@@ -30879,7 +30086,7 @@
           "spelling": "MSCATTER_MASK"
         }
       ],
-      "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], RowStrideGPR, SrcTile0, SrcTile1, PredicateTile2",
+      "macro_format": "MSCATTER_MASK <ValidRow=1, ValidCol=1, DataType, Layout?, PEMask=AllPE>, [BaseGPR], SrcTile0, SrcTile1, PredicateTile2",
       "mnemonic": "MSCATTER_MASK",
       "physical_bundle": [
         "BSTART.MSCATTER.MASK DataType",
@@ -30889,16 +30096,13 @@
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK",
         "B.IOT MaskTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, StrideGPR, zero, ->zero",
+        "B.IOR BaseGPR, zero, zero, ->zero",
         "BSTOP"
       ],
       "physical_schema": {
         "arguments": [
           {
             "operand": "address"
-          },
-          {
-            "operand": "scalar0"
           },
           {
             "operand": "source0"
@@ -30933,16 +30137,12 @@
             "role": "base-address"
           },
           {
-            "field": "scalar0",
-            "role": "GM row stride in elements"
-          },
-          {
             "field": "source0",
             "role": "source"
           },
           {
             "field": "source1",
-            "role": "logical-linear-element-indices"
+            "role": "byte-displacement-indices"
           },
           {
             "field": "source2",
@@ -30959,20 +30159,16 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "per-PE private-GPR GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source data"
         },
         {
           "field": "source1",
-          "role": "logical linear element indices"
+          "role": "byte-displacement indices"
         },
         {
           "field": "source2",
-          "role": "exact zero-or-one predicate mask"
+          "role": "U8 PredicateTile"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
@@ -30992,20 +30188,6 @@
           "value_style": null
         },
         {
-          "binding_kind": "scalar-binding",
-          "condition": null,
-          "configuration_kind": null,
-          "constraint": null,
-          "default": null,
-          "field": "RowStrideGPR",
-          "optional": false,
-          "ordinal": 1,
-          "role": "per-PE private-GPR GM row stride in elements",
-          "size": null,
-          "syntax": "RowStrideGPR",
-          "value_style": null
-        },
-        {
           "binding_kind": "tile-source-binding",
           "condition": null,
           "configuration_kind": null,
@@ -31013,7 +30195,7 @@
           "default": null,
           "field": "SrcTile0",
           "optional": false,
-          "ordinal": 2,
+          "ordinal": 1,
           "role": "source data",
           "size": null,
           "syntax": "SrcTile0",
@@ -31027,8 +30209,8 @@
           "default": null,
           "field": "SrcTile1",
           "optional": false,
-          "ordinal": 3,
-          "role": "logical linear element indices",
+          "ordinal": 2,
+          "role": "byte-displacement indices",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -31041,8 +30223,8 @@
           "default": null,
           "field": "PredicateTile2",
           "optional": false,
-          "ordinal": 4,
-          "role": "exact zero-or-one predicate mask",
+          "ordinal": 3,
+          "role": "U8 PredicateTile",
           "size": null,
           "syntax": "PredicateTile2",
           "value_style": null

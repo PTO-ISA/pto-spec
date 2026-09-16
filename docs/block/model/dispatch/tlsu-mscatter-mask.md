@@ -67,19 +67,23 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    if !TileSourceContentsDefined(source) ||
-       !TileSourceContentsDefined(indices) ||
-       !TilePredicateValuesLegal(mask) ||
+    if !IndexedTLSUNumericContentsDefined(source) ||
+       !IndexedTLSUNumericContentsDefined(indices) ||
+       !IndexedTLSUPredicateValuesLegal(mask) ||
        _Tiles[[source]].data_type != data_type ||
-       !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
-       !IndexedTLSUTransferDataTypeLegal(data_type) ||
+       !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
+       !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) ||
        _Tiles[[source]].valid_rows != valid_rows ||
        _Tiles[[source]].valid_columns != valid_columns ||
        _Tiles[[source]].columns != columns ||
-       _Tiles[[indices]].valid_rows != valid_rows ||
-       _Tiles[[indices]].valid_columns != valid_columns ||
-       _Tiles[[mask]].valid_rows != valid_rows ||
-       _Tiles[[mask]].valid_columns != valid_columns ||
+       !IndexedTLSUDataShapeMatchesIndex(
+           _Tiles[[source]].valid_rows, _Tiles[[source]].valid_columns,
+           _Tiles[[indices]].valid_rows, _Tiles[[indices]].valid_columns,
+           data_type) ||
+       _Tiles[[mask]].valid_rows != _Tiles[[indices]].valid_rows ||
+       _Tiles[[mask]].valid_columns != _Tiles[[indices]].valid_columns ||
+       !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
+           valid_rows, valid_columns, columns) ||
        _Tiles[[source]].layout != CurrentBundleTileLayout() ||
        _Tiles[[indices]].layout != CurrentBundleTileLayout() ||
        _Tiles[[mask]].layout != CurrentBundleTileLayout() then
@@ -88,18 +92,12 @@ begin
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
-    let row_stride_elements = ReadPEAbsoluteGPROperand(
-        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
-    if UInt(row_stride_elements) < valid_columns then
+    if !TileOperandsLegal_MSCATTER_MASK(
+           Zeros{PTO_XLEN}, source, indices, mask) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !TileOperandsLegal_MSCATTER_MASK(Zeros{PTO_XLEN},
-           row_stride_elements, source, indices, mask) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    MSCATTER_MASK(base_address, row_stride_elements, source, indices, mask);
+    MSCATTER_MASK(base_address, source, indices, mask);
     if _LastFault != Fault_None then return FALSE; end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
     return TRUE;

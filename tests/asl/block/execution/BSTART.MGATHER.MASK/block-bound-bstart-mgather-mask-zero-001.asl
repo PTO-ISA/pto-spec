@@ -14,7 +14,7 @@ begin
     instruction[19] = '1';
     instruction[18:15] = '0000';
     instruction[11:9] = '000';
-    instruction[8:7] = '11';
+    instruction[8:7] = '00';
     return instruction;
 end;
 

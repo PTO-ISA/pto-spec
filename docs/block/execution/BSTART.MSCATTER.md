@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MSCATTER.asl`
 
-Begins a strided indexed TLSU scatter block.
+scatter using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MSCATTER}
 
@@ -91,48 +91,48 @@ BSTART.MSCATTER DataType
 
 ## Field value dispositions
 
-### DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
 
-Selects the Tile element data type carried by Block data attributes and typed Block starts.
+Selects one absolute architectural GPR for B.IOR input or output binding.
 
-**Encoded zero:** Code zero selects FP64; zero never means absent, inherited, NONE, or NULL.
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
 
 | Code | Disposition | Meaning |
 | ---: | --- | --- |
-| 0 | assigned | FP64 |
-| 1 | assigned | FP32 |
-| 2 | assigned | TF32 |
-| 3 | assigned | HF32 |
-| 4 | assigned | FP16 |
-| 5 | assigned | BF16 |
-| 6 | assigned | HiF8 |
-| 7 | assigned | E4M3 |
-| 8 | assigned | E5M2 |
-| 9 | assigned | E3M2 |
-| 10 | assigned | E2M3 |
-| 11 | assigned | E2M1X2 |
-| 12 | assigned | E1M2X2 |
-| 13 | assigned | E8M0 |
-| 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
-| 16 | assigned | S64 |
-| 17 | assigned | S32 |
-| 18 | assigned | S16 |
-| 19 | assigned | S8 |
-| 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
-| 22 | reserved | future extension |
-| 23 | reserved | future extension |
-| 24 | assigned | U64 |
-| 25 | assigned | U32 |
-| 26 | assigned | U16 |
-| 27 | assigned | U8 |
-| 28 | assigned | U4X2 |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
 | 29 | reserved | future extension |
 | 30 | reserved | future extension |
 | 31 | reserved | future extension |
 
-**Reserved-value behavior:** Reserved values are held for future extension and reject before architectural effects.
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
 
 ## Encoded field closure
 
@@ -140,7 +140,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| bstart_mscatter_32_0f0ba08bd798 | DataType | 5 | 0–14, 16–20, 24–28 | none | 15, 21–23, 29–31 | memory transfer element type selector | Encoded zero selects FP64. |
+| bstart_mscatter_32_0f0ba08bd798 | DataType | 5 | 0–14, 16–20, 24–28 | none | 15, 21–23, 29–31 | memory transfer element type selector | Encoded zero supplies numeric zero for the memory transfer element type selector. |
 
 - `bstart_mscatter_32_0f0ba08bd798.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -150,7 +150,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | DataType | memory transfer element type selector |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
-| B.IOR.RegSrc1 | per-PE private-GPR GM row stride in elements |
+| B.IOR.RegSrc1 | per-PE private-GPR zero selector |
 
 ## Decode
 
@@ -172,7 +172,7 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT DataTile, IndexTile, mask=PE_MASK, <last>
-B.IOR BaseGPR, StrideGPR, zero, ->zero
+B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
 
@@ -201,15 +201,16 @@ end;
 
 ## Defaults and encoded zero
 
-- DataType is always encoded and selects the memory transfer type.
-- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
+- B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
+- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
-- bstart_mscatter_32_0f0ba08bd798.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.
-- Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MSCATTER carries no nibble selector.
-- The body must complete the exact MSCATTER schema documented by PTO-TILE-MSCATTER; no B.IOS or destination is accepted.
-- B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
+- Non-packed transfer shapes match IndexTile; packed four-bit uses Data.ValidCol == 2 * Index.ValidCol and rejects incomplete pairs.
+- ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.
+- Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.
+- B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 
 ## State effects
 
@@ -220,17 +221,17 @@ end;
 
 ### Memory effects
 
-- The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed scatter only after full preflight.
+- Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering
 
-- The start defines no ordering. B.CATR attributes apply when the completed block commits.
+- Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged.
 
 ## Exceptions
 
-- Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.
-- Malformed composition, source/type/shape/layout mismatch, packed transfer types, or access faults reject the complete block before any store or event effect.
+- Malformed bundle schema, nonzero unused B.IOR fields, unsupported datatype or layout, descriptor/shape mismatch, noncanonical predicate values, or an access fault rejects before effects.
 
 ## Examples
 
-- BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP
+- BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP

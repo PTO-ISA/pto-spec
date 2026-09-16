@@ -36,19 +36,20 @@ begin
         TileLayout_RowMajor);
     ConfigureTile(56, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(57, 128, 1, 4, 1, 3);
+    ConfigureTile(57, 128, 1, 4, 1, 3, TileDataType_U8,
+        TileLayout_RowMajor);
     ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
-    WriteTilePredicateBit(57, 0, 0, TRUE);
-    WriteTilePredicateBit(57, 0, 1, FALSE);
-    WriteTilePredicateBit(57, 0, 2, TRUE);
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 16);
+    WriteTileElement(57, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(57, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(57, 0, 2, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
     Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
     MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536,
-        Zeros{PTO_XLEN} + 3, 56, 57, TilePad_Zero);
+        56, 57, TilePad_Zero);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
@@ -58,7 +59,7 @@ begin
     Store(Zeros{PTO_XLEN} + 2056, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 2064, 8, Zeros{PTO_XLEN});
     MSCATTER_MASK(Zeros{PTO_XLEN} + 2048,
-        Zeros{PTO_XLEN} + 3, 55, 56, 57);
+        55, 56, 57);
     let masked_scatter_first = LoadUnsigned(Zeros{PTO_XLEN} + 2048, 8);
     let masked_scatter_middle = LoadUnsigned(Zeros{PTO_XLEN} + 2056, 8);
     let masked_scatter_last = LoadUnsigned(Zeros{PTO_XLEN} + 2064, 8);
@@ -76,12 +77,12 @@ begin
     WriteTileElement(59, 0, 0, Zeros{PTO_XLEN} + 111);
     WriteTileElement(59, 0, 1, Zeros{PTO_XLEN} + 222);
     WriteTileElement(59, 0, 2, Zeros{PTO_XLEN} + 333);
-    // MGATHER_CAS indices are signed or unsigned logical element indices.
+    // Indexed TLSU indices are explicit byte displacements.
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 16);
     MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536,
-        Zeros{PTO_XLEN} + 3, 56, 58, 59);
+        56, 58, 59);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 22;
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;

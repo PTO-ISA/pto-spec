@@ -202,10 +202,10 @@ readonly func TileOperandsLegal_GM_ATOM_CAS(
     pad_value: TilePadValue) => boolean
 begin
     let data_type = _Tiles[[destination]].data_type;
-    return TileDescriptorLegal(destination) &&
-           TileSourceContentsDefined(indices) &&
-           TileSourceContentsDefined(expected) &&
-           TileSourceContentsDefined(replacement) &&
+    return IndexedTLSUNumericDescriptorLegal(destination) &&
+           IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUNumericContentsDefined(expected) &&
+           IndexedTLSUNumericContentsDefined(replacement) &&
            GMAtomicOperationDataTypeLegal(operation, data_type) &&
            _Tiles[[expected]].data_type == data_type &&
            _Tiles[[replacement]].data_type == data_type &&
@@ -215,7 +215,11 @@ begin
            _Tiles[[destination]].valid_columns == _Tiles[[expected]].valid_columns &&
            _Tiles[[destination]].valid_rows == _Tiles[[replacement]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[replacement]].valid_columns &&
-           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type);
+           IndexedTLSUMemoryIndexDataTypeLegal(
+               _Tiles[[indices]].data_type) &&
+           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&
+           _Tiles[[destination]].layout == _Tiles[[expected]].layout &&
+           _Tiles[[destination]].layout == _Tiles[[replacement]].layout;
 end;
 
 readonly func TileOperandsLegal_GM_ATOM_VALUE(
@@ -223,32 +227,40 @@ readonly func TileOperandsLegal_GM_ATOM_VALUE(
     value: TileIndex, pad_value: TilePadValue) => boolean
 begin
     let data_type = _Tiles[[destination]].data_type;
-    return TileDescriptorLegal(destination) &&
-           TileSourceContentsDefined(indices) &&
-           TileSourceContentsDefined(value) &&
+    return IndexedTLSUNumericDescriptorLegal(destination) &&
+           IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUNumericContentsDefined(value) &&
            GMAtomicOperationDataTypeLegal(operation, data_type) &&
            _Tiles[[value]].data_type == data_type &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[indices]].valid_columns &&
            _Tiles[[destination]].valid_rows == _Tiles[[value]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[value]].valid_columns &&
-           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type);
+           IndexedTLSUMemoryIndexDataTypeLegal(
+               _Tiles[[indices]].data_type) &&
+           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&
+           _Tiles[[destination]].layout == _Tiles[[value]].layout;
 end;
 
 readonly func TileOperandsLegal_GM_RED_VALUE(
     operation: GMReductionOperation, base_address: Word, indices: TileIndex, value: TileIndex,
     pad_value: TilePadValue) => boolean
 begin
-    return TileSourceContentsDefined(indices) &&
-           TileSourceContentsDefined(value) &&
-           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+    return IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUNumericContentsDefined(value) &&
+           GMReductionOperationDataTypeLegal(
+               operation, _Tiles[[value]].data_type) &&
+           IndexedTLSUMemoryIndexDataTypeLegal(
+               _Tiles[[indices]].data_type) &&
            _Tiles[[indices]].valid_rows == _Tiles[[value]].valid_rows &&
-           _Tiles[[indices]].valid_columns == _Tiles[[value]].valid_columns;
+           _Tiles[[indices]].valid_columns == _Tiles[[value]].valid_columns &&
+           _Tiles[[indices]].layout == _Tiles[[value]].layout;
 end;
 
 readonly func TileOperandsLegal_GM_RED_POPC(
     operation: GMReductionOperation, base_address: Word, indices: TileIndex) => boolean
 begin
-    return TileSourceContentsDefined(indices) &&
-           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type);
+    return IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUMemoryIndexDataTypeLegal(
+               _Tiles[[indices]].data_type);
 end;

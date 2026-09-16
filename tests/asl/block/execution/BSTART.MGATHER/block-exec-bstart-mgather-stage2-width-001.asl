@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width logical indices and accepts narrower integer IndexTiles","pass_condition":"U64 and U16 logical indices execute at their encoded widths, an upper-half U64 index is scaled by the U64 transfer width without truncation, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width byte displacements and signed integer IndexTiles","pass_condition":"U64 and S32 byte displacements execute at their encoded widths, an upper-half U64 displacement is not scaled or truncated, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MgatherStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -20,7 +20,7 @@ pure func MgatherStage2IOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
-    instruction[24:20] = Zeros{5} + 4;
+    instruction[24:20] = Zeros{5};
     return instruction;
 end;
 
@@ -72,10 +72,10 @@ begin
     assert _MemoryEvents[[0]].size_bytes == 8;
     StopMemoryEventCapture();
 
-    // A nonzero upper half remains part of the logical element index and is
-    // scaled by the U64 transfer width. Truncation would reach the base.
+    // A nonzero upper half remains part of the U64 byte displacement and is
+    // not scaled. Truncation would incorrectly reach the base.
     let full_width_index = Zeros{PTO_XLEN} + 0x0000000100000000;
-    let full_width_address = Zeros{PTO_XLEN} + 0x0000000800000100;
+    let full_width_address = Zeros{PTO_XLEN} + 0x0000000100000100;
     PrepareMgatherStage2(
         TileDataType_U64,
         full_width_index,
@@ -90,10 +90,10 @@ begin
     StopMemoryEventCapture();
 
     PrepareMgatherStage2(
-        TileDataType_U16,
-        Zeros{PTO_XLEN},
-        Zeros{5} + 27);
-    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0x5a);
+        TileDataType_S32,
+        Zeros{PTO_XLEN} - 8,
+        Zeros{5} + 24);
+    Store(Zeros{PTO_XLEN} + 0xf8, 8, expected_u64);
     StartMemoryEventCapture(0);
     let narrow_completed = ExecuteBundleTileOperation();
     assert narrow_completed;
@@ -101,7 +101,7 @@ begin
     assert _MemoryEventCount == 1;
     let narrow_destination = _BundleTileBindings[[0]].destination;
     assert ReadTileElement(narrow_destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 0x5a;
+        expected_u64;
     StopMemoryEventCapture();
 
     PrepareMgatherStage2(

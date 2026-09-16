@@ -4311,9 +4311,6 @@
           "operand": "address"
         },
         {
-          "operand": "scalar0"
-        },
-        {
           "operand": "source0"
         },
         {
@@ -4346,10 +4343,6 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "indices"
         }
@@ -4359,10 +4352,10 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
+        "operand:source0:byte-displacement-indices",
         "runtime:CurrentBundlePadValue:physical-padding"
       ],
+      "semantic_summary": "gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4370,9 +4363,6 @@
       "arguments": [
         {
           "operand": "address"
-        },
-        {
-          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4402,26 +4392,22 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source"
         },
         {
           "field": "source1",
-          "role": "logical-linear-element-indices"
+          "role": "byte-displacement-indices"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MSCATTER",
       "state_effects": [
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:logical-linear-element-indices"
+        "operand:source1:byte-displacement-indices"
       ],
+      "semantic_summary": "scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4432,9 +4418,6 @@
         },
         {
           "operand": "address"
-        },
-        {
-          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4472,10 +4455,6 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "indices"
         },
@@ -4489,11 +4468,11 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
+        "operand:source0:byte-displacement-indices",
         "operand:source1:exact-predicate-mask",
         "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
       ],
+      "semantic_summary": "Masked gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4501,9 +4480,6 @@
       "arguments": [
         {
           "operand": "address"
-        },
-        {
-          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4536,16 +4512,12 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "source"
         },
         {
           "field": "source1",
-          "role": "logical-linear-element-indices"
+          "role": "byte-displacement-indices"
         },
         {
           "field": "source2",
@@ -4556,11 +4528,11 @@
       "semantic_handler": "MSCATTER_MASK",
       "state_effects": [
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:logical-linear-element-indices",
+        "operand:source1:byte-displacement-indices",
         "operand:source2:exact-predicate-mask"
       ],
+      "semantic_summary": "Masked scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4614,10 +4586,6 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "indices"
         },
@@ -4635,7 +4603,6 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:scalar0:GM row stride in elements",
         "operand:source0:indices",
         "operand:source1:expected",
         "operand:source2:replacement"
@@ -4643,6 +4610,7 @@
       "catalog_indices": [
         81
       ],
+      "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
