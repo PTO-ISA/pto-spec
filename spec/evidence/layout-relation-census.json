@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "9955c0fa130f08c6ae303a683f0734b806f869c4",
+  "candidate_head": "4c82252d4521cd0e029b05aa5eadf0050c1a49a5",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16983,7 +16983,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TileInfoWithPackedRowSlack"
     },
     {
@@ -17138,7 +17138,7 @@
         "ZN"
       ],
       "before_sha256": "0ff292f66ae1be3ac3810d6aef09a078360eaa512db199e7f8556196c58192ec",
-      "classification": "UNCLASSIFIED",
+      "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TilePackedLinearIndex",
       "path": "asl/tile/model/definedness/packed-boundary.asl"
     },
@@ -17158,7 +17158,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TilePackedRowPairIndex"
     },
     {
@@ -17174,7 +17174,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TilePackedRowSlackIndex"
     },
     {
@@ -17191,7 +17191,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TilePackedRowsHavePhysicalSlack"
     },
     {
@@ -30231,14 +30231,7 @@
     }
   ],
   "empty_layout_sets": [],
-  "errors": [
-    "common-helper definition set changed: TileInfoWithPackedRowSlack",
-    "common-helper definition set changed: TilePackedRowPairIndex",
-    "common-helper definition set changed: TilePackedRowSlackIndex",
-    "common-helper definition set changed: TilePackedRowsHavePhysicalSlack",
-    "unauthorized common-helper layout change: TilePackedLinearIndex: ['ColumnMajor', 'NZ', 'RowMajor', 'ZN']",
-    "unclassified common-helper change: TilePackedLinearIndex (asl/tile/model/definedness/packed-boundary.asl)"
-  ],
+  "errors": [],
   "exact_34": [
     "TADD",
     "TAND",
@@ -42904,7 +42897,7 @@
   ],
   "operative_baseline": "577e7b06422d87ec09c925401b477b4e524eded3",
   "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
-  "pass": false,
+  "pass": true,
   "reachability": {
     "after": {
       "helpers": {

@@ -120,6 +120,24 @@ TCI_PAYLOAD_INDEX_CLASSIFICATION = (
     "TCI CUBE physical-column payload indexing "
     "(ADR-TILE-0010 2026-09-15 amendment, Issue #233)"
 )
+# ADR-TILE-0008's packed ordinary carrier and ADR-CUBE-0017's 2026-09-16
+# amendment share one canonical X2 logical-column pairing.  Keep this helper
+# set explicit so the row-local representation cannot become an unclassified
+# common-helper change while unrelated layout growth still fails closed.
+PACKED_X2_ROW_LOCAL_HELPERS = {
+    "PackedTileDataTypeUsesRowLocalPairs",
+    "PackedTileRowPairColumns",
+    "PackedTileRowStorageBytes",
+    "TileInfoWithPackedRowSlack",
+    "TilePackedLinearIndex",
+    "TilePackedRowPairIndex",
+    "TilePackedRowSlackIndex",
+    "TilePackedRowsHavePhysicalSlack",
+}
+PACKED_X2_ROW_LOCAL_CLASSIFICATION = (
+    "TCVT packed-X2 row-local pairing "
+    "(ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)"
+)
 # ADR-CUBE-0004 and ADR-TILE-0012 (2026-09-15 amendments, Issue #311)
 # authorize CUBE reduction destinations to preserve the source's reduced-axis
 # physical envelope independently of the valid rectangle.  Keep this helper
@@ -1377,12 +1395,15 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
             if (name in TCI_PHYSICAL_COLUMN_HELPERS or
                     name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS or
-                    name in INDEXED_TLSU_HELPERS):
+                    name in INDEXED_TLSU_HELPERS or
+                    name in PACKED_X2_ROW_LOCAL_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
                                   else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
                                   if name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS
-                                  else INDEXED_TLSU_CLASSIFICATION)
+                                  else INDEXED_TLSU_CLASSIFICATION
+                                  if name in INDEXED_TLSU_HELPERS
+                                  else PACKED_X2_ROW_LOCAL_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
@@ -1397,14 +1418,20 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
             if classification is None and name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
                 classification = CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
+            if classification is None and name in PACKED_X2_ROW_LOCAL_HELPERS:
+                classification = PACKED_X2_ROW_LOCAL_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             payload_index_inherited = (
                 name in TCI_PAYLOAD_INDEX_HELPERS and
                 (set(new["layouts"]) - ALLOWED_LAYOUTS) <= (set(old["layouts"]) - ALLOWED_LAYOUTS))
+            packed_x2_layout_inherited = (
+                name in PACKED_X2_ROW_LOCAL_HELPERS and
+                set(new["layouts"]) == set(old["layouts"]))
             if (set(new["layouts"]) - ALLOWED_LAYOUTS and
                     name not in LOCATION_RETIREMENT_LAYOUT_HELPERS and
-                    not payload_index_inherited):
+                    not payload_index_inherited and
+                    not packed_x2_layout_inherited):
                 errors.append(f"unauthorized common-helper layout change: {name}: {new['layouts']}")
                 classification = None
             elif name in LOCATION_RETIREMENT_LAYOUT_HELPERS and classification is None:
