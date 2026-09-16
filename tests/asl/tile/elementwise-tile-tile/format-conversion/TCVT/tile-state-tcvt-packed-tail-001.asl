@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-PACKED-TAIL-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"state-transition","summary":"TCVT handles odd packed tails without reading or flagging the padding lane","pass_condition":"ValidCol 1, 3, and 5 narrow into packed rows with explicit Zero, Max, and Min padding, while widening ignores an undefined tail nibble and preserves zero numeric status","related_sources":["asl/tile/model/definedness/elements.asl","asl/tile/model/definedness/packed-boundary.asl","asl/arch/profile/tcvt-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-PACKED-TAIL-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"state-transition","summary":"TCVT handles odd packed tails without reading or flagging the padding lane","pass_condition":"ValidCol 1, 3, and 5 narrow into packed rows with explicit Zero, Max, and Min padding, while two-row odd-Col narrowing and widening use ordinary access without cross-row alias and widening ignores undefined slack","related_sources":["asl/tile/model/definedness/elements.asl","asl/tile/model/definedness/packed-boundary.asl","asl/tile/model/shape/rows-columns.asl","asl/arch/profile/tcvt-conversion.asl"]}
 func ConfigureTailPair(valid_columns: integer {1,3,5},
                        source_type: TileDataType,
                        destination_type: TileDataType)
@@ -108,6 +108,89 @@ begin
     assert !TileElementDefined(1, 0, 5);
 end;
 
+func ConfigureOddPhysicalPair(source_type: TileDataType,
+                              destination_type: TileDataType)
+begin
+    let source_capacity = if source_type == TileDataType_FP32 then 2560
+        else 384;
+    let destination_capacity = if destination_type == TileDataType_FP32
+        then 2560 else 384;
+    ConfigureTile(0, source_capacity, 2, 5, 2, 3, source_type,
+        TileLayout_RowMajor);
+    ConfigureTile(1, destination_capacity, 2, 5, 2, 3, destination_type,
+        TileLayout_RowMajor);
+end;
+
+func RunOddPhysicalNarrowing()
+begin
+    ResetProfileState();
+    ConfigureOddPhysicalPair(TileDataType_FP32, TileDataType_E2M1X2);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f000000);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x3f800000);
+    WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 0x3fc00000);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x40000000);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 0x40400000);
+    WriteTileElement(0, 1, 2, Zeros{PTO_XLEN} + 0x40800000);
+    assert TileLogicalLinearIndex(_Tiles[[1]], 0, 2) == 2;
+    assert TileLogicalLinearIndex(_Tiles[[1]], 1, 0) == 6;
+    SetTailPad('00');
+    let control = DefaultNumericExecutionControl();
+    assert TileOperandsLegal_TCVT(1, 0, control);
+    InstructionContractExecute_TCVT(1, 0, control);
+    assert NumericStatusFlags() == Zeros{5};
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
+    assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(1, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(1, 1, 0) == Zeros{PTO_XLEN} + 4;
+    assert ReadTileElement(1, 1, 1) == Zeros{PTO_XLEN} + 5;
+    assert ReadTileElement(1, 1, 2) == Zeros{PTO_XLEN} + 6;
+    assert TileElementDefined(1, 0, 3);
+    assert ReadTileElement(1, 0, 3) == Zeros{PTO_XLEN};
+    assert TileElementDefined(1, 1, 3);
+    assert ReadTileElement(1, 1, 3) == Zeros{PTO_XLEN};
+    assert TileLogicalElementDefined(_Tiles[[1]],
+        TilePackedRowSlackIndex(_Tiles[[1]], 0));
+    assert TileReadLogicalElement(_Tiles[[1]],
+        TilePackedRowSlackIndex(_Tiles[[1]], 0)) == Zeros{PTO_XLEN};
+    assert TileLogicalElementDefined(_Tiles[[1]],
+        TilePackedRowSlackIndex(_Tiles[[1]], 1));
+    assert TileReadLogicalElement(_Tiles[[1]],
+        TilePackedRowSlackIndex(_Tiles[[1]], 1)) == Zeros{PTO_XLEN};
+end;
+
+func RunOddPhysicalWidening()
+begin
+    ResetProfileState();
+    ConfigureOddPhysicalPair(TileDataType_E2M1X2, TileDataType_FP32);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(0, 1, 2, Zeros{PTO_XLEN} + 6);
+    let slack0 = TilePackedRowSlackIndex(_Tiles[[0]], 0);
+    let slack1 = TilePackedRowSlackIndex(_Tiles[[0]], 1);
+    _Tiles[[0]] = TileInfoWithLogicalElementAndDefined(
+        _Tiles[[0]], slack0, Zeros{PTO_XLEN} + 0xf, FALSE);
+    _Tiles[[0]] = TileInfoWithLogicalElementAndDefined(
+        _Tiles[[0]], slack1, Zeros{PTO_XLEN} + 0xf, FALSE);
+    assert !TileLogicalElementDefined(_Tiles[[0]], slack0);
+    assert !TileLogicalElementDefined(_Tiles[[0]], slack1);
+    SetTailPad('11');
+    let control = DefaultNumericExecutionControl();
+    assert TileOperandsLegal_TCVT(1, 0, control);
+    InstructionContractExecute_TCVT(1, 0, control);
+    assert NumericStatusFlags() == Zeros{5};
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x3f000000;
+    assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 0x3f800000;
+    assert ReadTileElement(1, 0, 2) == Zeros{PTO_XLEN} + 0x3fc00000;
+    assert ReadTileElement(1, 1, 0) == Zeros{PTO_XLEN} + 0x40000000;
+    assert ReadTileElement(1, 1, 1) == Zeros{PTO_XLEN} + 0x40400000;
+    assert ReadTileElement(1, 1, 2) == Zeros{PTO_XLEN} + 0x40800000;
+    assert !TileElementDefined(1, 0, 3);
+    assert !TileElementDefined(1, 1, 3);
+end;
+
 func main() => integer
 begin
     RunNarrowTail(1, TilePad_Zero, Zeros{PTO_XLEN});
@@ -117,5 +200,7 @@ begin
     RunNullNarrowTail(3);
     RunNullNarrowTail(5);
     RunWideningTail();
+    RunOddPhysicalNarrowing();
+    RunOddPhysicalWidening();
     return 0;
 end;

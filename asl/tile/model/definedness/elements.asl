@@ -3,13 +3,11 @@
 // PredicateCell is distinct U8 CUBE predicate storage: valid values are 0x00/0x01, Null is per-element undefined, and compare flags/status publish atomically. TGPR2T is whole-tile numeric U8 and rejects Null.
 // NDF-END: PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","surface":"tile","classification":["model","definedness","elements"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
-pure func TileFractalInnerElements(
-    data_type: TileDataType) => integer {4,8,16,32,64}
+pure func TileFractalInnerElements(data_type: TileDataType) => integer {4,8,16,32,64}
 begin
     // PTO fractals contain 16 rows by 32 bytes.  Packed X2 formats therefore
     // carry 64 independently addressed logical nibbles in each fractal row.
-    return (256 DIV TileElementBits(data_type))
-        as integer {4,8,16,32,64};
+    return (256 DIV TileElementBits(data_type)) as integer {4,8,16,32,64};
 end;
 readonly func TileLayoutShapeLegal(tile: TileInfo) => boolean
 begin
@@ -132,8 +130,7 @@ begin
     return TileDataTypeIsSigned(data_type) ||
            TileDataTypeIsUnsignedInteger(data_type);
 end;
-pure func IndexedTLSUTransferDataTypeLegal(
-    data_type: TileDataType) => boolean
+pure func IndexedTLSUTransferDataTypeLegal(data_type: TileDataType) => boolean
 begin
     // Indexed TLSU addresses are byte displacements. A packed four-bit
     // transfer would additionally need a low/high-nibble selector, which the
@@ -457,6 +454,11 @@ begin
             end;
         end;
     end;
+    if TilePackedRowsHavePhysicalSlack(result) then
+        for row = 0 to result.rows - 1 looplimit 65536 do
+            result = TileInfoWithPackedRowSlack(result, row as integer {0..65535}, padding, padding_defined);
+        end;
+    end;
     return result;
 end;
 func ApplyTilePadding(index: TileIndex, pad_value: TilePadValue)
@@ -474,6 +476,11 @@ begin
             _Tiles[[index]] = TileInfoWithLogicalElement(
                 _Tiles[[index]], element,
                 TileReadLogicalElement(tile, element));
+        end;
+    end;
+    if TilePackedRowsHavePhysicalSlack(tile) then
+        for row = 0 to tile.rows - 1 looplimit 65536 do
+            _Tiles[[index]] = TileInfoWithPackedRowSlack(_Tiles[[index]], row as integer {0..65535}, TileReadLogicalElement(tile, TilePackedRowSlackIndex(tile, row as integer {0..65535})), TRUE);
         end;
     end;
     _Tiles[[index]].defined_valid_elements =

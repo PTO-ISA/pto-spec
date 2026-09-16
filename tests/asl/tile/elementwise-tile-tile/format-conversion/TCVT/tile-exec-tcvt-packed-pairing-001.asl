@@ -26,12 +26,12 @@ func main() => integer
 begin
     ResetProfileState();
     let tile = PairingTile();
-    let row0_col4 = TCVTPackedLogicalIndex(tile, 0, 4);
-    let row1_col0 = TCVTPackedLogicalIndex(tile, 1, 0);
-    assert TCVTPackedLogicalIndex(tile, 0, 0) == 0;
-    assert TCVTPackedLogicalIndex(tile, 0, 1) == 1;
-    assert TCVTPackedLogicalIndex(tile, 0, 2) == 2;
-    assert TCVTPackedLogicalIndex(tile, 0, 3) == 3;
+    let row0_col4 = TileLogicalLinearIndex(tile, 0, 4);
+    let row1_col0 = TileLogicalLinearIndex(tile, 1, 0);
+    assert TileLogicalLinearIndex(tile, 0, 0) == 0;
+    assert TileLogicalLinearIndex(tile, 0, 1) == 1;
+    assert TileLogicalLinearIndex(tile, 0, 2) == 2;
+    assert TileLogicalLinearIndex(tile, 0, 3) == 3;
     assert row0_col4 == 4;
     assert row1_col0 == 6;
     assert row0_col4 MOD 2 == 0;
@@ -39,20 +39,20 @@ begin
     assert row0_col4 + 1 != row1_col0;
 
     var packed = TileInfoWithLogicalElement(tile,
-        TCVTPackedLogicalIndex(tile, 0, 0), Zeros{PTO_XLEN} + 1);
+        TileLogicalLinearIndex(tile, 0, 0), Zeros{PTO_XLEN} + 1);
     packed = TileInfoWithLogicalElement(packed,
-        TCVTPackedLogicalIndex(tile, 0, 1), Zeros{PTO_XLEN} + 2);
+        TileLogicalLinearIndex(tile, 0, 1), Zeros{PTO_XLEN} + 2);
     packed = TileInfoWithLogicalElement(packed,
-        TCVTPackedLogicalIndex(tile, 0, 2), Zeros{PTO_XLEN} + 3);
+        TileLogicalLinearIndex(tile, 0, 2), Zeros{PTO_XLEN} + 3);
     packed = TileInfoWithLogicalElement(packed,
-        TCVTPackedLogicalIndex(tile, 0, 3), Zeros{PTO_XLEN} + 4);
+        TileLogicalLinearIndex(tile, 0, 3), Zeros{PTO_XLEN} + 4);
     packed = TileInfoWithLogicalElement(packed, row0_col4,
         Zeros{PTO_XLEN} + 5);
     packed = TileInfoWithLogicalElement(packed, row1_col0,
         Zeros{PTO_XLEN} + 6);
     assert packed.payload[[0]] == Zeros{PTO_XLEN} + 0x654321;
     assert TileReadLogicalElement(packed,
-        TCVTPackedLogicalIndex(packed, 0, 1)) ==
+        TileLogicalLinearIndex(packed, 0, 1)) ==
         Zeros{PTO_XLEN} + 2;
     assert TileReadLogicalElement(packed, row1_col0) ==
         Zeros{PTO_XLEN} + 6;
@@ -71,13 +71,13 @@ begin
     assert TileCubePayloadIndex(cube_m16, 0, 5) == 9;
     var cube_m16_values = cube_m16;
     for column = 0 to 4 looplimit 5 do
-        let element = TCVTPackedLogicalIndex(cube_m16_values, 0,
+        let element = TileLogicalLinearIndex(cube_m16_values, 0,
             column as integer {0..65535});
         cube_m16_values = TileInfoWithLogicalElement(cube_m16_values,
             element, Zeros{PTO_XLEN} + column + 1);
     end;
     for column = 0 to 4 looplimit 5 do
-        let element = TCVTPackedLogicalIndex(cube_m16_values, 0,
+        let element = TileLogicalLinearIndex(cube_m16_values, 0,
             column as integer {0..65535});
         assert TileReadLogicalElement(cube_m16_values, element) ==
             Zeros{PTO_XLEN} + column + 1;
@@ -97,13 +97,13 @@ begin
     assert TileCubePayloadIndex(cube_m32, 0, 5) == 5;
     var cube_m32_values = cube_m32;
     for column = 0 to 4 looplimit 5 do
-        let element = TCVTPackedLogicalIndex(cube_m32_values, 0,
+        let element = TileLogicalLinearIndex(cube_m32_values, 0,
             column as integer {0..65535});
         cube_m32_values = TileInfoWithLogicalElement(cube_m32_values,
             element, Zeros{PTO_XLEN} + column + 1);
     end;
     for column = 0 to 4 looplimit 5 do
-        let element = TCVTPackedLogicalIndex(cube_m32_values, 0,
+        let element = TileLogicalLinearIndex(cube_m32_values, 0,
             column as integer {0..65535});
         assert TileReadLogicalElement(cube_m32_values, element) ==
             Zeros{PTO_XLEN} + column + 1;

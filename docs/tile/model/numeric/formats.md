@@ -120,24 +120,6 @@ begin
     return (value, Zeros{5});
 end;
 
-readonly func TCVTPackedLogicalIndex(
-    tile: TileInfo,
-    row: integer {0..65535},
-    column: integer {0..65535}) => PackedTileElementIndex
-begin
-    assert row < tile.rows && column < tile.columns;
-    if !PackedTileDataTypeIsFourBit(tile.data_type) ||
-       TileLayoutIsCube(tile.layout) then
-        return TileLogicalLinearIndex(tile, row, column);
-    end;
-    let pair_columns = (tile.columns + 1) DIVRM 2;
-    let index = (row * pair_columns + (column DIVRM 2)) * 2 +
-                (column MOD 2);
-    assert index < PackedTileLogicalCapacity(tile.capacity_bytes,
-                                              tile.data_type);
-    return index as PackedTileElementIndex;
-end;
-
 func TileConvertValue(value: Word, source_type: TileDataType,
                       destination_type: TileDataType,
                       control: NumericExecutionControl)
@@ -189,9 +171,9 @@ begin
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TCVTPackedLogicalIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TCVTPackedLogicalIndex(result,
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             let source_value = TileReadLogicalElement(source_tile,
                 source_element);

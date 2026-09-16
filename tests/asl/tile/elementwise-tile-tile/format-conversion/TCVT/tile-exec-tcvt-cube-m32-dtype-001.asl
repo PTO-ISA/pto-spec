@@ -9,9 +9,14 @@ begin
         1, 2048, 17, 9, TileDataType_FP32,
         TileLayout_CUBE_M32);
     assert source_ready && destination_ready;
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(0, 16, 8, Zeros{PTO_XLEN} + 9);
-    MarkTileValidRegionDefined(0);
+    for row = 0 to 16 looplimit 17 do
+        for column = 0 to 8 looplimit 9 do
+            let source_value = Zeros{PTO_XLEN} +
+                0x3c00 + column * 0x0100;
+            WriteTileElement(0, row as integer {0..65535},
+                column as integer {0..65535}, source_value);
+        end;
+    end;
 
     assert _Tiles[[0]].rows == 32;
     assert _Tiles[[0]].columns == 10;
@@ -26,10 +31,18 @@ begin
         1, 0, DefaultNumericExecutionControl());
     assert _LastFault == Fault_None;
     assert _Tiles[[1]].layout == TileLayout_CUBE_M32;
-    assert ReadTileElement(1, 0, 0) ==
-        Zeros{PTO_XLEN} + 0x34e00000;
-    assert ReadTileElement(1, 16, 8) ==
-        Zeros{PTO_XLEN} + 0x35100000;
+    for row = 0 to 16 looplimit 17 do
+        for column = 0 to 8 looplimit 9 do
+            let source_value = Zeros{PTO_XLEN} +
+                0x3c00 + column * 0x0100;
+            let (expected, expected_flags) = ReferenceTCVTConvert(
+                source_value, TileDataType_FP16, TileDataType_FP32,
+                DefaultNumericExecutionControl());
+            assert expected_flags == Zeros{5};
+            assert ReadTileElement(1, row as integer {0..65535},
+                column as integer {0..65535}) == expected;
+        end;
+    end;
     assert _Tiles[[1]].contents_defined;
     return 0;
 end;

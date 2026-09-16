@@ -12,6 +12,72 @@ begin
            data_type == TileDataType_U4X2;
 end;
 
+// E2M1X2 and E1M2X2 are the packed-X2 formats whose canonical ordinary
+// storage pairs adjacent logical columns within each row.  The other four-bit
+// types retain their existing generic packed representation.
+pure func PackedTileDataTypeUsesRowLocalPairs(
+    data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_E2M1X2 ||
+           data_type == TileDataType_E1M2X2;
+end;
+
+pure func PackedTileRowPairColumns(
+    columns: integer {1..65535}) => integer {1..32768}
+begin
+    return ((columns + 1) DIVRM 2) as integer {1..32768};
+end;
+
+pure func PackedTileRowStorageBytes(
+    columns: integer {1..65535}, data_type: TileDataType) => integer
+begin
+    assert PackedTileDataTypeUsesRowLocalPairs(data_type);
+    return PackedTileRowPairColumns(columns);
+end;
+
+// Return the first packed element of one row-local pair.  The second lane of
+// the final pair is physical row padding when the logical column count is
+// odd; keeping the pair base row-local prevents that padding from aliasing the
+// next row.
+readonly func TilePackedRowPairIndex(
+    tile: TileInfo,
+    row: integer {0..65535},
+    pair: integer {0..65535}) => PackedTileElementIndex
+begin
+    assert tile.layout == TileLayout_RowMajor;
+    assert PackedTileDataTypeUsesRowLocalPairs(tile.data_type);
+    let pair_columns = PackedTileRowPairColumns(tile.columns);
+    assert row < tile.rows && pair < pair_columns;
+    let index = (row * pair_columns + pair) * 2;
+    assert index < PackedTileLogicalCapacity(
+        tile.capacity_bytes, tile.data_type);
+    return index as PackedTileElementIndex;
+end;
+
+readonly func TilePackedRowSlackIndex(
+    tile: TileInfo, row: integer {0..65535}) => PackedTileElementIndex
+begin
+    assert tile.columns MOD 2 == 1;
+    return (TilePackedRowPairIndex(tile, row,
+        PackedTileRowPairColumns(tile.columns) - 1) + 1)
+        as PackedTileElementIndex;
+end;
+
+pure func TilePackedRowsHavePhysicalSlack(tile: TileInfo) => boolean
+begin
+    return tile.layout == TileLayout_RowMajor &&
+           PackedTileDataTypeUsesRowLocalPairs(tile.data_type) &&
+           tile.columns MOD 2 == 1;
+end;
+
+readonly func TileInfoWithPackedRowSlack(
+    tile: TileInfo, row: integer {0..65535}, value: Word,
+    defined: boolean) => TileInfo
+begin
+    return TileInfoWithLogicalElementAndDefined(tile,
+        TilePackedRowSlackIndex(tile, row), value, defined);
+end;
+
 pure func PackedTileElementBits(data_type: TileDataType) => integer {4,8,16,32,64}
 begin
     return TileElementBits(data_type);
@@ -191,7 +257,13 @@ begin
     assert row < tile.rows && column < tile.columns;
     var index: integer = 0;
     if tile.layout == TileLayout_RowMajor then
-        index = row * tile.columns + column;
+        if PackedTileDataTypeUsesRowLocalPairs(tile.data_type) then
+            let pair_columns = PackedTileRowPairColumns(tile.columns);
+            index = (row * pair_columns + (column DIVRM 2)) * 2 +
+                    (column MOD 2);
+        else
+            index = row * tile.columns + column;
+        end;
     elsif tile.layout == TileLayout_ColumnMajor then
         index = column * tile.rows + row;
     else
