@@ -7,9 +7,7 @@ begin
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
-    
     Store(Zeros{PTO_XLEN} + 0x204, 1, Zeros{PTO_XLEN} + 0xa5);
-    
 
     StartMemoryEventCapture(0);
     MGATHER(0, Zeros{PTO_XLEN} + 0x200,

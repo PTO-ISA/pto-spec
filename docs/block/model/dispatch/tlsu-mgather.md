@@ -36,7 +36,10 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    return valid_columns <= columns && IsNonzeroPowerOfTwo(columns) &&
+    let row_major_shape_legal =
+        CurrentBundleTileLayout() != TileLayout_RowMajor ||
+        (valid_columns <= columns && IsNonzeroPowerOfTwo(columns));
+    return row_major_shape_legal &&
            valid_rows * valid_columns <= PTO_MODEL_TILE_ELEMENTS;
 end;
 

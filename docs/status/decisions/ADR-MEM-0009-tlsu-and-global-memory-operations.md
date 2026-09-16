@@ -182,7 +182,9 @@
     "PTO-TILE-MGATHER-XOR",
     "PTO-TILE-MODEL-DISPATCH-MEMORY-AND-DATA-MOVEMENT",
     "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT",
     "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+    "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
     "PTO-TILE-MODEL-MEMORY-ADDRESSING",
     "PTO-TILE-MODEL-MEMORY-ATOMICS",
     "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
@@ -415,6 +417,65 @@
         "PTO-TILE-MSCATTER-OR",
         "PTO-TILE-MSCATTER-POPC",
         "PTO-TILE-MSCATTER-XOR"
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/301",
+      "affected_ndf": [
+        "PTO-ATOM-RED-FAULTS-001",
+        "PTO-ATOM-RED-ORDERING-001",
+        "PTO-ATOM-RED-TYPE-LEGALITY-001",
+        "PTO-B-IOR-BINDING-001",
+        "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+        "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+        "PTO-BSTART-MGATHER-SCHEMA-001",
+        "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+        "PTO-BSTART-MSCATTER-SCHEMA-001",
+        "PTO-INDEXED-TLSU-STRIDE-001",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+        "PTO-MGATHER-CAS-ATOMIC-001",
+        "PTO-MGATHER-CAS-PUBLICATION-001",
+        "PTO-MGATHER-MASK-PREDICATE-001",
+        "PTO-MGATHER-MASK-PUBLICATION-001",
+        "PTO-MGATHER-MASK-TYPE-002",
+        "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+        "PTO-MSCATTER-DUPLICATE-ORDER-001",
+        "PTO-MSCATTER-MASK-DUPLICATE-001",
+        "PTO-MSCATTER-MASK-PREDICATE-001",
+        "PTO-MSCATTER-MASK-TYPE-002",
+        "PTO-REQ-TILE-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-BSTART-MGATHER",
+        "PTO-BLOCK-BSTART-MGATHER-CAS",
+        "PTO-BLOCK-BSTART-MGATHER-MASK",
+        "PTO-BLOCK-BSTART-MSCATTER",
+        "PTO-BLOCK-BSTART-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-MGATHER-CAS",
+        "PTO-TILE-MGATHER-MASK",
+        "PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED",
+        "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION",
+        "PTO-TILE-MSCATTER",
+        "PTO-TILE-MSCATTER-MASK"
       ]
     }
   ]
@@ -727,3 +788,18 @@ This record owns the listed TLSU and GM-operation decisions but does not replace
 Issue [#301](https://github.com/PTO-ISA/pto-spec/issues/301) amends the indexed TLSU contract without changing the owning decision family. Indexed ordinary, masked, CAS, and atomic/RMW gather/scatter operations use one `BaseGPR` plus a signed or unsigned byte displacement from an `S32`, `U32`, `S64`, or `U64` Local IndexTile. There is no element-size scaling, logical-row decomposition, row stride, or tensor-pitch lookup. `B.IOR` is BaseGPR-only for this family: `RegSrc0` carries the base and `RegSrc1`, `RegSrc2`, and `RegDst` encode zero.
 
 `ROWMAJOR`, `CUBE_M16`, and `CUBE_M32` are supported as one indexed layout class while retaining independent physical descriptors, capacities, `LB2`, and `TSize`; `CUBE_N8` remains excluded. Ordinary Local U8 `PredicateTile` masks use one physical U8 element per logical predicate and canonical values `0x00` or `0x01`, independent of producer datatype. Ordinary packed-four-bit gather/scatter uses one index per byte and maps the byte to two adjacent nibbles; packed atomics remain unsupported. Existing arithmetic, duplicate ordering, precise preflight/fault, padding, TCI, and `PE_MASK` semantics are unchanged.
+
+### Compatibility and dependent-toolchain impact
+
+This amendment restores the pre-row-stride indexed-address ABI. Assemblers,
+disassemblers, compilers, emulators, RTL, catalogs, and generated documentation
+must remove the indexed row-stride operand and encode BaseGPR-only `B.IOR`.
+Software constructs exact byte displacements explicitly. Existing indexed
+atomic opcode/function assignments and datatype matrices are unchanged.
+
+### Release impact
+
+`release_impact: required`. The ASL/NDF, command-form, TileOp macro, catalog,
+AVS, coverage, ADR index, readiness, traceability, and `0.58.6.x` release-input
+projections must advance together; this amendment does not itself publish a
+release.

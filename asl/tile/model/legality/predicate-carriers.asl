@@ -242,14 +242,10 @@ begin
                TileDescriptorLegal(index);
     end;
     if tile.storage_kind == TileStorage_PredicateCell then
-        return TilePredicateCellDescriptorLegal(index) &&
-               tile.rows == (if tile.layout == TileLayout_CUBE_M16 then
-                   16 else 32);
+        return TilePredicateCellDescriptorLegal(index);
     end;
     return tile.storage_kind == TileStorage_Numeric &&
-           TileCubeDescriptorLegal(tile) &&
-           tile.rows == (if tile.layout == TileLayout_CUBE_M16 then
-               16 else 32);
+           TileCubeDescriptorLegal(tile);
 end;
 
 readonly func IndexedTLSUPredicateValuesLegal(index: TileIndex) => boolean

@@ -7,21 +7,21 @@ begin
     var mask_ready: boolean = FALSE;
     if layout == TileLayout_RowMajor then
         ConfigureTile(0, 128, 1, 1, 1, 1,
-            TileDataType_U32, layout, TileLocation_Any);
+            TileDataType_U32, layout);
         ConfigureTile(1, 128, 1, 1, 1, 1,
-            TileDataType_S32, layout, TileLocation_Any);
+            TileDataType_S32, layout);
         ConfigureTile(2, 128, 1, 1, 1, 1,
-            TileDataType_U8, layout, TileLocation_Any);
+            TileDataType_U8, layout);
         destination_ready = TRUE;
         index_ready = TRUE;
         mask_ready = TRUE;
     else
         destination_ready = ConfigureCubeTile(0, 128, 1, 1,
-            TileDataType_U32, layout, TileLocation_Matrix);
+            TileDataType_U32, layout);
         index_ready = ConfigureCubeTile(1, 128, 1, 1,
-            TileDataType_S32, layout, TileLocation_Matrix);
+            TileDataType_S32, layout);
         mask_ready = ConfigureCubeTile(2, 128, 1, 1,
-            TileDataType_U8, layout, TileLocation_Matrix);
+            TileDataType_U8, layout);
     end;
     assert destination_ready && index_ready && mask_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x11);

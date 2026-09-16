@@ -4,10 +4,10 @@ func CubeGather(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     assert destination_ready;
     let index_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
     Store(base + 4, 4, Zeros{PTO_XLEN} + 0x11223344);
@@ -23,10 +23,10 @@ func CubeScatter(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     assert source_ready;
     let index_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xaabbccdd);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -44,13 +44,13 @@ func CubeMaskedGather(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     assert destination_ready;
     let index_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready;
     let mask_ready = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U8,
-        layout, TileLocation_Matrix);
+        layout);
     assert mask_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -67,16 +67,16 @@ func CubeCAS(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U16,
-        layout, TileLocation_Matrix);
+        layout);
     assert destination_ready;
     let index_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready;
     let expected_ready = ConfigureCubeTile(2, 128, 1, 1, TileDataType_U16,
-        layout, TileLocation_Matrix);
+        layout);
     assert expected_ready;
     let replacement_ready = ConfigureCubeTile(3, 128, 1, 1, TileDataType_U16,
-        layout, TileLocation_Matrix);
+        layout);
     assert replacement_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
@@ -96,11 +96,11 @@ func CubeAtomicValue(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTile(0, 128, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     let index_ready = ConfigureCubeTile(1, 256, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     let value_ready = ConfigureCubeTile(2, 256, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     assert destination_ready && index_ready && value_ready;
     assert _Tiles[[0]].capacity_bytes != _Tiles[[1]].capacity_bytes;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -122,9 +122,9 @@ func CubeReduction(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let index_ready = ConfigureCubeTile(0, 256, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     let value_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_U32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready && value_ready;
     assert _Tiles[[0]].capacity_bytes != _Tiles[[1]].capacity_bytes;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -143,7 +143,7 @@ func CubePopc(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let index_ready = ConfigureCubeTile(0, 256, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert index_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 4);
     Store(base + 4, 4, Zeros{PTO_XLEN} + 10);
@@ -160,9 +160,9 @@ func CubeHeterogeneousDescriptors(layout: TileLayout, base: Word)
 begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(0, 256, 1, 1, TileDataType_U16,
-        layout, TileLocation_Matrix);
+        layout);
     let index_ready = ConfigureCubeTile(1, 128, 1, 1, TileDataType_S32,
-        layout, TileLocation_Matrix);
+        layout);
     assert source_ready && index_ready;
     assert _Tiles[[0]].capacity_bytes != _Tiles[[1]].capacity_bytes;
     assert _Tiles[[0]].columns != _Tiles[[1]].columns;
@@ -182,17 +182,17 @@ func LayoutMismatchCUBEM32Index()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTile(0, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let index_ready = ConfigureCubeTile(1, 128, 1, 1,
-        TileDataType_S32, TileLayout_CUBE_M32, TileLocation_Matrix);
+        TileDataType_S32, TileLayout_CUBE_M32);
     let value_ready = ConfigureCubeTile(2, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let mask_ready = ConfigureCubeTile(3, 128, 1, 1,
-        TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U8, TileLayout_CUBE_M16);
     let expected_ready = ConfigureCubeTile(4, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     let replacement_ready = ConfigureCubeTile(5, 128, 1, 1,
-        TileDataType_U32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_U32, TileLayout_CUBE_M16);
     assert destination_ready && index_ready && value_ready && mask_ready &&
            expected_ready && replacement_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -225,7 +225,7 @@ begin
     ResetProfileState();
     var destination_ready = TRUE;
     let index_ready = ConfigureCubeTile(1, 128, 1, 1,
-        TileDataType_S32, TileLayout_CUBE_M16, TileLocation_Matrix);
+        TileDataType_S32, TileLayout_CUBE_M16);
     var value_ready = TRUE;
     var mask_ready = TRUE;
     var expected_ready = TRUE;

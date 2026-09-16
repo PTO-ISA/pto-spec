@@ -30,9 +30,7 @@ begin
         return FALSE;
     end;
     if TileLayoutIsCube(tile.layout) then
-        return TileCubeDescriptorLegal(tile) &&
-               tile.rows == (if tile.layout == TileLayout_CUBE_M16 then
-                   16 else 32);
+        return TileCubeDescriptorLegal(tile);
     end;
     return TileDescriptorLegal(index) && tile.layout == TileLayout_RowMajor;
 end;
@@ -58,7 +56,7 @@ begin
     return data_valid_columns == index_valid_columns;
 end;
 
-pure func IndexedTLSUPhysicalShapeLegal(
+readonly func IndexedTLSUPhysicalShapeLegal(
     layout: TileLayout, data_type: TileDataType,
     valid_rows: integer {1..65535},
     valid_columns: integer {1..65535},
@@ -68,9 +66,13 @@ begin
     if layout == TileLayout_RowMajor then
         return valid_columns <= columns && IsNonzeroPowerOfTwo(columns);
     end;
-    return TileCubeStorageRows(layout, valid_rows, data_type) ==
-               (if layout == TileLayout_CUBE_M16 then 16 else 32) &&
-           TileCubeStorageColumns(layout, valid_columns, data_type) == columns;
+    let physical_rows = TileCubeStorageRows(layout, valid_rows, data_type);
+    let required_bytes = TileCubePhysicalRequiredBytes(
+        layout, physical_rows, columns, data_type);
+    return physical_rows != 0 && required_bytes != 0 &&
+           TileCubeDescriptorShapeAndPhysicalLegal(required_bytes,
+               physical_rows, columns, valid_rows, valid_columns,
+               data_type, layout);
 end;
 
 readonly func TileOperandsLegal_TFMA(
