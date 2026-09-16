@@ -60,9 +60,10 @@ begin
         Zeros{PTO_XLEN}, NumericRound_RNE, FALSE);
     let (negative_zero, negative_zero_flags) = ConvertFromBF16(
         Zeros{PTO_XLEN} + 0x8000, NumericRound_RNE, FALSE);
-    assert zero == Zeros{PTO_XLEN} && zero_flags == Zeros{5};
+    assert zero == Zeros{PTO_XLEN} &&
+           zero_flags == Zeros{5} + 0x18;
     assert negative_zero == Zeros{PTO_XLEN} &&
-           negative_zero_flags == Zeros{5};
+           negative_zero_flags == Zeros{5} + 0x18;
 
     let (exact, exact_flags) = ConvertFromFP16(
         Zeros{PTO_XLEN} + 0x3d00, NumericRound_RNE, FALSE);

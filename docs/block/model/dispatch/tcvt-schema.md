@@ -73,6 +73,20 @@ begin
            source_operation_type, destination_type) then
         return FALSE;
     end;
+    // E6M2 and RCPE6M2 have a closed RNE/RNA profile. Resolve the operation
+    // default here, while the bundle is still in schema preflight, so an
+    // unsupported mode cannot reach destination allocation or effects. The
+    // operand legality check repeats this rule after decoded operands exist.
+    let rounding_selection = DecodeBundleRoundingSelection(
+        _BundleDataAttributes.rounding_mode);
+    let resolved_rounding_mode = if
+        rounding_selection.use_operation_default then NumericRound_RNE
+        else rounding_selection.rounding_mode;
+    if !HardwareTCVTRoundingModeSupported(
+           source_operation_type, destination_type,
+           resolved_rounding_mode) then
+        return FALSE;
+    end;
 
     let source_layout = _Tiles[[source]].layout;
     let requested_valid_columns = UInt(_BundleDimensions[[0]]);

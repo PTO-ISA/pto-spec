@@ -106,7 +106,7 @@ begin
     end;
     if value_class == NumericValue_NegativeZero ||
        value_class == NumericValue_PositiveZero then
-        return (Zeros{PTO_XLEN}, Zeros{5});
+        return (Zeros{PTO_XLEN}, Zeros{5} + 0x18);
     end;
     if value_class == NumericValue_NegativeInfinity ||
        value_class == NumericValue_NegativeNormal ||

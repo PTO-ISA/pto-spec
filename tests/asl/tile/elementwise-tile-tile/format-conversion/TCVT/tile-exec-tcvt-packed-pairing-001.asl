@@ -69,6 +69,19 @@ begin
     assert TileCubePayloadIndex(cube_m16, 0, 3) == 3;
     assert TileCubePayloadIndex(cube_m16, 0, 4) == 8;
     assert TileCubePayloadIndex(cube_m16, 0, 5) == 9;
+    var cube_m16_values = cube_m16;
+    for column = 0 to 4 looplimit 5 do
+        let element = TCVTPackedLogicalIndex(cube_m16_values, 0,
+            column as integer {0..65535});
+        cube_m16_values = TileInfoWithLogicalElement(cube_m16_values,
+            element, Zeros{PTO_XLEN} + column + 1);
+    end;
+    for column = 0 to 4 looplimit 5 do
+        let element = TCVTPackedLogicalIndex(cube_m16_values, 0,
+            column as integer {0..65535});
+        assert TileReadLogicalElement(cube_m16_values, element) ==
+            Zeros{PTO_XLEN} + column + 1;
+    end;
 
     var cube_m32 = tile;
     cube_m32.layout = TileLayout_CUBE_M32;
@@ -82,5 +95,18 @@ begin
     assert TileCubePayloadIndex(cube_m32, 0, 3) == 3;
     assert TileCubePayloadIndex(cube_m32, 0, 4) == 4;
     assert TileCubePayloadIndex(cube_m32, 0, 5) == 5;
+    var cube_m32_values = cube_m32;
+    for column = 0 to 4 looplimit 5 do
+        let element = TCVTPackedLogicalIndex(cube_m32_values, 0,
+            column as integer {0..65535});
+        cube_m32_values = TileInfoWithLogicalElement(cube_m32_values,
+            element, Zeros{PTO_XLEN} + column + 1);
+    end;
+    for column = 0 to 4 looplimit 5 do
+        let element = TCVTPackedLogicalIndex(cube_m32_values, 0,
+            column as integer {0..65535});
+        assert TileReadLogicalElement(cube_m32_values, element) ==
+            Zeros{PTO_XLEN} + column + 1;
+    end;
     return 0;
 end;

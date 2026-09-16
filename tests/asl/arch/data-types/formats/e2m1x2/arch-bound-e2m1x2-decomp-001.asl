@@ -62,9 +62,9 @@ begin
     assert TileNumericValueClass(TileDataType_E2M1X2,
         Zeros{PTO_XLEN} + 8) == NumericValue_NegativeZero;
     assert TileNumericValueClass(TileDataType_E2M1X2,
-        Zeros{PTO_XLEN} + 1) == NumericValue_PositiveNormal;
+        Zeros{PTO_XLEN} + 1) == NumericValue_PositiveSubnormal;
     assert TileNumericValueClass(TileDataType_E2M1X2,
-        Zeros{PTO_XLEN} + 9) == NumericValue_NegativeNormal;
+        Zeros{PTO_XLEN} + 9) == NumericValue_NegativeSubnormal;
 end;
 func main() => integer
 begin

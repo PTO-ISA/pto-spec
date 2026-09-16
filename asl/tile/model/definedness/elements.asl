@@ -199,7 +199,7 @@ begin
             when TileDataType_E6M2 =>
                 return Zeros{PTO_XLEN} + 0xfe;
             when TileDataType_RCPE6M2 =>
-                return Zeros{PTO_XLEN} + 0xfe;
+                return Zeros{PTO_XLEN};
             when TileDataType_U8 => return Zeros{PTO_XLEN} + 0xff;
             when TileDataType_U16 => return Zeros{PTO_XLEN} + 0xffff;
             when TileDataType_U32 => return Zeros{PTO_XLEN} + 0xffffffff;
@@ -230,9 +230,9 @@ begin
         when TileDataType_E5M2 =>
             return Zeros{PTO_XLEN} + 0xfb;
         when TileDataType_E2M1X2,
-             TileDataType_E1M2X2,
-             TileDataType_E6M2,
-             TileDataType_RCPE6M2 => return Zeros{PTO_XLEN};
+             TileDataType_E1M2X2 => return Zeros{PTO_XLEN} + 0xf;
+        when TileDataType_E6M2 => return Zeros{PTO_XLEN};
+        when TileDataType_RCPE6M2 => return Zeros{PTO_XLEN} + 0xfe;
         when TileDataType_U8, TileDataType_U16, TileDataType_U32,
              TileDataType_U64, TileDataType_U4X2 => return Zeros{PTO_XLEN};
         when TileDataType_S8 => return Zeros{PTO_XLEN} + 0x80;

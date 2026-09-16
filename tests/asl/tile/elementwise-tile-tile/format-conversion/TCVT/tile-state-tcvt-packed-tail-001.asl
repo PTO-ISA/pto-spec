@@ -112,7 +112,7 @@ func main() => integer
 begin
     RunNarrowTail(1, TilePad_Zero, Zeros{PTO_XLEN});
     RunNarrowTail(3, TilePad_Max, Zeros{PTO_XLEN} + 0x7);
-    RunNarrowTail(5, TilePad_Min, Zeros{PTO_XLEN});
+    RunNarrowTail(5, TilePad_Min, Zeros{PTO_XLEN} + 0xf);
     RunNullNarrowTail(1);
     RunNullNarrowTail(3);
     RunNullNarrowTail(5);

@@ -22,6 +22,11 @@ begin
     assert e6_exact == Zeros{PTO_XLEN} + 0xc1;
     assert e6_exact_flags == Zeros{5};
 
+    let (e6_minimum, e6_minimum_flags) = ReferenceE6M2Encoding(
+        FP19PowerOfTwo(-48), control);
+    assert e6_minimum == Zeros{PTO_XLEN};
+    assert e6_minimum_flags == Zeros{5};
+
     let (e6_tiny, e6_tiny_flags) = ReferenceE6M2Encoding(
         0.5 * FP19PowerOfTwo(-48), control);
     assert e6_tiny == Zeros{PTO_XLEN};

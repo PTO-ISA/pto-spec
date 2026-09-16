@@ -38,6 +38,23 @@ begin
     assert HardwareTCVTTypePairSupported(
         TileDataType_RCPE6M2, TileDataType_BF16);
 
+    assert TilePadValueForDataType(
+        TilePad_Max, TileDataType_E2M1X2) == Zeros{PTO_XLEN} + 0x7;
+    assert TilePadValueForDataType(
+        TilePad_Min, TileDataType_E2M1X2) == Zeros{PTO_XLEN} + 0xf;
+    assert TilePadValueForDataType(
+        TilePad_Max, TileDataType_E1M2X2) == Zeros{PTO_XLEN} + 0x7;
+    assert TilePadValueForDataType(
+        TilePad_Min, TileDataType_E1M2X2) == Zeros{PTO_XLEN} + 0xf;
+    assert TilePadValueForDataType(
+        TilePad_Max, TileDataType_E6M2) == Zeros{PTO_XLEN} + 0xfe;
+    assert TilePadValueForDataType(
+        TilePad_Min, TileDataType_E6M2) == Zeros{PTO_XLEN};
+    assert TilePadValueForDataType(
+        TilePad_Max, TileDataType_RCPE6M2) == Zeros{PTO_XLEN};
+    assert TilePadValueForDataType(
+        TilePad_Min, TileDataType_RCPE6M2) == Zeros{PTO_XLEN} + 0xfe;
+
     assert HardwareTCVTRoundingModeSupported(
         TileDataType_E6M2, TileDataType_FP16, NumericRound_RNE);
     assert HardwareTCVTRoundingModeSupported(

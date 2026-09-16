@@ -37,6 +37,58 @@ begin
         destination_type, control);
 end;
 
+func AssertPackedMidpoint(data_type: TileDataType, midpoint: real,
+                          rne_code: integer {0..7},
+                          rna_code: integer {0..7},
+                          underflow: boolean)
+begin
+    let rne_control = NumericExecutionControl {
+        rounding_mode = NumericRound_RNE, saturating = FALSE
+    };
+    let rna_control = NumericExecutionControl {
+        rounding_mode = NumericRound_RNA, saturating = FALSE
+    };
+    let expected_flags = if underflow then Zeros{5} + 0x18
+        else Zeros{5} + 0x10;
+    let (positive_rne, positive_rne_flags) = ReferencePacked4Encoding(
+        midpoint, data_type, rne_control);
+    let (positive_rna, positive_rna_flags) = ReferencePacked4Encoding(
+        midpoint, data_type, rna_control);
+    let (negative_rne, negative_rne_flags) = ReferencePacked4Encoding(
+        -midpoint, data_type, rne_control);
+    let (negative_rna, negative_rna_flags) = ReferencePacked4Encoding(
+        -midpoint, data_type, rna_control);
+    assert positive_rne == Zeros{PTO_XLEN} + rne_code;
+    assert positive_rna == Zeros{PTO_XLEN} + rna_code;
+    assert negative_rne == Zeros{PTO_XLEN} + rne_code + 8;
+    assert negative_rna == Zeros{PTO_XLEN} + rna_code + 8;
+    assert positive_rne_flags == expected_flags &&
+           positive_rna_flags == expected_flags &&
+           negative_rne_flags == expected_flags &&
+           negative_rna_flags == expected_flags;
+end;
+
+func AssertAllPackedMidpoints()
+begin
+    // Every adjacent E2M1 midpoint, including the subnormal-to-normal tie.
+    AssertPackedMidpoint(TileDataType_E2M1X2, 0.25, 0, 1, TRUE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 0.75, 2, 2, TRUE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 1.25, 2, 3, FALSE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 1.75, 4, 4, FALSE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 2.5, 4, 5, FALSE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 3.5, 6, 6, FALSE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 5.0, 6, 7, FALSE);
+
+    // Every adjacent S1P2 midpoint, including the subnormal 0.125 tie.
+    AssertPackedMidpoint(TileDataType_E1M2X2, 0.125, 0, 1, TRUE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 0.375, 2, 2, FALSE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 0.625, 2, 3, FALSE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 0.875, 4, 4, FALSE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 1.125, 4, 5, FALSE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 1.375, 6, 6, FALSE);
+    AssertPackedMidpoint(TileDataType_E1M2X2, 1.625, 6, 7, FALSE);
+end;
+
 func AssertPackedForwardBoundaries()
 begin
     let control = DefaultNumericExecutionControl();
@@ -171,6 +223,7 @@ func main() => integer
 begin
     AssertPackedValueSet(TileDataType_E2M1X2);
     AssertPackedValueSet(TileDataType_E1M2X2);
+    AssertAllPackedMidpoints();
     AssertPackedForwardBoundaries();
     AssertPackedReverseExact();
     return 0;
