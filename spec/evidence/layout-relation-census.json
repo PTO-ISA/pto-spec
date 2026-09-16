@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "22b6c82da88ad053b2b39b09ff01ba961d33d171",
+  "candidate_head": "01b5456161fca7727705220a9fc225141f562094",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16020,6 +16020,15 @@
   ],
   "common_helper_deltas": [
     {
+      "after_layouts": [],
+      "after_sha256": "30a419e71b5d27494bcd015cdc5ea0eded70dfa03007005c375f3b1947235b45",
+      "before_layouts": [],
+      "before_sha256": "71ebaa83430e0aeb12c6417fe7fb1dbcfee1a8f2ed7cf3b3ecfc88d6067e8ad5",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleDataTypeConcrete",
+      "path": "asl/block/model/dispatch/descriptor-legality.asl"
+    },
+    {
       "after_layouts": [
         "CUBE_M16",
         "CUBE_M32"
@@ -16519,6 +16528,15 @@
       "path": "asl/block/model/dispatch/destination-shape.asl"
     },
     {
+      "after_layouts": [],
+      "after_sha256": "4006d688f049374eacbe46dcd42c85748cf23ef6c3b761bb223037e80420bc9f",
+      "before_layouts": [],
+      "before_sha256": "5effad816c0e5392f2a4a7d7ff9f13ab55df6efbee934623866e53885e3795b2",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileCarrierWidthCompatible",
+      "path": "asl/tile/model/legality/dtype-layout.asl"
+    },
+    {
       "after": [],
       "before": [
         {
@@ -16843,6 +16861,60 @@
       "name": "TileCubeStorageElementsForColumns"
     },
     {
+      "after_layouts": [],
+      "after_sha256": "a675572cdd3d9e5efa74358b287e3b33e91eedda491535413eb335206c128b1c",
+      "before_layouts": [],
+      "before_sha256": "61fef0a58778effe93a3c96398c121f94887c0557e6cadee2a87650e412b3489",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileDataTypeEncodingValid",
+      "path": "asl/arch/data-types/tile-data-types.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "068d9b5dac41a1bb76b159f3bb94fc43700a339fcebedfae41fdb7b0da6e045c",
+      "before_layouts": [],
+      "before_sha256": "47783d12791d81141799985f26abd588d1400e78ee4e77aada53b5fac97c3e1a",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileDataTypeFromEncoding",
+      "path": "asl/arch/data-types/tile-data-types.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "8b8c43c3047739c8a85f979a6ca9727e2ef92eacb2d9f26b4c2077ddeb8b5f39",
+      "before_layouts": [],
+      "before_sha256": "0337bb45eb8bdca90aeeaeaf7ebd9e76dc7d69877ccc417e6b7ee5dec1a1b250",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileDataTypeIsFloating",
+      "path": "asl/tile/model/definedness/elements.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "63d71919c93d40a53682044d6989053d01a4ddc468cd547741106266f5276025",
+      "before_layouts": [],
+      "before_sha256": "6ea939dc7cf11a1396cdc6af09a14f4f82c34a526681a7562b6b3b27c83be4d9",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileDataTypeToEncoding",
+      "path": "asl/arch/data-types/tile-data-types.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "aea6a0215bb620e28147848a7b93df5fb296c5eb41c2abb74583c3f0f8d4598e",
+      "before_layouts": [],
+      "before_sha256": "866dc87b246dd333930884709259d749cd1505b20a87aa5045e2ecda827d0262",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileElementBits",
+      "path": "asl/tile/model/state/descriptors.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "8542171b507a70df4b684d1f373ef12d5df8af3028d4d7fa8a2c62d04acf086e",
+      "before_layouts": [],
+      "before_sha256": "4ee56b5212c57a06a9c31045001473ee706d5cc29d8e1edcbeb7d357c787c059",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileElementBytes",
+      "path": "asl/tile/model/definedness/elements.asl"
+    },
+    {
       "after": [],
       "before": [
         {
@@ -17007,6 +17079,24 @@
       ],
       "classification": "indexed TLSU byte-displacement and Local layout closure (ADR-MEM-0009 2026-09-16 amendment, Issue #301)",
       "name": "TileMemoryIndexedStridedAddress"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "adf16a8c4ba327aca09609a43f358157c49cb2651b221718e9c081171cc6abfd",
+      "before_layouts": [],
+      "before_sha256": "39cbd0c03ceca537ca6a710473fde81f1e9556d0a66813bb2cf76f7ec2117ec6",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileNumericValueClass",
+      "path": "asl/arch/features/mx-formats.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "3afe68a7721f3b195842769f752b97c229daa892cd3ede1730b96abe82d01ef2",
+      "before_layouts": [],
+      "before_sha256": "e7b32f291681bc386dd9ead00fec76c0be95b98574defacb09dadab99ac7cb49",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TilePadValueForDataType",
+      "path": "asl/tile/model/definedness/elements.asl"
     },
     {
       "after_layouts": [],
@@ -42827,7 +42917,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/descriptor-legality.asl",
-            "sha256": "71ebaa83430e0aeb12c6417fe7fb1dbcfee1a8f2ed7cf3b3ecfc88d6067e8ad5"
+            "sha256": "30a419e71b5d27494bcd015cdc5ea0eded70dfa03007005c375f3b1947235b45"
           }
         ],
         "BundleDescriptorHasTIMG2COLFormIdentity": [
@@ -47355,7 +47445,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/dtype-layout.asl",
-            "sha256": "5effad816c0e5392f2a4a7d7ff9f13ab55df6efbee934623866e53885e3795b2"
+            "sha256": "4006d688f049374eacbe46dcd42c85748cf23ef6c3b761bb223037e80420bc9f"
           }
         ],
         "TileCellRearrangementByteDefined": [
@@ -48090,7 +48180,7 @@
             ],
             "layouts": [],
             "path": "asl/arch/data-types/tile-data-types.asl",
-            "sha256": "61fef0a58778effe93a3c96398c121f94887c0557e6cadee2a87650e412b3489"
+            "sha256": "a675572cdd3d9e5efa74358b287e3b33e91eedda491535413eb335206c128b1c"
           }
         ],
         "TileDataTypeFromEncoding": [
@@ -48101,7 +48191,7 @@
             ],
             "layouts": [],
             "path": "asl/arch/data-types/tile-data-types.asl",
-            "sha256": "47783d12791d81141799985f26abd588d1400e78ee4e77aada53b5fac97c3e1a"
+            "sha256": "068d9b5dac41a1bb76b159f3bb94fc43700a339fcebedfae41fdb7b0da6e045c"
           }
         ],
         "TileDataTypeIsFloating": [
@@ -48109,7 +48199,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/tile/model/definedness/elements.asl",
-            "sha256": "0337bb45eb8bdca90aeeaeaf7ebd9e76dc7d69877ccc417e6b7ee5dec1a1b250"
+            "sha256": "8b8c43c3047739c8a85f979a6ca9727e2ef92eacb2d9f26b4c2077ddeb8b5f39"
           }
         ],
         "TileDataTypeIsFourBit": [
@@ -48152,7 +48242,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/arch/data-types/tile-data-types.asl",
-            "sha256": "6ea939dc7cf11a1396cdc6af09a14f4f82c34a526681a7562b6b3b27c83be4d9"
+            "sha256": "63d71919c93d40a53682044d6989053d01a4ddc468cd547741106266f5276025"
           }
         ],
         "TileDenseRowStrideBytes": [
@@ -48210,7 +48300,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/tile/model/state/descriptors.asl",
-            "sha256": "866dc87b246dd333930884709259d749cd1505b20a87aa5045e2ecda827d0262"
+            "sha256": "aea6a0215bb620e28147848a7b93df5fb296c5eb41c2abb74583c3f0f8d4598e"
           }
         ],
         "TileElementBytes": [
@@ -48218,7 +48308,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/tile/model/definedness/elements.asl",
-            "sha256": "4ee56b5212c57a06a9c31045001473ee706d5cc29d8e1edcbeb7d357c787c059"
+            "sha256": "8542171b507a70df4b684d1f373ef12d5df8af3028d4d7fa8a2c62d04acf086e"
           }
         ],
         "TileElementwiseDescriptorLegal": [
@@ -49498,6 +49588,7 @@
               "ClassifyE3M2",
               "ClassifyE4M3",
               "ClassifyE5M2",
+              "ClassifyE6M2",
               "ClassifyE8M0",
               "ClassifyFP16",
               "ClassifyFP32",
@@ -49505,6 +49596,7 @@
               "ClassifyHF32",
               "ClassifyHiF4X2",
               "ClassifyHiF8",
+              "ClassifyRCPE6M2",
               "ClassifySignedInteger",
               "ClassifySignedInteger",
               "ClassifySignedInteger",
@@ -49520,7 +49612,7 @@
             ],
             "layouts": [],
             "path": "asl/arch/features/mx-formats.asl",
-            "sha256": "39cbd0c03ceca537ca6a710473fde81f1e9556d0a66813bb2cf76f7ec2117ec6"
+            "sha256": "adf16a8c4ba327aca09609a43f358157c49cb2651b221718e9c081171cc6abfd"
           }
         ],
         "TileNumericValueClassIsNegative": [
@@ -50079,6 +50171,7 @@
               "CurrentBundleDataLayout",
               "CurrentBundleTileLayout",
               "CurrentBundleTileSourceLayout",
+              "HardwareTCVTRoundingModeSupported",
               "HardwareTCVTTypePairSupported",
               "TileCarrierWidthCompatible",
               "TileCubeDescriptorLegal",
@@ -50096,7 +50189,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/legality/operand-schema.asl",
-            "sha256": "7f4f8ec5b083c7844c49506086ed604bd7d39a83e679f689ffaf24988eb96c9f"
+            "sha256": "fec66c1b63a124b4aeb1160156eb5b46ee6cc1925f5ce81420fa2dadcddbd058"
           }
         ],
         "TileOperandsLegal_TFMA": [
@@ -50775,7 +50868,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/tile/model/definedness/elements.asl",
-            "sha256": "e7b32f291681bc386dd9ead00fec76c0be95b98574defacb09dadab99ac7cb49"
+            "sha256": "3afe68a7721f3b195842769f752b97c229daa892cd3ede1730b96abe82d01ef2"
           }
         ],
         "TilePayloadNonzero": [
@@ -204090,6 +204183,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 892,
+  "source_path_count": 896,
   "tile_location_normative_refs": []
 }
