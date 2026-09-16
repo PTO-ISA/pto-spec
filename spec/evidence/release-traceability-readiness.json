@@ -23624,7 +23624,7 @@
     "tests/asl/tile/model/execution/unary/tile-static-unary-contract-001.asl": "317d4cecb38d480e77ff4063b385bbfd3dd453be65e2f7533e56ff1d7cbc7b0c",
     "tests/asl/tile/model/legality/allocation-capacity/tile-bound-legality-001.asl": "ae82fc2f9ca0d1c6d5c8c0e594d90dca6d7f1d05f4615e0706e086eb741e7ac9",
     "tests/asl/tile/model/legality/allocation-capacity/tile-static-allocation-capacity-contract-001.asl": "84cf72a19b36cc5b72ad2b8cc19a4320166c30200451ba2d2483c4f0f6705bce",
-    "tests/asl/tile/model/legality/descriptor-shape/tile-fault-cube-generic-001.asl": "eaa607186fc85423f5c3488472ccf514e1523113d1cdfdedfc067490e3d425b0",
+    "tests/asl/tile/model/legality/descriptor-shape/tile-fault-cube-generic-001.asl": "32aab5cf9a105084d67ef0484f17b951da6eb47797b4fc6a7934507ebc7fb9ba",
     "tests/asl/tile/model/legality/descriptor-shape/tile-static-descriptor-shape-contract-001.asl": "4deaaa493ccc5c11488ad4f5c57a386b0f96f93285c9d0b33d1b2fedb71999db",
     "tests/asl/tile/model/legality/dtype-layout/tile-bound-carrier-reinterpret-002.asl": "57958acfe479dfa5a2672b010476b9fca5fdd8e4c2a8bb5dc3beec2c395313d1",
     "tests/asl/tile/model/legality/dtype-layout/tile-static-dtype-layout-contract-001.asl": "12aa77307004a575c9cb75ae3a549a7b9fd74577628d577f5095923441c5f959",
@@ -57241,7 +57241,7 @@
       "requirements": [
         "PTO-CUBE-CELL-STATE-001"
       ],
-      "sha256": "eaa607186fc85423f5c3488472ccf514e1523113d1cdfdedfc067490e3d425b0",
+      "sha256": "32aab5cf9a105084d67ef0484f17b951da6eb47797b4fc6a7934507ebc7fb9ba",
       "source": "asl/tile/model/legality/descriptor-shape.asl"
     },
     {
