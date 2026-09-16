@@ -66,10 +66,16 @@ begin
         end;
         return layout == TileLayout_RowMajor && valid_rows == 1;
     end;
-    if UInt(_BundleDimensions[[0]]) < 1 ||
-       UInt(_BundleDimensions[[0]]) > 65535 ||
-       UInt(_BundleDimensions[[2]]) < UInt(_BundleDimensions[[0]]) ||
-       UInt(_BundleDimensions[[2]]) > 65535 then
+    if decoded != TileOperation_TTRI then
+        return FALSE;
+    end;
+    let valid_columns = UInt(_BundleDimensions[[0]]);
+    let columns = if _BundleDimensionPresent[[2]] then
+        UInt(_BundleDimensions[[2]])
+    else
+        valid_columns;
+    if valid_columns < 1 || valid_columns > 65535 ||
+       columns < valid_columns || columns > 65535 then
         return FALSE;
     end;
     return UInt(_BundleDimensions[[1]]) >= 1 &&
