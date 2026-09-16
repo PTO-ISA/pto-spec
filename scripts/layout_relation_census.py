@@ -111,6 +111,27 @@ TCI_PAYLOAD_INDEX_CLASSIFICATION = (
     "TCI CUBE physical-column payload indexing "
     "(ADR-TILE-0010 2026-09-15 amendment, Issue #233)"
 )
+# ADR-CUBE-0004 and ADR-TILE-0012 (2026-09-15 amendments, Issue #311)
+# authorize CUBE reduction destinations to preserve the source's reduced-axis
+# physical envelope independently of the valid rectangle.  Keep this helper
+# set explicit so unrelated shared geometry changes continue to fail closed.
+CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS = {
+    "TileCubeCellCount",
+    "TileCubeDescriptorShapeAndPhysicalLegal",
+    "TileCubeKRepeat",
+    "TileCubeNRepeat",
+    "TileCubePhysicalCellCount",
+    "TileCubePhysicalKRepeat",
+    "TileCubePhysicalNRepeat",
+    "TileCubePhysicalRequiredBytes",
+    "TileCubePhysicalStorageElements",
+    "TileCubeRequiredBytes",
+    "TileReductionSourceCapacityLegal",
+}
+CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION = (
+    "CUBE reduction physical-geometry decoupling "
+    "(ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)"
+)
 
 
 def git(*args: str) -> str:
@@ -1306,8 +1327,11 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
-            if name in TCI_PHYSICAL_COLUMN_HELPERS:
-                rows.append({"name": name, "classification": TCI_PHYSICAL_COLUMN_CLASSIFICATION,
+            if name in TCI_PHYSICAL_COLUMN_HELPERS or name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
+                classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
+                                  if name in TCI_PHYSICAL_COLUMN_HELPERS
+                                  else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION)
+                rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
             errors.append(f"common-helper definition set changed: {name}")
@@ -1319,6 +1343,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             if old["sha256"] == new["sha256"]:
                 continue
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
+            if classification is None and name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
+                classification = CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             payload_index_inherited = (

@@ -10669,7 +10669,7 @@
           "sha256": "cd20bd93062f6a4ad5bdce762a7c06c735dd650b7f25ff5b82b66ab710f39679"
         }
       ],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubeCellCount"
     },
     {
@@ -10720,7 +10720,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubeDescriptorShapeAndPhysicalLegal"
     },
     {
@@ -10768,7 +10768,7 @@
           "sha256": "865243cd90fae952dc2e50b1a9359285f71a97de1cc3b63a7e1a906747637013"
         }
       ],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubeKRepeat"
     },
     {
@@ -10808,7 +10808,7 @@
           "sha256": "6063b1378fb7a716c98b21fdec547770c59d0022c743cc85e8887283b97c2121"
         }
       ],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubeNRepeat"
     },
     {
@@ -10859,7 +10859,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubePhysicalCellCount"
     },
     {
@@ -10877,7 +10877,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubePhysicalKRepeat"
     },
     {
@@ -10896,7 +10896,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubePhysicalNRepeat"
     },
     {
@@ -10911,7 +10911,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubePhysicalRequiredBytes"
     },
     {
@@ -10928,7 +10928,7 @@
         }
       ],
       "before": [],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubePhysicalStorageElements"
     },
     {
@@ -10943,7 +10943,7 @@
           "sha256": "a66658b0f46171619b7fd26e5c2b843de78aed95176f745191f5438303e9af1e"
         }
       ],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileCubeRequiredBytes"
     },
     {
@@ -11108,7 +11108,7 @@
           "sha256": "06938ac8f0765f84efef96ac785d3a9284bc08e9df0306b06a54655429802e93"
         }
       ],
-      "classification": "UNCLASSIFIED",
+      "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileReductionSourceCapacityLegal"
     },
     {
@@ -16088,19 +16088,7 @@
     }
   ],
   "empty_layout_sets": [],
-  "errors": [
-    "common-helper definition set changed: TileCubeCellCount",
-    "common-helper definition set changed: TileCubeDescriptorShapeAndPhysicalLegal",
-    "common-helper definition set changed: TileCubeKRepeat",
-    "common-helper definition set changed: TileCubeNRepeat",
-    "common-helper definition set changed: TileCubePhysicalCellCount",
-    "common-helper definition set changed: TileCubePhysicalKRepeat",
-    "common-helper definition set changed: TileCubePhysicalNRepeat",
-    "common-helper definition set changed: TileCubePhysicalRequiredBytes",
-    "common-helper definition set changed: TileCubePhysicalStorageElements",
-    "common-helper definition set changed: TileCubeRequiredBytes",
-    "common-helper definition set changed: TileReductionSourceCapacityLegal"
-  ],
+  "errors": [],
   "exact_34": [
     "TADD",
     "TAND",
@@ -28784,7 +28772,7 @@
   ],
   "operative_baseline": "577e7b06422d87ec09c925401b477b4e524eded3",
   "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
-  "pass": false,
+  "pass": true,
   "reachability": {
     "after": {
       "helpers": {
