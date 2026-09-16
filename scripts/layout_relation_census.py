@@ -1589,6 +1589,22 @@ def _fixture() -> dict[str, str]:
     }
 
 
+def _remove_relation_from_readonly_function(
+    text: str, function_name: str, relation: str
+) -> str:
+    marker = f"readonly func {function_name}("
+    start = text.find(marker)
+    if start < 0:
+        raise AssertionError(f"{function_name} canary function is missing")
+    end = text.find("\nreadonly func ", start + len(marker))
+    if end < 0:
+        end = len(text)
+    body = text[start:end]
+    if relation not in body:
+        raise AssertionError(f"{function_name} canary source line is missing")
+    return text[:start] + body.replace(relation, "", 1) + text[end:]
+
+
 def _real_relation_mutation_canaries() -> None:
     """Exercise relation extraction against the real authoritative ASL map."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -1598,10 +1614,10 @@ def _real_relation_mutation_canaries() -> None:
     memory_path = "asl/tile/model/legality/memory-schema.asl"
     original = candidate.get(memory_path, "")
     removed = "           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&\n"
-    if removed not in original:
-        raise AssertionError("MGATHER_MASK equality canary source line is missing")
     mutated = dict(candidate)
-    mutated[memory_path] = original.replace(removed, "", 1)
+    mutated[memory_path] = _remove_relation_from_readonly_function(
+        original, "TileOperandsLegal_MGATHER_MASK", removed
+    )
     result = _census_texts(
         baseline, mutated, BASELINE_OBJECT, "real-mutated-mgather-mask",
         enforce_closure=False,

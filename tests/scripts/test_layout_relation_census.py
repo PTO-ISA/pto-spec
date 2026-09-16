@@ -12,6 +12,7 @@ from scripts.layout_relation_census import (
     _inventory,
     _load_baseline_fixture,
     _metadata_map,
+    _remove_relation_from_readonly_function,
     census,
     source_paths,
     _ref_texts,
@@ -190,8 +191,9 @@ class LayoutRelationCensusTest(unittest.TestCase):
         candidate = _ref_texts("working-tree", paths)
         path = "asl/tile/model/legality/memory-schema.asl"
         removed = "           _Tiles[[destination]].layout == _Tiles[[indices]].layout &&\n"
-        self.assertIn(removed, candidate[path])
-        candidate[path] = candidate[path].replace(removed, "", 1)
+        candidate[path] = _remove_relation_from_readonly_function(
+            candidate[path], "TileOperandsLegal_MGATHER_MASK", removed
+        )
         result = _census_texts(
             baseline, candidate, BASELINE_OBJECT, "real-mutated-mgather-mask",
             enforce_closure=False,
