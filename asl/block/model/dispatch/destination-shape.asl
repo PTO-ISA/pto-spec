@@ -1,7 +1,6 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
-readonly func BundleDestinationValidRows(shape_source_valid: boolean,
-                                         shape_source: TileIndex)
-                                         => integer {0..65535}
+readonly func BundleDestinationValidRows(
+    shape_source_valid: boolean, shape_source: TileIndex) => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB1);
     if UInt(_BundleDimensions[[index]]) <= 65535 then
@@ -9,9 +8,8 @@ begin
     end;
     return 0;
 end;
-readonly func BundleDestinationValidColumns(shape_source_valid: boolean,
-                                            shape_source: TileIndex)
-                                            => integer {0..65535}
+readonly func BundleDestinationValidColumns(
+    shape_source_valid: boolean, shape_source: TileIndex) => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB0);
     if UInt(_BundleDimensions[[index]]) <= 65535 then
@@ -19,9 +17,8 @@ begin
     end;
     return 0;
 end;
-readonly func BundleDestinationPhysicalColumns(shape_source_valid: boolean,
-                                               shape_source: TileIndex)
-                                               => integer {0..65535}
+readonly func BundleDestinationPhysicalColumns(
+    shape_source_valid: boolean, shape_source: TileIndex) => integer {0..65535}
 begin
     let index = BundleDimensionIndexOfRegister(BundleDimension_LB2);
     if !_BundleDimensionPresent[[index]] && _BundleOperation.valid then
@@ -36,8 +33,7 @@ begin
             CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
             let (type_valid, data_type) = ResolveBundleEffectiveDataType();
             if type_valid then
-                let cell_columns = TileCubeCellColumns(
-                    CurrentBundleTileLayout(), data_type);
+                let cell_columns = TileCubeCellColumns(CurrentBundleTileLayout(), data_type);
                 if cell_columns != 0 then
                     return TileCubeAlignedExtent(
                         BundleDestinationValidColumns(shape_source_valid,
@@ -170,6 +166,12 @@ begin
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let decoded_operation = DecodeTileOperation(BundleTileDecodeFamily(_BundleOperation.operation_class), BundleOperationDecodeCode(_BundleOperation));
+    let reduction_operation = if decoded_operation != PTO_TILE_OPERATION_COUNT then
+        TileOperationUsesClosedReductionSchema(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1})
+        else FALSE;
+    let reduction_row = if decoded_operation != PTO_TILE_OPERATION_COUNT then
+        TileOperationUsesClosedRowReductionSchema(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1})
+        else FALSE;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
     let matrix_output_type = if matrix &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
@@ -235,10 +237,8 @@ begin
                 else if auxiliary_group then
                     BundleGroupMaxColumns(valid_columns)
                 else valid_columns;
-            let capacity_bytes = BundleLocalDestinationAllocationBytes(
-                binding as BundleTileBindingIndex);
-            let reused =
-                _BundleTileBindings[[binding]].destination_reused_by_generation;
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(binding as BundleTileBindingIndex);
+            let reused = _BundleTileBindings[[binding]].destination_reused_by_generation;
             let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
                 destination_layout == TileLayout_CUBE_M32;
             let exact_cube_columns = cube_destination &&
@@ -246,8 +246,7 @@ begin
                 TileOperationOfIndex(
                     decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                     TileOperation_TCI;
-            let source_geometry = if shape_source_valid then
-                _Tiles[[shape_source]] else _Tiles[[0]];
+            let source_geometry = if shape_source_valid then _Tiles[[shape_source]] else _Tiles[[0]];
             let physical_rows = if cube_destination then
                 if reduction_operation && !reduction_row then source_geometry.rows
                 else TileCubeStorageRows(destination_layout, valid_rows,
@@ -260,8 +259,7 @@ begin
                 else TileCubeStorageColumns(destination_layout,
                     auxiliary_valid_columns, destination_type)
             else auxiliary_columns;
-            let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
-                destination_type);
+            let rows = DerivedTileRows(capacity_bytes, auxiliary_columns, destination_type);
             let shape_legal = if cube_destination then
                 TileCubeDescriptorShapeAndPhysicalLegal(capacity_bytes,
                     physical_rows, physical_columns, valid_rows,
@@ -334,8 +332,7 @@ begin
                     else if auxiliary_group then
                         BundleGroupMaxColumns(valid_columns)
                     else valid_columns;
-                let capacity_bytes = BundleLocalDestinationAllocationBytes(
-                    binding as BundleTileBindingIndex);
+                let capacity_bytes = BundleLocalDestinationAllocationBytes(binding as BundleTileBindingIndex);
                 let tgpr2t = (decoded_operation != PTO_TILE_OPERATION_COUNT &&
                     TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
                     destination_layout == TileLayout_CUBE_M16 ||
@@ -345,8 +342,7 @@ begin
                     TileOperationOfIndex(
                         decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                         TileOperation_TCI;
-                let source_geometry = if shape_source_valid then
-                    _Tiles[[shape_source]] else _Tiles[[0]];
+                let source_geometry = if shape_source_valid then _Tiles[[shape_source]] else _Tiles[[0]];
                 let physical_rows = if destination_layout == TileLayout_CUBE_M16 ||
                     destination_layout == TileLayout_CUBE_M32 then
                     if reduction_operation && !reduction_row then
