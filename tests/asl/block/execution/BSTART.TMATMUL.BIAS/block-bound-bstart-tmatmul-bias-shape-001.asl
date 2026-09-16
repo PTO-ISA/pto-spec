@@ -3,12 +3,15 @@ func RejectBias(valid_rows: integer {1..16}, valid_columns: integer {1..16},
                 data_type: TileDataType, layout: TileLayout)
 begin
     ResetProfileState();
-    ConfigureCubeTile(1, 128, 2, 2, TileDataType_S16,
+    let left_configured = ConfigureCubeTile(1, 128, 2, 2, TileDataType_S16,
         TileLayout_CUBE_M16);
-    ConfigureCubeTile(2, 128, 2, 2, TileDataType_S8,
+    assert left_configured;
+    let right_configured = ConfigureCubeTile(2, 128, 2, 2, TileDataType_S8,
         TileLayout_CUBE_N8);
-    ConfigureCubeTile(3, 512, valid_rows, valid_columns,
+    assert right_configured;
+    let bias_configured = ConfigureCubeTile(3, 512, valid_rows, valid_columns,
         data_type, layout);
+    assert bias_configured;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);

@@ -20,12 +20,15 @@ end;
 func TestMatrixPhysicalAccumulatorClasses()
 begin
     SelectTestCUBEDataType('00111');
-    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_E4M3,
-        TileLayout_RowMajor);
-    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_E4M3,
-        TileLayout_RowMajor);
-    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
+    let fp_left = ConfigureCubeTile(45, 256, 1, 1, TileDataType_E4M3,
+        TileLayout_CUBE_M16);
+    assert fp_left;
+    let fp_right = ConfigureCubeTile(46, 256, 1, 1, TileDataType_E4M3,
+        TileLayout_CUBE_N8);
+    assert fp_right;
+    let fp_acc = ConfigureCubeTile(47, 256, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_M16);
+    assert fp_acc;
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(47, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -33,26 +36,32 @@ begin
     assert ReadTileElement(47, 0, 0) == Zeros{PTO_XLEN} + 7;
 
     SelectTestCUBEDataType('10011');
-    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_S8,
-        TileLayout_RowMajor);
-    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_S8,
-        TileLayout_RowMajor);
+    let s_left = ConfigureCubeTile(45, 256, 1, 1, TileDataType_S8,
+        TileLayout_CUBE_M16);
+    assert s_left;
+    let s_right = ConfigureCubeTile(46, 256, 1, 1, TileDataType_S8,
+        TileLayout_CUBE_N8);
+    assert s_right;
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
-    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_S32,
-        TileLayout_RowMajor);
+    let s_acc = ConfigureCubeTile(47, 256, 1, 1, TileDataType_S32,
+        TileLayout_CUBE_M16);
+    assert s_acc;
     TMATMUL(47, 45, 46);
     assert _Tiles[[47]].data_type == TileDataType_S32;
 
     SelectTestCUBEDataType('11011');
-    ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor);
-    ConfigureTile(46, 256, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor);
+    let u_left = ConfigureCubeTile(45, 256, 1, 1, TileDataType_U8,
+        TileLayout_CUBE_M16);
+    assert u_left;
+    let u_right = ConfigureCubeTile(46, 256, 1, 1, TileDataType_U8,
+        TileLayout_CUBE_N8);
+    assert u_right;
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
-    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor);
+    let u_acc = ConfigureCubeTile(47, 256, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M16);
+    assert u_acc;
     TMATMUL(47, 45, 46);
     assert _Tiles[[47]].data_type == TileDataType_U32;
 end;

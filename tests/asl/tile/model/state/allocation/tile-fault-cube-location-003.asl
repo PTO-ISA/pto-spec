@@ -2,7 +2,7 @@
 func main() => integer
 begin
     ResetProfileState();
-    let invalid = ConfigureCubeTile(0, 512, 16, 16,
+    let invalid = ConfigureCubeTile(0, 256, 16, 16,
         TileDataType_FP16, TileLayout_CUBE_M16);
     assert !invalid;
     assert !_Tiles[[0]].allocated;

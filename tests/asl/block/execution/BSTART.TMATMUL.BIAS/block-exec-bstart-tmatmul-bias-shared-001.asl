@@ -7,8 +7,9 @@ begin
     assert left_ready;
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor);
-    ConfigureTile(3, 128, 4, 8, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor);
+    let bias_ready = ConfigureCubeTile(3, 128, 1, 1,
+        TileDataType_U32, TileLayout_CUBE_M16);
+    assert bias_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 6);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
