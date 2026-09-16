@@ -301,9 +301,27 @@ begin
         return TRUE;
     end;
     let operands = BundleTileInstructionOperands(operation);
-    let (status, -) =
-        ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
-        rules, family, code, operands);
+    var status = TileExecution_Rejected;
+    if TileOperationOfIndex(operation) == TileOperation_TCI &&
+       (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
+        CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
+        let step2d = ReadScalarRegisterOperand(
+            BundleOperationGPRInputSelector(
+                BundleOperationGPRInputSlot(
+                    operation, TileOperand_flag0) as integer {0..2}));
+        if !TileOperandsLegal_TCICube(
+               operands.destination0, operands.scalar0, step2d) then
+            SetFault(Fault_TileLegality, ReadTPC());
+        else
+            TCICube(operands.destination0, operands.scalar0, step2d);
+            status = TileExecution_Executed;
+        end;
+    else
+        let (generated_status, -) =
+            ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
+            rules, family, code, operands);
+        status = generated_status;
+    end;
     if _LastFault != Fault_None || status != TileExecution_Executed then
         RollBackBundleTileDestinations();
         AbortBundleLocalGenerationsForBundle();

@@ -143,7 +143,7 @@ begin
             operands.diagonal = SInt(raw) as integer {-65535..65535};
         end;
     end;
-    if TileOperandPresent(operation, TileOperand_flag0) then
+    if TileOperandPresent(operation, TileOperand_flag0) && !(TileOperationOfIndex(operation) == TileOperation_TCI && (CurrentBundleTileLayout() == TileLayout_CUBE_M16 || CurrentBundleTileLayout() == TileLayout_CUBE_M32)) then
         if _BundleScalarBindings[[0]].valid then
             let raw = ReadScalarRegisterOperand(
                 BundleOperationGPRInputSelector(
@@ -273,6 +273,14 @@ begin
         return FALSE;
     end;
     let decoded_operation = TileOperationOfIndex(operation);
+    let cube_tci = decoded_operation == TileOperation_TCI && (CurrentBundleTileLayout() == TileLayout_CUBE_M16 || CurrentBundleTileLayout() == TileLayout_CUBE_M32);
+    if cube_tci && (!_BundleDataAttributesPresent || _BundleDataAttributes.data_type != DTYPE_NONE || _BundleDataAttributes.pad_value != Zeros{2} || _BundleDataAttributes.comparison_mode != Zeros{3} || _BundleDataAttributes.rounding_mode != Zeros{3} || _BundleDataAttributes.saturating || _BundleDataAttributes.canonicalize) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    elsif decoded_operation == TileOperation_TCI && !cube_tci && (explicit_layout != Zeros{5} || explicit_data_type != Zeros{5}) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if decoded_operation == TileOperation_TGPR2T &&
        !TileTGPR2TRModeLegal(_BundleDataAttributes.rounding_mode) then
         SetFault(Fault_TileLegality, ReadTPC());

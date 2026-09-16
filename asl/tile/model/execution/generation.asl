@@ -62,6 +62,59 @@ begin
     _Tiles[[destination]] = result;
 end;
 
+readonly func TileOperandsLegal_TCICube(destination: TileIndex, start: Word, step2d: Word) => boolean
+begin
+    let tile = _Tiles[[destination]];
+    let row_step = SInt(step2d[63:32]); let column_step = SInt(step2d[31:0]);
+    return TileCubeDescriptorLegal(tile) && TileTCIDataTypeSupported(tile.data_type) &&
+           tile.storage_kind == TileStorage_Numeric &&
+           (tile.layout == TileLayout_CUBE_M16 || tile.layout == TileLayout_CUBE_M32) &&
+           tile.valid_rows >= 1 && tile.valid_columns >= 1 &&
+           (row_step == -1 || row_step == 0 || row_step == 1) &&
+           (column_step == -1 || column_step == 0 || column_step == 1);
+end;
+func TCICube(destination: TileIndex, start: Word, step2d: Word)
+begin
+    var result = _Tiles[[destination]];
+    assert result.allocated;
+    assert (result.layout == TileLayout_CUBE_M16 ||
+            result.layout == TileLayout_CUBE_M32);
+    assert result.valid_rows >= 1 && result.valid_columns >= 1;
+    assert TileTCIDataTypeSupported(result.data_type);
+    let row_step = SInt(step2d[63:32]);
+    let column_step = SInt(step2d[31:0]);
+    assert (row_step == -1 || row_step == 0 || row_step == 1) &&
+           (column_step == -1 || column_step == 0 || column_step == 1);
+    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+        for column = 0 to result.valid_columns - 1 looplimit 65536 do
+            let row_offset = if row_step == -1 then
+                Zeros{PTO_XLEN} - NaturalToWord(
+                    row as integer {0..65535})
+            else if row_step == 1 then
+                NaturalToWord(row as integer {0..65535})
+            else
+                Zeros{PTO_XLEN};
+            let column_offset = if column_step == -1 then
+                Zeros{PTO_XLEN} - NaturalToWord(
+                    column as integer {0..65535})
+            else if column_step == 1 then
+                NaturalToWord(column as integer {0..65535})
+            else
+                Zeros{PTO_XLEN};
+            let element = TileLogicalLinearIndex(result,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result = TileInfoWithLogicalElement(result, element,
+                TileRawElementValue(
+                    start + row_offset + column_offset,
+                    result.data_type));
+        end;
+    end;
+    result = TileWithValidRegionDefined(result);
+    result = TileWithPadding(result, TilePad_Null);
+    _Tiles[[destination]] = result;
+end;
+
 func TTRI(destination: TileIndex, upper: boolean,
           diagonal: integer {-65535..65535})
 begin

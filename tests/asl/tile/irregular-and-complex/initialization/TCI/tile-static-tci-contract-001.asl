@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: irregular-and-complex/initialization
-    // block: BSTART.SFU TCI, S32|S16|U32|U16 | B.DATR all-zero (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1; when present must equal 1) | B.DIM LB2=Col (optional, default ValidCol) | B.IOR Start, Direction (optional; omission selects 0 and ascending) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TCI, S32|S16|U32|U16 | B.DATR RowMajor all-zero (optional), or explicit CUBE_M32/CUBE_M16 tuple | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (RowMajor optional, default 1; when present must equal 1; CUBE required positive) | B.DIM LB2=Col (RowMajor optional, default ValidCol; CUBE optional; omitted aligns ValidCol to the cell-column quantum) | RowMajor: B.IOR Start, Direction (optional; omission selects 0 and ascending) | CUBE: exactly one B.IOR StartGPR, Step2DGPR, zero, ->zero | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001100110') == 68;
     assert TileOperationOfIndex(68) == TileOperation_TCI;
     assert TileHandlerOfIndex(68) == TileHandler_TCI;

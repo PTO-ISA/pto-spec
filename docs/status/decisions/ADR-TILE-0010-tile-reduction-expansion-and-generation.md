@@ -61,6 +61,17 @@
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
     "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+    "PTO-TILE-MODEL-EXECUTION-GENERATION",
+    "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
     "PTO-TILE-TCI",
     "PTO-TILE-TCOLARGMAX",
     "PTO-TILE-TCOLARGMIN",
@@ -91,6 +102,33 @@
     "PTO-TILE-TROWPROD",
     "PTO-TILE-TROWSUM",
     "PTO-TILE-TTRI"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-15",
+      "baseline": "1fae7c5d715a0468e941e5bb42f03399336cb465",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/233",
+      "affected_ndf": [
+        "PTO-TCI-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-EXECUTION-GENERATION",
+        "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-TCI"
+      ]
+    }
   ],
   "resolves": [],
   "supersedes": [
@@ -1058,3 +1096,72 @@ destination `1 x source.ValidCol` valid shape, destination physical shape,
 `PadValueOrByteId` applicability, prohibited `B.IOR`/`B.IOS`, equal and zero
 mask rules, source persistence, snapshot behavior, complete preflight,
 numeric-status transaction, rollback, and atomic publication follow Decision 111 in ADR-TILE-0010.
+
+## Amendment — 2026-09-15 (Issue #233)
+
+This amendment extends the `TCI` generation contract (Decision 130) with the
+CUBE_M16/CUBE_M32 two-dimensional form and records two consistency
+disclosures. The operative baseline is
+`1fae7c5d715a0468e941e5bb42f03399336cb465`.
+
+The affected NDF owner is `PTO-TCI-CONTRACT-001`; affected units are
+`PTO-TILE-TCI`, `PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY`,
+`PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE`,
+`PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA`,
+`PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA`,
+`PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION`,
+`PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA`,
+`PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS`,
+`PTO-TILE-MODEL-EXECUTION-GENERATION`,
+`PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE`,
+`PTO-TILE-MODEL-SHAPE-CUBE-CELL`, and
+`PTO-TILE-MODEL-STATE-ALLOCATION`.
+
+**CUBE_M16/CUBE_M32 two-dimensional TCI.** When `B.DATR.Layout` selects
+`CUBE_M16` or `CUBE_M32`, `TCI` writes a two-dimensional typed integer
+sequence: `B.DIM LB0` is `ValidCol`, `B.DIM LB1` is a required positive
+`ValidRow` (at most 16 for CUBE_M16), and `B.DIM LB2` is the exact physical
+`Col` independently of `ValidCol`; explicit `Col` is cell-column aligned and
+omitted `Col` is `align_up(ValidCol, cell quantum)`. The single `B.IOR` pair
+carries a packed `Step2D` whose row and column steps are each in
+`{-1, 0, +1}`; the destination element at `(r, c)` is
+`trunc_W(Start + r*RowStep + c*ColStep)`, written through the physical CELL
+mapping. CUBE physical tails are Null/undefined, and all schema, tuple, step,
+representability, TSize, and capacity rejection occurs before effects. The
+historical RowMajor single-row form is preserved unchanged: `B.IOR Start` with
+optional `Direction`, `ValidRow` exactly one.
+
+**Disclosure 1 — omitted `LB2` defaults to `ValidCol` on the shared
+destination-shape path.** The NDF dimension documentation already stated that
+an omitted `LB2` selects `Col=ValidCol`, but the model previously consumed the
+reset value one for any operation without a closed generation schema, so a
+RowMajor bundle with `LB0=2, LB1=1` and `LB2` omitted faulted on the
+physical-column shape. The model now implements the documented default in the
+shared bundle destination-shape resolution: an omitted `LB2` selects
+`Col=ValidCol` there (for CUBE_M16/CUBE_M32 `TCI`, the cell-aligned extent of
+`ValidCol`). This is a deliberate behavior repair for operations whose
+legality flows through that path; for example `TEXPANDS` with `LB0=2, LB1=1`
+and `LB2` omitted now executes with physical `Col=2` instead of faulting
+(evidence: `PTO-AVS-TILE-TEXPANDS-LB2-DEFAULT-001`).
+
+Known residual gap (recorded, not fixed here): `TTRI` keeps its legacy closed
+generation-schema dimension gate, which still consumes the raw reset value of
+an omitted `LB2` and therefore faults for `LB0>1` even though
+`TTRI`'s own documentation advertises the same omitted-`LB2` default. That
+gate predates this amendment, is unchanged by it, and its conformance repair
+is tracked as follow-up issue #316.
+
+**Disclosure 2 — `TCI` requires an explicit `B.DIM LB0` write.** `TCI` now
+rejects a bundle whose `LB0` was never written, in both RowMajor and CUBE
+forms; a fully omitted `B.DIM` raises `Fault_TileLegality` before destination
+allocation (evidence: `PTO-AVS-TILE-TCI-DIM-REQUIRED-001`, which covers both
+the RowMajor and the CUBE_M16 scenario). This is a
+`TCI`-specific carve-out from the omitted-dimension default-one rule recorded
+in `PTO-BUNDLE-DIMENSION-DEFAULT-001`: for `TCI`, presence of `LB0` is part of
+the generation-schema legality contract, because the CUBE extension made the
+silent one-column default an unacceptable ambiguity for a typed sequence
+generator. Before this amendment, a RowMajor `TCI` with omitted `LB0`
+executed with the effective default `ValidCol=1`.
+
+`release_impact: not-required` remains in force; this amendment does not
+select a release identity.

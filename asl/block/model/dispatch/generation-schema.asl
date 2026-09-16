@@ -10,18 +10,50 @@ end;
 readonly func SelectedBundleGenerationDimensionsLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    if UInt(_BundleDimensions[[0]]) < 1 ||
-       UInt(_BundleDimensions[[0]]) > 65535 then
-        return FALSE;
-    end;
-    if UInt(_BundleDimensions[[2]]) < UInt(_BundleDimensions[[0]]) ||
-       UInt(_BundleDimensions[[2]]) > 65535 then
-        return FALSE;
-    end;
-
     let decoded = TileOperationOfIndex(operation);
     if decoded == TileOperation_TCI then
-        return UInt(_BundleDimensions[[1]]) == 1;
+        if !_BundleDimensionPresent[[0]] ||
+           UInt(_BundleDimensions[[0]]) < 1 ||
+           UInt(_BundleDimensions[[0]]) > 65535 then
+            return FALSE;
+        end;
+        let data_type = TileDataTypeFromEncoding(
+            CurrentBundleTileOperationDataTypeCode()
+                as TileDataTypeEncoding);
+        if !TileTCIDataTypeSupported(data_type) then return FALSE; end;
+        let layout = CurrentBundleTileLayout();
+        let valid_columns = UInt(_BundleDimensions[[0]])
+            as integer {1..65535};
+        let valid_rows = UInt(_BundleDimensions[[1]]);
+        let columns = if _BundleDimensionPresent[[2]] then
+            UInt(_BundleDimensions[[2]])
+        else if layout == TileLayout_CUBE_M16 ||
+              layout == TileLayout_CUBE_M32 then
+            TileCubeAlignedExtent(valid_columns,
+                TileCubeCellColumns(layout, data_type) as integer {1..65535})
+        else
+            valid_columns;
+        if valid_rows < 1 || valid_rows > 65535 ||
+           columns < valid_columns || columns > 65535 then
+            return FALSE;
+        end;
+        if layout == TileLayout_CUBE_M16 then
+            if valid_rows > 16 then return FALSE; end;
+            let cell_columns = TileCubeCellColumns(layout, data_type);
+            if cell_columns == 0 then return FALSE; end;
+            return columns MOD (cell_columns as integer {1..65535}) == 0;
+        elsif layout == TileLayout_CUBE_M32 then
+            let cell_columns = TileCubeCellColumns(layout, data_type);
+            if cell_columns == 0 then return FALSE; end;
+            return columns MOD (cell_columns as integer {1..65535}) == 0;
+        end;
+        return layout == TileLayout_RowMajor && valid_rows == 1;
+    end;
+    if UInt(_BundleDimensions[[0]]) < 1 ||
+       UInt(_BundleDimensions[[0]]) > 65535 ||
+       UInt(_BundleDimensions[[2]]) < UInt(_BundleDimensions[[0]]) ||
+       UInt(_BundleDimensions[[2]]) > 65535 then
+        return FALSE;
     end;
     return UInt(_BundleDimensions[[1]]) >= 1 &&
            UInt(_BundleDimensions[[1]]) <= 65535;
@@ -59,6 +91,10 @@ begin
         TileTCIDataTypeSupported(data_type)
     else
         TileTTRIDataTypeSupported(data_type);
+    let layout = CurrentBundleTileLayout();
     return data_type_legal &&
-           CurrentBundleTileLayout() == TileLayout_RowMajor;
+           (layout == TileLayout_RowMajor ||
+            (decoded == TileOperation_TCI &&
+             (layout == TileLayout_CUBE_M16 ||
+              layout == TileLayout_CUBE_M32)));
 end;

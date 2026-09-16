@@ -3886,7 +3886,10 @@
       "command_mnemonic": "BSTART.TEPL",
       "contract_status": "reviewed-complete",
       "datr_contract": {
-        "allowed_nonzero_fields": [],
+        "allowed_nonzero_fields": [
+          "DataType",
+          "Layout"
+        ],
         "pad_union": "must-zero"
       },
       "disposition": "accepted-direct-operation",
@@ -3904,11 +3907,11 @@
         },
         {
           "field": "scalar0",
-          "role": "typed sequence start"
+          "role": "typed sequence start from RegSrc0"
         },
         {
           "field": "flag0",
-          "role": "ascending or descending direction"
+          "role": "RowMajor direction from RegSrc1 or CUBE packed Step2D from RegSrc1"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3917,7 +3920,7 @@
       "state_effects": [
         "operand:destination0:new-local-integer-destination",
         "operand:scalar0:typed-sequence-start",
-        "operand:flag0:ascending-or-descending",
+        "operand:flag0:RowMajor-direction-or-CUBE-Step2D",
         "runtime:TilePad_Null:physical-padding"
       ],
       "classification": "irregular-and-complex",
