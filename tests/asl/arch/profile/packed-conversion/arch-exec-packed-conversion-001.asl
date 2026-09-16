@@ -7,6 +7,15 @@ begin
     assert e2_midpoint == Zeros{PTO_XLEN};
     assert e2_midpoint_flags == Zeros{5} + 0x18;
 
+    let (e2_exact_half, e2_exact_half_flags) = ReferencePacked4Encoding(
+        0.5, TileDataType_E2M1X2, control);
+    let (e2_exact_negative_half, e2_exact_negative_half_flags) =
+        ReferencePacked4Encoding(-0.5, TileDataType_E2M1X2, control);
+    assert e2_exact_half == Zeros{PTO_XLEN} + 1 &&
+           e2_exact_negative_half == Zeros{PTO_XLEN} + 9;
+    assert e2_exact_half_flags == Zeros{5} &&
+           e2_exact_negative_half_flags == Zeros{5};
+
     let (e2_overflow, e2_overflow_flags) = ReferencePacked4Encoding(
         7.0, TileDataType_E2M1X2, control);
     assert e2_overflow == Zeros{PTO_XLEN} + 6;

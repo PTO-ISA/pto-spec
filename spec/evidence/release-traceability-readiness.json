@@ -18244,7 +18244,7 @@
     "asl/arch/profile/linx-runtime-compat.asl": "7fed94fc787bfaa80c0ccd53b69b65c5220974480cca77d9507f55a3dc23095d",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "39953db0e24797665d2deccc371753fdf7d284f0a034a1cfe49b94a5935a9e4e",
-    "asl/arch/profile/packed-conversion.asl": "1af7d0d63c9c9aa33096a60fa8d1300512687d23e7accb408c926d671afbc827",
+    "asl/arch/profile/packed-conversion.asl": "1683a02aa12d9fd5f5539b5beb43af0d7ec255856dc41ad957a5139a8ab0f22d",
     "asl/arch/profile/reference-conversion.asl": "ed1e073ec50cdc8173641e6b5978fb635748cc8516e8185ac19ce43e68c14e68",
     "asl/arch/profile/reference-profile.asl": "b3c153262b495e2f1fb5d796d5ebf1cc527afdd7b09e87fa05e88cb0e108679a",
     "asl/arch/profile/reference-quantization.asl": "5edf34134b72d030c4281301dc9abf3aecb7b233f677e28db5e6f5829f22d5dd",
@@ -19140,7 +19140,7 @@
     "docs/arch/profile/linx-runtime-compat.md": "497597d16d51e7b3796c281565d0f7691c896c8e580a3753e5275d3e0f5a3cda",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "86dfc6fd87e61b804fcfc6273833ba6c83b9ae5754e5056eab5fb9caba44d61f",
-    "docs/arch/profile/packed-conversion.md": "2c1bf61448c8800ab71791b35ac249586af35b37cd8887135cd324944ddf1658",
+    "docs/arch/profile/packed-conversion.md": "6487b6757146b80f7ab61ccf422f839ab81bbfbd6eb9023527b083cdcefd8820",
     "docs/arch/profile/reference-conversion.md": "e65567d768d8e1322fa8b5437844e802e6f7276529e96c43da1d7be548423a15",
     "docs/arch/profile/reference-profile.md": "e22df664d29dba3717daaff72a0c6c894aba7034c5499eec1a679d9f6f9a214c",
     "docs/arch/profile/reference-quantization.md": "290c338712e8c1cc19bae71d713b201dce4333bb1e06c7f311d959f76b14997d",
@@ -20118,8 +20118,8 @@
     "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl": "d6cb36092f0003111e8003e8e027c323e2686e8b88965bccd59e7332f5e2306e",
     "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-quantization-001.asl": "58ba7a5c35d1c667e57c23b82a434006709c925c88a0c91b64190cf859160c50",
     "tests/asl/arch/profile/matrix-quantization/arch-static-matrix-quantization-contract-001.asl": "bd64d8ee6c83946d3d622e3bede11ae210e662fba80f0793bfac6f18ad8629c8",
-    "tests/asl/arch/profile/packed-conversion/arch-bound-packed-conversion-002.asl": "9039ae33f5fbae150d466dcae494a0f90a88bb7d5372e953f4ac33069a0f5e5c",
-    "tests/asl/arch/profile/packed-conversion/arch-exec-packed-conversion-001.asl": "e675de5e7c668fa678748df0ea8223238fe807ac866388929a901acb4c15d1af",
+    "tests/asl/arch/profile/packed-conversion/arch-bound-packed-conversion-002.asl": "a48a91a8ec8dfebdfb0788d6469ef51b933ea2cbb310cfaf8ad067e80d9226ea",
+    "tests/asl/arch/profile/packed-conversion/arch-exec-packed-conversion-001.asl": "74df9a19a139fcc1207e6747ba5901a45a7b8e9e833404a88d01dd9f3f4e2913",
     "tests/asl/arch/profile/packed-conversion/arch-static-packed-conversion-contract-001.asl": "54aba8167851209e95555b352f57b6872e2d315b1e7109ffa153ba2c23b3fe23",
     "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-fp16-001.asl": "6d7c29d2bd4aa3f77c94280940d670c70d302ace345c4789e34702e54c1941d9",
     "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-special-002.asl": "ccc6b9837c1d7e6de3895c4e657301f4da3fd3b0b469506e66c555e602102b8d",
@@ -32457,7 +32457,7 @@
       "requirements": [
         "PTO-TCVT-CONTRACT-001"
       ],
-      "sha256": "9039ae33f5fbae150d466dcae494a0f90a88bb7d5372e953f4ac33069a0f5e5c",
+      "sha256": "a48a91a8ec8dfebdfb0788d6469ef51b933ea2cbb310cfaf8ad067e80d9226ea",
       "source": "asl/arch/profile/packed-conversion.asl"
     },
     {
@@ -32467,7 +32467,7 @@
       "requirements": [
         "PTO-TCVT-CONTRACT-001"
       ],
-      "sha256": "e675de5e7c668fa678748df0ea8223238fe807ac866388929a901acb4c15d1af",
+      "sha256": "74df9a19a139fcc1207e6747ba5901a45a7b8e9e833404a88d01dd9f3f4e2913",
       "source": "asl/arch/profile/packed-conversion.asl"
     },
     {

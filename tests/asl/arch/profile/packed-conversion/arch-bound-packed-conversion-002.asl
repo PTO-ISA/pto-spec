@@ -72,7 +72,7 @@ func AssertAllPackedMidpoints()
 begin
     // Every adjacent E2M1 midpoint, including the subnormal-to-normal tie.
     AssertPackedMidpoint(TileDataType_E2M1X2, 0.25, 0, 1, TRUE);
-    AssertPackedMidpoint(TileDataType_E2M1X2, 0.75, 2, 2, TRUE);
+    AssertPackedMidpoint(TileDataType_E2M1X2, 0.75, 2, 2, FALSE);
     AssertPackedMidpoint(TileDataType_E2M1X2, 1.25, 2, 3, FALSE);
     AssertPackedMidpoint(TileDataType_E2M1X2, 1.75, 4, 4, FALSE);
     AssertPackedMidpoint(TileDataType_E2M1X2, 2.5, 4, 5, FALSE);
@@ -116,6 +116,23 @@ begin
     assert e2_n020_flags == Zeros{5} + 0x18 &&
            e2_n025_flags == Zeros{5} + 0x18 &&
            e2_n030_flags == Zeros{5} + 0x18;
+
+    let (e2_075_rne, e2_075_rne_flags) = ConvertFP32(
+        0x3f400000, TileDataType_E2M1X2, NumericRound_RNE, FALSE);
+    let (e2_075_rna, e2_075_rna_flags) = ConvertFP32(
+        0x3f400000, TileDataType_E2M1X2, NumericRound_RNA, FALSE);
+    let (e2_n075_rne, e2_n075_rne_flags) = ConvertFP32(
+        0xbf400000, TileDataType_E2M1X2, NumericRound_RNE, FALSE);
+    let (e2_n075_rna, e2_n075_rna_flags) = ConvertFP32(
+        0xbf400000, TileDataType_E2M1X2, NumericRound_RNA, FALSE);
+    assert e2_075_rne == Zeros{PTO_XLEN} + 2 &&
+           e2_075_rna == Zeros{PTO_XLEN} + 2 &&
+           e2_n075_rne == Zeros{PTO_XLEN} + 10 &&
+           e2_n075_rna == Zeros{PTO_XLEN} + 10;
+    assert e2_075_rne_flags == Zeros{5} + 0x10 &&
+           e2_075_rna_flags == Zeros{5} + 0x10 &&
+           e2_n075_rne_flags == Zeros{5} + 0x10 &&
+           e2_n075_rna_flags == Zeros{5} + 0x10;
 
     let (e1_0125, e1_0125_flags) = ConvertFP32(
         0x3e000000, TileDataType_E1M2X2, NumericRound_RNE, FALSE);

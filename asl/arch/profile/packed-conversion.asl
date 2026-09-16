@@ -130,7 +130,10 @@ begin
     let minimum_normal = if destination_type == TileDataType_E2M1X2
         then 1.0 else 0.25;
     let inexact = best_value != value;
-    let underflow = inexact && magnitude < minimum_normal;
+    let best_magnitude = if best_value < 0.0 then -best_value else best_value;
+    let underflow = if destination_type == TileDataType_E2M1X2 then
+        inexact && best_magnitude < minimum_normal
+        else inexact && magnitude < minimum_normal;
     return (Zeros{PTO_XLEN} + best_code,
             if underflow then Zeros{5} + 0x18
             else if inexact then Zeros{5} + 0x10
