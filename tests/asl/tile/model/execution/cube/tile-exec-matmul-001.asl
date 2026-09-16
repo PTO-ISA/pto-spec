@@ -63,8 +63,9 @@ begin
     assert ReadTileElement(7, 1, 0) == Zeros{PTO_XLEN} + 43;
     assert ReadTileElement(7, 1, 1) == Zeros{PTO_XLEN} + 50;
 
-    ConfigureTile(26, 256, 1, 2, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor);
+    let bias_cfg = ConfigureCubeTile(26, 256, 1, 2, TileDataType_U32,
+        TileLayout_CUBE_M16);
+    assert bias_cfg;
     WriteTileElement(26, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(26, 0, 1, Zeros{PTO_XLEN} + 2);
     TMATMUL_BIAS(7, 5, 6, 26);

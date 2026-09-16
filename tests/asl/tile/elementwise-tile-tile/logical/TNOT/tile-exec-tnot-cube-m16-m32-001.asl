@@ -17,7 +17,9 @@ end;
 
 func main() => integer
 begin
-    assert RunTNOTCube(TileLayout_CUBE_M16);
-    assert RunTNOTCube(TileLayout_CUBE_M32);
+    let m16_ok = RunTNOTCube(TileLayout_CUBE_M16);
+    assert m16_ok;
+    let m32_ok = RunTNOTCube(TileLayout_CUBE_M32);
+    assert m32_ok;
     return 0;
 end;
