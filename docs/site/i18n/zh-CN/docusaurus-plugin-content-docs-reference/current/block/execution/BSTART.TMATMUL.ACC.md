@@ -113,13 +113,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |

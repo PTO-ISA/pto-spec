@@ -25,6 +25,8 @@
     "PTO-FCVTN-DECISION-BINDING-001",
     "PTO-FCVTP-DECISION-BINDING-001",
     "PTO-FCVTZ-DECISION-BINDING-001",
+    "PTO-NUMERIC-E6M2-FORMAT-001",
+    "PTO-NUMERIC-RCPE6M2-FORMAT-001",
     "PTO-TCVT-CONTRACT-001"
   ],
   "affected_units": [
@@ -36,6 +38,8 @@
     "PTO-SCALAR-FCVTN",
     "PTO-SCALAR-FCVTP",
     "PTO-SCALAR-FCVTZ",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
     "PTO-TILE-TCVT"
   ],
   "resolves": [],
@@ -56,10 +60,14 @@
       ],
       "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
       "affected_ndf": [
-        "PTO-TCVT-CONTRACT-001"
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001"
       ],
       "affected_units": [
-        "PTO-TILE-TCVT"
+        "PTO-TILE-TCVT",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
       ]
     }
   ]

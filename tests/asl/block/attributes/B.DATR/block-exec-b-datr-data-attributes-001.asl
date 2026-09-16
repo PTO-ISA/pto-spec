@@ -52,10 +52,9 @@ end;
 
 func TestReservedBundleDataTypeEncodingsRejectBeforeEffects()
 begin
-    for index = 0 to 5 looplimit 6 do
-        let reserved = if index == 0 then Zeros{5} + 15 else
-                       if index <= 3 then Zeros{5} + 20 + index else
-                       Zeros{5} + 25 + index;
+    for index = 0 to 3 looplimit 4 do
+        let reserved = if index <= 1 then Zeros{5} + 22 + index else
+                       Zeros{5} + 27 + index;
         ResetProfileState();
         WriteTPC(Zeros{PTO_XLEN} + 0x180);
         SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '00',

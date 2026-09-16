@@ -24,6 +24,7 @@
     "PTO-CUBE-CSCALE-001",
     "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
     "PTO-CUBE-HIF4-SCALE-001",
+    "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-CUBE-MATRIX-SCALE-001",
     "PTO-CUBE-MATRIX-SCALE-CELL-001",
     "PTO-CUBE-SHARED-TRANSPOSE-001",
@@ -33,6 +34,7 @@
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
     "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
     "PTO-BLOCK-B-FPATR",
     "PTO-BLOCK-BSTART-TMATMULMX",
@@ -117,10 +119,12 @@
       ],
       "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
       "affected_ndf": [
-        "PTO-CUBE-HIF4-SCALE-001"
+        "PTO-CUBE-HIF4-SCALE-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001"
       ],
       "affected_units": [
-        "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE"
+        "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2"
       ]
     }
   ]

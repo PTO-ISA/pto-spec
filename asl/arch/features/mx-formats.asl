@@ -5,7 +5,8 @@ begin
         when TileDataType_FP64, TileDataType_FP32, TileDataType_TF32,
              TileDataType_HF32, TileDataType_FP16, TileDataType_BF16,
              TileDataType_HiF8, TileDataType_E4M3, TileDataType_E5M2,
-             TileDataType_E3M2, TileDataType_E2M3 => return TRUE;
+             TileDataType_E3M2, TileDataType_E2M3,
+             TileDataType_E2M1X2 => return TRUE;
         otherwise => return FALSE;
     end;
 end;
@@ -94,6 +95,10 @@ begin
             return (TRUE, Zeros{PTO_XLEN} + 0x01,
                     Zeros{PTO_XLEN} + 0x07,
                     Zeros{PTO_XLEN} + 0x08);
+        when TileDataType_E2M1X2 =>
+            return (TRUE, Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x01,
+                    Zeros{PTO_XLEN} + 0x02);
         otherwise =>
             return (FALSE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
                     Zeros{PTO_XLEN});
@@ -187,6 +192,8 @@ begin
         when TileDataType_E1M2X2 => return ClassifyE1M2X2(value);
         when TileDataType_E8M0 => return ClassifyE8M0(value[7:0]);
         when TileDataType_HiF4X2 => return ClassifyHiF4X2(value);
+        when TileDataType_E6M2 => return ClassifyE6M2(value[7:0]);
+        when TileDataType_RCPE6M2 => return ClassifyRCPE6M2(value[7:0]);
         when TileDataType_S64 => return ClassifySignedInteger(value, 63);
         when TileDataType_S32 => return ClassifySignedInteger(value, 31);
         when TileDataType_S16 => return ClassifySignedInteger(value, 15);
@@ -213,6 +220,8 @@ begin
         when TileDataType_E4M3 => return (TRUE, E4M3CanonicalNaN());
         when TileDataType_E5M2 => return (TRUE, E5M2CanonicalNaN());
         when TileDataType_E8M0 => return (TRUE, E8M0CanonicalNaN());
+        when TileDataType_E6M2 => return (TRUE, E6M2CanonicalNaN());
+        when TileDataType_RCPE6M2 => return (TRUE, RCPE6M2CanonicalNaN());
         otherwise => return (FALSE, Zeros{PTO_XLEN});
     end;
 end;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-TYPES-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"boundary","summary":"TCVT accepts every assigned Tile DataType including its private HiF4X2 format","pass_condition":"all twenty-five assigned Tile DataTypes are accepted as TCVT sources and destinations","related_sources":["asl/arch/data-types/tile-data-types.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-TYPES-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"boundary","summary":"TCVT excludes private HiF4X2 while recognizing the assigned E6M2 and RCPE6M2 identities","pass_condition":"the TCVT contract rejects HiF4X2 and accepts the two newly assigned data type identities as contract-level types","related_sources":["asl/arch/data-types/tile-data-types.asl"]}
 func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_FP64);
@@ -15,7 +15,9 @@ begin
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_E2M1X2);
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_E1M2X2);
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_E8M0);
-    assert InstructionContractDataTypeLegal_TCVT(TileDataType_HiF4X2);
+    assert !InstructionContractDataTypeLegal_TCVT(TileDataType_HiF4X2);
+    assert InstructionContractDataTypeLegal_TCVT(TileDataType_E6M2);
+    assert InstructionContractDataTypeLegal_TCVT(TileDataType_RCPE6M2);
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_S64);
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_S32);
     assert InstructionContractDataTypeLegal_TCVT(TileDataType_S16);

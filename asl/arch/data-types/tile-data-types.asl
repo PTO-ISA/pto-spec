@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","surface":"arch","classification":["data-types","tile-data-types"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"],"field_domains":[{"id":"PTO-FIELD-BLOCK-DATATYPE","width":5,"role":"Selects the Tile element data type carried by Block data attributes and typed Block starts.","zero_meaning":"Code zero selects FP64; zero never means absent, inherited, NONE, or NULL.","assigned":[{"value":0,"meaning":"FP64"},{"value":1,"meaning":"FP32"},{"value":2,"meaning":"TF32"},{"value":3,"meaning":"HF32"},{"value":4,"meaning":"FP16"},{"value":5,"meaning":"BF16"},{"value":6,"meaning":"HiF8"},{"value":7,"meaning":"E4M3"},{"value":8,"meaning":"E5M2"},{"value":9,"meaning":"E3M2"},{"value":10,"meaning":"E2M3"},{"value":11,"meaning":"E2M1X2"},{"value":12,"meaning":"E1M2X2"},{"value":13,"meaning":"E8M0"},{"value":14,"meaning":"HiF4X2"},{"value":16,"meaning":"S64"},{"value":17,"meaning":"S32"},{"value":18,"meaning":"S16"},{"value":19,"meaning":"S8"},{"value":20,"meaning":"S4X2"},{"value":24,"meaning":"U64"},{"value":25,"meaning":"U32"},{"value":26,"meaning":"U16"},{"value":27,"meaning":"U8"},{"value":28,"meaning":"U4X2"}],"reserved":[15,21,22,23,29,30,31],"rejection":"Reserved values are held for future extension and reject before architectural effects."}]}
+// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","surface":"arch","classification":["data-types","tile-data-types"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"],"field_domains":[{"id":"PTO-FIELD-BLOCK-DATATYPE","width":5,"role":"Selects the Tile element data type carried by Block data attributes and typed Block starts.","zero_meaning":"Code zero selects FP64; zero never means absent, inherited, NONE, or NULL.","assigned":[{"value":0,"meaning":"FP64"},{"value":1,"meaning":"FP32"},{"value":2,"meaning":"TF32"},{"value":3,"meaning":"HF32"},{"value":4,"meaning":"FP16"},{"value":5,"meaning":"BF16"},{"value":6,"meaning":"HiF8"},{"value":7,"meaning":"E4M3"},{"value":8,"meaning":"E5M2"},{"value":9,"meaning":"E3M2"},{"value":10,"meaning":"E2M3"},{"value":11,"meaning":"E2M1X2"},{"value":12,"meaning":"E1M2X2"},{"value":13,"meaning":"E8M0"},{"value":14,"meaning":"HiF4X2"},{"value":15,"meaning":"E6M2"},{"value":16,"meaning":"S64"},{"value":17,"meaning":"S32"},{"value":18,"meaning":"S16"},{"value":19,"meaning":"S8"},{"value":20,"meaning":"S4X2"},{"value":21,"meaning":"RCPE6M2"},{"value":24,"meaning":"U64"},{"value":25,"meaning":"U32"},{"value":26,"meaning":"U16"},{"value":27,"meaning":"U8"},{"value":28,"meaning":"U4X2"}],"reserved":[22,23,29,30,31],"rejection":"Reserved values are held for future extension and reject before architectural effects."}]}
 type TileHand of enumeration {
     TileHand_T,
     TileHand_U,
@@ -22,11 +22,13 @@ type TileDataType of enumeration {
     TileDataType_E1M2X2,
     TileDataType_E8M0,
     TileDataType_HiF4X2,
+    TileDataType_E6M2,
     TileDataType_S64,
     TileDataType_S32,
     TileDataType_S16,
     TileDataType_S8,
     TileDataType_S4X2,
+    TileDataType_RCPE6M2,
     TileDataType_U64,
     TileDataType_U32,
     TileDataType_U16,
@@ -39,7 +41,7 @@ type TileDataTypeEncoding of bits(5);
 pure func TileDataTypeEncodingValid(encoded: TileDataTypeEncoding) => boolean
 begin
     let code = UInt(encoded);
-    return code <= 14 || (16 <= code && code <= 20) ||
+    return code <= 16 || (17 <= code && code <= 21) ||
            (24 <= code && code <= 28);
 end;
 
@@ -62,11 +64,13 @@ begin
         when 12 => return TileDataType_E1M2X2;
         when 13 => return TileDataType_E8M0;
         when 14 => return TileDataType_HiF4X2;
+        when 15 => return TileDataType_E6M2;
         when 16 => return TileDataType_S64;
         when 17 => return TileDataType_S32;
         when 18 => return TileDataType_S16;
         when 19 => return TileDataType_S8;
         when 20 => return TileDataType_S4X2;
+        when 21 => return TileDataType_RCPE6M2;
         when 24 => return TileDataType_U64;
         when 25 => return TileDataType_U32;
         when 26 => return TileDataType_U16;
@@ -95,11 +99,13 @@ begin
         when TileDataType_E1M2X2 => return Zeros{5} + 12;
         when TileDataType_E8M0 => return Zeros{5} + 13;
         when TileDataType_HiF4X2 => return Zeros{5} + 14;
+        when TileDataType_E6M2 => return Zeros{5} + 15;
         when TileDataType_S64 => return Zeros{5} + 16;
         when TileDataType_S32 => return Zeros{5} + 17;
         when TileDataType_S16 => return Zeros{5} + 18;
         when TileDataType_S8 => return Zeros{5} + 19;
         when TileDataType_S4X2 => return Zeros{5} + 20;
+        when TileDataType_RCPE6M2 => return Zeros{5} + 21;
         when TileDataType_U64 => return Zeros{5} + 24;
         when TileDataType_U32 => return Zeros{5} + 25;
         when TileDataType_U16 => return Zeros{5} + 26;
