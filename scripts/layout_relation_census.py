@@ -52,14 +52,23 @@ EXACT_34 = (
     "TADDS TANDS TDIVS TMAXS TMINS TMULS TORS TREMS TSHLS TSHRS TSUBS TXORS TFMA"
 ).split()
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
+INDEXED_TLSU = {
+    "MGATHER", "MGATHER_MASK", "MGATHER_CAS",
+    "MGATHER_ADD", "MGATHER_AND", "MGATHER_DEC", "MGATHER_EXCH",
+    "MGATHER_INC", "MGATHER_MAX", "MGATHER_MIN", "MGATHER_OR",
+    "MGATHER_XOR", "MSCATTER", "MSCATTER_MASK", "MSCATTER_ADD",
+    "MSCATTER_AND", "MSCATTER_DEC", "MSCATTER_INC", "MSCATTER_MAX",
+    "MSCATTER_MIN", "MSCATTER_OR", "MSCATTER_POPC", "MSCATTER_XOR",
+}
 OWNER_DECISIONS = {
     "GMOV": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
+    "INDEXED_TLSU": "ADR-MEM-0009 2026-09-16 amendment / Issue #301",
     "BIAS": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
     "EXACT_34": "ADR-CUBE-0013",
 }
 COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
-    "ExecuteTile", "ExecuteBundle",
+    "ExecuteTile", "ExecuteBundle", "IndexedTLSU",
 )
 BUNDLE_PIPELINE_ROOTS = (
     "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -131,6 +140,25 @@ CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS = {
 CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION = (
     "CUBE reduction physical-geometry decoupling "
     "(ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)"
+)
+INDEXED_TLSU_HELPERS = {
+    "IndexedTLSUDataShapeMatchesIndex",
+    "IndexedTLSUIndexDataTypeLegal",
+    "IndexedTLSULayoutSupported",
+    "IndexedTLSUMemoryIndexDataTypeLegal",
+    "IndexedTLSUNumericContentsDefined",
+    "IndexedTLSUNumericDescriptorLegal",
+    "IndexedTLSUOrdinaryTransferDataTypeLegal",
+    "IndexedTLSUPhysicalShapeLegal",
+    "IndexedTLSUPredicateDescriptorLegal",
+    "IndexedTLSUPredicateValuesLegal",
+    "TileIndexLinearElementIndex",
+    "TileIndexedTLSURow",
+    "TileMemoryIndexedStridedAddress",
+}
+INDEXED_TLSU_CLASSIFICATION = (
+    "indexed TLSU byte-displacement and Local layout closure "
+    "(ADR-MEM-0009 2026-09-16 amendment, Issue #301)"
 )
 
 
@@ -946,6 +974,7 @@ def _layout_atoms(body: str, env: dict[str, str]) -> tuple[set[tuple[str, str]],
     # same environment used for equality propagation.
     domain_calls = {
         "TileElementwiseLayoutSupported": ALLOWED_LAYOUTS,
+        "IndexedTLSULayoutSupported": ALLOWED_LAYOUTS,
         "TileReductionAndExpansionLayoutSupported": ALLOWED_LAYOUTS,
         "TileCellRearrangementLayoutLegal": LOCAL_CUBE_LAYOUTS,
         "TileLayoutShapeLegal": KNOWN_LAYOUTS - LOCAL_CUBE_LAYOUTS,
@@ -1076,6 +1105,13 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
     context_layout_names = set(LAYOUT_RE.findall(context_text)) & ALLOWED_LAYOUTS
     contract_layouts: dict[str, set[str]] = {role["field"]: set() for role in roles}
     contract_layout_names = set(LAYOUT_RE.findall(contract))
+    if re.search(r"\bROWMAJOR\b", contract):
+        contract_layout_names.add("RowMajor")
+    mnemonic = meta.get("mnemonic")
+    if (mnemonic in INDEXED_TLSU and
+            ALLOWED_LAYOUTS <= contract_layout_names):
+        for role in roles:
+            contract_layouts[role["field"]].update(ALLOWED_LAYOUTS)
     has_explicit_row_major = bool("RowMajor" in contract_layout_names or
                                   re.search(r"\brow[ -]major\s+layout\b|Layout\s*=\s*NORM[^.\n]*RowMajor", contract, re.IGNORECASE))
     if ALL_SELECTED_LAYOUT_RE.search(contract):
@@ -1157,7 +1193,9 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         for role in roles:
             field, description = role["field"], role["role"]
             text = f"{field} {description}"
-            if re.search(r"bias", text, re.IGNORECASE):
+            if mnemonic in INDEXED_TLSU and ALLOWED_LAYOUTS <= contract_layout_names:
+                context_role_layouts[field] = set(ALLOWED_LAYOUTS)
+            elif re.search(r"bias", text, re.IGNORECASE):
                 if re.search(r"resolved\s+M\s+layout|Bias\s+uses", context_text, re.IGNORECASE):
                     context_role_layouts[field] = set(context_layout_names & LOCAL_CUBE_LAYOUTS)
                 elif re.search(r"row[ -]?major", context_text, re.IGNORECASE):
@@ -1192,6 +1230,12 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         # they must not widen an elementwise operation's accepted set.
         if "TileElementwiseLayoutSupported" in reachable_names:
             accepted_layouts[field] &= ALLOWED_LAYOUTS
+        if (mnemonic in INDEXED_TLSU and
+                "IndexedTLSULayoutSupported" in reachable_names):
+            accepted_layouts[field] = set(ALLOWED_LAYOUTS)
+        if (mnemonic in INDEXED_TLSU and
+                contract_values == ALLOWED_LAYOUTS):
+            accepted_layouts[field] = set(ALLOWED_LAYOUTS)
         if field in context_role_layouts:
             accepted_layouts[field] &= context_role_layouts[field]
     # Relation graph transitivity is retained for canonical Bias wording and
@@ -1281,6 +1325,8 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
         # exactly {RowMajor, CUBE_M16, CUBE_M32}.
         if layout in old_values and layout not in new_values:
             return "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)"
+    if mnemonic in INDEXED_TLSU and old_values != new_values and new_values == ALLOWED_LAYOUTS:
+        return INDEXED_TLSU_CLASSIFICATION
     if mnemonic in BIAS and layout in ALLOWED_LAYOUTS and role == new_model.get("bias_role"):
         if layout in new_values and layout not in old_values and layout in new_model.get("contract_layouts", {}).get(role, []):
             return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
@@ -1302,6 +1348,8 @@ def _classify_relation(mnemonic: str, relation: str) -> str | None:
         "Local A present => A.layout == ML",
     }:
         return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
+    if mnemonic in INDEXED_TLSU and ".layout == " in relation:
+        return INDEXED_TLSU_CLASSIFICATION
     return None
 
 
@@ -1327,10 +1375,14 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
-            if name in TCI_PHYSICAL_COLUMN_HELPERS or name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
+            if (name in TCI_PHYSICAL_COLUMN_HELPERS or
+                    name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS or
+                    name in INDEXED_TLSU_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
-                                  else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION)
+                                  else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
+                                  if name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS
+                                  else INDEXED_TLSU_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
@@ -1423,6 +1475,20 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 errors.append(f"{key[0]}:{key[1]}: empty layout-bearing {side} role(s): {', '.join(empty_roles)}")
         operation_models_before[key], operation_models_after[key] = old_model, new_model
 
+    for (mnemonic, form), model in operation_models_after.items():
+        if mnemonic not in INDEXED_TLSU:
+            continue
+        role_fields = list(model.get("layouts", {}))
+        expected_relations = {
+            f"{role_fields[0]}.layout == {role}.layout"
+            for role in role_fields[1:]
+        } if role_fields else set()
+        if set(model.get("relations", [])) != expected_relations:
+            errors.append(
+                f"indexed TLSU same-layout relation closure missing "
+                f"for {mnemonic}/{form}"
+            )
+
     changed_records: list[dict[str, Any]] = []
     deltas: list[dict[str, Any]] = []
     authorized_helpers: set[str] = set()
@@ -1443,7 +1509,11 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
             classification = _classify_tuple(mnemonic, role, layout, old_model, new_model)
             deltas.append({"tuple": list(item), "owner": new_rows[key]["owner"], "mnemonic": mnemonic, "form": form,
                            "classification": classification or "UNCLASSIFIED",
-                           "owner_decision": OWNER_DECISIONS.get("BIAS" if mnemonic in BIAS else "EXACT_34" if mnemonic in EXACT_34 else mnemonic, "none")})
+                           "owner_decision": OWNER_DECISIONS.get(
+                               "BIAS" if mnemonic in BIAS else
+                               "EXACT_34" if mnemonic in EXACT_34 else
+                               "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
+                               mnemonic, "none")})
             if classification is None:
                 tuple_delta_classified = False
                 errors.append(f"unclassified layout delta for {mnemonic}/{form} ({role}): {item}")
@@ -1452,7 +1522,10 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
             deltas.append({"relation": relation, "owner": new_rows[key]["owner"],
                            "mnemonic": mnemonic, "form": form,
                            "classification": classification or "UNCLASSIFIED",
-                           "owner_decision": OWNER_DECISIONS.get("BIAS" if mnemonic in BIAS else mnemonic, "none")})
+                           "owner_decision": OWNER_DECISIONS.get(
+                               "BIAS" if mnemonic in BIAS else
+                               "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
+                               mnemonic, "none")})
             if classification is None:
                 errors.append(f"unclassified relation delta for {mnemonic}/{form}: {relation}")
         if mnemonic in BIAS:
@@ -1480,7 +1553,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     helper_deltas, helper_errors = _helper_deltas(before_reach, after_reach, before_defs, after_defs, authorized_helpers)
     errors.extend(helper_errors)
     if enforce_closure:
-        expected = set(EXACT_34) | set(BIAS) | {"GMOV"}
+        expected = set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV"}
         for mnemonic in EXACT_34:
             rows = [key for key in operation_models_after if key[0] == mnemonic]
             if not rows or any(set(operation_models_after[key].get("layouts", {}).get(role, [])) != ALLOWED_LAYOUTS
@@ -1498,13 +1571,20 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 bias_role = model.get("bias_role")
                 if not bias_role or set(model.get("layouts", {}).get(bias_role, [])) != LOCAL_CUBE_LAYOUTS:
                     errors.append(f"Bias layout closure missing for {mnemonic}/{form}")
+            if mnemonic in INDEXED_TLSU:
+                for role, layouts in model.get("layouts", {}).items():
+                    if set(layouts) != ALLOWED_LAYOUTS:
+                        errors.append(
+                            f"indexed TLSU layout closure missing for "
+                            f"{mnemonic}/{form}/{role}"
+                        )
             if mnemonic not in expected and (set(model.get("relations", [])) or model.get("layouts")):
                 # Non-target operations are checked by baseline equality below;
                 # this branch documents that an operation with no layout roles
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | {"GMOV"}:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV"}:
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;
@@ -1623,7 +1703,8 @@ def _real_relation_mutation_canaries() -> None:
         enforce_closure=False,
     )
     if result["pass"] or not any(
-        "MGATHER_MASK" in error and "unclassified relation delta" in error
+        "indexed TLSU same-layout relation closure missing for "
+        "MGATHER_MASK/direct" in error
         for error in result["errors"]
     ):
         raise AssertionError("real MGATHER_MASK equality mutation did not fail closed")

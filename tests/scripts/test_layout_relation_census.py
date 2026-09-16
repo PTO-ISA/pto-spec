@@ -5,6 +5,7 @@ import unittest
 from scripts.layout_relation_census import (
     BASELINE_OBJECT,
     BIAS,
+    INDEXED_TLSU,
     _complete_fixture_keys,
     _catalog_operand_rows,
     _census_texts,
@@ -199,7 +200,8 @@ class LayoutRelationCensusTest(unittest.TestCase):
             enforce_closure=False,
         )
         self.assertFalse(result["pass"])
-        self.assertTrue(any("MGATHER_MASK" in error and "unclassified relation delta" in error
+        self.assertTrue(any("indexed TLSU same-layout relation closure missing for "
+                            "MGATHER_MASK/direct" in error
                             for error in result["errors"]), result["errors"])
 
     def test_real_tpermute_relation_mutation_is_rejected(self) -> None:
@@ -316,17 +318,24 @@ class LayoutRelationCensusTest(unittest.TestCase):
             self.assertNotIn("primary", " ".join(row["L1"]).lower())
 
         relation_deltas = [row for row in result["delta"] if "relation" in row]
-        self.assertEqual(len(relation_deltas), 16)
+        bias_relation_deltas = [
+            row for row in relation_deltas if row["mnemonic"] in BIAS
+        ]
+        indexed_relation_deltas = [
+            row for row in relation_deltas if row["mnemonic"] in INDEXED_TLSU
+        ]
+        self.assertEqual(len(bias_relation_deltas), 16)
+        self.assertTrue(indexed_relation_deltas)
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in relation_deltas))
         self.assertTrue(all(row["owner_decision"] != "none" for row in relation_deltas))
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in result["delta"]))
         self.assertTrue(all(row["owner_decision"] != "none" for row in result["delta"]))
         self.assertEqual(
-            {row["relation"] for row in relation_deltas},
+            {row["relation"] for row in bias_relation_deltas},
             {"Bias.layout == ML == D.layout", "Local A present => A.layout == ML"},
         )
 
-        expected = set(BIAS) | set(result["exact_34"]) | {"GMOV"}
+        expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV"}
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)
