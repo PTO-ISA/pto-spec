@@ -350,7 +350,7 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("## Encoded field closure", rendered)
         self.assertIn(
             "| b_datr_32_c161a042ff38 | DataType | 5 | "
-            "0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 |",
+            "0–21, 24–28, 31 | none | 22–23, 29–30 |",
             rendered,
         )
         self.assertIn("code 31, not code zero, is DTYPE_NONE", rendered)
