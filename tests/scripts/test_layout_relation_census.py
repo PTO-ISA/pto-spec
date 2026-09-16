@@ -13,6 +13,7 @@ from scripts.layout_relation_census import (
     _inventory,
     _load_baseline_fixture,
     _metadata_map,
+    _narrow_indexed_tlsu_layout_helper,
     _remove_relation_from_readonly_function,
     census,
     source_paths,
@@ -203,6 +204,23 @@ class LayoutRelationCensusTest(unittest.TestCase):
         self.assertTrue(any("indexed TLSU same-layout relation closure missing for "
                             "MGATHER_MASK/direct" in error
                             for error in result["errors"]), result["errors"])
+
+    def test_real_indexed_layout_domain_narrowing_is_rejected(self) -> None:
+        paths = source_paths(BASELINE_OBJECT, "working-tree")
+        baseline = _ref_texts(BASELINE_OBJECT, paths)
+        candidate = _ref_texts("working-tree", paths)
+        path = "asl/tile/model/legality/indexed-layout.asl"
+        candidate[path] = _narrow_indexed_tlsu_layout_helper(candidate[path])
+        result = _census_texts(
+            baseline, candidate, BASELINE_OBJECT,
+            "real-mutated-indexed-layout", enforce_closure=True,
+        )
+        self.assertFalse(result["pass"])
+        self.assertTrue(
+            any("indexed TLSU layout closure missing" in error
+                for error in result["errors"]),
+            result["errors"],
+        )
 
     def test_real_tpermute_relation_mutation_is_rejected(self) -> None:
         paths = source_paths(BASELINE_OBJECT, "working-tree")

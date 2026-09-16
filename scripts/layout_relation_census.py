@@ -1049,6 +1049,7 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
     errors.extend(root_errors)
     layout_pairs: set[tuple[str, str]] = set()
     relation_pairs: set[tuple[str, str]] = set()
+    indexed_layout_domains: dict[str, set[str]] = {}
     visited: set[tuple[str, tuple[tuple[str, str], ...]]] = set()
     stack: list[tuple[str, dict[str, str]]] = [(root_name, root_env)]
     while stack:
@@ -1075,6 +1076,9 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
                 found_layouts, found_relations, unresolved = set(), set(), False
             layout_pairs.update(found_layouts)
             relation_pairs.update(found_relations)
+            if name == "IndexedTLSULayoutSupported":
+                for field, layout in found_layouts:
+                    indexed_layout_domains.setdefault(field, set()).add(layout)
             # Unknown atoms in unrelated predicate branches (for example a
             # predicate-cell carrier) are not layout roles.  Missing root
             # bindings and missing layout-helper bodies are the fail-closed
@@ -1230,12 +1234,8 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         # they must not widen an elementwise operation's accepted set.
         if "TileElementwiseLayoutSupported" in reachable_names:
             accepted_layouts[field] &= ALLOWED_LAYOUTS
-        if (mnemonic in INDEXED_TLSU and
-                "IndexedTLSULayoutSupported" in reachable_names):
-            accepted_layouts[field] = set(ALLOWED_LAYOUTS)
-        if (mnemonic in INDEXED_TLSU and
-                contract_values == ALLOWED_LAYOUTS):
-            accepted_layouts[field] = set(ALLOWED_LAYOUTS)
+        if field in indexed_layout_domains:
+            accepted_layouts[field] &= indexed_layout_domains[field]
         if field in context_role_layouts:
             accepted_layouts[field] &= context_role_layouts[field]
     # Relation graph transitivity is retained for canonical Bias wording and
@@ -1685,6 +1685,18 @@ def _remove_relation_from_readonly_function(
     return text[:start] + body.replace(relation, "", 1) + text[end:]
 
 
+def _narrow_indexed_tlsu_layout_helper(text: str) -> str:
+    accepted = (
+        "    return layout == TileLayout_RowMajor ||\n"
+        "           layout == TileLayout_CUBE_M16 ||\n"
+        "           layout == TileLayout_CUBE_M32;\n"
+    )
+    narrowed = "    return layout == TileLayout_RowMajor;\n"
+    if accepted not in text:
+        raise AssertionError("IndexedTLSULayoutSupported canary body is missing")
+    return text.replace(accepted, narrowed, 1)
+
+
 def _real_relation_mutation_canaries() -> None:
     """Exercise relation extraction against the real authoritative ASL map."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -1708,6 +1720,23 @@ def _real_relation_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("real MGATHER_MASK equality mutation did not fail closed")
+
+    indexed_path = "asl/tile/model/legality/indexed-layout.asl"
+    mutated = dict(candidate)
+    mutated[indexed_path] = _narrow_indexed_tlsu_layout_helper(
+        candidate.get(indexed_path, "")
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-indexed-layout",
+        enforce_closure=True,
+    )
+    if result["pass"] or not any(
+        "indexed TLSU layout closure missing" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError(
+            "real IndexedTLSULayoutSupported narrowing did not fail closed"
+        )
 
     rearrangement_path = "asl/tile/model/legality/layout-rearrangement.asl"
     original = candidate.get(rearrangement_path, "")
@@ -1774,7 +1803,7 @@ def self_test() -> None:
     if result["pass"] or not any("missing authoritative PTO-INSTRUCTION" in error or "inventory changed" in error for error in result["errors"]):
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain mutations rejected")
 
 
 def main() -> int:
