@@ -115539,7 +115539,7 @@
       "engine": "TLSU",
       "exceptions": [
         "Reserved DataType, unsupported or wrong-direction Layout, operation-inapplicable PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.",
-        "Every selected memory address is preflighted before any destination payload, descriptor, allocation, definedness, or load event becomes visible. A failed Local allocation is rolled back; a failed Shared update preserves the prior Shared record."
+        "The request stops at the first memory fault; reads and load events completed before that fault may remain in a partially defined Local destination or Shared generation. A partial result is not complete or whole-parent-ready."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -266625,7 +266625,7 @@
       "engine": "TLSU",
       "exceptions": [
         "A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.",
-        "A memory translation, permission, or alignment fault is detected before the first GM write."
+        "A memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [

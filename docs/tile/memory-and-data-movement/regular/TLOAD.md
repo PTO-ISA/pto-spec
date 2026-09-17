@@ -26,19 +26,19 @@ The current instruction contract is owned by the ASL source linked above.
 
 The ASL DOC contract selects `TileHandler_TLOAD` through the instruction's selector-encoded block carrier.
 
-The completed schema chooses exactly one Local or Shared destination domain; GM base, row stride, dimensions, layout, DataType, capacity, and the whole selected footprint are resolved before the first load.
+The completed schema chooses exactly one Local or Shared destination domain; GM base, row stride, dimensions, layout, DataType, and capacity are resolved before element accesses proceed until the first fault.
 
 <!-- PTO-READER-BLOCK: tile-tload-inputs-outputs role=inputs-outputs -->
 ## Operands and descriptors
 
 `destination0` is the new Local destination or absolute Shared destination; `address` is the per-PE private-GPR GM base address; `scalar0` is the per-PE private-GPR byte row stride.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+Sources remain persistent unless the current contract explicitly names a consumed or replaced state; a destination may retain completed reads but is not complete until the request succeeds.
 
 <!-- PTO-READER-BLOCK: tile-tload-effects role=effects -->
 ## Publication and ordering
 
-Success atomically publishes the complete Local destination or complete Shared parent, including descriptor, payload, definedness, and CUBE padding when requested. Multi-PE Shared producers publish only through complete B.ASSEMBLE.LAST.
+Success publishes the complete Local destination or complete Shared parent, including descriptor, payload, definedness, and CUBE padding when requested. A first fault may leave a partial destination or generation that is not complete or whole-parent-ready; multi-PE Shared producers publish only through complete B.ASSEMBLE.LAST.
 
 Memory events use the block ordering attributes. Encoded-zero stride is a real zero stride, while omission selects the derived dense stride.
 
@@ -47,7 +47,7 @@ Memory events use the block ordering attributes. Encoded-zero stride is a real z
 
 Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality or bundle-control fault without partial effects. A memory fault may retain completed reads.
 
 <!-- PTO-READER-BLOCK: tile-tload-example role=example -->
 ## Non-normative contract sketch
@@ -198,18 +198,18 @@ end;
 ### Memory effects
 
 - For each selected PE and each element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size. Packed four-bit types add floor(column / 2) to each byte-strided row base and select the nibble from column parity.
-- The accesses participate in PTO-TSO using the block aq/rl attributes and are precise and restartable.
+- The accesses participate in PTO-RC using the block aq/rl attributes; the request reports the first fault and may retain effects completed before it.
 - Weight mode reads dense OHWI/OIHW source elements in canonical [kh][kw][c1][c0] order, supplies defined raw-zero Cin padding, and atomically publishes the Shared generation after complete preflight.
 
 ### Ordering
 
-- Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, destination capacity, and all memory translations before the first architectural load effect.
-- On success publish the complete Local destination or complete Shared parent atomically at block commit. A multi-PE Shared producer publishes only after complete B.ASSEMBLE.LAST; failure preserves prior state.
+- Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, and destination capacity before the first architectural load effect; translate and access each element until the first fault.
+- On success publish the complete Local destination or complete Shared parent at block commit. A fault may leave a partially defined Local destination or Shared generation, which is not advertised as complete or whole-parent-ready.
 
 ## Exceptions
 
 - Reserved DataType, unsupported or wrong-direction Layout, operation-inapplicable PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.
-- Every selected memory address is preflighted before any destination payload, descriptor, allocation, definedness, or load event becomes visible. A failed Local allocation is rolled back; a failed Shared update preserves the prior Shared record.
+- The request stops at the first memory fault; reads and load events completed before that fault may remain in a partially defined Local destination or Shared generation. A partial result is not complete or whole-parent-ready.
 
 ## Examples
 

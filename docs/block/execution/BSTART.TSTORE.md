@@ -229,11 +229,11 @@ end;
 ### Memory effects
 
 - For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
-- The complete selected-PE footprint is preflighted before the first GM write, so a fault produces no partial store. After successful preflight individual store beats need not be atomic or ordered to observers.
+- The selected-PE footprint is accessed element by element until the first fault; prior GM writes and memory events may remain visible. Individual store beats need not be atomic or ordered to observers.
 
 ### Ordering
 
-- Resolve and validate the complete schema, source descriptor or temporary descriptor, dimensions, masks, per-PE GPR inputs, and every memory access before the first architectural store effect.
+- Resolve and validate the complete schema, source descriptor or temporary descriptor, dimensions, masks, and per-PE GPR inputs before accessing each element until the first fault.
 - Selected Shared-store PEs have no architecture-defined relative issue or commit order; software avoids overlapping GM regions or establishes ordering separately.
 
 ## Exceptions

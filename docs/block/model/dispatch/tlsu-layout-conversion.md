@@ -194,7 +194,6 @@ begin
         let destination = _BundleTileBindings[[0]].destination;
         TLOAD(destination, base_address, row_stride_bytes);
         if _LastFault != Fault_None then
-            RollBackBundleTileDestinations();
             return FALSE;
         end;
     else

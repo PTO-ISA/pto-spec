@@ -143,7 +143,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Architecture
 - [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
 - [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
-- [ADR-MEM-0001](docs/status/decisions/ADR-MEM-0001-pto-total-store-order.md): PTO total store order candidate model
 - [ADR-NUM-0001](docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md): Numeric profile identity and bounded variation framework
 - [ADR-NUM-0005](docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md): Numeric variation-point ownership
 - [ADR-NUM-0010](docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md): Hardware numeric subnormal policy
@@ -165,6 +164,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-MEM-0006](docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-MEM-0007](docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
+- [ADR-MEM-0011](docs/status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md): Cross-agent visibility, fence transport, atomic ordering, and precise replay
 - [ADR-NUM-0002](docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md): Scalar numeric flag state and producer ownership
 - [ADR-NUM-0003](docs/status/decisions/ADR-NUM-0003-numeric-rounding-selector-ownership.md): Numeric rounding selector ownership
 - [ADR-NUM-0004](docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md): Numeric format namespace ownership

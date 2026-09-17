@@ -84,7 +84,7 @@ begin
         assert _MemoryEvents[[event_number]].kind != MemoryEvent_Fence;
     end;
     assert MemoryCandidateExecutionValid();
-    assert MemoryExecutionAllowedTSO();
+    assert MemoryExecutionAllowedRC();
 end;
 
 func main() => integer

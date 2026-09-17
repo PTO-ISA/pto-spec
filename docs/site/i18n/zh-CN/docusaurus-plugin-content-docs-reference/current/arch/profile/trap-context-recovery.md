@@ -119,6 +119,7 @@ begin
         _TrapContexts[[target]].bundle_execution_domain_token;
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
     _FrameTemplate = _TrapContexts[[target]].frame_template;
+    _MemoryReplayState = _TrapContexts[[target]].memory_replay_state;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
         _TQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f45 + index);
         _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);

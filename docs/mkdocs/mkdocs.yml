@@ -1029,6 +1029,8 @@ nav:
               - "ADR-MEM-0007: PTO Encoding Ownership and Per-PE GM Access": status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md
               - "ADR-MEM-0008: TLOAD/TSTORE GM Byte Row Stride": status/decisions/ADR-MEM-0008-tload-tstore-gm-byte-row-stride.md
               - "ADR-MEM-0009: TLSU and global-memory operations": status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md
+              - "ADR-MEM-0010: PTO relaxed consistency with preserved Store-to-Store order": status/decisions/ADR-MEM-0010-relaxed-consistency-store-store-order.md
+              - "ADR-MEM-0011: Cross-agent visibility, fence transport, atomic ordering, and precise replay": status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md
           - BLOCK:
               - "ADR-BLOCK-0001: Define the PTO predicate-register contract": status/decisions/ADR-BLOCK-0001-predicate-register-contract.md
               - "ADR-BLOCK-0002: Separate execution-mask and predicate domains (superseded)": status/decisions/ADR-BLOCK-0002-separate-execution-mask-and-warp-predicates.md

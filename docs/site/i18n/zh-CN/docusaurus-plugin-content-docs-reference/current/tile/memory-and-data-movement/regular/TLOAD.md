@@ -26,19 +26,19 @@ The current instruction contract is owned by the ASL source linked above.
 
 ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TLOAD`。
 
-完成的 绑定模式 只选择一个 Local 或 Shared 目的域；第一次载入前必须解析 GM 基址、行步幅、维度、布局、DataType、容量和整个选中访问范围。
+完成的绑定模式只选择一个 Local 或 Shared 目的域；第一次载入前解析 GM 基址、行步幅、维度、布局、DataType 与容量，随后逐元素访问直到首个故障。
 
 <!-- PTO-READER-BLOCK: tile-tload-inputs-outputs role=inputs-outputs -->
 ## 操作数与描述符
 
 `destination0` 是新 Local 目的地或绝对 Shared 目的地；`address` 是每 PE 私有 GPR 的 GM 基址；`scalar0` 是每 PE 私有 GPR 的字节行步幅。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+除非当前契约明确指出状态被消费或替换，否则源保持持久；目的地可以保留已完成的读取，但只有成功完成后才是完整结果。
 
 <!-- PTO-READER-BLOCK: tile-tload-effects role=effects -->
 ## 发布与排序
 
-成功时原子发布完整 Local 目的地或仅发布选中的 Shared 分区，其中包括描述符、载荷、已定义性，以及请求时的 CUBE 填充。
+成功时发布完整 Local 目的地或完整 Shared 父对象，其中包括描述符、载荷、已定义性，以及请求时的 CUBE 填充。首个故障可以留下未完成、未达到 whole-parent-ready 的部分目的地或代际。
 
 内存事件使用块排序属性。编码零步幅是真正的零步幅，而省略步幅会选择推导出的紧密步幅。
 
@@ -47,7 +47,7 @@ ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TLOA
 
 绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性或块控制故障且不产生部分效果；内存故障可以保留已完成的读取。
 
 <!-- PTO-READER-BLOCK: tile-tload-example role=example -->
 ## 非规范契约草图
@@ -198,18 +198,18 @@ end;
 ### Memory effects
 
 - For each selected PE and each element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size. Packed four-bit types add floor(column / 2) to each byte-strided row base and select the nibble from column parity.
-- The accesses participate in PTO-TSO using the block aq/rl attributes and are precise and restartable.
+- The accesses participate in PTO-RC using the block aq/rl attributes; the request reports the first fault and may retain effects completed before it.
 - Weight mode reads dense OHWI/OIHW source elements in canonical [kh][kw][c1][c0] order, supplies defined raw-zero Cin padding, and atomically publishes the Shared generation after complete preflight.
 
 ### Ordering
 
-- Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, destination capacity, and all memory translations before the first architectural load effect.
-- On success publish the complete Local destination or complete Shared parent atomically at block commit. A multi-PE Shared producer publishes only after complete B.ASSEMBLE.LAST; failure preserves prior state.
+- Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, and destination capacity before the first architectural load effect; translate and access each element until the first fault.
+- On success publish the complete Local destination or complete Shared parent at block commit. A fault may leave a partially defined Local destination or Shared generation, which is not advertised as complete or whole-parent-ready.
 
 ## Exceptions
 
 - Reserved DataType, unsupported or wrong-direction Layout, operation-inapplicable PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.
-- Every selected memory address is preflighted before any destination payload, descriptor, allocation, definedness, or load event becomes visible. A failed Local allocation is rolled back; a failed Shared update preserves the prior Shared record.
+- The request stops at the first memory fault; reads and load events completed before that fault may remain in a partially defined Local destination or Shared generation. A partial result is not complete or whole-parent-ready.
 
 ## Examples
 

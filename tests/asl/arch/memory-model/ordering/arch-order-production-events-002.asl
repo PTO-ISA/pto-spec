@@ -34,7 +34,7 @@ begin
     assert _MemoryEvents[[4]].write_performed;
     assert _MemoryEvents[[4]].coherence_rank == 2;
     assert MemoryCandidateExecutionValid();
-    assert MemoryExecutionAllowedTSO();
+    assert MemoryExecutionAllowedRC();
     StopMemoryEventCapture();
 end;
 

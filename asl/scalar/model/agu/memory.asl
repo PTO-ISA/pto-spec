@@ -1,10 +1,10 @@
 // PTO-UNIT: {"id":"PTO-SCALAR-MODEL-AGU-MEMORY","surface":"scalar","classification":["model","agu","memory"],"depends_on":["PTO-SCALAR-MODEL-BRU-SEMANTICS","PTO-ARCH-MEMORY-MODEL-ORDERING"]}
 // PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001,
-// PTO-REQ-MEMORY-TSO-001: profile-backed, little-endian memory with precise
-// instruction-wide completion and PTO-TSO event extraction.
+// PTO-REQ-MEMORY-RC-001: profile-backed, little-endian memory with precise
+// instruction-wide completion and PTO-RC event extraction.
 
-readonly func RangesOverlap(left_address: Word, left_size: integer,
-                            right_address: Word, right_size: integer) => boolean
+pure func RangesOverlap(left_address: Word, left_size: integer,
+                        right_address: Word, right_size: integer) => boolean
 begin
     let left_start = UInt(left_address);
     let right_start = UInt(right_address);

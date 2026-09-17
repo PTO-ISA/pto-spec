@@ -35,6 +35,7 @@ type TrapContext of record {
     bundle_execution_domain_token: integer,
     memory_copy_template: MemoryCopyTemplateState,
     frame_template: FrameTemplateState,
+    memory_replay_state: MemoryReplayState,
     t_queue: TemporaryQueueSnapshot,
     t_queue_valid: TemporaryQueueValiditySnapshot,
     u_queue: TemporaryQueueSnapshot,

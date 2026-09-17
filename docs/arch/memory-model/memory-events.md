@@ -54,9 +54,39 @@ Use this example block only as a reading aid: apply the rules above, then confir
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/memory-events.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS","surface":"arch","classification":["memory-model","memory-events"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE"]}
-// PTO-REQ-MEMORY-TSO-001: bounded executable candidate-execution checker for
-// PTO total store order. The event bound is verification infrastructure, not
-// an architectural limit on agents or executions.
+// PTO-REQ-MEMORY-RC-001: bounded executable candidate-execution checker for
+// PTO relaxed consistency with preserved Store->Store order. The event bound
+// is verification infrastructure, not an architectural limit on agents or
+// executions.
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-VISIBILITY-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// The portable GM domain is multi-copy atomic: one location has one global
+// coherence order and a completed write may be observed by every applicable
+// agent. Release/acquire pairs add a cross-agent synchronizes-with relation;
+// relaxed operations retain atomicity/coherence only and do not publish a
+// cross-agent ordering guarantee.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-VISIBILITY-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// Fence predecessor/successor class masks are the architecture-visible
+// transport of fence strength. A fence orders only matching classes in the
+// same agent; it does not silently acquire a stronger implementation fence or
+// create a cross-agent relation without a matching release/acquire access.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// GM locations are bytes, but this revision does not define byte-level merge or
+// tearing for mixed-size accesses. Any partial overlap between distinct access
+// ranges fails closed; only exact address-and-size matches participate in the
+// portable coherence relation.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// An atomic/RMW access to one exact byte range is one indivisible read/write
+// event in the global coherence order. Acquire/release atomic pairs may
+// synchronize across agents; relaxed atomics do not imply a global SC order for
+// different locations.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001
 
 pure func MemoryEventIsRead(event: MemoryEvent) => boolean
 begin
@@ -75,10 +105,40 @@ begin
     return MemoryEventIsRead(event) || MemoryEventIsWrite(event);
 end;
 
+pure func MemoryEventRangesOverlap(left: MemoryEvent,
+                                   right: MemoryEvent) => boolean
+begin
+    return RangesOverlap(left.address, left.size_bytes,
+                         right.address, right.size_bytes);
+end;
+
+pure func MemoryFenceStrengthOf(predecessor: bits(4), successor: bits(4))
+                                => MemoryFenceStrength
+begin
+    let has_predecessor = predecessor != Zeros{4};
+    let has_successor = successor != Zeros{4};
+    if has_predecessor && has_successor then
+        return MemoryFenceStrength_AcquireRelease;
+    elsif has_predecessor then
+        return MemoryFenceStrength_Release;
+    elsif has_successor then
+        return MemoryFenceStrength_Acquire;
+    else
+        return MemoryFenceStrength_None;
+    end;
+end;
+
 pure func MemoryEventsShareLocation(left: MemoryEvent,
                                     right: MemoryEvent) => boolean
 begin
     return left.address == right.address && left.size_bytes == right.size_bytes;
+end;
+
+pure func MemoryEventPartialOverlap(left: MemoryEvent,
+                                    right: MemoryEvent) => boolean
+begin
+    return MemoryEventRangesOverlap(left, right) &&
+           !MemoryEventsShareLocation(left, right);
 end;
 
 pure func MemoryEventClass(event: MemoryEvent) => bits(4)

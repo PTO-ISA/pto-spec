@@ -95,6 +95,10 @@ begin
     ResetMemoryExecution();
     _MemoryEventCaptureEnabled = FALSE;
     _CurrentMemoryAgent = 0;
+    _MemoryReplayState.active = FALSE;
+    _MemoryReplayState.request = Zeros{PTO_XLEN};
+    _MemoryReplayState.committed_event_count = 0;
+    _MemoryReplayState.epoch = 0;
     _LastFencePredecessor = Zeros{4};
     _LastFenceSuccessor = Zeros{4};
     _DataCacheEpoch = 0;
@@ -141,6 +145,10 @@ begin
         _TrapContexts[[ring]].bundle_range_group = _BundleRangeGroup;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
+        _TrapContexts[[ring]].memory_replay_state.active = FALSE;
+        _TrapContexts[[ring]].memory_replay_state.request = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].memory_replay_state.committed_event_count = 0;
+        _TrapContexts[[ring]].memory_replay_state.epoch = 0;
         _TrapContexts[[ring]].t_queue = _TQueue;
         _TrapContexts[[ring]].t_queue_valid = _TQueueValid;
         _TrapContexts[[ring]].u_queue = _UQueue;

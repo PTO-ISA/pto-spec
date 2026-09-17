@@ -313,7 +313,7 @@ def evidence_for_scalar_family(family: str) -> list[str]:
     by_family = {
         "AGU": ["PTO-REQ-SCALAR-ADDRESS-001", "PTO-REQ-MEMORY-COMPLETION-001"],
         "ALU": ["PTO-REQ-SCALAR-ALU-001", "PTO-REQ-SCALAR-OPERAND-001"],
-        "AMO": ["PTO-REQ-SCALAR-AMO-001", "PTO-REQ-MEMORY-TSO-001"],
+        "AMO": ["PTO-REQ-SCALAR-AMO-001", "PTO-REQ-MEMORY-RC-001"],
         "BRU": ["PTO-REQ-SCALAR-CONTROL-001", "PTO-REQ-SCALAR-EXECUTION-001"],
         "FSU": ["PTO-REQ-SCALAR-FP-001", "PTO-REQ-PROFILE-001"],
         "SYS": ["PTO-REQ-SCALAR-SYS-001", "PTO-REQ-SCALAR-SSR-001"],
@@ -346,7 +346,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             [
                 "PTO-REQ-TLSU-001",
                 "PTO-REQ-MEMORY-COMPLETION-001",
-                "PTO-REQ-MEMORY-TSO-001",
+                "PTO-REQ-MEMORY-RC-001",
             ],
             [
                 "spec/evidence/tlsu-totality.json",

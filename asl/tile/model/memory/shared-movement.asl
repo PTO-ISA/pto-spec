@@ -1,6 +1,6 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
 // PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
-// PTO-REQ-MEMORY-TSO-001: precise, restartable direct
+// PTO-REQ-MEMORY-RC-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
 type ScatterLaneOrder of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
@@ -189,33 +189,21 @@ begin
             if selected then
                 let agent = if single_issuer then single_agent
                     else region as MemoryAgentId;
-                let address = TileMemoryStridedByteAddress(
-                    base_addresses[[agent]], row as integer {0..65535},
-                    column as integer {0..65535},
-                    row_stride_bytes[[agent]], tile.data_type);
-                let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
-                if RaiseDataAccessFault(probe, address) then return; end;
-            end;
-        end;
-    end;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let region = SharedTileElementRegion(tile, element);
-            let selected = single_issuer ||
-                pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1';
-            if selected then
-                let agent = if single_issuer then single_agent
-                    else region as MemoryAgentId;
                 let high_nibble = TileMemoryStridedByteHighNibble(
                     column as integer {0..65535}, tile.data_type);
                 let address = TileMemoryStridedByteAddress(
                     base_addresses[[agent]], row as integer {0..65535},
                     column as integer {0..65535},
                     row_stride_bytes[[agent]], tile.data_type);
-                let translated = ProbeTileMemoryAccess(address,
-                    tile.data_type, FALSE).translated_address;
+                let probe = ProbeTileMemoryAccess(address,
+                    tile.data_type, FALSE);
+                if RaiseDataAccessFault(probe, address) then
+                    let updated = AtomicUpdateSharedTile(shared_tile_id,
+                        tile, pe_mask);
+                    assert updated;
+                    return;
+                end;
+                let translated = probe.translated_address;
                 let raw = LoadTranslatedUnsigned(translated,
                     TileMemoryElementBytes(tile.data_type));
                 RecordLoadEventForAgent(agent, translated,
@@ -224,6 +212,9 @@ begin
                 tile = TileInfoWithLogicalElement(tile, element,
                     LoadTileMemoryElement(translated, tile.data_type,
                         high_nibble));
+                tile.defined_valid_elements =
+                    (tile.defined_valid_elements + 1)
+                        as integer {0..524288};
             end;
         end;
     end;
@@ -244,24 +235,8 @@ func TSTOREShared(base_addresses: CorePEWords,
 begin
     if pe_mask == Zeros{4} then return; end;
     assert tile.allocated;
-    // PE_MASK selects consumer PEs. Each selected PE stores the complete
-    // parent through its own private base and byte-stride GPR values.
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-        let agent = pe as MemoryAgentId;
-        if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
-            for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-                for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-                    let address = TileMemoryStridedByteAddress(
-                        base_addresses[[agent]], row as integer {0..65535},
-                        column as integer {0..65535},
-                        row_stride_bytes[[agent]], tile.data_type);
-                    let probe = ProbeTileMemoryAccess(
-                        address, tile.data_type, TRUE);
-                    if RaiseDataAccessFault(probe, address) then return; end;
-                end;
-            end;
-        end;
-    end;
+    // PE_MASK selects consumer PEs. The first fault stops the request and
+    // stores completed before it remain visible.
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         let agent = pe as MemoryAgentId;
         if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
@@ -274,8 +249,10 @@ begin
                         base_addresses[[agent]], row as integer {0..65535},
                         column as integer {0..65535},
                         row_stride_bytes[[agent]], tile.data_type);
-                    let translated = ProbeTileMemoryAccess(address,
-                        tile.data_type, TRUE).translated_address;
+                    let probe = ProbeTileMemoryAccess(address,
+                        tile.data_type, TRUE);
+                    if RaiseDataAccessFault(probe, address) then return; end;
+                    let translated = probe.translated_address;
                     let stored_value = StoreTileMemoryElement(
                         address, translated, tile.data_type,
                         TileMemoryStridedByteHighNibble(
@@ -343,22 +320,7 @@ begin
                     let probe = ProbeTileMemoryAccess(address,
                         tile.data_type, TRUE);
                     if RaiseDataAccessFault(probe, address) then return; end;
-                end;
-            end;
-        end;
-    end;
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-        let agent = pe as MemoryAgentId;
-        if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
-            let tile = per_pe_tiles[[agent]];
-            for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-                for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-                    let address = TileMemoryStridedByteAddress(
-                        base_addresses[[agent]], row as integer {0..65535},
-                        column as integer {0..65535},
-                        row_stride_bytes[[agent]], tile.data_type);
-                    let translated = ProbeTileMemoryAccess(address,
-                        tile.data_type, TRUE).translated_address;
+                    let translated = probe.translated_address;
                     let stored_value = StoreTileMemoryElement(
                         address, translated, tile.data_type,
                         TileMemoryStridedByteHighNibble(

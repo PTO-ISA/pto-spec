@@ -197,10 +197,10 @@ scalar_assertion_files = tuple(
 
 scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
-if scalar_count != 36:
-    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 36")
-if tile_count != 229:
-    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 229")
+if scalar_count != 120:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 120")
+if tile_count != 399:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 399")
 
 concurrency_paths = (
     "asl/arch/memory-model/memory-events.asl",
@@ -317,7 +317,7 @@ require_once(
 )
 
 cube_preflight = function_body(
-    "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
+    "tests/asl/tile/model/execution/cube/tile-bound-preflight-002.asl",
     "TestCubeCompositePreflight",
 )
 for status in (
@@ -333,8 +333,8 @@ for status in (
     )
 
 verifier = function_body(
-    "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl",
-    "TestTSOConcurrency",
+    "tests/asl/arch/memory-model/ordering/arch-order-rc-concurrency-001.asl",
+    "TestRCConcurrencyBoundaries",
 )
 for label, pattern in (
     (

@@ -260,6 +260,7 @@ class NdfTest(unittest.TestCase):
                 "_MemoryEventCount",
                 "_MemoryEventCaptureEnabled",
                 "_CurrentMemoryAgent",
+                "_MemoryReplayState",
             ),
             "PTO-STATE-ARCH-MAINTENANCE": (
                 "_DataCacheEpoch",
