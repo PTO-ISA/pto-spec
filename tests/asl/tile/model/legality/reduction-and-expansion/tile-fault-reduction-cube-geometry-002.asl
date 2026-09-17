@@ -2,7 +2,7 @@
 func main() => integer
 begin
     ResetProfileState();
-    let source = ConfigureCubeTileForMaskWithPhysical(0, 4096, 64, 16,
+    let source = ConfigureCubeTileForMaskWithPhysical(0, 4096, 32, 16,
         8, 16, TileDataType_U8, TileLayout_CUBE_M32, '0001');
     let row_bad = ConfigureCubeTileForMaskWithPhysical(1, 512, 32, 4,
         8, 1, TileDataType_U8, TileLayout_CUBE_M32, '0001');

@@ -268,6 +268,23 @@ the generic CUBE descriptor remains unchanged and may represent multiple
 exposes only one row block. A shape exceeding the selected limit is illegal;
 software splitting is outside the ISA semantics.
 
+### Issue #323 correction: generic single-block ownership
+
+The 2026-09-17 Issue #323 amendment supersedes the Issue #311 Local M32
+multi-row consequence that previously appeared in the generic descriptor
+and reduction/expansion reconciliation. The reduction and expansion family
+no longer owns an independent `TileReductionAndExpansionRowLimitLegal`
+architectural bound: legal CUBE descriptors obtain the fixed `Rows=16` or
+`Rows=32` and valid-row tail from generic descriptor legality. All reduction
+destination geometry, rollback, definedness, and preflight behavior remains
+unchanged.
+
+This amendment does not supersede the Issue #311 removal of the reduction-only
+2 KiB source ceiling or its independent physical-column rules. Legal sources
+above 2 KiB remain accepted when generic capacity and shape rules are met.
+The compatibility classification is **breaking** and release impact is
+**required**.
+
 ### Reduction shapes and source capacity
 
 `TROW*` reductions map logical `[R,C]` to `[R,1]`. `TCOL*` reductions map

@@ -19,6 +19,9 @@
 // input type is not FP16 or BF16. Published Shared operands may replace the
 // right group or both matrix groups; supplementary operands and destinations
 // remain Local.
+// Local A/B/C scales use one physical CUBE_M32 row block, so their valid major
+// dimension is at most 32; a Local B-scale with N>32 is illegal without a
+// replacement representation. Shared scales remain ordinary Tiles.
 // Shared primaries MUST satisfy parent-level whole_parent_ready and published
 // readiness; producer and consumer masks remain independent.
 // TransA/TransB MUST apply only to the corresponding Shared primary. Every

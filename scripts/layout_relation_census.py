@@ -171,6 +171,18 @@ CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION = (
     "CUBE reduction physical-geometry decoupling "
     "(ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)"
 )
+# Issue #323 makes the generic Local M16/M32 one-physical-M-block invariant
+# authoritative and removes the reduction-local duplicate row-limit helper.
+# Keep these names explicit so the census records the owner change while
+# unrelated common-helper mutations continue to fail closed.
+LOCAL_SINGLE_M_BLOCK_HELPERS = {
+    "TileCubeStorageRows",
+    "TileReductionAndExpansionRowLimitLegal",
+}
+LOCAL_SINGLE_M_BLOCK_CLASSIFICATION = (
+    "Local M16/M32 single-physical-M-block geometry "
+    "(ADR-CUBE-0004/ADR-TILE-0012/ADR-CUBE-0012 2026-09-17 amendments, Issue #323)"
+)
 INDEXED_TLSU_HELPERS = {
     "IndexedTLSUDataShapeMatchesIndex",
     "IndexedTLSUIndexDataTypeLegal",
@@ -1413,7 +1425,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS or
                     name in INDEXED_TLSU_HELPERS or
                     name in PACKED_X2_ROW_LOCAL_HELPERS or
-                    name in TCVT_PHYSICAL_SHAPE_HELPERS):
+                    name in TCVT_PHYSICAL_SHAPE_HELPERS or
+                    name in LOCAL_SINGLE_M_BLOCK_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
                                   else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
@@ -1422,7 +1435,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                   if name in INDEXED_TLSU_HELPERS
                                   else PACKED_X2_ROW_LOCAL_CLASSIFICATION
                                   if name in PACKED_X2_ROW_LOCAL_HELPERS
-                                  else TCVT_PHYSICAL_SHAPE_CLASSIFICATION)
+                                  else TCVT_PHYSICAL_SHAPE_CLASSIFICATION
+                                  if name in TCVT_PHYSICAL_SHAPE_HELPERS
+                                  else LOCAL_SINGLE_M_BLOCK_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
@@ -1441,6 +1456,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = PACKED_X2_ROW_LOCAL_CLASSIFICATION
             if classification is None and name in TCVT_PHYSICAL_SHAPE_HELPERS:
                 classification = TCVT_PHYSICAL_SHAPE_CLASSIFICATION
+            if classification is None and name in LOCAL_SINGLE_M_BLOCK_HELPERS:
+                classification = LOCAL_SINGLE_M_BLOCK_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             payload_index_inherited = (
@@ -1451,6 +1468,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 set(new["layouts"]) == set(old["layouts"]))
             if (set(new["layouts"]) - ALLOWED_LAYOUTS and
                     name not in LOCATION_RETIREMENT_LAYOUT_HELPERS and
+                    not payload_index_inherited and
+                    name not in LOCAL_SINGLE_M_BLOCK_HELPERS and
                     not payload_index_inherited and
                     not packed_x2_layout_inherited):
                 errors.append(f"unauthorized common-helper layout change: {name}: {new['layouts']}")

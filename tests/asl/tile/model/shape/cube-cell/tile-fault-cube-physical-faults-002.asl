@@ -12,6 +12,10 @@ begin
         1, 16, TileDataType_FP16, TileLayout_CUBE_M16);
     assert !TileCubeDescriptorShapeAndPhysicalLegal(1024, 31, 16,
         1, 16, TileDataType_FP16, TileLayout_CUBE_M32);
+    assert !TileCubeDescriptorShapeAndPhysicalLegal(1024, 64, 16,
+        1, 16, TileDataType_FP16, TileLayout_CUBE_M32);
+    assert !TileCubeDescriptorShapeAndPhysicalLegal(1024, 32, 16,
+        33, 16, TileDataType_FP16, TileLayout_CUBE_M32);
     assert !TileCubeDescriptorShapeAndPhysicalLegal(1024, 32, 31,
         1, 16, TileDataType_FP16, TileLayout_CUBE_M32);
     assert !TileCubeDescriptorShapeAndPhysicalLegal(512, 16, 32,

@@ -24,8 +24,9 @@ This page is a generated reference view of the normative ASL unit.
 // Each Matrix-MX primary side MUST independently select group-32 E8M0 scale
 // for MX FP8/FP4 carriers or group-64 raw U32 scale for HiF4X2. HiF4X2 MUST
 // be accepted only by Matrix-MX input roles; ordinary Matrix MUST not gain it.
-// Each Local scale MUST use CUBE_M32 and each Shared scale MUST remain an
-// independently bound ordinary Tile with the corresponding primary location.
+// Each Local scale MUST use one-block CUBE_M32 storage with a valid major no
+// greater than 32, while each Shared scale MUST remain an independently bound
+// ordinary Tile with the corresponding primary location.
 // For Shared Matrix-MX, A scale valid shape is [M,G_A] or [G_A,M] and B
 // scale valid shape is [N,G_B] or [G_B,N] for transpose control zero or one;
 // each shape is exact while physical columns MAY use legal capacity padding.

@@ -135,8 +135,6 @@ begin
        !TileReductionAndExpansionLayoutSupported(
            CurrentBundleTileLayout()) ||
        _Tiles[[broadcast]].layout != CurrentBundleTileLayout() ||
-       !TileReductionAndExpansionRowLimitLegal(
-           _Tiles[[broadcast]].layout, _Tiles[[broadcast]].valid_rows) ||
        !(if copy then
              TileReductionAndExpansionSourceContentsDefined(broadcast)
          else TileReductionAndExpansionSourceLegal(broadcast)) ||
@@ -150,9 +148,6 @@ begin
         return TRUE;
     end;
     return _Tiles[[binding.source0]].layout == CurrentBundleTileLayout() &&
-           TileReductionAndExpansionRowLimitLegal(
-               _Tiles[[binding.source0]].layout,
-               _Tiles[[binding.source0]].valid_rows) &&
            TileReductionAndExpansionSourceLegal(binding.source0) &&
            _Tiles[[binding.source0]].data_type == source_data_type &&
            SelectedBundleComparisonShapeMatches(binding.source0) &&

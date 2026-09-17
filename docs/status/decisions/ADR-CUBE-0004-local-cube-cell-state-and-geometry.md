@@ -116,6 +116,24 @@ matrix, and release traceability projections must remain closed to this owner.
 `release_impact: required` remains in force; this V1 amendment does not select
 a release identity.
 
+## Amendment — 2026-09-17 (Issue #323)
+
+This amendment supersedes only the Local M32 multi-row portion of the
+2026-09-15 Issue #311 amendment. Every PE-local `CUBE_M16` descriptor now has
+physical `Rows=16` with `1 <= ValidRows <= 16`; every PE-local `CUBE_M32`
+descriptor has physical `Rows=32` with `1 <= ValidRows <= 32`. Both layouts
+have `NRepeat=1`; legal column/K CELL repetition and capacity slack remain
+unchanged, and spare capacity never creates additional M rows or CELLs.
+
+`TileCubeDescriptorShapeAndPhysicalLegal` is the single generic owner of the
+fixed-row invariant, including creators, mutators, publishers, and consumers.
+The amendment preserves `CUBE_N8`, RowMajor, SharedTile, dtype/CELL geometry,
+physical-column independence, and the cooperative `ADR-CUBE-0011` contract
+that encodes Core-total `group_M` in `LB0` and derives per-PE Local fragments.
+The compatibility classification is **breaking** and release impact remains
+**required**. The old Issue #311 multi-row Local M32 behavior is not current
+semantics.
+
 ## CELL geometry
 
 One CELL is exactly 128 bytes. Its logical geometry is derived from the layout

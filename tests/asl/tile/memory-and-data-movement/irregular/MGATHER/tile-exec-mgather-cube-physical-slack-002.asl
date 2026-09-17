@@ -4,10 +4,10 @@ func TestOrdinary()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 64, 3, 1, 1,
+        0, 768, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 96, 5, 1, 1,
+        1, 1920, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -15,9 +15,9 @@ begin
         Zeros{PTO_XLEN} + 0x12345678);
     MGATHER(0, Zeros{PTO_XLEN} + 0x500, 1, TilePad_Zero);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x12345678;
-    assert _Tiles[[0]].rows == 64 && _Tiles[[0]].columns == 3 &&
+    assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 3 &&
            _Tiles[[0]].capacity_bytes == 768;
-    assert _Tiles[[1]].rows == 96 && _Tiles[[1]].columns == 5 &&
+    assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 5 &&
            _Tiles[[1]].capacity_bytes == 1920;
 end;
 
@@ -25,13 +25,13 @@ func TestMasked()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 64, 3, 1, 1,
+        0, 768, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 96, 5, 1, 1,
+        1, 1920, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let mask_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 768, 64, 12, 1, 1,
+        2, 768, 32, 12, 1, 1,
         TileDataType_U8, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && mask_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -41,25 +41,25 @@ begin
     MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x540,
         1, 2, TilePad_Zero);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x87654321;
-    assert _Tiles[[0]].rows == 64 && _Tiles[[0]].columns == 3;
-    assert _Tiles[[1]].rows == 96 && _Tiles[[1]].columns == 5;
-    assert _Tiles[[2]].rows == 64 && _Tiles[[2]].columns == 12;
+    assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 3;
+    assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 5;
+    assert _Tiles[[2]].rows == 32 && _Tiles[[2]].columns == 12;
 end;
 
 func TestCAS()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 64, 6, 1, 1,
+        0, 768, 32, 6, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1152, 96, 3, 1, 1,
+        1, 1152, 32, 3, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let expected_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 1024, 64, 8, 1, 1,
+        2, 1024, 32, 8, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     let replacement_ready = ConfigureCubeTileForMaskWithPhysical(
-        3, 1152, 96, 6, 1, 1,
+        3, 1152, 32, 6, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && expected_ready &&
            replacement_ready;
@@ -71,23 +71,23 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 7;
     let cas_result = LoadUnsigned(Zeros{PTO_XLEN} + 0x582, 2);
     assert cas_result == Zeros{PTO_XLEN} + 9;
-    assert _Tiles[[0]].rows == 64 && _Tiles[[0]].columns == 6;
-    assert _Tiles[[1]].rows == 96 && _Tiles[[1]].columns == 3;
-    assert _Tiles[[2]].rows == 64 && _Tiles[[2]].columns == 8;
-    assert _Tiles[[3]].rows == 96 && _Tiles[[3]].columns == 6;
+    assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 6;
+    assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 3;
+    assert _Tiles[[2]].rows == 32 && _Tiles[[2]].columns == 8;
+    assert _Tiles[[3]].rows == 32 && _Tiles[[3]].columns == 6;
 end;
 
 func TestAtomReduction()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 64, 3, 1, 1,
+        0, 768, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 96, 5, 1, 1,
+        1, 1920, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let value_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 1536, 128, 3, 1, 1,
+        2, 1536, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && value_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -103,10 +103,10 @@ begin
         1, 2, TilePad_Null);
     let reduction_result = LoadUnsigned(Zeros{PTO_XLEN} + 0x604, 4);
     assert reduction_result == Zeros{PTO_XLEN} + 25;
-    assert _Tiles[[0]].rows == 64 && _Tiles[[0]].columns == 3;
-    assert _Tiles[[1]].rows == 96 && _Tiles[[1]].columns == 5 &&
+    assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 3;
+    assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 5 &&
            _Tiles[[1]].capacity_bytes == 1920;
-    assert _Tiles[[2]].rows == 128 && _Tiles[[2]].columns == 3 &&
+    assert _Tiles[[2]].rows == 32 && _Tiles[[2]].columns == 3 &&
            _Tiles[[2]].capacity_bytes == 1536;
 end;
 
