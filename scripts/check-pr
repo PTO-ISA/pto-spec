@@ -20,7 +20,7 @@ source_commands=(
     "git diff --check"
 )
 tooling_commands=(
-    "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection --exclude-module tests.scripts.test_ndf_compiler_graph_parity"
+    "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection"
 )
 
 run_source_checks() {

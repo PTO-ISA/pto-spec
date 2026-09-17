@@ -18,8 +18,7 @@ git submodule update --init --recursive
 ```
 
 The pull-request lane does not need opam, a prepared ASLRef checkout, or a
-Rust toolchain. The cargo-dependent NDF compiler graph parity check is kept
-out of this lane and runs under full validation instead.
+Rust toolchain.
 Hosted CI runs source-contract and tooling workers concurrently. The local
 command sequences these workers and runs isolated Python test modules in parallel,
 reports command durations, and lists the slowest Python modules. Set
@@ -30,8 +29,8 @@ larger bounded value for a host with more cores.
 
 Full verification additionally requires OCaml, opam, network access, the
 PTO-ISA ASLRef fork pinned by `.aslref-origin`, and the Rust toolchain
-(`tools/ndf` pins `rust-version = "1.94.0"` with edition 2024) for the NDF
-compiler graph parity check. Prepare it once, then run the
+(`tools/ndf` pins `rust-version = "1.94.0"` with edition 2024) used by the
+release NDF impact preflight. Prepare it once, then run the
 release-equivalent sequence:
 
 ```bash
