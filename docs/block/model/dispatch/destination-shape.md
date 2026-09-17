@@ -70,7 +70,8 @@ readonly func BundleReusedDestinationDescriptorMatches(
     binding: BundleTileBindingIndex, capacity_bytes: integer {0..262144},
     valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
     columns: integer {0..65535}, data_type: TileDataType,
-    layout: TileLayout, cube: boolean, exact_cube_columns: boolean) => boolean
+    layout: TileLayout, cube: boolean, exact_cube_columns: boolean,
+    preserve_physical_rows: boolean, expected_physical_rows: integer {0..65535}) => boolean
 begin
     let index = _BundleTileBindings[[binding]].destination;
     let destination = _Tiles[[index]];
@@ -89,7 +90,7 @@ begin
     return TileDescriptorLegal(index) &&
            destination.storage_kind == TileStorage_Numeric &&
            destination.capacity_bytes == capacity_bytes &&
-           destination.rows == DerivedTileRows(capacity_bytes, columns, data_type) &&
+           destination.rows == (if preserve_physical_rows then expected_physical_rows else DerivedTileRows(capacity_bytes, columns, data_type)) &&
            destination.columns == columns &&
            destination.valid_rows == valid_rows &&
            destination.valid_columns == valid_columns &&
@@ -215,9 +216,7 @@ begin
             end;
         end;
     end;
-    // Validate every derived descriptor before allocating any destination.
-    // This preserves precise all-or-nothing B.IOT allocation when a size code
-    // is too small for its logical shape.
+    // Validate every derived descriptor before allocating; preserve precise all-or-nothing B.IOT allocation when a size code is too small for its logical shape.
     var destination_ordinal: integer = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -258,6 +257,7 @@ begin
             let reused = _BundleTileBindings[[binding]].destination_reused_by_generation;
             let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
                 destination_layout == TileLayout_CUBE_M32;
+            let ordinary_tcvt = BundleDestinationIsOrdinaryTCVT(decoded_operation, cube_destination);
             let exact_cube_columns = cube_destination &&
                 decoded_operation != PTO_TILE_OPERATION_COUNT &&
                 TileOperationOfIndex(
@@ -276,12 +276,14 @@ begin
                 else TileCubeStorageColumns(destination_layout,
                     auxiliary_valid_columns, destination_type)
             else auxiliary_columns;
-            let rows = DerivedTileRows(capacity_bytes, auxiliary_columns, destination_type);
+            let rows = if ordinary_tcvt then source_geometry.rows else DerivedTileRows(capacity_bytes, auxiliary_columns, destination_type);
             let shape_legal = if cube_destination then
                 TileCubeDescriptorShapeAndPhysicalLegal(capacity_bytes,
                     physical_rows, physical_columns, valid_rows,
                     auxiliary_valid_columns, destination_type,
                     destination_layout)
+            else if ordinary_tcvt then
+                TileDescriptorPhysicalShapeLegal(capacity_bytes, source_geometry.rows, auxiliary_columns, valid_rows, auxiliary_valid_columns, destination_type)
             else
                 TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
                     valid_rows, auxiliary_valid_columns, destination_type);
@@ -304,7 +306,7 @@ begin
                    binding as BundleTileBindingIndex, capacity_bytes,
                    valid_rows, auxiliary_valid_columns, auxiliary_columns,
                    destination_type, destination_layout, cube_destination,
-                   exact_cube_columns) then
+                   exact_cube_columns, ordinary_tcvt, source_geometry.rows) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
@@ -360,6 +362,7 @@ begin
                         decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                         TileOperation_TCI;
                 let source_geometry = if shape_source_valid then _Tiles[[shape_source]] else _Tiles[[0]];
+                let ordinary_tcvt = BundleDestinationIsOrdinaryTCVT(decoded_operation, tgpr2t);
                 let physical_rows = if destination_layout == TileLayout_CUBE_M16 ||
                     destination_layout == TileLayout_CUBE_M32 then
                     if reduction_operation && !reduction_row then
@@ -380,7 +383,7 @@ begin
                         valid_rows, auxiliary_columns,
                         auxiliary_valid_columns, destination_type,
                         destination_layout, _BundleTileBindings[[binding]].pe_mask,
-                        tgpr2t, exact_cube_columns) then
+                        tgpr2t, exact_cube_columns, ordinary_tcvt) then
                     SetFault(Fault_TileAllocation, ReadTPC());
                     return FALSE;
                 end;
@@ -417,10 +420,7 @@ end;
 func ResolveBundleTileDestinationsForOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    // CUBE matrix handlers own the primary CUBE destination and allocation.
-    // Leave it unresolved for the authoritative M/N/layout/type handler;
-    // the generic RowMajor resolver would mark the destination as already
-    // allocated and prevent that conversion.
+    // CUBE matrix handlers own the primary CUBE destination and allocation; leave it unresolved for the authoritative M/N/layout/type handler because generic RowMajor resolution would mark it allocated and prevent conversion.
     if _BundleOperation.valid &&
        _BundleOperation.operation_class == BundleOperation_TileMatrix then
         return TRUE;

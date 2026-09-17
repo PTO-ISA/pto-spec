@@ -16,6 +16,11 @@
 // Fault_TileAllocation without destination effects. Under the
 // named hardware profile an E8M0 destination MUST accept only FP16, BF16, or
 // FP32 sources and MUST apply PTO-TCVT-E8M0-PROFILE-001 exactly.
+// For ordinary RowMajor conversions in the explicitly admitted odd-column
+// profiles (FP32, FP16, BF16, E2M1X2, and E1M2X2), TSize is a capacity upper
+// bound: the destination MUST retain the source physical Row and Col, and its
+// complete row-local storage MUST fit the selected capacity. Legacy
+// power-of-two-column profiles retain the exact full-capacity row rule.
 // For an ordinary non-packed source, the BSTART source operation type MAY differ
 // from the backing type only at the same element width. Matrix/CUBE sources MUST
 // retain exact backing/source-operation type equality, and the destination backing

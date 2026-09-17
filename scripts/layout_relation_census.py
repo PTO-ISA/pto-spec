@@ -64,6 +64,7 @@ OWNER_DECISIONS = {
     "GMOV": "ADR-MEM-0009 / PTO-GMOV-CORE4-PEER-001",
     "INDEXED_TLSU": "ADR-MEM-0009 2026-09-16 amendment / Issue #301",
     "BIAS": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
+    "TCVT": "ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment / Issue #254",
     "EXACT_34": "ADR-CUBE-0013",
 }
 COMMON_PREFIXES = (
@@ -136,6 +137,17 @@ PACKED_X2_ROW_LOCAL_HELPERS = {
 }
 PACKED_X2_ROW_LOCAL_CLASSIFICATION = (
     "TCVT packed-X2 row-local pairing "
+    "(ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)"
+)
+TCVT_PHYSICAL_SHAPE_HELPERS = {
+    "BundleDestinationIsOrdinaryTCVT",
+    "TileDataTypeAllowsOddPhysicalColumns",
+    "TileDescriptorPhysicalShapeLegal",
+    "TileStorageBytes",
+    "TileStorageFitsCapacity",
+}
+TCVT_PHYSICAL_SHAPE_CLASSIFICATION = (
+    "TCVT ordinary odd-column physical shape and capacity closure "
     "(ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)"
 )
 # ADR-CUBE-0004 and ADR-TILE-0012 (2026-09-15 amendments, Issue #311)
@@ -1328,6 +1340,8 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
         return None
     old_values = set(old_model.get("layouts", {}).get(role, []))
     new_values = set(new_model.get("layouts", {}).get(role, []))
+    if mnemonic == "TCVT" and layout == "RowMajor":
+        return TCVT_PHYSICAL_SHAPE_CLASSIFICATION
     if mnemonic in EXACT_34 and layout in ALLOWED_LAYOUTS:
         # Exact operations are authorized only when the candidate contract
         # itself advertises the selected Local layouts for this role.
@@ -1361,6 +1375,8 @@ def _classify_relation(mnemonic: str, relation: str) -> str | None:
     extraction itself is general; this small allowlist only classifies the
     frozen Bias amendment and cannot make an unextracted edge pass.
     """
+    if mnemonic == "TCVT":
+        return TCVT_PHYSICAL_SHAPE_CLASSIFICATION
     if mnemonic in BIAS and relation in {
         "Bias.layout == ML == D.layout",
         "Local A present => A.layout == ML",
@@ -1396,14 +1412,17 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             if (name in TCI_PHYSICAL_COLUMN_HELPERS or
                     name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS or
                     name in INDEXED_TLSU_HELPERS or
-                    name in PACKED_X2_ROW_LOCAL_HELPERS):
+                    name in PACKED_X2_ROW_LOCAL_HELPERS or
+                    name in TCVT_PHYSICAL_SHAPE_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
                                   else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
                                   if name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS
                                   else INDEXED_TLSU_CLASSIFICATION
                                   if name in INDEXED_TLSU_HELPERS
-                                  else PACKED_X2_ROW_LOCAL_CLASSIFICATION)
+                                  else PACKED_X2_ROW_LOCAL_CLASSIFICATION
+                                  if name in PACKED_X2_ROW_LOCAL_HELPERS
+                                  else TCVT_PHYSICAL_SHAPE_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
@@ -1420,6 +1439,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
             if classification is None and name in PACKED_X2_ROW_LOCAL_HELPERS:
                 classification = PACKED_X2_ROW_LOCAL_CLASSIFICATION
+            if classification is None and name in TCVT_PHYSICAL_SHAPE_HELPERS:
+                classification = TCVT_PHYSICAL_SHAPE_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             payload_index_inherited = (
@@ -1611,7 +1632,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV"}:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT"}:
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;

@@ -39,9 +39,11 @@ begin
            PackedTileDataTypeUsesRowLocalPairs(data_type);
 end;
 
-// TSize is a per-PE byte capacity. Physical rows are descriptor state derived
-// exactly from that capacity, the physical column count, and the element type.
-// Zero means that no legal 16-bit row count exists for the supplied shape.
+// TSize is a per-PE byte capacity. Legacy power-of-two-column descriptors use
+// the exact full-capacity row count. Explicitly admitted odd ordinary profiles
+// use the capacity as an upper bound: every positive row count whose complete
+// row-local storage fits is representable. Zero means that no legal 16-bit row
+// count exists for the supplied shape.
 pure func DerivedTileRows(capacity_bytes: integer {0..262144},
                           columns: integer {0..65535},
                           data_type: TileDataType) => integer {0..65535}
@@ -78,7 +80,15 @@ pure func TileShapeMatchesCapacity(capacity_bytes: integer {0..262144},
                                    data_type: TileDataType) => boolean
 begin
     let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
-    return derived_rows != 0 && rows == derived_rows;
+    if derived_rows == 0 || rows == 0 then return FALSE; end;
+    if !IsNonzeroPowerOfTwo(columns) &&
+       TileDataTypeAllowsOddPhysicalColumns(data_type) then
+        // DerivedTileRows is the floor of capacity/row-storage for the
+        // admitted odd profiles, so this is equivalent to a complete-row
+        // storage-fit check without creating a shape-module dependency cycle.
+        return rows <= derived_rows;
+    end;
+    return rows == derived_rows;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

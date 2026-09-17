@@ -120,10 +120,19 @@ begin
         destination_capacity,
         requested_columns as integer {1..65535},
         destination_type);
+    let odd_physical_profile = !IsNonzeroPowerOfTwo(requested_columns) &&
+        TileDataTypeAllowsOddPhysicalColumns(source_operation_type) &&
+        TileDataTypeAllowsOddPhysicalColumns(destination_type);
+    let destination_physical_shape_legal = if odd_physical_profile then
+        TileStorageFitsCapacity(
+            _Tiles[[source]].rows,
+            requested_columns as integer {1..65535},
+            destination_type, destination_capacity)
+    else destination_rows == _Tiles[[source]].rows;
     if requested_valid_columns != _Tiles[[source]].valid_columns ||
        requested_valid_rows != _Tiles[[source]].valid_rows ||
        requested_columns != _Tiles[[source]].columns ||
-       destination_rows != _Tiles[[source]].rows then
+       !destination_physical_shape_legal then
         return FALSE;
     end;
 

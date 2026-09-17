@@ -72,5 +72,18 @@ pure func TileStorageFitsCapacity(rows: integer {0..65535},
 begin
     return TileStorageBytes(rows, columns, data_type) <= capacity_bytes;
 end;
+
+readonly func TileDescriptorPhysicalShapeLegal(
+    capacity_bytes: integer {0..262144},
+    rows: integer {0..65535}, columns: integer {0..65535},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    data_type: TileDataType) => boolean
+begin
+    return TileShapeMatchesCapacity(capacity_bytes, rows, columns, data_type) &&
+           valid_rows <= rows && valid_columns <= columns &&
+           valid_rows * valid_columns <=
+               TileLogicalElementCapacity(capacity_bytes, data_type) &&
+           TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
+end;
 ```
 <!-- GENERATED-ASL-END: unit -->

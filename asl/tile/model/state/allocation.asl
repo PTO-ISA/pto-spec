@@ -14,9 +14,12 @@ begin
     assert TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
         valid_columns, data_type);
     let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
-    assert rows <= derived_rows;
-    assert derived_rows * columns <=
-        TileLogicalElementCapacity(capacity_bytes, data_type);
+    let configured_rows = if !IsNonzeroPowerOfTwo(columns) &&
+        TileDataTypeAllowsOddPhysicalColumns(data_type) then rows
+        else derived_rows;
+    assert valid_rows <= configured_rows;
+    assert TileDescriptorPhysicalShapeLegal(capacity_bytes, configured_rows, columns,
+        valid_rows, valid_columns, data_type);
     assert LocalTileAllocationFitsExcept(
         index, allocation_mask, capacity_bytes);
     InvalidateTileFeatureMapDescriptor(index);
@@ -31,7 +34,7 @@ begin
     _Tiles[[index]].packed_defined_elements =
         zero_packed_tile_elements;
     _Tiles[[index]].capacity_bytes = capacity_bytes;
-    _Tiles[[index]].rows = derived_rows;
+    _Tiles[[index]].rows = configured_rows;
     _Tiles[[index]].columns = columns;
     _Tiles[[index]].valid_rows = valid_rows;
     _Tiles[[index]].valid_columns = valid_columns;
