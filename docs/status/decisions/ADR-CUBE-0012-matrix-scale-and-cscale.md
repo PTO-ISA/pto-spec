@@ -181,21 +181,6 @@ Local A scale is CUBE_M32 storage `[M,G]`. Local B scale is CUBE_M32 storage
 32-row/N repeat is slow. A partial final group or row block is legal storage
 tail and is not an operand. Primary B remains CUBE_N8.
 
-## Amendment — 2026-09-17 (Issue #323)
-
-This amendment supersedes the Issue #311/earlier Issue #323-design text that
-allowed Local M32 scale storage to repeat across multiple physical row blocks.
-Local A-scale, B-scale, and CScale remain Local `CUBE_M32`, but each has one
-physical 32-row block and a valid major at most 32. Consequently a Local
-TMATMULMX B-scale for `N>32` is illegal before effects; no sharding, alternate
-layout, carrier, implicit repetition, or extra operand replaces that domain.
-
-Shared Matrix-MX scales remain ordinary Tiles with their existing group and
-transpose shapes. TGEMV-MX scale Tiles remain RowMajor and unchanged. Primary
-Matrix dtype, carrier/group selection, CScale ordering, arithmetic, and
-`CUBE_N8` behavior are unchanged. The compatibility classification is
-**breaking** and release impact is **required**.
-
 Shared scales remain ordinary Tiles with normalized A-scale `[group_M,G]` and
 B-scale `[G,N]`. TransA or TransB applies to the corresponding independently
 bound primary and scale after any B.SUBVIEW resolution, without persistent
@@ -224,9 +209,8 @@ C/D, rollback, and atomic output publication remain unchanged.
 
 ## Verification
 
-Executable evidence covers MX G5 row-32/row-33 bounds and HiF4 multi-column
-CellReg order with one physical row block, partial tails, E6M2 00/FE/FF,
-decoded HiF4X2 Matrix-MX acceptance, ordinary
+Executable evidence covers MX G5/N33 and HiF4 multi-repeat CellReg order,
+partial tails, E6M2 00/FE/FF, decoded HiF4X2 Matrix-MX acceptance, ordinary
 Matrix rejection, decoded CScale success, and reserved/missing/surplus/alias/
 opcode/accumulator-class rejection before effects.
 
