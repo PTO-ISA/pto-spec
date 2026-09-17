@@ -251,7 +251,7 @@ begin
                 if reduction_operation && !reduction_row then source_geometry.rows
                 else TileCubeStorageRows(destination_layout, valid_rows,
                     destination_type)
-            else 0;
+            else if ordinary_tcvt then source_geometry.rows else 0;
             let physical_columns = if cube_destination then
                 if exact_cube_columns then auxiliary_columns
                 else if reduction_operation && reduction_row then
@@ -352,7 +352,7 @@ begin
                         source_geometry.rows
                     else TileCubeStorageRows(destination_layout, valid_rows,
                         destination_type)
-                else 0;
+                else if ordinary_tcvt then source_geometry.rows else 0;
                 let physical_columns = if destination_layout == TileLayout_CUBE_M16 ||
                     destination_layout == TileLayout_CUBE_M32 then
                     if exact_cube_columns then auxiliary_columns
