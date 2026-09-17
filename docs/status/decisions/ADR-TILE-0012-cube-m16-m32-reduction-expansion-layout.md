@@ -168,6 +168,46 @@
         "PTO-TILE-TCOLARGMAX",
         "PTO-TILE-TCOLARGMIN"
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/323",
+      "affected_ndf": [
+        "PTO-TROWSUM-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-TROWSUM",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN"
+      ]
     }
   ],
   "legacy_ids": [
