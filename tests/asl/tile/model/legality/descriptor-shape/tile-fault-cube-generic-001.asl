@@ -27,6 +27,21 @@ begin
     assert m32_tile.cube_k_repeat == 16 && m32_tile.cube_n_repeat == 1;
     assert m32_tile.cube_cell_count == 16 &&
            m32_tile.cube_storage_bytes == 2048;
+    assert TileCubeDescriptorShapeLegal(
+        4096, 32, 31, TileDataType_FP16, TileLayout_CUBE_M32);
+    let m32_slack_configured = ConfigureCubeTileForMaskWithPhysical(
+        2, 4096, 32, 32, 31, 32,
+        TileDataType_FP16, TileLayout_CUBE_M32, '0001');
+    assert m32_slack_configured;
+    assert _Tiles[[2]].valid_rows == 31 && _Tiles[[2]].rows == 32;
+    let m32_rows64_valid32 = ConfigureCubeTileForMaskWithPhysical(
+        3, 4096, 64, 32, 32, 32,
+        TileDataType_FP16, TileLayout_CUBE_M32, '0001');
+    assert !m32_rows64_valid32;
+    let m32_rows64_valid64 = ConfigureCubeTileForMaskWithPhysical(
+        3, 4096, 64, 32, 64, 32,
+        TileDataType_FP16, TileLayout_CUBE_M32, '0001');
+    assert !m32_rows64_valid64;
     assert !TileCubeDescriptorShapeAndPhysicalLegal(4096, 64, 32,
         1, 16, TileDataType_FP16, TileLayout_CUBE_M32);
     assert !TileCubeDescriptorShapeAndPhysicalLegal(4096, 32, 32,
