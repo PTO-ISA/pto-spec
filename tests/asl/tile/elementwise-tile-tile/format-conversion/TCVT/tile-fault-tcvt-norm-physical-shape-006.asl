@@ -135,7 +135,9 @@ begin
             Zeros{PTO_XLEN} + 0x4000;
         assert ReadTileElement(1, row as integer {0..65535}, 4) ==
             Zeros{PTO_XLEN} + 0x4200;
-        assert !TileElementDefined(1, row as integer {0..65535}, 17);
+        // The FP16 destination keeps Row=32 and Col=17 with no packed tail
+        // lane, so its last physical column is the last defined element.
+        assert TileElementDefined(1, row as integer {0..65535}, 16);
     end;
 end;
 

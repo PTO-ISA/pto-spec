@@ -34,7 +34,8 @@ begin
     assert odd_fp16_rows == 60;
     assert TileStorageFitsCapacity(odd_fp16_rows, 17,
         TileDataType_FP16, 2048);
-    assert !TileStorageFitsCapacity(odd_fp16_rows + 1, 17,
+    assert !TileStorageFitsCapacity(
+        (odd_fp16_rows + 1) as integer {0..65535}, 17,
         TileDataType_FP16, 2048);
     assert DerivedTileRows(2048, 17, TileDataType_E2M1X2) == 227;
     assert DerivedTileRows(2048, 17, TileDataType_U8) == 0;

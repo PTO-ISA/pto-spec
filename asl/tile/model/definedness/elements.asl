@@ -252,6 +252,7 @@ readonly func TileElementDefined(index: TileIndex,
                                  column: integer {0..65535}) => boolean
 begin
     let tile = _Tiles[[index]];
+    if TilePackedRowPaddingColumn(tile, row, column) then return FALSE; end;
     let element = TileLogicalLinearIndex(tile, row, column);
     return TileLogicalElementDefined(tile, element);
 end;

@@ -22,7 +22,9 @@ begin
     end;
 
     assert _Tiles[[0]].rows == 32;
-    assert _Tiles[[0]].columns == 10;
+    // CUBE_M32 FP16 stores two elements per cell column, so five valid columns
+    // align to six physical columns; E1M2X2's cell quantum is eight.
+    assert _Tiles[[0]].columns == 6;
     assert _Tiles[[1]].rows == 32;
     assert _Tiles[[1]].columns == 8;
     assert _Tiles[[0]].valid_rows == _Tiles[[1]].valid_rows;

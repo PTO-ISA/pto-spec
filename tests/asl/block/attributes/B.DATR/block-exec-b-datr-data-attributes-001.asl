@@ -37,8 +37,10 @@ begin
     assert _LastFault == Fault_None;
     assert TileDataLayoutCodeSupported(Zeros{5} + 1);
 
+    // Codes 22, 23, 29, and 30 stay reserved; 15 (E6M2) and 21 (RCPE6M2) are
+    // assigned TileDataType identities and are covered as accepted codes.
     ClearFault();
-    SetBundleDataAttributeState(Zeros{5} + 15, Zeros{5}, '00',
+    SetBundleDataAttributeState(Zeros{5} + 22, Zeros{5}, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_TileLegality;
 end;

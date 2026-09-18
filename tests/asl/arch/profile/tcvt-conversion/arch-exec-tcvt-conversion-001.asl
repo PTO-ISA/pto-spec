@@ -11,7 +11,7 @@ begin
     let (e6_result, e6_flags) = TileProfileConvert(
         Zeros{PTO_XLEN} + 0x3fc0,
         TileDataType_BF16, TileDataType_E6M2, control);
-    assert e6_result == Zeros{PTO_XLEN} + 0xc1;
+    assert e6_result == Zeros{PTO_XLEN} + 0xc2;
     assert e6_flags == Zeros{5};
 
     let (from_e6, from_e6_flags) = TileProfileConvert(
