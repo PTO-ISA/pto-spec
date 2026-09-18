@@ -197,10 +197,10 @@ scalar_assertion_files = tuple(
 
 scalar_count = assertion_count(scalar_assertion_files)
 tile_count = assertion_count(tile_assertion_files)
-if scalar_count != 120:
-    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 120")
-if tile_count != 399:
-    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 399")
+if scalar_count != 134:
+    fail(f"scalar/system/concurrency assertion inventory drifted: {scalar_count} != 134")
+if tile_count != 405:
+    fail(f"tile/bundle assertion inventory drifted: {tile_count} != 405")
 
 concurrency_paths = (
     "asl/arch/memory-model/memory-events.asl",

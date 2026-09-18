@@ -26,11 +26,11 @@
     },
     {
       "path": "asl/arch/data-types/formats/e1m2x2.asl",
-      "sha256": "35274c08bcd0227b100119a8829fe1814fe34f3b46fb3c2fd1641d2d71e8e614"
+      "sha256": "0c1734641bca1461e11bf79d2755bdda27ca8376203c9c684c35540b28a56947"
     },
     {
       "path": "asl/arch/data-types/formats/e2m1x2.asl",
-      "sha256": "8c6ba2f9a03a48e1e09c8b93b0a8222ebe0c079b28c5ee98d0f16a11f48ee0eb"
+      "sha256": "efe1bade45bb5c93bdf3b214234b8b6d42decdff03c151b8e57581511e7a2667"
     },
     {
       "path": "asl/arch/data-types/formats/e2m3.asl",
@@ -47,6 +47,10 @@
     {
       "path": "asl/arch/data-types/formats/e5m2.asl",
       "sha256": "139580a9effcd0f37e3bcd0b91ed1b7df05bcba1713aebd2570282c1920a2a40"
+    },
+    {
+      "path": "asl/arch/data-types/formats/e6m2.asl",
+      "sha256": "50fab1ef24214d4972ac99db9432a553dd654a9d00190b3f3d0ba504e04869d6"
     },
     {
       "path": "asl/arch/data-types/formats/e8m0.asl",
@@ -70,7 +74,7 @@
     },
     {
       "path": "asl/arch/data-types/formats/hif4-scale.asl",
-      "sha256": "6244309630f70598af01ec16b5ccc1e33b896b1db47b9fc315a79b454fe0255a"
+      "sha256": "40a4f5495bc768152ff17a8597de8a114274946f9c920c73a00ba932766f9254"
     },
     {
       "path": "asl/arch/data-types/formats/hif4x2.asl",
@@ -79,6 +83,10 @@
     {
       "path": "asl/arch/data-types/formats/hif8.asl",
       "sha256": "44dbda4ee90a1dcb8f96cf7d087492e6a18d9b6e4e4b3d84b0cada344804578c"
+    },
+    {
+      "path": "asl/arch/data-types/formats/rcpe6m2.asl",
+      "sha256": "2def21ddac55131d7dbd3affea057d8dc45f528806a020baccf9e916e802d68c"
     },
     {
       "path": "asl/arch/data-types/formats/tf32.asl",
@@ -106,7 +114,7 @@
     },
     {
       "path": "asl/arch/data-types/numeric-formats.asl",
-      "sha256": "101bbe4d0efa238d214cdf20cb2f9b7a413f86aa12ff1ae1be9638c4ade90c8d"
+      "sha256": "8ee9de4f827345dc26721d216327705c976f361411430f543807960a9c73ad1a"
     },
     {
       "path": "asl/arch/data-types/packed.asl",
@@ -122,7 +130,7 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "0e0b41e9fa5121480c4641cc3889b40e2135fb5732f24043928320b17c9d4889"
+      "sha256": "70ed87af56adda4d346a76eced16dbb5d80dd53e04b1212d11aeb9d6448f94e0"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
@@ -138,7 +146,7 @@
     },
     {
       "path": "asl/arch/features/mx-formats.asl",
-      "sha256": "867a6c4e22bb402766d2d4bec75a1c0e6b29e271be17a4a18a5d3bc4925f9d6d"
+      "sha256": "44639ab47cd2dec4c6a03231a07003e55835f42c9d58c622e05332e8bedfeb1d"
     },
     {
       "path": "asl/arch/features/predication.asl",
@@ -198,7 +206,7 @@
     },
     {
       "path": "asl/arch/profile/e8m0-conversion.asl",
-      "sha256": "7e94f1b7c5f3f0d76bf89cda5ece4e0aa363b1d699d01acf0b0f66c0d893199a"
+      "sha256": "ff02d6c9a1fe7ea26f651bea7002dcd9eee1086f0b428ddd9e095a132c3f663c"
     },
     {
       "path": "asl/arch/profile/extension-first-use.asl",
@@ -214,7 +222,11 @@
     },
     {
       "path": "asl/arch/profile/matrix-quantization.asl",
-      "sha256": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373"
+      "sha256": "39953db0e24797665d2deccc371753fdf7d284f0a034a1cfe49b94a5935a9e4e"
+    },
+    {
+      "path": "asl/arch/profile/packed-conversion.asl",
+      "sha256": "1683a02aa12d9fd5f5539b5beb43af0d7ec255856dc41ad957a5139a8ab0f22d"
     },
     {
       "path": "asl/arch/profile/reference-conversion.asl",
@@ -235,6 +247,10 @@
     {
       "path": "asl/arch/profile/reset.asl",
       "sha256": "4f138f83ea2ae58109d350e0798fa540f03dc128019510ff5a2a24b041fd8807"
+    },
+    {
+      "path": "asl/arch/profile/tcvt-conversion.asl",
+      "sha256": "30211f99245badab246e38d110bc83ff8514a052ccff38b69e6c61d27e705209"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
@@ -318,7 +334,7 @@
     },
     {
       "path": "asl/block/attributes/B.DATR.asl",
-      "sha256": "67218afd32253fb5e30931cad1b95ae0525a86bddc6d00e01561312d3643c549"
+      "sha256": "33ebd43b1cf4cca8b700d20756e4ea44d29bfc047c60e0f5be2dbe02f0706eda"
     },
     {
       "path": "asl/block/attributes/B.DIM.asl",
@@ -470,7 +486,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TEPL.asl",
-      "sha256": "989b116fe7f8e9cdc26ddaeb65e9520f2d207d3850f678d02aeb199294b1e770"
+      "sha256": "01106af145302562cc9306dcd538e931929294ed99a0ca34bfc604e5ab6c1714"
     },
     {
       "path": "asl/block/execution/BSTART.TGEMV.ACC.asl",
@@ -646,15 +662,15 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "8f3dc9a4f8349a5bf0468957e9a9d7004eb6439cc1a134133aa9e94dd1fc30a5"
+      "sha256": "0cee1102eff132c5220fb6a6ba20f9978bd98e37f576c8a6aa053b16b2a3641b"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4"
+      "sha256": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae"
+      "sha256": "ca759010d83de9bea47bf5bd3bdba496e079db4a1c516f07efdd06e4781d40ad"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -702,7 +718,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "15b0ac1344100a46f244b24f03d602549834c259be5c69943e965bd080249620"
+      "sha256": "5eec3856d8d9c5d73c0e9734c632d076a20f767a12b0e72465a0773e79cd6c63"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -2870,7 +2886,7 @@
     },
     {
       "path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
-      "sha256": "a814b189d8ef3520ce720a80b1eb31b4b936fc5dbb13f5d0faa5c998352ee81b"
+      "sha256": "c47e3ade6542e06350128ee073b41d238102bdf0d9da9b68a7a6adc7f003c356"
     },
     {
       "path": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
@@ -3150,11 +3166,11 @@
     },
     {
       "path": "asl/tile/model/definedness/elements.asl",
-      "sha256": "96e31b7511af60ba653f50b4307f0352b9911dd7b8d20a80283bbbd33d286216"
+      "sha256": "e27bf2056ab772469c0a422e0abd9a5283fafc694cade9cbfc54fcf98005b6de"
     },
     {
       "path": "asl/tile/model/definedness/packed-boundary.asl",
-      "sha256": "5c76ed856b225b2e097700c7459f21131c8421791ea8877e78fe47cfa6e8e0c9"
+      "sha256": "bcee0939e137d3cedbf8015e4c619ca5598d5f7bb961b03fcd3381dcde689e50"
     },
     {
       "path": "asl/tile/model/dispatch/elementwise-tile-tile.asl",
@@ -3258,7 +3274,7 @@
     },
     {
       "path": "asl/tile/model/legality/dtype-layout.asl",
-      "sha256": "debba388939a683ee9485c0b5c6d38977c9e815126f749aa0ffde5d5ffd8db5a"
+      "sha256": "e5380ea60c148325801b68eff3ffa28471b45f4d147dfe11ca10cdb14293ab82"
     },
     {
       "path": "asl/tile/model/legality/indexed-layout.asl",
@@ -3302,7 +3318,7 @@
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
-      "sha256": "0f565fd5e7fb1c28896d6d546140a3bbeba2477d6a7517660da457edcb565749"
+      "sha256": "42db928bdf0659c28454573839e9ff544206cbeda6422e8ebd2711c468c7f66d"
     },
     {
       "path": "asl/tile/model/legality/pe-mask.asl",
@@ -3358,7 +3374,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "d8111e6ebc6ed087b5eeccc911e42f2923279265433cacfc533f30085fd0db32"
+      "sha256": "88a40249cfb3c033ee4104cb688f5d7c7811b2a398a3c49ba2d152a5ce51128b"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -3374,19 +3390,19 @@
     },
     {
       "path": "asl/tile/model/shape/rows-columns.asl",
-      "sha256": "b88e329ffc836c8df374dbb848df723f6cd78710c2f5b631a2646b07952a8c11"
+      "sha256": "febaae10366735f67fd394142682f2e55cb1ef6523ad1d6dcdd2a08f1cc9dd38"
     },
     {
       "path": "asl/tile/model/shape/valid-region.asl",
-      "sha256": "64cadbd12ae6a7f7f5ce06f8c3844cfe72055441b6f479bb10091cdadec64c98"
+      "sha256": "51b3af7ea3894d77851a61e51e6a3f2ae26e64110f2c5dd955ed102bda9446b6"
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "3e188e875d392a63d6ad68de171d9fb00ac5d27296134a9d341ba170be52cde2"
+      "sha256": "228d6ed66471a3d568e2333c70fed5df35231f23b5e605c75568e92b606ac6d5"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
-      "sha256": "1ca02cb25ccc629b8ce5b5307e68096e54f8c135155c135715c5f24c6cb55ea6"
+      "sha256": "b7cea14d14e71f932e947e6a4046e7edf62705084588b75b5a3b882c8aa59cc7"
     },
     {
       "path": "asl/tile/model/state/feature-map-descriptors.asl",
@@ -3578,7 +3594,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "91e05c771339f8852bbe20ddec6430cbeb385819cf32c3840f1f085fc7e60c74"
+      "sha256": "30d42b6246fc982f2bb092174a462a017769c5e31f73af2c94390f8e205a91a1"
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -3606,23 +3622,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "8f0e6f35404a8e743bc3d2051f62d3c04d5f2d77e3fb628ff6cd6ab825a97900"
+      "sha256": "4ba4a78abac114133151ace9c4480cb28b059c9865d0bda9d7961a3952039e37"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "d644d0a2d06cc1f58077263f1f32782323db7431547d079d9239bb80acb801c7"
+      "sha256": "5453c2bc3965602f8e0c19b5742d918daec07fa6268a385447295a6c1376630a"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "e62858214298fae3f4f0bceaed5df7f1f537e3c03f18bcdf31b009b0cdcecace"
+      "sha256": "2a2542e72e150f1837943612e543be2bcf9df88c4a9a36fef604bba6655b92fe"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "e476bff4a612baa178a676a56a98eed3cd27bc933580c3d88bb961552cd9387d"
+      "sha256": "5d4630ab50850070359fae3b5ba73c4467b494bfd5f83c0940cf1e1ea4c8b302"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "184af53390fe4a67589544a7ee9d576b9313e9ce00e611e7440224fbddce5fde"
+      "sha256": "aa4f753c58606ada1197358e7d72985790c4dcb9360152e2e8c7030446e65ac0"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3684,7 +3700,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "87ff175a62178b59c1a96d537aaf20a81fb9286ad33cacfcd3934a165da257ad",
+  "content_sha256": "1ee99b65ba904438a13673094a242c67cbc223b8350976931532559526312581",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3703,7 +3719,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.6-mode-function-v1",
-  "encoding_projection_sha256": "7aac40fd77df32e465cb52f39f7cf231f18fa2d2db38dd6c1c3c6cb1ff053432",
+  "encoding_projection_sha256": "169949cf19f9ca7a06dc28ab8204af6fda534c6d204cf66076ca5de03499f606",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0586-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -3741,12 +3757,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/formats/e1m2x2.md",
-      "sha256": "77a9930b89ca665cedf71a57c06bf25154189af77a78b0208810243fa3c478e0"
+      "sha256": "7e0b6e3394a6bb230892b6ef89296bc6c83d50232cad8dcb240d13f75b5f8d5c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/formats/e2m1x2.md",
-      "sha256": "dbac308a1de72a90f956a8f828f6c4b67ae15698bd471751eceb29aa8eed7c1b"
+      "sha256": "2d8c73114fafdc607ca54c52ca88e71d9d8da6df2c3f799ab866e4e2255f5b32"
     },
     {
       "kind": "generated-documentation",
@@ -3767,6 +3783,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/formats/e5m2.md",
       "sha256": "a9ff0108569f1ffdd7e6784d31a45be3418d6c98d90f65a4ad6681aa13cd7122"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/data-types/formats/e6m2.md",
+      "sha256": "9d5e54c15d79b22d0a02ae9d721fdbde1f0eb0457628f0680648eda8e7d27c4b"
     },
     {
       "kind": "generated-documentation",
@@ -3796,7 +3817,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/formats/hif4-scale.md",
-      "sha256": "702603af420d1c9a3059a25e0c9bc823c18fed793a988382311ecc349778413c"
+      "sha256": "82245415df75742ca335d5b47c6ed05fd51570a16ae74fe2f971eb97d759adf9"
     },
     {
       "kind": "generated-documentation",
@@ -3807,6 +3828,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/formats/hif8.md",
       "sha256": "093f9407c984e65584350f4eb7c1430ac429d285ff320148131ae31a52728e5c"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/data-types/formats/rcpe6m2.md",
+      "sha256": "9eddbccdda766de11fa5f9e454c7ae5fab7aff9ad027fdf8da959e62a8408fb7"
     },
     {
       "kind": "generated-documentation",
@@ -3841,7 +3867,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/numeric-formats.md",
-      "sha256": "5e7be22e814ec8ca26e9a9ce7076642f7c3c26b84c9ccf832b39e9dc9b28a0f9"
+      "sha256": "3f626ddba864dc12b1b146860979ada92d8398c9029dd1ac498b8af606801bb4"
     },
     {
       "kind": "generated-documentation",
@@ -3861,7 +3887,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/tile-data-types.md",
-      "sha256": "5abc7ee8fc9ce608b521f1b6fd53a28607677886d6ae7422a5426fddce681e1a"
+      "sha256": "321722d8ea0df9e493747a6549ef576dcb3337b5777da8f56e4257942ef0bd39"
     },
     {
       "kind": "generated-documentation",
@@ -3881,7 +3907,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/features/mx-formats.md",
-      "sha256": "1fab4fe17b5a75209615fa83743b8281bc893e78f10605ed9172493a83d8cbd1"
+      "sha256": "7e416bb70198ff71b778a9ce55ab2564dcaedcf05e4a7c5e71f6509725af8d34"
     },
     {
       "kind": "generated-documentation",
@@ -3956,7 +3982,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/e8m0-conversion.md",
-      "sha256": "d37b356b3f853454189d23a09346db5ce5c78d6f036fef3b75963cc49f9bbf37"
+      "sha256": "85b9e1cd2a76f281dfc3753dd2e3609f8e227a74d1447905c9bd145630cb9153"
     },
     {
       "kind": "generated-documentation",
@@ -3976,7 +4002,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/matrix-quantization.md",
-      "sha256": "345a80455b11084670964309b2ad6e3b1e176a91dae84eb542c6291fb1b52d10"
+      "sha256": "86dfc6fd87e61b804fcfc6273833ba6c83b9ae5754e5056eab5fb9caba44d61f"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/packed-conversion.md",
+      "sha256": "6487b6757146b80f7ab61ccf422f839ab81bbfbd6eb9023527b083cdcefd8820"
     },
     {
       "kind": "generated-documentation",
@@ -4002,6 +4033,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reset.md",
       "sha256": "ba4e60972b2b214a8b8a0db187e0516379fd6bf582ccd9b7febf8c069ac1bc6e"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/tcvt-conversion.md",
+      "sha256": "15dda4483e949da41ac8a93aff42ca49de4cc4a3ab8fd7c94c8440b6287086e2"
     },
     {
       "kind": "generated-documentation",
@@ -4106,7 +4142,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/attributes/B.DATR.md",
-      "sha256": "b40cc47526c19a9a09f2095b3497bfe5aba646eda31127488e64623fd8351173"
+      "sha256": "6d87561ca3b462677a7ded6642c02d22afd1c184172a211bc3c2c6de53417789"
     },
     {
       "kind": "generated-documentation",
@@ -4156,7 +4192,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.GMOV.md",
-      "sha256": "b05f7f2f911882254a9e6ea2615af8d6a5581377b18267ca66440252058aaba0"
+      "sha256": "d9421dbfc3be3d152da9d23db96ce9c84538db2bc90495d1df9c9e377f14f181"
     },
     {
       "kind": "generated-documentation",
@@ -4166,12 +4202,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.ADD.md",
-      "sha256": "d1e1dcc8ba1589b785338e13b8ad13916cd56b21af0766986ad055ca1fbca33b"
+      "sha256": "16f5dfeecb91ab22d872a3b355122ab844bdd2a5ecb8190c4e24e8ca7a058bb9"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.AND.md",
-      "sha256": "ff436df461564401cf6d559b23086f232bfa4badac96385369eb22be8b56a2e5"
+      "sha256": "105209927991cb20780eb7d2ea3d6c088b30c34dc57b0f34fcf78f5d85b93d72"
     },
     {
       "kind": "generated-documentation",
@@ -4181,17 +4217,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.DEC.md",
-      "sha256": "fdf6009e0ddae7166d87129fbb919276a72ed11462991dbe9f526d491360c2f3"
+      "sha256": "bd67d2b04f3bf65dd62764e393e2d39e8d98ce4751a509da8bc35a1e05b37ab3"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.EXCH.md",
-      "sha256": "a7d01364832fe1f9850e3c9769ced6cf61994bf5d5ba971984c1819c9a397962"
+      "sha256": "0aecbc23a910ff1673a77a8cf6b279e50751363e87e84d0ae78e90a2d8e3db4b"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.INC.md",
-      "sha256": "04caec5a75b67f13e3d5a90ba59e7a5b8720d45ffd8a3d070dcea927e96842af"
+      "sha256": "e8ee08dd1688280fe596d22cc0020b2528c55d33f2d1cecd066129b69f8fa14b"
     },
     {
       "kind": "generated-documentation",
@@ -4201,22 +4237,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.MAX.md",
-      "sha256": "6fe9424d7cfe5d0965e1c81db139c15848733b4ebe65974d71499229e61a7c06"
+      "sha256": "86adca2e59610261637e7d74da550937407b5a6e9e10fc33d05f0cdc1b96d2c0"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.MIN.md",
-      "sha256": "3a423e994dffdd5d2afba08aeb58a45e34f2e1939fa36f1351bdb4817e9604ca"
+      "sha256": "b12ad695c89f01b95745ff7bd313ae8eb61ade17b8ef72a8fc4c4b90de85e96e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.OR.md",
-      "sha256": "96847c9186acf114b728097b6e41336363578fd9d82d36672f17172918781b9c"
+      "sha256": "c654263ded1d2355761ce24f1f669826beb65931f1916c703a0ac214070edec8"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.XOR.md",
-      "sha256": "8d7dd3cc23f50edc50b97ca08ce453b4e3fe71ca8e8df11fec3bc8d358c41385"
+      "sha256": "f4666e92916bada8b97b15ce362e59caed001bd3d2c9a1b10179ff2d8b3c5fc5"
     },
     {
       "kind": "generated-documentation",
@@ -4226,22 +4262,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.ADD.md",
-      "sha256": "b1b8b655cf30c72d3dc339821516f3d4c9dc8f8075ee2277487cbe8b5a233818"
+      "sha256": "5213ce4bc0dae702b2669f0d4b6f2a79ab1948cac5e4cd21b592f5d111bb4464"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.AND.md",
-      "sha256": "61e1a692b8507d87e9ebb5b001b75b6ebdf7de6501934a01ec5fe73798c0d1ad"
+      "sha256": "e3a4cb257eb2f8a6f35ffe6605d8782032b234774a10f1169d89367327ebc659"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.DEC.md",
-      "sha256": "7f28072dc942ce9a333767d9ff0569df4bc29c9c60262e6593c9007dd2b8054d"
+      "sha256": "54a3641412ac0fad1184d03b6c7cb701d17f365895e0b9e206cc823549eb3e73"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.INC.md",
-      "sha256": "bf8698b95186379d2d1f659d97904e70e6503955610259877fdc28e3bcad0a31"
+      "sha256": "7ec220694c4aff74ab4a9235697e432ec7464db06574c112939d8b228e5a76e3"
     },
     {
       "kind": "generated-documentation",
@@ -4251,27 +4287,27 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.MAX.md",
-      "sha256": "e6b4b251369acedd32b0e39b5165bb2863ca80234d8d68994e89917157448b95"
+      "sha256": "92e791170e77f739d0856ca854b087576ddd0429675a726d4c2f5c0be7ccf56f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.MIN.md",
-      "sha256": "5beceb147edae34afe1faec6ab090556c00687b005727ff5c6c3b0377e6ddbbe"
+      "sha256": "3467f6bda09d4ed755ad98df223551ab953c4b53d9e68e654c1bdfdfeeb3f440"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.OR.md",
-      "sha256": "16aa2c392beb6cc5d7e590445370ed4f94ddc643add9b7cb69de8486c9b9a8b6"
+      "sha256": "d43f05128a66236ebde1b9fc771a696707bba6bb36c26c868869191ec9c9423f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.POPC.md",
-      "sha256": "64fa60e071d29ab81150e9375be2e14a818eb5b9a7acc44423c1de164b82e06c"
+      "sha256": "32e6a5378d4b01bbff1f9541c971b98301b25e0655fd28bedc19768e032cd40e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.XOR.md",
-      "sha256": "389df16ad2c7f9f00c717efe486547a91038ca6a56fc921a60f79677f5376143"
+      "sha256": "878a6fa9faa9fd4cc2e1fdbda8b30a17fa8fb6ef186d0cfd3e570a623beeb952"
     },
     {
       "kind": "generated-documentation",
@@ -4281,7 +4317,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.SFU.md",
-      "sha256": "87161c5a2a0a08e4ba7148ddab9a365a7eff0f34a72df335408710deed5e066f"
+      "sha256": "11e6af51dd3018295993ce89ad24ffcb7db32a2f021ebacde8a76538e48cb305"
     },
     {
       "kind": "generated-documentation",
@@ -4296,77 +4332,77 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TEPL.md",
-      "sha256": "9b2bfc73f32517bdb85466b450e36cb78219915f1d666551e7847b4e1ea11310"
+      "sha256": "84cf983d650f504128fec586ad7c1b8ac4ab5d6523df8d29a8b80ae425d2a02c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMV.ACC.md",
-      "sha256": "d308157f70acb0b57d5ed6c0317d073481a999f19d7fb5cad90faf513e94dd67"
+      "sha256": "82f73dfe1e0fa9efd73e53dc11e85cdbf7719372e0cf4433fff027909a04ac1c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMV.BIAS.md",
-      "sha256": "631f7b1709eac51966502384627fddce714d22cd52c6609e96335e5692057e98"
+      "sha256": "20f20dd51f3dd9ff8ccbc583db979c0f7b557a0ab3495abac309287a47a85e76"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMV.md",
-      "sha256": "3c9f90562420170646bca4284572caff5a39e07244cca7113f5f8b26f7ec835c"
+      "sha256": "b6dafa80c995cfb8a24cd2c5256d142d5b2184d9ddea9e2ee5958f6a3b87431a"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMVMX.ACC.md",
-      "sha256": "11bc82f1bf30a84fbf892f9b4574a339c713cec27468c6c4f40585379565f039"
+      "sha256": "291d86e03cfffd3d7b2595b4a400bd9adbe76f88c315d7eeac5a3dafda1f412e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMVMX.BIAS.md",
-      "sha256": "8ad54f4a8a265f7472cdf12bf4f33d73ca05d3e313a1ffd90f4f007de65647fc"
+      "sha256": "e50729f24cbe084d0d82b2abd7e3d01d035ef377e9f1cc7eb2eb68591dc29648"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMVMX.md",
-      "sha256": "b929ad7a547ffbe6c06f2e2d38937662dc665fe73c6fb2bd3623f6bd1bfa6f96"
+      "sha256": "2d8f78f307e978ed8d0a1eea03753356a0d59139cedb1c3df8cf840829b309cf"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TIMG2COL.md",
-      "sha256": "839348782e3647b0fb40f5d1caf1be106642bc33da1c80483e27f92e5f5e332a"
+      "sha256": "832382569b39cc9ebe84e55bc3ea31ad3c6258224a1f83071cd673023a7b2520"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TLOAD.md",
-      "sha256": "62abacfa72705c7fbbc46427f93a9472b0e77b2dbd71f5e94942427e416f5963"
+      "sha256": "48d3146399e410adb517bda5edb39a2ab0f64896a1f926d0c322fdf41eaa35cd"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.ACC.md",
-      "sha256": "b840f30e8a4cdc929dbd0dc6cf56e31698b6c2dc703497d30ff1a948647f9310"
+      "sha256": "257aa0e0a6dd34498dc53941d1db01f7eb9d42515d4fd7047ea61892c5769d3c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.BIAS.md",
-      "sha256": "36eb3c6b548f44b0da0ebaf863e2b40ae9c18fccd06fafe9f98f8d93c2e5a8d2"
+      "sha256": "37ced3af50cd3a80732bf422797a9ff845e86ea9923fb76e6c4b7ed3df6317dc"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.md",
-      "sha256": "fa309b11a4b322e3e077de521f63fc981f642d13fd6489d24f7508d64e27926d"
+      "sha256": "70f6181dd586b15702889e41de6f4dced8affbdfd5d3081a738e84c7c65a748a"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.ACC.md",
-      "sha256": "61f0184ae5b31018ecf465e77dac4e0a9f0dd9859d5ad34fc0b53cf665e4aec9"
+      "sha256": "2a8c1227d87221d1acce7ad1c8b8b67a6df22d1972398b81eddc435a0261375c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.BIAS.md",
-      "sha256": "74f90b1f5ce12196ca3a9bd2c1ed751493bc7e7ff7fadf3dbc701cba84327aa6"
+      "sha256": "44a113b85decabb6669e78eddff1cdf5eb9dc44c9faa7e636dfd6c53aa2bb5e4"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.md",
-      "sha256": "0c6050b18773bf310f07ef45d98e80bed375b6e024d8c5754734d41340de233a"
+      "sha256": "206384e6374e0180eefaef5430ca37eff0f16f5049846b7c7fe2ab84230511ac"
     },
     {
       "kind": "generated-documentation",
@@ -4376,17 +4412,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TPREFETCH.md",
-      "sha256": "3c82037e3ddef5baa5ad1810bd33cbbdb9623dba507a7b4b90676e97f3da4731"
+      "sha256": "6859ccb2aac5cc59329720520e2c6421139332b25624ee447a425d63713982ff"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
-      "sha256": "e952f381e09171e3fe01e69e24380a1464412e9a0df3695a91687a90d371bcb1"
+      "sha256": "658ba10286ed541eec719ce01473684c227da1b9fcc7e4a2e0e4938eea549479"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.VEC.md",
-      "sha256": "6532771a0a21edfadab955ebfd15f03eabf3624023d5e7c79fed74caf53a1581"
+      "sha256": "d58ea5f02964b161e542e6a0751e51f98d9995ae711f6f34c5fe5d5b6dc4f933"
     },
     {
       "kind": "generated-documentation",
@@ -4516,17 +4552,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/descriptor-legality.md",
-      "sha256": "0173573b0c4be7b92ec38fba24aa08dd374acf3381b59cdfe0e11d5054cb033a"
+      "sha256": "9ba138ec22ff89f3e8bbfd4789ab70fcdfd6858a0c2d3bcd5f3e1b3e04a3c56d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-auxiliary.md",
-      "sha256": "1f657dc0e6fe830bdda9c800de6a58b7bc5452f54fcb506fe28fc18185d47157"
+      "sha256": "48b5d092220e0ea1d61879faaab7b0e1bcbec4bc0f88a8c16907b3b6f1dda9ed"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-shape.md",
-      "sha256": "61dc7d3fc6959f4536f44165a012882afe0b743476ef5b792725a3b4eca73a92"
+      "sha256": "b0f45dce843cb3fc7d0e5fd70e60e775d9586497f70e89719f112cd6a964ebf5"
     },
     {
       "kind": "generated-documentation",
@@ -4586,7 +4622,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tcvt-schema.md",
-      "sha256": "2c2344b0b23db0456cdc811f7f419ccb133408ac2049b4fa83da22c0d063e37c"
+      "sha256": "517d76ea8788030eec60eb70a0315cbdef11f09082697392d83ac5fa05f9e13b"
     },
     {
       "kind": "generated-documentation",
@@ -7296,7 +7332,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",
-      "sha256": "b28e04e39903747e57cf30272cc882f06d0f804b923a59cf3775a61f67315fe0"
+      "sha256": "54edad80adc01515f487b370b8e65a55e1fac153390d3bbaf8c2cc8ce0bde26b"
     },
     {
       "kind": "generated-documentation",
@@ -7631,7 +7667,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
-      "sha256": "bb354567bbe9a0b98c1a6755c1e390e1d42a371385c2141f3f9e1e9c5a521455"
+      "sha256": "ecabffb076873fe8691d72ef0e8d0ca1cf73472721cfe59be917b9a736aff865"
     },
     {
       "kind": "generated-documentation",
@@ -7646,12 +7682,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/definedness/elements.md",
-      "sha256": "72a4ddf9a83ff0456c8b70e3c62ee105b72cbe3e8fca5cdca1c8bc9190cb6281"
+      "sha256": "9963608d63cbcfb09d1d81564b295f04d7094857dc890e687addbd27f58a660e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/definedness/packed-boundary.md",
-      "sha256": "3f846f0a231a472f67d73c61c19e430c6d259c762b65e996816c193c6480eb04"
+      "sha256": "641bb5a8c6bb5fe788157f8670be307c171a875f8b34193a42afeba7ad2c65b4"
     },
     {
       "kind": "generated-documentation",
@@ -7781,7 +7817,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/dtype-layout.md",
-      "sha256": "5c2990101f0bfec291ae86bf9d9eeed5544b1189ce79d557005b0a40e25a0af5"
+      "sha256": "515d9bf114544326b3495b92d840d6dbf0f46924bde5ba5136b915a7a4abaac2"
     },
     {
       "kind": "generated-documentation",
@@ -7836,7 +7872,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/operand-schema.md",
-      "sha256": "679b76cb802ed02aaa7a2eab32d58b0fed69df382c1a275a9f09fb85c94a9d1b"
+      "sha256": "dd87accd62cfbac87d02ef38cedd2b6ce6d6e2a3d0583bb285cf8b00313ced49"
     },
     {
       "kind": "generated-documentation",
@@ -7906,7 +7942,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/numeric/formats.md",
-      "sha256": "bd50c4f072c2864fe5c94e03e71eff0d45800ea99ff06cda3b55e772b41a7de4"
+      "sha256": "a2c7551dd14edfdd00f246e06f6a7a1c604cdc9880e5ca13a0aec2507c356795"
     },
     {
       "kind": "generated-documentation",
@@ -7926,22 +7962,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/shape/rows-columns.md",
-      "sha256": "de9f5a01121d40c47313aa3f622a642573ec75730ae34d51dead89459c5532e5"
+      "sha256": "71940198d631dd21942677d69aa6f475bad2b8f6750ec7643e0f3d596f9b37e6"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/shape/valid-region.md",
-      "sha256": "d614988d48438db2612555267a9ff08983900d7358b3cc44dcc6c1790ddbf228"
+      "sha256": "f4994a74a3880e13571fa111b4630cc8819e35e5414958721f2d559bd49ec6bb"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/allocation.md",
-      "sha256": "cc6c2f9f1e112e9087af1f052ec3d9ac4f42fb3eeb20ba10e9bee58bca9b8814"
+      "sha256": "c3a3681e5654c5307756aa5ab8b219994197dd3f6867697756b435e2fc4b15c3"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/descriptors.md",
-      "sha256": "dd7d2772f0c336e2c9df638a3e261397b0b1828bfb7f0664b74a9b8a8cda0ed6"
+      "sha256": "92f01f9d9273b978ce6ea49c79f0b741bc9d637d12d667b31d661f32067caa15"
     },
     {
       "kind": "generated-documentation",
@@ -7981,7 +8017,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.md",
-      "sha256": "5cd3321e1059aa7970df2b2d18ec47b44a4e9909260827461a75e92c5d316356"
+      "sha256": "d7a9916ea9c140328cf1cf031bfe8eef9ad8b6143d4f097f47d18302323e5f96"
     },
     {
       "kind": "generated-documentation",
@@ -8051,7 +8087,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md",
-      "sha256": "2e2ab8d7a8825f6338cf18d0c9cbecbe64d7312bb04a65533d247456e58b1eb9"
+      "sha256": "6a7ee34d0b29b6ac3d73f403468bb799feed703f999cdbea989192978b5ab940"
     },
     {
       "kind": "generated-documentation",
@@ -8181,12 +8217,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0586-abi-vectors.json",
-      "sha256": "6b29fb8d64b0f2f20993f68b3de8a388baccbbf935fef7d12094d657641a1858"
+      "sha256": "7231997ca4d885f5ea6ad62a628d3472c07a9848216531c60d5f0b8a59f98df1"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0586-encoding-totality.json",
-      "sha256": "1dd08a55b264b691dadaf9ffc8a8460b1fcb6a8b3b06bca8d650866dd79e0182"
+      "sha256": "43905eb046b2127cc12277619d1f3d82d49381b19265176e4dd881e943c32d0d"
     },
     {
       "kind": "generated-evidence",
@@ -8200,8 +8236,8 @@
     "architecture_version": "0.58.6",
     "baseline_commit": "ae04395a024046e2b77395ffc2e732804181c22f",
     "blockers": [
-      "release NDF drift is not covered by an accepted target ADR: PTO-ARCH-MEMORY-MODEL-ATOMIC-001, PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001, PTO-ARCH-MEMORY-MODEL-CONFLICT-001, PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001, PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001, PTO-ARCH-MEMORY-MODEL-FLUSH-001, PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001, PTO-ARCH-MEMORY-MODEL-OPEN-001, PTO-ARCH-MEMORY-MODEL-PREFETCH-001, PTO-ARCH-MEMORY-MODEL-QUALIFIER-001, PTO-ARCH-MEMORY-MODEL-RANGE-001, PTO-ARCH-MEMORY-MODEL-RC-001, PTO-ARCH-MEMORY-MODEL-REPLAY-001, PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001, PTO-ARCH-MEMORY-MODEL-SCOPE-001, PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001, PTO-ARCH-MEMORY-MODEL-VISIBILITY-001, PTO-AS-TILEOP-MACRO-001, PTO-B-ASSEMBLE-LOCAL-GENERATION-001, PTO-B-ASSEMBLE-RANGE-001, PTO-B-SUBVIEW-SHARED-PER-PE-001, PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001, PTO-BSTART-CALL-DECISION-BINDING-001, PTO-BSTART-FP-CONTROL-001, PTO-BSTART-STD-CONTROL-001, PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001, PTO-BSTART-TLOAD-WEIGHT-DEFINEDNESS-001, PTO-BSTART-TLOAD-WEIGHT-KORDER-001, PTO-BSTART-TLOAD-WEIGHT-NK-CONTRACT-001, PTO-BSTART-TLOAD-WEIGHT-SOURCE-001, PTO-CUBE-MATRIX-SCALE-001, PTO-CUBE-SHARED-TRANSPOSE-001, PTO-INST-BLOCK-B-ASSEMBLE, PTO-INST-BLOCK-B-IOS, PTO-INST-BLOCK-B-IOT, PTO-INST-BLOCK-BSTART-CALL, PTO-INST-BLOCK-BSTART-FP, PTO-INST-BLOCK-BSTART-STD, PTO-INST-BLOCK-BSTART-TLOAD, PTO-INST-BLOCK-BSTART-TPREFETCH, PTO-INST-BLOCK-BSTART-TSTORE, PTO-INST-SCALAR-C-SETRET, PTO-INST-TILE-TABS, PTO-INST-TILE-TADD, PTO-INST-TILE-TADDS, PTO-INST-TILE-TAND, PTO-INST-TILE-TANDS, PTO-INST-TILE-TCMP, PTO-INST-TILE-TCMPS, PTO-INST-TILE-TCVT, PTO-INST-TILE-TDIV, PTO-INST-TILE-TDIVS, PTO-INST-TILE-TEXP, PTO-INST-TILE-TFMA, PTO-INST-TILE-TLOG, PTO-INST-TILE-TMAX, PTO-INST-TILE-TMAXS, PTO-INST-TILE-TMIN, PTO-INST-TILE-TMINS, PTO-INST-TILE-TMUL, PTO-INST-TILE-TMULS, PTO-INST-TILE-TNEG, PTO-INST-TILE-TNOT, PTO-INST-TILE-TOR, PTO-INST-TILE-TORS, PTO-INST-TILE-TRECIP, PTO-INST-TILE-TRELU, PTO-INST-TILE-TREM, PTO-INST-TILE-TREMS, PTO-INST-TILE-TRSQRT, PTO-INST-TILE-TSEL, PTO-INST-TILE-TSELS, PTO-INST-TILE-TSHL, PTO-INST-TILE-TSHLS, PTO-INST-TILE-TSHR, PTO-INST-TILE-TSHRS, PTO-INST-TILE-TSQRT, PTO-INST-TILE-TSUB, PTO-INST-TILE-TSUBS, PTO-INST-TILE-TXOR, PTO-INST-TILE-TXORS, PTO-PROFILE-HOST-MEMORY-001, PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001, PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001, PTO-PROFILE-LINX-PEID-SSR-001, PTO-PROFILE-LINX-RUNTIME-COMPAT-001, PTO-TABS-CONTRACT-001, PTO-TADD-CONTRACT-001, PTO-TADDS-CONTRACT-001, PTO-TAND-CONTRACT-001, PTO-TANDS-CONTRACT-001, PTO-TCI-CONTRACT-001, PTO-TCMP-CONTRACT-001, PTO-TCMPS-CONTRACT-001, PTO-TDIV-CONTRACT-001, PTO-TDIVS-CONTRACT-001, PTO-TEXP-CONTRACT-001, PTO-TFMA-CONTRACT-001, PTO-TILE-CARRIER-REINTERPRETATION-001, PTO-TLOG-CONTRACT-001, PTO-TMAX-CONTRACT-001, PTO-TMAXS-CONTRACT-001, PTO-TMIN-CONTRACT-001, PTO-TMINS-CONTRACT-001, PTO-TMUL-CONTRACT-001, PTO-TMULS-CONTRACT-001, PTO-TNEG-CONTRACT-001, PTO-TNOT-CONTRACT-001, PTO-TOR-CONTRACT-001, PTO-TORS-CONTRACT-001, PTO-TRECIP-CONTRACT-001, PTO-TRELU-CONTRACT-001, PTO-TREM-CONTRACT-001, PTO-TREMS-CONTRACT-001, PTO-TRSQRT-CONTRACT-001, PTO-TSEL-CONTRACT-001, PTO-TSELS-CONTRACT-001, PTO-TSHL-CONTRACT-001, PTO-TSHLS-CONTRACT-001, PTO-TSHR-CONTRACT-001, PTO-TSHRS-CONTRACT-001, PTO-TSQRT-CONTRACT-001, PTO-TSUB-CONTRACT-001, PTO-TSUBS-CONTRACT-001, PTO-TXOR-CONTRACT-001, PTO-TXORS-CONTRACT-001",
-      "release ASL unit drift is not covered by an accepted target ADR: PTO-ARCH-DATA-TYPES-INTEGER, PTO-ARCH-DATA-TYPES-MEMORY-MODEL, PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS, PTO-ARCH-DATA-TYPES-TRAP-CONTEXT, PTO-ARCH-FEATURES-TILE-ALLOCATION, PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE, PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION, PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS, PTO-ARCH-MEMORY-MODEL-ORDERING, PTO-ARCH-OVERVIEW-ARCHITECTURE, PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION, PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT, PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT, PTO-ARCH-STATE-TRAP-CONTEXT, PTO-BLOCK-B-ASSEMBLE, PTO-BLOCK-BSTART-CALL, PTO-BLOCK-BSTART-FP, PTO-BLOCK-BSTART-STD, PTO-BLOCK-MODEL-COMMIT-EFFECTS, PTO-BLOCK-MODEL-COMMIT-VALIDATION, PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA, PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION, PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX, PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL, PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA, PTO-BLOCK-MODEL-MEMORY-WEIGHT-TO-SHARED-GM, PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS, PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS, PTO-BLOCK-MODEL-OPERANDS-WEIGHT-PARAMETERS, PTO-SCALAR-C-SETRET, PTO-SCALAR-MODEL-AGU-MEMORY, PTO-SCALAR-MODEL-AMO-SEMANTICS, PTO-SCALAR-MODEL-SYS-REGISTERS, PTO-SCALAR-MODEL-SYS-SEMANTICS, PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS, PTO-TILE-MODEL-EXECUTION-COMPARISON, PTO-TILE-MODEL-EXECUTION-GENERATION, PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT, PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS, PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE, PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS, PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS, PTO-TILE-MODEL-MEMORY-LOAD-STORE, PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT, PTO-TILE-MODEL-SHAPE-CUBE-CELL, PTO-TILE-MODEL-STATE-SHARED-REGISTERS, PTO-TILE-TABS, PTO-TILE-TADD, PTO-TILE-TADDS, PTO-TILE-TAND, PTO-TILE-TANDS, PTO-TILE-TCMP, PTO-TILE-TCMPS, PTO-TILE-TDIV, PTO-TILE-TDIVS, PTO-TILE-TEXP, PTO-TILE-TFMA, PTO-TILE-TLOG, PTO-TILE-TMAX, PTO-TILE-TMAXS, PTO-TILE-TMIN, PTO-TILE-TMINS, PTO-TILE-TMUL, PTO-TILE-TMULS, PTO-TILE-TNEG, PTO-TILE-TNOT, PTO-TILE-TOR, PTO-TILE-TORS, PTO-TILE-TRECIP, PTO-TILE-TRELU, PTO-TILE-TREM, PTO-TILE-TREMS, PTO-TILE-TRSQRT, PTO-TILE-TSEL, PTO-TILE-TSELS, PTO-TILE-TSHL, PTO-TILE-TSHLS, PTO-TILE-TSHR, PTO-TILE-TSHRS, PTO-TILE-TSQRT, PTO-TILE-TSUB, PTO-TILE-TSUBS, PTO-TILE-TXOR, PTO-TILE-TXORS"
+      "release NDF drift is not covered by an accepted target ADR: PTO-ARCH-MEMORY-MODEL-ATOMIC-001, PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001, PTO-ARCH-MEMORY-MODEL-CONFLICT-001, PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001, PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001, PTO-ARCH-MEMORY-MODEL-FLUSH-001, PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001, PTO-ARCH-MEMORY-MODEL-OPEN-001, PTO-ARCH-MEMORY-MODEL-PREFETCH-001, PTO-ARCH-MEMORY-MODEL-QUALIFIER-001, PTO-ARCH-MEMORY-MODEL-RANGE-001, PTO-ARCH-MEMORY-MODEL-RC-001, PTO-ARCH-MEMORY-MODEL-REPLAY-001, PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001, PTO-ARCH-MEMORY-MODEL-SCOPE-001, PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001, PTO-ARCH-MEMORY-MODEL-VISIBILITY-001, PTO-AS-TILEOP-MACRO-001, PTO-B-ASSEMBLE-LOCAL-GENERATION-001, PTO-B-ASSEMBLE-RANGE-001, PTO-B-SUBVIEW-SHARED-PER-PE-001, PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001, PTO-BSTART-CALL-DECISION-BINDING-001, PTO-BSTART-FP-CONTROL-001, PTO-BSTART-STD-CONTROL-001, PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001, PTO-BSTART-TLOAD-WEIGHT-DEFINEDNESS-001, PTO-BSTART-TLOAD-WEIGHT-KORDER-001, PTO-BSTART-TLOAD-WEIGHT-NK-CONTRACT-001, PTO-BSTART-TLOAD-WEIGHT-SOURCE-001, PTO-CUBE-MATRIX-SCALE-001, PTO-CUBE-SHARED-TRANSPOSE-001, PTO-INST-BLOCK-B-ASSEMBLE, PTO-INST-BLOCK-B-IOS, PTO-INST-BLOCK-B-IOT, PTO-INST-BLOCK-BSTART-CALL, PTO-INST-BLOCK-BSTART-FP, PTO-INST-BLOCK-BSTART-STD, PTO-INST-BLOCK-BSTART-TEPL, PTO-INST-BLOCK-BSTART-TLOAD, PTO-INST-BLOCK-BSTART-TPREFETCH, PTO-INST-BLOCK-BSTART-TSTORE, PTO-INST-SCALAR-C-SETRET, PTO-INST-TILE-TABS, PTO-INST-TILE-TADD, PTO-INST-TILE-TADDS, PTO-INST-TILE-TAND, PTO-INST-TILE-TANDS, PTO-INST-TILE-TCMP, PTO-INST-TILE-TCMPS, PTO-INST-TILE-TCVT, PTO-INST-TILE-TDIV, PTO-INST-TILE-TDIVS, PTO-INST-TILE-TEXP, PTO-INST-TILE-TFMA, PTO-INST-TILE-TLOG, PTO-INST-TILE-TMAX, PTO-INST-TILE-TMAXS, PTO-INST-TILE-TMIN, PTO-INST-TILE-TMINS, PTO-INST-TILE-TMUL, PTO-INST-TILE-TMULS, PTO-INST-TILE-TNEG, PTO-INST-TILE-TNOT, PTO-INST-TILE-TOR, PTO-INST-TILE-TORS, PTO-INST-TILE-TRECIP, PTO-INST-TILE-TRELU, PTO-INST-TILE-TREM, PTO-INST-TILE-TREMS, PTO-INST-TILE-TRSQRT, PTO-INST-TILE-TSEL, PTO-INST-TILE-TSELS, PTO-INST-TILE-TSHL, PTO-INST-TILE-TSHLS, PTO-INST-TILE-TSHR, PTO-INST-TILE-TSHRS, PTO-INST-TILE-TSQRT, PTO-INST-TILE-TSUB, PTO-INST-TILE-TSUBS, PTO-INST-TILE-TXOR, PTO-INST-TILE-TXORS, PTO-NUMERIC-E6M2-FORMAT-001, PTO-NUMERIC-FINITE-DECOMPOSITION-001, PTO-NUMERIC-RCPE6M2-FORMAT-001, PTO-PROFILE-HOST-MEMORY-001, PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001, PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001, PTO-PROFILE-LINX-PEID-SSR-001, PTO-PROFILE-LINX-RUNTIME-COMPAT-001, PTO-TABS-CONTRACT-001, PTO-TADD-CONTRACT-001, PTO-TADDS-CONTRACT-001, PTO-TAND-CONTRACT-001, PTO-TANDS-CONTRACT-001, PTO-TCI-CONTRACT-001, PTO-TCMP-CONTRACT-001, PTO-TCMPS-CONTRACT-001, PTO-TDIV-CONTRACT-001, PTO-TDIVS-CONTRACT-001, PTO-TEXP-CONTRACT-001, PTO-TFMA-CONTRACT-001, PTO-TILE-CARRIER-REINTERPRETATION-001, PTO-TLOG-CONTRACT-001, PTO-TMAX-CONTRACT-001, PTO-TMAXS-CONTRACT-001, PTO-TMIN-CONTRACT-001, PTO-TMINS-CONTRACT-001, PTO-TMUL-CONTRACT-001, PTO-TMULS-CONTRACT-001, PTO-TNEG-CONTRACT-001, PTO-TNOT-CONTRACT-001, PTO-TOR-CONTRACT-001, PTO-TORS-CONTRACT-001, PTO-TRECIP-CONTRACT-001, PTO-TRELU-CONTRACT-001, PTO-TREM-CONTRACT-001, PTO-TREMS-CONTRACT-001, PTO-TRSQRT-CONTRACT-001, PTO-TSEL-CONTRACT-001, PTO-TSELS-CONTRACT-001, PTO-TSHL-CONTRACT-001, PTO-TSHLS-CONTRACT-001, PTO-TSHR-CONTRACT-001, PTO-TSHRS-CONTRACT-001, PTO-TSQRT-CONTRACT-001, PTO-TSUB-CONTRACT-001, PTO-TSUBS-CONTRACT-001, PTO-TXOR-CONTRACT-001, PTO-TXORS-CONTRACT-001",
+      "release ASL unit drift is not covered by an accepted target ADR: PTO-ARCH-DATA-TYPES-FORMAT-E1M2X2, PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2, PTO-ARCH-DATA-TYPES-FORMAT-E6M2, PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE, PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2, PTO-ARCH-DATA-TYPES-INTEGER, PTO-ARCH-DATA-TYPES-MEMORY-MODEL, PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS, PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS, PTO-ARCH-DATA-TYPES-TRAP-CONTEXT, PTO-ARCH-FEATURES-MX-FORMATS, PTO-ARCH-FEATURES-TILE-ALLOCATION, PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE, PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION, PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS, PTO-ARCH-MEMORY-MODEL-ORDERING, PTO-ARCH-OVERVIEW-ARCHITECTURE, PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION, PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT, PTO-ARCH-PROFILE-PACKED-CONVERSION, PTO-ARCH-PROFILE-TCVT-CONVERSION, PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT, PTO-ARCH-STATE-TRAP-CONTEXT, PTO-BLOCK-B-ASSEMBLE, PTO-BLOCK-BSTART-CALL, PTO-BLOCK-BSTART-FP, PTO-BLOCK-BSTART-STD, PTO-BLOCK-BSTART-TEPL, PTO-BLOCK-MODEL-COMMIT-EFFECTS, PTO-BLOCK-MODEL-COMMIT-VALIDATION, PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA, PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION, PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX, PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL, PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA, PTO-BLOCK-MODEL-MEMORY-WEIGHT-TO-SHARED-GM, PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS, PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS, PTO-BLOCK-MODEL-OPERANDS-WEIGHT-PARAMETERS, PTO-SCALAR-C-SETRET, PTO-SCALAR-MODEL-AGU-MEMORY, PTO-SCALAR-MODEL-AMO-SEMANTICS, PTO-SCALAR-MODEL-SYS-REGISTERS, PTO-SCALAR-MODEL-SYS-SEMANTICS, PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS, PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY, PTO-TILE-MODEL-EXECUTION-COMPARISON, PTO-TILE-MODEL-EXECUTION-GENERATION, PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT, PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS, PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE, PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS, PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS, PTO-TILE-MODEL-MEMORY-LOAD-STORE, PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT, PTO-TILE-MODEL-SHAPE-CUBE-CELL, PTO-TILE-MODEL-SHAPE-ROWS-COLUMNS, PTO-TILE-MODEL-SHAPE-VALID-REGION, PTO-TILE-MODEL-STATE-SHARED-REGISTERS, PTO-TILE-TABS, PTO-TILE-TADD, PTO-TILE-TADDS, PTO-TILE-TAND, PTO-TILE-TANDS, PTO-TILE-TCMP, PTO-TILE-TCMPS, PTO-TILE-TDIV, PTO-TILE-TDIVS, PTO-TILE-TEXP, PTO-TILE-TFMA, PTO-TILE-TLOG, PTO-TILE-TMAX, PTO-TILE-TMAXS, PTO-TILE-TMIN, PTO-TILE-TMINS, PTO-TILE-TMUL, PTO-TILE-TMULS, PTO-TILE-TNEG, PTO-TILE-TNOT, PTO-TILE-TOR, PTO-TILE-TORS, PTO-TILE-TRECIP, PTO-TILE-TRELU, PTO-TILE-TREM, PTO-TILE-TREMS, PTO-TILE-TRSQRT, PTO-TILE-TSEL, PTO-TILE-TSELS, PTO-TILE-TSHL, PTO-TILE-TSHLS, PTO-TILE-TSHR, PTO-TILE-TSHRS, PTO-TILE-TSQRT, PTO-TILE-TSUB, PTO-TILE-TSUBS, PTO-TILE-TXOR, PTO-TILE-TXORS"
     ],
     "excluded_draft_adrs": [
       "ADR-NUM-0013",
@@ -9089,7 +9125,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-DATR",
-        "sha256": "aea38cb40fcc2496732b235663152cc52aa38b60cba4bb7c7096640667d6eda4"
+        "sha256": "6fa43e478e6db21c458d4c9376e548fdd6adcc2e28cfca5ce5b398dcd1815170"
       },
       {
         "id": "PTO-INST-BLOCK-B-DIM",
@@ -9241,7 +9277,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TEPL",
-        "sha256": "1d22253b7b0b9c361bb8d195325bea86178c1798eb972e6851a0b6929bcbcfd2"
+        "sha256": "bcdd409303a70964a44f71daf36208e125ab48f00f398cf71d8ec05db35255f3"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TGEMV",
@@ -11445,7 +11481,7 @@
       },
       {
         "id": "PTO-INST-TILE-TCVT",
-        "sha256": "a322e26e1ae28b7ef11dcfbc8689e7bf61f10a9c3198d1f640e08e6fddd7fd76"
+        "sha256": "97ad0e69cf0c36ec767dde7cb9464c4be2df5fc3b132298e4ac459365a508040"
       },
       {
         "id": "PTO-INST-TILE-TDIV",
@@ -11804,12 +11840,20 @@
         "sha256": "af95e40324693b224ccfcbb4591d5bbd356cd3283a7fe2a4640fe12f24a6feb6"
       },
       {
+        "id": "PTO-NUMERIC-E6M2-FORMAT-001",
+        "sha256": "cb8a09656da9d56c4c756d9ad8df790adb5461c5ab267e26383f264e6973444f"
+      },
+      {
         "id": "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
-        "sha256": "d8600ddd582614156957a4fb3bf7d8876bc0a5c9e279f461300afc1138d8661d"
+        "sha256": "9ed0ea05c7a2d2a64581cd53911ce78c15361608a797c9ceb0a5c22a1694fd5a"
       },
       {
         "id": "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
         "sha256": "4a6f88f2fa25dcf4096b684ff7422583faa7d6721fab951ec1477cc82be4bc3c"
+      },
+      {
+        "id": "PTO-NUMERIC-RCPE6M2-FORMAT-001",
+        "sha256": "d9ddd619910ba972df36ca8299790d34e03a6c3fbd3375f8d3603d2da3f79109"
       },
       {
         "id": "PTO-NUMERIC-STATUS-STICKY-001",
@@ -12245,7 +12289,7 @@
       },
       {
         "id": "PTO-TCVT-CONTRACT-001",
-        "sha256": "69a8c459b03fbfb7a37c617173012a9bd8db7cf3512e6900c442fa3f1da2c530"
+        "sha256": "c338ab5206de63265c91368debcf05b841db9d8619337f0a560116083c732bfd"
       },
       {
         "id": "PTO-TCVT-E8M0-PROFILE-001",
