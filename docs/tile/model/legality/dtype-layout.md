@@ -56,6 +56,12 @@ pure func TileCarrierWidthCompatible(
     stored_type: TileDataType, operation_type: TileDataType) => boolean
 begin
     if stored_type == operation_type then return TRUE; end;
+    // RCPE6M2 is a source-only derived interpretation. It may consume the
+    // same raw eight-bit carrier as E6M2, but ordinary same-width carriers do
+    // not acquire the reciprocal interpretation.
+    if operation_type == TileDataType_RCPE6M2 then
+        return stored_type == TileDataType_E6M2;
+    end;
     return !TileDataTypeIsFourBit(stored_type) &&
            !TileDataTypeIsFourBit(operation_type) &&
            TileElementBits(stored_type) == TileElementBits(operation_type);

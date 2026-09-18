@@ -71,7 +71,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
 
 ### Fields
 
@@ -134,13 +134,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |
@@ -179,7 +179,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control | Zero padding, ByteId zero, or matrix CCTRL=00 as selected by the operation schema |
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
-| b_datr_32_c161a042ff38 | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
+| b_datr_32_c161a042ff38 | DataType | 5 | 0–21, 24–28, 31 | none | 22–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
 | b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB | operation-defined default rounding |
 | b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–11, 17–18, 20–31 | none | 2, 5, 7, 12–16, 19 | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
 
@@ -260,7 +260,7 @@ end;
 ## Legality
 
 - B.DATR may appear at most once, after BSTART and before the block body.
-- DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.
+- DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.
 - Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.
 - CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.

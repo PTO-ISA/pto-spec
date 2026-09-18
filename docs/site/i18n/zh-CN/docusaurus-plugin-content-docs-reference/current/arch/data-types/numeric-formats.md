@@ -62,15 +62,18 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/numeric-formats.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS","surface":"arch","classification":["data-types","numeric-formats"],"depends_on":["PTO-ARCH-DATA-TYPES-FORMAT-FP64","PTO-ARCH-DATA-TYPES-FORMAT-FP32","PTO-ARCH-DATA-TYPES-FORMAT-TF32","PTO-ARCH-DATA-TYPES-FORMAT-HF32","PTO-ARCH-DATA-TYPES-FORMAT-FP16","PTO-ARCH-DATA-TYPES-FORMAT-BF16","PTO-ARCH-DATA-TYPES-FORMAT-HIF8","PTO-ARCH-DATA-TYPES-FORMAT-E4M3","PTO-ARCH-DATA-TYPES-FORMAT-E5M2","PTO-ARCH-DATA-TYPES-FORMAT-E3M2","PTO-ARCH-DATA-TYPES-FORMAT-E2M3","PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2","PTO-ARCH-DATA-TYPES-FORMAT-E1M2X2","PTO-ARCH-DATA-TYPES-FORMAT-E8M0","PTO-ARCH-DATA-TYPES-FORMAT-HIF4X2"]}
+// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS","surface":"arch","classification":["data-types","numeric-formats"],"depends_on":["PTO-ARCH-DATA-TYPES-FORMAT-FP64","PTO-ARCH-DATA-TYPES-FORMAT-FP32","PTO-ARCH-DATA-TYPES-FORMAT-TF32","PTO-ARCH-DATA-TYPES-FORMAT-HF32","PTO-ARCH-DATA-TYPES-FORMAT-FP16","PTO-ARCH-DATA-TYPES-FORMAT-BF16","PTO-ARCH-DATA-TYPES-FORMAT-HIF8","PTO-ARCH-DATA-TYPES-FORMAT-E4M3","PTO-ARCH-DATA-TYPES-FORMAT-E5M2","PTO-ARCH-DATA-TYPES-FORMAT-E3M2","PTO-ARCH-DATA-TYPES-FORMAT-E2M3","PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2","PTO-ARCH-DATA-TYPES-FORMAT-E1M2X2","PTO-ARCH-DATA-TYPES-FORMAT-E8M0","PTO-ARCH-DATA-TYPES-FORMAT-HIF4X2","PTO-ARCH-DATA-TYPES-FORMAT-E6M2","PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"]}
 
 // NDF-BEGIN: PTO-NUMERIC-FINITE-DECOMPOSITION-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
-// Every valid finite floating or scale encoding MUST decompose without host
-// floating-point arithmetic into available, sign, integer significand, and
-// integer exponent such that its exact value is
-// (-1)^sign * UInt(significand) * 2^exponent. Invalid internal encodings,
-// infinities, NaNs, and integer Tile DataTypes MUST report unavailable.
+// Every valid finite floating or scale encoding with a finite-binary
+// decomposition MUST decompose without host floating-point arithmetic into
+// available, sign, integer significand, and integer exponent such that its
+// exact value is (-1)^sign * UInt(significand) * 2^exponent. A derived exact-
+// real source whose values are not all finite-binary, such as RCPE6M2, may
+// report unavailable here and MUST expose its exact real decoder to the
+// operation profile. Invalid internal encodings, infinities, NaNs, and
+// integer Tile DataTypes MUST report unavailable.
 // NDF-END: PTO-NUMERIC-FINITE-DECOMPOSITION-001
 
 // DOC-BEGIN: operation
@@ -93,6 +96,8 @@ begin
         when TileDataType_E1M2X2 => return E1M2X2NumericFormatDescriptor();
         when TileDataType_E8M0 => return E8M0NumericFormatDescriptor();
         when TileDataType_HiF4X2 => return HiF4X2NumericFormatDescriptor();
+        when TileDataType_E6M2 => return E6M2NumericFormatDescriptor();
+        when TileDataType_RCPE6M2 => return RCPE6M2NumericFormatDescriptor();
         otherwise => return UnavailableNumericFormatDescriptor();
     end;
 end;
@@ -117,6 +122,8 @@ begin
         when TileDataType_E1M2X2 => return E1M2X2FiniteDecomposition(value);
         when TileDataType_E8M0 => return E8M0FiniteDecomposition(value[7:0]);
         when TileDataType_HiF4X2 => return HiF4X2FiniteDecomposition(value);
+        when TileDataType_E6M2 => return E6M2FiniteDecomposition(value[7:0]);
+        when TileDataType_RCPE6M2 => return RCPE6M2FiniteDecomposition(value[7:0]);
         otherwise => return (FALSE, FALSE, Zeros{PTO_XLEN}, 0);
     end;
 end;

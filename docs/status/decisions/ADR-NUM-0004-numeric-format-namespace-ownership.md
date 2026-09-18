@@ -23,12 +23,16 @@
     "PTO-CUBE-CELL-TRANSPORT-001",
     "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
     "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+    "PTO-NUMERIC-E6M2-FORMAT-001",
+    "PTO-NUMERIC-RCPE6M2-FORMAT-001",
     "PTO-TCVT-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
     "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
     "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
     "PTO-BLOCK-B-DATR",
     "PTO-TILE-TCVT"
   ],
@@ -39,6 +43,27 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0040"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+        "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+      ]
+    }
   ]
 }
 ---
@@ -184,3 +209,17 @@ not establish target availability, conversion results, special-value behavior,
 or numeric conformance.
 
 **中文。** 位精确浮点值与完整操作/类型合法性由后续决策负责，不能在此推断。
+
+## 2026-09-16 accepted amendment: E6M2 and RCPE6M2 codes
+
+At Issue #254 baseline `9323e466512eb261eec084e5c5401214787fffe4`,
+bundle Tile DataType code 15 is allocated to the unsigned eight-bit E6M2 scale
+format and code 21 to RCPE6M2, the reciprocal interpretation of the same raw
+code. Existing assignments do not move; codes 22, 23, 29, 30, and 31 remain
+reserved. This allocation does not add either type to the distinct
+TLSU/TALLOC or scalar namespaces.
+
+在 Issue #254 基线 `9323e466512eb261eec084e5c5401214787fffe4` 上，bundle
+Tile DataType 编码 15 分配给无符号八位 E6M2 scale，编码 21 分配给同一 raw code
+的倒数解释 RCPE6M2。既有分配不移动；22、23、29、30、31 继续保留。本修订不把
+任一类型加入独立的 TLSU/TALLOC 或 scalar 命名空间。

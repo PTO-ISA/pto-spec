@@ -210,10 +210,12 @@ class CommonV058ContractTest(unittest.TestCase):
         assigned = dict(domain.assigned)
 
         self.assertEqual(domain.width, 5)
-        self.assertEqual(len(assigned), 25)
+        self.assertEqual(len(assigned), 27)
         self.assertEqual(assigned[0], "FP64")
+        self.assertEqual(assigned[15], "E6M2")
         self.assertEqual(assigned[28], "U4X2")
-        self.assertEqual(domain.reserved, (15, 21, 22, 23, 29, 30, 31))
+        self.assertEqual(assigned[21], "RCPE6M2")
+        self.assertEqual(domain.reserved, (22, 23, 29, 30, 31))
         self.assertNotIn("NONE", assigned.values())
         self.assertNotIn("NULL", assigned.values())
 

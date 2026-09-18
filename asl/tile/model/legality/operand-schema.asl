@@ -431,7 +431,10 @@ begin
            source_tile.data_type, source_operation_type) ||
        !HardwareTCVTTypePairSupported(
            source_operation_type,
-           destination_tile.data_type) then
+           destination_tile.data_type) ||
+       !HardwareTCVTRoundingModeSupported(
+           source_operation_type, destination_tile.data_type,
+           control.rounding_mode) then
         return FALSE;
     end;
     if destination_tile.valid_rows != source_tile.valid_rows ||

@@ -353,11 +353,39 @@ class LayoutRelationCensusTest(unittest.TestCase):
             {"Bias.layout == ML == D.layout", "Local A present => A.layout == ML"},
         )
 
-        expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV"}
+        expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV", "TCVT"}
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)
         self.assertEqual(len(bias), 8)
+        tcvt = [row for row in changed if row["mnemonic"] == "TCVT"]
+        self.assertEqual({row["form"] for row in tcvt}, {"direct", "bundle"})
+        for row in tcvt:
+            self.assertEqual(set(row["L0"]), {"destination0", "source0"})
+            self.assertEqual(set(row["L1"]), {"destination0", "source0"})
+            self.assertEqual(set(row["L0"]["destination0"]), {"CUBE_M16", "CUBE_M32"})
+            self.assertEqual(set(row["L1"]["destination0"]), {"CUBE_M16", "CUBE_M32", "RowMajor"})
+            self.assertEqual(set(row["L1"]["source0"]), {"CUBE_M16", "CUBE_M32", "RowMajor"})
+            self.assertEqual(row["R0"], row["R1"])
+            self.assertEqual(
+                {tuple(delta) for delta in row["tuple_deltas"]},
+                {
+                    ("TCVT", row["form"], "destination0", "RowMajor"),
+                    ("TCVT", row["form"], "source0", "RowMajor"),
+                },
+            )
+        tcvt_deltas = [row for row in result["delta"] if row.get("mnemonic") == "TCVT"]
+        self.assertEqual(
+            {(row["form"], tuple(row["tuple"])) for row in tcvt_deltas},
+            {
+                ("direct", ("TCVT", "direct", "destination0", "RowMajor")),
+                ("direct", ("TCVT", "direct", "source0", "RowMajor")),
+                ("bundle", ("TCVT", "bundle", "destination0", "RowMajor")),
+                ("bundle", ("TCVT", "bundle", "source0", "RowMajor")),
+            },
+        )
+        self.assertTrue(all(row["classification"].startswith("TCVT ordinary odd-column") for row in tcvt_deltas))
+        self.assertTrue(all(row["owner_decision"].startswith("ADR-TILE-0008/ADR-CUBE-0017") for row in tcvt_deltas))
         exact = [row for row in changed if row["mnemonic"] in result["exact_34"]]
         for row in exact:
             self.assertTrue(all(set(values) == {"RowMajor"} for values in row["L0"].values()))

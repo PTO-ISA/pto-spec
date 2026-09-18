@@ -477,6 +477,30 @@
         "en": "A named runtime profile may provide sparse host-backed data memory for addresses outside the bounded reference byte array. The portable profile keeps the bounded in-ASL array and its existing permission and fault rules; enabling host-backed memory must not alter decode, Tile legality, ordering, or definedness semantics.",
         "zh-CN": "具名运行时配置可以为有界参考字节数组之外的地址提供稀疏的主机后备数据内存。可移植配置保留 ASL 内的有界数组及其现有权限与故障规则；启用主机后备内存不得改变译码、Tile 合法性、顺序或定义性语义。"
       }
+    },
+    {
+      "id": "PTO-NUMERIC-E6M2-FORMAT-001",
+      "source_path": "asl/arch/data-types/formats/e6m2.asl",
+      "title": {
+        "en": "E6M2 eight-bit floating format",
+        "zh-CN": "E6M2 八位浮点格式"
+      },
+      "summary": {
+        "en": "This clause defines E6M2 as a positive finite eight-bit format with a six-bit exponent, two-bit fraction, bias 48, and a quiet-NaN code. It excludes zero, subnormal, infinity, and signaling-NaN encodings while retaining one canonical decoder and classification path.",
+        "zh-CN": "本条款定义 E6M2 为正值有限的八位格式，包含六位指数、两位小数、偏置 48 和一个静默 NaN 编码。该格式排除零、次正规数、无穷大和信号 NaN 编码，并保留唯一的规范解码与分类路径。"
+      }
+    },
+    {
+      "id": "PTO-NUMERIC-RCPE6M2-FORMAT-001",
+      "source_path": "asl/arch/data-types/formats/rcpe6m2.asl",
+      "title": {
+        "en": "RCPE6M2 reciprocal E6M2 source format",
+        "zh-CN": "RCPE6M2 E6M2 倒数源格式"
+      },
+      "summary": {
+        "en": "This clause defines RCPE6M2 as the exact mathematical reciprocal interpretation of an E6M2 code. It is source-only for TCVT, has no destination encoding, and converts directly to FP16 or BF16 with one final destination rounding step.",
+        "zh-CN": "本条款定义 RCPE6M2 为 E6M2 编码的精确数学倒数解释。它仅可作为 TCVT 源类型，不提供目标编码，并直接转换为 FP16 或 BF16，最后只进行一次目标舍入。"
+      }
     }
   ]
 }

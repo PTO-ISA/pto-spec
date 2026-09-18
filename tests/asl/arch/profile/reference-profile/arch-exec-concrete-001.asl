@@ -97,7 +97,11 @@ begin
         Zeros{PTO_XLEN} + 0x01, Zeros{PTO_XLEN} + 0x07,
         Zeros{PTO_XLEN} + 0x08, Zeros{PTO_XLEN} + 0x20);
 
-    AssertHardwareNumericSubnormalNotApplicable(TileDataType_E2M1X2);
+    AssertHardwareNumericSubnormalBoundary(TileDataType_E2M1X2,
+        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2,
+        Zeros{PTO_XLEN} + 0x8);
     AssertHardwareNumericSubnormalNotApplicable(TileDataType_E1M2X2);
     AssertHardwareNumericSubnormalNotApplicable(TileDataType_E8M0);
     AssertHardwareNumericSubnormalNotApplicable(TileDataType_HiF4X2);

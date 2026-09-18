@@ -41,8 +41,7 @@ end;
 pure func BundleDataTypeConcrete(data_type: bits(5)) => boolean
 begin
     let code = UInt(data_type);
-    return code <= 14 || (16 <= code && code <= 20) ||
-           (24 <= code && code <= 28);
+    return code <= 21 || (24 <= code && code <= 28);
 end;
 
 pure func BundleDataTypeFieldValid(data_type: bits(5)) => boolean

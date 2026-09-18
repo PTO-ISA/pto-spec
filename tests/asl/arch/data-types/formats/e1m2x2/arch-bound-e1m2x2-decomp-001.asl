@@ -36,8 +36,8 @@ begin
     assert descriptor.available && descriptor.kind == NumericFormatKind_FixedBinary;
     assert descriptor.carrier_bits == 8 && descriptor.lane_bits == 4;
     assert descriptor.lanes_per_carrier == 2 && descriptor.sign_bit == 3;
-    assert descriptor.exponent_bits_min == 1 && descriptor.fraction_bits_min == 2;
-    assert descriptor.exponent_bias == 1;
+    assert descriptor.exponent_bits_min == 0 && descriptor.fraction_bits_min == 3;
+    assert !descriptor.exponent_bias_available && descriptor.exponent_bias == 0;
     assert descriptor.has_zero && descriptor.has_signed_zero;
     assert !descriptor.has_subnormal && !descriptor.has_infinity;
     AssertE1M2X2Lane(0, FALSE, Zeros{PTO_XLEN}, 0);

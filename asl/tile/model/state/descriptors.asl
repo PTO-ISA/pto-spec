@@ -155,7 +155,8 @@ begin
              TileDataType_U4X2 => return 4;
         when TileDataType_S8, TileDataType_U8, TileDataType_HiF8,
              TileDataType_E4M3, TileDataType_E5M2, TileDataType_E3M2,
-             TileDataType_E2M3, TileDataType_E8M0 => return 8;
+             TileDataType_E2M3, TileDataType_E8M0,
+             TileDataType_E6M2, TileDataType_RCPE6M2 => return 8;
         when TileDataType_S16, TileDataType_U16, TileDataType_FP16,
              TileDataType_BF16 => return 16;
         when TileDataType_S32, TileDataType_U32,

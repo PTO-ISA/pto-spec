@@ -35,6 +35,13 @@ pure func TileStorageBytes(rows: integer {0..65535},
                            columns: integer {0..65535},
                            data_type: TileDataType) => integer
 begin
+    // Packed-X2 rows reserve a complete final byte for an odd logical column,
+    // so row padding is not shared across row boundaries.
+    if PackedTileDataTypeUsesRowLocalPairs(data_type) then
+        if columns == 0 then return 0; end;
+        return rows * PackedTileRowStorageBytes(
+            columns as integer {1..65535}, data_type);
+    end;
     // Capacity accounting is bit-packed. In particular, two four-bit
     // elements occupy one byte and an odd final element rounds up.
     return ((rows * columns * TileElementBits(data_type)) + 7) DIVRM 8;
@@ -47,4 +54,17 @@ pure func TileStorageFitsCapacity(rows: integer {0..65535},
     => boolean
 begin
     return TileStorageBytes(rows, columns, data_type) <= capacity_bytes;
+end;
+
+readonly func TileDescriptorPhysicalShapeLegal(
+    capacity_bytes: integer {0..262144},
+    rows: integer {0..65535}, columns: integer {0..65535},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    data_type: TileDataType) => boolean
+begin
+    return TileShapeMatchesCapacity(capacity_bytes, rows, columns, data_type) &&
+           valid_rows <= rows && valid_columns <= columns &&
+           valid_rows * valid_columns <=
+               TileLogicalElementCapacity(capacity_bytes, data_type) &&
+           TileStorageFitsCapacity(rows, columns, data_type, capacity_bytes);
 end;

@@ -82,7 +82,7 @@ This spelling reuses the exact encoding owned by `BSTART.TEPL`.
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| bstart_tepl_32_d022db6dacb3 | L32 | 32 | 0x00019181 / 0x000fffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]}] |
+| bstart_tepl_32_d022db6dacb3 | L32 | 32 | 0x00019181 / 0x000fffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28]}] |
 
 ### Fields
 
@@ -124,13 +124,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |

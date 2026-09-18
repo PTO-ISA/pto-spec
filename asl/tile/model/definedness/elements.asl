@@ -3,13 +3,11 @@
 // PredicateCell is distinct U8 CUBE predicate storage: valid values are 0x00/0x01, Null is per-element undefined, and compare flags/status publish atomically. TGPR2T is whole-tile numeric U8 and rejects Null.
 // NDF-END: PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","surface":"tile","classification":["model","definedness","elements"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
-pure func TileFractalInnerElements(
-    data_type: TileDataType) => integer {4,8,16,32,64}
+pure func TileFractalInnerElements(data_type: TileDataType) => integer {4,8,16,32,64}
 begin
     // PTO fractals contain 16 rows by 32 bytes.  Packed X2 formats therefore
     // carry 64 independently addressed logical nibbles in each fractal row.
-    return (256 DIV TileElementBits(data_type))
-        as integer {4,8,16,32,64};
+    return (256 DIV TileElementBits(data_type)) as integer {4,8,16,32,64};
 end;
 readonly func TileLayoutShapeLegal(tile: TileInfo) => boolean
 begin
@@ -104,6 +102,7 @@ begin
              TileDataType_E4M3, TileDataType_E5M2, TileDataType_E3M2,
              TileDataType_E2M3, TileDataType_E2M1X2,
              TileDataType_E1M2X2, TileDataType_E8M0,
+             TileDataType_E6M2, TileDataType_RCPE6M2,
              TileDataType_HiF4X2, TileDataType_S4X2,
              TileDataType_U4X2 => return 1;
         when TileDataType_S16, TileDataType_U16,
@@ -131,8 +130,7 @@ begin
     return TileDataTypeIsSigned(data_type) ||
            TileDataTypeIsUnsignedInteger(data_type);
 end;
-pure func IndexedTLSUTransferDataTypeLegal(
-    data_type: TileDataType) => boolean
+pure func IndexedTLSUTransferDataTypeLegal(data_type: TileDataType) => boolean
 begin
     // Indexed TLSU addresses are byte displacements. A packed four-bit
     // transfer would additionally need a low/high-nibble selector, which the
@@ -156,7 +154,9 @@ begin
            data_type == TileDataType_E2M1X2 ||
            data_type == TileDataType_E1M2X2 ||
            data_type == TileDataType_E8M0 ||
-           data_type == TileDataType_HiF4X2;
+           data_type == TileDataType_HiF4X2 ||
+           data_type == TileDataType_E6M2 ||
+           data_type == TileDataType_RCPE6M2;
 end;
 pure func TileMatrixAccumulatorDataType(data_type: TileDataType) => TileDataType
 begin
@@ -190,6 +190,13 @@ begin
                 return Zeros{PTO_XLEN} + 0x7e;
             when TileDataType_E5M2 =>
                 return Zeros{PTO_XLEN} + 0x7b;
+            when TileDataType_E2M1X2,
+                 TileDataType_E1M2X2 =>
+                return Zeros{PTO_XLEN} + 0x7;
+            when TileDataType_E6M2 =>
+                return Zeros{PTO_XLEN} + 0xfe;
+            when TileDataType_RCPE6M2 =>
+                return Zeros{PTO_XLEN};
             when TileDataType_U8 => return Zeros{PTO_XLEN} + 0xff;
             when TileDataType_U16 => return Zeros{PTO_XLEN} + 0xffff;
             when TileDataType_U32 => return Zeros{PTO_XLEN} + 0xffffffff;
@@ -219,6 +226,10 @@ begin
             return Zeros{PTO_XLEN} + 0xfe;
         when TileDataType_E5M2 =>
             return Zeros{PTO_XLEN} + 0xfb;
+        when TileDataType_E2M1X2,
+             TileDataType_E1M2X2 => return Zeros{PTO_XLEN} + 0xf;
+        when TileDataType_E6M2 => return Zeros{PTO_XLEN};
+        when TileDataType_RCPE6M2 => return Zeros{PTO_XLEN} + 0xfe;
         when TileDataType_U8, TileDataType_U16, TileDataType_U32,
              TileDataType_U64, TileDataType_U4X2 => return Zeros{PTO_XLEN};
         when TileDataType_S8 => return Zeros{PTO_XLEN} + 0x80;
@@ -443,6 +454,11 @@ begin
             end;
         end;
     end;
+    if TilePackedRowsHavePhysicalSlack(result) then
+        for row = 0 to result.rows - 1 looplimit 65536 do
+            result = TileInfoWithPackedRowSlack(result, row as integer {0..65535}, padding, padding_defined);
+        end;
+    end;
     return result;
 end;
 func ApplyTilePadding(index: TileIndex, pad_value: TilePadValue)
@@ -460,6 +476,11 @@ begin
             _Tiles[[index]] = TileInfoWithLogicalElement(
                 _Tiles[[index]], element,
                 TileReadLogicalElement(tile, element));
+        end;
+    end;
+    if TilePackedRowsHavePhysicalSlack(tile) then
+        for row = 0 to tile.rows - 1 looplimit 65536 do
+            _Tiles[[index]] = TileInfoWithPackedRowSlack(_Tiles[[index]], row as integer {0..65535}, TileReadLogicalElement(tile, TilePackedRowSlackIndex(tile, row as integer {0..65535})), TRUE);
         end;
     end;
     _Tiles[[index]].defined_valid_elements =

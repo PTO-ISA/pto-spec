@@ -72,7 +72,7 @@ BSTART.TEPL Mode, Function, DataType
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| bstart_tepl_32_d022db6dacb3 | L32 | 32 | 0x00019181 / 0x000fffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28]}] |
+| bstart_tepl_32_d022db6dacb3 | L32 | 32 | 0x00019181 / 0x000fffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28]}] |
 
 ### Fields
 
@@ -112,13 +112,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |
@@ -138,7 +138,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| bstart_tepl_32_d022db6dacb3 | DataType | 5 | 0–14, 16–20, 24–28 | none | 15, 21–23, 29–31 | tile element data type selector | Encoded zero selects FP64. |
+| bstart_tepl_32_d022db6dacb3 | DataType | 5 | 0–21, 24–28 | none | 22–23, 29–31 | tile element data type selector | Encoded zero selects FP64. |
 | bstart_tepl_32_d022db6dacb3 | Mode | 2 | 0–3 | none | none | execution mode selector | Encoded zero supplies numeric zero for the execution mode selector. |
 | bstart_tepl_32_d022db6dacb3 | Function | 5 | 0–31 | none | none | tile operation function selector | Encoded zero supplies numeric zero for the tile operation function selector. |
 
@@ -201,7 +201,7 @@ end;
 
 - Mode:Function is a seven-bit selector with Mode in bits 6:5 and Function in bits 4:0.
 - Only assigned TEPL-carried operations are legal; unassigned selector holes reject before effects.
-- DataType accepts 0..14, 16..20, and 24..28; 15, 21..23, and 29..31 are reserved.
+- DataType accepts 0..14, 15..21, and 24..28; 22, 23, and 29..31 are reserved.
 - BSTART.TEPL is compatibility input only; canonical output uses the operation's VEC or SFU alias.
 
 ## State effects
