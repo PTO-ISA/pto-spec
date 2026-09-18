@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "4b5911ff7972a1eb6a777d56400fa2451c989f07",
+  "candidate_head": "7a3da1548fd8c03aa9be7d2c8c1f6df1db9a0e33",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16736,7 +16736,7 @@
             "CUBE_M32"
           ],
           "path": "asl/tile/model/shape/cube-cell.asl",
-          "sha256": "f3c6d54f1a7969d2e4f5b72eba6947dc6378525af0e741c0c76700b46102b525"
+          "sha256": "dcee12e67ca5056ef9c4df360e0c2ca780b861d6296420b5c6ffa11b1d3ce620"
         }
       ],
       "before": [],
@@ -16844,7 +16844,7 @@
             "CUBE_N8"
           ],
           "path": "asl/tile/model/shape/cube-cell.asl",
-          "sha256": "23f3c2b6992d7e19fe286f58c86b127ae8a33a4e8cb723829dcdffab14dc8319"
+          "sha256": "a078b6d359e55b1608d59c159991c734c1cfe83300bfb21024e125d7fc86dd04"
         }
       ],
       "before": [],
@@ -16856,7 +16856,7 @@
         "CUBE_M32",
         "CUBE_N8"
       ],
-      "after_sha256": "974bf421dc6c6ed8e0dff9b1abf991fb1646325f96703b679c34eb065c074cbd",
+      "after_sha256": "46676875009525d564a27e52b2bc8fe94238b9edfb3744880e0afd855a664b35",
       "before_layouts": [
         "CUBE_M32",
         "CUBE_N8"
@@ -16914,7 +16914,7 @@
             "CUBE_M32"
           ],
           "path": "asl/tile/model/shape/cube-cell.asl",
-          "sha256": "6658d81edfa38bac963139fd81b6100e29c8e306c942c0c64477f4a965e8ce17"
+          "sha256": "d58e9fac4014ce3af0d2eca14aba62d47b9f569a54fed6779da3d0de17159a20"
         }
       ],
       "before": [],
@@ -17001,6 +17001,20 @@
       "before": [],
       "classification": "TCI explicit physical-column decomposition (ADR-TILE-0010 2026-09-15 amendment, Issue #233)",
       "name": "TileCubeStorageElementsForColumns"
+    },
+    {
+      "after_layouts": [
+        "CUBE_N8"
+      ],
+      "after_sha256": "c46e90405ea3c539b3407f39bf7481af3d98522f8dd842664da317ba43c8bdf1",
+      "before_layouts": [
+        "CUBE_M32",
+        "CUBE_N8"
+      ],
+      "before_sha256": "c3d6fcea59f86437e9bcd6298e4885c5d81de062f99c3c1e43eefe7be2cad851",
+      "classification": "Local M16/M32 single-physical-M-block geometry (ADR-CUBE-0004/ADR-TILE-0012/ADR-CUBE-0012 2026-09-17 amendments, Issue #323)",
+      "name": "TileCubeStorageRows",
+      "path": "asl/tile/model/shape/cube-cell.asl"
     },
     {
       "after": [
@@ -17385,6 +17399,24 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TileProfileConvert",
       "path": "asl/arch/profile/e8m0-conversion.asl"
+    },
+    {
+      "after": [],
+      "before": [
+        {
+          "calls": [
+            "TileReductionAndExpansionLayoutSupported"
+          ],
+          "layouts": [
+            "CUBE_M16",
+            "CUBE_M32"
+          ],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "df87efba564f3d3d6dd472cd1fe4ca845020cf516d3545d3f86eb8a21b5ac71e"
+        }
+      ],
+      "classification": "Local M16/M32 single-physical-M-block geometry (ADR-CUBE-0004/ADR-TILE-0012/ADR-CUBE-0012 2026-09-17 amendments, Issue #323)",
+      "name": "TileReductionAndExpansionRowLimitLegal"
     },
     {
       "after": [],
@@ -48176,7 +48208,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "f3c6d54f1a7969d2e4f5b72eba6947dc6378525af0e741c0c76700b46102b525"
+            "sha256": "dcee12e67ca5056ef9c4df360e0c2ca780b861d6296420b5c6ffa11b1d3ce620"
           }
         ],
         "TileCubeDescriptorShapeLegal": [
@@ -48231,7 +48263,7 @@
               "CUBE_N8"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "23f3c2b6992d7e19fe286f58c86b127ae8a33a4e8cb723829dcdffab14dc8319"
+            "sha256": "a078b6d359e55b1608d59c159991c734c1cfe83300bfb21024e125d7fc86dd04"
           }
         ],
         "TileCubeNumericContentsDefined": [
@@ -48294,7 +48326,7 @@
               "CUBE_N8"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "974bf421dc6c6ed8e0dff9b1abf991fb1646325f96703b679c34eb065c074cbd"
+            "sha256": "46676875009525d564a27e52b2bc8fe94238b9edfb3744880e0afd855a664b35"
           }
         ],
         "TileCubePhysicalCellCount": [
@@ -48334,7 +48366,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "6658d81edfa38bac963139fd81b6100e29c8e306c942c0c64477f4a965e8ce17"
+            "sha256": "d58e9fac4014ce3af0d2eca14aba62d47b9f569a54fed6779da3d0de17159a20"
           }
         ],
         "TileCubePhysicalRequiredBytes": [
@@ -48466,11 +48498,10 @@
               "TileCubeCellRows"
             ],
             "layouts": [
-              "CUBE_M32",
               "CUBE_N8"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "c3d6fcea59f86437e9bcd6298e4885c5d81de062f99c3c1e43eefe7be2cad851"
+            "sha256": "c46e90405ea3c539b3407f39bf7481af3d98522f8dd842664da317ba43c8bdf1"
           }
         ],
         "TileDataLayoutCodeAccepted": [
@@ -50205,9 +50236,6 @@
               "TileExpandExpdifTypePairLegal",
               "TileReductionAndExpansionDescriptorLegal",
               "TileReductionAndExpansionLogicalShapeMatch",
-              "TileReductionAndExpansionRowLimitLegal",
-              "TileReductionAndExpansionRowLimitLegal",
-              "TileReductionAndExpansionRowLimitLegal",
               "TileReductionAndExpansionSourceContentsDefined",
               "TileReductionAndExpansionSourceContentsDefined",
               "TileReductionAndExpansionSourceLegal",
@@ -50217,19 +50245,18 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "1075504b0655ef299b1acef1f008f77c7cdc643722f0e52e8aafc49d01d428b1"
+            "sha256": "57ae609c35db84676d57f7b44837ceb542d4b6cd91e623a75a0c9f2906d514e4"
           }
         ],
         "TileOperandsLegal_ExecuteTileFillScalar": [
           {
             "calls": [
               "TileFillPadDataTypeSupported",
-              "TileReductionAndExpansionDescriptorLegal",
-              "TileReductionAndExpansionRowLimitLegal"
+              "TileReductionAndExpansionDescriptorLegal"
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "f2fd1fd70bfac4ef1619cd9d5a42a33053d19a8db738fc0fe4bb10eb24239817"
+            "sha256": "39b8b271f6937e9450d0d5f10689f04b33aefbec9b2bbc0407e7ed6de6955a60"
           }
         ],
         "TileOperandsLegal_ExecuteTileReduction": [
@@ -50241,8 +50268,6 @@
               "TileCubeStorageColumns",
               "TileCubeStorageRows",
               "TileReductionAndExpansionDescriptorLegal",
-              "TileReductionAndExpansionRowLimitLegal",
-              "TileReductionAndExpansionRowLimitLegal",
               "TileReductionAndExpansionSourceLegal",
               "TileVecArithmeticDataTypeSupported"
             ],
@@ -50250,7 +50275,7 @@
               "RowMajor"
             ],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "ba5108c369ada977fa53335fbd180d8929305db0e74f60ca0c81e3bda9583c29"
+            "sha256": "2d04f540f8a39dab2c361cdfb10530c549b79b5b92d77f393d709d48cd9f515b"
           }
         ],
         "TileOperandsLegal_ExecuteTileScalar": [
@@ -51854,19 +51879,6 @@
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
             "sha256": "66cae3e39f94045282ce4c44070d5943e1d316b6d4edb72d8a1c9c46d6f3f003"
-          }
-        ],
-        "TileReductionAndExpansionRowLimitLegal": [
-          {
-            "calls": [
-              "TileReductionAndExpansionLayoutSupported"
-            ],
-            "layouts": [
-              "CUBE_M16",
-              "CUBE_M32"
-            ],
-            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "df87efba564f3d3d6dd472cd1fe4ca845020cf516d3545d3f86eb8a21b5ac71e"
           }
         ],
         "TileReductionAndExpansionSourceContentsDefined": [
@@ -71988,7 +72000,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -72129,7 +72140,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -72637,7 +72647,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -72778,7 +72787,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -73304,7 +73312,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -73471,7 +73478,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -74003,7 +74009,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -74174,7 +74179,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -74710,7 +74714,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -74881,7 +74884,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -75417,7 +75419,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -75588,7 +75589,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -76124,7 +76124,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -76295,7 +76294,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -76831,7 +76829,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -77002,7 +76999,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -77538,7 +77534,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -77709,7 +77704,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -78245,7 +78239,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -78416,7 +78409,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -78934,7 +78926,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -79075,7 +79066,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -79583,7 +79573,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -79724,7 +79713,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -80232,7 +80220,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -80373,7 +80360,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -80881,7 +80867,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -81022,7 +81007,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -84089,7 +84073,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -84198,7 +84181,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileShapeMatchesCapacity",
             "TileStorageIndex",
             "TileUsesPackedCarrierRepresentation",
@@ -106571,7 +106553,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -106712,7 +106693,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -107220,7 +107200,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -107361,7 +107340,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -107887,7 +107865,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -108054,7 +108031,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -108586,7 +108562,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -108757,7 +108732,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -109293,7 +109267,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -109464,7 +109437,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -110000,7 +109972,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -110171,7 +110142,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -110707,7 +110677,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -110878,7 +110847,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -111414,7 +111382,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -111585,7 +111552,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -112121,7 +112087,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -112292,7 +112257,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -112828,7 +112792,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionOperationReturnsIndex",
@@ -112999,7 +112962,6 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileSFUUnarySpecialValue",
@@ -113517,7 +113479,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -113658,7 +113619,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -114166,7 +114126,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -114307,7 +114266,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -114815,7 +114773,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -114956,7 +114913,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -115464,7 +115420,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
@@ -115605,7 +115560,6 @@
             "TileReadLogicalElement",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
-            "TileReductionAndExpansionRowLimitLegal",
             "TileReductionAndExpansionSourceContentsDefined",
             "TileReductionAndExpansionSourceLegal",
             "TileReductionInitialValue",
