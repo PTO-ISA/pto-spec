@@ -13,11 +13,11 @@ begin
 
     assert TileNumericValueClass(TileDataType_E6M2,
         Zeros{PTO_XLEN} + 0xc0) == NumericValue_PositiveNormal;
-    assert E6M2FiniteValue(0xc0 as bits(8)) == 1.0;
-    assert E6M2FiniteValue(0xc1 as bits(8)) == 1.25;
-    assert E6M2FiniteValue(0xc2 as bits(8)) == 1.5;
-    assert E6M2FiniteValue(0xc3 as bits(8)) == 1.75;
-    assert E6M2FiniteValue(0xfe as bits(8)) == 49152.0;
+    assert E6M2FiniteValue(Zeros{8} + 0xc0) == 1.0;
+    assert E6M2FiniteValue(Zeros{8} + 0xc1) == 1.25;
+    assert E6M2FiniteValue(Zeros{8} + 0xc2) == 1.5;
+    assert E6M2FiniteValue(Zeros{8} + 0xc3) == 1.75;
+    assert E6M2FiniteValue(Zeros{8} + 0xfe) == 49152.0;
     assert TileNumericValueClass(TileDataType_E6M2,
         Zeros{PTO_XLEN} + 0xff) == NumericValue_QuietNaN;
 

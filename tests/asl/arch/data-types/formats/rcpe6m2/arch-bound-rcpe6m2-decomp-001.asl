@@ -13,9 +13,9 @@ begin
 
     assert TileNumericValueClass(TileDataType_RCPE6M2,
         Zeros{PTO_XLEN} + 0xc0) == NumericValue_PositiveNormal;
-    assert RCPE6M2FiniteValue(0xc0 as bits(8)) == 1.0;
-    assert RCPE6M2FiniteValue(0xc1 as bits(8)) == 0.8;
-    assert RCPE6M2FiniteValue(0xc2 as bits(8)) == 2.0 / 3.0;
+    assert RCPE6M2FiniteValue(Zeros{8} + 0xc0) == 1.0;
+    assert RCPE6M2FiniteValue(Zeros{8} + 0xc1) == 0.8;
+    assert RCPE6M2FiniteValue(Zeros{8} + 0xc2) == 2.0 / 3.0;
     assert TileNumericValueClass(TileDataType_RCPE6M2,
         Zeros{PTO_XLEN} + 0xff) == NumericValue_QuietNaN;
 

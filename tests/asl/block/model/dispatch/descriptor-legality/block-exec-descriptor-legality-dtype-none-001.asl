@@ -27,7 +27,7 @@ func TestBundleDataTypeNoneResolution()
 begin
     assert BundleDataTypeFieldValid(DTYPE_NONE);
     assert !BundleDataTypeConcrete(DTYPE_NONE);
-    assert !BundleDataTypeFieldValid(Zeros{5} + 15);
+    assert !BundleDataTypeFieldValid(Zeros{5} + 22);
 
     // The sentinel is decode-valid only on the explicitly accepted fields.
     let b_datr = Zeros{64} + 0x01f01023;

@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "1e05a61094d258bdc38c7bc3c9ae597f1d2a5951",
+  "candidate_head": "e18826e720646c20c2952040f04fa6845be9ae72",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17376,6 +17376,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TilePredicateCellDescriptorLegal",
       "path": "asl/tile/model/legality/predicate-carriers.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "273be64cd712d7766b021f0b8d9fb80cd8775865ec234ffa3e06b1c0bb095faa",
+      "before_layouts": [],
+      "before_sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileProfileConvert",
+      "path": "asl/arch/profile/e8m0-conversion.asl"
     },
     {
       "after": [],
@@ -51487,11 +51496,12 @@
               "ReferenceCommonConversionTypeSupported",
               "ReferenceCommonConvert",
               "ReferenceFloatToE8M0",
+              "ReferenceTCVTConvert",
               "TileDataTypeIsFloating"
             ],
             "layouts": [],
             "path": "asl/arch/profile/e8m0-conversion.asl",
-            "sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a"
+            "sha256": "273be64cd712d7766b021f0b8d9fb80cd8775865ec234ffa3e06b1c0bb095faa"
           },
           {
             "calls": [],
