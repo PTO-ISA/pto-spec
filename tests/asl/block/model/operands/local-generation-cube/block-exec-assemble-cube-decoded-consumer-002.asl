@@ -104,6 +104,11 @@ begin
     assert started == CommandExecution_Executed;
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 32);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 128);
+    assert UInt(_BundleDimensions[[0]]) == 32 &&
+           UInt(_BundleDimensions[[2]]) == 128;
     AddBundleTileBinding(FALSE, 0, 0, '1111', TRUE, TRUE,
         parent, 4, FALSE);
     AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, TRUE,
