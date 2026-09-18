@@ -20,24 +20,27 @@ begin
     _LocalGenerations[[slot]].writers[[ordinal]].layout = TileLayout_CUBE_M32;
 end;
 
-func PrepareGeneration(slot: integer {0..63})
+func PrepareGenerationWithCapacity(slot: integer {0..63},
+                                   capacity_bytes: integer,
+                                   parent_size_code: integer {1..12},
+                                   parent_cell_count: integer {1..2048})
 begin
     ClearBundleLocalGenerationState(slot);
-    let configured = ConfigureCubeTileForMaskWithPhysical(1, 4096,
+    let configured = ConfigureCubeTileForMaskWithPhysical(1, capacity_bytes,
         32, 32, 32, 32, TileDataType_E2M1X2, TileLayout_CUBE_M32, '1111');
     assert configured;
     _LocalGenerations[[slot]].open = TRUE;
     _LocalGenerations[[slot]].generation_identity_valid = TRUE;
     _LocalGenerations[[slot]].descriptor_finalized = FALSE;
     _LocalGenerations[[slot]].participant_mask = '1111';
-    _LocalGenerations[[slot]].parent_size_code = 5;
-    _LocalGenerations[[slot]].parent_cell_count = 32;
+    _LocalGenerations[[slot]].parent_size_code = parent_size_code;
+    _LocalGenerations[[slot]].parent_cell_count = parent_cell_count;
     _LocalGenerations[[slot]].working_destination = 1;
     _LocalGenerations[[slot]].parent_descriptor.valid = TRUE;
     _LocalGenerations[[slot]].parent_descriptor.object_name = 1;
     _LocalGenerations[[slot]].parent_descriptor.object_kind = TileStorage_Numeric;
     _LocalGenerations[[slot]].parent_descriptor.participant_mask = '1111';
-    _LocalGenerations[[slot]].parent_descriptor.capacity_bytes = 4096;
+    _LocalGenerations[[slot]].parent_descriptor.capacity_bytes = capacity_bytes;
     _LocalGenerations[[slot]].parent_descriptor.layout = TileLayout_CUBE_M32;
 end;
 
@@ -56,7 +59,7 @@ func main() => integer
 begin
     ResetProfileState();
     let slot: integer {0..63} = 7;
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 2048, 4, 16);
     InstallWriter(slot, 0, 8, 32, '1111');
     InstallWriter(slot, 1, 0, 32, '1111');
     InstallWriter(slot, 2, 4, 32, '1111');
@@ -67,12 +70,15 @@ begin
         slot, 1, 12, 4, 3, '1111', FALSE, FALSE);
     InstallWriter(slot, 3, 12, 32, '1111');
     _LocalGenerations[[slot]].writer_count = 4;
+    for writer = 0 to 3 do
+        assert _LocalGenerations[[slot]].writers[[writer]].physical_rows == 32 && _LocalGenerations[[slot]].writers[[writer]].physical_columns == 32 && _LocalGenerations[[slot]].writers[[writer]].valid_rows == 32 && _LocalGenerations[[slot]].writers[[writer]].valid_columns == 32 && _LocalGenerations[[slot]].writers[[writer]].cell_count == 4;
+    end;
     SetCoverage(slot, 16);
     assert BundleLocalGenerationCubeFinalExtent(slot) == 16;
     FinalizeBundleLocalGenerationCube(slot);
     assert _LocalGenerations[[slot]].generation_identity_valid;
     assert _LocalGenerations[[slot]].descriptor_finalized;
-    assert _Tiles[[1]].capacity_bytes == 4096;
+    assert _Tiles[[1]].capacity_bytes == 2048;
     assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 128;
     assert _Tiles[[1]].valid_rows == 32 && _Tiles[[1]].valid_columns == 128;
     assert _Tiles[[1]].cube_k_repeat == 16;
@@ -104,9 +110,24 @@ begin
     assert final_view.valid && final_view.valid_columns == 8;
     assert !slack_view.valid;
 
+    // ParentCapacity is allocation metadata only.
+    ResetProfileState();
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
+    InstallWriter(slot, 0, 0, 32, '1111');
+    InstallWriter(slot, 1, 4, 32, '1111');
+    InstallWriter(slot, 2, 8, 32, '1111');
+    InstallWriter(slot, 3, 12, 32, '1111');
+    _LocalGenerations[[slot]].writer_count = 4;
+    SetCoverage(slot, 16);
+    assert BundleLocalGenerationCubeFinalizationLegal(
+        slot, 1, 12, 4, 3, '0000', FALSE, TRUE);
+    FinalizeBundleLocalGenerationCube(slot);
+    assert _Tiles[[1]].capacity_bytes == 4096 && _Tiles[[1]].rows == 32 &&
+           _Tiles[[1]].columns == 128 && _Tiles[[1]].cube_storage_bytes == 2048;
+
     // Only the terminal writer may carry a valid-column tail.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     InstallWriter(slot, 1, 4, 32, '1111');
     InstallWriter(slot, 2, 8, 32, '1111');
@@ -120,7 +141,7 @@ begin
 
     // A physical CELL gap is illegal even when capacity can hold it.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     InstallWriter(slot, 1, 8, 32, '1111');
     _LocalGenerations[[slot]].writer_count = 2;
@@ -137,7 +158,7 @@ begin
     // Capacity slack is not required before or after finalization, while a
     // whole-parent consumer still waits for successful LAST.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     _LocalGenerations[[slot]].writer_count = 1;
     SetCoverage(slot, 4);
@@ -165,6 +186,21 @@ begin
     assert !BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 12, 4, 3, Zeros{4}, FALSE, TRUE);
 
+    // INIT_LAST may finalize at CELL zero with capacity slack, but a
+    // nonzero INIT_LAST offset is rejected before publication.
+    ResetProfileState();
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
+    InstallWriter(slot, 0, 0, 32, '1111');
+    _LocalGenerations[[slot]].writer_count = 1;
+    SetCoverage(slot, 4);
+    assert BundleLocalGenerationCubeFinalizationLegal(
+        slot, 1, 0, 4, 3, '1111', TRUE, FALSE);
+    assert !BundleLocalGenerationCubeFinalizationLegal(
+        slot, 1, 4, 4, 3, '1111', TRUE, FALSE);
+
+    // Same-PE overlap uses the range rule; replay is the exception.
+    assert BundleLocalGenerationRangeOverlaps(0, 4, 2, 4);
+
     // Exact WriterSizeCode envelopes reject both undersized and oversized
     // fragment descriptors, and #326 row rules remain explicit.
     ResetProfileState();
@@ -182,7 +218,7 @@ begin
     // Common writer metadata and per-PE final geometry are checked before any
     // descriptor installation.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     InstallWriter(slot, 1, 4, 32, '1111');
     _LocalGenerations[[slot]].writer_count = 2;
@@ -191,7 +227,7 @@ begin
     assert !BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 8, 4, 3, '1111', FALSE, FALSE);
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     InstallWriter(slot, 1, 4, 20, '1111');
     _LocalGenerations[[slot]].writer_count = 2;
@@ -210,7 +246,7 @@ begin
     // A failed LAST leaves the old descriptor and finalized bit untouched;
     // replay identity is idempotent and does not double-count coverage.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
     InstallWriter(slot, 1, 4, 32, '1111');
     InstallWriter(slot, 2, 8, 32, '1111');
@@ -235,12 +271,12 @@ begin
     FinalizeBundleLocalGenerationCube(slot);
     let replay_cells = _Tiles[[1]].cube_cell_count;
     assert BundleLocalGenerationCubeFinalizationLegal(
-        slot, 1, 12, 4, 3, Zeros{4}, FALSE, TRUE);
+        slot, 1, 0, 4, 3, Zeros{4}, FALSE, TRUE);
     assert _Tiles[[1]].cube_cell_count == replay_cells;
 
     // A subset/interleaved writer sequence still derives one common parent.
     ResetProfileState();
-    PrepareGeneration(slot);
+    PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 8, 32, '1000');
     InstallWriter(slot, 1, 0, 32, '0100');
     InstallWriter(slot, 2, 4, 32, '1000');
