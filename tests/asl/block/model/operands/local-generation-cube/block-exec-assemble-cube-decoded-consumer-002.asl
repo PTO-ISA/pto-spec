@@ -108,6 +108,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 128);
     assert UInt(_BundleDimensions[[0]]) == 32 &&
+           UInt(_BundleDimensions[[1]]) == 1 &&
            UInt(_BundleDimensions[[2]]) == 128;
     AddBundleTileBinding(FALSE, 0, 0, '1111', TRUE, TRUE,
         parent, 4, FALSE);
