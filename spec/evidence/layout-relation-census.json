@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "e18826e720646c20c2952040f04fa6845be9ae72",
+  "candidate_head": "4b5911ff7972a1eb6a777d56400fa2451c989f07",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16300,7 +16300,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "cbd4763a8fb69f00077b53ff88aab62a12d190c293f606ffeddcd5f54725d36b",
+      "after_sha256": "b18d2134d5aad23857fd1bc6cc23013555312b75afc886ed81ef9739cb4f7868",
       "before_layouts": [],
       "before_sha256": "c16888d98541787ef9117b38c9c5f7c069715393978c70d7da2468750a3e4ef1",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -45960,6 +45960,8 @@
               "ReadTPC",
               "ResolveBundleCubeTransportDestination",
               "ResolveBundleEffectiveDataType",
+              "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
               "SetFault",
               "SetFault",
@@ -45977,7 +45979,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "cbd4763a8fb69f00077b53ff88aab62a12d190c293f606ffeddcd5f54725d36b"
+            "sha256": "b18d2134d5aad23857fd1bc6cc23013555312b75afc886ed81ef9739cb4f7868"
           }
         ],
         "ExecuteBundleGMAtomRedOperation": [
