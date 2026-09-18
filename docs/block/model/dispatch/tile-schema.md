@@ -293,6 +293,16 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    // Ordinary and Shared TLOAD/TSTORE require PadValue zero; only their Local
+    // CUBE conversion forms, specialized before this check, carry a nonzero
+    // PadValue.
+    if explicit_pad != Zeros{2} &&
+       (TileOperationOfIndex(operation) == TileOperation_TLOAD ||
+        TileOperationOfIndex(operation) == TileOperation_TSTORE) &&
+       !TileDataLayoutIsCubeConversion(explicit_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     return TRUE;
 end;
 readonly func SelectedBundleTileMasksLegal() => boolean

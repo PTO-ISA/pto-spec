@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TLSU-INDEXED-BOUND-002","source":"asl/tile/model/memory/load-store.asl","requirements":[],"kind":"boundary","summary":"indexed TLSU operations preflight and restart packed accesses","pass_condition":"indexed, preflight, and restart assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TLSU-INDEXED-BOUND-002","source":"asl/tile/model/memory/load-store.asl","requirements":[],"kind":"boundary","summary":"indexed TLSU operations preflight their whole request while incremental packed transfers retain their completed prefix","pass_condition":"indexed, preflight, retained-prefix, and restart assertions hold","related_sources":[]}
 func ConfigurePackedTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
     // Keep packed data and U64 index tiles on the same legal physical shape:
@@ -102,7 +102,8 @@ begin
     StartMemoryEventCapture(2);
     TLOAD(13, Zeros{PTO_XLEN} + 4095, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
+    // One completed byte-strided pair precedes the failing element.
+    assert _MemoryEventCount == 2;
     StopMemoryEventCapture();
     assert ReadTileElement(13, 0, 2) == Zeros{PTO_XLEN} + 0xd;
 
@@ -112,7 +113,8 @@ begin
     StartMemoryEventCapture(2);
     TLOAD(13, Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5);
     assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
+    // Two completed byte-strided pairs precede the failing element.
+    assert _MemoryEventCount == 4;
     StopMemoryEventCapture();
     assert ReadTileElement(13, 0, 4) == Zeros{PTO_XLEN} + 0xd;
 
@@ -139,12 +141,14 @@ begin
     StartMemoryEventCapture(2);
     TSTORE(Zeros{PTO_XLEN} + 4094, Zeros{PTO_XLEN} + 5, 13);
     assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
+    // The four completed four-bit stores remain visible; only the fifth
+    // element's byte at 4096 is never touched.
+    assert _MemoryEventCount == 4;
     StopMemoryEventCapture();
     let fault_tstore_byte0 = LoadUnsigned(Zeros{PTO_XLEN} + 4094, 1);
     let fault_tstore_byte1 = LoadUnsigned(Zeros{PTO_XLEN} + 4095, 1);
-    assert fault_tstore_byte0 == Zeros{PTO_XLEN} + 0xaa;
-    assert fault_tstore_byte1 == Zeros{PTO_XLEN} + 0xbb;
+    assert fault_tstore_byte0 == Zeros{PTO_XLEN} + 0x21;
+    assert fault_tstore_byte1 == Zeros{PTO_XLEN} + 0x43;
 
     WriteTileElement(14, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(14, 0, 1, Zeros{PTO_XLEN} + 1);

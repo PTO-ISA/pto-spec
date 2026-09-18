@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TLSU-FAULTS-BOUND-003","source":"asl/tile/model/memory/load-store.asl","requirements":[],"kind":"boundary","summary":"TLSU faults identify exact byte positions without partial effects","pass_condition":"fault position and no-effect assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TLSU-FAULTS-BOUND-003","source":"asl/tile/model/memory/load-store.asl","requirements":[],"kind":"boundary","summary":"TLSU faults identify exact byte positions; incremental stores retain their completed prefix while preflighted requests record none","pass_condition":"fault position, retained incremental-store prefix, and preflighted zero-event assertions hold","related_sources":[]}
 func ConfigurePackedTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
     // Keep packed data and U64 index tiles on the same legal physical shape:
@@ -36,7 +36,10 @@ begin
         StartMemoryEventCapture(0);
         TSTORE(start_address, Zeros{PTO_XLEN} + 5, 26);
         assert _LastFault == Fault_DataPage;
-        assert _MemoryEventCount == 0;
+        // First-fault-only execution retains the packed store events completed
+        // before the failing probe (ADR-MEM-0011).  Each earlier fault
+        // position completes one more byte-strided pair of lanes.
+        assert _MemoryEventCount == 2 * fault_position;
         StopMemoryEventCapture();
 
         let byte_count = if fault_position == 0 then 1 else 3;

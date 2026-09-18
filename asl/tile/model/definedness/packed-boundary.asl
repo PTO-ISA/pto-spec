@@ -72,6 +72,17 @@ begin
            tile.columns MOD 2 == 1;
 end;
 
+// The lane immediately past an odd physical column count is the second lane of
+// the final row-local pair.  It is storage, not a logical element, so it is
+// addressable as a definedness query and is always reported undefined.
+readonly func TilePackedRowPaddingColumn(tile: TileInfo,
+                                        row: integer {0..65535},
+                                        column: integer {0..65535}) => boolean
+begin
+    return TilePackedRowsHavePhysicalSlack(tile) &&
+           row < tile.rows && column == tile.columns;
+end;
+
 readonly func TileInfoWithPackedRowSlack(
     tile: TileInfo, row: integer {0..65535}, value: Word,
     defined: boolean) => TileInfo

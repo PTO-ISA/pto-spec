@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-ACCESS-003","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001","PTO-INST-BLOCK-BSTART-TLOAD"],"kind":"fault","summary":"CUBE TLOAD preflights first middle and last valid GM accesses before effects","pass_condition":"every fault position produces no event or destination and both live and saved bindings retain the unallocated destination hand","related_sources":["asl/tile/model/memory/load-store.asl","asl/block/model/faults/rollback.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-ACCESS-003","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001","PTO-INST-BLOCK-BSTART-TLOAD"],"kind":"fault","summary":"CUBE TLOAD reports its first middle and last GM fault and retains only the completed prefix","pass_condition":"each fault position keeps exactly the load events completed before the exact fault and rolls back the unallocated destination hand in both live and saved bindings","related_sources":["asl/tile/model/memory/load-store.asl","asl/block/model/faults/rollback.asl"]}
 pure func CubeAccessTLoadStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -32,7 +32,8 @@ begin
 end;
 
 func CubeTLoadAccessRejects(base: Word, stride: Word,
-                            expected_fault_address: Word) => boolean
+                            expected_fault_address: Word,
+                            expected_events: integer {0..3}) => boolean
 begin
     ResetProfileState();
     WriteGPR(2, base);
@@ -51,9 +52,12 @@ begin
        ior_status != CommandExecution_Executed then return FALSE; end;
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
+    // First-fault-only execution retains the load events completed before the
+    // failing element and leaves the destination unpublished.
     let rejected = !completed && _LastFault == Fault_DataPage &&
         _FaultAddress == expected_fault_address &&
-        _MemoryEventCount == 0 && CoreTileCapacityInUse() == 0 &&
+        _MemoryEventCount == expected_events &&
+        CoreTileCapacityInUse() == 0 &&
         !_BundleTileBindings[[0]].destination_allocated_by_bundle &&
         _TrapContexts[[0]].valid &&
         !_TrapContexts[[0]].bundle_tile_bindings[[0]]
@@ -67,17 +71,20 @@ begin
     let first = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN} + 4096,
         Zeros{PTO_XLEN} + 2,
-        Zeros{PTO_XLEN} + 4096);
+        Zeros{PTO_XLEN} + 4096,
+        0);
     assert first;
     let middle = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 0x8000000000000002,
-        Zeros{PTO_XLEN} + 0x8000000000000002);
+        Zeros{PTO_XLEN} + 0x8000000000000002,
+        1);
     assert middle;
     let last = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN} + 4092,
         Zeros{PTO_XLEN} + 2,
-        Zeros{PTO_XLEN} + 4096);
+        Zeros{PTO_XLEN} + 4096,
+        2);
     assert last;
     return 0;
 end;

@@ -26,7 +26,9 @@ begin
     ConfigurePackedTlsuTile(21, 1);
     ConfigureTile(22, 1024, 1, 16, 1, 1, TileDataType_U64,
         TileLayout_RowMajor);
-    ConfigurePredicateTile(23, 128, 1, 16, 1, 1);
+    // A RowMajor indexed mask is carried by a plain U8 numeric tile whose
+    // byte value is the predicate.
+    ConfigureByteTlsuTile(23, 1);
     ConfigureHalfwordTlsuTile(24, 1);
     ConfigureHalfwordTlsuTile(25, 1);
     WriteTileElement(20, 0, 0, Zeros{PTO_XLEN});

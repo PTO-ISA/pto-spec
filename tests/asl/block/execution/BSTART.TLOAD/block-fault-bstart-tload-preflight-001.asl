@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-PREFLIGHT-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"fault","summary":"TLOAD preflights the complete footprint before publishing its destination.","pass_condition":"A fault on the second element records no load event and rolls back the new Local destination allocation.","related_sources":["asl/tile/model/memory/load-store.asl","asl/block/model/dispatch/destination-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-PREFLIGHT-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"fault","summary":"TLOAD stops at its first memory fault and publishes no destination.","pass_condition":"A fault on the second element retains the completed first element's load event, rolls back the new Local destination allocation, and reports the exact fault.","related_sources":["asl/tile/model/memory/load-store.asl","asl/block/model/dispatch/destination-shape.asl"]}
 pure func TLoadFaultStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -43,7 +43,8 @@ begin
     let completed = ExecuteBundleTileOperation();
     assert !completed;
     assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
+    // first-fault-only: the completed first element is retained as evidence.
+    assert _MemoryEventCount == 1;
     assert CoreTileCapacityInUse() == 0;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     StopMemoryEventCapture();

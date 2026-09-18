@@ -71,12 +71,15 @@ begin
         TileLayout_RowMajor);
     ConfigureTile(7, 256, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor);
-    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_FP16,
-        TileLayout_RowMajor);
-    ConfigureTile(28, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
-    ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_FP16,
-        TileLayout_RowMajor);
+    // TGEMV is CUBE-only: A is a 1xK CUBE_M32 vector, B is a KxN CUBE_N8
+    // matrix, and D plus the 1xN FP32 bias reuse A's CUBE_M32 layout.
+    let gemv_b_ready = ConfigureCubeTile(27, 512, 2, 1, TileDataType_FP16,
+        TileLayout_CUBE_N8);
+    let gemv_d_ready = ConfigureCubeTile(28, 1024, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_M32);
+    let gemv_a_ready = ConfigureCubeTile(29, 512, 1, 2, TileDataType_FP16,
+        TileLayout_CUBE_M32);
+    assert gemv_a_ready && gemv_b_ready && gemv_d_ready;
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 0x4200);
@@ -90,8 +93,9 @@ begin
     WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 0x4000);
 
-    ConfigureTile(61, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
+    let gemv_bias_ready = ConfigureCubeTile(61, 1024, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M32);
+    assert gemv_bias_ready;
     WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     SelectTestCUBEDataType('00100');
     TMATMUL_MX(7, 5, 0, 6, 0);

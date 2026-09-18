@@ -194,6 +194,11 @@ begin
         let destination = _BundleTileBindings[[0]].destination;
         TLOAD(destination, base_address, row_stride_bytes);
         if _LastFault != Fault_None then
+            // A memory fault retains the beats completed before it but must
+            // not publish the speculative Local destination.  Release it and
+            // re-synchronize the saved trap context exactly like the generic
+            // destination path does.
+            RollBackBundleTileDestinations();
             return FALSE;
         end;
     else
@@ -210,7 +215,10 @@ begin
             return FALSE;
         end;
         TSTORE(base_address, row_stride_bytes, source);
-        if _LastFault != Fault_None then return FALSE; end;
+        if _LastFault != Fault_None then
+            RollBackBundleTileDestinations();
+            return FALSE;
+        end;
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
     return TRUE;

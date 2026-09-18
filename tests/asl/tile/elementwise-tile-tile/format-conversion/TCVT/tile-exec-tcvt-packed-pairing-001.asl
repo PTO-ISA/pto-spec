@@ -50,7 +50,9 @@ begin
         Zeros{PTO_XLEN} + 5);
     packed = TileInfoWithLogicalElement(packed, row1_col0,
         Zeros{PTO_XLEN} + 6);
-    assert packed.payload[[0]] == Zeros{PTO_XLEN} + 0x654321;
+    // Row 0 owns nibbles 0..5 with the odd pair lane left as zero padding, so
+    // row 1's first element starts at nibble 6.
+    assert packed.payload[[0]] == Zeros{PTO_XLEN} + 0x6054321;
     assert TileReadLogicalElement(packed,
         TileLogicalLinearIndex(packed, 0, 1)) ==
         Zeros{PTO_XLEN} + 2;
@@ -69,16 +71,19 @@ begin
     assert TileCubePayloadIndex(cube_m16, 0, 3) == 3;
     assert TileCubePayloadIndex(cube_m16, 0, 4) == 8;
     assert TileCubePayloadIndex(cube_m16, 0, 5) == 9;
+    // CUBE layouts have no packed row-local pairs; their logical column pairs
+    // map through the CUBE payload index, which is what the round trip below
+    // writes and reads back.
     var cube_m16_values = cube_m16;
     for column = 0 to 4 looplimit 5 do
-        let element = TileLogicalLinearIndex(cube_m16_values, 0,
-            column as integer {0..65535});
+        let element = TileCubePayloadIndex(cube_m16_values, 0,
+            column as integer {0..65535}) as PackedTileElementIndex;
         cube_m16_values = TileInfoWithLogicalElement(cube_m16_values,
             element, Zeros{PTO_XLEN} + column + 1);
     end;
     for column = 0 to 4 looplimit 5 do
-        let element = TileLogicalLinearIndex(cube_m16_values, 0,
-            column as integer {0..65535});
+        let element = TileCubePayloadIndex(cube_m16_values, 0,
+            column as integer {0..65535}) as PackedTileElementIndex;
         assert TileReadLogicalElement(cube_m16_values, element) ==
             Zeros{PTO_XLEN} + column + 1;
     end;
@@ -97,14 +102,14 @@ begin
     assert TileCubePayloadIndex(cube_m32, 0, 5) == 5;
     var cube_m32_values = cube_m32;
     for column = 0 to 4 looplimit 5 do
-        let element = TileLogicalLinearIndex(cube_m32_values, 0,
-            column as integer {0..65535});
+        let element = TileCubePayloadIndex(cube_m32_values, 0,
+            column as integer {0..65535}) as PackedTileElementIndex;
         cube_m32_values = TileInfoWithLogicalElement(cube_m32_values,
             element, Zeros{PTO_XLEN} + column + 1);
     end;
     for column = 0 to 4 looplimit 5 do
-        let element = TileLogicalLinearIndex(cube_m32_values, 0,
-            column as integer {0..65535});
+        let element = TileCubePayloadIndex(cube_m32_values, 0,
+            column as integer {0..65535}) as PackedTileElementIndex;
         assert TileReadLogicalElement(cube_m32_values, element) ==
             Zeros{PTO_XLEN} + column + 1;
     end;
