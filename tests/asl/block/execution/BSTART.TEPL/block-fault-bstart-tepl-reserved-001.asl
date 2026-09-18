@@ -15,8 +15,8 @@ func main() => integer
 begin
     // Mode 0, Function 5 is an unassigned selector hole.
     AssertTEPLRejected(Zeros{64} + 0x00519181);
-    // DataType codes 15 and 31 are reserved at carrier level.
-    AssertTEPLRejected(Zeros{64} + 0x78019181);
+    // DataType codes 22 and 31 are reserved at carrier level.
+    AssertTEPLRejected(Zeros{64} + 0xb0019181);
     AssertTEPLRejected(Zeros{64} + 0xf8019181);
     return 0;
 end;

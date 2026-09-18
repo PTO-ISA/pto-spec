@@ -648,11 +648,13 @@
                 12,
                 13,
                 14,
+                15,
                 16,
                 17,
                 18,
                 19,
                 20,
+                21,
                 24,
                 25,
                 26,
@@ -889,11 +891,7 @@
             "assigned_ranges": [
               [
                 0,
-                14
-              ],
-              [
-                16,
-                20
+                21
               ],
               [
                 24,
@@ -910,11 +908,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
-                15
-              ],
-              [
-                21,
+                22,
                 23
               ],
               [
@@ -1115,6 +1109,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -1133,6 +1131,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -1159,8 +1161,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -1203,7 +1203,7 @@
         ],
         "legality": [
           "B.DATR may appear at most once, after BSTART and before the block body.",
-          "DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.",
+          "DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.",
           "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.",
           "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
@@ -5914,6 +5914,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -5932,6 +5936,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -5958,8 +5966,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -6637,6 +6643,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -6655,6 +6665,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -6681,8 +6695,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -6926,6 +6938,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -6944,6 +6960,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -6970,8 +6990,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -7518,6 +7536,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -7536,6 +7558,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -7562,8 +7588,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -7807,6 +7831,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -7825,6 +7853,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -7851,8 +7883,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -8096,6 +8126,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -8114,6 +8148,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -8140,8 +8178,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -8688,6 +8724,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -8706,6 +8746,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -8732,8 +8776,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -8977,6 +9019,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -8995,6 +9041,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -9021,8 +9071,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -9266,6 +9314,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -9284,6 +9336,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -9310,8 +9366,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -9555,6 +9609,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -9573,6 +9631,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -9599,8 +9661,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -10145,6 +10205,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -10163,6 +10227,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -10189,8 +10257,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -10434,6 +10500,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -10452,6 +10522,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -10478,8 +10552,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -10723,6 +10795,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -10741,6 +10817,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -10767,8 +10847,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -11012,6 +11090,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -11030,6 +11112,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -11056,8 +11142,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -11605,6 +11689,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -11623,6 +11711,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -11649,8 +11741,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -11894,6 +11984,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -11912,6 +12006,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -11938,8 +12036,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -12183,6 +12279,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -12201,6 +12301,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -12227,8 +12331,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -12472,6 +12574,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -12490,6 +12596,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -12516,8 +12626,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -12762,6 +12870,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -12780,6 +12892,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -12806,8 +12922,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -12938,6 +13052,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -12956,6 +13074,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -12982,8 +13104,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -13526,11 +13646,13 @@
                 12,
                 13,
                 14,
+                15,
                 16,
                 17,
                 18,
                 19,
                 20,
+                21,
                 24,
                 25,
                 26,
@@ -13615,11 +13737,7 @@
             "assigned_ranges": [
               [
                 0,
-                14
-              ],
-              [
-                16,
-                20
+                21
               ],
               [
                 24,
@@ -13632,11 +13750,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
-                15
-              ],
-              [
-                21,
+                22,
                 23
               ],
               [
@@ -13756,6 +13870,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -13774,6 +13892,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -13800,8 +13922,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -13817,7 +13937,7 @@
         "legality": [
           "Mode:Function is a seven-bit selector with Mode in bits 6:5 and Function in bits 4:0.",
           "Only assigned TEPL-carried operations are legal; unassigned selector holes reject before effects.",
-          "DataType accepts 0..14, 16..20, and 24..28; 15, 21..23, and 29..31 are reserved.",
+          "DataType accepts 0..14, 15..21, and 24..28; 22, 23, and 29..31 are reserved.",
           "BSTART.TEPL is compatibility input only; canonical output uses the operation's VEC or SFU alias."
         ],
         "memory_effects": [
@@ -14069,6 +14189,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -14087,6 +14211,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -14113,8 +14241,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -14383,6 +14509,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -14401,6 +14531,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -14427,8 +14561,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -14698,6 +14830,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -14716,6 +14852,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -14742,8 +14882,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -15011,6 +15149,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -15029,6 +15171,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -15055,8 +15201,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -15325,6 +15469,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -15343,6 +15491,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -15369,8 +15521,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -15640,6 +15790,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -15658,6 +15812,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -15684,8 +15842,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -15936,6 +16092,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -15954,6 +16114,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -15980,8 +16144,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -16256,6 +16418,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -16274,6 +16440,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -16300,8 +16470,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -16597,6 +16765,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -16615,6 +16787,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -16641,8 +16817,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -16913,6 +17087,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -16931,6 +17109,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -16957,8 +17139,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -17230,6 +17410,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -17248,6 +17432,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -17274,8 +17462,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -17545,6 +17731,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -17563,6 +17753,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -17589,8 +17783,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -17861,6 +18053,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -17879,6 +18075,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -17905,8 +18105,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -18178,6 +18376,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -18196,6 +18398,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -18222,8 +18428,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -18673,6 +18877,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -18691,6 +18899,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -18717,8 +18929,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -18988,6 +19198,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -19006,6 +19220,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -19032,8 +19250,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -19196,6 +19412,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -19214,6 +19434,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -19240,8 +19464,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -128237,6 +128459,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -128255,6 +128481,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -128281,8 +128511,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -129867,6 +130095,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -129885,6 +130117,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -129911,8 +130147,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -129987,6 +130221,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -130005,6 +130243,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -130031,8 +130273,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -130049,7 +130289,7 @@
           "TCVT is selected only by VEC Mode 0 Function 27 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one source and one newly allocated destination. B.IOR, B.IOS, a second source, and a second binding are illegal.",
           "For ordinary layouts, source and destination have equal Row, Col, ValidRow, and ValidCol. For a CUBE_M16 or CUBE_M32 source, the destination preserves the same CUBE layout and ValidRow/ValidCol, while Row, Col, CELL count, capacity, and packing independently match the destination DataType.",
-          "Every assigned Tile DataType is legal. Reserved five-bit DataType codes reject before effects; HiF4X2 is TCVT-only.",
+          "TCVT legal pairs are profile-scoped: FP32/FP16/BF16 <-> E2M1X2/E1M2X2; FP16/BF16 <-> E6M2; RCPE6M2 -> FP16/BF16. No pair contains HiF4X2, and RCPE6M2 has no destination encoding. Reserved five-bit DataType codes reject before effects.",
           "Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.",
           "Canonicalize=1 is reserved-illegal before effects. CUBE_M16 and CUBE_M32 sources with Canonicalize=0 preserve the source layout while the destination independently derives its geometry from the destination DataType. An ordinary source requires Canonicalize=0.",
           "The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.",
@@ -137922,6 +138162,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -137940,6 +138184,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -137966,8 +138214,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,
@@ -141410,6 +141656,10 @@
                 "value": 14
               },
               {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
                 "meaning": "S64",
                 "value": 16
               },
@@ -141428,6 +141678,10 @@
               {
                 "meaning": "S4X2",
                 "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
               },
               {
                 "meaning": "U64",
@@ -141454,8 +141708,6 @@
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
-              15,
-              21,
               22,
               23,
               29,

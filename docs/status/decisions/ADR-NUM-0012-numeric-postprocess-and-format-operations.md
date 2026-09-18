@@ -22,10 +22,16 @@
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
     "PTO-FP19-PARAMETER-CARRIER-001",
+    "PTO-NUMERIC-E6M2-FORMAT-001",
+    "PTO-NUMERIC-RCPE6M2-FORMAT-001",
     "PTO-TCVT-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FP19",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
     "PTO-BLOCK-B-FPATR",
     "PTO-TILE-TCVT"
   ],
@@ -48,6 +54,28 @@
     "PRD-182",
     "PRD-183",
     "ADR-0085"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-16",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/254",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
+        "PTO-TILE-TCVT"
+      ]
+    }
   ]
 }
 ---
@@ -294,3 +322,19 @@ meaning remains in affected ASL/NDF, and unassigned modes remain reserved.
 
 **中文。** 本记录保存已接受审计决策；当前规范含义仍在相关 ASL/NDF 中，未分配
 mode 继续保留。
+
+## 2026-09-16 accepted amendment: TCVT packed FP4 and scale profiles
+
+Issue #254 accepts bit-exact TCVT profiles for FP16/BF16/FP32 with E2M1X2 and
+E1M2X2, FP16/BF16 both ways with E6M2, and RCPE6M2 to FP16/BF16. The packed
+profiles convert independent logical lanes and assemble adjacent columns into
+one X2 carrier. E6M2 and reciprocal conversion use the exact special-value,
+saturation, overflow/underflow, and NV/UF/OF/NX rules in their owning NDF
+profiles. No conversion to RCPE6M2 and no complete HiF4 quantize/dequantize
+operation is accepted.
+
+Issue #254 接受 FP16/BF16/FP32 与 E2M1X2、E1M2X2，FP16/BF16 与 E6M2 双向，
+以及 RCPE6M2 到 FP16/BF16 的位精确 TCVT profile。packed profile 独立转换逻辑
+lane，并把相邻列组装到一个 X2 carrier。E6M2 与倒数转换采用其 owning NDF 中精确
+的特殊值、饱和、溢出/下溢及 NV/UF/OF/NX 规则。不接受转换到 RCPE6M2，也不接受
+完整 HiF4 量化/反量化操作。

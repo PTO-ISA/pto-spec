@@ -57,11 +57,11 @@ class InstructionContractClosureTest(unittest.TestCase):
 
         self.assertEqual(
             datatype["assigned_ranges"],
-            [[0, 14], [16, 20], [24, 28], [31, 31]],
+            [[0, 21], [24, 28], [31, 31]],
         )
         self.assertEqual(
             datatype["reserved_ranges"],
-            [[15, 15], [21, 23], [29, 30]],
+            [[22, 23], [29, 30]],
         )
         self.assertEqual(
             document["deleted_names"],

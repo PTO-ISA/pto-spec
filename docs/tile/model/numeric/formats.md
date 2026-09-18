@@ -175,10 +175,24 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            let (converted, flags) = TileConvertValue(
-                TileReadLogicalElement(source_tile, source_element),
-                source_operation_type,
-                result.data_type, control);
+            let source_value = TileReadLogicalElement(source_tile,
+                source_element);
+            let (converted, flags) =
+                if (source_operation_type == TileDataType_E2M1X2 ||
+                    source_operation_type == TileDataType_E1M2X2 ||
+                    result.data_type == TileDataType_E2M1X2 ||
+                    result.data_type == TileDataType_E1M2X2 ||
+                    source_operation_type == TileDataType_E6M2 ||
+                    result.data_type == TileDataType_E6M2 ||
+                    source_operation_type == TileDataType_RCPE6M2) &&
+                   HardwareTCVTTypePairSupported(source_operation_type,
+                       result.data_type) then
+                    ReferenceTCVTConvert(source_value, source_operation_type,
+                        result.data_type, control)
+                else
+                    TileConvertValue(source_value, source_operation_type,
+                        result.data_type, control)
+                end;
             result = TileInfoWithLogicalElement(result, destination_element,
                 converted);
             conversion_flags = conversion_flags OR flags;

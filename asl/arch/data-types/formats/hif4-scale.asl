@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE","surface":"arch","classification":["data-types","formats","hif4-scale"],"depends_on":["PTO-ARCH-DATA-TYPES-FP19"]}
+// PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE","surface":"arch","classification":["data-types","formats","hif4-scale"],"depends_on":["PTO-ARCH-DATA-TYPES-FP19","PTO-ARCH-DATA-TYPES-FORMAT-E6M2"]}
 
 // NDF-BEGIN: PTO-CUBE-HIF4-SCALE-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -11,16 +11,12 @@
 
 pure func HiF4E6M2ValueClass(value: bits(8)) => NumericValueClass
 begin
-    if value == Ones{8} then return NumericValue_QuietNaN; end;
-    return NumericValue_PositiveNormal;
+    return ClassifyE6M2(value);
 end;
 
 pure func HiF4E6M2FiniteValue(value: bits(8)) => real
 begin
-    assert value != Ones{8};
-    let exponent = (UInt(value[7:2]) - 48) as integer {-48..15};
-    let mantissa_quarters = 4 + UInt(value[1:0]);
-    return (Real(mantissa_quarters) / 4.0) * FP19PowerOfTwo(exponent);
+    return E6M2FiniteValue(value);
 end;
 
 pure func HiF4ScaleExponentIncrement(

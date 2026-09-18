@@ -52,7 +52,7 @@ binary16 逻辑区分 `FP16` 与 `BF16`。FP8 候选选择按请求的舍入规�
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/matrix-quantization.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-DATA-TYPES-FP19"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-PROFILE-PACKED-CONVERSION","PTO-ARCH-DATA-TYPES-FP19"]}
 // Bit-exact numeric helpers for B.FPATR matrix post-processing.
 // NDF-BEGIN: PTO-MATRIX-QUANT-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -532,6 +532,11 @@ begin
     elsif destination_type == TileDataType_FP16 ||
           destination_type == TileDataType_BF16 then
         return ReferenceBinary16Encoding(value, destination_type, control);
+    elsif destination_type == TileDataType_E2M1X2 ||
+          destination_type == TileDataType_E1M2X2 then
+        return ReferencePacked4Encoding(value, destination_type, control);
+    elsif destination_type == TileDataType_E6M2 then
+        return ReferenceE6M2Encoding(value, control);
     else
         return ReferenceFP8Encoding(value, destination_type, control);
     end;

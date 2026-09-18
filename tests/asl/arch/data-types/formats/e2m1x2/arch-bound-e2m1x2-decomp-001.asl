@@ -39,7 +39,7 @@ begin
     assert descriptor.exponent_bits_min == 2 && descriptor.fraction_bits_min == 1;
     assert descriptor.exponent_bias == 1;
     assert descriptor.has_zero && descriptor.has_signed_zero;
-    assert !descriptor.has_subnormal && !descriptor.has_infinity;
+    assert descriptor.has_subnormal && !descriptor.has_infinity;
     assert !descriptor.has_quiet_nan && !descriptor.has_signaling_nan;
     AssertE2M1X2Lane(0, FALSE, Zeros{PTO_XLEN}, 0);
     AssertE2M1X2Lane(1, FALSE, Zeros{PTO_XLEN} + 1, -1);
@@ -62,9 +62,9 @@ begin
     assert TileNumericValueClass(TileDataType_E2M1X2,
         Zeros{PTO_XLEN} + 8) == NumericValue_NegativeZero;
     assert TileNumericValueClass(TileDataType_E2M1X2,
-        Zeros{PTO_XLEN} + 1) == NumericValue_PositiveNormal;
+        Zeros{PTO_XLEN} + 1) == NumericValue_PositiveSubnormal;
     assert TileNumericValueClass(TileDataType_E2M1X2,
-        Zeros{PTO_XLEN} + 9) == NumericValue_NegativeNormal;
+        Zeros{PTO_XLEN} + 9) == NumericValue_NegativeSubnormal;
 end;
 func main() => integer
 begin

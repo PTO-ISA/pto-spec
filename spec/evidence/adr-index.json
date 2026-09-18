@@ -7897,6 +7897,8 @@
         "PTO-TADD-CONTRACT-001",
         "PTO-TAND-CONTRACT-001",
         "PTO-TCMP-CONTRACT-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001",
         "PTO-TDIV-CONTRACT-001",
         "PTO-TEXP-CONTRACT-001",
@@ -8002,6 +8004,8 @@
         "PTO-TILE-TAND",
         "PTO-TILE-TCMP",
         "PTO-TILE-TCVT",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-TILE-TDIV",
         "PTO-TILE-TEXP",
         "PTO-TILE-TEXTRACT",
@@ -8049,6 +8053,7 @@
         "PTO-TILE-MODEL-EXECUTION-UNARY",
         "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY",
         "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
         "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
@@ -8314,6 +8319,30 @@
           "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
           "date": "2026-09-08",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/256"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-TCVT",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
         }
       ],
       "approvers": [
@@ -9856,6 +9885,7 @@
         "PTO-CUBE-CSCALE-001",
         "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
         "PTO-CUBE-HIF4-SCALE-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
         "PTO-CUBE-MATRIX-SCALE-001",
         "PTO-CUBE-MATRIX-SCALE-CELL-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001",
@@ -9865,6 +9895,7 @@
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
         "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
         "PTO-BLOCK-B-FPATR",
         "PTO-BLOCK-BSTART-TMATMULMX",
@@ -9932,6 +9963,22 @@
           "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
           "date": "2026-09-08",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/255"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-HIF4-SCALE-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
         }
       ],
       "approvers": [
@@ -10135,7 +10182,27 @@
         "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
         "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "zhoubot"
@@ -10482,14 +10549,39 @@
         "PTO-CUBE-CELL-TRANSPORT-001",
         "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
         "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
         "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
         "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-BLOCK-B-DATR",
         "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+            "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -10565,13 +10657,38 @@
       "affected_ndf": [
         "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
         "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
         "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
         "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+            "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -10645,6 +10762,8 @@
         "PTO-FCVTN-DECISION-BINDING-001",
         "PTO-FCVTP-DECISION-BINDING-001",
         "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001"
       ],
       "affected_units": [
@@ -10656,7 +10775,29 @@
         "PTO-SCALAR-FCVTN",
         "PTO-SCALAR-FCVTP",
         "PTO-SCALAR-FCVTZ",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TCVT",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -10693,6 +10834,8 @@
         "PTO-FMIN-DECISION-BINDING-001",
         "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
         "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TMAX-CONTRACT-001",
         "PTO-TMIN-CONTRACT-001"
       ],
@@ -10705,6 +10848,7 @@
         "PTO-ARCH-DATA-TYPES-FORMAT-E3M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-E4M3",
         "PTO-ARCH-DATA-TYPES-FORMAT-E5M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
         "PTO-ARCH-DATA-TYPES-FORMAT-FP16",
         "PTO-ARCH-DATA-TYPES-FORMAT-FP32",
@@ -10712,6 +10856,7 @@
         "PTO-ARCH-DATA-TYPES-FORMAT-HF32",
         "PTO-ARCH-DATA-TYPES-FORMAT-HIF4X2",
         "PTO-ARCH-DATA-TYPES-FORMAT-HIF8",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-TF32",
         "PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION",
         "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
@@ -10725,6 +10870,29 @@
         "PTO-TILE-MODEL-ORDERING-SORTING",
         "PTO-TILE-TMAX",
         "PTO-TILE-TMIN"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+            "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION",
+            "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -10846,12 +11014,40 @@
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-FP19-PARAMETER-CARRIER-001",
+        "PTO-NUMERIC-E6M2-FORMAT-001",
+        "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FP19",
+        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-BLOCK-B-FPATR",
         "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-NUMERIC-E6M2-FORMAT-001",
+            "PTO-NUMERIC-RCPE6M2-FORMAT-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+            "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+            "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+            "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-16",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"

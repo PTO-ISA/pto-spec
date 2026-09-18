@@ -49,6 +49,15 @@ begin
     assert TRUE;
 end;
 
+readonly func BundleDestinationIsOrdinaryTCVT(
+    decoded_operation: integer {0..PTO_TILE_OPERATION_COUNT},
+    cube: boolean) => boolean
+begin
+    return !cube && decoded_operation != PTO_TILE_OPERATION_COUNT &&
+        TileOperationOfIndex(decoded_operation as integer {
+            0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TCVT;
+end;
+
 func ConfigureBundleTileDestination(
     index: TileIndex, capacity_bytes: integer {0..262144},
     physical_rows: integer {0..65535},
@@ -56,7 +65,7 @@ func ConfigureBundleTileDestination(
     valid_rows: integer {0..65535}, columns: integer {0..65535},
     valid_columns: integer {0..65535}, data_type: TileDataType,
     layout: TileLayout, allocation_mask: bits(4), tgpr2t: boolean,
-    exact_cube_columns: boolean)
+    exact_cube_columns: boolean, preserve_physical_rows: boolean)
     => boolean
 begin
     if tgpr2t then
@@ -64,7 +73,8 @@ begin
             physical_rows, physical_columns, valid_rows, valid_columns,
             data_type, layout, allocation_mask);
     end;
-    ConfigureTileForMask(index, capacity_bytes, valid_rows, columns,
+    ConfigureTileForMask(index, capacity_bytes, if preserve_physical_rows then
+        physical_rows else DerivedTileRows(capacity_bytes, columns, data_type), columns,
         valid_rows, valid_columns, data_type, layout,
         allocation_mask);
     return TRUE;

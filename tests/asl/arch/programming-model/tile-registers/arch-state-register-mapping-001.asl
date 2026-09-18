@@ -44,6 +44,8 @@ begin
     assert TileElementBits(TileDataType_E1M2X2) == 4;
     assert TileElementBits(TileDataType_E8M0) == 8;
     assert TileElementBits(TileDataType_HiF4X2) == 4;
+    assert TileElementBits(TileDataType_E6M2) == 8;
+    assert TileElementBits(TileDataType_RCPE6M2) == 8;
     assert TileElementBits(TileDataType_S8) == 8;
     assert TileElementBits(TileDataType_U8) == 8;
     assert TileElementBits(TileDataType_S16) == 16;
@@ -57,8 +59,7 @@ begin
 
     for code = 0 to 31 looplimit 32 do
         let encoded = (Zeros{5} + code) as TileDataTypeEncoding;
-        let expected = (0 <= code && code <= 14) ||
-                       (16 <= code && code <= 20) ||
+        let expected = (0 <= code && code <= 21) ||
                        (24 <= code && code <= 28);
         assert TileDataTypeEncodingValid(encoded) == expected;
     end;
@@ -80,17 +81,21 @@ begin
     assert TileDataTypeFromEncoding(Zeros{5} + 13) == TileDataType_E8M0;
     assert TileDataTypeFromEncoding(Zeros{5} + 14) ==
         TileDataType_HiF4X2;
+    assert TileDataTypeFromEncoding(Zeros{5} + 15) ==
+        TileDataType_E6M2;
     assert TileDataTypeFromEncoding(Zeros{5} + 16) == TileDataType_S64;
     assert TileDataTypeFromEncoding(Zeros{5} + 17) == TileDataType_S32;
     assert TileDataTypeFromEncoding(Zeros{5} + 18) == TileDataType_S16;
     assert TileDataTypeFromEncoding(Zeros{5} + 19) == TileDataType_S8;
     assert TileDataTypeFromEncoding(Zeros{5} + 20) == TileDataType_S4X2;
+    assert TileDataTypeFromEncoding(Zeros{5} + 21) ==
+        TileDataType_RCPE6M2;
     assert TileDataTypeFromEncoding(Zeros{5} + 24) == TileDataType_U64;
     assert TileDataTypeFromEncoding(Zeros{5} + 25) == TileDataType_U32;
     assert TileDataTypeFromEncoding(Zeros{5} + 26) == TileDataType_U16;
     assert TileDataTypeFromEncoding(Zeros{5} + 27) == TileDataType_U8;
     assert TileDataTypeFromEncoding(Zeros{5} + 28) == TileDataType_U4X2;
-    assert !TileDataTypeEncodingValid(Zeros{5} + 15);
+    assert !TileDataTypeEncodingValid(Zeros{5} + 22);
     assert TileStorageBytes(1, 1, TileDataType_U4X2) == 1;
     assert TileStorageBytes(1, 2, TileDataType_U4X2) == 1;
     assert TileStorageBytes(1, 3, TileDataType_U4X2) == 2;

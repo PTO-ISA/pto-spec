@@ -28,6 +28,16 @@ begin
     assert DerivedTileRows(4096, 1, TileDataType_U64) == 512;
     assert DerivedTileRows(8192, 1, TileDataType_U64) == 1024;
     assert DerivedTileRows(8192, 1, TileDataType_U4X2) == 16384;
+    // Explicitly admitted odd ordinary FP columns use the complete rows that
+    // fit a power-of-two TSize; legacy power-of-two columns remain exact.
+    let odd_fp16_rows = DerivedTileRows(2048, 17, TileDataType_FP16);
+    assert odd_fp16_rows == 60;
+    assert TileStorageFitsCapacity(odd_fp16_rows, 17,
+        TileDataType_FP16, 2048);
+    assert !TileStorageFitsCapacity(odd_fp16_rows + 1, 17,
+        TileDataType_FP16, 2048);
+    assert DerivedTileRows(2048, 17, TileDataType_E2M1X2) == 227;
+    assert DerivedTileRows(2048, 17, TileDataType_U8) == 0;
     assert TileShapeMatchesCapacity(128, 16, 1, TileDataType_U64);
     assert TileShapeMatchesCapacity(8192, 16384, 1,
                                     TileDataType_U4X2);

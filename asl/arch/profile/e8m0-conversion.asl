@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-E8M0-CONVERSION","surface":"arch","classification":["profile","e8m0-conversion"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-E8M0-CONVERSION","surface":"arch","classification":["profile","e8m0-conversion"],"depends_on":["PTO-ARCH-PROFILE-TCVT-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
 
 // NDF-BEGIN: PTO-TCVT-E8M0-PROFILE-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
@@ -23,8 +23,66 @@ pure func HardwareTCVTTypePairSupported(
     source_type: TileDataType,
     destination_type: TileDataType) => boolean
 begin
+    // HiF4X2 is the payload of the composite Matrix/MX format, not a
+    // standalone TCVT scalar. The two newly allocated scale identities have
+    // deliberately narrow conversion profiles; width equality does not widen
+    // these profiles.
+    if source_type == TileDataType_HiF4X2 ||
+       destination_type == TileDataType_HiF4X2 then
+        return FALSE;
+    end;
+    if destination_type == TileDataType_RCPE6M2 then
+        return FALSE;
+    end;
+    if source_type == TileDataType_RCPE6M2 then
+        return destination_type == TileDataType_FP16 ||
+               destination_type == TileDataType_BF16;
+    end;
+    if source_type == TileDataType_E6M2 ||
+       destination_type == TileDataType_E6M2 then
+        return (source_type == TileDataType_E6M2 &&
+                (destination_type == TileDataType_FP16 ||
+                 destination_type == TileDataType_BF16)) ||
+               (destination_type == TileDataType_E6M2 &&
+                (source_type == TileDataType_FP16 ||
+                 source_type == TileDataType_BF16));
+    end;
+    if source_type == TileDataType_E2M1X2 ||
+       source_type == TileDataType_E1M2X2 ||
+       destination_type == TileDataType_E2M1X2 ||
+       destination_type == TileDataType_E1M2X2 then
+        let source_ok = source_type == TileDataType_E2M1X2 ||
+            source_type == TileDataType_E1M2X2 ||
+            source_type == TileDataType_FP32 ||
+            source_type == TileDataType_FP16 ||
+            source_type == TileDataType_BF16;
+        let destination_ok = destination_type == TileDataType_E2M1X2 ||
+            destination_type == TileDataType_E1M2X2 ||
+            destination_type == TileDataType_FP32 ||
+            destination_type == TileDataType_FP16 ||
+            destination_type == TileDataType_BF16;
+        let source_packed = source_type == TileDataType_E2M1X2 ||
+            source_type == TileDataType_E1M2X2;
+        let destination_packed = destination_type == TileDataType_E2M1X2 ||
+            destination_type == TileDataType_E1M2X2;
+        return source_ok && destination_ok &&
+               source_packed != destination_packed;
+    end;
     if destination_type == TileDataType_E8M0 then
         return HardwareTCVTE8M0SourceTypeSupported(source_type);
+    end;
+    return TRUE;
+end;
+
+pure func HardwareTCVTRoundingModeSupported(
+    source_type: TileDataType,
+    destination_type: TileDataType,
+    mode: NumericRoundingMode) => boolean
+begin
+    if source_type == TileDataType_E6M2 ||
+       destination_type == TileDataType_E6M2 ||
+       source_type == TileDataType_RCPE6M2 then
+        return mode == NumericRound_RNE || mode == NumericRound_RNA;
     end;
     return TRUE;
 end;

@@ -712,11 +712,11 @@
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "659feca66ad67db81726c8e0139e614b3ced2694e645f9e5dda534832920d2dd"
+      "sha256": "2767dc6302e8d777b517c198d3ead8a5acb62602c26f517eb9ee581bc4afd4da"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "2ac0d09df574369eba23b95b7f480e68b8e4ff366ad0b6f01107de65c822007f"
+      "sha256": "30d42b6246fc982f2bb092174a462a017769c5e31f73af2c94390f8e205a91a1"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -768,7 +768,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f"
+      "sha256": "ddab80194961559047af378635173792ea4855c8a7d3ce597b9ff1ea62865fd3"
     },
     {
       "path": "asl/block/model/state/barg.asl",
@@ -780,31 +780,31 @@
     },
     {
       "path": "asl/block/model/state/control-state.asl",
-      "sha256": "a27149b52c881a6ded0d3f39849bebc908af7b181ba19868d501086bf1d634e4"
+      "sha256": "609266e83fd85f5be4e6b603b447c5b35a008c1440737f8ffdf943b352667610"
     },
     {
       "path": "asl/block/model/state/descriptor-state.asl",
-      "sha256": "f1ae39cb6e39f1de03a4c2ae2228a27c2640b7e59aff60446f97e9ab6a3b8423"
+      "sha256": "393bc0b1410fdd95e22cf38993d6e71772630784d9a0dba8c1b2bab80ecd1046"
     },
     {
       "path": "asl/block/model/state/shared-generation-state.asl",
-      "sha256": "4cba683f113ce4e0e4995aa2f150fcbd683c92f825879182febae5a87f5bb6c6"
+      "sha256": "fb8d85dc010af90aaf4e10e77c87807a02628a6ab21ded62549d1655074043a2"
     },
     {
       "path": "asl/block/model/state/types.asl",
-      "sha256": "637311cf65086fe1ca95e2aea380af609c054cf1629fae4b58bd827aaf46af46"
+      "sha256": "84b2e734d840aa7078489e16b171854a694f755c80f2953f28c9fc19ae0ba2d4"
     },
     {
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
-      "sha256": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2"
+      "sha256": "c25f2f36237f5b865f3c0e687d991200a6813b528189c311db37ca6d2af611da"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "35a9ae0b170bdecbf546383d13403478238edf7b1a9320dbb28d25cfe5056a7b"
+      "sha256": "60ed5f3c9ef8adb6b516920b6502ce5c1cbef7b352ffa1e934fb9a40d23764a9"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
-      "sha256": "2ab4829a931b2f11e577d5df43e8ef13594ddbcf65e1d14fb0ebeacb43860ab9"
+      "sha256": "4f8ea243c765f13ef8fe210bea1db4f61d7782d9df7de4fa17854a8ccc06d8fc"
     },
     {
       "path": "asl/block/model/dispatch/cube-accumulator-routing.asl",
@@ -812,35 +812,35 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-destination.asl",
-      "sha256": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd"
+      "sha256": "415bd2e0433b3a0c103942f3b00fb5f0b72bc1c89a949279ef9c2903f335a2e4"
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "4909bf4c1ca80a9c95cfc1303277eb3aec40be26cf59e03335edb65b335f4971"
+      "sha256": "8252a43ba3b4f248d701b2fb2761d159684f2652d0348d6c3e7fcbed9718b3b4"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "dd1dff7f347f2ec090bf34984a2541be7568bb1f24ae5e4716c8b715ca8852a9"
+      "sha256": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "37cb31810ba59a136bccffef460801b95490b54e9b748db191b7fb8f81370f96"
+      "sha256": "0cee1102eff132c5220fb6a6ba20f9978bd98e37f576c8a6aa053b16b2a3641b"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "539ef9bc4f9445b65f89b9e8c19104daa57a9f64f7880298ae7a42b85f30cb7b"
+      "sha256": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "9961aaa2688c29611a85473c2a0ea32a1be7f4c06933aa030ba3ad53b538bebb"
+      "sha256": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
-      "sha256": "5d860e3164f66fd642efe8d39b925ef4b7308a20ebfc40277dfc610b2a516dcf"
+      "sha256": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756"
     },
     {
       "path": "asl/block/model/dispatch/generation-schema.asl",
-      "sha256": "a1a4e348a9641229b73df1129fac3624d3fd96905eae4a835cdac4ee49f70e67"
+      "sha256": "feadde0ca1dce3b46b49c9ba7768bcad3a9f99443413b3b1fe7a631bb90e7cea"
     },
     {
       "path": "asl/block/model/dispatch/matrix-scale.asl",
@@ -852,23 +852,23 @@
     },
     {
       "path": "asl/block/model/dispatch/predicate-destination.asl",
-      "sha256": "59d86f2f69f7e85993c21e03d99f9dbc696ae7d652a0912eb0b853c80a1692a9"
+      "sha256": "a06441c22690f69100ca62972b7732bdc6c7dfd81c43407b5668d302cb7ba17b"
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "b6641ea1899a45c2afc612befe15e01268bba38d3e8065d7a8825cd8cfc41957"
+      "sha256": "b1b28d2109be6e74f320649772708a8ecada19435767111a92517de486acdd47"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "d0bfa55f46df0ec161b8b69962f3a7a2cb5cbb78dc89d51f5934038f31b366e2"
+      "sha256": "d874ff5c684f6eb531505ac6029fa972ffe957ed0075febc7d6991b3526d1bf3"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "f295fd84f83a482fa8f5a659cb74cd4919fb6b85d8d5b7d8a173756ac6e48ec7"
+      "sha256": "22c5b8fdaa941fe934aa66f0762b1a09c1ae81efbee7d9d1370c27c3e730dc7b"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf"
+      "sha256": "651c72f5f0603799398135e3607cc90b86d4432da0f09881a669b3dde340f4fb"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
@@ -876,67 +876,83 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-destination.asl",
-      "sha256": "f235ce4c705079d980a130437813c66d36c7d327ede0cc80535ad5fdf59783d6"
+      "sha256": "8ad3e52ffa7b62d772a54ef45378d8d8671859bec47b3cac8121b0373ecb143a"
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "fc458a48b3c9c322dd6298885a55f6a4888e56f928534c5903e9d05d21925ebb"
+      "sha256": "15b0ac1344100a46f244b24f03d602549834c259be5c69943e965bd080249620"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
-      "sha256": "42f1ddcd420ddb35677a454fbbcd288155ea5a55b44da9c750d1090af69571a8"
+      "sha256": "25d13561c47c7e64614e3f0c4754730f16297eddc25bf15ff7058dc9fc3acebb"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "aeb4e2f5bfaa8e4be768bb6a897ffb778e21c7437552a49b196f9c950066a07f"
+      "sha256": "1a1f5222fe16da17afad4c6259b2d623e8469b9e9dcc2c94950d604f7dbb43a1"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "e7f2fda4155298f38f920e8e8a4f131f685e9439f22697dd81401295fb4ee7b6"
+      "sha256": "19740b5e96c976d356239b5b0a8f852729d2996a1dd37c4e40559ef192036a33"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "902cf28036e09a730aacd3d6f751c00a440d3ce7392084a603c42c4ede212a11"
+      "sha256": "bb750e8700e9224c0834f6e7285813da64cd0f2eb71101bc33844e83e18d2ff2"
+    },
+    {
+      "path": "asl/block/model/dispatch/timg2col-execution.asl",
+      "sha256": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35"
+    },
+    {
+      "path": "asl/block/model/dispatch/timg2col-schema.asl",
+      "sha256": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-      "sha256": "0b2c65a197536b48d516f56975d6303d275f2a649f3409a20368ea0445ae9812"
+      "sha256": "948946416a87f10cbe563556a857169f9574f0cddff240b9968cc381c3096828"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159"
+      "sha256": "0ddcbec724a75acd2fa4cc534bba788eb15fcb029d34fb75b5ecdbd0978c4c70"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "6bc7f9212605217e06b0d30afa5826467e4af4b23d9f0f52c22731a4a144dcff"
+      "sha256": "b5e5d0c65e6c0bcc1fcccb429ba3adbbb8b287ad509866c18d4cf2467daf3881"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "3de51afff6cadfab0030b8572763fabf92dafa11fc8fe76013d435426209bbfb"
+      "sha256": "7b3e65e5276432ae8b72dad188a6b7e1b3ce3c49e5e19aea3bc61396979c8960"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "054cd448bbed1fb782145dfc18339a8664c3c63396196f20fe6c933c987f97a4"
+      "sha256": "8300cd350d848d41095c0c024852a925782c96fd2171f1b887e444885c706d6b"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "35ad7020bbaa3a3108f81aca7b3e324afe045a477dd4027e06f2202bba9140fa"
+      "sha256": "289972ef6f6e495d785eab85238276333f7d5d0933feda46616d005381b3e703"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
-      "sha256": "79f4a9d81aba5f4b40d032da1c01115199e17fb140ff08576c4a23b437b80437"
+      "sha256": "3c861fedffccae228bc5bcb6c8191b3effbee6389433264484889b1c55dcb819"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter.asl",
-      "sha256": "31ab1e1b1e237abe9b9005d7448a80a4296a7843425025fa01029f366528e367"
+      "sha256": "994721fbab076ae70bf812fbf9f38d127104d3df1cbac00db48c726fe6554926"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-prefetch.asl",
-      "sha256": "b107fe0e545c9d64e35e2689d91fd724a08d3a23981c06a0717d2a137630b6f9"
+      "sha256": "08d470dfc375c62c22219fb5158f24c42caa3410fdb284afd85eccd71e258275"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "9df548e07c24e683ff375e0cb33a0786432f19455633d4c167d32f2b25161f99"
+      "sha256": "bf9b29d428ad3e06c0a57aaf27c27a4b2986467f3f8b61579f3d876933b410b2"
+    },
+    {
+      "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
+      "sha256": "b14a55f0dcba8a3bc206a404763cf0cacb88f6d15c83e15a1dae663abf01c28b"
+    },
+    {
+      "path": "asl/block/model/dispatch/weight-to-shared-schema.asl",
+      "sha256": "35a4a68557fa122603f26e9aa32a4b5c64982645c43e28afeb06101055cfc55f"
     },
     {
       "path": "asl/tile/model/numeric/exceptions.asl",
@@ -944,7 +960,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "498887f273c87b5a16fea498ee4faf08433ed5206d5d40afe1fb8aa0d1ec09cf"
+      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -952,15 +968,15 @@
     },
     {
       "path": "asl/tile/model/execution/cube.asl",
-      "sha256": "15af194fd2a25cc515199cba6675770ed9d9c1cd432d623387ff1d9fbd7badaf"
+      "sha256": "0597d5a1c35143a267a5e435e0014631256d613786629f0236098d399e0fc9cb"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "d7e99a6ca83099ae6f6a536cdde4c6db3cdc9dbbb6c6e23a594ade1f20043f02"
+      "sha256": "251485e32b747b2d09128ff58a9e12b686ab19110d9d63d19510a0d67d6ee7c4"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
+      "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
@@ -972,7 +988,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
-      "sha256": "53d6e6e892a9800b3bed1bdf8803f771f42a1fa698bc9274cb48583629104464"
+      "sha256": "a510b3930dbd78c401b19882483792383ae60144817c41ab368a970824a32862"
     }
   ],
   "summary": {

@@ -111,13 +111,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |
@@ -154,13 +154,13 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | 12 | assigned | E1M2X2 |
 | 13 | assigned | E8M0 |
 | 14 | assigned | HiF4X2 |
-| 15 | reserved | future extension |
+| 15 | assigned | E6M2 |
 | 16 | assigned | S64 |
 | 17 | assigned | S32 |
 | 18 | assigned | S16 |
 | 19 | assigned | S8 |
 | 20 | assigned | S4X2 |
-| 21 | reserved | future extension |
+| 21 | assigned | RCPE6M2 |
 | 22 | reserved | future extension |
 | 23 | reserved | future extension |
 | 24 | assigned | U64 |
@@ -212,9 +212,9 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TCVT(
     data_type: TileDataType) => boolean
 begin
-    // TileDataType has exactly the twenty-five assigned architectural values.
-    // Reserved five-bit encodings never enter this semantic type.
-    return TRUE;
+    // Assigned identity is separate from TCVT pair legality. HiF4X2 remains
+    // an assigned Matrix/MX payload but is not a standalone TCVT type.
+    return data_type != TileDataType_HiF4X2;
 end;
 
 pure func InstructionContractDestinationDataType_TCVT(
@@ -268,7 +268,7 @@ end;
 - TCVT is selected only by VEC Mode 0 Function 27 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one source and one newly allocated destination. B.IOR, B.IOS, a second source, and a second binding are illegal.
 - For ordinary layouts, source and destination have equal Row, Col, ValidRow, and ValidCol. For a CUBE_M16 or CUBE_M32 source, the destination preserves the same CUBE layout and ValidRow/ValidCol, while Row, Col, CELL count, capacity, and packing independently match the destination DataType.
-- Every assigned Tile DataType is legal. Reserved five-bit DataType codes reject before effects; HiF4X2 is TCVT-only.
+- TCVT legal pairs are profile-scoped: FP32/FP16/BF16 <-> E2M1X2/E1M2X2; FP16/BF16 <-> E6M2; RCPE6M2 -> FP16/BF16. No pair contains HiF4X2, and RCPE6M2 has no destination encoding. Reserved five-bit DataType codes reject before effects.
 - Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.
 - Canonicalize=1 is reserved-illegal before effects. CUBE_M16 and CUBE_M32 sources with Canonicalize=0 preserve the source layout while the destination independently derives its geometry from the destination DataType. An ordinary source requires Canonicalize=0.
 - The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.

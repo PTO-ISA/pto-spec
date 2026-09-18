@@ -7253,15 +7253,15 @@
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "d1f2583ef1d75716f7e5ffbdc63c4f2bc770cc421eb6f321718196278fee9069"
+      "sha256": "147b9c0d1cdba8baa85763dca85592d6dff413d03e1912219bfdf668a02bcad9"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16"
+      "sha256": "cf76a0e3709883c4cc100fd76796820216cc193418d2ec6563da857ddf00b762"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "4151ff2d8ce47fc7f0f5c4334c1eecd783ebdcc7a3f82935081023e67376fb5d"
+      "sha256": "7f3a6521f784a6f2384ba03a01ac25fbf55e6c2e5e88f0c50fdede7facc17679"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
@@ -7269,7 +7269,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "246689ea145b8fe5d27765bfd8b5dc81024ec64ec3970a3389a2098dabfbad4e"
+      "sha256": "014352e90d17b362a568e3618c131aad091f66adbd52f897f74ada233af60363"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
