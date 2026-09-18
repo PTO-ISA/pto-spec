@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","surface":"block","classification":["model","operands","portable-carriers"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-BLOCK-MODEL-STATE-CONTROL-STATE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","surface":"block","classification":["model","operands","portable-carriers"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
 
 // NDF-BEGIN: PTO-B-ASSEMBLE-CONSUMER-READINESS-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -45,7 +45,9 @@ readonly func BundleLocalGenerationPublicationEligible(
     slot: integer {0..63}) => boolean
 begin
     if !_LocalGenerations[[slot]].last_seen ||
-       !_LocalGenerations[[slot]].parent_descriptor.valid then
+       (BundleLocalGenerationCubeLayout(
+            _LocalGenerations[[slot]].parent_descriptor.layout) &&
+        !_LocalGenerations[[slot]].descriptor_finalized) then
         return FALSE;
     end;
     for pe = 0 to 3 do
@@ -91,7 +93,11 @@ begin
     let raw_offset = UInt(offset);
     if raw_offset > 2047 then return FALSE; end;
     let offset_cells = raw_offset as integer {0..2047};
-    let parent_cells = _LocalGenerations[[slot]].parent_cell_count;
+    let parent_cells = if _LocalGenerations[[slot]].descriptor_finalized &&
+        BundleLocalGenerationCubeLayout(
+            _LocalGenerations[[slot]].parent_descriptor.layout) then
+        _LocalGenerations[[slot]].parent_descriptor.cube_cell_count
+        else _LocalGenerations[[slot]].parent_cell_count;
     if parent_cells == 0 || parent_cells > 2048 then return FALSE; end;
     var required: bits(2048) = Zeros{2048};
     var required_count: integer = 0;
@@ -184,7 +190,7 @@ func BundlePrepareConsumerSource(
     size_code: integer {0..15}, participant_mask: bits(4)) => boolean
 begin
     let slot = BundleLocalGenerationSlotForSource(source);
-    if slot == 64 || !_LocalGenerations[[slot]].parent_descriptor.valid then
+    if slot == 64 || !_LocalGenerations[[slot]].generation_identity_valid then
         return TRUE;
     end;
     return BundleConsumerDependencyRequiredRange(
@@ -474,7 +480,6 @@ begin
             return BundleProducerEffect_AtomicAuxiliary;
     end;
 end;
-
 pure func BundleProducerEffectClassOfOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
     => BundleProducerEffectClass

@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/tile-bindings.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-DESCRIPTORS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
 func SetBundleTileBinding(index: BundleTileBindingIndex,
                          destination_valid: boolean,
                          destination: TileIndex,
@@ -134,10 +134,14 @@ readonly func BundleLocalGenerationPEPublicationEligible(
     slot: integer {0..63}, pe: integer {0..3}) => boolean
 begin
     if !_LocalGenerations[[slot]].last_seen ||
-       !_LocalGenerations[[slot]].parent_descriptor.valid ||
+       (BundleLocalGenerationCubeLayout(
+            _LocalGenerations[[slot]].parent_descriptor.layout) &&
+        !_LocalGenerations[[slot]].descriptor_finalized) ||
        _LocalGenerations[[slot]].participant_mask[
            PTOPEMaskBitOfPEIdentity(pe)] == '0' then return FALSE; end;
-    let required = _LocalGenerations[[slot]].parent_cell_count;
+    let required = if _LocalGenerations[[slot]].descriptor_finalized then
+        _LocalGenerations[[slot]].parent_descriptor.cube_cell_count
+        else _LocalGenerations[[slot]].parent_cell_count;
     if required == 0 || required > 2048 then return FALSE; end;
     for cell = 0 to 2047 do
         if cell < required &&

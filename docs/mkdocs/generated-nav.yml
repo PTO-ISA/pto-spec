@@ -235,6 +235,7 @@ nav:
               - Timg2col Gm: block/model/memory/timg2col-gm.md
               - Weight To Shared Gm: block/model/memory/weight-to-shared-gm.md
           - Operands:
+              - Local Generation CUBE: block/model/operands/local-generation-cube.md
               - Local Generation: block/model/operands/local-generation.md
               - Portable Carriers: block/model/operands/portable-carriers.md
               - Range Modifiers: block/model/operands/range-modifiers.md
