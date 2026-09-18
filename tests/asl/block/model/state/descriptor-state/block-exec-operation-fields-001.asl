@@ -39,8 +39,7 @@ begin
 
     for data_type_code = 0 to 31 do
         let data_type = Zeros{5} + data_type_code;
-        let expected = data_type_code <= 14 ||
-                       (16 <= data_type_code && data_type_code <= 20) ||
+        let expected = data_type_code <= 21 ||
                        (24 <= data_type_code && data_type_code <= 28);
         assert BundleDataTypeSupported(data_type) == expected;
     end;

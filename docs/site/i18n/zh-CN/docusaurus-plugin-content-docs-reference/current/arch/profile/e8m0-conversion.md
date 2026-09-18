@@ -271,6 +271,19 @@ implementation func TileProfileConvert(
     destination_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
+    // The E6M2/RCPE6M2 scale identities and the packed X2 formats have their
+    // own closed reference policy; route them through the same dispatcher the
+    // TCVT instruction uses instead of the generic raw-encoding fallback.
+    if source_type == TileDataType_E2M1X2 ||
+       source_type == TileDataType_E1M2X2 ||
+       destination_type == TileDataType_E2M1X2 ||
+       destination_type == TileDataType_E1M2X2 ||
+       source_type == TileDataType_E6M2 ||
+       destination_type == TileDataType_E6M2 ||
+       source_type == TileDataType_RCPE6M2 then
+        return ReferenceTCVTConvert(
+            value, source_type, destination_type, control);
+    end;
     if ReferenceCommonConversionTypeSupported(source_type) &&
        ReferenceCommonConversionTypeSupported(destination_type) then
         return ReferenceCommonConvert(

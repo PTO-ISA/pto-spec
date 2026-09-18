@@ -133,7 +133,8 @@ begin
     InstructionContractExecute_TCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x3f000000;
-    assert ReadTileElement(1, 0, 4) == Zeros{PTO_XLEN} + 0x40a00000;
+    // Logical nibble 5 decodes through the E2M1X2 reference policy to 3.0.
+    assert ReadTileElement(1, 0, 4) == Zeros{PTO_XLEN} + 0x40400000;
     assert !TileElementDefined(1, 0, 5);
     assert !TileElementDefined(1, 1, 5);
 end;

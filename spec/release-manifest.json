@@ -206,7 +206,7 @@
     },
     {
       "path": "asl/arch/profile/e8m0-conversion.asl",
-      "sha256": "ff02d6c9a1fe7ea26f651bea7002dcd9eee1086f0b428ddd9e095a132c3f663c"
+      "sha256": "4e6dc241b2766d029cde2351551cc34accf3beb27b60bbf6619f4b0d607570e8"
     },
     {
       "path": "asl/arch/profile/extension-first-use.asl",
@@ -3622,7 +3622,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "d0a9a62b9854740860c34b959b275ab9f19e200ce55471f95ae93fc081c30514"
+      "sha256": "ee81ae315dff7a103fc87958e43171d26fcee1894eeb2f3f757d695f1d61cb8e"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3630,15 +3630,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "5b6b60bf5974dd88ac3bcab82abe8e61eed829b6f42c9daa9518a3adea6a982d"
+      "sha256": "2d5afa9e37dc605fd75718b409b2ea0035c54792cd0c8302f785de74f4f1a1f5"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "685e3ba17c8e2b6944c66470117089452474867d301b59591c1af72ab0e448c3"
+      "sha256": "1711569cdcc1a1870374d3022672ba22edda772cacf79b0d157e3c3a401a216d"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a77e7081012aa60e1b6d03c09920101c204eeadfddd9f9728d757068ec72cb73"
+      "sha256": "ff107760fb27851c417382f15e6d8547287f0503632c8c0a4532f27955cc523b"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3700,7 +3700,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "5f28c52e5b3c8d94d3378416b0b51f9febbb400b8a3683145ed608b49c3edc9e",
+  "content_sha256": "1bb7d791ad5e68f2128f2082e66da9dcecbf3b594cd4279441bb77f7206e3a4e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3982,7 +3982,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/e8m0-conversion.md",
-      "sha256": "85b9e1cd2a76f281dfc3753dd2e3609f8e227a74d1447905c9bd145630cb9153"
+      "sha256": "4caa69125d8f051468174d76a6febfb8273d5bb09191369c95f304396591cd24"
     },
     {
       "kind": "generated-documentation",

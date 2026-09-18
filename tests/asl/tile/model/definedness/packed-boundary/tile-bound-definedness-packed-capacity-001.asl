@@ -152,6 +152,8 @@ begin
     let shared_fault_completed = ExecuteBundleTileOperation();
     assert !shared_fault_completed;
     assert _LastFault == Fault_DataPage;
-    assert !SharedTileRecord(shared_fault_id).descriptor_valid;
+    // A first fault retains the partial candidate generation in place but
+    // must not advertise it as ready or published.
+    assert !SharedTileFullyInitialized(shared_fault_id);
     return 0;
 end;

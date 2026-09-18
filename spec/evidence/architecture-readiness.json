@@ -24738,7 +24738,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a77e7081012aa60e1b6d03c09920101c204eeadfddd9f9728d757068ec72cb73",
+      "sha256": "ff107760fb27851c417382f15e6d8547287f0503632c8c0a4532f27955cc523b",
       "test_count": 3964,
       "unit_count": 896
     }
