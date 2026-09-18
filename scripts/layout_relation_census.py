@@ -1470,7 +1470,6 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     name not in LOCATION_RETIREMENT_LAYOUT_HELPERS and
                     not payload_index_inherited and
                     name not in LOCAL_SINGLE_M_BLOCK_HELPERS and
-                    not payload_index_inherited and
                     not packed_x2_layout_inherited):
                 errors.append(f"unauthorized common-helper layout change: {name}: {new['layouts']}")
                 classification = None
