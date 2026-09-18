@@ -47,6 +47,7 @@ begin
         _BundleExecutionDomainToken;
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
+    _TrapContexts[[target]].memory_replay_state = _MemoryReplayState;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].t_queue_valid = _TQueueValid;
     _TrapContexts[[target]].u_queue = _UQueue;

@@ -11,6 +11,24 @@ type MemoryOrder of enumeration {
     MemoryOrder_AcquireRelease
 };
 
+// Shareability is an architecture-visible classification used by the memory
+// model.  It is deliberately independent of any cache or interconnect tier.
+type MemoryShareability of enumeration {
+    MemoryShareability_Private,
+    MemoryShareability_IntraCore,
+    MemoryShareability_InterCore
+};
+
+// Fences carry their predecessor/successor class masks as the portable
+// transport contract.  Strength is derived from the pair of masks rather than
+// from an implementation-specific opcode encoding.
+type MemoryFenceStrength of enumeration {
+    MemoryFenceStrength_None,
+    MemoryFenceStrength_Release,
+    MemoryFenceStrength_Acquire,
+    MemoryFenceStrength_AcquireRelease
+};
+
 type MemoryAgentId of integer {0..PTO_MODEL_MEMORY_AGENTS-1};
 type MemoryEventIndex of integer {0..PTO_MODEL_MEMORY_EVENTS-1};
 type MemoryCoherenceRank of integer {0..PTO_MODEL_MEMORY_EVENTS-1};
@@ -40,3 +58,10 @@ type MemoryEvent of record {
 
 type MemoryRelationMatrix of array [[PTO_MODEL_MEMORY_EVENTS]]
     of bits(PTO_MODEL_MEMORY_EVENTS);
+
+type MemoryReplayState of record {
+    active: boolean,
+    request: Word,
+    committed_event_count: integer {0..PTO_MODEL_MEMORY_EVENTS},
+    epoch: integer
+};

@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "07606854e6a1214abfabad119aced921130d81e8",
+  "candidate_head": "e4a5b93f4e9eb152268a9064bf8f3ec629b28b21",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16300,6 +16300,15 @@
     },
     {
       "after_layouts": [],
+      "after_sha256": "cbd4763a8fb69f00077b53ff88aab62a12d190c293f606ffeddcd5f54725d36b",
+      "before_layouts": [],
+      "before_sha256": "c16888d98541787ef9117b38c9c5f7c069715393978c70d7da2468750a3e4ef1",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "ExecuteBundleCubeTransportOperation",
+      "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl"
+    },
+    {
+      "after_layouts": [],
       "after_sha256": "c8aa8b1dc0500f3c1d99d2514a9f060b2625a453eac2c9e7ff6804f8a926482c",
       "before_layouts": [],
       "before_sha256": "a75dc3aa464109a6075e9e84f7d4dd51002f2bd489342747e3a91ca60f58a62d",
@@ -16360,6 +16369,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "ExecuteBundleMSCATTEROperation",
       "path": "asl/block/model/dispatch/tlsu-mscatter.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "1216b0c97a19c3d4cd67601163ab091ffa26758115ed26286639edfffe4e980e",
+      "before_layouts": [],
+      "before_sha256": "a0cfafdf7a15e038b1002f949fc9f2c29511d435c81401691fd6701bf05992a7",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "ExecuteBundleSharedTLSUOperation",
+      "path": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
       "after_layouts": [],
@@ -45929,7 +45947,6 @@
               "ReadTPC",
               "ResolveBundleCubeTransportDestination",
               "ResolveBundleEffectiveDataType",
-              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
               "SetFault",
               "SetFault",
@@ -45947,7 +45964,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "c16888d98541787ef9117b38c9c5f7c069715393978c70d7da2468750a3e4ef1"
+            "sha256": "cbd4763a8fb69f00077b53ff88aab62a12d190c293f606ffeddcd5f54725d36b"
           }
         ],
         "ExecuteBundleGMAtomRedOperation": [
@@ -46439,7 +46456,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-tlsu.asl",
-            "sha256": "a0cfafdf7a15e038b1002f949fc9f2c29511d435c81401691fd6701bf05992a7"
+            "sha256": "1216b0c97a19c3d4cd67601163ab091ffa26758115ed26286639edfffe4e980e"
           }
         ],
         "ExecuteBundleTIMG2COLOperation": [

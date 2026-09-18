@@ -24,9 +24,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
 ## 操作机制
 
-完整的选定 PE GM 访问范围会在第一次存储前完成地址转换与权限检查。
+选定 PE 的每个 GM 元素在访问时完成地址转换与权限检查；请求在首个故障处停止。
 
-预检成功后，每个有效源元素都按解析后的字节行步幅存储；打包四位元素按列奇偶性选择字节半区。
+每个有效源元素都按解析后的字节行步幅存储，直到首个故障；打包四位元素按列奇偶性选择字节半区。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
@@ -42,18 +42,18 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-effects role=effects -->
 ## 已定义性、填充与发布
 
-源载荷与描述符保持不变；完整访问范围预检成功后，只有 GM 与内存事件状态改变。
+源载荷与描述符保持不变；故障前完成的 GM 写入与内存事件可以保留。
 
-故障不会留下部分 GM 写入或内存事件前缀。
+故障可能留下部分 GM 写入与内存事件前缀。
 
 源 Tile 在成功执行后保持不变。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-绑定模式、维度、DataType、布局、源描述符或临时 Shared 描述符，以及每个选定 GM 访问都会在效果前预检。
+绑定模式、维度、DataType、布局和源描述符在效果前校验；选定 GM 访问逐项进行直到首个故障。
 
-合法性或 GM 访问故障不会留下部分 GM 或内存-事件效果；TSTORE 不执行目标分配或目标发布。
+合法性故障不会留下部分 GM 效果；GM 访问故障可以保留较早写入与事件。TSTORE 不执行目标分配或目标发布。
 
 `PE_MASK=0000` 是严格无操作，发生在操作数读取、描述符检查、故障、GM 写入或内存事件效果之前。
 
@@ -64,7 +64,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TSTORE <bundle operands>` 会在存储有效矩形前完成全部形状、描述符与 GM 访问检查；源 Tile 保持不变。
+`TSTORE <bundle operands>` 先校验形状与描述符，再存储有效矩形直到首个 GM 故障；源 Tile 保持不变。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
@@ -246,17 +246,17 @@ end;
 ### Memory effects
 
 - For every selected PE and each element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.
-- The complete selected-PE footprint is translated and permission-checked before the first GM write. A fault therefore produces no partial GM or memory-event effect.
+- The selected-PE footprint is accessed element by element until the first fault. Stores and memory events completed before that fault may remain visible.
 
 ### Ordering
 
-- Snapshot the source payload, resolve the complete schema and dimensions, validate the source descriptor or temporary descriptor, and preflight every selected GM access before storing any element.
-- After successful preflight, store beats have no architecture-defined relative order. Software avoids overlapping selected-PE GM regions or establishes ordering separately.
+- Snapshot the source payload, resolve the complete schema and dimensions, validate the source descriptor or temporary descriptor, and access each selected GM element until the first fault.
+- After all requested stores complete without a fault, store beats have no architecture-defined relative order. Software avoids overlapping selected-PE GM regions or establishes ordering separately.
 
 ## Exceptions
 
 - A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.
-- A memory translation, permission, or alignment fault is detected before the first GM write.
+- A memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible.
 
 ## Examples
 

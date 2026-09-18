@@ -40,7 +40,7 @@ All four PE address footprints are preflighted before the first request or event
 
 Success emits TLOAD-equivalent typed load events for the strided rectangle but exposes no architectural cache placement or retention state.
 
-The block aq/rl attributes provide the same PTO-TSO ordering used by TLOAD.
+The block aq/rl attributes provide the same PTO-RC ordering used by TLOAD.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## Legality, padding, and faults
@@ -172,7 +172,7 @@ end;
 ### Ordering
 
 - Preflight all addresses and permissions for all four PEs before any event.
-- Use CurrentBundleMemoryOrder so aq/rl and PTO-TSO behavior match TLOAD.
+- Use CurrentBundleMemoryOrder so aq/rl and PTO-RC behavior match TLOAD.
 
 ## Exceptions
 

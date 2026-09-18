@@ -1,9 +1,9 @@
 ---
 {
   "id": "ADR-MEM-0001",
-  "title": "PTO total store order candidate model",
-  "title_zh": "PTO 全存储序候选模型",
-  "status": "accepted",
+  "title": "PTO total store order candidate model (superseded)",
+  "title_zh": "PTO 全存储序候选模型（已废止）",
+  "status": "superseded",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
   ],
@@ -13,7 +13,7 @@
   "created": "2026-07-28",
   "accepted": "2026-07-28",
   "rejected": null,
-  "superseded": null,
+  "superseded": "2026-09-16",
   "baseline": "e4b8d240e358eff9aacc38235f1de8f2a4c5582e",
   "target_releases": [
     "unassigned"
@@ -31,7 +31,9 @@
   ],
   "resolves": [],
   "supersedes": [],
-  "superseded_by": [],
+  "superseded_by": [
+    "ADR-MEM-0010"
+  ],
   "implementation_issue": null,
   "release_impact": "required",
   "legacy_ids": [

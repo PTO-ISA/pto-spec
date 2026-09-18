@@ -35,7 +35,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/generate-readme-inventory --check",
                 "python3 scripts/manual_semantic_audit.py",
                 "git diff --check",
-                "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection --exclude-module tests.scripts.test_ndf_compiler_graph_parity",
+                "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection",
             ],
         )
         lowered = "\n".join(commands).lower()

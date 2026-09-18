@@ -113,8 +113,9 @@ begin
         return;
     end;
     var result = tile;
-    // Instruction-wide preflight makes tile memory faults precise and
-    // restartable: no payload element changes until every access succeeds.
+    BeginMemoryReplay(ReadBPC());
+    // First-fault-only execution retains effects completed before the first
+    // failing access. The destination is not marked complete until success.
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(tile,
@@ -123,18 +124,12 @@ begin
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
-            if RaiseDataAccessFault(probe, address) then return; end;
-        end;
-    end;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryStridedByteAddress(base_address,
-                row as integer {0..65535}, column as integer {0..65535},
-                row_stride_bytes, tile.data_type);
-            let translated = ProbeTileMemoryAccess(address, tile.data_type,
-                FALSE).translated_address;
+            if RaiseDataAccessFault(probe, address) then
+                _Tiles[[destination]] = result;
+                FlushMemoryReplay();
+                return;
+            end;
+            let translated = probe.translated_address;
             let high_nibble = TileMemoryStridedByteHighNibble(
                 column as integer {0..65535}, tile.data_type);
             let raw = LoadTranslatedUnsigned(translated,
@@ -142,8 +137,11 @@ begin
             RecordLoadEvent(translated,
                 TileMemoryElementBytes(tile.data_type), raw,
                 CurrentBundleMemoryOrder());
+            CommitMemoryReplayEffect();
             result = TileInfoWithLogicalElement(result, element,
                 DecodeTileMemoryElementRaw(raw, tile.data_type, high_nibble));
+            result.defined_valid_elements =
+                (result.defined_valid_elements + 1) as integer {0..524288};
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -151,6 +149,7 @@ begin
         result = TileWithPadding(result, CurrentBundlePadValue());
     end;
     _Tiles[[destination]] = result;
+    CompleteMemoryReplay();
 end;
 
 func TSTORE(base_address: Word, row_stride_bytes: Word, source: TileIndex)
@@ -160,6 +159,7 @@ begin
     if TileLayoutIsCube(tile.layout) then
         assert TileCubeDescriptorLegal(tile);
     end;
+    BeginMemoryReplay(ReadBPC());
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(tile,
@@ -168,18 +168,11 @@ begin
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
-            if RaiseDataAccessFault(probe, address) then return; end;
-        end;
-    end;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryStridedByteAddress(base_address,
-                row as integer {0..65535}, column as integer {0..65535},
-                row_stride_bytes, tile.data_type);
-            let translated = ProbeTileMemoryAccess(address, tile.data_type,
-                TRUE).translated_address;
+            if RaiseDataAccessFault(probe, address) then
+                FlushMemoryReplay();
+                return;
+            end;
+            let translated = probe.translated_address;
             let stored_value = StoreTileMemoryElement(
                 address, translated, tile.data_type,
                 TileMemoryStridedByteHighNibble(
@@ -188,8 +181,10 @@ begin
             RecordStoreEvent(translated,
                 TileMemoryElementBytes(tile.data_type), stored_value,
                 CurrentBundleMemoryOrder());
+            CommitMemoryReplayEffect();
         end;
     end;
+    CompleteMemoryReplay();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

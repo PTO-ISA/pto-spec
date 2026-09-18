@@ -1,4 +1,60 @@
 // PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","surface":"arch","classification":["memory-model","fault-precision"],"depends_on":["PTO-ARCH-STATE-TRAP-CONTEXT"]}
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-REPLAY-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// A scalar fault is precise: effects committed by older instructions remain,
+// the faulting instruction is the restart point, and younger work has no
+// architectural effect.  A Tile memory request is precise at its Block
+// boundary; completed TLOAD/TSTORE beats remain visible, while retrying a
+// fault re-executes the whole logical request and never exposes an internal
+// lane or cursor as architectural state.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-REPLAY-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-FLUSH-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// A replay flush discards only uncommitted event records and younger pending
+// work.  It MUST NOT roll back committed GM writes, committed Tile payload
+// elements, or a memory event already admitted before the fault.  Recovery
+// retries from the saved instruction/request template.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-FLUSH-001
+
+func BeginMemoryReplay(request: Word)
+begin
+    _MemoryReplayState.active = TRUE;
+    _MemoryReplayState.request = request;
+    _MemoryReplayState.committed_event_count = _MemoryEventCount;
+    _MemoryReplayState.epoch = _MemoryReplayState.epoch + 1;
+end;
+
+func CommitMemoryReplayEffect()
+begin
+    if _MemoryReplayState.active then
+        _MemoryReplayState.committed_event_count = _MemoryEventCount;
+    end;
+end;
+
+func FlushMemoryReplay()
+begin
+    if _MemoryReplayState.active then
+        // Event records after the last committed effect are speculative and
+        // are removed.  Architectural memory and Tile state are not undone.
+        _MemoryEventCount = _MemoryReplayState.committed_event_count;
+        _MemoryReplayState.active = FALSE;
+    end;
+end;
+
+func CompleteMemoryReplay()
+begin
+    if _MemoryReplayState.active then
+        _MemoryReplayState.committed_event_count = _MemoryEventCount;
+        _MemoryReplayState.active = FALSE;
+    end;
+end;
+
+readonly func MemoryReplayCanRetryWholeRequest(request: Word) => boolean
+begin
+    return !_MemoryReplayState.active &&
+           (_MemoryReplayState.request == request ||
+            _MemoryReplayState.request == Zeros{PTO_XLEN});
+end;
 func SetFaultWithCause(code: FaultCode, address: Word, cause: bits(24))
 begin
     let source_ring = CurrentACR();

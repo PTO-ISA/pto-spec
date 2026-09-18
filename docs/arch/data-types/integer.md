@@ -63,7 +63,7 @@ Read a model-bound array extent as a type-checking contract for this ASL model, 
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-DATA-TYPES-INTEGER","surface":"arch","classification":["data-types","integer"],"depends_on":["PTO-ARCH-FEATURES-TILE-ALLOCATION"]}
 // Requirement references: PTO-REQ-STATE-001, PTO-REQ-TILE-001,
-// PTO-REQ-FAULT-001, PTO-REQ-MEMORY-TSO-001.
+// PTO-REQ-FAULT-001, PTO-REQ-MEMORY-RC-001.
 
 type Word of bits(PTO_XLEN);
 type DoubleWord of bits(PTO_XLEN * 2);

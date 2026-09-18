@@ -222,7 +222,7 @@ end;
 ### Ordering
 
 - The four PE footprints are one combined preflighted block attempt; no request or event becomes effective until every address, translation, permission, and access check succeeds.
-- All successful accesses participate in PTO-TSO using the block aq/rl attributes exactly as TLOAD.
+- All successful accesses participate in PTO-RC using the block aq/rl attributes exactly as TLOAD.
 
 ## Exceptions
 

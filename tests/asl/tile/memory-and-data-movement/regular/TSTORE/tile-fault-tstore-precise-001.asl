@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-PRECISE-001","source":"asl/tile/memory-and-data-movement/regular/TSTORE.asl","requirements":["PTO-INST-TILE-TSTORE"],"kind":"fault","summary":"TSTORE preflights its full footprint before the first GM or source-state effect.","pass_condition":"A second element on an unmapped page faults with zero memory events and leaves the first address and source Tile unchanged.","related_sources":["asl/tile/model/memory/load-store.asl","asl/arch/memory-model/fault-precision.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-PRECISE-001","source":"asl/tile/memory-and-data-movement/regular/TSTORE.asl","requirements":["PTO-INST-TILE-TSTORE","PTO-TSTORE-MEMORY-001"],"kind":"fault","summary":"TSTORE stops at its first memory fault and retains prior GM effects without modifying the source Tile.","pass_condition":"The first element is stored and recorded, the second element faults, and the source Tile remains unchanged.","related_sources":["asl/tile/model/memory/load-store.asl","asl/arch/memory-model/fault-precision.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -11,12 +11,15 @@ begin
     StartMemoryEventCapture(0);
     TSTORE(Zeros{PTO_XLEN} + 4088, Zeros{PTO_XLEN} + 1, 5);
     assert _LastFault == Fault_DataPage;
-    assert _MemoryEventCount == 0;
+    assert _MemoryEventCount == 1;
+    assert !_MemoryReplayState.active;
+    assert _MemoryReplayState.committed_event_count == 1;
+    assert MemoryReplayCanRetryWholeRequest(Zeros{PTO_XLEN});
     StopMemoryEventCapture();
 
     ClearFault();
     let preserved = LoadUnsigned(Zeros{PTO_XLEN} + 4088, 8);
-    assert preserved == Zeros{PTO_XLEN} + 9;
+    assert preserved == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(5, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(5, 0, 1) == Zeros{PTO_XLEN} + 22;
     assert InstructionContractZeroMaskNoEffect_TSTORE('0000');

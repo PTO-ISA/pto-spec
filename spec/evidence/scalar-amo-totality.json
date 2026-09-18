@@ -156,7 +156,7 @@
     "PTO-REQ-SCALAR-OPERAND-001",
     "PTO-REQ-MEMORY-001",
     "PTO-REQ-MEMORY-COMPLETION-001",
-    "PTO-REQ-MEMORY-TSO-001",
+    "PTO-REQ-MEMORY-RC-001",
     "PTO-REQ-SCALAR-EXECUTION-001"
   ],
   "reservation_case_breakdown": {

@@ -16,8 +16,8 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/amo/semantics.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-SCALAR-MODEL-AMO-SEMANTICS","surface":"scalar","classification":["model","amo","semantics"],"depends_on":["PTO-SCALAR-MODEL-AGU-ADDRESSING","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
-// PTO-REQ-SCALAR-AMO-001, PTO-REQ-MEMORY-TSO-001: LR/SC, CAS, and atomic
-// read-modify-write operations represented as indivisible TSO events.
+// PTO-REQ-SCALAR-AMO-001, PTO-REQ-MEMORY-RC-001: LR/SC, CAS, and atomic
+// read-modify-write operations represented as indivisible PTO-RC memory events.
 
 readonly impdef func AtomicAddress(address: Word, far: boolean) => Word
 begin

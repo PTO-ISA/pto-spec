@@ -40,7 +40,7 @@ ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TPRE
 
 成功时为带步幅矩形发出与 TLOAD 等价的带类型载入事件，但不暴露架构缓存放置或保留状态。
 
-块的 aq/rl 属性提供与 TLOAD 相同的 PTO-TSO 排序。
+块的 aq/rl 属性提供与 TLOAD 相同的 PTO-RC 排序。
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## 合法性、填充与故障
@@ -172,7 +172,7 @@ end;
 ### Ordering
 
 - Preflight all addresses and permissions for all four PEs before any event.
-- Use CurrentBundleMemoryOrder so aq/rl and PTO-TSO behavior match TLOAD.
+- Use CurrentBundleMemoryOrder so aq/rl and PTO-RC behavior match TLOAD.
 
 ## Exceptions
 

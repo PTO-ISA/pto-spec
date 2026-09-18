@@ -203,10 +203,14 @@ begin
             CurrentBundleTileLayout(), shared_mask);
         if assembling then
             let candidate = SharedTileRecord(shared_tile_id);
-            RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
-            if _LastFault == Fault_None &&
-               !CommitBundleSharedGenerationCandidate(0, candidate) then
-                SetFault(Fault_TileLegality, ReadTPC());
+            // On a first fault, leave the candidate record in place: prior
+            // reads remain observable but the partial generation is not ready
+            // or published. Successful candidates still commit atomically.
+            if _LastFault == Fault_None then
+                RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
+                if !CommitBundleSharedGenerationCandidate(0, candidate) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                end;
             end;
         end;
     elsif function == 1 then

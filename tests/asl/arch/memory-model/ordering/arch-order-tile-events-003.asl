@@ -58,7 +58,7 @@ begin
     assert _MemoryEvents[[1]].agent == _MemoryEvents[[2]].agent;
     assert _MemoryEvents[[2]].read_from == 1;
     assert MemoryCandidateExecutionValid();
-    assert MemoryExecutionAllowedTSO();
+    assert MemoryExecutionAllowedRC();
     StopMemoryEventCapture();
 
     ClearFault();
@@ -84,13 +84,13 @@ begin
     StopMemoryEventCapture();
 end;
 
-func TestTSOMixedSizeAndConditionalAtomicPolicy()
+func TestRCMixedSizeAndConditionalAtomicPolicy()
 begin
     ResetMemoryExecution();
     - = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 4, Zeros{PTO_XLEN});
     assert MemoryCandidateExecutionValid();
-    assert MemoryExecutionAllowedTSO();
+    assert MemoryExecutionAllowedRC();
 
     ResetMemoryExecution();
     - = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
@@ -105,13 +105,13 @@ begin
         MemoryOrder_Acquire, 0, FALSE);
     SetMemoryReadFrom(failed_cas, initial);
     assert MemoryCandidateExecutionValid();
-    assert MemoryExecutionAllowedTSO();
+    assert MemoryExecutionAllowedRC();
 end;
 
 func main() => integer
 begin
     ResetProfileState();
     TestProductionTileEventExtraction();
-    TestTSOMixedSizeAndConditionalAtomicPolicy();
+    TestRCMixedSizeAndConditionalAtomicPolicy();
     return 0;
 end;

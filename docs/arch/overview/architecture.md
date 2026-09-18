@@ -55,7 +55,7 @@ For a release question, compare every result with the same immutable commit. A p
 ## Related owners
 
 - [Execution context](../programming-model/execution-context.md) inventories the principal architectural state and temporary-queue operations.
-- [Memory ordering](../memory-model/ordering.md) defines the event relations used to accept or reject a candidate PTO-TSO execution.
+- [Memory ordering](../memory-model/ordering.md) defines the event relations used to accept or reject a candidate PTO-RC execution with preserved Store-to-Store order.
 - [Reference profile](../profile/reference-profile.md) supplies deterministic profile implementations for profile-defined hooks.
 <!-- SUPPLEMENTARY-END -->
 

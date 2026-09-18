@@ -235,18 +235,18 @@ end;
 ### Memory effects
 
 - For every selected PE and every element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
-- All accesses participate in PTO-TSO with the block's aq/rl attributes and are precise and restartable.
+- All accesses participate in PTO-RC with the block's aq/rl attributes and report the first fault while retaining prior completed reads.
 - Weight mode maps OHWI/OIHW GM weights into canonical [kh][kw][c1][c0] order, defines Cin padding lanes as raw zero without GM access, and writes a row-major Shared [N][K] window without touching physical tails.
 
 ### Ordering
 
-- Resolve and validate the full schema, dimensions, masks, per-PE GPR inputs, destination allocation, and complete memory footprint before the first architectural load effect.
-- On success publish the complete destination atomically at block commit; on failure preserve prior destination and block-visible state for restart.
+- Resolve and validate the full schema, dimensions, masks, per-PE GPR inputs, and destination allocation before accessing each element until the first fault.
+- On success publish the complete destination atomically at block commit; on a fault retain only completed effects and do not advertise a partial destination as complete.
 
 ## Exceptions
 
 - Reserved DataType, unsupported Layout, invalid dimensions, capacity/shape overflow, inconsistent or illegal PE masks, malformed binding schema, allocation failure, or memory translation/permission/alignment fault rejects before destination publication.
-- The complete selected-PE footprint is preflighted before any Local or Shared destination payload or descriptor becomes visible.
+- The request stops at the first memory fault; completed reads may remain in a partially defined Local destination or Shared generation, which is not complete or whole-parent-ready.
 
 ## Examples
 

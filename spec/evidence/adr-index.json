@@ -3159,15 +3159,17 @@
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
+      "status": "superseded",
+      "superseded": "2026-09-16",
+      "superseded_by": [
+        "ADR-MEM-0010"
+      ],
       "supersedes": [],
       "target_releases": [
         "unassigned"
       ],
-      "title": "PTO total store order candidate model",
-      "title_zh": "PTO \u5168\u5b58\u50a8\u5e8f\u5019\u9009\u6a21\u578b"
+      "title": "PTO total store order candidate model (superseded)",
+      "title_zh": "PTO \u5168\u5b58\u50a8\u5e8f\u5019\u9009\u6a21\u578b\uff08\u5df2\u5e9f\u6b62\uff09"
     },
     {
       "accepted": "2026-07-29",
@@ -4633,6 +4635,131 @@
       ],
       "title": "TLSU and global-memory operations",
       "title_zh": "TLSU \u4e0e\u5168\u5c40\u5185\u5b58\u64cd\u4f5c"
+    },
+    {
+      "accepted": "2026-09-16",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
+        "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-RANGE-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001",
+        "PTO-ARCH-MEMORY-MODEL-QUALIFIER-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-PREFETCH-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
+        "PTO-ARCH-MEMORY-MODEL-OPEN-001",
+        "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
+        "PTO-TLOAD-MEMORY-001",
+        "PTO-TSTORE-MEMORY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-MODEL-MEMORY-RESTART",
+        "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU"
+      ],
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "authors": [
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
+      ],
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "created": "2026-09-16",
+      "id": "ADR-MEM-0010",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/302",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-MEM-0010-relaxed-consistency-store-store-order.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "superseded",
+      "superseded": "2026-09-17",
+      "superseded_by": [
+        "ADR-MEM-0011"
+      ],
+      "supersedes": [
+        "ADR-MEM-0001"
+      ],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "PTO relaxed consistency with preserved Store-to-Store order",
+      "title_zh": "PTO \u4fdd\u7559 Store-to-Store \u987a\u5e8f\u7684 RC \u5185\u5b58\u6a21\u578b"
+    },
+    {
+      "accepted": "2026-09-17",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
+        "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-RANGE-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001",
+        "PTO-ARCH-MEMORY-MODEL-QUALIFIER-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-PREFETCH-001",
+        "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001",
+        "PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
+        "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
+        "PTO-ARCH-MEMORY-MODEL-OPEN-001",
+        "PTO-TLOAD-MEMORY-001",
+        "PTO-TSTORE-MEMORY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+        "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TSTORE"
+      ],
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "authors": [
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
+      ],
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "created": "2026-09-17",
+      "id": "ADR-MEM-0011",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/302",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [
+        "ADR-MEM-0010"
+      ],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "Cross-agent visibility, fence transport, atomic ordering, and precise replay",
+      "title_zh": "\u8de8 agent \u53ef\u89c1\u6027\u3001fence \u4f20\u8f93\u3001atomic \u987a\u5e8f\u4e0e\u7cbe\u786e\u91cd\u653e"
     },
     {
       "accepted": "2026-07-31",
@@ -11396,12 +11523,12 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 111,
+    "record_count": 113,
     "type_counts": {
       "BLOCK": 19,
       "CUBE": 18,
       "GOV": 11,
-      "MEM": 9,
+      "MEM": 11,
       "NUM": 22,
       "SCALAR": 6,
       "STATE": 13,

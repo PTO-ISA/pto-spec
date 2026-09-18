@@ -1051,7 +1051,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "casb_32_7e529b871832",
@@ -1071,7 +1071,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "casd_32_5852c57277a6",
@@ -1091,7 +1091,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "cash_32_cb1315ff6cb5",
@@ -1111,7 +1111,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "casw_32_cb29e4287223",
@@ -1671,7 +1671,7 @@
       "pto_disposition": "Independent model decodes the form but does not provide executable semantics for this row.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "dma_32_a168aeca5fa5",
@@ -2512,7 +2512,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "hl_casb_48_21fb578617a8",
@@ -2532,7 +2532,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "hl_casd_48_fbb5c4256d30",
@@ -2552,7 +2552,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "hl_cash_48_eee12c324d97",
@@ -2572,7 +2572,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "hl_casw_48_a89b3d58d8f0",
@@ -6352,7 +6352,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_add_32_a4038a6c7e86",
@@ -6372,7 +6372,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_and_32_2a46b3003480",
@@ -6392,7 +6392,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_or_32_456d270cfc7d",
@@ -6432,7 +6432,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_smax_32_a3aad6120226",
@@ -6452,7 +6452,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_smin_32_9461d345718f",
@@ -6472,7 +6472,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_umax_32_a84af75745d9",
@@ -6492,7 +6492,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_umin_32_4bf2f357eff3",
@@ -6512,7 +6512,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "ld_xor_32_33072c0fde61",
@@ -6732,7 +6732,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lr_b_32_cf80903a761a",
@@ -6752,7 +6752,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lr_d_32_84d21a553dc1",
@@ -6772,7 +6772,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lr_h_32_f936df218d63",
@@ -6792,7 +6792,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lr_w_32_efecc735bb75",
@@ -6872,7 +6872,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_add_32_5be3ad1ad081",
@@ -6892,7 +6892,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_and_32_f8dd9866b069",
@@ -6912,7 +6912,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_or_32_d6d2f87706fd",
@@ -6952,7 +6952,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_smax_32_838b8c673c91",
@@ -6972,7 +6972,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_smin_32_44452ae44d02",
@@ -6992,7 +6992,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_umax_32_3c6a5a534674",
@@ -7012,7 +7012,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_umin_32_fd9b7bb538a3",
@@ -7032,7 +7032,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "lw_xor_32_4d4aa82c676a",
@@ -7652,7 +7652,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sc_b_32_baf609e1d5c3",
@@ -7672,7 +7672,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sc_d_32_2e714149031c",
@@ -7692,7 +7692,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sc_h_32_108941eabac6",
@@ -7712,7 +7712,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sc_w_32_14b238f02bfd",
@@ -7772,7 +7772,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_add_32_2a55ae1228bd",
@@ -7792,7 +7792,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_and_32_71963e1769c2",
@@ -7812,7 +7812,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_or_32_2a65eedfae0f",
@@ -7852,7 +7852,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_smax_32_e59bf90b50c3",
@@ -7872,7 +7872,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_smin_32_188d93125032",
@@ -7912,7 +7912,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_umax_32_89c5ec42be68",
@@ -7932,7 +7932,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_umin_32_2388cbb378ac",
@@ -7952,7 +7952,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sd_xor_32_7655ceaf9497",
@@ -8872,7 +8872,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_add_32_3dca755552cb",
@@ -8892,7 +8892,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_and_32_7ef0872d5502",
@@ -8912,7 +8912,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_or_32_354579538c4e",
@@ -8952,7 +8952,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_smax_32_8bab38a878d7",
@@ -8972,7 +8972,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_smin_32_773e7d83b011",
@@ -9012,7 +9012,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_umax_32_5530dfa23323",
@@ -9032,7 +9032,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_umin_32_3ce114819cfc",
@@ -9052,7 +9052,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "sw_xor_32_874c32572226",
@@ -9072,7 +9072,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "swapb_32_80733f03b77f",
@@ -9092,7 +9092,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "swapd_32_cd31ccde2303",
@@ -9112,7 +9112,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "swaph_32_8c2d4a28bf25",
@@ -9132,7 +9132,7 @@
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
         "PTO-REQ-SCALAR-AMO-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "semantic_family": "AMO",
       "stable_id": "swapw_32_ef15c3ebac33",
@@ -13723,7 +13723,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x000",
       "selector_match": true,
@@ -13747,7 +13747,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x001",
       "selector_match": true,
@@ -13771,7 +13771,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x002",
       "selector_match": true,
@@ -13795,7 +13795,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x003",
       "selector_match": true,
@@ -13819,7 +13819,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x004",
       "selector_match": true,
@@ -13843,7 +13843,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x005",
       "selector_match": true,
@@ -13867,7 +13867,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x006",
       "selector_match": true,
@@ -13891,7 +13891,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x007",
       "selector_match": true,
@@ -13915,7 +13915,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x008",
       "selector_match": true,
@@ -13939,7 +13939,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00d",
       "selector_match": false,
@@ -14388,7 +14388,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x009",
       "selector_match": false,
@@ -14412,7 +14412,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00a",
       "selector_match": false,
@@ -14436,7 +14436,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00b",
       "selector_match": false,
@@ -14460,7 +14460,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00c",
       "selector_match": false,
@@ -14484,7 +14484,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00e",
       "selector_match": false,
@@ -14508,7 +14508,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x00f",
       "selector_match": false,
@@ -14532,7 +14532,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x010",
       "selector_match": false,
@@ -14556,7 +14556,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x011",
       "selector_match": false,
@@ -14580,7 +14580,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x012",
       "selector_match": false,
@@ -14604,7 +14604,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x013",
       "selector_match": false,
@@ -14628,7 +14628,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x014",
       "selector_match": false,
@@ -14652,7 +14652,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x015",
       "selector_match": false,
@@ -14676,7 +14676,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x016",
       "selector_match": false,
@@ -14700,7 +14700,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x017",
       "selector_match": false,
@@ -14724,7 +14724,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x018",
       "selector_match": false,
@@ -14748,7 +14748,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x019",
       "selector_match": false,
@@ -14772,7 +14772,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x01a",
       "selector_match": false,
@@ -14796,7 +14796,7 @@
       "requirements": [
         "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
-        "PTO-REQ-MEMORY-TSO-001"
+        "PTO-REQ-MEMORY-RC-001"
       ],
       "selector": "0x01b",
       "selector_match": false,
