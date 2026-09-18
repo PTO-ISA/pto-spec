@@ -46,9 +46,11 @@ readonly func TilePackedRowPairIndex(
 begin
     assert tile.layout == TileLayout_RowMajor;
     assert PackedTileDataTypeUsesRowLocalPairs(tile.data_type);
-    let pair_columns = PackedTileRowPairColumns(tile.columns);
+    assert tile.columns > 0;
+    let pair_columns = PackedTileRowPairColumns(
+        tile.columns as integer {1..65535});
     assert row < tile.rows && pair < pair_columns;
-    let index = (row * pair_columns + pair) * 2;
+    var index: integer = (row * pair_columns + pair) * 2;
     assert index < PackedTileLogicalCapacity(
         tile.capacity_bytes, tile.data_type);
     return index as PackedTileElementIndex;
@@ -59,11 +61,11 @@ readonly func TilePackedRowSlackIndex(
 begin
     assert tile.columns MOD 2 == 1;
     return (TilePackedRowPairIndex(tile, row,
-        PackedTileRowPairColumns(tile.columns) - 1) + 1)
+        PackedTileRowPairColumns(tile.columns as integer {1..65535}) - 1) + 1)
         as PackedTileElementIndex;
 end;
 
-pure func TilePackedRowsHavePhysicalSlack(tile: TileInfo) => boolean
+readonly func TilePackedRowsHavePhysicalSlack(tile: TileInfo) => boolean
 begin
     return tile.layout == TileLayout_RowMajor &&
            PackedTileDataTypeUsesRowLocalPairs(tile.data_type) &&
@@ -258,7 +260,8 @@ begin
     var index: integer = 0;
     if tile.layout == TileLayout_RowMajor then
         if PackedTileDataTypeUsesRowLocalPairs(tile.data_type) then
-            let pair_columns = PackedTileRowPairColumns(tile.columns);
+            let pair_columns = PackedTileRowPairColumns(
+                tile.columns as integer {1..65535});
             index = (row * pair_columns + (column DIVRM 2)) * 2 +
                     (column MOD 2);
         else

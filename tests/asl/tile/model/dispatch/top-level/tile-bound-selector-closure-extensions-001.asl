@@ -93,17 +93,15 @@ begin
     assert cas_middle == Zeros{PTO_XLEN} + 22;
     assert cas_last == Zeros{PTO_XLEN} + 333;
 
-    ConfigureTile(2, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor);
-    ConfigureTile(3, 256, 2, 2, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor);
-    ConfigureTwoByTwo(4);
-    ConfigureTile(5, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor);
-    ConfigureTile(6, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor);
-    ConfigureTile(7, 256, 1, 2, 1, 2, TileDataType_FP32,
-        TileLayout_RowMajor);
+    let mx_cube_a = ConfigureCubeTile(2, 256, 2, 2, TileDataType_FP16,
+        TileLayout_CUBE_M32);
+    assert mx_cube_a;
+    let mx_cube_b = ConfigureCubeTile(3, 256, 2, 2, TileDataType_FP16,
+        TileLayout_CUBE_N8);
+    assert mx_cube_b;
+    let mx_cube_bias = ConfigureCubeTile(7, 256, 1, 2, TileDataType_FP32,
+        TileLayout_CUBE_M32);
+    assert mx_cube_bias;
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 0x4200);
@@ -112,25 +110,29 @@ begin
     WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 0x4600);
     WriteTileElement(3, 1, 0, Zeros{PTO_XLEN} + 0x4700);
     WriteTileElement(3, 1, 1, Zeros{PTO_XLEN} + 0x4800);
-    ExecuteTileFillScalar(5, Zeros{PTO_XLEN} + 1);
-    ExecuteTileFillScalar(6, Zeros{PTO_XLEN} + 1);
-    ExecuteTileFillScalar(7, Zeros{PTO_XLEN} + 0x40000000);
+    WriteTileElement(7, 0, 0, Zeros{PTO_XLEN} + 0x40000000);
+    WriteTileElement(7, 0, 1, Zeros{PTO_XLEN} + 0x40000000);
     SelectTestCUBEDataType('00100');
-    ConfigureTile(10, 256, 2, 2, 2, 2, TileDataType_FP32,
-        TileLayout_RowMajor);
-    TMATMUL_MX_BIAS(10, 2, 5, 3, 6, 7);
+    let mx_cube_d = ConfigureCubeTile(10, 256, 2, 2, TileDataType_FP32,
+        TileLayout_CUBE_M32);
+    assert mx_cube_d;
+    TMATMUL_MX_BIAS(10, 2, 0, 3, 0, 7);
     assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 0x41a80000;
-    TMATMUL_MX_ACC(10, 10, 2, 5, 3, 6);
+    TMATMUL_MX_ACC(10, 10, 2, 0, 3, 0);
     assert ReadTileElement(10, 0, 0) == Zeros{PTO_XLEN} + 0x42200000;
 
-    ConfigureTile(12, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor);
-    ConfigureTile(13, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor);
-    ConfigureTile(14, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
-    ConfigureTile(15, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
+    let mx_cube_a16 = ConfigureCubeTile(12, 128, 1, 1, TileDataType_FP16,
+        TileLayout_CUBE_M16);
+    assert mx_cube_a16;
+    let mx_cube_b16 = ConfigureCubeTile(13, 128, 1, 1, TileDataType_FP16,
+        TileLayout_CUBE_N8);
+    assert mx_cube_b16;
+    let mx_cube_bias16 = ConfigureCubeTile(14, 128, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_M16);
+    assert mx_cube_bias16;
+    let mx_cube_d16 = ConfigureCubeTile(15, 128, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_M16);
+    assert mx_cube_d16;
     WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 0x4200);
     WriteTileElement(14, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);

@@ -718,7 +718,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "5eec3856d8d9c5d73c0e9734c632d076a20f767a12b0e72465a0773e79cd6c63"
+      "sha256": "fa01b6603827f5ef6e3ca3d4869652e59f6803bf3d1b41ca95b668f93efb6be7"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -3170,7 +3170,7 @@
     },
     {
       "path": "asl/tile/model/definedness/packed-boundary.asl",
-      "sha256": "bcee0939e137d3cedbf8015e4c619ca5598d5f7bb961b03fcd3381dcde689e50"
+      "sha256": "3a181e106a4b86e620a0102020614c5b100d1483c05a12054c0880b6ec82d023"
     },
     {
       "path": "asl/tile/model/dispatch/elementwise-tile-tile.asl",
@@ -3374,7 +3374,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "88a40249cfb3c033ee4104cb688f5d7c7811b2a398a3c49ba2d152a5ce51128b"
+      "sha256": "c977753674ad864b6f8c5aeec52abb094ad08a5b0b8fc89999819835f9fd4a5e"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -3386,7 +3386,7 @@
     },
     {
       "path": "asl/tile/model/shape/cube-cell.asl",
-      "sha256": "5f4d74afc9781d54c6f83efcc83570834b239c3527efbb766b56c47cbee066da"
+      "sha256": "a4f0d22c00d4f501306c79dadb5282346b985560f77e2fc4d33d7a7a4f09ee0a"
     },
     {
       "path": "asl/tile/model/shape/rows-columns.asl",
@@ -3622,7 +3622,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "4ba4a78abac114133151ace9c4480cb28b059c9865d0bda9d7961a3952039e37"
+      "sha256": "d0a9a62b9854740860c34b959b275ab9f19e200ce55471f95ae93fc081c30514"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3630,15 +3630,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "2a2542e72e150f1837943612e543be2bcf9df88c4a9a36fef604bba6655b92fe"
+      "sha256": "5b6b60bf5974dd88ac3bcab82abe8e61eed829b6f42c9daa9518a3adea6a982d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "5d4630ab50850070359fae3b5ba73c4467b494bfd5f83c0940cf1e1ea4c8b302"
+      "sha256": "685e3ba17c8e2b6944c66470117089452474867d301b59591c1af72ab0e448c3"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "aa4f753c58606ada1197358e7d72985790c4dcb9360152e2e8c7030446e65ac0"
+      "sha256": "a77e7081012aa60e1b6d03c09920101c204eeadfddd9f9728d757068ec72cb73"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3700,7 +3700,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "1ee99b65ba904438a13673094a242c67cbc223b8350976931532559526312581",
+  "content_sha256": "5f28c52e5b3c8d94d3378416b0b51f9febbb400b8a3683145ed608b49c3edc9e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4622,7 +4622,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tcvt-schema.md",
-      "sha256": "517d76ea8788030eec60eb70a0315cbdef11f09082697392d83ac5fa05f9e13b"
+      "sha256": "c95942b7636aee3695e01e59af9303d6906d8f6dda31447b6b550ea936ab4c36"
     },
     {
       "kind": "generated-documentation",
@@ -7687,7 +7687,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/definedness/packed-boundary.md",
-      "sha256": "641bb5a8c6bb5fe788157f8670be307c171a875f8b34193a42afeba7ad2c65b4"
+      "sha256": "7d65dc9e840588e5db7f94d4b2d7b5547d1e38a5e011316f979602102105cc5e"
     },
     {
       "kind": "generated-documentation",
@@ -7942,7 +7942,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/numeric/formats.md",
-      "sha256": "a2c7551dd14edfdd00f246e06f6a7a1c604cdc9880e5ca13a0aec2507c356795"
+      "sha256": "d0faa8438cb22de8b385789f2172b331db3d7c091634b7052c835e771643e158"
     },
     {
       "kind": "generated-documentation",
@@ -7957,7 +7957,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/shape/cube-cell.md",
-      "sha256": "e7bdc820cc32a37aa97a77786990c72f3a6f15eed7a515338b726151a7f7ef24"
+      "sha256": "2ba1c403611fd7c46e239ce88a2d8b11a2c119fb608b7508748e871a13f102e8"
     },
     {
       "kind": "generated-documentation",

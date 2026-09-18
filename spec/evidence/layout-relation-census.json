@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "e4a5b93f4e9eb152268a9064bf8f3ec629b28b21",
+  "candidate_head": "1e05a61094d258bdc38c7bc3c9ae597f1d2a5951",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16719,6 +16719,8 @@
       "after": [
         {
           "calls": [
+            "MOD",
+            "MOD",
             "TileCapacityIsLegal",
             "TileCubeCellColumns",
             "TileCubeDataTypeSupported",
@@ -16734,7 +16736,7 @@
             "CUBE_M32"
           ],
           "path": "asl/tile/model/shape/cube-cell.asl",
-          "sha256": "8f5ea9a49a33dec7a880a7e5b7c7483b40da610c2860e952956312099d5515cd"
+          "sha256": "f3c6d54f1a7969d2e4f5b72eba6947dc6378525af0e741c0c76700b46102b525"
         }
       ],
       "before": [],
@@ -16884,6 +16886,8 @@
       "after": [
         {
           "calls": [
+            "DIVRM",
+            "DIVRM",
             "TileCubeCellColumns",
             "TileCubeCellRows"
           ],
@@ -16891,7 +16895,7 @@
             "CUBE_N8"
           ],
           "path": "asl/tile/model/shape/cube-cell.asl",
-          "sha256": "ddf995fdcd02add867b91521a77052d283fe6967cc8ccb2ad548467922c69902"
+          "sha256": "dc4fea6953d2d386d80e4675c24fed008d2dc42c3c9011a6864151ce53ba267d"
         }
       ],
       "before": [],
@@ -17291,7 +17295,7 @@
         "RowMajor",
         "ZN"
       ],
-      "after_sha256": "b791bfef8c1fc72fe098a15027d7c92020096b10dabb5c750e1871d8d11c0587",
+      "after_sha256": "7980cf8356324a97a957366f03fa0e6d6ac76366e87a72e9cf0bb9d1f4ffb149",
       "before_layouts": [
         "ColumnMajor",
         "NZ",
@@ -17315,7 +17319,7 @@
             "RowMajor"
           ],
           "path": "asl/tile/model/definedness/packed-boundary.asl",
-          "sha256": "ffa6dfddb62cb1a36c7de2ca99236c4e8dddb050a63c9a51e741d24afbde7437"
+          "sha256": "ed35bf6e3f11e65127f7968f712f7f18ee790004de86575e9d1619a8ef68f272"
         }
       ],
       "before": [],
@@ -17331,7 +17335,7 @@
           ],
           "layouts": [],
           "path": "asl/tile/model/definedness/packed-boundary.asl",
-          "sha256": "998fd94381b003a49ebe851f341ae149fd954c451b8e206b8de081e71dc2cfd6"
+          "sha256": "ffada7f2aa26cd104399df09f457a79ad8765b435bd0d91d6636da5de00cff4b"
         }
       ],
       "before": [],
@@ -17348,7 +17352,7 @@
             "RowMajor"
           ],
           "path": "asl/tile/model/definedness/packed-boundary.asl",
-          "sha256": "028150ab062247f4a89736e880f44ad28e1fa1431f1274fab9b0697e8695c918"
+          "sha256": "3c77338e37de65ded57fca06dca8822894251e1026ad86969e2eaf5887383e85"
         }
       ],
       "before": [],
@@ -48144,6 +48148,8 @@
         "TileCubeDescriptorShapeAndPhysicalLegal": [
           {
             "calls": [
+              "MOD",
+              "MOD",
               "TileCapacityIsLegal",
               "TileCubeCellColumns",
               "TileCubeDataTypeSupported",
@@ -48159,7 +48165,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "8f5ea9a49a33dec7a880a7e5b7c7483b40da610c2860e952956312099d5515cd"
+            "sha256": "f3c6d54f1a7969d2e4f5b72eba6947dc6378525af0e741c0c76700b46102b525"
           }
         ],
         "TileCubeDescriptorShapeLegal": [
@@ -48294,6 +48300,8 @@
         "TileCubePhysicalKRepeat": [
           {
             "calls": [
+              "DIVRM",
+              "DIVRM",
               "TileCubeCellColumns",
               "TileCubeCellRows"
             ],
@@ -48301,7 +48309,7 @@
               "CUBE_N8"
             ],
             "path": "asl/tile/model/shape/cube-cell.asl",
-            "sha256": "ddf995fdcd02add867b91521a77052d283fe6967cc8ccb2ad548467922c69902"
+            "sha256": "dc4fea6953d2d386d80e4675c24fed008d2dc42c3c9011a6864151ce53ba267d"
           }
         ],
         "TileCubePhysicalNRepeat": [
@@ -51280,7 +51288,7 @@
               "ZN"
             ],
             "path": "asl/tile/model/definedness/packed-boundary.asl",
-            "sha256": "b791bfef8c1fc72fe098a15027d7c92020096b10dabb5c750e1871d8d11c0587"
+            "sha256": "7980cf8356324a97a957366f03fa0e6d6ac76366e87a72e9cf0bb9d1f4ffb149"
           }
         ],
         "TilePackedRowPairIndex": [
@@ -51294,7 +51302,7 @@
               "RowMajor"
             ],
             "path": "asl/tile/model/definedness/packed-boundary.asl",
-            "sha256": "ffa6dfddb62cb1a36c7de2ca99236c4e8dddb050a63c9a51e741d24afbde7437"
+            "sha256": "ed35bf6e3f11e65127f7968f712f7f18ee790004de86575e9d1619a8ef68f272"
           }
         ],
         "TilePackedRowSlackIndex": [
@@ -51305,7 +51313,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/definedness/packed-boundary.asl",
-            "sha256": "998fd94381b003a49ebe851f341ae149fd954c451b8e206b8de081e71dc2cfd6"
+            "sha256": "ffada7f2aa26cd104399df09f457a79ad8765b435bd0d91d6636da5de00cff4b"
           }
         ],
         "TilePackedRowsHavePhysicalSlack": [
@@ -51317,7 +51325,7 @@
               "RowMajor"
             ],
             "path": "asl/tile/model/definedness/packed-boundary.asl",
-            "sha256": "028150ab062247f4a89736e880f44ad28e1fa1431f1274fab9b0697e8695c918"
+            "sha256": "3c77338e37de65ded57fca06dca8822894251e1026ad86969e2eaf5887383e85"
           }
         ],
         "TilePadValueForDataType": [
