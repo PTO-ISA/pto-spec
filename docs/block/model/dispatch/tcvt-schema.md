@@ -120,7 +120,8 @@ begin
         destination_capacity,
         requested_columns as integer {1..65535},
         destination_type);
-    let odd_physical_profile = !IsNonzeroPowerOfTwo(requested_columns) &&
+    let odd_physical_profile =
+        !IsNonzeroPowerOfTwo(requested_columns as integer {1..65535}) &&
         TileDataTypeAllowsOddPhysicalColumns(source_operation_type) &&
         TileDataTypeAllowsOddPhysicalColumns(destination_type);
     let destination_physical_shape_legal = if odd_physical_profile then

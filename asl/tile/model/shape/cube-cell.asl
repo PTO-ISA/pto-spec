@@ -251,9 +251,11 @@ begin
         return 0;
     end;
     if layout == TileLayout_CUBE_N8 then
-        return (physical_rows DIVRM cell_rows) as integer {1..65535};
+        return (physical_rows DIVRM (cell_rows as integer {4,8,16,32}))
+            as integer {1..65535};
     end;
-    return (physical_columns DIVRM cell_columns) as integer {1..65535};
+    return (physical_columns DIVRM (cell_columns as integer {1,2,4,8,16}))
+        as integer {1..65535};
 end;
 
 pure func TileCubePhysicalNRepeat(
@@ -340,11 +342,13 @@ begin
     end;
     let cell_columns = TileCubeCellColumns(layout, data_type);
     if layout == TileLayout_CUBE_M16 then
-        if physical_rows != 16 || physical_columns MOD cell_columns != 0 then
+        if physical_rows != 16 ||
+           physical_columns MOD (cell_columns as integer {1,2,4,8,16}) != 0 then
             return FALSE;
         end;
     elsif layout == TileLayout_CUBE_M32 then
-        if physical_rows MOD 32 != 0 || physical_columns MOD cell_columns != 0 then
+        if physical_rows MOD 32 != 0 ||
+           physical_columns MOD (cell_columns as integer {1,2,4,8,16}) != 0 then
             return FALSE;
         end;
     else

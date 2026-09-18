@@ -153,6 +153,12 @@ def datr_word(row: dict) -> int | None:
     dtype = fixture_data_type(row)
     contract = row.get("datr_contract", {})
     allowed = set(contract.get("allowed_nonzero_fields", []))
+    if row.get("name", row.get("operation")) == "TCI":
+        # The operation-matrix TCI fixture uses the RowMajor form, whose
+        # integer type is selected by BSTART. Its B.DATR must be all-zero or
+        # omitted, so no explicit attribute is emitted; a nonzero DataType or
+        # Layout selects the closed CUBE tuple and is rejected here.
+        return None
     if ("DataType" not in allowed and
             row.get("name", row.get("operation")) not in EXACT34_OPERATIONS):
         # Omission preserves the BSTART source type.  Emitting an otherwise
@@ -420,6 +426,15 @@ def dimension_words(row: dict) -> list[int]:
         return [0x43 | (2 << 20),
                 0x1043 | (2 << 20),
                 0x2043 | (2 << 20)]
+    if name == "TCVT" and row.get("role_kind") == "source":
+        # A TCVT source-role fixture seeds its source as CUBE_M16. The closed
+        # CUBE TCVT schema keeps that layout and requires the third B.DIM
+        # (physical Col) to stay the omitted default of one, because the CUBE
+        # layout owns the physical geometry. The first two dimensions must
+        # still match the seeded valid region.
+        return [0x43 | (source_valid_columns(row, "source0") << 20),
+                0x1043 | (source_valid_rows(row, "source0") << 20),
+                0x2043 | (1 << 20)]
     values = (1, 1, 1) if row["family"] == "CUBE" else (4, 1, 4)
     return [0x43 | (values[0] << 20),
             0x1043 | (values[1] << 20),
@@ -469,7 +484,8 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         expected_fault = "Fault_TileLegality"
         outcome = "predicate-role-pre-effect-fault"
     elif (role_kind == "source" and
-          row["name"] in CELL_REARRANGEMENT_OPERATIONS):
+          (row["name"] in CELL_REARRANGEMENT_OPERATIONS or
+           row["name"] == "TGPR2T")):
         # These TEPL handlers require CUBE_M16/M32 operands.  B.SUBVIEW is
         # total and preserves the bounded CUBE view, so the preserved view
         # now satisfies the handler's role/layout legality and the operation
@@ -477,7 +493,8 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         # SUBVIEW change, the materialized RowMajor view was rejected with
         # Fault_TileLegality; the commit outcome is the accepted issue
         # #264/#267 behavior and is disclosed in the ADR-CUBE-0013 and
-        # ADR-CUBE-0017 amendments.)
+        # ADR-CUBE-0017 amendments.  TGPR2T source roles cross the same
+        # preserved-CUBE B.SUBVIEW boundary.)
         outcome = "cell-rearrangement-subview-preserved-commit"
     elif (role_kind == "source" and row["family"] == "TEPL" and
           row["name"] not in EXACT34_OPERATIONS and
