@@ -38,6 +38,15 @@ begin
     return BundleLocalGenerationPrefixExtent(covered);
 end;
 
+pure func BundleLocalGenerationCubeValidColumnsAt(
+    offset_cells: integer {0..2047}, cell_columns: integer {0,1,2,4,8,16},
+    fragment_valid_columns: integer {0..65535}) => integer {0..65535}
+begin
+    let derived = offset_cells * cell_columns + fragment_valid_columns;
+    if derived > 65535 then return 0; end;
+    return derived as integer {0..65535};
+end;
+
 readonly func BundleLocalGenerationCubeWriterLegal(
     destination: TileIndex, writer_size: integer {1..12}) => boolean
 begin
@@ -139,8 +148,10 @@ begin
                                 return FALSE;
                             end;
                             terminal_found = TRUE;
-                            pe_valid_columns = prior.offset_cells * cell_columns +
-                                prior.valid_columns;
+                            pe_valid_columns =
+                                BundleLocalGenerationCubeValidColumnsAt(
+                                    prior.offset_cells, cell_columns,
+                                    prior.valid_columns);
                         elsif prior.valid_columns != prior.physical_columns then
                             return FALSE;
                         end;
@@ -156,8 +167,10 @@ begin
                         return FALSE;
                     end;
                     terminal_found = TRUE;
-                    pe_valid_columns = offset_cells * cell_columns +
-                        candidate.valid_columns;
+                    pe_valid_columns =
+                        BundleLocalGenerationCubeValidColumnsAt(
+                            offset_cells, cell_columns,
+                            candidate.valid_columns);
                 elsif candidate.valid_columns != candidate.columns then
                     return FALSE;
                 end;
@@ -227,8 +240,9 @@ begin
            current.offset_cells + current.cell_count == extent then
             if found then return 0; end;
             found = TRUE;
-            valid_columns = current.offset_cells * cell_columns +
-                current.valid_columns;
+            valid_columns = BundleLocalGenerationCubeValidColumnsAt(
+                current.offset_cells, cell_columns, current.valid_columns);
+            if valid_columns == 0 then return 0; end;
         end;
     end;
     return if found then valid_columns else 0;
