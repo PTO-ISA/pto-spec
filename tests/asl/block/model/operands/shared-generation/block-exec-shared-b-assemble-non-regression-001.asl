@@ -1,7 +1,9 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-B-ASSEMBLE-NON-REGRESSION-001","source":"asl/block/model/operands/shared-generation.asl","requirements":["PTO-B-ASSEMBLE-SHARED-GENERATION-001","PTO-B-ASSEMBLE-RANGE-001"],"kind":"execution","summary":"Shared B.ASSEMBLE keeps its fixed-column and ParentCapacity-complete semantics beside Local CUBE parent finalization.","pass_condition":"Shared INIT derives the parent from ParentCapacity, continuation preserves the fixed writer columns, and collective LAST publishes only after complete capacity coverage; no Local CUBE descriptor finalization is applied.","related_sources":["asl/block/model/operands/local-generation-cube.asl","asl/block/model/operands/shared-generation.asl","asl/block/operands/B.ASSEMBLE.asl"]}
 pure func SharedRegressionStart() => bits(64)
 begin
-    return Zeros{64} + 0x00011181;
+    var instruction = Zeros{64} + 0x00011181;
+    instruction[31:27] = Zeros{5} + 27;
+    return instruction;
 end;
 
 pure func SharedRegressionBIOS(size_code: integer) => bits(64)
@@ -46,13 +48,15 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    assert ExecuteSharedRegressionWriter(TRUE, FALSE, 0, 0x11);
+    let init = ExecuteSharedRegressionWriter(TRUE, FALSE, 0, 0x11);
+    assert init;
     let shared_tile_id = (Zeros{6} + 8) as SharedTileID;
     assert BundleSharedGenerationOpen(shared_tile_id);
     assert !SharedTileRecord(shared_tile_id).descriptor_valid;
 
     ClearBundleHeaderState();
-    assert ExecuteSharedRegressionWriter(FALSE, TRUE, 1, 0x22);
+    let last = ExecuteSharedRegressionWriter(FALSE, TRUE, 1, 0x22);
+    assert last;
     assert SharedTilePublished(shared_tile_id);
     let shared = SharedTileRecord(shared_tile_id);
     assert shared.tile.capacity_bytes == 256;

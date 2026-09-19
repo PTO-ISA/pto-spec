@@ -21,7 +21,7 @@ begin
 end;
 
 func PrepareGenerationWithCapacity(slot: integer {0..63},
-                                   capacity_bytes: integer,
+                                   capacity_bytes: integer {0..262144},
                                    parent_size_code: integer {1..12},
                                    parent_cell_count: integer {1..2048})
 begin
@@ -233,7 +233,7 @@ begin
     _LocalGenerations[[slot]].writer_count = 2;
     SetCoverage(slot, 8);
     assert !BundleLocalGenerationCubeFinalizationLegal(
-        slot, 1, 8, 4, 3, '0000', FALSE, TRUE);
+        slot, 1, 8, 4, 3, '1111', FALSE, FALSE);
     var pe0_prefix = Zeros{2048};
     var pe1_prefix = Zeros{2048};
     for cell = 0 to 15 do pe0_prefix[cell] = '1'; end;
@@ -268,21 +268,21 @@ begin
         _BundleExecutionDomainToken;
     assert BundleLocalGenerationReplay(slot, 12, 4,
         Zeros{PTO_XLEN} + 0x328, _BundleExecutionDomainToken);
+    assert BundleLocalGenerationCubeFinalizationLegal(
+        slot, 1, 12, 4, 3, Zeros{4}, FALSE, TRUE);
     FinalizeBundleLocalGenerationCube(slot);
     let replay_cells = _Tiles[[1]].cube_cell_count;
-    assert BundleLocalGenerationCubeFinalizationLegal(
-        slot, 1, 0, 4, 3, Zeros{4}, FALSE, TRUE);
     assert _Tiles[[1]].cube_cell_count == replay_cells;
 
     // A subset/interleaved writer sequence still derives one common parent.
     ResetProfileState();
     PrepareGenerationWithCapacity(slot, 4096, 5, 32);
-    InstallWriter(slot, 0, 8, 32, '1000');
-    InstallWriter(slot, 1, 0, 32, '0100');
-    InstallWriter(slot, 2, 4, 32, '1000');
-    InstallWriter(slot, 3, 12, 32, '0100');
+    InstallWriter(slot, 0, 8, 32, '1000'); InstallWriter(slot, 1, 0, 32, '0100');
+    InstallWriter(slot, 2, 4, 32, '1000'); InstallWriter(slot, 3, 12, 32, '0100');
+    InstallWriter(slot, 4, 0, 32, '1000'); InstallWriter(slot, 5, 8, 32, '0100');
+    InstallWriter(slot, 6, 12, 32, '1000'); InstallWriter(slot, 7, 4, 32, '0100');
     _LocalGenerations[[slot]].participant_mask = '1100';
-    _LocalGenerations[[slot]].writer_count = 4;
+    _LocalGenerations[[slot]].writer_count = 8;
     for pe = 0 to 3 do
         _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = Zeros{2048};
     end;

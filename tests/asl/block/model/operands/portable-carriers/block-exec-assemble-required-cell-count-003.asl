@@ -6,6 +6,7 @@ begin
     ClearBundleLocalGenerationState(slot);
     _LocalGenerations[[slot]].open = FALSE;
     _LocalGenerations[[slot]].closed = TRUE;
+    _LocalGenerations[[slot]].generation_identity_valid = TRUE;
     _LocalGenerations[[slot]].participant_mask = '1000';
     _LocalGenerations[[slot]].generation_instance =
         Zeros{PTO_XLEN} + 0x314;
