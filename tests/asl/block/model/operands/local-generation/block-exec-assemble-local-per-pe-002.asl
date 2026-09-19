@@ -7,6 +7,7 @@ begin
     ConfigureTileForMask(1, 256, 2, 64, 2, 64,
         TileDataType_U8, TileLayout_RowMajor, '1100');
     _LocalGenerations[[slot]].open = TRUE;
+    _LocalGenerations[[slot]].generation_identity_valid = TRUE;
     _LocalGenerations[[slot]].participant_mask = '1100';
     _LocalGenerations[[slot]].parent_cell_count = 2;
     _LocalGenerations[[slot]].parent_size_code = 2;

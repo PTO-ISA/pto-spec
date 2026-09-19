@@ -114,6 +114,13 @@ type LocalGenerationWriter of record {
     destination: TileIndex,
     pe_mask: bits(4),
     ready: boolean,
+    physical_rows: integer {0..65535},
+    physical_columns: integer {0..65535},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    data_type: TileDataType,
+    predicate_basis_type: TileDataType,
+    layout: TileLayout,
     identity: PortableSpeculationIdentity
 };
 
@@ -186,6 +193,8 @@ type LocalGenerationState of record {
     open: boolean,
     closed: boolean,
     published: boolean,
+    generation_identity_valid: boolean,
+    descriptor_finalized: boolean,
     destination_hand: integer {0..3},
     participant_mask: bits(4),
     generation_instance: Word,

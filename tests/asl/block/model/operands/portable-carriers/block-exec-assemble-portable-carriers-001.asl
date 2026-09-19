@@ -85,7 +85,7 @@ begin
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
     let bound = ExecuteCommandInstruction(Binding(1, 2, 0, 2), 32);
-    let writer_size = if init && last then 2 else 1;
+    let writer_size = 1;
     let assembled = ExecuteCommandInstruction(
         Assemble(init, last, writer_size, 0), 32);
     assert started == CommandExecution_Executed &&
@@ -174,7 +174,7 @@ begin
         _LocalGenerations[[slot]].consumers[[1]].state ==
             BundleConsumerDependency_Waiting;
     let completed = CompleteBundleLocalGenerationWriterEvent(
-        slot, writer_domain, 0, 2);
+        slot, writer_domain, 0, 1);
     assert completed;
     assert _LocalGenerations[[slot]].published;
     assert _LocalGenerations[[slot]].ready_cells[0] == '1';

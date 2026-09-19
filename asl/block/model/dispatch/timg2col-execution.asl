@@ -85,6 +85,14 @@ begin
         return FALSE;
     end;
     let output = BundleTIMG2COLStateOutput();
+    if output != BundleTIMG2COLOutput_SharedND then
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid &&
+               _BundleTileBindings[[binding]].destination_assemble.valid then
+                return FALSE;
+            end;
+        end;
+    end;
     let valid_col_raw = UInt(_BundleDimensions[[0]]);
     let valid_row_raw = UInt(_BundleDimensions[[1]]);
     let total_col_raw = UInt(_BundleDimensions[[2]]);
@@ -285,25 +293,47 @@ begin
         candidate = SharedTileRecord(BundleSharedBindingId(0)).tile;
         mask = BundleSharedBindingMask(0);
     else
-        let hand = UInt(_BundleTileBindings[[0]].destination_hand);
-        var found = FALSE;
-        for offset = 0 to 15 do
-            let raw_index = hand * 16 + offset;
-            if !found && !_Tiles[[raw_index]].allocated then
-                destination = raw_index as TileIndex;
-                found = TRUE;
+        let binding = _BundleTileBindings[[0]];
+        let expected_layout =
+            if output == BundleTIMG2COLOutput_LocalM16 then
+                TileLayout_CUBE_M16
+            else TileLayout_CUBE_M32;
+        if binding.destination_reused_by_generation then
+            destination = binding.destination;
+            let reused = _Tiles[[destination]];
+            if !TileCubeDescriptorLegal(reused) ||
+               reused.capacity_bytes != capacity ||
+               reused.valid_rows != pe_valid_row ||
+               reused.valid_columns != valid_col ||
+               reused.data_type != data_type ||
+               reused.layout != expected_layout then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
             end;
+        else
+            let hand = UInt(binding.destination_hand);
+            var found = FALSE;
+            for offset = 0 to 15 do
+                let raw_index = hand * 16 + offset;
+                if !found && !_Tiles[[raw_index]].allocated then
+                    destination = raw_index as TileIndex;
+                    found = TRUE;
+                end;
+            end;
+            if !found || !ConfigureCubeTileForMask(
+                   destination, capacity, pe_valid_row, valid_col, data_type,
+                   expected_layout, BundleTIMG2COLPEBit()) then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
+            _BundleTileBindings[[0]].destination = destination;
+            _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
         end;
-        if !found || !ConfigureCubeTileForMask(
-               destination, capacity, pe_valid_row, valid_col, data_type,
-               if output == BundleTIMG2COLOutput_LocalM16 then
-                   TileLayout_CUBE_M16 else TileLayout_CUBE_M32, BundleTIMG2COLPEBit()) then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
-        end;
-        _BundleTileBindings[[0]].destination = destination;
-        _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
         candidate = _Tiles[[destination]];
+        // The destination now carries the exact current writer descriptor.
+        // Reject malformed WriterSize/common metadata/tail/finalization before
+        // the first GM event, payload update, coverage change, or publication.
+        if !ValidateBundleLocalGenerationWriters() then return FALSE; end;
     end;
     candidate.allocated = TRUE;
     candidate.storage_kind = TileStorage_Numeric;

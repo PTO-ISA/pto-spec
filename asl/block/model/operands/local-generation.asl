@@ -1,9 +1,15 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
 // NDF-BEGIN: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A Local generation is one logical entry in the ordinary T/U/M/N relative queue; INIT owns per-PE instances; continuations resolve one entry and subset writers.
 // INIT allocates before effects; MIDDLE/LAST reuses it. Coverage, readiness, closure, publication, replay, waiting, abort, and explicit no-fallback selectors follow the per-PE contract; Shared Sx is unchanged.
 // NDF-END: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
+
+// NDF-BEGIN: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, ParentCapacity is allocation metadata only. Each writer retains its fragment descriptor. A successful LAST derives one common parent physical/valid descriptor from the participating PEs' gap-free CELL prefix coverage, and atomically publishes that final descriptor. Capacity slack never creates parent rows, columns, repeats, or CELLs. ParentRef selects the open generation by generation identity and does not require the aggregate descriptor to be finalized before LAST.
+// Generation structure is preflighted before destination resolution. The exact materialized writer descriptor is validated after destination shape/allocation or reuse and before producer effects, coverage registration, LAST closure, or parent finalization.
+// NDF-END: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 pure func BundleLocalGenerationQueueSlot(hand: integer {0..3}, distance: integer {0..15}) => integer {0..63}
 begin
     return (hand * 16 + distance) as integer {0..63};
@@ -11,7 +17,7 @@ end;
 readonly func BundleLocalGenerationSlotForDestination(destination: TileIndex) => integer {0..64}
 begin
     for slot = 0 to 63 do
-        if _LocalGenerations[[slot]].parent_descriptor.valid &&
+        if _LocalGenerations[[slot]].generation_identity_valid &&
            _LocalGenerations[[slot]].working_destination == destination then
             return slot;
         end;
@@ -22,7 +28,7 @@ readonly func BundleLocalGenerationSlot(hand: integer {0..3}, participant_mask: 
     => integer {0..63}
 begin
     for slot = hand * 16 to hand * 16 + 15 do
-        if _LocalGenerations[[slot]].parent_descriptor.valid &&
+        if _LocalGenerations[[slot]].generation_identity_valid &&
            _LocalGenerations[[slot]].participant_mask == participant_mask then
             return slot as integer {0..63};
         end;
@@ -33,7 +39,7 @@ readonly func BundleLocalGenerationOpenForHand(
     hand: integer {0..3}) => boolean
 begin
     for slot = hand * 16 to hand * 16 + 15 do
-        if _LocalGenerations[[slot]].parent_descriptor.valid &&
+        if _LocalGenerations[[slot]].generation_identity_valid &&
            _LocalGenerations[[slot]].open then
             return TRUE;
         end;
@@ -57,6 +63,8 @@ begin
     _LocalGenerations[[slot]].open = FALSE;
     _LocalGenerations[[slot]].closed = FALSE;
     _LocalGenerations[[slot]].published = FALSE;
+    _LocalGenerations[[slot]].generation_identity_valid = FALSE;
+    _LocalGenerations[[slot]].descriptor_finalized = FALSE;
     _LocalGenerations[[slot]].destination_hand = 0;
     _LocalGenerations[[slot]].participant_mask = Zeros{4};
     _LocalGenerations[[slot]].generation_instance = Zeros{PTO_XLEN};
@@ -74,8 +82,7 @@ begin
     _LocalGenerations[[slot]].parent_descriptor.valid_rows = 0;
     _LocalGenerations[[slot]].parent_descriptor.valid_columns = 0;
     _LocalGenerations[[slot]].parent_descriptor.data_type = TileDataType_FP64;
-    _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type =
-        TileDataType_FP64;
+    _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type = TileDataType_FP64;
     _LocalGenerations[[slot]].parent_descriptor.layout = TileLayout_RowMajor;
     _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = 0;
     _LocalGenerations[[slot]].parent_descriptor.cube_n_repeat = 0;
@@ -91,11 +98,15 @@ begin
     _LocalGenerations[[slot]].committed_destination = 0;
     _LocalGenerations[[slot]].committed_valid = FALSE;
     for pe = 0 to 3 do
-        _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = Zeros{2048}; _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = Zeros{2048};
-        _LocalGenerations[[slot]].per_pe_closed[[pe]] = FALSE; _LocalGenerations[[slot]].per_pe_published[[pe]] = FALSE; _LocalGenerations[[slot]].per_pe_working_destination[[pe]] = 0;
+        _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = Zeros{2048}; _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = Zeros{2048}; _LocalGenerations[[slot]].per_pe_closed[[pe]] = FALSE; _LocalGenerations[[slot]].per_pe_published[[pe]] = FALSE; _LocalGenerations[[slot]].per_pe_working_destination[[pe]] = 0;
     end;
     for writer = 0 to 15 do
         _LocalGenerations[[slot]].writers[[writer]].valid = FALSE; _LocalGenerations[[slot]].writers[[writer]].pe_mask = Zeros{4}; _LocalGenerations[[slot]].writers[[writer]].ready = FALSE;
+        _LocalGenerations[[slot]].writers[[writer]].physical_rows = 0; _LocalGenerations[[slot]].writers[[writer]].physical_columns = 0;
+        _LocalGenerations[[slot]].writers[[writer]].valid_rows = 0; _LocalGenerations[[slot]].writers[[writer]].valid_columns = 0;
+        _LocalGenerations[[slot]].writers[[writer]].data_type = TileDataType_FP64;
+        _LocalGenerations[[slot]].writers[[writer]].predicate_basis_type = TileDataType_FP64;
+        _LocalGenerations[[slot]].writers[[writer]].layout = TileLayout_RowMajor;
     end;
     for consumer = 0 to 15 do _LocalGenerations[[slot]].consumers[[consumer]].valid = FALSE; _LocalGenerations[[slot]].consumers[[consumer]].participant_mask = Zeros{4}; end;
 end;
@@ -165,82 +176,7 @@ begin
     end;
     return BundleTileDestinationSizeBytes(binding);
 end;
-pure func BundleLocalGenerationRangeOverlaps(
-    left_offset: integer {0..2047}, left_count: integer {1..2048},
-    right_offset: integer {0..2047}, right_count: integer {1..2048}) => boolean
-begin
-    return left_offset < right_offset + right_count &&
-           right_offset < left_offset + left_count;
-end;
-readonly func BundleLocalGenerationCoverageComplete(
-    slot: integer {0..63}, offset: Word, writer_size: integer {1..12},
-    writer_mask: bits(4), init: boolean,
-    parent_size: integer {0..12}) => boolean
-begin
-    let raw_offset = UInt(offset);
-    if raw_offset > 2047 then return FALSE; end;
-    let offset_cells = raw_offset as integer {0..2047};
-    let writer_cells = BundleLocalGenerationCellCount(writer_size);
-    let required_cells = if init then
-        BundleLocalGenerationCellCount(parent_size as integer {1..12})
-        else _LocalGenerations[[slot]].parent_cell_count;
-    let participant_mask = if init then writer_mask
-        else _LocalGenerations[[slot]].participant_mask;
-    for pe = 0 to 3 do
-        if participant_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' then
-            var covered: bits(2048) = if init then Zeros{2048}
-                else _LocalGenerations[[slot]].per_pe_covered_cells[[pe]];
-            if writer_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' then
-                for cell = 0 to 2047 do
-                    if cell < writer_cells then
-                        covered[offset_cells + cell] = '1';
-                    end;
-                end;
-            end;
-            for required = 0 to 2047 do
-                if required < required_cells && covered[required] == '0' then
-                    return FALSE;
-                end;
-            end;
-        end;
-    end;
-    return TRUE;
-end;
-readonly func BundleLocalGenerationMaskSubset(writer_mask: bits(4), init_mask: bits(4)) => boolean
-begin
-    for pe = 0 to 3 do if writer_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' && init_mask[PTOPEMaskBitOfPEIdentity(pe)] == '0' then return FALSE; end; end;
-    return TRUE;
-end;
-readonly func BundleLocalGenerationDescriptorMatches(
-    slot: integer {0..63}, destination: TileIndex,
-    participant_mask: bits(4)) => boolean
-begin
-    let expected = _LocalGenerations[[slot]].parent_descriptor;
-    let actual = _Tiles[[destination]];
-    return expected.valid && actual.allocated &&
-           expected.object_name == destination &&
-           expected.object_kind == actual.storage_kind &&
-           expected.participant_mask == _TileAllocationMasks[[destination]] &&
-           BundleLocalGenerationMaskSubset(participant_mask,
-               expected.participant_mask) &&
-           actual.capacity_bytes == expected.capacity_bytes &&
-           actual.rows == expected.rows && actual.columns == expected.columns &&
-           actual.valid_rows == expected.valid_rows &&
-           actual.valid_columns == expected.valid_columns &&
-           actual.data_type == expected.data_type &&
-           actual.predicate_basis_type == expected.predicate_basis_type &&
-           actual.layout == expected.layout &&
-           actual.cube_k_repeat == expected.cube_k_repeat &&
-           actual.cube_n_repeat == expected.cube_n_repeat &&
-           actual.cube_cell_count == expected.cube_cell_count &&
-           actual.cube_storage_bytes == expected.cube_storage_bytes;
-end;
-func SetBundleLocalGenerationInitFault(fault: FaultCode)
-begin
-    SetFault(fault, ReadTPC()); let ring = CurrentACR();
-    if _TrapContexts[[ring]].valid then _TrapContexts[[ring]].tpc = ReadBPC(); end;
-end;
-func ValidateBundleLocalGeneration() => boolean
+func ValidateBundleLocalGenerationStructure() => boolean
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -269,11 +205,6 @@ begin
                 let raw_offset = UInt(assemble.offset);
                 let writer_cells = BundleLocalGenerationCellCount(writer_size) as integer {1..2048};
                 if raw_offset > 2047 || raw_offset + writer_cells > parent_cells then
-                    SetBundleLocalGenerationInitFault(Fault_TileLegality); return FALSE;
-                end;
-                if assemble.last && !BundleLocalGenerationCoverageComplete(
-                        0, assemble.offset, writer_size, writer_mask, TRUE,
-                        parent_size as integer {1..12}) then
                     SetBundleLocalGenerationInitFault(Fault_TileLegality); return FALSE;
                 end;
             else
@@ -335,18 +266,12 @@ begin
                             Fault_TileLegality); return FALSE;
                     end;
                 end;
-                if assemble.last &&
-                   !BundleLocalGenerationCoverageComplete(
-                       generation_slot, assemble.offset, writer_size,
-                       writer_mask, FALSE, 0) then
-                    SetBundleLocalGenerationFault(generation_slot,
-                        Fault_TileLegality); return FALSE;
-                end;
             end;
         end;
     end;
     return TRUE;
 end;
+
 func CommitBundleLocalGeneration()
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
@@ -368,6 +293,10 @@ begin
                 _LocalGenerations[[slot]].open = TRUE;
                 _LocalGenerations[[slot]].closed = FALSE;
                 _LocalGenerations[[slot]].published = FALSE;
+                _LocalGenerations[[slot]].generation_identity_valid = TRUE;
+                _LocalGenerations[[slot]].descriptor_finalized =
+                    !BundleLocalGenerationCubeLayout(
+                        _Tiles[[destination]].layout);
                 _LocalGenerations[[slot]].destination_hand = hand;
                 _LocalGenerations[[slot]].participant_mask = participant_mask;
                 _LocalGenerations[[slot]].generation_instance = ReadBPC();
@@ -413,6 +342,20 @@ begin
                 _LocalGenerations[[slot]].writers[[ordinal]].destination = destination;
                 _LocalGenerations[[slot]].writers[[ordinal]].pe_mask = participant_mask;
                 _LocalGenerations[[slot]].writers[[ordinal]].ready = FALSE;
+                _LocalGenerations[[slot]].writers[[ordinal]].physical_rows =
+                    _Tiles[[destination]].rows;
+                _LocalGenerations[[slot]].writers[[ordinal]].physical_columns =
+                    _Tiles[[destination]].columns;
+                _LocalGenerations[[slot]].writers[[ordinal]].valid_rows =
+                    _Tiles[[destination]].valid_rows;
+                _LocalGenerations[[slot]].writers[[ordinal]].valid_columns =
+                    _Tiles[[destination]].valid_columns;
+                _LocalGenerations[[slot]].writers[[ordinal]].data_type =
+                    _Tiles[[destination]].data_type;
+                _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
+                    _Tiles[[destination]].predicate_basis_type;
+                _LocalGenerations[[slot]].writers[[ordinal]].layout =
+                    _Tiles[[destination]].layout;
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.instruction_instance = ReadBPC();
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.execution_domain_token = _BundleExecutionDomainToken;
                 _LocalGenerations[[slot]].writer_count = (ordinal + 1) as integer {0..16};
@@ -432,6 +375,11 @@ begin
             end;
             _LocalGenerations[[slot]].covered_cells = covered_cells;
             _LocalGenerations[[slot]].ready_cells = ready_cells;
+            if assemble.last &&
+               BundleLocalGenerationCubeLayout(
+                   _Tiles[[destination]].layout) then
+                FinalizeBundleLocalGenerationCube(slot);
+            end;
             if assemble.last then
                 let generation_participant_mask =
                     _LocalGenerations[[slot]].participant_mask;

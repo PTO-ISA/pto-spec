@@ -29,6 +29,18 @@
    }
   },
   {
+   "id": "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+   "source_path": "asl/block/model/operands/local-generation.asl",
+   "title": {
+    "en": "Local CUBE assembled-parent geometry",
+    "zh-CN": "Local CUBE 组装父几何"
+   },
+   "summary": {
+    "en": "ParentCapacity is allocation metadata for Local CUBE_M16 and CUBE_M32 assembly. Each writer retains its fragment descriptor; successful LAST derives and atomically publishes one common physical/valid parent descriptor from gap-free per-PE CELL-prefix coverage, while generation identity remains usable before descriptor finalization and unused capacity does not create geometry.",
+    "zh-CN": "对于 Local CUBE_M16 和 CUBE_M32 组装，ParentCapacity 仅是分配元数据。每个写入者保留其片段描述符；成功的 LAST 根据各 PE 无间隙的 CELL 前缀覆盖范围派生并原子发布一个共同的物理/有效父描述符，同时在描述符最终确定前代次身份仍可使用，未使用容量不会生成几何。"
+   }
+  },
+  {
    "id": "PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001",
    "source_path": "asl/block/model/operands/portable-carriers.asl",
    "title": {

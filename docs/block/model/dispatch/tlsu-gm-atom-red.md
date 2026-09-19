@@ -132,6 +132,9 @@ begin
                valid_rows, valid_columns, columns) ||
            !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
                valid_columns, columns, TRUE, data_type) then return FALSE; end;
+        if !ValidateBundleLocalGenerationWriters() then
+            RollBackBundleTileDestinations(); return FALSE;
+        end;
         if cas then
             destination = _BundleTileBindings[[1]].destination;
         else

@@ -216,7 +216,7 @@ begin
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 
     ResetProfileState(); BeginSource();
-    let incomplete = Run(TRUE, TRUE, 2, 0);
+    let incomplete = Run(TRUE, TRUE, 2, 1);
     assert !incomplete && _LastFault == Fault_TileLegality;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
 

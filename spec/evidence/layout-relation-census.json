@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "7a3da1548fd8c03aa9be7d2c8c1f6df1db9a0e33",
+  "candidate_head": "4db8c57a3d4b2699f42763433816bed68f1951ae",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16253,7 +16253,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "56f20ed8213cf69845116fbeea2a225847b28eca7783208531e90edaaa441a2b",
+      "after_sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16262,6 +16262,21 @@
       "before_sha256": "42cb70f1399341d067543bd03b61568b545fde0d4921754e026e9d2a0b691747",
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "BundleTIMG2COLBuildAndPublish",
+      "path": "asl/block/model/dispatch/timg2col-execution.asl"
+    },
+    {
+      "after_layouts": [
+        "CUBE_M16",
+        "CUBE_M32"
+      ],
+      "after_sha256": "671412aaf9fc12d04d46d3ff6cb5e2d6c241772de19221a71ec39bab2157b74d",
+      "before_layouts": [
+        "CUBE_M16",
+        "CUBE_M32"
+      ],
+      "before_sha256": "d70f520e006be1147b06c87225f1b1dfeca9f0b9f64a189a2550b45ca6974ae8",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleTIMG2COLStateLegal",
       "path": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
@@ -16300,7 +16315,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "b18d2134d5aad23857fd1bc6cc23013555312b75afc886ed81ef9739cb4f7868",
+      "after_sha256": "061f5977e202f2e09986ba40434942f907f70904bf9308dc4f50541b6c5cd911",
       "before_layouts": [],
       "before_sha256": "c16888d98541787ef9117b38c9c5f7c069715393978c70d7da2468750a3e4ef1",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16309,7 +16324,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "c8aa8b1dc0500f3c1d99d2514a9f060b2625a453eac2c9e7ff6804f8a926482c",
+      "after_sha256": "463dd04dcfd696e806a470a2f80eed8b9b96de06986b9fc5efea1ae360875140",
       "before_layouts": [],
       "before_sha256": "a75dc3aa464109a6075e9e84f7d4dd51002f2bd489342747e3a91ca60f58a62d",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16318,7 +16333,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "ddbc50a8bd742a316607731e82ac3bcc439da9392e07106f66711171a6add3dd",
+      "after_sha256": "e6dbd39724506bca5ab6c6e4cc219d1a9da1874d078d61a9fd4248bc818a4259",
       "before_layouts": [],
       "before_sha256": "f5443eea3b974c4c7c04475228870d2e0484e6f8a57254cf388b8183119f5bcb",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16327,7 +16342,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "1c7f4e762524dc74828f0eb787b1c4d5c49af558667b47660216ece69b657e1b",
+      "after_sha256": "310d45cd936e7a525b583586a5a81283cf46cd7aab2ff77710ae40d737dece59",
       "before_layouts": [],
       "before_sha256": "42fab101fab6df0a41ea610b87cb5c330027b44ed7f119bd9e4eabb678a6cffe",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16336,7 +16351,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "4a396a9054618b3c567beb45664c1c72dc1a4453e4bbcf0fe7065ccb19f3265c",
+      "after_sha256": "fd50f227c053b1c4230884e33411d851c4cf30b0ab4c0067a7859b054f0787e8",
       "before_layouts": [],
       "before_sha256": "42095242c72e56efa04f46cc369e4e0878b0eac68dd31626d4818111e792de2f",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16345,7 +16360,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "5faaa3bedb485f22d3a233a1e0c45f80ea68f9db88941c1ebd47f5156f26e32d",
+      "after_sha256": "75f90cdba92edf7e052022ba4be7982e5b87943002c60277267e90a546f36872",
       "before_layouts": [],
       "before_sha256": "767d540b3a219ea7649324d77823499584cb2861677b8ff1c5effc6b11646355",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16372,7 +16387,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "1216b0c97a19c3d4cd67601163ab091ffa26758115ed26286639edfffe4e980e",
+      "after_sha256": "9d01c700a81825be988a7d9bd76b91b32de2b3aef5a8864454b3a310a7bf538d",
       "before_layouts": [],
       "before_sha256": "a0cfafdf7a15e038b1002f949fc9f2c29511d435c81401691fd6701bf05992a7",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16381,7 +16396,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "3d7ba36a8db2f356bfec3e058e25c5602be22523bbf6f33f67131bcf5d81b5cd",
+      "after_sha256": "a5e4d72fee5c14da2ae787903ec5d8d30ff578188f9dac730773fc13e48bd82b",
       "before_layouts": [],
       "before_sha256": "f8dd5ca6309cdb3e15738a5f45b6395acb5312200d7ccc21981e7bc67febacbc",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16393,7 +16408,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "283f0e561f53cd5081f9e949cdf8607a12345dda875727d4c6d9f2629d7710da",
+      "after_sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -44676,12 +44691,15 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "RecordLoadEvent",
               "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
               "SharedTileRecord",
+              "TileCubeDescriptorLegal",
               "TileDataLayoutOfCode",
               "TileDataTypeFromEncoding",
               "TileInfoWithLogicalElement",
@@ -44696,6 +44714,7 @@
               "UInt",
               "UInt",
               "UInt",
+              "ValidateBundleLocalGenerationWriters",
               "ZeroPackedTileDefinedElements",
               "let"
             ],
@@ -44705,7 +44724,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "56f20ed8213cf69845116fbeea2a225847b28eca7783208531e90edaaa441a2b"
+            "sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9"
           }
         ],
         "BundleTIMG2COLC0Elements": [
@@ -45118,7 +45137,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "d70f520e006be1147b06c87225f1b1dfeca9f0b9f64a189a2550b45ca6974ae8"
+            "sha256": "671412aaf9fc12d04d46d3ff6cb5e2d6c241772de19221a71ec39bab2157b74d"
           }
         ],
         "BundleTIMG2COLStateOutput": [
@@ -45994,6 +46013,7 @@
               "ResolveBundleEffectiveDataType",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
               "SetFault",
               "SetFault",
@@ -46007,11 +46027,12 @@
               "UInt",
               "UInt",
               "UInt",
+              "ValidateBundleLocalGenerationWriters",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "b18d2134d5aad23857fd1bc6cc23013555312b75afc886ed81ef9739cb4f7868"
+            "sha256": "061f5977e202f2e09986ba40434942f907f70904bf9308dc4f50541b6c5cd911"
           }
         ],
         "ExecuteBundleGMAtomRedOperation": [
@@ -46069,6 +46090,7 @@
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
@@ -46093,11 +46115,12 @@
               "UInt",
               "UInt",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-            "sha256": "c8aa8b1dc0500f3c1d99d2514a9f060b2625a453eac2c9e7ff6804f8a926482c"
+            "sha256": "463dd04dcfd696e806a470a2f80eed8b9b96de06986b9fc5efea1ae360875140"
           }
         ],
         "ExecuteBundleGMOVOperation": [
@@ -46125,6 +46148,7 @@
               "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMasksLegal",
               "SetFault",
@@ -46138,11 +46162,12 @@
               "TileDataTypeFromEncoding",
               "TileOperandsLegal_GMOV",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-            "sha256": "ddbc50a8bd742a316607731e82ac3bcc439da9392e07106f66711171a6add3dd"
+            "sha256": "e6dbd39724506bca5ab6c6e4cc219d1a9da1874d078d61a9fd4248bc818a4259"
           }
         ],
         "ExecuteBundleMGATHERCASOperation": [
@@ -46177,6 +46202,7 @@
               "ResolveBundleTileDestinationsWithShapeAndType",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
@@ -46189,11 +46215,12 @@
               "TileOperandsLegal_MGATHER_CAS",
               "UInt",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-            "sha256": "1c7f4e762524dc74828f0eb787b1c4d5c49af558667b47660216ece69b657e1b"
+            "sha256": "310d45cd936e7a525b583586a5a81283cf46cd7aab2ff77710ae40d737dece59"
           }
         ],
         "ExecuteBundleMGATHERMASKOperation": [
@@ -46228,6 +46255,7 @@
               "ResolveBundleTileDestinationsWithShapeAndType",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
@@ -46240,11 +46268,12 @@
               "TileOperandsLegal_MGATHER_MASK",
               "UInt",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-            "sha256": "4a396a9054618b3c567beb45664c1c72dc1a4453e4bbcf0fe7065ccb19f3265c"
+            "sha256": "fd50f227c053b1c4230884e33411d851c4cf30b0ab4c0067a7859b054f0787e8"
           }
         ],
         "ExecuteBundleMGATHEROperation": [
@@ -46278,6 +46307,7 @@
               "ResolveBundleTileDestinationsWithShapeAndType",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
@@ -46291,11 +46321,12 @@
               "TileOperandsLegal_MGATHER",
               "UInt",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-            "sha256": "5faaa3bedb485f22d3a233a1e0c45f80ea68f9db88941c1ebd47f5156f26e32d"
+            "sha256": "75f90cdba92edf7e052022ba4be7982e5b87943002c60277267e90a546f36872"
           }
         ],
         "ExecuteBundleMSCATTERMASKOperation": [
@@ -46458,6 +46489,7 @@
               "RestoreBundleSharedGenerationProbe",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMasksLegal",
               "SetFault",
@@ -46499,11 +46531,12 @@
               "UInt",
               "UInt",
               "UInt",
-              "UInt"
+              "UInt",
+              "ValidateBundleLocalGenerationWriters"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-tlsu.asl",
-            "sha256": "1216b0c97a19c3d4cd67601163ab091ffa26758115ed26286639edfffe4e980e"
+            "sha256": "9d01c700a81825be988a7d9bd76b91b32de2b3aef5a8864454b3a310a7bf538d"
           }
         ],
         "ExecuteBundleTIMG2COLOperation": [
@@ -46593,6 +46626,7 @@
               "ResolveBundleTMATMULDestination",
               "ReuseBundleLocalGenerationDestination",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
               "SetFault",
@@ -46648,11 +46682,12 @@
               "TileProfileInternalAccumulatorPrefetchHint",
               "TileProfileInternalAccumulatorReplacementHint",
               "UInt",
+              "ValidateBundleLocalGenerationWriters",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-            "sha256": "3d7ba36a8db2f356bfec3e058e25c5602be22523bbf6f33f67131bcf5d81b5cd"
+            "sha256": "a5e4d72fee5c14da2ae787903ec5d8d30ff578188f9dac730773fc13e48bd82b"
           }
         ],
         "ExecuteBundleTPREFETCHOperation": [
@@ -46696,6 +46731,7 @@
               "AbortBundleLocalGenerationsForBundle",
               "AbortBundleLocalGenerationsForBundle",
               "AbortBundleLocalGenerationsForBundle",
+              "AbortBundleLocalGenerationsForBundle",
               "BundleAssembleOutputStructureLegal",
               "BundleCubeMatrixSelected",
               "BundleCubeTransportSelected",
@@ -46733,6 +46769,7 @@
               "CurrentBundleTileLayout",
               "DecodeTileOperation",
               "DecodeTileOperation",
+              "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
@@ -46785,6 +46822,7 @@
               "ReuseBundleLocalGenerationDestination",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleCellRearrangementSchemaLegal",
               "SelectedBundleClosedSchemasLegal",
               "SelectedBundleComparisonConsumesGPR",
@@ -46811,6 +46849,7 @@
               "TileOperandsLegal_TCICube",
               "TileOperationOfIndex",
               "TileOperationUsesCellRearrangementSchema",
+              "ValidateBundleLocalGenerationWriters",
               "let"
             ],
             "layouts": [
@@ -46818,7 +46857,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "283f0e561f53cd5081f9e949cdf8607a12345dda875727d4c6d9f2629d7710da"
+            "sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
@@ -206016,6 +206055,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 896,
+  "source_path_count": 897,
   "tile_location_normative_refs": []
 }

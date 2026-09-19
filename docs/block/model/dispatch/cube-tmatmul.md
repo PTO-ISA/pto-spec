@@ -355,6 +355,10 @@ begin
            allocation_mask) then
         return FALSE;
     end;
+    if !ValidateBundleLocalGenerationWriters() then
+        RollBackBundleTileDestinations();
+        return FALSE;
+    end;
     let operands = BundleTileInstructionOperands(operation);
     var left = _Tiles[[0]];
     var right = _Tiles[[0]];

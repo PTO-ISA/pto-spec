@@ -80,6 +80,9 @@ begin
         _BundleScalarBindings[[0]].source0);
     if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
            valid_columns, columns, TRUE, data_type) then return FALSE; end;
+    if !ValidateBundleLocalGenerationWriters() then
+        RollBackBundleTileDestinations(); return FALSE;
+    end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},

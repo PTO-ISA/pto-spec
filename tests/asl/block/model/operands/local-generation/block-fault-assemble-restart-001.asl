@@ -90,7 +90,7 @@ begin
     WriteTPC(Zeros{PTO_XLEN} + 0x500);
     Source();
     let expected_init = ReadTPC();
-    let rejected_init = Run(TRUE, TRUE, 2, 0);
+    let rejected_init = Run(TRUE, TRUE, 2, 1);
     assert !rejected_init && _LastFault == Fault_TileLegality;
     let target = CurrentACR();
     assert _TrapContexts[[target]].valid;
