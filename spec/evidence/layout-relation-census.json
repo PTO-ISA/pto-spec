@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "480bb498dafdbe5a40325f656eeb1bb9c74963ed",
+  "candidate_head": "9b112d0aff03eea9dddc08ba47de28c3dbbac64a",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16253,7 +16253,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9",
+      "after_sha256": "fbe313de0ba19d20714333c166644e46664085562eb6a161ceeb341e0b8f0ecf",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16262,6 +16262,21 @@
       "before_sha256": "42cb70f1399341d067543bd03b61568b545fde0d4921754e026e9d2a0b691747",
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "BundleTIMG2COLBuildAndPublish",
+      "path": "asl/block/model/dispatch/timg2col-execution.asl"
+    },
+    {
+      "after_layouts": [
+        "CUBE_M16",
+        "CUBE_M32"
+      ],
+      "after_sha256": "c163e6dcf8f4dbd82cb88971fa74de393db967e479ef59ee9da1de94e99a420c",
+      "before_layouts": [
+        "CUBE_M16",
+        "CUBE_M32"
+      ],
+      "before_sha256": "d70f520e006be1147b06c87225f1b1dfeca9f0b9f64a189a2550b45ca6974ae8",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleTIMG2COLStateLegal",
       "path": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
@@ -16381,7 +16396,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5",
+      "after_sha256": "78f7e7d0d7a484aa601ea898d6acf6fc6b91cef68962f09f14ebf13233bf5732",
       "before_layouts": [],
       "before_sha256": "fc7b2280ca1e0497878b1c4a89bd289d71315826f09adeeae86c9ecbe33e8545",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16402,7 +16417,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029",
+      "after_sha256": "88b3d8428f4d9ddda71fef4995cc1cccac5fe199e8879904ff28d3ba0da457ba",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -44718,7 +44733,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9"
+            "sha256": "fbe313de0ba19d20714333c166644e46664085562eb6a161ceeb341e0b8f0ecf"
           }
         ],
         "BundleTIMG2COLC0Elements": [
@@ -45131,7 +45146,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "d70f520e006be1147b06c87225f1b1dfeca9f0b9f64a189a2550b45ca6974ae8"
+            "sha256": "c163e6dcf8f4dbd82cb88971fa74de393db967e479ef59ee9da1de94e99a420c"
           }
         ],
         "BundleTIMG2COLStateOutput": [
@@ -46547,11 +46562,12 @@
               "ReadTPC",
               "SetFault",
               "SetFault",
-              "SetFault"
+              "SetFault",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5"
+            "sha256": "78f7e7d0d7a484aa601ea898d6acf6fc6b91cef68962f09f14ebf13233bf5732"
           }
         ],
         "ExecuteBundleTMATMULOperation": [
@@ -46848,14 +46864,15 @@
               "TileOperationOfIndex",
               "TileOperationUsesCellRearrangementSchema",
               "ValidateBundleLocalGenerationWriters",
-              "let"
+              "let",
+              "then"
             ],
             "layouts": [
               "CUBE_M16",
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029"
+            "sha256": "88b3d8428f4d9ddda71fef4995cc1cccac5fe199e8879904ff28d3ba0da457ba"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
