@@ -24,15 +24,20 @@
     "PTO-FP19-PARAMETER-CARRIER-001",
     "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-NUMERIC-RCPE6M2-FORMAT-001",
-    "PTO-TCVT-CONTRACT-001"
+    "PTO-TCVT-CONTRACT-001",
+    "PTO-TCVT-E8M0-PROFILE-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FP19",
     "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
     "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
     "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
     "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
+    "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+    "PTO-ARCH-PROFILE-TCVT-CONVERSION",
     "PTO-BLOCK-B-FPATR",
+    "PTO-TILE-MODEL-NUMERIC-FORMATS",
     "PTO-TILE-TCVT"
   ],
   "resolves": [],
@@ -41,7 +46,7 @@
   ],
   "superseded_by": [],
   "implementation_issue": null,
-  "release_impact": "not-required",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-174",
     "PRD-175",
@@ -55,6 +60,7 @@
     "PRD-183",
     "ADR-0085"
   ],
+  "interface_change": true,
   "amendments": [
     {
       "date": "2026-09-16",
@@ -75,11 +81,42 @@
         "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/324",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TCVT-E8M0-PROFILE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
+        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+        "PTO-ARCH-PROFILE-TCVT-CONVERSION",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ]
     }
   ]
 }
 ---
 # ADR-NUM-0012: Numeric post-process and format operations
+
+## 2026-09-19 accepted amendment: E8M0 as a TCVT source
+
+Issue #324 extends Decision 183 only in the reverse direction: E8M0 is a TCVT
+source only for FP16, BF16, and FP32 destinations. Codes 0x00 through 0xFE
+denote exact values 2^(code-127) and use the ordinary target rounding,
+saturation, overflow, underflow, and inexact rules. Code 0xFF produces the
+destination canonical quiet NaN and does not set NV. No other E8M0 source pair
+is added, and the existing E8M0 destination contract is unchanged.
+
+This is an additive but architecture-visible compatibility change with
+required release impact.
 
 ## Context
 
