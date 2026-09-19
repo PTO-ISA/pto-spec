@@ -630,6 +630,7 @@
         "ADR-BLOCK-0016"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001"
@@ -649,6 +650,7 @@
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-FAULTS-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-LIFECYCLE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PER-PE-002",
+        "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PUBLICATION-LAYOUT-003",
         "PTO-AVS-BLOCK-ASSEMBLE-MULTI-OPEN-INTERLEAVED-003",
         "PTO-AVS-BLOCK-ASSEMBLE-MULTIOUTPUT-001",
         "PTO-AVS-BLOCK-ASSEMBLE-OUTPUT-STRUCTURE-001",
@@ -4573,6 +4575,7 @@
         "ADR-BLOCK-0017"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-FAULTS-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-LIFECYCLE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-MULTI-OPEN-INTERLEAVED-003",
@@ -4769,6 +4772,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-ALIAS-CONSUMER-001",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-FAULTS-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-LIFECYCLE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-MULTI-OPEN-INTERLEAVED-003",
@@ -5449,6 +5453,7 @@
         "ADR-GOV-0009"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-DECODE-001",
         "PTO-AVS-BLOCK-TMATMULMX-EXEC-001",
         "PTO-AVS-BLOCK-TMATMULMX-LOCAL-SCALE-001"
@@ -18606,7 +18611,7 @@
     "asl/block/model/dispatch/comparison-schema.asl": "4f8ea243c765f13ef8fe210bea1db4f61d7782d9df7de4fa17854a8ccc06d8fc",
     "asl/block/model/dispatch/cube-accumulator-routing.asl": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b",
     "asl/block/model/dispatch/cube-destination.asl": "415bd2e0433b3a0c103942f3b00fb5f0b72bc1c89a949279ef9c2903f335a2e4",
-    "asl/block/model/dispatch/cube-tmatmul.asl": "8252a43ba3b4f248d701b2fb2761d159684f2652d0348d6c3e7fcbed9718b3b4",
+    "asl/block/model/dispatch/cube-tmatmul.asl": "f4523e01c260e1d8b236d7652abadb20076204e14f25d98c46e73b92e79fe1fe",
     "asl/block/model/dispatch/decode.asl": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8",
     "asl/block/model/dispatch/descriptor-legality.asl": "0cee1102eff132c5220fb6a6ba20f9978bd98e37f576c8a6aa053b16b2a3641b",
     "asl/block/model/dispatch/destination-auxiliary.asl": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c",
@@ -18619,22 +18624,22 @@
     "asl/block/model/dispatch/reduction-schema.asl": "64553aa5a95ec920ed43e46b2e3e027db9eca767c811ae88a2e4a119b6df8c7c",
     "asl/block/model/dispatch/scalar-schema.asl": "d874ff5c684f6eb531505ac6029fa972ffe957ed0075febc7d6991b3526d1bf3",
     "asl/block/model/dispatch/shared-cube-matrix.asl": "22c5b8fdaa941fe934aa66f0762b1a09c1ae81efbee7d9d1370c27c3e730dc7b",
-    "asl/block/model/dispatch/shared-tlsu.asl": "3987ae3c0f0128c01c022778c6d1877130994fb41bc1e307772ae336aa2430df",
+    "asl/block/model/dispatch/shared-tlsu.asl": "7e29fa92195753fae53a08eae4c7a6b66fb71062bd8f7e17e0afb47b39223661",
     "asl/block/model/dispatch/start.asl": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9",
     "asl/block/model/dispatch/tcvt-destination.asl": "8ad3e52ffa7b62d772a54ef45378d8d8671859bec47b3cac8121b0373ecb143a",
     "asl/block/model/dispatch/tcvt-schema.asl": "fa01b6603827f5ef6e3ca3d4869652e59f6803bf3d1b41ca95b668f93efb6be7",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "25d13561c47c7e64614e3f0c4754730f16297eddc25bf15ff7058dc9fc3acebb",
-    "asl/block/model/dispatch/tile-execution.asl": "1a1f5222fe16da17afad4c6259b2d623e8469b9e9dcc2c94950d604f7dbb43a1",
+    "asl/block/model/dispatch/tile-execution.asl": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126",
     "asl/block/model/dispatch/tile-schema.asl": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624",
     "asl/block/model/dispatch/timg2col-execution.asl": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35",
     "asl/block/model/dispatch/timg2col-schema.asl": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5",
-    "asl/block/model/dispatch/tlsu-gm-atom-red.asl": "948946416a87f10cbe563556a857169f9574f0cddff240b9968cc381c3096828",
-    "asl/block/model/dispatch/tlsu-gmov.asl": "0ddcbec724a75acd2fa4cc534bba788eb15fcb029d34fb75b5ecdbd0978c4c70",
-    "asl/block/model/dispatch/tlsu-layout-conversion.asl": "4e610b2a7b46f7f71fe90b6725d51f74ad5e0e2f0716e87d09dc025272bc5a53",
-    "asl/block/model/dispatch/tlsu-mgather-cas.asl": "7b3e65e5276432ae8b72dad188a6b7e1b3ce3c49e5e19aea3bc61396979c8960",
-    "asl/block/model/dispatch/tlsu-mgather-mask.asl": "8300cd350d848d41095c0c024852a925782c96fd2171f1b887e444885c706d6b",
-    "asl/block/model/dispatch/tlsu-mgather.asl": "289972ef6f6e495d785eab85238276333f7d5d0933feda46616d005381b3e703",
+    "asl/block/model/dispatch/tlsu-gm-atom-red.asl": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778",
+    "asl/block/model/dispatch/tlsu-gmov.asl": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3",
+    "asl/block/model/dispatch/tlsu-layout-conversion.asl": "7b53bfd9ddbe3f72e06d60d69e8d0b51644e0aa1415627d4481813a138228ba0",
+    "asl/block/model/dispatch/tlsu-mgather-cas.asl": "5045758cde12b18c6704126efe1179644cf096e9d157c80f8f132c003bff1095",
+    "asl/block/model/dispatch/tlsu-mgather-mask.asl": "ce6b58980592140ccc80e2569d0a3f9aaa5e5981459defc1c5ea48eee413d0e1",
+    "asl/block/model/dispatch/tlsu-mgather.asl": "eb50c88814eb103a5b73c0ca036b3ffe34ca339dfd5dd99bbddecf1e7ca84989",
     "asl/block/model/dispatch/tlsu-mscatter-mask.asl": "3c861fedffccae228bc5bcb6c8191b3effbee6389433264484889b1c55dcb819",
     "asl/block/model/dispatch/tlsu-mscatter.asl": "994721fbab076ae70bf812fbf9f38d127104d3df1cbac00db48c726fe6554926",
     "asl/block/model/dispatch/tlsu-prefetch.asl": "08d470dfc375c62c22219fb5158f24c42caa3410fdb284afd85eccd71e258275",
@@ -18648,15 +18653,15 @@
     "asl/block/model/lifecycle/reset.asl": "3574c8314a6a744541f10bc70100539c9e2d8c4965c703abf93282ac1e331211",
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
-    "asl/block/model/operands/local-generation-cube.asl": "fff1985f9c68ebe1ad9e2799b0bfc385a0c1947923dcd72e1121164d96cd4f55",
-    "asl/block/model/operands/local-generation.asl": "044a30d8db04dae11b82e92d5a8f81931fea77122bdfa8fa376da25c1cff874f",
+    "asl/block/model/operands/local-generation-cube.asl": "1d272c781a4436b639d61e2ff3980b8ff543015bc4b9dfdd49ae68c4b93b87b2",
+    "asl/block/model/operands/local-generation.asl": "b8991f4fa1726b0b5b60172cff68aeddb56ca846a0908e05223dc318ce8ab4c1",
     "asl/block/model/operands/portable-carriers.asl": "aba165efaf48597eb1e02da665a82f5276c5be42d0f1c317648f300109eb05bd",
     "asl/block/model/operands/range-modifiers.asl": "c95f0e58a62ace6ff6ce3aadf5b3d783eded605c7231fbcb26eac2193a3358ce",
     "asl/block/model/operands/scalar-bindings.asl": "a5b468e7912a7a5513eabbad1024ae41e5a7b553e59fae1d02ed1f9cc5a08c7a",
     "asl/block/model/operands/shared-bindings.asl": "6678bc4c0986747635c52040454da4b31a9d19c84d4c818a63ffda2a16a0f33f",
     "asl/block/model/operands/shared-generation.asl": "b968fa86f8bb03b89a2284ae341c5c38cbdce4acd3aacc7eb9254cce11443b9f",
-    "asl/block/model/operands/subview-descriptor.asl": "b0b98a1bceb467b573ec57448ffe495975b173883beefddef86ea24ceb88f4a0",
-    "asl/block/model/operands/tile-bindings.asl": "e0ba409134d2622ebb2fcdc114fd89d02e3886be1d1372feb8ae495d7e6c25a7",
+    "asl/block/model/operands/subview-descriptor.asl": "f435920634ee9fa80b23e443120c9f909b00e649a0a801e3e0296e7e05a7dbc1",
+    "asl/block/model/operands/tile-bindings.asl": "172f88cfeb837a3a0440cbafebec4990c37fb5039cdeffd8c8d76233910c1b6b",
     "asl/block/model/operands/timg2col-parameters.asl": "cc2d3bd4c59aa87dc618b5eef32ec8606ee886d0be3eec5d0090903a9e605ea2",
     "asl/block/model/operands/weight-to-shared-parameters.asl": "c42be3478e831f484a67729ad28a152b04cc7a87e1dcf3c7456778cfdc1cbd81",
     "asl/block/model/schema/attributes.asl": "90dc72291f078c79f3bc5ebb44a2c18c757785ef8720d49adf552763292597a2",
@@ -19503,7 +19508,7 @@
     "docs/block/model/dispatch/comparison-schema.md": "c006afc880d936d6a8be0310799861752220edec32e32aba7585c570c47d7fab",
     "docs/block/model/dispatch/cube-accumulator-routing.md": "66e2db9aa55ed4b0059f6b49770143d986d0fc629d25da106094cf4b83b6f3cf",
     "docs/block/model/dispatch/cube-destination.md": "f36118bcd8997dfd03940c2bf964416b28d0d74c23f5f28647f0bb6ac553b037",
-    "docs/block/model/dispatch/cube-tmatmul.md": "076005278a575f951aea21fbb63fb3bc80fadedaf141338b6c09be37022ee046",
+    "docs/block/model/dispatch/cube-tmatmul.md": "e2915c79a261a5eda6a74ce3922a9945d2c98bb4462b72e319b4fc0fe58c5e3d",
     "docs/block/model/dispatch/decode.md": "e13866d0e563a72be84e395c6646f560e9510b41a57752bcc6c02ed3d72391c0",
     "docs/block/model/dispatch/descriptor-legality.md": "9ba138ec22ff89f3e8bbfd4789ab70fcdfd6858a0c2d3bcd5f3e1b3e04a3c56d",
     "docs/block/model/dispatch/destination-auxiliary.md": "48b5d092220e0ea1d61879faaab7b0e1bcbec4bc0f88a8c16907b3b6f1dda9ed",
@@ -19516,22 +19521,22 @@
     "docs/block/model/dispatch/reduction-schema.md": "a4695a30161b8b9fce73a282575e884443a4c1edc88b5bac0ca4af3cde342886",
     "docs/block/model/dispatch/scalar-schema.md": "3c9c965681230257425bd94ee9542db99e9d8923f3d32197fdcbcff4b64305a4",
     "docs/block/model/dispatch/shared-cube-matrix.md": "8721426389f0459ec99896ac2e85f6e8b6727a452599cee6ab8e1a84ac997e7e",
-    "docs/block/model/dispatch/shared-tlsu.md": "dd16f04886e38fbef78272919c06ad2930bae7b592566a2a7840c5516aae8603",
+    "docs/block/model/dispatch/shared-tlsu.md": "ba596f5d20797ec25284be8acc238191e40dcff74ba0daa0844932587881e64a",
     "docs/block/model/dispatch/start.md": "1e117eaf3e954b6937d7426979e8072d22b2cd0160c6a8ad34fa558e98ad8504",
     "docs/block/model/dispatch/tcvt-destination.md": "74d1e525dfe6104aabfbbf734e52b6c93c5f537ce3bb13200ec8e187d3bcb455",
     "docs/block/model/dispatch/tcvt-schema.md": "c95942b7636aee3695e01e59af9303d6906d8f6dda31447b6b550ea936ab4c36",
     "docs/block/model/dispatch/tgpr2t-schema.md": "fe5b100cbcab7898c04ccf086dcaddec1fd0fffe2a33384c532898a91ed9ae5e",
-    "docs/block/model/dispatch/tile-execution.md": "d1d2f9758a25924479d659574975349e13a7e883c3bd31ca688f4156ce25b72d",
+    "docs/block/model/dispatch/tile-execution.md": "d3792e53bf33b0229d49bcabc726a1cea10adbcd1a780c47a29d77c02516d8c5",
     "docs/block/model/dispatch/tile-scalar-schema.md": "a9e6d4afed2aa85e318f129202fc9d62e88726a8b0906a5b1aa38dcaedb36098",
     "docs/block/model/dispatch/tile-schema.md": "eb5b89521950fa2cf5625e6cb700e8c230475b5d7393bb48844f6d962d739226",
     "docs/block/model/dispatch/timg2col-execution.md": "b0cac8e52bb96fe5a567bfa058496c390bdcb6d3e90b4fd565b7086e0c0d2a7d",
     "docs/block/model/dispatch/timg2col-schema.md": "31da73e5f1448f330d1b49317714bf3564e360e9750a356e2f0d259b0aeb19be",
-    "docs/block/model/dispatch/tlsu-gm-atom-red.md": "d08aad0df2d031e291a7edf86cd88409acbe118a3162ff250cded719fda1ef29",
-    "docs/block/model/dispatch/tlsu-gmov.md": "1774154c16f70f23261bf46a6751cc1810e6b043bb0f885d917ed68df2e48b08",
-    "docs/block/model/dispatch/tlsu-layout-conversion.md": "619ab2bf4661093323c53e363dbba370b356b3eae3b9e4e4c2555a083de77f26",
-    "docs/block/model/dispatch/tlsu-mgather-cas.md": "d68a2ad48fd23e8831d092891cf7356323d6a620ba388b6defe3e15a829e2b74",
-    "docs/block/model/dispatch/tlsu-mgather-mask.md": "6598a6ac5f9b59b59b09411b6a6e019c8ffbc1dca5a74d0c992d28898f474b1e",
-    "docs/block/model/dispatch/tlsu-mgather.md": "03b334c555a4b4151a326cfb23ee5977ac462217ea67162270bf2f9f117e97dd",
+    "docs/block/model/dispatch/tlsu-gm-atom-red.md": "50a1a12727dd11d612f6836e6f15a93660d142d6e4b7b884f0e739a9359cf747",
+    "docs/block/model/dispatch/tlsu-gmov.md": "9d690ebdf071be3eff1d73eb7b05aa6921d063e1e2babcecf5deb3c47625f41c",
+    "docs/block/model/dispatch/tlsu-layout-conversion.md": "e47861b9ec0352d800b53efb47b5804136380d8e69fbae9b31a255b9e54361f8",
+    "docs/block/model/dispatch/tlsu-mgather-cas.md": "7e8009134d6024954b364749700cb32774c2d3c1972e3fe73ea2ec1e128ee7eb",
+    "docs/block/model/dispatch/tlsu-mgather-mask.md": "d133c82bb5c6111450ff8b1814189eed7e283258229bb727eb887959e513742f",
+    "docs/block/model/dispatch/tlsu-mgather.md": "a3295557553aeb46359e9a1e8af4db7a231a7c7028afbe7df0af0e38430c2263",
     "docs/block/model/dispatch/tlsu-mscatter-mask.md": "323ae6747246cdcfaf77920433bc696abf165437713bfb3cebb45bb89a1ba8a9",
     "docs/block/model/dispatch/tlsu-mscatter.md": "67455d7c1630c99f79c73cd8be6d8fd080848dc651f0a700d06518ea8afbf9c5",
     "docs/block/model/dispatch/tlsu-prefetch.md": "4adda6b2e6d1afa1b61c4a0c0300e4697532d20d87b5ef701983b78ce863a03b",
@@ -19545,15 +19550,15 @@
     "docs/block/model/lifecycle/reset.md": "2e59b17c7a078f6134b07a4005a2529a0e74be2ace23a7818233915b3f9e28b2",
     "docs/block/model/memory/timg2col-gm.md": "67c5a0ec1562981d42937f76b5de85bfcea097e3ac7b5c054433a0420ebab74a",
     "docs/block/model/memory/weight-to-shared-gm.md": "60abc161f4ec307126629c64999e050feb159c34ac3af761991c14156aba5b7d",
-    "docs/block/model/operands/local-generation-cube.md": "4544ef04bfdb7e30c29b204be94fb2d665933f2a535a7d58ba25affba7cee6ae",
-    "docs/block/model/operands/local-generation.md": "7a843956db31a949e734a9ff39ac3d1d89183017dcc656a92c6dadb2c9689a41",
+    "docs/block/model/operands/local-generation-cube.md": "4affa637d939decb9de385d22aa601e8fc68671d1a9ca7806ec3e1b0e17bbbf8",
+    "docs/block/model/operands/local-generation.md": "212fe22f3943b3a0886af3035886354c2a9eabfa45eb84122c0cb9878efa816c",
     "docs/block/model/operands/portable-carriers.md": "5345a07bed313baed930c779b28ed8ac1a8dfa3b8fe94684839a034e60104296",
     "docs/block/model/operands/range-modifiers.md": "855c2733e6c2e9c1e0504fc51c3047c2e41def2af0af3f66d38a702481b74bfa",
     "docs/block/model/operands/scalar-bindings.md": "452cfc149578ccd0fb97de9afcc726d4de0884d23a7585d92a032361716cb590",
     "docs/block/model/operands/shared-bindings.md": "864f96d8a2d83e20266c3ea525fcc3bb85ba1d391569c7ff0eb0bf9835b69032",
     "docs/block/model/operands/shared-generation.md": "6db5fb549e7455d3b0681689f28ea0fd04f56f97983a91aaaada5a5780f8b0cc",
-    "docs/block/model/operands/subview-descriptor.md": "11b00362aa9f5e2e8570d3863b59749d1ab576a5078e015e0a67f2a02d922209",
-    "docs/block/model/operands/tile-bindings.md": "3ed34eb5cf828f707c60dc8b32735041b1c3ea192dff799a76d5245ad7c66ab8",
+    "docs/block/model/operands/subview-descriptor.md": "cb540bec8a2146d31cf1fa51405641781b2b6ff2236dead3b7747119f23e2c5c",
+    "docs/block/model/operands/tile-bindings.md": "c3840e6bb80474e61fa22ee4d9d50228831d2fb795996b2f683e2896b8d498a6",
     "docs/block/model/operands/timg2col-parameters.md": "35bbefcf34db2c4ca1370d62fcf1abbacf4c62bb2814bbedebf91cdfe7c7b0ba",
     "docs/block/model/operands/weight-to-shared-parameters.md": "64a3df945bdfdc2efe82608e8bcea51ef87087d7b0fa608bb235d855289e06cb",
     "docs/block/model/schema/attributes.md": "c93b1efa1f3f81849391459a7f6e255550b5ddbcb3c421cda9904ec67574bbc3",
@@ -20239,7 +20244,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "4d3633221aa109d451a66a9143b0e99a203170cb681c57224603ae81d756f14b",
+    "spec/evidence/adr-index.json": "f08636e7a8df75377220f59a38e6118485ca131607c4ac1d9a135c6d26fd2024",
     "spec/evidence/instruction-contract-closure.json": "45b93fcb74eb58e8f30b12dbad1ba5d6e3d9f8e95b639015cdfa7487680653f5",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -20937,8 +20942,9 @@
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-korder-padding-001.asl": "83e2b515bf8561800f05f77676a0fcce038bd9f2b1200bfee0fb6b3825f96a26",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-windows-001.asl": "6e792e56b64b514140811471d9d25cacdf920e7cc77f4c69901c4a8ff88ac959",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-static-weight-to-shared-gm-contract-001.asl": "0c6b6e0cfc135c5c335e359e4e24519c05d41590c301eb03ecbb37a2f7972d7c",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "ee554cccea14f47971b1623fa7bded62391e7d40d10c467565bbc83a502dc41c",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m16-parent-geometry-001.asl": "a561df9e33ea83f13671796dbf95e8eadc65f5c0c3eb84cd0347f0ed00028687",
-    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-parent-geometry-001.asl": "bd36e27797cb01773b355ee9f8effa8d5b497d2bca8945a03167bbbff66de586",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-parent-geometry-001.asl": "762fc78c6ac9879dc7021ee95639e880102a077003171fac4f204262ec94b788",
     "tests/asl/block/model/operands/local-generation-cube/block-static-local-generation-cube-contract-001.asl": "e783fc196a584b00172685ff9fa3bda57402ca2ecc0697ae64aef823ab3e5df1",
     "tests/asl/block/model/operands/local-generation/block-atomic-assemble-multioutput-001.asl": "ed0b5fce7dea764814a67c7d63c890aa5be8b5ece59469e3a0bcf0d1b3124204",
     "tests/asl/block/model/operands/local-generation/block-exec-assemble-alias-consumer-001.asl": "3707fca342b97fbe7468a74eec63d683b32c4a6df4891869bd6e5f687352b2d9",
@@ -21280,6 +21286,7 @@
     "tests/asl/block/model/operands/subview-descriptor/block-exec-range-operation-matrix-313.asl": "efd3608862568799f2c1c9133f2bd1b137f97ac7ca6661bb45925977c8a9f6d9",
     "tests/asl/block/model/operands/subview-descriptor/block-exec-subview-cube-descriptor-001.asl": "fa912dc5fecc0fddda55e249e2625fd7883b8a2962950a205db304e8babdf1e5",
     "tests/asl/block/model/operands/subview-descriptor/block-static-subview-descriptor-contract-001.asl": "ea0b65d8e3a2bb75d9e57c8c9ccb4d97e0be7579db7658675da6281f46aea42d",
+    "tests/asl/block/model/operands/tile-bindings/block-exec-assemble-local-publication-layout-003.asl": "5f6def6eb912604bd842d758585383543785f874f4767a50f0d8852f92ba3e60",
     "tests/asl/block/model/operands/tile-bindings/block-static-tile-bindings-contract-001.asl": "870f1af191426a965d414b23a13ee263b33a2187050977ddda5dbb768a4cb6e7",
     "tests/asl/block/model/operands/timg2col-parameters/block-bound-timg2col-params-001.asl": "7825de92d05fa9968256e29e6414c121024877f92cdf7c7859d3ad8266d4029c",
     "tests/asl/block/model/operands/timg2col-parameters/block-fault-timg2col-reserved-parameters-001.asl": "a272abd65115e797eda3e4167aeab96c4291d8c47a70ca657860972d5b25fa0b",
@@ -24219,7 +24226,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1096,
     "status": "closed",
-    "test_count": 3969,
+    "test_count": 3971,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -33491,6 +33498,19 @@
       "source": "asl/block/model/operands/local-generation.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-INST-BLOCK-B-IOT",
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-INST-BLOCK-BSTART-TMATMULMX"
+      ],
+      "sha256": "ee554cccea14f47971b1623fa7bded62391e7d40d10c467565bbc83a502dc41c",
+      "source": "asl/block/model/operands/local-generation-cube.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
       "kind": "execution",
       "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m16-parent-geometry-001.asl",
@@ -33509,7 +33529,7 @@
         "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
         "PTO-CUBE-CELL-STATE-001"
       ],
-      "sha256": "bd36e27797cb01773b355ee9f8effa8d5b497d2bca8945a03167bbbff66de586",
+      "sha256": "762fc78c6ac9879dc7021ee95639e880102a077003171fac4f204262ec94b788",
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
@@ -33556,6 +33576,16 @@
       ],
       "sha256": "83675f12a869a9395aecf79551f178e118a66850e00a91093dfbc039b16b7491",
       "source": "asl/block/model/operands/local-generation.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PUBLICATION-LAYOUT-003",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/tile-bindings/block-exec-assemble-local-publication-layout-003.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001"
+      ],
+      "sha256": "5f6def6eb912604bd842d758585383543785f874f4767a50f0d8852f92ba3e60",
+      "source": "asl/block/model/operands/tile-bindings.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-ASSEMBLE-MULTI-OPEN-INTERLEAVED-003",
@@ -68958,6 +68988,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0015",
+        "ADR-BLOCK-0016",
         "ADR-CUBE-0007",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
@@ -69162,6 +69193,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0015",
+        "ADR-BLOCK-0016",
         "ADR-CUBE-0010",
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
@@ -70124,14 +70156,18 @@
       "documentation": "docs/block/model/operands/local-generation-cube.md",
       "id": "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-BLOCK-0016"
+      ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001"
       ],
       "source": "asl/block/model/operands/local-generation-cube.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-STATIC-001"
@@ -70986,10 +71022,13 @@
         "ADR-STATE-0011",
         "ADR-TILE-0004"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PUBLICATION-LAYOUT-003"
+      ],
       "source": "asl/block/model/operands/tile-bindings.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PUBLICATION-LAYOUT-003",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-TILE-BINDINGS-STATIC-001"
       ]
     },
