@@ -20248,7 +20248,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "f08636e7a8df75377220f59a38e6118485ca131607c4ac1d9a135c6d26fd2024",
+    "spec/evidence/adr-index.json": "b3a43a442ab7e8dc289b8cc351d4fddb61e0816c1204d88e6b84c41f79f393f2",
     "spec/evidence/instruction-contract-closure.json": "45b93fcb74eb58e8f30b12dbad1ba5d6e3d9f8e95b639015cdfa7487680653f5",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -69457,6 +69457,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0015",
+        "ADR-BLOCK-0016",
         "ADR-CUBE-0014",
         "ADR-CUBE-0015",
         "ADR-CUBE-0016",
@@ -69675,6 +69676,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-BLOCK-0018"
       ],
       "semantic_tests": [
@@ -69725,6 +69727,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-MEM-0009"
       ],
       "semantic_tests": [],
@@ -69746,6 +69749,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-TILE-0004"
       ],
       "semantic_tests": [],
@@ -69767,6 +69771,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-GOV-0009",
         "ADR-TILE-0004"
       ],
@@ -69800,6 +69805,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-MEM-0009",
         "ADR-TILE-0004"
       ],
@@ -69822,6 +69828,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-MEM-0009",
         "ADR-TILE-0004"
       ],
@@ -69844,6 +69851,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
+        "ADR-BLOCK-0016",
         "ADR-MEM-0009",
         "ADR-TILE-0004"
       ],
