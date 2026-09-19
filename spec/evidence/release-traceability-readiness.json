@@ -633,7 +633,6 @@
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
-        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001"
       ]
     },
@@ -656,7 +655,6 @@
         "PTO-AVS-BLOCK-ASSEMBLE-MULTIOUTPUT-001",
         "PTO-AVS-BLOCK-ASSEMBLE-OUTPUT-STRUCTURE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-RESTART-001",
-        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001",
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
         "PTO-AVS-BLOCK-TLOAD-REUSED-DESTINATION-SHAPE-009",
@@ -1004,6 +1002,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-OUTPUT-STRUCTURE-001",
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-SHARED-B-ASSEMBLE-NON-REGRESSION-001"
       ]
     },
@@ -2543,6 +2542,7 @@
         "ADR-BLOCK-0018"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M16-001",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M32-DN-001",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-SHARED-001",
@@ -18633,10 +18633,10 @@
     "asl/block/model/dispatch/tcvt-destination.asl": "8ad3e52ffa7b62d772a54ef45378d8d8671859bec47b3cac8121b0373ecb143a",
     "asl/block/model/dispatch/tcvt-schema.asl": "fa01b6603827f5ef6e3ca3d4869652e59f6803bf3d1b41ca95b668f93efb6be7",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "25d13561c47c7e64614e3f0c4754730f16297eddc25bf15ff7058dc9fc3acebb",
-    "asl/block/model/dispatch/tile-execution.asl": "cbd1d68e23d69f89a9563e14e90f488bf15c323e763ce605e032c6aa10f5c917",
+    "asl/block/model/dispatch/tile-execution.asl": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126",
     "asl/block/model/dispatch/tile-schema.asl": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624",
-    "asl/block/model/dispatch/timg2col-execution.asl": "55958e8862e4a7e81cde8196d252ff1f8558c70a05dacbf38690ea4e44d3736a",
+    "asl/block/model/dispatch/timg2col-execution.asl": "633ceb0f353c950e8a533459063a1e3f7e76b31249e19cb3b2fbe8b0b9bf21a8",
     "asl/block/model/dispatch/timg2col-schema.asl": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5",
     "asl/block/model/dispatch/tlsu-gm-atom-red.asl": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778",
     "asl/block/model/dispatch/tlsu-gmov.asl": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3",
@@ -19530,10 +19530,10 @@
     "docs/block/model/dispatch/tcvt-destination.md": "74d1e525dfe6104aabfbbf734e52b6c93c5f537ce3bb13200ec8e187d3bcb455",
     "docs/block/model/dispatch/tcvt-schema.md": "c95942b7636aee3695e01e59af9303d6906d8f6dda31447b6b550ea936ab4c36",
     "docs/block/model/dispatch/tgpr2t-schema.md": "fe5b100cbcab7898c04ccf086dcaddec1fd0fffe2a33384c532898a91ed9ae5e",
-    "docs/block/model/dispatch/tile-execution.md": "ef6f2f16abb77e6073aa4e56b92e307f13c9a57b1a745ad31d3fce1bfabecd7b",
+    "docs/block/model/dispatch/tile-execution.md": "d3792e53bf33b0229d49bcabc726a1cea10adbcd1a780c47a29d77c02516d8c5",
     "docs/block/model/dispatch/tile-scalar-schema.md": "a9e6d4afed2aa85e318f129202fc9d62e88726a8b0906a5b1aa38dcaedb36098",
     "docs/block/model/dispatch/tile-schema.md": "eb5b89521950fa2cf5625e6cb700e8c230475b5d7393bb48844f6d962d739226",
-    "docs/block/model/dispatch/timg2col-execution.md": "92f17385b77911f6bc2a8626987659aa873f5abeb400b49033f34bdd8f68fecd",
+    "docs/block/model/dispatch/timg2col-execution.md": "d5adfac5b390683761e6824740d757a2ca60a81d8382a8909c7111a0f42098ac",
     "docs/block/model/dispatch/timg2col-schema.md": "31da73e5f1448f330d1b49317714bf3564e360e9750a356e2f0d259b0aeb19be",
     "docs/block/model/dispatch/tlsu-gm-atom-red.md": "50a1a12727dd11d612f6836e6f15a93660d142d6e4b7b884f0e739a9359cf747",
     "docs/block/model/dispatch/tlsu-gmov.md": "9d690ebdf071be3eff1d73eb7b05aa6921d063e1e2babcecf5deb3c47625f41c",
@@ -20902,7 +20902,7 @@
     "tests/asl/block/model/dispatch/tile-schema/block-exec-tile-schema-tgpr2t-001.asl": "84e62d0b34385f66fd07672ed3cb74a38d4a370a750a6d123a2fec88882522c3",
     "tests/asl/block/model/dispatch/tile-schema/block-fault-tload-tstore-ordinary-pad-008.asl": "700b7e69801e68534053f9644fe0f2f7a096119f317107f653a88b24e423bee4",
     "tests/asl/block/model/dispatch/tile-schema/block-static-tile-schema-contract-001.asl": "6ca8a345a60df34cc1a9a2526c1be2fba2e3dbb51227cf54b21240cc4c04d930",
-    "tests/asl/block/model/dispatch/timg2col-execution/block-exec-bstart-timg2col-local-assemble-002.asl": "ff8f699c79748fd82a8ea5037744b1bc2873a75b623f10f238f2b70ce2f6b2ed",
+    "tests/asl/block/model/dispatch/timg2col-execution/block-fault-bstart-timg2col-local-assemble-002.asl": "2acbc7fb9de2ea058700ceb783b07e786070541a67ba549c4f9f103ceefca9e8",
     "tests/asl/block/model/dispatch/timg2col-execution/block-fault-timg2col-participant-parameters-001.asl": "33a8acc9c1a18a508d0878acffc14d77e2de4a976f953646a11566a894175717",
     "tests/asl/block/model/dispatch/timg2col-execution/block-static-timg2col-execution-contract-001.asl": "ac518a5bcd8f468235f39e146945a5528a9324dbdd731e54a2e8bb6d628d7af2",
     "tests/asl/block/model/dispatch/timg2col-schema/block-bound-timg2col-shape-001.asl": "83182fb4f3bf71cdea1a67ee6ef7f3ea99b0dac3ef237cfb29df28d5decfd87d",
@@ -35427,15 +35427,15 @@
     },
     {
       "id": "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
-      "kind": "execution",
-      "path": "tests/asl/block/model/dispatch/timg2col-execution/block-exec-bstart-timg2col-local-assemble-002.asl",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/timg2col-execution/block-fault-bstart-timg2col-local-assemble-002.asl",
       "requirements": [
         "PTO-INST-BLOCK-BSTART-TIMG2COL",
-        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
-        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-RANGE-001",
+        "PTO-BSTART-TIMG2COL-CONTRACT-001",
         "PTO-BSTART-TIMG2COL-DEFINEDNESS-001"
       ],
-      "sha256": "ff8f699c79748fd82a8ea5037744b1bc2873a75b623f10f238f2b70ce2f6b2ed",
+      "sha256": "2acbc7fb9de2ea058700ceb783b07e786070541a67ba549c4f9f103ceefca9e8",
       "source": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
