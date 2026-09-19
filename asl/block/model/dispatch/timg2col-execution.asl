@@ -85,6 +85,14 @@ begin
         return FALSE;
     end;
     let output = BundleTIMG2COLStateOutput();
+    if output != BundleTIMG2COLOutput_SharedND then
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid &&
+               _BundleTileBindings[[binding]].destination_assemble.valid then
+                return FALSE;
+            end;
+        end;
+    end;
     let valid_col_raw = UInt(_BundleDimensions[[0]]);
     let valid_row_raw = UInt(_BundleDimensions[[1]]);
     let total_col_raw = UInt(_BundleDimensions[[2]]);
@@ -203,7 +211,6 @@ begin
         let expected_layout = if output == BundleTIMG2COLOutput_LocalM16 then
             TileLayout_CUBE_M16 else TileLayout_CUBE_M32;
         if !binding.valid || !binding.destination_valid ||
-           binding.destination_assemble.valid ||
            binding.source0_valid || binding.source1_valid || !binding.last ||
            binding.pe_mask != '1111' ||
            (BundleTIMG2COLPEValidRow(output, valid_row) != 0 &&
@@ -229,20 +236,6 @@ begin
         _SharedGenerations[[SharedTileArrayIndex(shared_tile_id)]].parent_cell_count;
     if offset_cells > parent_cells then return (FALSE, 0); end;
     return (TRUE, (parent_cells - offset_cells) as integer {0..8192});
-end;
-
-func PrepareBundleTIMG2COLLocalGeneration() => boolean
-begin
-    if BundleTIMG2COLStateOutput() == BundleTIMG2COLOutput_SharedND then
-        return TRUE;
-    end;
-    // TIMG2COL has a dedicated operation descriptor and cannot use the generic
-    // Stage 2 decoder path. Preserve the same Local generation ordering here:
-    // resolve ParentRef identity, preflight structure, then reuse the exact
-    // open destination before any allocation, GM access, or payload effect.
-    if !ResolveBundleRelativeTileSources() then return FALSE; end;
-    if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
-    return ReuseBundleLocalGenerationDestination();
 end;
 
 func BundleTIMG2COLBuildAndPublish() => boolean
@@ -448,13 +441,6 @@ end;
 
 func ExecuteBundleTIMG2COLOperation() => boolean
 begin
-    if !PrepareBundleTIMG2COLLocalGeneration() then
-        BundleTIMG2COLAbortFailedAttempt();
-        if _LastFault == Fault_None then
-            SetFault(Fault_TileLegality, ReadTPC());
-        end;
-        return FALSE;
-    end;
     if !BundleTIMG2COLStateLegal() then
         BundleTIMG2COLAbortFailedAttempt();
         SetFault(Fault_TileLegality, ReadTPC());
