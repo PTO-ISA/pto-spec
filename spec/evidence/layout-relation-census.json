@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "de60f46f5b0bb81f815d73a2f469e3a5a5992939",
+  "candidate_head": "4db8c57a3d4b2699f42763433816bed68f1951ae",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16269,7 +16269,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "56b05973123727551a5c7051a9116a1e41dd24f961b8d2d5472fc04cafa2f885",
+      "after_sha256": "671412aaf9fc12d04d46d3ff6cb5e2d6c241772de19221a71ec39bab2157b74d",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32"
@@ -16393,15 +16393,6 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "ExecuteBundleSharedTLSUOperation",
       "path": "asl/block/model/dispatch/shared-tlsu.asl"
-    },
-    {
-      "after_layouts": [],
-      "after_sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5",
-      "before_layouts": [],
-      "before_sha256": "fc7b2280ca1e0497878b1c4a89bd289d71315826f09adeeae86c9ecbe33e8545",
-      "classification": "operation-scoped accepted layout/relation owner",
-      "name": "ExecuteBundleTIMG2COLOperation",
-      "path": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
       "after_layouts": [],
@@ -45146,7 +45137,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "56b05973123727551a5c7051a9116a1e41dd24f961b8d2d5472fc04cafa2f885"
+            "sha256": "671412aaf9fc12d04d46d3ff6cb5e2d6c241772de19221a71ec39bab2157b74d"
           }
         ],
         "BundleTIMG2COLStateOutput": [
@@ -46553,20 +46544,16 @@
             "calls": [
               "BundleTIMG2COLAbortFailedAttempt",
               "BundleTIMG2COLAbortFailedAttempt",
-              "BundleTIMG2COLAbortFailedAttempt",
               "BundleTIMG2COLBuildAndPublish",
               "BundleTIMG2COLStateLegal",
-              "PrepareBundleTIMG2COLLocalGeneration",
               "ReadTPC",
               "ReadTPC",
-              "ReadTPC",
-              "SetFault",
               "SetFault",
               "SetFault"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5"
+            "sha256": "fc7b2280ca1e0497878b1c4a89bd289d71315826f09adeeae86c9ecbe33e8545"
           }
         ],
         "ExecuteBundleTMATMULOperation": [
