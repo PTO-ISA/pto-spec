@@ -269,6 +269,12 @@ begin
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
+    if !ValidateBundleLocalGenerationWriters() then
+        RollBackBundleTileDestinations();
+        AbortBundleLocalGenerationsForBundle();
+        DiscardBundleSubviewMaterializations();
+        return FALSE;
+    end;
     if SelectedBundleComparisonConsumesGPR(operation) then
         if !ExecuteBundleComparisonGPRCarrier(operation) then
             SetFault(Fault_TileLegality, ReadTPC());

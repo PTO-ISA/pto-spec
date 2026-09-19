@@ -25,6 +25,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, ParentCapacity is allocation metadata only. Each writer retains its fragment descriptor. A successful LAST derives one common parent physical/valid descriptor from the participating PEs' gap-free CELL prefix coverage, and atomically publishes that final descriptor. Capacity slack never creates parent rows, columns, repeats, or CELLs. ParentRef selects the open generation by generation identity and does not require the aggregate descriptor to be finalized before LAST.
+// Generation structure is preflighted before destination resolution. The exact materialized writer descriptor is validated after destination shape/allocation or reuse and before producer effects, coverage registration, LAST closure, or parent finalization.
 // NDF-END: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 pure func BundleLocalGenerationQueueSlot(hand: integer {0..3}, distance: integer {0..15}) => integer {0..63}
 begin
@@ -192,7 +193,7 @@ begin
     end;
     return BundleTileDestinationSizeBytes(binding);
 end;
-func ValidateBundleLocalGeneration() => boolean
+func ValidateBundleLocalGenerationStructure() => boolean
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -221,30 +222,6 @@ begin
                 let raw_offset = UInt(assemble.offset);
                 let writer_cells = BundleLocalGenerationCellCount(writer_size) as integer {1..2048};
                 if raw_offset > 2047 || raw_offset + writer_cells > parent_cells then
-                    SetBundleLocalGenerationInitFault(Fault_TileLegality); return FALSE;
-                end;
-                let init_destination = _BundleTileBindings[[binding]].destination;
-                if BundleLocalGenerationCubeLayout(
-                       _Tiles[[init_destination]].layout) then
-                    if !BundleLocalGenerationCubeWriterLegal(
-                           init_destination, writer_size) then
-                        SetBundleLocalGenerationInitFault(Fault_TileLegality);
-                        return FALSE;
-                    end;
-                    if assemble.last &&
-                       !BundleLocalGenerationCubeFinalizationLegal(
-                           0, init_destination, raw_offset as integer {0..2047},
-                           writer_cells, writer_size, writer_mask, TRUE, FALSE) then
-                        SetBundleLocalGenerationInitFault(Fault_TileLegality);
-                        return FALSE;
-                    end;
-                end;
-                if assemble.last &&
-                   !BundleLocalGenerationCubeLayout(
-                       _Tiles[[init_destination]].layout) &&
-                   !BundleLocalGenerationCoverageComplete(
-                       0, assemble.offset, writer_size, writer_mask, TRUE,
-                       parent_size as integer {1..12}) then
                     SetBundleLocalGenerationInitFault(Fault_TileLegality); return FALSE;
                 end;
             else
@@ -282,40 +259,9 @@ begin
                     SetBundleLocalGenerationFault(generation_slot,
                         Fault_TileLegality); return FALSE;
                 end;
-                let continuation_destination =
-                    _LocalGenerations[[generation_slot]].working_destination;
                 let replay = BundleLocalGenerationReplay(
                     generation_slot, offset_cells, writer_cells, ReadBPC(),
                     _BundleExecutionDomainToken);
-                if BundleLocalGenerationCubeLayout(
-                       _Tiles[[continuation_destination]].layout) then
-                    if !BundleLocalGenerationCubeWriterLegal(
-                           continuation_destination, writer_size) then
-                        SetBundleLocalGenerationFault(generation_slot,
-                            Fault_TileLegality); return FALSE;
-                    end;
-                    if _LocalGenerations[[generation_slot]].writer_count != 0 then
-                        let first = _LocalGenerations[[generation_slot]].writers[[0]];
-                        let actual = _Tiles[[continuation_destination]];
-                        if first.layout != actual.layout ||
-                           first.data_type != actual.data_type ||
-                           first.predicate_basis_type != actual.predicate_basis_type ||
-                           first.physical_rows != actual.rows ||
-                           first.valid_rows != actual.valid_rows then
-                            SetBundleLocalGenerationFault(generation_slot,
-                                Fault_TileLegality); return FALSE;
-                        end;
-                    end;
-                    if assemble.last &&
-                       !BundleLocalGenerationCubeFinalizationLegal(
-                           generation_slot, continuation_destination,
-                           offset_cells, writer_cells, writer_size,
-                           if replay then Zeros{4} else writer_mask,
-                           FALSE, replay) then
-                        SetBundleLocalGenerationFault(generation_slot,
-                            Fault_TileLegality); return FALSE;
-                    end;
-                end;
                 for prior = 0 to _LocalGenerations[[generation_slot]].writer_count - 1
                     looplimit 16 do
                     var pe_overlap = FALSE;
@@ -337,20 +283,12 @@ begin
                             Fault_TileLegality); return FALSE;
                     end;
                 end;
-                if assemble.last &&
-                   !BundleLocalGenerationCubeLayout(
-                       _Tiles[[continuation_destination]].layout) &&
-                   !BundleLocalGenerationCoverageComplete(
-                       generation_slot, assemble.offset, writer_size,
-                       writer_mask, FALSE, 0) then
-                    SetBundleLocalGenerationFault(generation_slot,
-                        Fault_TileLegality); return FALSE;
-                end;
             end;
         end;
     end;
     return TRUE;
 end;
+
 func CommitBundleLocalGeneration()
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do

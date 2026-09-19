@@ -169,7 +169,7 @@ begin
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if !PrepareBundleSubviewDescriptors(operation) then return FALSE; end;
-    if !ValidateBundleLocalGeneration() then return FALSE; end;
+    if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
     if !ValidateBundleSharedGeneration() then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;

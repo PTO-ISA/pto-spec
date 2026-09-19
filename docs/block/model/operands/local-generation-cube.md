@@ -396,5 +396,93 @@ begin
     SetFault(fault, ReadTPC()); let ring = CurrentACR();
     if _TrapContexts[[ring]].valid then _TrapContexts[[ring]].tpc = ReadBPC(); end;
 end;
+
+// Destination shape, allocation, and generation reuse are resolved before
+// this check. Writer descriptor legality therefore observes the exact Tile
+// that the producer would update, while still preceding producer effects,
+// coverage updates, LAST closure, and parent-descriptor finalization.
+func ValidateBundleLocalGenerationWriters() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_assemble.valid then
+            let assemble = _BundleTileBindings[[binding]].destination_assemble;
+            let destination = _BundleTileBindings[[binding]].destination;
+            let writer_mask = _BundleTileBindings[[binding]].pe_mask;
+            let writer_size = assemble.size_code as integer {1..12};
+            let offset_cells = UInt(assemble.offset) as integer {0..2047};
+            let writer_cells = BundleLocalGenerationCellCount(writer_size)
+                as integer {1..2048};
+            let slot = if assemble.init then 0
+                else BundleLocalGenerationSlotForDestination(destination);
+            if !assemble.init && slot == 64 then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+            let generation_slot = slot as integer {0..63};
+            if BundleLocalGenerationCubeLayout(
+                   _Tiles[[destination]].layout) then
+                if !BundleLocalGenerationCubeWriterLegal(
+                       destination, writer_size) then
+                    if assemble.init then
+                        SetBundleLocalGenerationInitFault(Fault_TileLegality);
+                    else
+                        SetBundleLocalGenerationFault(generation_slot,
+                            Fault_TileLegality);
+                    end;
+                    return FALSE;
+                end;
+                if !assemble.init &&
+                   _LocalGenerations[[generation_slot]].writer_count != 0 then
+                    let first = _LocalGenerations[[generation_slot]].writers[[0]];
+                    let actual = _Tiles[[destination]];
+                    if first.layout != actual.layout ||
+                       first.data_type != actual.data_type ||
+                       first.predicate_basis_type != actual.predicate_basis_type ||
+                       first.physical_rows != actual.rows ||
+                       first.valid_rows != actual.valid_rows then
+                        SetBundleLocalGenerationFault(generation_slot,
+                            Fault_TileLegality);
+                        return FALSE;
+                    end;
+                end;
+                let replay = if assemble.init then FALSE
+                    else BundleLocalGenerationReplay(
+                        generation_slot, offset_cells, writer_cells, ReadBPC(),
+                        _BundleExecutionDomainToken);
+                if assemble.last &&
+                   !BundleLocalGenerationCubeFinalizationLegal(
+                       generation_slot, destination, offset_cells,
+                       writer_cells, writer_size,
+                       if replay then Zeros{4} else writer_mask,
+                       assemble.init, replay) then
+                    if assemble.init then
+                        SetBundleLocalGenerationInitFault(Fault_TileLegality);
+                    else
+                        SetBundleLocalGenerationFault(generation_slot,
+                            Fault_TileLegality);
+                    end;
+                    return FALSE;
+                end;
+            elsif assemble.last &&
+                  !BundleLocalGenerationCoverageComplete(
+                      generation_slot, assemble.offset, writer_size,
+                      writer_mask, assemble.init,
+                      if assemble.init then
+                          _BundleTileBindings[[binding]].destination_size
+                              as integer {1..12}
+                      else 0) then
+                if assemble.init then
+                    SetBundleLocalGenerationInitFault(Fault_TileLegality);
+                else
+                    SetBundleLocalGenerationFault(generation_slot,
+                        Fault_TileLegality);
+                end;
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: unit -->

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-BSTART-TMATMULMX"],"kind":"execution","summary":"Decoded Local B.IOT/B.ASSEMBLE INIT, ParentRef MIDDLE/LAST, and Local-A TMATMULMX observe one finalized CUBE_M32 parent.","pass_condition":"Four decoded 32x32 E2M1X2 writers with 512-byte envelopes assemble at CELL offsets 0, 4, 8, and 12 into a 2-KiB parent; LAST publishes 32x128, a decoded Local-A TMATMULMX accepts M=32,K=128, and an out-of-bounds decoded writer rolls back without partial publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/operands/portable-carriers.asl","asl/block/model/dispatch/cube-tmatmul.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-BSTART-TMATMULMX"],"kind":"execution","summary":"Decoded Local B.IOT/B.ASSEMBLE INIT_LAST and multi-writer generations validate materialized CUBE writers before delayed publication and Local-A TMATMULMX consumption.","pass_condition":"Decoded 32x32 E2M1X2 writers with 512-byte envelopes complete explicitly; INIT_LAST publishes one capacity-slack parent, four writers at CELL offsets 0, 4, 8, and 12 publish 32x128 only after every writer event, Local-A TMATMULMX accepts M=32,K=128, and out-of-bounds or last-writer dtype/layout/row/tail mismatches roll back without partial publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/operands/portable-carriers.asl","asl/block/model/dispatch/cube-tmatmul.asl"]}
 pure func CubeDecodedStartTMOV() => bits(64)
 begin
     return Zeros{64} + 0x20419181;
@@ -73,6 +73,16 @@ begin
     let completed = CompleteBundleAt(
         Zeros{PTO_XLEN} + (0x800 + offset * 0x10));
     assert completed && _LastFault == Fault_None;
+    let slot = BundleLocalGenerationSlot(0, '1111');
+    let writer = (_LocalGenerations[[slot]].writer_count - 1)
+        as integer {0..15};
+    assert !_LocalGenerations[[slot]].writers[[writer]].ready;
+    if last then assert !_LocalGenerations[[slot]].published; end;
+    let writer_completed = CompleteBundleLocalGenerationWriterEvent(
+        slot, _BundleExecutionDomainToken, offset, 4);
+    assert writer_completed &&
+           _LocalGenerations[[slot]].writers[[writer]].ready;
+    if last then assert _LocalGenerations[[slot]].published; end;
 end;
 func CubeDecodedRunBadWriter()
 begin
@@ -84,6 +94,22 @@ begin
            parent_bound == CommandExecution_Executed &&
            assembled == CommandExecution_Executed;
     let completed = CompleteBundleAt(Zeros{PTO_XLEN} + 0x900);
+    assert !completed && _LastFault == Fault_TileLegality;
+end;
+func CubeDecodedRunBadLast(offset: integer)
+begin
+    CubeDecodedBeginBundle();
+    let bound = ExecuteCommandInstruction(
+        CubeDecodedLocalBinder(FALSE, FALSE), 32);
+    let parent_bound = ExecuteCommandInstruction(
+        CubeDecodedParentBinder(0), 32);
+    let assembled = ExecuteCommandInstruction(
+        CubeDecodedAssemble(FALSE, TRUE, offset), 32);
+    assert bound == CommandExecution_Executed &&
+           parent_bound == CommandExecution_Executed &&
+           assembled == CommandExecution_Executed;
+    let completed = CompleteBundleAt(
+        Zeros{PTO_XLEN} + (0xa00 + offset * 0x10));
     assert !completed && _LastFault == Fault_TileLegality;
 end;
 func CubeDecodedRunConsumer(parent: TileIndex)
@@ -145,6 +171,21 @@ begin
     end;
     CubeDecodedRunConsumer(parent);
 
+    // A decoded INIT_LAST validates the newly materialized 32x32 writer, not
+    // the pre-allocation destination placeholder. Capacity slack is legal and
+    // publication waits for the writer-completion event.
+    ResetProfileState();
+    CubeDecodedPrepareSources();
+    CubeDecodedRunWriter(TRUE, TRUE, 0);
+    let init_last_slot = BundleLocalGenerationSlot(0, '1111');
+    let init_last_parent =
+        _LocalGenerations[[init_last_slot]].published_destination;
+    assert _LocalGenerations[[init_last_slot]].descriptor_finalized &&
+           _LocalGenerations[[init_last_slot]].published &&
+           _Tiles[[init_last_parent]].capacity_bytes == 2048 &&
+           _Tiles[[init_last_parent]].rows == 32 &&
+           _Tiles[[init_last_parent]].columns == 32;
+
     ResetProfileState();
     CubeDecodedPrepareSources();
     CubeDecodedRunWriter(TRUE, FALSE, 0);
@@ -155,5 +196,42 @@ begin
            !_LocalGenerations[[bad_slot]].descriptor_finalized &&
            !_LocalGenerations[[bad_slot]].published;
     assert _Tiles[[bad_parent]].allocated == FALSE;
+
+    // A decoded LAST must agree with every retained writer descriptor. Each
+    // mismatch faults before registering the last writer or finalizing the
+    // parent descriptor.
+    ResetProfileState();
+    CubeDecodedPrepareSources();
+    CubeDecodedRunWriter(TRUE, FALSE, 0);
+    let dtype_slot = BundleLocalGenerationSlot(0, '1111');
+    _LocalGenerations[[dtype_slot]].writers[[0]].data_type =
+        TileDataType_FP16;
+    CubeDecodedRunBadLast(4);
+    assert !_LocalGenerations[[dtype_slot]].published;
+
+    ResetProfileState();
+    CubeDecodedPrepareSources();
+    CubeDecodedRunWriter(TRUE, FALSE, 0);
+    let layout_slot = BundleLocalGenerationSlot(0, '1111');
+    _LocalGenerations[[layout_slot]].writers[[0]].layout =
+        TileLayout_CUBE_M16;
+    CubeDecodedRunBadLast(4);
+    assert !_LocalGenerations[[layout_slot]].published;
+
+    ResetProfileState();
+    CubeDecodedPrepareSources();
+    CubeDecodedRunWriter(TRUE, FALSE, 0);
+    let rows_slot = BundleLocalGenerationSlot(0, '1111');
+    _LocalGenerations[[rows_slot]].writers[[0]].physical_rows = 16;
+    CubeDecodedRunBadLast(4);
+    assert !_LocalGenerations[[rows_slot]].published;
+
+    ResetProfileState();
+    CubeDecodedPrepareSources();
+    CubeDecodedRunWriter(TRUE, FALSE, 0);
+    let tail_slot = BundleLocalGenerationSlot(0, '1111');
+    _LocalGenerations[[tail_slot]].writers[[0]].valid_columns = 20;
+    CubeDecodedRunBadLast(4);
+    assert !_LocalGenerations[[tail_slot]].published;
     return 0;
 end;

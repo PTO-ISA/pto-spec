@@ -334,6 +334,9 @@ begin
                 shared_tile_id, valid_rows, valid_columns, columns, data_type,
                 CurrentBundleTileLayout(), capacity_bytes);
             if !ResolveBundleTileDestinations() then return FALSE; end;
+            if !ValidateBundleLocalGenerationWriters() then
+                RollBackBundleTileDestinations(); return FALSE;
+            end;
             let destination = _BundleTileBindings[[0]].destination;
             if _Tiles[[destination]].rows != shared_tile.rows ||
                _Tiles[[destination]].columns != shared_tile.columns ||
