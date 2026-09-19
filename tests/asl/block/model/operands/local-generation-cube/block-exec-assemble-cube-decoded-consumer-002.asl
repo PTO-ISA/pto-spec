@@ -1,16 +1,16 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-BSTART-TMATMULMX"],"kind":"execution","summary":"Decoded Local B.IOT/B.ASSEMBLE INIT_LAST and multi-writer generations validate materialized CUBE writers before delayed publication and Local-A TMATMULMX consumption.","pass_condition":"Decoded 32x32 E2M1X2 writers with 512-byte envelopes complete explicitly; INIT_LAST publishes one capacity-slack parent, four writers at CELL offsets 0, 4, 8, and 12 publish 32x128 only after every writer event, Local-A TMATMULMX accepts M=32,K=128, and out-of-bounds or last-writer dtype/layout/row/tail mismatches roll back without partial publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/operands/portable-carriers.asl","asl/block/model/dispatch/cube-tmatmul.asl"]}
-pure func CubeDecodedStartTMOV() => bits(64)
+pure func CubeDecodedStartTCVT() => bits(64)
 begin
-    return Zeros{64} + 0x20419181;
+    return Zeros{64} + 0x21b19181;
 end;
 pure func CubeDecodedLocalBinder(init: boolean, last: boolean) => bits(64)
 begin
-    var instruction = Zeros{64} + 0x00004013;
-    instruction[31:26] = Zeros{6} + 2;
-    instruction[25:20] = Zeros{6} + 1;
+    var instruction = Zeros{64} + 0x00005013;
+    instruction[31:26] = Zeros{6};
+    instruction[25:20] = if init then Zeros{6} + 1 else Zeros{6} + 2;
     instruction[19] = if last then '1' else '0';
-    instruction[18:15] = '0101';
-    instruction[11:9] = '101'; instruction[8:7] = '00';
+    instruction[18:15] = if init then '0101' else '0000';
+    instruction[11:9] = '111'; instruction[8:7] = '00';
     return instruction;
 end;
 pure func CubeDecodedParentBinder(parent: integer) => bits(64)
@@ -18,7 +18,7 @@ begin
     var instruction = Zeros{64} + 0x00005013;
     instruction[25:20] = Zeros{6} + parent;
     instruction[19] = '1';
-    instruction[11:9] = '101';
+    instruction[11:9] = '111';
     return instruction;
 end;
 pure func CubeDecodedAssemble(
@@ -33,32 +33,34 @@ begin
 end;
 func CubeDecodedPrepareSources()
 begin
-    let source0 = ConfigureCubeTileForMaskWithPhysical(1, 512,
-        32, 32, 32, 32, TileDataType_E2M1X2,
+    let source0 = ConfigureCubeTileForMaskWithPhysical(1, 2048,
+        32, 32, 32, 32, TileDataType_FP16,
         TileLayout_CUBE_M32, '1111');
-    let source1 = ConfigureCubeTileForMaskWithPhysical(2, 512,
-        32, 32, 32, 32, TileDataType_E2M1X2,
+    let source1 = ConfigureCubeTileForMaskWithPhysical(2, 2048,
+        32, 32, 32, 32, TileDataType_FP16,
         TileLayout_CUBE_M32, '1111');
     assert source0 && source1;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     MarkTileValidRegionDefined(1);
     MarkTileValidRegionDefined(2);
 end;
 func CubeDecodedBeginBundle()
 begin
-    let started = ExecuteCommandInstruction(CubeDecodedStartTMOV(), 32);
+    let started = ExecuteCommandInstruction(CubeDecodedStartTCVT(), 32);
     assert started == CommandExecution_Executed;
-    SetBundleDataAttributeState(Zeros{5} + 11, Zeros{5} + 29,
+    SetBundleDataAttributeState(Zeros{5} + 11, Zeros{5},
         Zeros{2}, Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 32);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 32);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
 end;
 func CubeDecodedRunWriter(
     init: boolean, last: boolean, offset: integer {0..2047})
 begin
     CubeDecodedBeginBundle();
-    let bound = ExecuteCommandInstruction(CubeDecodedLocalBinder(init, FALSE), 32);
+    let bound = ExecuteCommandInstruction(CubeDecodedLocalBinder(init, init), 32);
     var parent_bound = CommandExecution_Executed;
     if !init then
         parent_bound = ExecuteCommandInstruction(CubeDecodedParentBinder(0), 32);
@@ -68,10 +70,15 @@ begin
     assert bound == CommandExecution_Executed &&
            parent_bound == CommandExecution_Executed &&
            assembled == CommandExecution_Executed;
-    assert _BundleTileBindings[[0]].destination_assemble.valid;
-    assert _BundleTileBindings[[0]].destination_assemble.init == init;
-    assert _BundleTileBindings[[0]].destination_assemble.last == last;
-    if !init then assert _BundleTileBindings[[0]].parent_ref_valid; end;
+    let assemble_binding: BundleTileBindingIndex = if init then 0 else 1;
+    assert _BundleTileBindings[[assemble_binding]].destination_assemble.valid;
+    assert _BundleTileBindings[[assemble_binding]].destination_assemble.init ==
+           init;
+    assert _BundleTileBindings[[assemble_binding]].destination_assemble.last ==
+           last;
+    if !init then
+        assert _BundleTileBindings[[assemble_binding]].parent_ref_valid;
+    end;
     let completed = CompleteBundleAt(
         Zeros{PTO_XLEN} + (0x800 + offset * 0x10));
     assert completed && _LastFault == Fault_None;
