@@ -20944,18 +20944,18 @@
     "tests/asl/block/model/memory/weight-to-shared-gm/block-static-weight-to-shared-gm-contract-001.asl": "0c6b6e0cfc135c5c335e359e4e24519c05d41590c301eb03ecbb37a2f7972d7c",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "cc155c1156e6d8596ad6e9e3a41b652d4af05efc0a7afa985fbecfdb57c7cd81",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m16-parent-geometry-001.asl": "a561df9e33ea83f13671796dbf95e8eadc65f5c0c3eb84cd0347f0ed00028687",
-    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-parent-geometry-001.asl": "762fc78c6ac9879dc7021ee95639e880102a077003171fac4f204262ec94b788",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-parent-geometry-001.asl": "346cd936794f8de84d172423a22ba225f30555389ea28288c7d9350ec0728171",
     "tests/asl/block/model/operands/local-generation-cube/block-static-local-generation-cube-contract-001.asl": "e783fc196a584b00172685ff9fa3bda57402ca2ecc0697ae64aef823ab3e5df1",
     "tests/asl/block/model/operands/local-generation/block-atomic-assemble-multioutput-001.asl": "ed0b5fce7dea764814a67c7d63c890aa5be8b5ece59469e3a0bcf0d1b3124204",
     "tests/asl/block/model/operands/local-generation/block-exec-assemble-alias-consumer-001.asl": "3707fca342b97fbe7468a74eec63d683b32c4a6df4891869bd6e5f687352b2d9",
     "tests/asl/block/model/operands/local-generation/block-exec-assemble-local-lifecycle-001.asl": "b02c4ffda506694bee3797aefc0e642270667a38b78b191b3f21cd9de46b4ecc",
-    "tests/asl/block/model/operands/local-generation/block-exec-assemble-local-per-pe-002.asl": "83675f12a869a9395aecf79551f178e118a66850e00a91093dfbc039b16b7491",
+    "tests/asl/block/model/operands/local-generation/block-exec-assemble-local-per-pe-002.asl": "881328aba2530750dd1d96f45023fc22032ed0e8a8e10764d8025b4b8d80b73e",
     "tests/asl/block/model/operands/local-generation/block-exec-assemble-multi-open-interleaved-003.asl": "50913450218ceb677693830fabe115d67533dd780cfc2868b34515c844dd7d33",
-    "tests/asl/block/model/operands/local-generation/block-fault-assemble-local-faults-001.asl": "79710f66a05cea58115cce45cd47947be908e8ca324d4a42016ab12037f860cc",
-    "tests/asl/block/model/operands/local-generation/block-fault-assemble-restart-001.asl": "7c95de62a5695eaa5651b9a991c47622c62f036b60f4ae4afc3a5c57c347cab0",
+    "tests/asl/block/model/operands/local-generation/block-fault-assemble-local-faults-001.asl": "d3a669c637fdde17526a58225fa47f09358f69b4bcd484a4c0b9e964c2649a6e",
+    "tests/asl/block/model/operands/local-generation/block-fault-assemble-restart-001.asl": "300ef273fbd9c4505342d1aa8e1b83cc71a36bdb80475c462a2abce2774ec990",
     "tests/asl/block/model/operands/local-generation/block-static-local-generation-contract-001.asl": "16499602fc0b118ce005843abe8aaa73060ffb0f35ea1a6a863db5a6c80ece2e",
-    "tests/asl/block/model/operands/portable-carriers/block-exec-assemble-portable-carriers-001.asl": "0dea9d5aafbc48c87e904738b2970f22244f7b26fc6a6190919a013aa1b846bf",
-    "tests/asl/block/model/operands/portable-carriers/block-exec-assemble-required-cell-count-003.asl": "09feef85094c955b97734a207559d81420f8fc65fa6b05b3ef648bea14e53d29",
+    "tests/asl/block/model/operands/portable-carriers/block-exec-assemble-portable-carriers-001.asl": "1a614c2b683a9e7b310e4034e761bec7f45fe0f76fb505ca7c3625700f339e51",
+    "tests/asl/block/model/operands/portable-carriers/block-exec-assemble-required-cell-count-003.asl": "b5eb177ddbf0d10b0f6c3c2b979478dc8bc9be1e05e6398488e88b021247cb08",
     "tests/asl/block/model/operands/portable-carriers/block-state-assemble-dynamic-domain-002.asl": "569c78b4db9ff01b5b949f3e35aca5c1d0a8a91bf873f0aabb37cff669c01b4f",
     "tests/asl/block/model/operands/portable-carriers/block-static-portable-carriers-contract-001.asl": "30b55312540c2f4754d9eadf240c4ec9f2fe8eeff7e106d8454582229a96b6ca",
     "tests/asl/block/model/operands/range-modifiers/block-exec-range-pemode-zero-001.asl": "97391c16c8e7f937b1a1bb2e06dab80f8c66a2a4aed84f8ccda354b917cb7abf",
@@ -20963,7 +20963,7 @@
     "tests/asl/block/model/operands/range-modifiers/block-static-range-modifiers-contract-001.asl": "95e7fc2f4b4cdbe420feafaf0bd8c64a75297d4dddafe31dcd3d9b12c36d2f7b",
     "tests/asl/block/model/operands/scalar-bindings/block-static-scalar-bindings-contract-001.asl": "bb2b2cf07b78f3f200a5cfb6dd085f9c75cf2289cd34a15e708e5501214a0aff",
     "tests/asl/block/model/operands/shared-bindings/block-static-shared-bindings-contract-001.asl": "7a2c31c0851119fcd30d6d8b4678dbe1b84a1ff20e194b72f80dc5f97767c662",
-    "tests/asl/block/model/operands/shared-generation/block-exec-shared-b-assemble-non-regression-001.asl": "38e56a088d4af64d0a536d75ca9dc9ac42ae7b44ccd3b210d2b2a628bc2c391e",
+    "tests/asl/block/model/operands/shared-generation/block-exec-shared-b-assemble-non-regression-001.asl": "b13c417b3bc5e74cf09d13b4aeb2db257df45cb66b29a1a8935f51dda8eecedd",
     "tests/asl/block/model/operands/shared-generation/block-exec-shared-generation-001.asl": "7fdf0dadac27a4d974721c1a6522d122c680802f750220f346f1f90246a06011",
     "tests/asl/block/model/operands/shared-generation/block-exec-shared-generation-explicit-range-001.asl": "6f87071d82fecb0977cb22122ef4826421c5a036f3ebb6566a0047eaa3bc890c",
     "tests/asl/block/model/operands/shared-generation/block-exec-shared-subview-001.asl": "7721b9a67fba9be03134e01e53b168c65b947b4a1a69f7edd8cd9290a6f43e49",
@@ -33529,7 +33529,7 @@
         "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
         "PTO-CUBE-CELL-STATE-001"
       ],
-      "sha256": "762fc78c6ac9879dc7021ee95639e880102a077003171fac4f204262ec94b788",
+      "sha256": "346cd936794f8de84d172423a22ba225f30555389ea28288c7d9350ec0728171",
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
@@ -33551,7 +33551,7 @@
         "PTO-INST-BLOCK-B-ASSEMBLE",
         "PTO-INST-BLOCK-B-IOT"
       ],
-      "sha256": "79710f66a05cea58115cce45cd47947be908e8ca324d4a42016ab12037f860cc",
+      "sha256": "d3a669c637fdde17526a58225fa47f09358f69b4bcd484a4c0b9e964c2649a6e",
       "source": "asl/block/model/operands/local-generation.asl"
     },
     {
@@ -33574,7 +33574,7 @@
         "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
         "PTO-B-ASSEMBLE-CONSUMER-READINESS-001"
       ],
-      "sha256": "83675f12a869a9395aecf79551f178e118a66850e00a91093dfbc039b16b7491",
+      "sha256": "881328aba2530750dd1d96f45023fc22032ed0e8a8e10764d8025b4b8d80b73e",
       "source": "asl/block/model/operands/local-generation.asl"
     },
     {
@@ -33637,7 +33637,7 @@
         "PTO-INST-BLOCK-B-SUBVIEW",
         "PTO-INST-BLOCK-B-ASSEMBLE"
       ],
-      "sha256": "0dea9d5aafbc48c87e904738b2970f22244f7b26fc6a6190919a013aa1b846bf",
+      "sha256": "1a614c2b683a9e7b310e4034e761bec7f45fe0f76fb505ca7c3625700f339e51",
       "source": "asl/block/model/operands/portable-carriers.asl"
     },
     {
@@ -33647,7 +33647,7 @@
       "requirements": [
         "PTO-B-ASSEMBLE-CONSUMER-READINESS-001"
       ],
-      "sha256": "09feef85094c955b97734a207559d81420f8fc65fa6b05b3ef648bea14e53d29",
+      "sha256": "b5eb177ddbf0d10b0f6c3c2b979478dc8bc9be1e05e6398488e88b021247cb08",
       "source": "asl/block/model/operands/portable-carriers.asl"
     },
     {
@@ -33659,7 +33659,7 @@
         "PTO-INST-BLOCK-B-ASSEMBLE",
         "PTO-INST-BLOCK-B-IOT"
       ],
-      "sha256": "7c95de62a5695eaa5651b9a991c47622c62f036b60f4ae4afc3a5c57c347cab0",
+      "sha256": "300ef273fbd9c4505342d1aa8e1b83cc71a36bdb80475c462a2abce2774ec990",
       "source": "asl/block/model/operands/local-generation.asl"
     },
     {
@@ -41271,7 +41271,7 @@
         "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
         "PTO-B-ASSEMBLE-RANGE-001"
       ],
-      "sha256": "38e56a088d4af64d0a536d75ca9dc9ac42ae7b44ccd3b210d2b2a628bc2c391e",
+      "sha256": "b13c417b3bc5e74cf09d13b4aeb2db257df45cb66b29a1a8935f51dda8eecedd",
       "source": "asl/block/model/operands/shared-generation.asl"
     },
     {
