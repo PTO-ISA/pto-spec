@@ -179,8 +179,10 @@ begin
     end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
+    var specialized_commits_local_generation = TRUE;
     if timg2col_selected then
-        specialized_completed = ExecuteBundleTIMG2COLOperation();
+        (specialized_completed, specialized_commits_local_generation) =
+            ExecuteBundleTIMG2COLOperation();
     elsif weight_tload_selected then
         specialized_completed = ExecuteBundleWeightTLOADOperation();
     elsif matrix_selected then
@@ -214,7 +216,9 @@ begin
     if specialized then
         if specialized_completed && _LastFault == Fault_None then
             if !matrix_selected || !BundleTMATMULCurrentPEInactive() then
-                CommitBundleLocalGeneration();
+                if specialized_commits_local_generation then
+                    CommitBundleLocalGeneration();
+                end;
                 RetireBundleConsumerDependencies();
                 if timg2col_selected then
                     FinalizeBundleTileAttempt(TileExecution_Executed);
