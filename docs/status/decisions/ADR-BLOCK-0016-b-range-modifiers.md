@@ -40,6 +40,8 @@
     "PTO-BLOCK-B-SUBVIEW",
     "PTO-BLOCK-B-ASSEMBLE",
     "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS",
     "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
     "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
@@ -55,6 +57,7 @@
     "PTO-BLOCK-MODEL-FAULTS-ROLLBACK",
     "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
     "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
     "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
     "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
     "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
@@ -66,6 +69,31 @@
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/262",
   "release_impact": "required",
+  "amendments": [
+    {
+      "date": "2026-09-19",
+      "baseline": "072bda20ddc65d624ad9732b14b4222e87bc05ac",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/328",
+      "affected_ndf": [
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR"
+      ]
+    }
+  ],
   "legacy_ids": [
     "ADR-0098"
   ]
@@ -199,7 +227,7 @@ The modifiers do not form an independent command group and cannot associate retr
 
 ## Release amendment: ParentRef, WriterSize, and Shared destination reuse
 
-The historical ADR-0098 prose above is preserved verbatim and in order for the serial-to-typed ADR migration. This section is the sole 0.58.6 amendment and is authoritative for the final frozen candidate.
+The historical ADR-0098 prose above is preserved verbatim and in order for the serial-to-typed ADR migration. This section is the first accepted 0.58.6 amendment and remains authoritative for its ParentRef, WriterSize, and Shared-reuse scope.
 
 ### Frozen contract
 
@@ -220,3 +248,51 @@ The authoritative owner is the PTO-TILEOP-MACRO-001 record in asl/arch/overview/
 ### Reviewed provenance
 
 The reviewed scalar-plus-command encoded-form projection has 561 forms and SHA-256 fingerprint 0589076678a0e1954d83d444e61769f57a68640ce79c1e5e2eeed3efaa387f71. The refreshed Local selector projection has candidate fingerprint f46fe83c2ff29c9c40e03b8aec8bd110852308d7fb37b7dc2cdc6b4a03ca3afb, with encoding ABI pto-isa-0.58.6-mode-function-v1. This amendment is release-impacting for 0.58.6 but does not itself publish a release.
+
+## 2026-09-19 accepted amendment: Local CUBE parent geometry
+
+### Provenance and approval
+
+Issue [#328](https://github.com/PTO-ISA/pto-spec/issues/328) is accepted by
+architecture approver `zhoubot` against stable pre-change baseline
+`072bda20ddc65d624ad9732b14b4222e87bc05ac`. The affected requirements are
+`PTO-B-ASSEMBLE-LOCAL-GENERATION-001`,
+`PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001`,
+`PTO-B-ASSEMBLE-CONSUMER-READINESS-001`, and
+`PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001`. The affected owners are the
+Local-generation and Local-CUBE-generation operand units, Stage 2 destination
+resolution and Tile execution, CUBE TMATMUL dispatch, subview materialization,
+and writer-completion event handling listed in this record's structured
+amendment metadata.
+
+### Decision
+
+For Local `CUBE_M16` and `CUBE_M32` `B.ASSEMBLE`, ParentCapacity remains
+allocation metadata. Every producer first materializes or reuses its current
+destination descriptor, then validates that exact writer descriptor before
+producer effects, coverage registration, LAST closure, or finalization.
+`WriterSizeCode` must exactly describe the writer's physical CELL envelope;
+all writers have common dtype, predicate basis, layout, physical rows, and
+valid rows. Each participating PE supplies the same gap-free CELL prefix.
+Only its terminal writer may have a valid-column tail, and every PE derives
+the same final valid-column extent.
+
+A successful LAST derives the parent rows, physical columns, valid rows,
+valid columns, repeat counts, CELL count, and storage bytes from those retained
+writer descriptors and common prefixes. Unused ParentCapacity does not create
+rows, columns, repeats, or CELLs. The finalized descriptor is architectural
+Local Tile state observed by whole-parent `B.SUBVIEW` and matrix consumers.
+Writer registration contributes coverage only; publication remains delayed
+until the registered writer-completion events make the closed generation
+ready. `Shared`, `RowMajor`, and `CUBE_N8` assembly semantics are unchanged.
+
+### Compatibility and release impact
+
+This is a release-impacting behavior change for the 0.58.6 candidate. Local
+M16/M32 generations whose contiguous finalized geometry uses less than the
+allocated ParentCapacity are newly legal, and later consumers can observe the
+derived aggregate descriptor rather than the INIT fragment descriptor. Code
+or models that required full-capacity coverage or retained fragment geometry
+must adopt the finalized-parent rule. The amendment does not publish a
+release; exact-commit release verification and release selection remain
+separate required work.
