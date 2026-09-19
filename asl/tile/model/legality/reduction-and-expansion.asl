@@ -8,14 +8,6 @@ begin
            layout == TileLayout_CUBE_M32;
 end;
 
-pure func TileReductionAndExpansionRowLimitLegal(
-    layout: TileLayout, valid_rows: integer {0..65535}) => boolean
-begin
-    if layout == TileLayout_CUBE_M16 then return valid_rows <= 16; end;
-    if layout == TileLayout_CUBE_M32 then return valid_rows <= 32; end;
-    return TileReductionAndExpansionLayoutSupported(layout);
-end;
-
 readonly func TileReductionAndExpansionDescriptorLegal(index: TileIndex)
     => boolean
 begin
@@ -84,9 +76,6 @@ readonly func TileOperandsLegal_ExecuteTileFillScalar(
     destination: TileIndex, scalar: Word) => boolean
 begin
     return TileReductionAndExpansionDescriptorLegal(destination) &&
-           TileReductionAndExpansionRowLimitLegal(
-               _Tiles[[destination]].layout,
-               _Tiles[[destination]].valid_rows) &&
            _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
            TileFillPadDataTypeSupported(
                _Tiles[[destination]].data_type);
@@ -119,10 +108,6 @@ begin
        destination_tile.layout != source_tile.layout ||
        source_tile.valid_rows == 0 ||
        source_tile.valid_columns == 0 ||
-       !TileReductionAndExpansionRowLimitLegal(
-           source_tile.layout, source_tile.valid_rows) ||
-       !TileReductionAndExpansionRowLimitLegal(
-           destination_tile.layout, destination_tile.valid_rows) ||
            !source_type_legal then
         return FALSE;
     end;
@@ -214,16 +199,12 @@ begin
     if destination_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.valid_rows == 0 ||
        destination_tile.valid_columns == 0 ||
-       !TileReductionAndExpansionRowLimitLegal(
-           destination_tile.layout, destination_tile.valid_rows) ||
        !operation_type_legal ||
        broadcast_tile.storage_kind != TileStorage_Numeric ||
        broadcast_tile.data_type !=
            (if expdif then source_tile.data_type
             else destination_tile.data_type) ||
-       broadcast_tile.layout != destination_tile.layout ||
-       !TileReductionAndExpansionRowLimitLegal(
-           broadcast_tile.layout, broadcast_tile.valid_rows) then
+       broadcast_tile.layout != destination_tile.layout then
         return FALSE;
     end;
 
@@ -233,9 +214,7 @@ begin
         end;
     elsif !TileReductionAndExpansionLogicalShapeMatch(destination, source) ||
           source_tile.storage_kind != TileStorage_Numeric ||
-          (!expdif && source_tile.data_type != destination_tile.data_type) ||
-          !TileReductionAndExpansionRowLimitLegal(
-              source_tile.layout, source_tile.valid_rows) then
+          (!expdif && source_tile.data_type != destination_tile.data_type) then
         return FALSE;
     end;
 

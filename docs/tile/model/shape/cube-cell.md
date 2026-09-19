@@ -20,15 +20,17 @@ This page is a generated reference view of the normative ASL unit.
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Local CUBE layouts MUST use the assigned 128-byte width-parametric CELL
 // mappings, derive storage independently of valid M/N/K, and reject unsupported
-// types or insufficient per-PE capacity before effects.
+// types or insufficient per-PE capacity before effects. Local M16 and M32
+// descriptors each contain exactly one physical M block; valid rows are a
+// nonzero tail within that block.
 // NDF-END: PTO-CUBE-CELL-STATE-001
 
 // NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-CELL-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Matrix scale Tiles in CUBE_M32 MUST use a two-dimensional 128-byte CellReg
-// grid with column/K repeat fast and 32-row repeat slow. Partial final group
-// slots and final row blocks MUST remain invalid storage tail. This generic
-// grid MUST NOT expand primary A/C/D legality beyond one M16/M32 row block.
+// Matrix scale Tiles in CUBE_M32 MUST use a 128-byte CellReg grid with
+// column/K repeat fast and exactly one 32-row physical block. Partial final
+// group slots remain invalid storage tail. This generic grid MUST NOT expand
+// primary A/C/D legality beyond one M16/M32 row block.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-CELL-001
 
 pure func TileLayoutIsCube(layout: TileLayout) => boolean
@@ -104,8 +106,7 @@ pure func TileCubeStorageRows(layout: TileLayout,
 begin
     let cell_rows = TileCubeCellRows(layout, data_type);
     if cell_rows == 0 || valid_rows == 0 then return 0; end;
-    if layout == TileLayout_CUBE_N8 ||
-       layout == TileLayout_CUBE_M32 then
+    if layout == TileLayout_CUBE_N8 then
         return TileCubeAlignedExtent(valid_rows,
             cell_rows as integer {1..65535});
     end;
@@ -179,7 +180,7 @@ begin
         let storage_rows = TileCubeStorageRows(
             layout, valid_rows, data_type);
         if storage_rows == 0 then return 0; end;
-        return (storage_rows DIVRM 32) as integer {1..2048};
+        return 1;
     end;
     if layout != TileLayout_CUBE_N8 then return 1; end;
     if columns MOD 8 != 0 then return 0; end;
@@ -287,9 +288,8 @@ begin
        physical_rows == 0 || physical_columns == 0 then
         return 0;
     end;
-    if layout == TileLayout_CUBE_M16 then return 1; end;
-    if layout == TileLayout_CUBE_M32 then
-        return (physical_rows DIVRM 32) as integer {1..2048};
+    if layout == TileLayout_CUBE_M16 || layout == TileLayout_CUBE_M32 then
+        return 1;
     end;
     return (physical_columns DIVRM 8) as integer {1..8192};
 end;
@@ -364,7 +364,7 @@ begin
             return FALSE;
         end;
     elsif layout == TileLayout_CUBE_M32 then
-        if physical_rows MOD 32 != 0 ||
+        if physical_rows != 32 ||
            physical_columns MOD (cell_columns as integer {1,2,4,8,16}) != 0 then
             return FALSE;
         end;
@@ -496,11 +496,9 @@ begin
         inner_row = row MOD row_divisor;
         inner_column = column MOD column_divisor;
     elsif tile.layout == TileLayout_CUBE_M32 then
-        let cell_row = (row DIVRM row_divisor)
-            as integer {0..2047};
         let cell_column = (column DIVRM column_divisor)
             as integer {0..65535};
-        cell_index = cell_row * k_repeat + cell_column;
+        cell_index = cell_column;
         inner_row = row MOD row_divisor;
         inner_column = column MOD column_divisor;
     else

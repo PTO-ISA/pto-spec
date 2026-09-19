@@ -99,7 +99,7 @@ begin
     assert ReadTileElement(row_slack_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 3;
 
-    PrepareCubeReduction(512, Zeros{5} + 29, 64, 2, 16, 2, 4, TRUE);
+    PrepareCubeReduction(512, Zeros{5} + 29, 32, 2, 16, 2, 4, TRUE);
     let column_slack_completed = ExecuteBundleTileOperation();
     assert column_slack_completed;
     assert _LastFault == Fault_None;
@@ -107,7 +107,7 @@ begin
     assert _Tiles[[column_slack_destination]].layout == TileLayout_CUBE_M32;
     assert _Tiles[[column_slack_destination]].valid_rows == 1;
     assert _Tiles[[column_slack_destination]].valid_columns == 2;
-    assert _Tiles[[column_slack_destination]].rows == 64;
+    assert _Tiles[[column_slack_destination]].rows == 32;
     assert _Tiles[[column_slack_destination]].columns == 2;
     assert ReadTileElement(column_slack_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 256;

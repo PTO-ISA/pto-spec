@@ -42,8 +42,6 @@ begin
 
     assert !TileCubeDescriptorShapeLegal(256, 17, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
-    assert !TileReductionAndExpansionRowLimitLegal(
-        TileLayout_CUBE_M16, 17);
 
     let source_over_capacity = ConfigureCubeTile(5, 4096, 2, 2,
         TileDataType_U32, TileLayout_CUBE_M16);
@@ -55,11 +53,11 @@ begin
         TileReduction_SUM, TileAxis_Row, 6, 5);
 
     let source_m32_ok = ConfigureCubeTileForMaskWithPhysical(7, 512,
-        64, 2, 4, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
+        32, 2, 4, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let destination_m32_row = ConfigureCubeTileForMaskWithPhysical(8, 512,
         32, 2, 4, 1, TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let destination_m32_column = ConfigureCubeTileForMaskWithPhysical(9, 512,
-        64, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
+        32, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
     assert source_m32_ok && destination_m32_row && destination_m32_column;
     FillTile(7, 4, 2);
     assert TileOperandsLegal_ExecuteTileReduction(
@@ -69,7 +67,7 @@ begin
     assert _Tiles[[8]].valid_rows == 4 && _Tiles[[8]].valid_columns == 1;
     assert _Tiles[[8]].rows == 32 && _Tiles[[8]].columns == 2;
     assert _Tiles[[9]].valid_rows == 1 && _Tiles[[9]].valid_columns == 2;
-    assert _Tiles[[9]].rows == 64 && _Tiles[[9]].columns == 2;
+    assert _Tiles[[9]].rows == 32 && _Tiles[[9]].columns == 2;
     assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTileElement(8, 3, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTileElement(9, 0, 0) == Zeros{PTO_XLEN} + 4;
@@ -79,10 +77,7 @@ begin
         TileDataType_U32, TileLayout_CUBE_M32);
     let destination_m32_too_tall = ConfigureCubeTile(11, 256, 33, 1,
         TileDataType_U32, TileLayout_CUBE_M32);
-    assert source_m32_too_tall && destination_m32_too_tall;
-    FillTile(10, 33, 1);
-    assert !TileOperandsLegal_ExecuteTileReduction(
-        TileReduction_SUM, TileAxis_Row, 11, 10);
+    assert !source_m32_too_tall && !destination_m32_too_tall;
 end;
 
 func main() => integer

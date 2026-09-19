@@ -51,6 +51,23 @@
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/323",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-STATE-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+      ]
     }
   ],
   "legacy_ids": [

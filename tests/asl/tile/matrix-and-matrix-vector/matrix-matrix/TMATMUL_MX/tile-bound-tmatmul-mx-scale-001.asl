@@ -69,6 +69,15 @@ begin
     assert TileMatrixInfoOptionalScalesLegal(
         _Tiles[[1]], _Tiles[[3]], TRUE,
         _Tiles[[2]], _Tiles[[4]], TRUE);
+    assert TileCubeDescriptorShapeLegal(
+        128, 32, 1, TileDataType_E8M0, TileLayout_CUBE_M32);
+    assert !TileCubeDescriptorShapeLegal(
+        128, 33, 1, TileDataType_E8M0, TileLayout_CUBE_M32);
+    var bad_right_scale = _Tiles[[4]];
+    bad_right_scale.valid_rows = 33;
+    assert !TileMatrixInfoOptionalScalesLegal(
+        _Tiles[[1]], _Tiles[[3]], TRUE,
+        _Tiles[[2]], bad_right_scale, TRUE);
     assert !TileMatrixInfoOptionalScalesLegal(
         _Tiles[[1]], _Tiles[[3]], FALSE,
         _Tiles[[2]], _Tiles[[4]], TRUE);

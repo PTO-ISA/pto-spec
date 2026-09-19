@@ -126,8 +126,8 @@ end;
 
 func main() => integer
 begin
-    // M16 and M32 cover all four TCI integer carriers, including an M32
-    // shape with more than one M16 row block.
+    // M16 and M32 cover all four TCI integer carriers with column/K CELL
+    // repetition and one fixed physical M block.
     RunTCICube(Zeros{5} + 17, Zeros{5} + 31, TileDataType_S32,
         TileLayout_CUBE_M16, 16, 3, 4, TRUE, 2, 256, 2, 15, 2,
         Zeros{PTO_XLEN} + 0x1000);
@@ -144,13 +144,13 @@ begin
         TileLayout_CUBE_M32, 32, 2, 2, TRUE, 2, 256, 2, 31, 1,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 26, Zeros{5} + 29, TileDataType_U16,
-        TileLayout_CUBE_M32, 33, 1, 2, TRUE, 2, 256, 2, 32, 0,
+        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 2, 31, 0,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 17, Zeros{5} + 29, TileDataType_S32,
         TileLayout_CUBE_M32, 32, 2, 2, TRUE, 2, 256, 2, 31, 1,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 18, Zeros{5} + 29, TileDataType_S16,
-        TileLayout_CUBE_M32, 33, 1, 2, TRUE, 2, 256, 2, 32, 0,
+        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 2, 31, 0,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 26, Zeros{5} + 31, TileDataType_U16,
         TileLayout_CUBE_M16, 1, 1, 4, FALSE, 1, 128, 1, 0, 0,

@@ -9048,6 +9048,46 @@
           "baseline": "02dcd04b82510e209780d00d29a6cdfedaf1aaf0",
           "date": "2026-09-15",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/311"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TROWSUM-CONTRACT-001",
+            "PTO-TROWPROD-CONTRACT-001",
+            "PTO-TROWMAX-CONTRACT-001",
+            "PTO-TROWMIN-CONTRACT-001",
+            "PTO-TROWARGMAX-CONTRACT-001",
+            "PTO-TROWARGMIN-CONTRACT-001",
+            "PTO-TCOLSUM-CONTRACT-001",
+            "PTO-TCOLPROD-CONTRACT-001",
+            "PTO-TCOLMAX-CONTRACT-001",
+            "PTO-TCOLMIN-CONTRACT-001",
+            "PTO-TCOLARGMAX-CONTRACT-001",
+            "PTO-TCOLARGMIN-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+            "PTO-TILE-TROWSUM",
+            "PTO-TILE-TROWPROD",
+            "PTO-TILE-TROWMAX",
+            "PTO-TILE-TROWMIN",
+            "PTO-TILE-TROWARGMAX",
+            "PTO-TILE-TROWARGMIN",
+            "PTO-TILE-TCOLSUM",
+            "PTO-TILE-TCOLPROD",
+            "PTO-TILE-TCOLMAX",
+            "PTO-TILE-TCOLMIN",
+            "PTO-TILE-TCOLARGMAX",
+            "PTO-TILE-TCOLARGMIN"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-17",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
         }
       ],
       "approvers": [
@@ -9403,6 +9443,23 @@
           "baseline": "02dcd04b82510e209780d00d29a6cdfedaf1aaf0",
           "date": "2026-09-15",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/311"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-STATE-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+            "PTO-TILE-MODEL-STATE-ALLOCATION",
+            "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-17",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
         }
       ],
       "approvers": [
@@ -10018,7 +10075,10 @@
         "PTO-CUBE-SHARED-TRANSPOSE-001",
         "PTO-BSTART-TMATMULMX-CONTRACT-001",
         "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
-        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001"
+        "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+        "PTO-TMATMUL-MX-CONTRACT-001",
+        "PTO-TMATMUL-MX-ACC-CONTRACT-001",
+        "PTO-TMATMUL-MX-BIAS-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
@@ -10028,6 +10088,9 @@
         "PTO-BLOCK-BSTART-TMATMULMX",
         "PTO-BLOCK-BSTART-TMATMULMX-ACC",
         "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+        "PTO-TILE-TMATMUL-MX",
+        "PTO-TILE-TMATMUL-MX-ACC",
+        "PTO-TILE-TMATMUL-MX-BIAS",
         "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
         "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
         "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
@@ -10106,6 +10169,35 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-16",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-MATRIX-SCALE-001",
+            "PTO-CUBE-MATRIX-SCALE-CELL-001",
+            "PTO-BSTART-TMATMULMX-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+            "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+            "PTO-TMATMUL-MX-CONTRACT-001",
+            "PTO-TMATMUL-MX-ACC-CONTRACT-001",
+            "PTO-TMATMUL-MX-BIAS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+            "PTO-BLOCK-BSTART-TMATMULMX",
+            "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+            "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+            "PTO-TILE-TMATMUL-MX",
+            "PTO-TILE-TMATMUL-MX-ACC",
+            "PTO-TILE-TMATMUL-MX-BIAS"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
+          "date": "2026-09-17",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
         }
       ],
       "approvers": [

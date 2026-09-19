@@ -11,6 +11,10 @@ begin
     ResetBundleControlState();
     assert BundleTMATMULDimensionsLegal(0);
     assert BundleTMATMULDimensionsLegal(1);
+    assert BundleMatrixCooperativeValidM(128, 0) == 32;
+    assert BundleMatrixCooperativeValidM(128, 1) == 32;
+    assert BundleMatrixCooperativeValidM(128, 2) == 32;
+    assert BundleMatrixCooperativeValidM(128, 3) == 32;
 
     ResetBundleControlState();
     SetBundleDimension(0, Zeros{PTO_XLEN});
