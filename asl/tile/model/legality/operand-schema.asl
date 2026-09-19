@@ -412,14 +412,6 @@ begin
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)
         else source_tile.data_type;
-    // CUBE M-layout sources are private matrix operands: their backing type
-    // must match the operation type. An ordinary source backing type MAY
-    // differ only for a same-width non-packed carrier.
-    if (source_tile.layout == TileLayout_CUBE_M16 ||
-        source_tile.layout == TileLayout_CUBE_M32) &&
-       source_tile.data_type != source_operation_type then
-        return FALSE;
-    end;
     if (if TileLayoutIsCube(destination_tile.layout) then
             !TileCubeDescriptorLegal(destination_tile)
         else !TileDescriptorLegal(destination)) ||
