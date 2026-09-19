@@ -21,7 +21,8 @@ begin
     instruction[11:9] = '101';
     return instruction;
 end;
-pure func CubeDecodedAssemble(init: boolean, last: boolean, offset: integer) => bits(64)
+pure func CubeDecodedAssemble(
+    init: boolean, last: boolean, offset: integer {0..2047}) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001053;
     instruction[31] = if init then '1' else '0';
@@ -53,7 +54,8 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32);
 end;
-func CubeDecodedRunWriter(init: boolean, last: boolean, offset: integer)
+func CubeDecodedRunWriter(
+    init: boolean, last: boolean, offset: integer {0..2047})
 begin
     CubeDecodedBeginBundle();
     let bound = ExecuteCommandInstruction(CubeDecodedLocalBinder(init, FALSE), 32);
@@ -96,7 +98,7 @@ begin
     let completed = CompleteBundleAt(Zeros{PTO_XLEN} + 0x900);
     assert !completed && _LastFault == Fault_TileLegality;
 end;
-func CubeDecodedRunBadLast(offset: integer)
+func CubeDecodedRunBadLast(offset: integer {0..2047})
 begin
     CubeDecodedBeginBundle();
     let bound = ExecuteCommandInstruction(
