@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "fcd28eab55185bafe748b8372ef6d0888714aa22",
+  "candidate_head": "480bb498dafdbe5a40325f656eeb1bb9c74963ed",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16253,7 +16253,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "56f20ed8213cf69845116fbeea2a225847b28eca7783208531e90edaaa441a2b",
+      "after_sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16378,6 +16378,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "ExecuteBundleSharedTLSUOperation",
       "path": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5",
+      "before_layouts": [],
+      "before_sha256": "fc7b2280ca1e0497878b1c4a89bd289d71315826f09adeeae86c9ecbe33e8545",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "ExecuteBundleTIMG2COLOperation",
+      "path": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
       "after_layouts": [],
@@ -44676,12 +44685,15 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "RecordLoadEvent",
               "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
               "SharedTileRecord",
+              "TileCubeDescriptorLegal",
               "TileDataLayoutOfCode",
               "TileDataTypeFromEncoding",
               "TileInfoWithLogicalElement",
@@ -44696,6 +44708,7 @@
               "UInt",
               "UInt",
               "UInt",
+              "ValidateBundleLocalGenerationWriters",
               "ZeroPackedTileDefinedElements",
               "let"
             ],
@@ -44705,7 +44718,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "56f20ed8213cf69845116fbeea2a225847b28eca7783208531e90edaaa441a2b"
+            "sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9"
           }
         ],
         "BundleTIMG2COLC0Elements": [
@@ -46525,16 +46538,20 @@
             "calls": [
               "BundleTIMG2COLAbortFailedAttempt",
               "BundleTIMG2COLAbortFailedAttempt",
+              "BundleTIMG2COLAbortFailedAttempt",
               "BundleTIMG2COLBuildAndPublish",
               "BundleTIMG2COLStateLegal",
+              "PrepareBundleTIMG2COLLocalGeneration",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
+              "SetFault",
               "SetFault",
               "SetFault"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "fc7b2280ca1e0497878b1c4a89bd289d71315826f09adeeae86c9ecbe33e8545"
+            "sha256": "2c1a36e93f3290c2b6fe99f4cdae74f73dbe8d06ea5eea01a8ead0f687911be5"
           }
         ],
         "ExecuteBundleTMATMULOperation": [

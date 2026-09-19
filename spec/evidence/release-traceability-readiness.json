@@ -633,6 +633,7 @@
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001"
       ]
     },
@@ -655,6 +656,7 @@
         "PTO-AVS-BLOCK-ASSEMBLE-MULTIOUTPUT-001",
         "PTO-AVS-BLOCK-ASSEMBLE-OUTPUT-STRUCTURE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-RESTART-001",
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001",
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
         "PTO-AVS-BLOCK-TLOAD-REUSED-DESTINATION-SHAPE-009",
@@ -2593,6 +2595,7 @@
         "ADR-BLOCK-0018"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M16-001",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-SHARED-001",
         "PTO-AVS-BLOCK-MODEL-MEMORY-TIMG2COL-GM-STATIC-001",
@@ -5367,6 +5370,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-DECODE-001",
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M16-001",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M32-DN-001",
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-SHARED-001",
@@ -18632,7 +18636,7 @@
     "asl/block/model/dispatch/tile-execution.asl": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126",
     "asl/block/model/dispatch/tile-schema.asl": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624",
-    "asl/block/model/dispatch/timg2col-execution.asl": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35",
+    "asl/block/model/dispatch/timg2col-execution.asl": "aebb3608f43fdaf48fafe92fd555a503424ae716b50ac3669cdacca53b5736fe",
     "asl/block/model/dispatch/timg2col-schema.asl": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5",
     "asl/block/model/dispatch/tlsu-gm-atom-red.asl": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778",
     "asl/block/model/dispatch/tlsu-gmov.asl": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3",
@@ -19529,7 +19533,7 @@
     "docs/block/model/dispatch/tile-execution.md": "d3792e53bf33b0229d49bcabc726a1cea10adbcd1a780c47a29d77c02516d8c5",
     "docs/block/model/dispatch/tile-scalar-schema.md": "a9e6d4afed2aa85e318f129202fc9d62e88726a8b0906a5b1aa38dcaedb36098",
     "docs/block/model/dispatch/tile-schema.md": "eb5b89521950fa2cf5625e6cb700e8c230475b5d7393bb48844f6d962d739226",
-    "docs/block/model/dispatch/timg2col-execution.md": "b0cac8e52bb96fe5a567bfa058496c390bdcb6d3e90b4fd565b7086e0c0d2a7d",
+    "docs/block/model/dispatch/timg2col-execution.md": "46670b23d1a336cb3bf891e417ce993c7aa1f98ccd5f870c1e5127af4f761b07",
     "docs/block/model/dispatch/timg2col-schema.md": "31da73e5f1448f330d1b49317714bf3564e360e9750a356e2f0d259b0aeb19be",
     "docs/block/model/dispatch/tlsu-gm-atom-red.md": "50a1a12727dd11d612f6836e6f15a93660d142d6e4b7b884f0e739a9359cf747",
     "docs/block/model/dispatch/tlsu-gmov.md": "9d690ebdf071be3eff1d73eb7b05aa6921d063e1e2babcecf5deb3c47625f41c",
@@ -20898,6 +20902,7 @@
     "tests/asl/block/model/dispatch/tile-schema/block-exec-tile-schema-tgpr2t-001.asl": "84e62d0b34385f66fd07672ed3cb74a38d4a370a750a6d123a2fec88882522c3",
     "tests/asl/block/model/dispatch/tile-schema/block-fault-tload-tstore-ordinary-pad-008.asl": "700b7e69801e68534053f9644fe0f2f7a096119f317107f653a88b24e423bee4",
     "tests/asl/block/model/dispatch/tile-schema/block-static-tile-schema-contract-001.asl": "6ca8a345a60df34cc1a9a2526c1be2fba2e3dbb51227cf54b21240cc4c04d930",
+    "tests/asl/block/model/dispatch/timg2col-execution/block-exec-bstart-timg2col-local-assemble-002.asl": "4ce1773bfb78c12a7a8ba28c470155d8c305cc195de1f2fdcc821976079f0842",
     "tests/asl/block/model/dispatch/timg2col-execution/block-fault-timg2col-participant-parameters-001.asl": "33a8acc9c1a18a508d0878acffc14d77e2de4a976f953646a11566a894175717",
     "tests/asl/block/model/dispatch/timg2col-execution/block-static-timg2col-execution-contract-001.asl": "ac518a5bcd8f468235f39e146945a5528a9324dbdd731e54a2e8bb6d628d7af2",
     "tests/asl/block/model/dispatch/timg2col-schema/block-bound-timg2col-shape-001.asl": "83182fb4f3bf71cdea1a67ee6ef7f3ea99b0dac3ef237cfb29df28d5decfd87d",
@@ -24226,7 +24231,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1096,
     "status": "closed",
-    "test_count": 3971,
+    "test_count": 3972,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -35419,6 +35424,19 @@
       ],
       "sha256": "f858ee22923ae96788b525ad6ce9be7464cd1d06e70f697840d1c0dd0f3e316c",
       "source": "asl/block/execution/BSTART.TIMG2COL.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/timg2col-execution/block-exec-bstart-timg2col-local-assemble-002.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-BSTART-TIMG2COL",
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-BSTART-TIMG2COL-DEFINEDNESS-001"
+      ],
+      "sha256": "4ce1773bfb78c12a7a8ba28c470155d8c305cc195de1f2fdcc821976079f0842",
+      "source": "asl/block/model/dispatch/timg2col-execution.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-M16-001",
@@ -69660,11 +69678,13 @@
         "ADR-BLOCK-0018"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-TIMG2COL-PARTICIPANT-PARAMETERS-001"
       ],
       "source": "asl/block/model/dispatch/timg2col-execution.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-BSTART-TIMG2COL-LOCAL-ASSEMBLE-002",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION-STATIC-001",
         "PTO-AVS-BLOCK-TIMG2COL-PARTICIPANT-PARAMETERS-001"
       ]
