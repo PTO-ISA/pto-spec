@@ -247,6 +247,20 @@ begin
     return (TRUE, (parent_cells - offset_cells) as integer {0..8192});
 end;
 
+func PrepareBundleTIMG2COLLocalGeneration() => boolean
+begin
+    if BundleTIMG2COLStateOutput() == BundleTIMG2COLOutput_SharedND then
+        return TRUE;
+    end;
+    // TIMG2COL has a dedicated operation descriptor and cannot use the generic
+    // Stage 2 decoder path. Preserve the same Local generation ordering here:
+    // resolve ParentRef identity, preflight structure, then reuse the exact
+    // open destination before any allocation, GM access, or payload effect.
+    if !ResolveBundleRelativeTileSources() then return FALSE; end;
+    if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
+    return ReuseBundleLocalGenerationDestination();
+end;
+
 func BundleTIMG2COLBuildAndPublish() => boolean
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
@@ -302,25 +316,47 @@ begin
         candidate = SharedTileRecord(BundleSharedBindingId(0)).tile;
         mask = BundleSharedBindingMask(0);
     else
-        let hand = UInt(_BundleTileBindings[[0]].destination_hand);
-        var found = FALSE;
-        for offset = 0 to 15 do
-            let raw_index = hand * 16 + offset;
-            if !found && !_Tiles[[raw_index]].allocated then
-                destination = raw_index as TileIndex;
-                found = TRUE;
+        let binding = _BundleTileBindings[[0]];
+        let expected_layout =
+            if output == BundleTIMG2COLOutput_LocalM16 then
+                TileLayout_CUBE_M16
+            else TileLayout_CUBE_M32;
+        if binding.destination_reused_by_generation then
+            destination = binding.destination;
+            let reused = _Tiles[[destination]];
+            if !TileCubeDescriptorLegal(reused) ||
+               reused.capacity_bytes != capacity ||
+               reused.valid_rows != pe_valid_row ||
+               reused.valid_columns != valid_col ||
+               reused.data_type != data_type ||
+               reused.layout != expected_layout then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
             end;
+        else
+            let hand = UInt(binding.destination_hand);
+            var found = FALSE;
+            for offset = 0 to 15 do
+                let raw_index = hand * 16 + offset;
+                if !found && !_Tiles[[raw_index]].allocated then
+                    destination = raw_index as TileIndex;
+                    found = TRUE;
+                end;
+            end;
+            if !found || !ConfigureCubeTileForMask(
+                   destination, capacity, pe_valid_row, valid_col, data_type,
+                   expected_layout, BundleTIMG2COLPEBit()) then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
+            _BundleTileBindings[[0]].destination = destination;
+            _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
         end;
-        if !found || !ConfigureCubeTileForMask(
-               destination, capacity, pe_valid_row, valid_col, data_type,
-               if output == BundleTIMG2COLOutput_LocalM16 then
-                   TileLayout_CUBE_M16 else TileLayout_CUBE_M32, BundleTIMG2COLPEBit()) then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
-        end;
-        _BundleTileBindings[[0]].destination = destination;
-        _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
         candidate = _Tiles[[destination]];
+        // The destination now carries the exact current writer descriptor.
+        // Reject malformed WriterSize/common metadata/tail/finalization before
+        // the first GM event, payload update, coverage change, or publication.
+        if !ValidateBundleLocalGenerationWriters() then return FALSE; end;
     end;
     candidate.allocated = TRUE;
     candidate.storage_kind = TileStorage_Numeric;
@@ -428,6 +464,13 @@ end;
 
 func ExecuteBundleTIMG2COLOperation() => boolean
 begin
+    if !PrepareBundleTIMG2COLLocalGeneration() then
+        BundleTIMG2COLAbortFailedAttempt();
+        if _LastFault == Fault_None then
+            SetFault(Fault_TileLegality, ReadTPC());
+        end;
+        return FALSE;
+    end;
     if !BundleTIMG2COLStateLegal() then
         BundleTIMG2COLAbortFailedAttempt();
         SetFault(Fault_TileLegality, ReadTPC());
