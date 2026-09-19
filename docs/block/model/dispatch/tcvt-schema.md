@@ -55,14 +55,6 @@ begin
     let source = BundleTileSourceIndex(0, FALSE);
     let source_operation_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    // CUBE M-layout sources are private matrix operands: their backing type
-    // must match the operation type. An ordinary source backing type MAY
-    // differ only for a same-width non-packed carrier.
-    if (_Tiles[[source]].layout == TileLayout_CUBE_M16 ||
-        _Tiles[[source]].layout == TileLayout_CUBE_M32) &&
-       _Tiles[[source]].data_type != source_operation_type then
-        return FALSE;
-    end;
     if !TileTCVTSourceEncodingsValidAs(source, source_operation_type) then
         return FALSE;
     end;

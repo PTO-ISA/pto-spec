@@ -8515,6 +8515,25 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-16",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-TILE-CARRIER-REINTERPRETATION-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+          "date": "2026-09-19",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/324"
         }
       ],
       "approvers": [
@@ -8530,6 +8549,7 @@
       "created": "2026-08-21",
       "id": "ADR-TILE-0008",
       "implementation_issue": null,
+      "interface_change": true,
       "legacy_ids": [
         "PRD-056",
         "PRD-057",
@@ -10438,12 +10458,14 @@
       "accepted": "2026-08-28",
       "affected_ndf": [
         "PTO-INST-TILE-TCVT",
-        "PTO-TCVT-CONTRACT-001"
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
       ],
       "affected_units": [
         "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
         "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
         "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
         "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
@@ -10466,6 +10488,27 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-16",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-TILE-CARRIER-REINTERPRETATION-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+          "date": "2026-09-19",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/324"
         }
       ],
       "approvers": [
@@ -10478,6 +10521,7 @@
       "created": "2026-08-28",
       "id": "ADR-CUBE-0017",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/167",
+      "interface_change": true,
       "legacy_ids": [
         "ADR-0110"
       ],
@@ -11280,15 +11324,20 @@
         "PTO-FP19-PARAMETER-CARRIER-001",
         "PTO-NUMERIC-E6M2-FORMAT-001",
         "PTO-NUMERIC-RCPE6M2-FORMAT-001",
-        "PTO-TCVT-CONTRACT-001"
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TCVT-E8M0-PROFILE-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FP19",
         "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
         "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
         "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
+        "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
         "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
+        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+        "PTO-ARCH-PROFILE-TCVT-CONVERSION",
         "PTO-BLOCK-B-FPATR",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
         "PTO-TILE-TCVT"
       ],
       "amendments": [
@@ -11311,6 +11360,25 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-16",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-TCVT-E8M0-PROFILE-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
+            "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+            "PTO-ARCH-PROFILE-TCVT-CONVERSION",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+          "date": "2026-09-19",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/324"
         }
       ],
       "approvers": [
@@ -11323,6 +11391,7 @@
       "created": "2026-08-21",
       "id": "ADR-NUM-0012",
       "implementation_issue": null,
+      "interface_change": true,
       "legacy_ids": [
         "PRD-174",
         "PRD-175",
@@ -11338,7 +11407,7 @@
       ],
       "path": "docs/status/decisions/ADR-NUM-0012-numeric-postprocess-and-format-operations.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,

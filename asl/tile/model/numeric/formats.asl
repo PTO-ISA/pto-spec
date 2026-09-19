@@ -162,7 +162,8 @@ begin
                 source_element);
             var converted: Word = source_value;
             var flags: bits(5) = Zeros{5};
-            if (source_operation_type == TileDataType_E2M1X2 ||
+            if (source_operation_type == TileDataType_E8M0 ||
+                source_operation_type == TileDataType_E2M1X2 ||
                 source_operation_type == TileDataType_E1M2X2 ||
                 result.data_type == TileDataType_E2M1X2 ||
                 result.data_type == TileDataType_E1M2X2 ||

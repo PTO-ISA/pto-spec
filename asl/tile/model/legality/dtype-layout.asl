@@ -34,6 +34,9 @@ end;
 // substituting the source backing type. Direct semantic wrappers use
 // deterministic operation-specific fallbacks: TCMP left backing, TCMPS source
 // backing, and TSEL/TSELS destination backing.
+// TCVT alone extends this view to CUBE_M16/M32 sources: the source operation
+// type may differ from the persistent backing descriptor only when both are
+// non-packed, equal-width, and accepted here. The view never retags the source.
 // NDF-END: PTO-TILE-CARRIER-REINTERPRETATION-001
 pure func TileCarrierWidthCompatible(
     stored_type: TileDataType, operation_type: TileDataType) => boolean

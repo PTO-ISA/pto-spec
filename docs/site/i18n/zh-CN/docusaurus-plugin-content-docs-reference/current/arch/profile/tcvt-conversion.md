@@ -158,12 +158,34 @@ begin
         RCPE6M2FiniteValue(value[7:0]), destination_type, control);
 end;
 
+func ReferenceTCVTConvertFromE8M0(
+    value: Word, destination_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    assert destination_type == TileDataType_FP16 ||
+           destination_type == TileDataType_BF16 ||
+           destination_type == TileDataType_FP32;
+    if value[7:0] == Ones{8} then
+        let (available, canonical) =
+            TileNumericCanonicalNaN(destination_type);
+        assert available;
+        return (canonical, Zeros{5});
+    end;
+    let exponent = (UInt(value[7:0]) - 127)
+        as integer {-1074..1023};
+    return ReferenceMatrixFloatingEncoding(
+        ReferencePowerOfTwo(exponent), destination_type, control);
+end;
+
 func ReferenceTCVTConvert(
     value: Word, source_type: TileDataType,
     destination_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
-    if destination_type == TileDataType_E2M1X2 ||
+    if source_type == TileDataType_E8M0 then
+        return ReferenceTCVTConvertFromE8M0(
+            value, destination_type, control);
+    elsif destination_type == TileDataType_E2M1X2 ||
        destination_type == TileDataType_E1M2X2 then
         return ReferenceTCVTConvertPacked4(
             value, source_type, destination_type, control);

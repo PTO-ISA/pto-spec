@@ -77700,7 +77700,7 @@
         "Malformed bindings, missing or zero dimensions, type, shape, capacity, layout, canonicalization, encoding, or definedness mismatch raises Fault_TileLegality before destination allocation or payload effects.",
         "Reserved selector, DataType, or Layout encodings raise the corresponding instruction or Tile legality fault before effects.",
         "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.",
-        "For E8M0, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX."
+        "For conversion to an E8M0 destination, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [

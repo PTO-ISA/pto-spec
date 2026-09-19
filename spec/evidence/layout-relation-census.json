@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "4db8c57a3d4b2699f42763433816bed68f1951ae",
+  "candidate_head": "d8907ad9e8d8fb8ab79953765a422b65a22712d4",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -50690,7 +50690,7 @@
               "CUBE_M32"
             ],
             "path": "asl/tile/model/legality/operand-schema.asl",
-            "sha256": "fec66c1b63a124b4aeb1160156eb5b46ee6cc1925f5ce81420fa2dadcddbd058"
+            "sha256": "2e40352978ebfec8dd9bbf0d8e75604bdb08288f19e190477fd71a8cd23e0935"
           }
         ],
         "TileOperandsLegal_TFMA": [

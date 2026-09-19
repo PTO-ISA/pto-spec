@@ -8,6 +8,10 @@
 // infinity and finite range overflow or underflow MUST produce 0xFF when Sat
 // is zero and the corresponding finite endpoint when Sat is one, with exact
 // OF or UF plus NX status. Canonicalize MUST retain its representation role.
+// TCVT from E8M0 MUST accept only FP16, BF16, and FP32 destinations. Codes
+// 0x00 through 0xFE denote 2^(code-127) and use the ordinary target rounding,
+// saturation, overflow, underflow, and inexact rules. Code 0xFF MUST produce
+// the target canonical quiet NaN without NV.
 // NDF-END: PTO-TCVT-E8M0-PROFILE-001
 
 // DOC-BEGIN: operation
@@ -37,6 +41,11 @@ begin
     if source_type == TileDataType_RCPE6M2 then
         return destination_type == TileDataType_FP16 ||
                destination_type == TileDataType_BF16;
+    end;
+    if source_type == TileDataType_E8M0 then
+        return destination_type == TileDataType_FP16 ||
+               destination_type == TileDataType_BF16 ||
+               destination_type == TileDataType_FP32;
     end;
     if source_type == TileDataType_E6M2 ||
        destination_type == TileDataType_E6M2 then

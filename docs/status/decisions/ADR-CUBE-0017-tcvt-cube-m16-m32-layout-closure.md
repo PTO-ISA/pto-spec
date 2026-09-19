@@ -21,12 +21,14 @@
   "release_boundary": true,
   "affected_ndf": [
     "PTO-INST-TILE-TCVT",
-    "PTO-TCVT-CONTRACT-001"
+    "PTO-TCVT-CONTRACT-001",
+    "PTO-TILE-CARRIER-REINTERPRETATION-001"
   ],
   "affected_units": [
     "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+    "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
     "PTO-TILE-MODEL-NUMERIC-FORMATS",
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
@@ -40,6 +42,7 @@
   "legacy_ids": [
     "ADR-0110"
   ],
+  "interface_change": true,
   "amendments": [
     {
       "date": "2026-09-16",
@@ -57,12 +60,47 @@
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/324",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-TCVT"
+      ]
     }
   ]
 }
 ---
 
 # ADR-CUBE-0017: TCVT CUBE_M16 and CUBE_M32 layout closure
+
+## 2026-09-19 accepted amendment: CUBE TCVT source operation view
+
+Issue #324 removes only TCVT's former exact backing/source-operation type
+requirement for CUBE_M16/M32. The selected TCVT source DataType supplies the
+operation-view geometry and numeric interpretation when it is non-packed,
+equal-width, and carrier-compatible with the independently legal finalized
+source descriptor. The source descriptor, #331 finalized-parent state,
+physical allocation, and payload remain unchanged.
+
+All existing source and destination geometry, capacity, definedness, alias,
+fault-before-effect, conversion-pair, and destination-publication rules remain
+in force. This is an additive but architecture-visible compatibility change
+with required release impact.
 
 ## Context
 

@@ -265,6 +265,7 @@
     "PRD-128",
     "ADR-0080"
   ],
+  "interface_change": true,
   "amendments": [
     {
       "date": "2026-08-30",
@@ -521,12 +522,45 @@
         "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/324",
+      "affected_ndf": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ]
     }
   ],
   "release_boundary": true
 }
 ---
 # ADR-TILE-0008: Tile elementwise and irregular operations
+
+## 2026-09-19 accepted amendment: TCVT-only source operation view
+
+Issue #324 permits a zero-instruction source operation view only for TCVT.
+For RowMajor, CUBE_M16, and CUBE_M32 sources, the persistent backing DataType
+may differ from the selected BSTART source operation DataType only when both
+are non-packed, equal-width, and carrier-compatible. Existing geometry,
+capacity, definedness, numeric-encoding, alias, fault, and TCVT pair rules
+still apply, and the view never mutates the backing descriptor.
+
+TFMA, TNOT, tile-scalar, reduction, expansion, TMOV, TLSU, Matrix,
+PredicateCell, and every other family remain unchanged. No bitcast instruction
+is introduced. This is an additive but architecture-visible compatibility
+change and therefore has required release impact.
 
 ## Context
 
