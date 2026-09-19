@@ -18653,7 +18653,7 @@
     "asl/block/model/lifecycle/reset.asl": "3574c8314a6a744541f10bc70100539c9e2d8c4965c703abf93282ac1e331211",
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
-    "asl/block/model/operands/local-generation-cube.asl": "1d272c781a4436b639d61e2ff3980b8ff543015bc4b9dfdd49ae68c4b93b87b2",
+    "asl/block/model/operands/local-generation-cube.asl": "d6316882127df931d8455b41a9f7b5e6e28c7e90c0dce8fe494d6a8288fa6337",
     "asl/block/model/operands/local-generation.asl": "b8991f4fa1726b0b5b60172cff68aeddb56ca846a0908e05223dc318ce8ab4c1",
     "asl/block/model/operands/portable-carriers.asl": "aba165efaf48597eb1e02da665a82f5276c5be42d0f1c317648f300109eb05bd",
     "asl/block/model/operands/range-modifiers.asl": "c95f0e58a62ace6ff6ce3aadf5b3d783eded605c7231fbcb26eac2193a3358ce",
@@ -19550,7 +19550,7 @@
     "docs/block/model/lifecycle/reset.md": "2e59b17c7a078f6134b07a4005a2529a0e74be2ace23a7818233915b3f9e28b2",
     "docs/block/model/memory/timg2col-gm.md": "67c5a0ec1562981d42937f76b5de85bfcea097e3ac7b5c054433a0420ebab74a",
     "docs/block/model/memory/weight-to-shared-gm.md": "60abc161f4ec307126629c64999e050feb159c34ac3af761991c14156aba5b7d",
-    "docs/block/model/operands/local-generation-cube.md": "4affa637d939decb9de385d22aa601e8fc68671d1a9ca7806ec3e1b0e17bbbf8",
+    "docs/block/model/operands/local-generation-cube.md": "4b19c2d3727fa8958f53d31bf7102037ff1b26a5914f0572a73988f97a9a1e0e",
     "docs/block/model/operands/local-generation.md": "212fe22f3943b3a0886af3035886354c2a9eabfa45eb84122c0cb9878efa816c",
     "docs/block/model/operands/portable-carriers.md": "5345a07bed313baed930c779b28ed8ac1a8dfa3b8fe94684839a034e60104296",
     "docs/block/model/operands/range-modifiers.md": "855c2733e6c2e9c1e0504fc51c3047c2e41def2af0af3f66d38a702481b74bfa",
@@ -20942,7 +20942,7 @@
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-korder-padding-001.asl": "83e2b515bf8561800f05f77676a0fcce038bd9f2b1200bfee0fb6b3825f96a26",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-windows-001.asl": "6e792e56b64b514140811471d9d25cacdf920e7cc77f4c69901c4a8ff88ac959",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-static-weight-to-shared-gm-contract-001.asl": "0c6b6e0cfc135c5c335e359e4e24519c05d41590c301eb03ecbb37a2f7972d7c",
-    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "ee554cccea14f47971b1623fa7bded62391e7d40d10c467565bbc83a502dc41c",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "869203545af57a5416985fcb85006a54c5c1c82c0ae7d1d181f43e650fc4ce26",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m16-parent-geometry-001.asl": "a561df9e33ea83f13671796dbf95e8eadc65f5c0c3eb84cd0347f0ed00028687",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-parent-geometry-001.asl": "762fc78c6ac9879dc7021ee95639e880102a077003171fac4f204262ec94b788",
     "tests/asl/block/model/operands/local-generation-cube/block-static-local-generation-cube-contract-001.asl": "e783fc196a584b00172685ff9fa3bda57402ca2ecc0697ae64aef823ab3e5df1",
@@ -33507,7 +33507,7 @@
         "PTO-INST-BLOCK-B-ASSEMBLE",
         "PTO-INST-BLOCK-BSTART-TMATMULMX"
       ],
-      "sha256": "ee554cccea14f47971b1623fa7bded62391e7d40d10c467565bbc83a502dc41c",
+      "sha256": "869203545af57a5416985fcb85006a54c5c1c82c0ae7d1d181f43e650fc4ce26",
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
