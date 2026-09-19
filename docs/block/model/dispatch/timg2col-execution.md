@@ -219,23 +219,17 @@ begin
         let binding = _BundleTileBindings[[0]];
         let expected_layout = if output == BundleTIMG2COLOutput_LocalM16 then
             TileLayout_CUBE_M16 else TileLayout_CUBE_M32;
-        let continuation = binding.destination_assemble.valid &&
-            !binding.destination_assemble.init;
-        let role_legal = if continuation then
-            !binding.destination_valid && binding.parent_ref_valid &&
-            !binding.source0_valid && !binding.source1_valid
-        else
-            binding.destination_valid && !binding.parent_ref_valid &&
-            !binding.source0_valid && !binding.source1_valid;
-        if !binding.valid || !role_legal || !binding.last ||
-           binding.pe_mask != '1111' then
-            return FALSE;
-        end;
-        if !continuation && BundleTIMG2COLPEValidRow(output, valid_row) != 0 &&
-           !TileCubeDescriptorShapeLegal(
+        if !binding.valid || !binding.destination_valid ||
+           binding.destination_assemble.valid ||
+           binding.source0_valid || binding.source1_valid || !binding.last ||
+           binding.pe_mask != '1111' ||
+           (BundleTIMG2COLPEValidRow(output, valid_row) != 0 &&
+            !TileCubeDescriptorShapeLegal(
                BundleTileDestinationSizeBytes(0),
                BundleTIMG2COLPEValidRow(output, valid_row), valid_col,
-               data_type, expected_layout) then return FALSE; end;
+               data_type, expected_layout)) then
+            return FALSE;
+        end;
     end;
     return TRUE;
 end;
@@ -263,16 +257,12 @@ begin
     // Stage 2 decoder path. Preserve the same Local generation ordering here:
     // resolve ParentRef identity, preflight structure, then reuse the exact
     // open destination before any allocation, GM access, or payload effect.
-    // The encoded all-PE mask closes cooperative parameter consistency. One
-    // Local attempt writes only the current PE's object, so generation
-    // identity, allocation, coverage, and continuation reuse use one mask.
-    _BundleTileBindings[[0]].pe_mask = BundleTIMG2COLPEBit();
     if !ResolveBundleRelativeTileSources() then return FALSE; end;
     if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
     return ReuseBundleLocalGenerationDestination();
 end;
 
-func BundleTIMG2COLBuildAndPublish() => (boolean, boolean)
+func BundleTIMG2COLBuildAndPublish() => boolean
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
     let output = BundleTIMG2COLStateOutput();
@@ -305,12 +295,12 @@ begin
     // Zero-row cooperative PEs complete the collective protocol but have no
     // Local allocation, GM read, payload write, or definedness effect.
     if pe_valid_row == 0 && output != BundleTIMG2COLOutput_SharedND then
-        return (TRUE, FALSE);
+        return TRUE;
     end;
     if pe_valid_row != 0 &&
        !BundleTIMG2COLPreflightGM(layout, data_type, base_parameters,
            valid_row, valid_col, gm_base, element_bytes) then
-        return (FALSE, FALSE);
+        return FALSE;
     end;
     let capacity = if output == BundleTIMG2COLOutput_SharedND then
         TileSizeCodeBytes(BundleSharedGenerationCapacity(0)
@@ -342,7 +332,7 @@ begin
                reused.data_type != data_type ||
                reused.layout != expected_layout then
                 SetFault(Fault_TileLegality, ReadTPC());
-                return (FALSE, FALSE);
+                return FALSE;
             end;
         else
             let hand = UInt(binding.destination_hand);
@@ -358,7 +348,7 @@ begin
                    destination, capacity, pe_valid_row, valid_col, data_type,
                    expected_layout, BundleTIMG2COLPEBit()) then
                 SetFault(Fault_TileAllocation, ReadTPC());
-                return (FALSE, FALSE);
+                return FALSE;
             end;
             _BundleTileBindings[[0]].destination = destination;
             _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
@@ -367,9 +357,7 @@ begin
         // The destination now carries the exact current writer descriptor.
         // Reject malformed WriterSize/common metadata/tail/finalization before
         // the first GM event, payload update, coverage change, or publication.
-        if !ValidateBundleLocalGenerationWriters() then
-            return (FALSE, FALSE);
-        end;
+        if !ValidateBundleLocalGenerationWriters() then return FALSE; end;
     end;
     candidate.allocated = TRUE;
     candidate.storage_kind = TileStorage_Numeric;
@@ -397,12 +385,10 @@ begin
                 let address = gm_base + byte_offset;
                 if UInt(address) < UInt(gm_base) then
                     SetFault(Fault_DataPage, address);
-                    return (FALSE, FALSE);
+                    return FALSE;
                 end;
                 let probe = ProbeTileMemoryAccess(address, data_type, FALSE);
-                if RaiseDataAccessFault(probe, address) then
-                    return (FALSE, FALSE);
-                end;
+                if RaiseDataAccessFault(probe, address) then return FALSE; end;
                 let raw = LoadTranslatedUnsigned(probe.translated_address,
                     element_bytes);
                 RecordLoadEvent(probe.translated_address, element_bytes, raw,
@@ -432,11 +418,11 @@ begin
                 _BundleDimensions[[2]][15:0],
                 Zeros{4} + BundleSharedGenerationCapacity(0),
                 BundleSharedBindingId(0));
-            if derived_offset > 8192 then return (FALSE, FALSE); end;
+            if derived_offset > 8192 then return FALSE; end;
             let (coverage_legal, coverage_cells) =
                 BundleTIMG2COLGenerationCoverage(
                     derived_offset as integer {0..8192}, writer_cells);
-            if !coverage_legal then return (FALSE, FALSE); end;
+            if !coverage_legal then return FALSE; end;
             _BundleSharedBindings[[0]].destination_assemble.offset =
                 Zeros{PTO_XLEN} + derived_offset;
             if !CommitBundleSharedGenerationCandidateRange(
@@ -453,17 +439,17 @@ begin
                 AbortBundleSharedGeneration(
                     BundleSharedBindingId(0));
                 SetFault(Fault_TileLegality, ReadTPC());
-                return (FALSE, FALSE);
+                return FALSE;
             end;
         elsif !AtomicUpdateSharedTile(
                BundleSharedBindingId(0), candidate, mask) then
             SetFault(Fault_TileAllocation, ReadTPC());
-            return (FALSE, FALSE);
+            return FALSE;
         end;
     else
         _Tiles[[destination]] = candidate;
     end;
-    return (TRUE, output != BundleTIMG2COLOutput_SharedND);
+    return TRUE;
 end;
 
 func BundleTIMG2COLAbortFailedAttempt()
@@ -477,26 +463,26 @@ begin
     end;
 end;
 
-func ExecuteBundleTIMG2COLOperation() => (boolean, boolean)
+func ExecuteBundleTIMG2COLOperation() => boolean
 begin
+    if !PrepareBundleTIMG2COLLocalGeneration() then
+        BundleTIMG2COLAbortFailedAttempt();
+        if _LastFault == Fault_None then
+            SetFault(Fault_TileLegality, ReadTPC());
+        end;
+        return FALSE;
+    end;
     if !BundleTIMG2COLStateLegal() then
         BundleTIMG2COLAbortFailedAttempt();
         SetFault(Fault_TileLegality, ReadTPC());
-        return (FALSE, FALSE);
+        return FALSE;
     end;
-    if !PrepareBundleTIMG2COLLocalGeneration() then
+    if !BundleTIMG2COLBuildAndPublish() then
         BundleTIMG2COLAbortFailedAttempt();
         if _LastFault == Fault_None then SetFault(Fault_TileLegality, ReadTPC()); end;
-        return (FALSE, FALSE);
+        return FALSE;
     end;
-    let (completed, commit_local_generation) =
-        BundleTIMG2COLBuildAndPublish();
-    if !completed then
-        BundleTIMG2COLAbortFailedAttempt();
-        if _LastFault == Fault_None then SetFault(Fault_TileLegality, ReadTPC()); end;
-        return (FALSE, FALSE);
-    end;
-    return (TRUE, commit_local_generation);
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
