@@ -18,6 +18,52 @@ TILE_OPERATIONS = ROOT / "spec/catalog/tile-operations.json"
 REFERENCE = ROOT / "docs/virtual-isa/tileop-macro-assembly.md"
 
 
+def _indexed_form(operations: dict[str, dict[str, object]], mnemonic: str) -> dict[str, object]:
+    operation = operations[mnemonic]
+    return operation["forms"][0]
+
+
+def _assemble_indexed_dimensions(
+    form: dict[str, object], configuration: dict[str, object]
+) -> dict[str, object]:
+    """Execute the frozen indexed macro dimension contract against one form."""
+    if "Col" not in configuration:
+        raise ValueError("indexed macro configuration requires Col")
+
+    resolved = {
+        "Col": configuration["Col"],
+        "ValidRow": configuration.get("ValidRow", 1),
+        "ValidCol": configuration.get("ValidCol", configuration["Col"]),
+    }
+    physical: dict[str, object] = {}
+    bindings = {
+        binding["field"]: binding
+        for binding in form["expansion"]["configuration_bindings"]
+    }
+    for field, value in resolved.items():
+        targets = bindings[field]["targets"]
+        if len(targets) != 1 or targets[0]["command"] != "B.DIM":
+            raise AssertionError(f"{field} must have one B.DIM target")
+        physical[targets[0]["slot"]] = value
+
+    if "Layout" in configuration:
+        layout_targets = bindings["Layout"]["targets"]
+        if layout_targets != [
+            {"command": "B.DATR", "group": None, "slot": "Layout"}
+        ]:
+            raise AssertionError("Layout must bind to B.DATR.Layout")
+        physical["Layout"] = configuration["Layout"]
+    return physical
+
+
+def _fold_indexed_dimensions(physical: dict[str, object]) -> dict[str, object]:
+    """Fold encoded indexed dimensions without consulting a Tile descriptor."""
+    folded = {"Col": physical["LB2"], "ValidRow": physical["LB1"]}
+    if physical["LB0"] != physical["LB2"]:
+        folded["ValidCol"] = physical["LB0"]
+    return folded
+
+
 class TileMacroAssemblyTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -1114,6 +1160,82 @@ class TileMacroAssemblyTest(unittest.TestCase):
                     bindings["Layout"]["targets"],
                     [{"command": "B.DATR", "group": None, "slot": "Layout"}],
                 )
+
+    def test_PTO_AVS_TILE_MACRO_INDEXED_COL_VALIDCOL_COMPATIBILITY_001(self) -> None:
+        """Execute the frozen indexed compatibility and folding table."""
+        cases = (
+            {
+                "name": "ordinary default",
+                "mnemonic": "MGATHER",
+                "configuration": {"Col": 8},
+                "physical": {"LB2": 8, "LB1": 1, "LB0": 8},
+                "folded": {"Col": 8, "ValidRow": 1},
+            },
+            {
+                "name": "atom row-major independent valid col",
+                "mnemonic": "MGATHER_ADD",
+                "configuration": {
+                    "Col": 8,
+                    "ValidRow": 7,
+                    "ValidCol": 6,
+                    "Layout": "NORM",
+                },
+                "physical": {"LB2": 8, "LB1": 7, "LB0": 6, "Layout": "NORM"},
+                "folded": {"Col": 8, "ValidRow": 7, "ValidCol": 6},
+            },
+            {
+                "name": "CAS special schema",
+                "mnemonic": "MGATHER_CAS",
+                "configuration": {
+                    "Col": 16, "ValidCol": 8, "Layout": "CUBE_M16"
+                },
+                "physical": {"LB2": 16, "LB1": 1, "LB0": 8, "Layout": "CUBE_M16"},
+                "folded": {"Col": 16, "ValidRow": 1, "ValidCol": 8},
+            },
+            {
+                "name": "mask special schema",
+                "mnemonic": "MGATHER_MASK",
+                "configuration": {"Col": 8, "ValidCol": 4},
+                "physical": {"LB2": 8, "LB1": 1, "LB0": 4},
+                "folded": {"Col": 8, "ValidRow": 1, "ValidCol": 4},
+            },
+            {
+                "name": "POPC CUBE independent valid col",
+                "mnemonic": "MSCATTER_POPC",
+                "configuration": {
+                    "Col": 32,
+                    "ValidCol": 16,
+                    "Layout": "CUBE_M32",
+                },
+                "physical": {"LB2": 32, "LB1": 1, "LB0": 16, "Layout": "CUBE_M32"},
+                "folded": {"Col": 32, "ValidRow": 1, "ValidCol": 16},
+            },
+        )
+        for case in cases:
+            with self.subTest(case=case["name"]):
+                form = _indexed_form(self.by_name, case["mnemonic"])
+                physical = _assemble_indexed_dimensions(form, case["configuration"])
+                self.assertEqual(physical, case["physical"])
+                self.assertEqual(_fold_indexed_dimensions(physical), case["folded"])
+                self.assertTrue(form["expansion"]["fold"]["canonical_without_runtime_state"])
+
+        with self.assertRaisesRegex(ValueError, "requires Col"):
+            _assemble_indexed_dimensions(
+                _indexed_form(self.by_name, "MGATHER"), {"ValidCol": 4}
+            )
+
+        cas = self.by_name["MGATHER_CAS"]["physical_schema"]
+        self.assertEqual(
+            [argument.get("constant") or argument.get("operand") for argument in cas["arguments"]],
+            ["GMAtomic_CAS", "destination0", "address", "source0", "source1", "source2", None],
+        )
+        mask = self.by_name["MGATHER_MASK"]["physical_schema"]
+        self.assertEqual(mask["operands"][-1], {"field": "source1", "role": "mask"})
+        popc = self.by_name["MSCATTER_POPC"]["physical_schema"]
+        self.assertEqual(
+            [argument.get("constant") or argument.get("operand") for argument in popc["arguments"]],
+            ["GMReduction_POPC", "address", "source0"],
+        )
 
     def test_indexed_tlsu_macros_are_base_only(self) -> None:
         for mnemonic in (

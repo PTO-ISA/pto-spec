@@ -149,9 +149,10 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // TLOAD and TSTORE address operands derived from B.IOR MUST use named entries:
 // `[base=GPR, stride=GPR]`. Indexed MGATHER and MSCATTER-family macros use
 // `[base=GPR]` only; B.IOR RegSrc1, RegSrc2, and RegDst are zero. Their forms
-// expose ValidRow and ValidCol, not physical Tile Row or Col; ValidCol supplies
-// both canonical LB0 and LB2. A missing default base is not printed. Ordinary
-// scalar inputs and scalar results
+// expose mandatory Col, ValidRow, and optional ValidCol=Col, not physical
+// Tile Row. Col supplies LB2, ValidRow supplies LB1, and ValidCol supplies
+// LB0; a source form omitting Col is rejected. A missing default base is not
+// printed. Ordinary scalar inputs and scalar results
 // remain bare GPR and `->GPR` operands without role labels.
 // NDF-END: PTO-AS-TILEOP-MACRO-001
 
