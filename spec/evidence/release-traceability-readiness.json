@@ -20270,7 +20270,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
     "spec/evidence/adr-index.json": "7565d665ff3f28170b8174357b1c3cfab422094f8d12690d3c124b183c0b0f84",
-    "spec/evidence/instruction-contract-closure.json": "45b93fcb74eb58e8f30b12dbad1ba5d6e3d9f8e95b639015cdfa7487680653f5",
+    "spec/evidence/instruction-contract-closure.json": "33ac433bb017ce5e960ecd36f004c418131242865e953757f41f099b3f83697b",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
