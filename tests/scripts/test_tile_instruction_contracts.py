@@ -70,7 +70,7 @@ class TileInstructionContractsTest(unittest.TestCase):
             "BSTART.MSCATTER.POPC DataType",
             "B.DIM LB0=ValidCol",
             "B.DIM LB1=ValidRow (optional, default 1)",
-            "B.DIM LB2=ValidCol",
+            "B.DIM LB2=Col",
             "B.IOT IndexTile, mask=PE_MASK, <last>",
             "B.IOR BaseGPR, zero, zero, ->zero",
             "BSTOP",
@@ -110,7 +110,7 @@ class TileInstructionContractsTest(unittest.TestCase):
         dimensions = (
             "B.DIM LB0=ValidCol",
             "B.DIM LB1=ValidRow (optional, default 1)",
-            "B.DIM LB2=ValidCol",
+            "B.DIM LB2=Col",
         )
         for tile in operations:
             start_name = tile.metadata["catalog_records"][0]["command_mnemonic"]
