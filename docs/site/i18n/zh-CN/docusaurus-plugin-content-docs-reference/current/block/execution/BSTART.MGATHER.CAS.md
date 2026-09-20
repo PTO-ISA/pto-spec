@@ -170,7 +170,7 @@ end;
 BSTART.MGATHER.CAS DataType
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional, default 1)
-B.DIM LB2=ValidCol
+B.DIM LB2=Col
 B.DATR PadValue, Layout (optional)
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
