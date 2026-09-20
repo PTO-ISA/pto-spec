@@ -754,7 +754,8 @@
         "PTO-TSUBS-CONTRACT-001",
         "PTO-TTRI-CONTRACT-001",
         "PTO-TXOR-CONTRACT-001",
-        "PTO-TXORS-CONTRACT-001"
+        "PTO-TXORS-CONTRACT-001",
+        "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
       ],
       "affected_units": [
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
@@ -928,6 +929,21 @@
           "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
           "date": "2026-09-09",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/261"
+        },
+        {
+          "affected_ndf": [
+            "PTO-AS-TILEOP-MACRO-001",
+            "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+          ],
+          "approvers": [
+            "Kevin Zhou <zhoubot@gmail.com>"
+          ],
+          "baseline": "4f5a0c23d676ee4612a2acd4635f7fed0e85b147",
+          "date": "2026-09-20",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/334"
         }
       ],
       "approvers": [

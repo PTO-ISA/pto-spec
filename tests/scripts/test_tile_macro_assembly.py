@@ -1089,18 +1089,31 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 for item in form["configuration"]
                 if item["configuration_kind"] == "dimension"
             ]
-            self.assertEqual(dimensions, ["ValidRow", "ValidCol"])
+            self.assertEqual(dimensions, ["Col", "ValidRow", "ValidCol"])
+            self.assertTrue(form["macro_format"].startswith(f"{mnemonic} <Col,"))
+            self.assertIn("ValidCol=Col", form["macro_format"])
             bindings = {
                 item["field"]: item
                 for item in form["expansion"]["configuration_bindings"]
             }
             self.assertEqual(
-                bindings["ValidCol"]["targets"],
-                [
-                    {"command": "B.DIM", "group": None, "slot": "LB0"},
-                    {"command": "B.DIM", "group": None, "slot": "LB2"},
-                ],
+                bindings["Col"]["targets"],
+                [{"command": "B.DIM", "group": None, "slot": "LB2"}],
             )
+            self.assertEqual(
+                bindings["ValidRow"]["targets"],
+                [{"command": "B.DIM", "group": None, "slot": "LB1"}],
+            )
+            self.assertEqual(
+                bindings["ValidCol"]["targets"],
+                [{"command": "B.DIM", "group": None, "slot": "LB0"}],
+            )
+            if mnemonic not in {"MGATHER", "MSCATTER", "MGATHER_MASK", "MSCATTER_MASK"}:
+                self.assertIn("Layout?", form["macro_format"])
+                self.assertEqual(
+                    bindings["Layout"]["targets"],
+                    [{"command": "B.DATR", "group": None, "slot": "Layout"}],
+                )
 
     def test_indexed_tlsu_macros_are_base_only(self) -> None:
         for mnemonic in (
@@ -1175,7 +1188,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertIn("`->PredicateGPR`", reference)
         self.assertIn("addresses use `[base=a0]`", reference)
         self.assertIn("row strides use `stride=a1`", reference)
-        self.assertIn("Every MGATHER and MSCATTER form exposes ValidRow", reference)
+        self.assertIn("Every MGATHER and MSCATTER form exposes mandatory Col", reference)
         self.assertIn("TPACK and TUNPACK preserve the first source Tile", reference)
         self.assertIn("scalar inputs remain bare GPRs", reference)
         self.assertIn("results remain `->a3`", reference)

@@ -96,7 +96,7 @@ end;
 BSTART.MSCATTER.DEC DataType
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional, default 1)
-B.DIM LB2=ValidCol
+B.DIM LB2=Col
 B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>
 B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
@@ -119,13 +119,13 @@ end;
 
 ## Defaults and encoded zero
 
-- LB0 and LB2 carry the same ValidCol; LB1 carries ValidRow. Every omitted dimension is one.
+- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
 - GM indexed operation uses byte-displacement addresses and complete preflight.
 
 ## Legality
 
 - GM-only; Shared, vector, packed, and U128 forms are rejected.
-- ValidRow and ValidCol are nonzero and match every Tile source and any published destination; physical Col equals ValidCol.
+- ValidRow and ValidCol are nonzero and match every Tile source and any published destination; selected-layout legality requires ValidCol <= Col, with CUBE descriptor rules applied separately.
 
 ## State effects
 
