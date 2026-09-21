@@ -139,7 +139,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0055"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0005: Complete-Bundle B.IOR Schema and Defaults

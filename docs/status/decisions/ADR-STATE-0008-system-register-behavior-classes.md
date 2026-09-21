@@ -41,7 +41,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0017"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0008: Classify every visible system register behavior

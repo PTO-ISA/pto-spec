@@ -272,9 +272,9 @@ def generate() -> dict[str, Any]:
             ],
         },
         "tests": [
-            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
-            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
-            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable",
+            "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:ValidateNumericFormatClassification",
+            "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
+            "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable",
         ],
         "sources": [
             source("spec/hardware-conformance-profile.json"),
@@ -285,7 +285,7 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/arch/data-types/*.asl"),
             *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
             source(
-                "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
+                "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl"
             ),
             source(ACCEPTANCE_RECORD),
         ],

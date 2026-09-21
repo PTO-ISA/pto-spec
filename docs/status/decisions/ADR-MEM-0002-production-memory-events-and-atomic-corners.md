@@ -151,7 +151,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0020"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0002: Production memory events and atomic corners

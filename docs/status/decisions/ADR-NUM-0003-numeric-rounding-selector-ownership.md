@@ -43,7 +43,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0039"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0003: Numeric rounding selector ownership

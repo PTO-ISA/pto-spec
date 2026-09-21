@@ -42,7 +42,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0021"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0010: Scalar PC-relative and return-address state

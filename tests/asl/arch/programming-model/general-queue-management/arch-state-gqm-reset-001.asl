@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-GQM-RESET-001","source":"asl/arch/programming-model/general-queue-management.asl","requirements":["PTO-ARCH-STATE-CLOSURE-001"],"kind":"state-transition","summary":"profile reset clears all executable GQM backing and synchronization state","pass_condition":"no queue remains initialized and all release, acquire, and event epochs return to zero","related_sources":["asl/arch/profile/reset.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-GQM-RESET-001","source":"asl/arch/programming-model/general-queue-management.asl","requirements":["PTO-ARCH-STATE-CLOSURE-001"],"kind":"state-transition","summary":"profile reset clears all executable GQM backing and synchronization state","pass_condition":"no queue remains initialized and all release, acquire, and event epochs return to zero","related_sources":["asl/arch/system-registers/addressing.asl"]}
 func main() => integer
 begin
     ResetProfileState();

@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-06",
     "ADR-0089"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0016: Numeric exception flags

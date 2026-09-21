@@ -203,6 +203,34 @@ INDEXED_TLSU_CLASSIFICATION = (
     "(ADR-MEM-0009 2026-09-16 amendment, Issue #301)"
 )
 
+# ADR-GOV-0012 (Issue #282) removes the reference/target profile concept and
+# folds every selected ``implementation func`` body into its owning ASL unit.
+# The helpers below only change their definition owner; their portable layout
+# relations are unchanged, so unrelated common-helper movement still fails
+# closed through the UNCLASSIFIED path.
+PROFILE_FOLD_HELPERS = {
+    "TileExponential",
+    "TileLogarithm",
+    "TileProfileConvert",
+    "TileProfileFloatingCompare",
+    "TileProfileFloatingModulo",
+    "TileProfileFloatingModuloFlags",
+    "TileProfileFusedInvalidResult",
+    "TileProfileFusedMultiplyAdd",
+    "TileProfileMixedExpdifFP32",
+    "TileProfilePredicateNullGPRPadding",
+    "TileProfileReductionInitial",
+    "TileProfileUnary",
+    "TileReciprocal",
+    "TileReciprocalSquareRoot",
+    "TileSquareRoot",
+    "TileUnaryValue",
+}
+PROFILE_FOLD_CLASSIFICATION = (
+    "reference/target profile concept removal: selected implementation folded "
+    "into its owning ASL unit (ADR-GOV-0012, Issue #282)"
+)
+
 
 def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True, stderr=subprocess.PIPE)
@@ -1426,7 +1454,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     name in INDEXED_TLSU_HELPERS or
                     name in PACKED_X2_ROW_LOCAL_HELPERS or
                     name in TCVT_PHYSICAL_SHAPE_HELPERS or
-                    name in LOCAL_SINGLE_M_BLOCK_HELPERS):
+                    name in LOCAL_SINGLE_M_BLOCK_HELPERS or
+                    name in PROFILE_FOLD_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
                                   else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
@@ -1437,7 +1466,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                   if name in PACKED_X2_ROW_LOCAL_HELPERS
                                   else TCVT_PHYSICAL_SHAPE_CLASSIFICATION
                                   if name in TCVT_PHYSICAL_SHAPE_HELPERS
-                                  else LOCAL_SINGLE_M_BLOCK_CLASSIFICATION)
+                                  else LOCAL_SINGLE_M_BLOCK_CLASSIFICATION
+                                  if name in LOCAL_SINGLE_M_BLOCK_HELPERS
+                                  else PROFILE_FOLD_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue

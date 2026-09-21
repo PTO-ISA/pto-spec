@@ -35,7 +35,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0058"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0007: Complete-Bundle GPR Operand Resolution

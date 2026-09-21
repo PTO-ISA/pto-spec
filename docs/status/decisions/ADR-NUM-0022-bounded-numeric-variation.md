@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-12",
     "ADR-0095"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0022: Bounded numeric variation

@@ -80,7 +80,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0033"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0006: TLSU four-bit memory packing and totality

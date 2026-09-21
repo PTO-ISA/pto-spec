@@ -49,7 +49,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0053"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0007: PTO ISA 0.58.0 Tile Operation Cleanup

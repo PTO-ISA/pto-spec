@@ -747,6 +747,54 @@
         "en": "This clause keeps InternalAcc as one opaque 128 KiB implementation-profile backing store with raw capacity and word access hooks. Portable ASL exposes no validity, shape, layout, dtype, owner, provenance, or activity metadata, and capacity misses select the required explicit D spill.",
         "zh-CN": "本条款将 InternalAcc 保持为一个不透明的 128 KiB 实现 profile 后备存储，并提供原始容量和字访问钩子。可移植 ASL 不暴露有效性、形状、布局、数据类型、所有者、来源或活动元数据，容量不足时选择所需的显式 D 溢出。"
       }
+    },
+    {
+      "id": "PTO-COMMON-CONVERSION-001",
+      "source_path": "asl/tile/model/numeric/reference-conversion.asl",
+      "title": {
+        "en": "Shared scalar and Tile conversion results",
+        "zh-CN": "标量与 Tile 共用的转换结果"
+      },
+      "summary": {
+        "en": "This clause unifies scalar conversion and TCVT results for their shared floating-point and integer type set. Equal source, destination, and control inputs therefore produce the same value properties and numeric flags across both instruction paths, with scalar conversion using its defined no-saturation setting.",
+        "zh-CN": "本条款统一标量转换与 TCVT 在共有浮点和整数类型集合上的结果规则。因此，相同的源类型、目标类型和控制输入在两条指令路径上产生一致的数值属性与状态标志；标量转换采用其既定的非饱和设置。"
+      }
+    },
+    {
+      "id": "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+      "source_path": "asl/tile/model/execution/matrix-postprocess.asl",
+      "title": {
+        "en": "Bit-exact matrix post-processing",
+        "zh-CN": "位精确矩阵后处理"
+      },
+      "summary": {
+        "en": "This clause orders accumulator reduction, activation-dependent scaling, destination conversion, and special-result canonicalization as one matrix post-processing pipeline. The destination, enabled auxiliary outputs, and sticky numeric flags become visible together in a non-faulting commit.",
+        "zh-CN": "本条款把累加器归约、依激活方式选择的缩放、目标转换和特殊结果规范化组织成一条矩阵后处理流水线。目标结果、启用的辅助输出和粘滞数值标志在一次不触发故障的提交中同时可见。"
+      }
+    },
+    {
+      "id": "PTO-MATRIX-QUANT-BITEXACT-001",
+      "source_path": "asl/tile/model/execution/matrix-quantization.asl",
+      "title": {
+        "en": "Bit-exact matrix quantization",
+        "zh-CN": "位精确矩阵量化"
+      },
+      "summary": {
+        "en": "This clause fixes the order of FP19 scaling, intermediate rounding and saturation, signed-offset addition, and final destination encoding for Matrix PreQuant. Shift modes similarly expose a defined arithmetic shift and S16 saturation result, eliminating implementation-selected staging.",
+        "zh-CN": "本条款固定 Matrix PreQuant 中 FP19 缩放、中间舍入与饱和、有符号偏移相加及最终目标编码的顺序。移位模式同样给出确定的算术右移与 S16 饱和结果，避免由实现自行选择处理阶段。"
+      }
+    },
+    {
+      "id": "PTO-TCVT-E8M0-001",
+      "source_path": "asl/tile/model/numeric/e8m0-conversion.asl",
+      "title": {
+        "en": "TCVT conversion to E8M0",
+        "zh-CN": "TCVT 转换为 E8M0 格式"
+      },
+      "summary": {
+        "en": "This clause defines the accepted source types and result classes for TCVT-to-E8M0, including exponent rounding, invalid inputs, saturation choice, range endpoints, and numeric flags. The observable byte result and OF, UF, NX, or NV status therefore follow one shared conversion path.",
+        "zh-CN": "本条款定义 TCVT 转换为 E8M0 时接受的源类型与结果类别，包括指数舍入、无效输入、饱和选择、范围端点和数值标志。因此，可观察的字节结果以及 OF、UF、NX 或 NV 状态都来自同一转换路径。"
+      }
     }
   ]
 }

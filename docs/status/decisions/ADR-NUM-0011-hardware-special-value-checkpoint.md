@@ -44,7 +44,8 @@
   "legacy_ids": [
     "PD-05-SC2",
     "ADR-0050"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0011: Hardware special-value result checkpoint

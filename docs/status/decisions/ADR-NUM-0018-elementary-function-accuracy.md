@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-08",
     "ADR-0091"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0018: Elementary-function accuracy

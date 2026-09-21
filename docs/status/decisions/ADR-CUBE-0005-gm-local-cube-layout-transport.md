@@ -46,7 +46,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0070"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0005: GM/Local CUBE Layout Transport

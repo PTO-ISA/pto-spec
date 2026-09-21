@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0012"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0006: Define PTO v0 ACRC service requests

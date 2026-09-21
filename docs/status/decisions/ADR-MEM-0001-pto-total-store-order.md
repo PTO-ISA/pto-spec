@@ -38,7 +38,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0006"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0001: PTO total store order candidate model

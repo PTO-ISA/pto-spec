@@ -113,7 +113,8 @@
   "legacy_ids": [
     "ADR-0114"
   ],
-  "release_boundary": true
+  "release_boundary": true,
+  "amendments": []
 }
 ---
 # ADR-TILE-0013: Retire software-replaceable tile operations

@@ -79,7 +79,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0034"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0005: CUBE raw-carrier totality and composite preflight

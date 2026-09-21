@@ -74,7 +74,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0038"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0002: Scalar numeric flag state and producer ownership

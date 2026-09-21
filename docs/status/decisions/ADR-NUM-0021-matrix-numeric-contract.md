@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-11",
     "ADR-0094"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0021: Matrix numeric contract

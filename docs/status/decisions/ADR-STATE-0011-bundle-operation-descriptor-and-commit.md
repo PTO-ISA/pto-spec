@@ -58,7 +58,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0022"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0011: Bundle operation descriptor and transactional commit

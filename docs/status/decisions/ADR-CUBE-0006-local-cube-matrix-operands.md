@@ -81,7 +81,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0071"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0006: Local CUBE Matrix Operand Contract

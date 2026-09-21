@@ -53,7 +53,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0041"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0001: A2/A3 MX CUBE profile applicability

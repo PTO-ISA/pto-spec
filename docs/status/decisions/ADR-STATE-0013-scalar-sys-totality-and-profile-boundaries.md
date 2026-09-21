@@ -92,7 +92,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0031"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0013: Scalar SYS totality and PTO-v0 profile boundaries

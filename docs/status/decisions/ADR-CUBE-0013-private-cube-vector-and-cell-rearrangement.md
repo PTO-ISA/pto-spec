@@ -38,7 +38,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0103"
-  ]
+  ],
+  "amendments": []
 }
 ---
 

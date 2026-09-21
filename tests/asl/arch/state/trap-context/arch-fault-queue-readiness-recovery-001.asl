@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-TEST-ARCH-QUEUE-READINESS-RECOVERY-001","surface":"arch","classification":["state","trap-context","arch-fault-queue-readiness-recovery-001"],"depends_on":["PTO-ARCH-STATE-TRAP-CONTEXT"]}
-// PTO-TEST: {"id":"PTO-AVS-ARCH-QUEUE-READINESS-RECOVERY-001","source":"asl/arch/state/trap-context.asl","requirements":["PTO-REQ-STATE-001"],"kind":"fault","summary":"Trap save and recovery preserve temporary queue values and their relative-source readiness","pass_condition":"after recovery the saved newest T/U entries remain available, older unsupplied entries remain unavailable, and post-save pushes are discarded","related_sources":["asl/arch/data-types/trap-context.asl","asl/arch/profile/reference-profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-QUEUE-READINESS-RECOVERY-001","source":"asl/arch/state/trap-context.asl","requirements":["PTO-REQ-STATE-001"],"kind":"fault","summary":"Trap save and recovery preserve temporary queue values and their relative-source readiness","pass_condition":"after recovery the saved newest T/U entries remain available, older unsupplied entries remain unavailable, and post-save pushes are discarded","related_sources":["asl/arch/data-types/trap-context.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 
 func main() => integer
 begin

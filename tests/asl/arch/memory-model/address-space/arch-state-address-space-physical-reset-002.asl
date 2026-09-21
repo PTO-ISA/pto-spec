@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-ADDRESS-SPACE-PHYSICAL-RESET-002","source":"asl/arch/memory-model/address-space.asl","requirements":["PTO-REQ-PHYSICAL-MEMORY-BINDING-001"],"kind":"state-transition","summary":"The reference profile binds physical byte primitives to resettable reference memory.","pass_condition":"Bytes written through WritePhysicalMemoryByte read back as zero after ResetProfileState.","related_sources":["asl/arch/profile/reference-profile.asl","asl/arch/profile/reset.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-ADDRESS-SPACE-PHYSICAL-RESET-002","source":"asl/arch/memory-model/address-space.asl","requirements":["PTO-REQ-PHYSICAL-MEMORY-BINDING-001"],"kind":"state-transition","summary":"The reference profile binds physical byte primitives to resettable reference memory.","pass_condition":"Bytes written through WritePhysicalMemoryByte read back as zero after ResetProfileState.","related_sources":["asl/scalar/model/fsu/scalar-fp.asl","asl/arch/system-registers/addressing.asl"]}
 func main() => integer
 begin
     ResetProfileState();

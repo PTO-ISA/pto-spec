@@ -28,7 +28,8 @@
   "legacy_ids": [
     "PD-10",
     "ADR-0093"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0020: Quantization contract

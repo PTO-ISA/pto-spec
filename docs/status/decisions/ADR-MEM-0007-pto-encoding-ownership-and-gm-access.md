@@ -82,7 +82,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0056"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0007: PTO Encoding Ownership and Per-PE GM Access

@@ -37,7 +37,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0016"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0007: Define interrupt pending and timer state

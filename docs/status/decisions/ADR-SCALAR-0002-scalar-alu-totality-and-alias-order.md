@@ -193,7 +193,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0026"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-SCALAR-0002: Scalar ALU totality and alias order

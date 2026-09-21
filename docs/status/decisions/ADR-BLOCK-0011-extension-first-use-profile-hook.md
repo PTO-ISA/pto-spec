@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0068"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0011: Extension first-use is a target-profile hook

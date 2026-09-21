@@ -56,7 +56,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0008"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0002: Define the PTO architectural state contract

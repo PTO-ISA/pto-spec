@@ -442,7 +442,7 @@ def generate() -> dict[str, Any]:
             },
         ],
         "tests": [
-            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
+            "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:ValidateNumericFormatClassification",
             "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl:TestTileRegisterMapping",
             "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
             "tests/asl/block/model/state/descriptor-state/block-exec-operation-fields-001.asl:TestBundleOperationDescriptorFields",

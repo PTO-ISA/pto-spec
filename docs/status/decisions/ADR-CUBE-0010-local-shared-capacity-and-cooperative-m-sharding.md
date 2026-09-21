@@ -53,7 +53,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0097"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0010: Local and Shared capacity pools with cooperative M-sharding

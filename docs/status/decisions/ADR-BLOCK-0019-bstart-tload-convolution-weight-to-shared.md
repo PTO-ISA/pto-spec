@@ -45,7 +45,8 @@
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/99",
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": []
 }
 ---
 

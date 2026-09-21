@@ -41,7 +41,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0099"
-  ]
+  ],
+  "amendments": []
 }
 ---
 

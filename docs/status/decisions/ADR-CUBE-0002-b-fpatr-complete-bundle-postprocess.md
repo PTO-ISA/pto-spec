@@ -36,7 +36,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0064"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0002: B.FPATR Complete-Bundle Matrix PostProcess
