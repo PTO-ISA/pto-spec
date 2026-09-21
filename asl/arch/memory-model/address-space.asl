@@ -3,45 +3,15 @@
 // NDF-BEGIN: PTO-REQ-PHYSICAL-MEMORY-BINDING-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // PTO memory operations MUST reach physical byte storage through
-// ReadPhysicalMemoryByte and WritePhysicalMemoryByte. An executable profile MAY
+// ReadPhysicalMemoryByte and WritePhysicalMemoryByte. An implementation MAY
 // bind those primitives to external storage, but MUST preserve ASL-owned
 // translation, permission, ordering, preflight, precise-fault, and commit
 // behavior. Fixed reference-array bounds MUST NOT constrain every
 // implementation.
 // NDF-END: PTO-REQ-PHYSICAL-MEMORY-BINDING-001
 
-// Hosted profiles bind these primitives to sparse host storage.  The portable
-// profile keeps the bounded in-ASL byte array below and never calls them.
-readonly impdef func HostInstructionAccessPermitted(
-    address: Word, size_bytes: integer {2,4,6,8}) => boolean
-begin
-    return FALSE;
-end;
-
-readonly impdef func HostDataAccessPermitted(
-    address: Word, size_bytes: integer {1..262144},
-    write: boolean) => boolean
-begin
-    return FALSE;
-end;
-
-readonly impdef func HostReadMemoryByte(address: Word) => Byte
-begin
-    assert FALSE;
-    return Zeros{8};
-end;
-
-impdef func HostWriteMemoryByte(address: Word, value: Byte)
-begin
-    assert FALSE;
-    pass;
-end;
-
 readonly func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
-    if PTOModelHostMemoryEnabled() then
-        return HostReadMemoryByte(address);
-    end;
     assert IsModelAddress(address);
     let index = UInt(address) as ModelAddress;
     return _Memory[[index]];
@@ -49,10 +19,6 @@ end;
 
 func WritePhysicalMemoryByte(address: Word, value: Byte)
 begin
-    if PTOModelHostMemoryEnabled() then
-        HostWriteMemoryByte(address, value);
-        return;
-    end;
     assert IsModelAddress(address);
     let index = UInt(address) as ModelAddress;
     _Memory[[index]] = value;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001","source":"asl/arch/profile/extension-first-use.asl","requirements":["PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"],"kind":"execution","summary":"portable extension first-use hooks are disabled and effect-free","pass_condition":"both kinds report disabled, raise no trap, and preserve trap, bundle, queue, memory, and fault state","related_sources":["asl/arch/programming-model/execution-context.asl","asl/arch/memory-model/fault-precision.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001","source":"asl/arch/features/extension-first-use.asl","requirements":["PTO-ARCH-EXTENSION-FIRST-USE-001"],"kind":"execution","summary":"portable extension first-use hooks are disabled and effect-free","pass_condition":"both kinds report disabled, raise no trap, and preserve trap, bundle, queue, memory, and fault state","related_sources":["asl/arch/programming-model/execution-context.asl","asl/arch/memory-model/fault-precision.asl"]}
 func main() => integer
 begin
     ResetProfileState();

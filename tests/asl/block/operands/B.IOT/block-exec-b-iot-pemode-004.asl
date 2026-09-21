@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-PEMODE-004","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"Decoded B.IOT source paths exercise all eight PEMode encodings.","pass_condition":"Every mode produces its fixed four-bit semantic mask, while encoded mode zero has no binding effect.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/tile-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-PEMODE-004","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"Decoded B.IOT source paths exercise all eight PEMode encodings.","pass_condition":"Every mode produces its fixed four-bit semantic mask, while encoded mode zero has no binding effect.","related_sources":["asl/block/model/schema/bundle-encoding.asl","asl/block/model/operands/tile-bindings.asl"]}
 pure func BIOTPEModeStart() => bits(64)
 begin
     return Zeros{64} + 0x00011181;
@@ -28,7 +28,7 @@ begin
         else
             assert BundleTileBindingCount() == 1;
             assert _BundleTileBindings[[0]].pe_mask ==
-                PTOv0PEMaskOfPEMode(encoded_mode);
+                PEMaskOfPEMode(encoded_mode);
         end;
     end;
     return 0;

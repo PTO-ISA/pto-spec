@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-FP16-001","source":"asl/arch/profile/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-INST-SCALAR-FCVT"],"kind":"boundary","summary":"the common conversion profile converts FP32 carriers to FP16 across rounding and range boundaries","pass_condition":"exact, inexact, overflow, normal, subnormal, and underflow inputs produce the selected binary16 carrier and flags","related_sources":["asl/arch/profile/reference-quantization.asl","asl/scalar/fsu/FCVT.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-FP16-001","source":"asl/tile/model/numeric/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-INST-SCALAR-FCVT"],"kind":"boundary","summary":"the common conversion profile converts FP32 carriers to FP16 across rounding and range boundaries","pass_condition":"exact, inexact, overflow, normal, subnormal, and underflow inputs produce the selected binary16 carrier and flags","related_sources":["asl/scalar/model/fsu/reference-quantization.asl","asl/scalar/fsu/FCVT.asl"]}
 func main() => integer
 begin
     let fp32_type = Zeros{5} + 1;

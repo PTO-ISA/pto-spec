@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/matrix-postprocess.asl -->
+<!-- GENERATED FROM: asl/tile/model/execution/matrix-postprocess.asl -->
 # Matrix Postprocess
 
-**Normative ASL source:** `asl/arch/profile/matrix-postprocess.asl`
+**Normative ASL source:** `asl/tile/model/execution/matrix-postprocess.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-MATRIX-POSTPROCESS}
+## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS}
 
 ## Reader guide
 
@@ -50,9 +50,9 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/matrix-postprocess.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/matrix-postprocess.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-POSTPROCESS","surface":"arch","classification":["profile","matrix-postprocess"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-PROFILE","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS","surface":"arch","classification":["profile","matrix-postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-PROFILE","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
 // Bit-exact B.FPATR conversion, activation, auxiliary reduction, and flags.
 // NDF-BEGIN: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted

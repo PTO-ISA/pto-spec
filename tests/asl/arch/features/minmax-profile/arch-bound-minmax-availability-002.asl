@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-AVAILABILITY-BOUND-002","source":"asl/arch/features/minmax-profile.asl","requirements":[],"kind":"boundary","summary":"invalid TF32 and unsupported integer carriers have no floating order key","pass_condition":"invalid and unsupported requests return unavailable with the zero placeholder","related_sources":["asl/arch/features/mx-formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-AVAILABILITY-BOUND-002","source":"asl/arch/features/minmax.asl","requirements":[],"kind":"boundary","summary":"invalid TF32 and unsupported integer carriers have no floating order key","pass_condition":"invalid and unsupported requests return unavailable with the zero placeholder","related_sources":["asl/arch/features/mx-formats.asl"]}
 func main() => integer
 begin
     let (invalid_tf32_available, invalid_tf32_key) =

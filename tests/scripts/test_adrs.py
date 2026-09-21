@@ -396,7 +396,7 @@ class AdrRecordTest(unittest.TestCase):
                 "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
                 "PTO-SCALAR-FMAX",
                 "PTO-SCALAR-FMIN",
-                "PTO-SCALAR-MODEL-FSU-PROFILE",
+                "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
                 "PTO-TILE-MODEL-EXECUTION-COMPARISON",
                 "PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD",
                 "PTO-TILE-MODEL-EXECUTION-UNARY",

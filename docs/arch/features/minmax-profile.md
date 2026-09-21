@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/features/minmax-profile.asl -->
+<!-- GENERATED FROM: asl/arch/features/minmax.asl -->
 # Minmax Profile
 
-**Normative ASL source:** `asl/arch/features/minmax-profile.asl`
+**Normative ASL source:** `asl/arch/features/minmax.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-FEATURES-MINMAX-PROFILE}
+## ASL unit identity {#PTO-ARCH-FEATURES-MINMAX}
 
 ## Reader guide
 
@@ -58,9 +58,9 @@ If either operand is an invalid `TF32` carrier, ordinary key selection reports u
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/minmax-profile.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/minmax.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-MINMAX-PROFILE","surface":"arch","classification":["features","minmax-profile"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-MINMAX","surface":"arch","classification":["features","minmax-profile"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"]}
 // Convert an assigned binary floating carrier into a monotonically increasing
 // unsigned key. NaNs and signed-zero ties are resolved before this helper is
 // called. The returned availability bit keeps unsupported formats explicit.

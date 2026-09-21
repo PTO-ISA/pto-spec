@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/fused-multiply-add.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","surface":"tile","classification":["model","execution","fused-multiply-add"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-SCALAR-MODEL-FSU-PROFILE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","surface":"tile","classification":["model","execution","fused-multiply-add"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
 impdef func TileProfileFusedMultiplyAdd(
     data_type: TileDataType,
     addend: Word,

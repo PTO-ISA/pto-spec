@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-PROFILE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
 
 func TileSquareRoot(value: Word) => Word

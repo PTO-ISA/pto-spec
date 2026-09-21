@@ -180,7 +180,7 @@ git commit -m "fix: narrow FPATR FP19 parameter domain"
 ### Task 3: Model the assigned intermediate rounding and saturation points
 
 **Files:**
-- Modify: `asl/arch/profile/matrix-quantization.asl`
+- Modify: `asl/tile/model/execution/matrix-quantization.asl`
 - Test: `tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl`
 - Test: `tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-rounding-008.asl`
 - Generated: `docs/arch/profile/matrix-quantization.md`
@@ -274,7 +274,7 @@ Expected: all four pass.
 
 ```bash
 python3 scripts/instruction_docs.py generate
-git add asl/arch/profile/matrix-quantization.asl \
+git add asl/tile/model/execution/matrix-quantization.asl \
   docs/arch/profile/matrix-quantization.md \
   tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl \
   tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-rounding-008.asl
@@ -284,7 +284,7 @@ git commit -m "fix: model FPATR intermediate saturation"
 ### Task 4: Apply activation before destination conversion and keep zero affine
 
 **Files:**
-- Modify: `asl/arch/profile/matrix-postprocess.asl`
+- Modify: `asl/tile/model/execution/matrix-postprocess.asl`
 - Test: `tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-pipeline-002.asl`
 - Test: `tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-zero-affine-009.asl`
 - Modify: `tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-activation-004.asl`
@@ -366,7 +366,7 @@ Expected: all points pass with exact words and flags.
 
 ```bash
 python3 scripts/instruction_docs.py generate
-git add asl/arch/profile/matrix-postprocess.asl \
+git add asl/tile/model/execution/matrix-postprocess.asl \
   docs/arch/profile/matrix-postprocess.md \
   tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-pipeline-002.asl \
   tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-zero-affine-009.asl \

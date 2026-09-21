@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002","source":"asl/arch/profile/matrix-postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"Matrix activation selects the negative-path multiplier before destination conversion","pass_condition":"an FP32 value at a double-rounding boundary produces the single-round FP16 result and exact flags","related_sources":["asl/arch/profile/matrix-quantization.asl","asl/block/attributes/B.FPATR.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002","source":"asl/tile/model/execution/matrix-postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"Matrix activation selects the negative-path multiplier before destination conversion","pass_condition":"an FP32 value at a double-rounding boundary produces the single-round FP16 result and exact flags","related_sources":["asl/tile/model/execution/matrix-quantization.asl","asl/block/attributes/B.FPATR.asl"]}
 func main() => integer
 begin
     let scale_one = MatrixQuantParameter(

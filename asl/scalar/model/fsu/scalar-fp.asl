@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-PROFILE","surface":"scalar","classification":["model","fsu","profile"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC","PTO-ARCH-STATE-NUMERIC-STATUS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-SCALAR-FP","surface":"scalar","classification":["model","fsu","scalar-fp"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC","PTO-ARCH-STATE-NUMERIC-STATUS"]}
 // Raw scalar floating-point execution. The portable model fixes carrier,
 // control/status, comparison, NaN, signed-zero, and destination rules. Numeric
 // operations that require a concrete floating-point implementation cross one

@@ -83,7 +83,7 @@ class HardwareNumericProfileTest(unittest.TestCase):
             ],
         )
         implementation = (
-            ROOT / "asl/arch/profile/matrix-postprocess.asl"
+            ROOT / "asl/tile/model/execution/matrix-postprocess.asl"
         ).read_text(encoding="utf-8")
         body = implementation.split(
             "implementation func TileProfileMatrixPostProcessWithFlags", 1

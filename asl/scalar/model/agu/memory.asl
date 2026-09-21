@@ -31,13 +31,7 @@ readonly func DataAccessPermitted(address: Word,
                                                  write: boolean) => boolean
 begin
     let end_address = UInt(address) + size_bytes;
-    // Hosted profiles delegate address-space bounds and permissions to the
-    // runtime bridge.  Keep the bounded byte-array check for the portable
-    // profile, but do not reject guest virtual addresses before the host
-    // primitive is reached.
-    if PTOModelHostMemoryEnabled() &&
-       !HostDataAccessPermitted(address, size_bytes, write) then return FALSE; end;
-    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
+    if end_address > PTO_MODEL_MEMORY_BYTES then
         return FALSE;
     end;
     // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through

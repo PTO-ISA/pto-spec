@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/extension-first-use.asl -->
+<!-- GENERATED FROM: asl/arch/features/extension-first-use.asl -->
 # Extension First Use
 
-**Normative ASL source:** `asl/arch/profile/extension-first-use.asl`
+**Normative ASL source:** `asl/arch/features/extension-first-use.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-EXTENSION-FIRST-USE}
+## ASL unit identity {#PTO-ARCH-FEATURES-EXTENSION-FIRST-USE}
 
 ## Reader guide
 
@@ -52,16 +52,16 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/extension-first-use.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/extension-first-use.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-EXTENSION-FIRST-USE","surface":"arch","classification":["profile","extension-first-use"],"depends_on":["PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION"]}
-// NDF-BEGIN: PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001
+// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-EXTENSION-FIRST-USE","surface":"arch","classification":["profile","extension-first-use"],"depends_on":["PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION"]}
+// NDF-BEGIN: PTO-ARCH-EXTENSION-FIRST-USE-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
 // A target profile MAY provide a precise extension first-use trap. The
 // portable default MUST remain disabled and effect-free. An enabling profile
 // MUST define covered kinds, enable state, source and manager ACRs, the exact
 // trap envelope, pre-effect ordering, retry state, and context-save progress.
-// NDF-END: PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001
+// NDF-END: PTO-ARCH-EXTENSION-FIRST-USE-001
 
 type ExtensionFirstUseKind of enumeration {
     ExtensionFirstUseKind_VECTOR,

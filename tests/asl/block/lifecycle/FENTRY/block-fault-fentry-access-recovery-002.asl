@@ -6,7 +6,7 @@ begin
     WriteGPR(1, Zeros{PTO_XLEN} + 3080);
     WriteGPR(3, Zeros{PTO_XLEN} + 0x55aa);
     SetCurrentACR(2);
-    PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
+    WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(instruction_pc);
     ClearFault();
 

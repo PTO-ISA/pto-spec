@@ -271,7 +271,7 @@
     {
       "name": "ScalarFPBinaryProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -284,7 +284,7 @@
     {
       "name": "ScalarFPConvertProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -294,7 +294,7 @@
     {
       "name": "ScalarFPFusedProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -307,7 +307,7 @@
     {
       "name": "ScalarFPToIntegerProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -321,7 +321,7 @@
     {
       "name": "ScalarFPUnaryProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -333,7 +333,7 @@
     {
       "name": "ScalarIntegerToFPProfile",
       "role": "portable-profile-boundary",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [

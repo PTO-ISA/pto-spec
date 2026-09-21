@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ROUNDING-008","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"B.FPATR saturates assigned signed intermediates before offset and destination encoding","pass_condition":"REQ4 REQ8 DEQS16 and shift modes expose exact intermediate saturation results under non-saturating final control","related_sources":["asl/arch/profile/matrix-quantization.asl","asl/arch/profile/matrix-postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ROUNDING-008","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"B.FPATR saturates assigned signed intermediates before offset and destination encoding","pass_condition":"REQ4 REQ8 DEQS16 and shift modes expose exact intermediate saturation results under non-saturating final control","related_sources":["asl/tile/model/execution/matrix-quantization.asl","asl/tile/model/execution/matrix-postprocess.asl"]}
 func main() => integer
 begin
     let scale_one = FP32ToFP19(Zeros{PTO_XLEN} + 0x3f800000);

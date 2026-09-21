@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/reference-conversion.asl -->
+<!-- GENERATED FROM: asl/tile/model/numeric/reference-conversion.asl -->
 # Reference Conversion
 
-**Normative ASL source:** `asl/arch/profile/reference-conversion.asl`
+**Normative ASL source:** `asl/tile/model/numeric/reference-conversion.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-REFERENCE-CONVERSION}
+## ASL unit identity {#PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION}
 
 ## Reader guide
 
@@ -45,18 +45,18 @@ The dependency list and linked source path below are the navigation index for re
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-conversion.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/numeric/reference-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-CONVERSION","surface":"arch","classification":["profile","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-PROFILE","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","surface":"arch","classification":["profile","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 
-// NDF-BEGIN: PTO-COMMON-CONVERSION-PROFILE-001
+// NDF-BEGIN: PTO-COMMON-CONVERSION-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
 // Scalar conversion and TCVT MUST use this common result rule whenever both
 // types are in the shared FP64/FP32/FP16/E4M3 or signed/unsigned 64/32/16/8
 // set. Scalar conversion MUST supply saturation disabled. Exact, inexact,
 // underflow, overflow, saturation, wrap, signed-zero, NaN, infinity, and flag
 // results MUST be identical for equal source, destination, and control inputs.
-// NDF-END: PTO-COMMON-CONVERSION-PROFILE-001
+// NDF-END: PTO-COMMON-CONVERSION-001
 
 pure func ReferenceCommonConversionTypeSupported(
     data_type: TileDataType) => boolean

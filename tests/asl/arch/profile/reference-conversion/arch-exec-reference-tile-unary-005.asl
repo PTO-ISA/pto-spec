@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005","source":"asl/arch/profile/reference-conversion.asl","requirements":[],"kind":"execution","summary":"the reference Tile SFU profile computes deterministic FP32 and FP16 finite unary results","pass_condition":"EXP, LOG, RECIP, SQRT, and RSQRT match independent host encodings for 0.1","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/execution/unary.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005","source":"asl/tile/model/numeric/reference-conversion.asl","requirements":[],"kind":"execution","summary":"the reference Tile SFU profile computes deterministic FP32 and FP16 finite unary results","pass_condition":"EXP, LOG, RECIP, SQRT, and RSQRT match independent host encodings for 0.1","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/execution/unary.asl"]}
 func main() => integer
 begin
     let fp32_tenth = Zeros{PTO_XLEN} + 0x3dcccccd;

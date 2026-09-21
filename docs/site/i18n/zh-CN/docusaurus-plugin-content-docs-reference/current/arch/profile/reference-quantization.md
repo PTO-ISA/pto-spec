@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/reference-quantization.asl -->
+<!-- GENERATED FROM: asl/scalar/model/fsu/reference-quantization.asl -->
 # Reference Quantization
 
-**Normative ASL source:** `asl/arch/profile/reference-quantization.asl`
+**Normative ASL source:** `asl/scalar/model/fsu/reference-quantization.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION}
+## ASL unit identity {#PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION}
 
 ## Reader guide
 
@@ -51,9 +51,9 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-quantization.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/fsu/reference-quantization.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","surface":"arch","classification":["profile","reference-quantization"],"depends_on":["PTO-SCALAR-MODEL-FSU-PROFILE","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION","surface":"arch","classification":["profile","reference-quantization"],"depends_on":["PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 pure func ReferencePowerOfTwo(exponent: integer {-1074..1023}) => real
 begin
     var result: real = 1.0;

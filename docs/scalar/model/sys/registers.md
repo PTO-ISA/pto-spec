@@ -16,7 +16,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/registers.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
-// PTO-REQ-SCALAR-SSR-001, PTO-REQ-PROFILE-001: canonical 24-bit
+// PTO-REQ-SCALAR-SSR-001, PTO-REQ-RESET-001: canonical 24-bit
 // system-register addressing with explicit Access Control Ring checks.
 
 readonly impdef func SystemRegisterAccessPermitted(

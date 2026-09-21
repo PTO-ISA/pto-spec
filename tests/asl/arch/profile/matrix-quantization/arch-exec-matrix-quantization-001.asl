@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-QUANT-001","source":"asl/arch/profile/matrix-quantization.asl","requirements":["PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"Matrix quantization helpers encode parameters and representative destination values exactly","pass_condition":"FP19 scale, signed offset, integer wrap, FP16, E4M3, and HiF8 helpers return exact carriers","related_sources":["asl/arch/data-types/fp19.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-QUANT-001","source":"asl/tile/model/execution/matrix-quantization.asl","requirements":["PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"Matrix quantization helpers encode parameters and representative destination values exactly","pass_condition":"FP19 scale, signed offset, integer wrap, FP16, E4M3, and HiF8 helpers return exact carriers","related_sources":["asl/arch/data-types/fp19.asl"]}
 func main() => integer
 begin
     let one = FP32ToFP19(Zeros{PTO_XLEN} + 0x3f800000);

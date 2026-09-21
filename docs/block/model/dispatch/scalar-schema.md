@@ -22,7 +22,7 @@ readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
 begin
     let handler = CommandHandlerOfForm(form);
     let zero_participation = handler == CommandHandler_BindBundleTileIO &&
-        PTOv0PEMaskOfPEMode(DecodeCommandOperandRaw(
+        PEMaskOfPEMode(DecodeCommandOperandRaw(
             instruction, form, CommandField_PEMode)[2:0]) == Zeros{4};
     return _BundleZeroParticipationSeen ||
            !BundleTGPR2TSelected() ||

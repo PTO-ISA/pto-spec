@@ -52,13 +52,13 @@ Use this example block only as a reading aid: apply the rules above, then confir
 implementation func TrapContextRecoverable(target: AccessControlRing)
     => boolean
 begin
-    let control = PTOv0ReadContextRegister(target, 0x0f40);
-    let ecstate = PTOv0ReadContextRegister(target, 0x0f00);
-    let recovered_bpc = PTOv0ReadContextRegister(target, 0x0f41);
-    let recovered_tpc = PTOv0ReadContextRegister(target, 0x0f43);
+    let control = ReadContextRegister(target, 0x0f40);
+    let ecstate = ReadContextRegister(target, 0x0f00);
+    let recovered_bpc = ReadContextRegister(target, 0x0f41);
+    let recovered_tpc = ReadContextRegister(target, 0x0f43);
     return _TrapContexts[[target]].valid &&
            control[4] == '1' &&
-           PTOv0EBARGControlLegal(control) &&
+           EBARGControlLegal(control) &&
            control[3:0] == ecstate[3:0] &&
            recovered_bpc[0] == '0' &&
            recovered_tpc[0] == '0';
@@ -69,10 +69,10 @@ begin
     if !TrapContextRecoverable(target) then
         return FALSE;
     end;
-    var control = PTOv0ReadContextRegister(target, 0x0f40);
-    let ecstate = PTOv0ReadContextRegister(target, 0x0f00);
-    let recovered_bpc = PTOv0ReadContextRegister(target, 0x0f41);
-    let recovered_tpc = PTOv0ReadContextRegister(target, 0x0f43);
+    var control = ReadContextRegister(target, 0x0f40);
+    let ecstate = ReadContextRegister(target, 0x0f00);
+    let recovered_bpc = ReadContextRegister(target, 0x0f41);
+    let recovered_tpc = ReadContextRegister(target, 0x0f43);
     WriteTPC(recovered_tpc);
     WriteBPC(recovered_bpc);
     _SystemRegisters.core_state = ecstate;
@@ -86,13 +86,13 @@ begin
         _TrapContexts[[target]].bundle_condition_set;
     _SystemBlockTerminalPending =
         _TrapContexts[[target]].system_block_terminal_pending;
-    _BARG.block_type = PTOv0BundleKindOf(control[10:7]);
-    _BARG.transfer_type = PTOv0BundleTransferOf(control[13:11]);
+    _BARG.block_type = BundleKindOf(control[10:7]);
+    _BARG.transfer_type = BundleTransferOf(control[13:11]);
     _BARG.taken = control[14] == '1';
-    _BARG.bpcn = PTOv0ReadContextRegister(target, 0x0f42);
+    _BARG.bpcn = ReadContextRegister(target, 0x0f42);
     _FrameStackReturnTarget =
         _TrapContexts[[target]].frame_stack_return_target;
-    _ReturnAddress = PTOv0ReadContextRegister(target, 0x0f44);
+    _ReturnAddress = ReadContextRegister(target, 0x0f44);
     _BundleArgumentKind = _TrapContexts[[target]].bundle_argument_kind;
     _BundleSequentialPC = _TrapContexts[[target]].bundle_sequential_pc;
     _BundleOperation = _TrapContexts[[target]].bundle_operation;
@@ -121,15 +121,15 @@ begin
     _FrameTemplate = _TrapContexts[[target]].frame_template;
     _MemoryReplayState = _TrapContexts[[target]].memory_replay_state;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
-        _TQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f45 + index);
-        _UQueue[[index]] = PTOv0ReadContextRegister(target, 0x0f49 + index);
+        _TQueue[[index]] = ReadContextRegister(target, 0x0f45 + index);
+        _UQueue[[index]] = ReadContextRegister(target, 0x0f49 + index);
     end;
     _TQueueValid = _TrapContexts[[target]].t_queue_valid;
     _UQueueValid = _TrapContexts[[target]].u_queue_valid;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
     _CurrentACR = UInt(ecstate[3:0]) as AccessControlRing;
     control[4] = '0';
-    PTOv0WriteContextRegister(target, 0x0f40, control);
+    WriteContextRegister(target, 0x0f40, control);
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;
 end;

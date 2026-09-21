@@ -328,8 +328,8 @@ git commit -m "feat: preserve FPATR extension lifecycle"
 
 **Files:**
 - Create: `asl/arch/profile/matrix-pre-stage.asl`
-- Modify: `asl/arch/profile/matrix-quantization.asl`
-- Modify: `asl/arch/profile/matrix-postprocess.asl`
+- Modify: `asl/tile/model/execution/matrix-quantization.asl`
+- Modify: `asl/tile/model/execution/matrix-postprocess.asl`
 - Test: `tests/asl/arch/profile/matrix-pre-stage/arch-exec-matrix-pre-formats-001.asl`
 - Test: `tests/asl/arch/profile/matrix-pre-stage/arch-exec-matrix-pre-activation-002.asl`
 - Test: `tests/asl/block/attributes/B.FPATR.PRE/block-exec-b-fpatr-pre-compat-003.asl`
@@ -380,8 +380,8 @@ Expected: omission produces byte-for-byte PR1 results; every enabled extension p
 ```bash
 python3 scripts/instruction_docs.py generate
 git add asl/arch/profile/matrix-pre-stage.asl \
-  asl/arch/profile/matrix-quantization.asl \
-  asl/arch/profile/matrix-postprocess.asl \
+  asl/tile/model/execution/matrix-quantization.asl \
+  asl/tile/model/execution/matrix-postprocess.asl \
   docs/arch/profile/matrix-pre-stage.md \
   tests/asl/arch/profile/matrix-pre-stage \
   tests/asl/block/attributes/B.FPATR.PRE/block-exec-b-fpatr-pre-compat-003.asl
@@ -516,7 +516,7 @@ git commit -m "feat: implement FPATR extended post stage"
 ### Task 7: Integrate the complete pipeline and prove late rollback
 
 **Files:**
-- Modify: `asl/arch/profile/matrix-postprocess.asl`
+- Modify: `asl/tile/model/execution/matrix-postprocess.asl`
 - Modify: `asl/tile/model/execution/postprocess.asl`
 - Modify: `asl/block/model/dispatch/destination-shape.asl`
 - Test: `tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-extended-pipeline-003.asl`
@@ -564,7 +564,7 @@ Expected: exact combined values and zero partial effects on every rejected late 
 
 ```bash
 python3 scripts/instruction_docs.py generate
-git add asl/arch/profile/matrix-postprocess.asl \
+git add asl/tile/model/execution/matrix-postprocess.asl \
   asl/tile/model/execution/postprocess.asl \
   asl/block/model/dispatch/destination-shape.asl \
   docs/arch/profile/matrix-postprocess.md \

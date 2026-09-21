@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"B.FPATR floating signed zero participates in the complete affine pipeline","pass_condition":"positive and negative FP32 zero publish the assigned positive negative or zero S8 offset","related_sources":["asl/arch/profile/matrix-postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"B.FPATR floating signed zero participates in the complete affine pipeline","pass_condition":"positive and negative FP32 zero publish the assigned positive negative or zero S8 offset","related_sources":["asl/tile/model/execution/matrix-postprocess.asl"]}
 func main() => integer
 begin
     let scale_one = FP32ToFP19(Zeros{PTO_XLEN} + 0x3f800000);

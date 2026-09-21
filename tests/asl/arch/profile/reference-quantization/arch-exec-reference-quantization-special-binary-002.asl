@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002","source":"asl/arch/profile/reference-quantization.asl","requirements":[],"kind":"execution","summary":"the reference scalar FP binary profile closes IEEE infinity, NaN, signed-zero, and divide-by-zero inputs","pass_condition":"FP32 and FP64 special-value results and NV/DZ flags match the Linx IEEE-754 contract","related_sources":["asl/arch/profile/reference-profile.asl","asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002","source":"asl/scalar/model/fsu/reference-quantization.asl","requirements":[],"kind":"execution","summary":"the reference scalar FP binary profile closes IEEE infinity, NaN, signed-zero, and divide-by-zero inputs","pass_condition":"FP32 and FP64 special-value results and NV/DZ flags match the Linx IEEE-754 contract","related_sources":["asl/arch/profile/reference-profile.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     let fp32 = Zeros{5} + 1;

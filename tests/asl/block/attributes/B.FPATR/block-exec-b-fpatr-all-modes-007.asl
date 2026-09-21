@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"Every assigned B.FPATR PreQuantMode executes its source, parameter, and destination contract","pass_condition":"all 27 assigned modes convert an exact unit value to the expected destination encoding","related_sources":["asl/arch/profile/matrix-postprocess.asl","asl/arch/profile/matrix-quantization.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"Every assigned B.FPATR PreQuantMode executes its source, parameter, and destination contract","pass_condition":"all 27 assigned modes convert an exact unit value to the expected destination encoding","related_sources":["asl/tile/model/execution/matrix-postprocess.asl","asl/tile/model/execution/matrix-quantization.asl"]}
 func AssertMatrixModeUnit(
     mode: bits(6), source: Word, destination_type: TileDataType,
     parameter: Word, expected: Word)

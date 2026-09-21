@@ -18,7 +18,7 @@
       "profile_obligations": [
         "Reset all architecturally visible PTO v0 reference-profile state to the values stated in the implementation."
       ],
-      "requirement": "PTO-REQ-PROFILE-001",
+      "requirement": "PTO-REQ-RESET-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
@@ -34,7 +34,7 @@
       "profile_obligations": [
         "Define the ACR order, reset ring, protected register classes, and denied-access fault behavior."
       ],
-      "requirement": "PTO-REQ-PROFILE-001",
+      "requirement": "PTO-REQ-RESET-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
@@ -92,7 +92,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarFPBinaryProfile",
       "portable_default": "Apply deterministic modular carrier ADD, SUB, MUL, or DIV; zero DIV returns all ones and DZ. Scalar dispatch owns MIN/MAX NaN and signed-zero behavior.",
       "profile_obligations": [
@@ -109,7 +109,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarFPUnaryProfile",
       "portable_default": "Apply deterministic carrier ABS, identity SQRT, increment EXP, or unsigned reciprocal; zero reciprocal returns all ones and DZ.",
       "profile_obligations": [
@@ -126,7 +126,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarFPFusedProfile",
       "portable_default": "Apply one modular word-width multiply followed by the selected signed addend transform.",
       "profile_obligations": [
@@ -143,7 +143,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarFPToIntegerProfile",
       "portable_default": "Return the source payload before normative destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -159,7 +159,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarFPConvertProfile",
       "portable_default": "Return the source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -175,7 +175,7 @@
     },
     {
       "domain": "scalar-floating-encoding",
-      "model": "asl/scalar/model/fsu/profile.asl",
+      "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "name": "ScalarIntegerToFPProfile",
       "portable_default": "Return the normalized integer source payload before normative floating destination-width normalization and no new flags.",
       "profile_obligations": [
@@ -271,7 +271,7 @@
     },
     {
       "domain": "extension-first-use",
-      "model": "asl/arch/profile/extension-first-use.asl",
+      "model": "asl/arch/features/extension-first-use.asl",
       "name": "ExtensionFirstUseEnabled",
       "portable_default": "Return false for VECTOR and CUBE so portable PTO execution never raises an extension first-use trap.",
       "profile_obligations": [
@@ -279,7 +279,7 @@
         "Define source and manager ACR routing and the exact pre-effect ordering point.",
         "Keep the enable query readonly and stable for one decoded instruction attempt."
       ],
-      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
@@ -290,7 +290,7 @@
     },
     {
       "domain": "extension-first-use",
-      "model": "asl/arch/profile/extension-first-use.asl",
+      "model": "asl/arch/features/extension-first-use.asl",
       "name": "RaiseExtensionFirstUse",
       "portable_default": "Return false without changing trap, bundle, queue, memory, or fault state.",
       "profile_obligations": [
@@ -298,7 +298,7 @@
         "Raise before extension resource allocation, memory issue, queue mutation, or any other architectural effect.",
         "Preserve the original instruction for retry and guarantee context-save forward progress."
       ],
-      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,

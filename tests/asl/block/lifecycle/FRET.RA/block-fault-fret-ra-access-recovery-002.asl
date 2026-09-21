@@ -9,7 +9,7 @@ begin
     _ReturnAddress = Zeros{PTO_XLEN} + 0x900;
     _FrameDepth = 1;
     SetCurrentACR(2);
-    PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
+    WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(Zeros{PTO_XLEN} + 0x740);
     ClearFault();
 

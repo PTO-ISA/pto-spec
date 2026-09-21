@@ -447,7 +447,7 @@
   "behavior_classes": [
     {
       "id": "base-pointer-storage",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "THREAD_PTR",
@@ -459,7 +459,7 @@
     },
     {
       "id": "core-state-control",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "CORE_STATE"
@@ -472,7 +472,7 @@
     },
     {
       "id": "feature-enable-storage",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "CORE_FEATURE_ENABLE"
@@ -483,7 +483,7 @@
     },
     {
       "id": "architectural-time",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "architectural-time",
       "registers": [
         "TIME",
@@ -497,8 +497,8 @@
     },
     {
       "id": "zero-profile-identity",
-      "profile_status": "profile-constant",
-      "read": "profile-value",
+      "behavior_status": "fixed-constant",
+      "read": "fixed-value",
       "registers": [
         "CORE_ID",
         "VENDOR",
@@ -513,8 +513,8 @@
     },
     {
       "id": "version-profile-identity",
-      "profile_status": "profile-constant",
-      "read": "profile-value",
+      "behavior_status": "fixed-constant",
+      "read": "fixed-value",
       "registers": [
         "VERSION"
       ],
@@ -524,8 +524,8 @@
     },
     {
       "id": "tile-capacity-profile-limit",
-      "profile_status": "profile-constant",
-      "read": "profile-value",
+      "behavior_status": "fixed-constant",
+      "read": "fixed-value",
       "registers": [
         "TILE_CAPACITY"
       ],
@@ -537,20 +537,20 @@
     },
     {
       "id": "execution-context-state",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "ECSTATE_ACRn"
       ],
       "reset": "zero",
       "side_effects": [
-        "save-and-recovery-profile-state"
+        "save-and-recovery-state"
       ],
       "write": "store-value"
     },
     {
       "id": "exception-vector-base",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "EVBASE_ACRn"
@@ -563,7 +563,7 @@
     },
     {
       "id": "trap-status",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "packed-trap-status",
       "registers": [
         "TRAPNO_ACRn"
@@ -576,7 +576,7 @@
     },
     {
       "id": "trap-argument",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "trap-argument-zero",
       "registers": [
         "TRAPARG0_ACRn"
@@ -589,7 +589,7 @@
     },
     {
       "id": "exception-temporary-storage",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "ETEMP_ACRn",
@@ -601,7 +601,7 @@
     },
     {
       "id": "interrupt-configuration",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "ECONFIG_ACRn"
@@ -614,7 +614,7 @@
     },
     {
       "id": "interrupt-pending",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "refresh-timer-then-pending-bitmap",
       "registers": [
         "IPENDING_ACRn"
@@ -627,7 +627,7 @@
     },
     {
       "id": "top-pending-interrupt",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "refresh-timer-then-lowest-pending-id",
       "registers": [
         "TOPEI_ACRn"
@@ -640,7 +640,7 @@
     },
     {
       "id": "end-of-interrupt",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "reject-write-only",
       "registers": [
         "EOIEI_ACRn"
@@ -654,7 +654,7 @@
     },
     {
       "id": "translation-configuration-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "TTBR0_ACR1",
@@ -667,13 +667,13 @@
       ],
       "reset": "zero",
       "side_effects": [
-        "pto-v0-identity-translation-does-not-consume-value"
+        "identity-translation-does-not-consume-value"
       ],
       "write": "store-value"
     },
     {
       "id": "timer-time",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "architectural-time",
       "registers": [
         "TIMER_TIME_ACRn"
@@ -686,7 +686,7 @@
     },
     {
       "id": "timer-compare",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "stored-value",
       "registers": [
         "TIMER_TIMECMP_ACRn"
@@ -699,7 +699,7 @@
     },
     {
       "id": "acr-parameter-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "XBINFO_ACRn",
@@ -707,13 +707,13 @@
       ],
       "reset": "zero",
       "side_effects": [
-        "pto-v0-does-not-consume-value"
+        "does-not-consume-value"
       ],
       "write": "store-value"
     },
     {
       "id": "saved-execution-context",
-      "profile_status": "architectural-active",
+      "behavior_status": "architectural-active",
       "read": "saved-context-value",
       "registers": [
         "EBARG0_ACRn",
@@ -732,13 +732,13 @@
       ],
       "reset": "zero",
       "side_effects": [
-        "save-and-recovery-profile-state"
+        "save-and-recovery-state"
       ],
       "write": "store-saved-context-value"
     },
     {
       "id": "saved-loop-context-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "EBARG_LB_ACRn",
@@ -747,13 +747,13 @@
       "reset": "zero",
       "side_effects": [
         "trap-save-clears-value",
-        "pto-v0-recovery-does-not-consume-value"
+        "recovery-does-not-consume-value"
       ],
       "write": "store-value"
     },
     {
       "id": "extended-context-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "EBARG_EXTCTX_PTR_ACRn",
@@ -763,26 +763,26 @@
       "reset": "zero",
       "side_effects": [
         "trap-save-preserves-value",
-        "pto-v0-recovery-does-not-consume-value"
+        "recovery-does-not-consume-value"
       ],
       "write": "store-value"
     },
     {
       "id": "debug-identity-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "DBGID_ACRn"
       ],
       "reset": "zero",
       "side_effects": [
-        "pto-v0-debug-matching-disabled"
+        "debug-matching-disabled"
       ],
       "write": "reject-read-only"
     },
     {
       "id": "debug-control-storage",
-      "profile_status": "pto-v0-storage-only",
+      "behavior_status": "storage-only",
       "read": "stored-value",
       "registers": [
         "DBCR0_ACRn",
@@ -806,7 +806,7 @@
       ],
       "reset": "zero",
       "side_effects": [
-        "pto-v0-debug-matching-disabled"
+        "debug-matching-disabled"
       ],
       "write": "store-value"
     }
@@ -823,7 +823,7 @@
         "ArchitectureEnterRequest",
         "SetFault(Fault_ExecutionStateCheck)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -834,7 +834,7 @@
       "producers": [
         "SetFault(Fault_IllegalInstruction)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -847,7 +847,7 @@
         "SetFault(Fault_TileAllocation)",
         "SetFault(Fault_TileLegality)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -859,7 +859,7 @@
         "RaiseServiceRequest",
         "SetFault(Fault_ServiceRequest)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-context-resume-next-instruction"
     },
     {
@@ -870,7 +870,7 @@
       "producers": [
         "SetFault(Fault_InstructionPC)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -881,7 +881,7 @@
       "producers": [
         "SetFault(Fault_InstructionPage)"
       ],
-      "pto_v0_status": "envelope-only-no-trigger",
+      "trap_status": "envelope-only-no-trigger",
       "restart": "saved-source-context"
     },
     {
@@ -892,7 +892,7 @@
       "producers": [
         "SetFault(Fault_DataAlignment)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -903,7 +903,7 @@
       "producers": [
         "SetFault(Fault_DataPage)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -914,7 +914,7 @@
       "producers": [
         "RaiseInterrupt"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -925,7 +925,7 @@
       "producers": [
         "SetFault(Fault_HardwareBreakpoint)"
       ],
-      "pto_v0_status": "envelope-only-no-trigger",
+      "trap_status": "envelope-only-no-trigger",
       "restart": "saved-source-context"
     },
     {
@@ -936,7 +936,7 @@
       "producers": [
         "SetFault(Fault_SoftwareBreakpoint)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     },
     {
@@ -947,7 +947,7 @@
       "producers": [
         "SetFault(Fault_HardwareWatchpoint)"
       ],
-      "pto_v0_status": "envelope-only-no-trigger",
+      "trap_status": "envelope-only-no-trigger",
       "restart": "saved-source-context"
     },
     {
@@ -958,7 +958,7 @@
       "producers": [
         "SetFault(Fault_Assert)"
       ],
-      "pto_v0_status": "production-active",
+      "trap_status": "production-active",
       "restart": "saved-source-context"
     }
   ]

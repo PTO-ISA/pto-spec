@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference profile converts finite FP32, FP64, signed integer, and unsigned integer carriers","pass_condition":"FP width conversion and both integer conversion directions produce the fixed RNE or RTZ result and flags","related_sources":["asl/arch/profile/reference-quantization.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference profile converts finite FP32, FP64, signed integer, and unsigned integer carriers","pass_condition":"FP width conversion and both integer conversion directions produce the fixed RNE or RTZ result and flags","related_sources":["asl/scalar/model/fsu/reference-quantization.asl"]}
 func main() => integer
 begin
     let (fp32_to_fp64, fp32_to_fp64_flags) = ScalarFPConvertProfile(

@@ -139,7 +139,7 @@ end;
 
 pure func InstructionContractRejectsBeforeEffects_XB() => boolean
 begin
-    return !CommandHandlerSupportedPTOv0(
+    return !CommandHandlerSupported(
         CommandHandler_ExecuteCrossBlockTransfer);
 end;
 ```
@@ -153,7 +153,7 @@ end;
 
 - The full family selected by mask 0x00007fff and match 0x00006f81 is occupied extension space and is not executable in PTO.
 - All 1024 ACR-ID values and all 128 CROSS-BID values remain collision-protected; PTO must not allocate another instruction anywhere in this raw family.
-- Decode retains the form identity only for collision inventory and fail-closed dispatch. CommandHandlerSupportedPTOv0 returns false for ExecuteCrossBlockTransfer.
+- Decode retains the form identity only for collision inventory and fail-closed dispatch. CommandHandlerSupported returns false for ExecuteCrossBlockTransfer.
 
 ## State effects
 

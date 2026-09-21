@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference profile computes finite FP64 arithmetic and unary results from IEEE carriers","pass_condition":"add, subtract, multiply, divide, square-root, and reciprocal carriers match independently fixed FP64 encodings","related_sources":["asl/arch/profile/reference-quantization.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference profile computes finite FP64 arithmetic and unary results from IEEE carriers","pass_condition":"add, subtract, multiply, divide, square-root, and reciprocal carriers match independently fixed FP64 encodings","related_sources":["asl/scalar/model/fsu/reference-quantization.asl"]}
 func main() => integer
 begin
     let one_point_five = Zeros{PTO_XLEN} + 0x3ff8000000000000;

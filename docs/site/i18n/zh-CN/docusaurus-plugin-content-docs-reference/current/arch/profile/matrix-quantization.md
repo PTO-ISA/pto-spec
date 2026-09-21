@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/matrix-quantization.asl -->
+<!-- GENERATED FROM: asl/tile/model/execution/matrix-quantization.asl -->
 # Matrix Quantization
 
-**Normative ASL source:** `asl/arch/profile/matrix-quantization.asl`
+**Normative ASL source:** `asl/tile/model/execution/matrix-quantization.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-MATRIX-QUANTIZATION}
+## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION}
 
 ## Reader guide
 
@@ -50,9 +50,9 @@ binary16 逻辑区分 `FP16` 与 `BF16`。FP8 候选选择按请求的舍入规�
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/matrix-quantization.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/matrix-quantization.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-PROFILE-PACKED-CONVERSION","PTO-ARCH-DATA-TYPES-FP19"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION","PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION","PTO-ARCH-DATA-TYPES-FP19"]}
 // Bit-exact numeric helpers for B.FPATR matrix post-processing.
 // NDF-BEGIN: PTO-MATRIX-QUANT-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted

@@ -24,7 +24,7 @@ begin
     _LastMemoryCommandAddress = Zeros{PTO_XLEN} + 0x88;
     _LastMemoryCommandSize = Zeros{PTO_XLEN} + 9;
     SetCurrentACR(2);
-    PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
+    WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(Zeros{PTO_XLEN} + 0x780);
     ClearFault();
 

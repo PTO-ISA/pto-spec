@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/packed-conversion.asl -->
+<!-- GENERATED FROM: asl/tile/model/numeric/packed-conversion.asl -->
 # Packed Conversion
 
-**Normative ASL source:** `asl/arch/profile/packed-conversion.asl`
+**Normative ASL source:** `asl/tile/model/numeric/packed-conversion.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-PACKED-CONVERSION}
+## ASL unit identity {#PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION}
 
 ## Reader guide
 
@@ -17,9 +17,9 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/packed-conversion.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/numeric/packed-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-PACKED-CONVERSION","surface":"arch","classification":["profile","packed-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-DATA-TYPES-FORMAT-E6M2","PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION","surface":"arch","classification":["profile","packed-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-DATA-TYPES-FORMAT-E6M2","PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"]}
 
 pure func ReferencePacked4FiniteValue(
     data_type: TileDataType, code: integer {0..15}) => real

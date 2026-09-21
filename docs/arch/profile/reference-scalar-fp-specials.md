@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/arch/profile/reference-scalar-fp-specials.asl -->
+<!-- GENERATED FROM: asl/scalar/model/fsu/reference-scalar-fp-specials.asl -->
 # Reference Scalar Fp Specials
 
-**Normative ASL source:** `asl/arch/profile/reference-scalar-fp-specials.asl`
+**Normative ASL source:** `asl/scalar/model/fsu/reference-scalar-fp-specials.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS}
+## ASL unit identity {#PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS}
 
 ## Reader guide
 
@@ -45,9 +45,9 @@ The dependency list and linked source path below are the navigation index for re
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-scalar-fp-specials.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/fsu/reference-scalar-fp-specials.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS","surface":"arch","classification":["profile","reference-scalar-fp-specials"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS","surface":"arch","classification":["profile","reference-scalar-fp-specials"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION"]}
 // IEEE 754 special-value handling remains outside the rational finite kernel.
 
 pure func ReferenceScalarFPUnarySpecial(

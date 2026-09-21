@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004","source":"asl/arch/profile/reference-conversion.asl","requirements":[],"kind":"execution","summary":"the reference Tile floating modulo profile implements finite and IEEE special values","pass_condition":"FP32 and FP16 finite remainders, zero-divisor NaNs, infinity, and flags are exact","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004","source":"asl/tile/model/numeric/reference-conversion.asl","requirements":[],"kind":"execution","summary":"the reference Tile floating modulo profile implements finite and IEEE special values","pass_condition":"FP32 and FP16 finite remainders, zero-divisor NaNs, infinity, and flags are exact","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/execution/elementwise.asl"]}
 func main() => integer
 begin
     let (fp32_finite, fp32_finite_flags) = ReferenceTileFloatingModulo(

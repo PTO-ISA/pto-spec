@@ -66,7 +66,7 @@ For an access beginning at `3000` with size `72`, the exclusive end address is `
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-profile.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION","PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS"]}
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
@@ -321,29 +321,29 @@ begin
     var ecstate = _SystemRegisters.core_state;
     ecstate[3:0] = AccessControlRingBits(source);
     ecstate[4] = if _BundleBodyActive then '1' else '0';
-    PTOv0WriteContextRegister(target, 0x0f00, ecstate);
+    WriteContextRegister(target, 0x0f00, ecstate);
 
     var control: Word = Zeros{PTO_XLEN};
     control[3:0] = AccessControlRingBits(source);
     control[4] = '1';
     control[5] = if _BundleActive then '1' else '0';
     control[6] = if _BundleBodyActive then '1' else '0';
-    control[10:7] = PTOv0BundleKindCode(_BARG.block_type);
-    control[13:11] = PTOv0BundleTransferCode(_BARG.transfer_type);
+    control[10:7] = BundleKindCode(_BARG.block_type);
+    control[13:11] = BundleTransferCode(_BARG.transfer_type);
     control[14] = if _BARG.taken then '1' else '0';
-    PTOv0WriteContextRegister(target, 0x0f40, control);
-    PTOv0WriteContextRegister(target, 0x0f41, ReadBPC());
-    PTOv0WriteContextRegister(target, 0x0f42, _BARG.bpcn);
-    PTOv0WriteContextRegister(target, 0x0f43, ReadTPC());
-    PTOv0WriteContextRegister(target, 0x0f44, _ReturnAddress);
+    WriteContextRegister(target, 0x0f40, control);
+    WriteContextRegister(target, 0x0f41, ReadBPC());
+    WriteContextRegister(target, 0x0f42, _BARG.bpcn);
+    WriteContextRegister(target, 0x0f43, ReadTPC());
+    WriteContextRegister(target, 0x0f44, _ReturnAddress);
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
-        PTOv0WriteContextRegister(target, 0x0f45 + index,
+        WriteContextRegister(target, 0x0f45 + index,
             _TQueue[[index]]);
-        PTOv0WriteContextRegister(target, 0x0f49 + index,
+        WriteContextRegister(target, 0x0f49 + index,
             _UQueue[[index]]);
     end;
-    PTOv0WriteContextRegister(target, 0x0f4d, Zeros{PTO_XLEN});
-    PTOv0WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});
+    WriteContextRegister(target, 0x0f4d, Zeros{PTO_XLEN});
+    WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});
 end;
 
 implementation func TileProfileFloatingModulo(data_type: TileDataType,

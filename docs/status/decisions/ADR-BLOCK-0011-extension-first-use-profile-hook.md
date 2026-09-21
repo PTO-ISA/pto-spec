@@ -19,10 +19,10 @@
     "0.58.3"
   ],
   "affected_ndf": [
-    "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+    "PTO-ARCH-EXTENSION-FIRST-USE-001"
   ],
   "affected_units": [
-    "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE"
+    "PTO-ARCH-FEATURES-EXTENSION-FIRST-USE"
   ],
   "resolves": [],
   "supersedes": [],
@@ -37,7 +37,7 @@
 # ADR-BLOCK-0011: Extension first-use is a target-profile hook
 
 - Scope: architecture profile boundary
-- Requirement: PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001
+- Requirement: PTO-ARCH-EXTENSION-FIRST-USE-001
 - Issue: https://github.com/PTO-ISA/pto-spec/issues/100
 
 ## Context

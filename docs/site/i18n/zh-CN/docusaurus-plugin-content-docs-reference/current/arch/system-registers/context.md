@@ -20,14 +20,14 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-context-concepts-state role=concepts-state -->
 ## 上下文寄存器索引
 
-`ContextRegisterIndex` 和 `PTOv0ContextRegisterIndex` 都计算 `ring * 4096 + low_index`。低位索引限制在 `0` 到 `4095`。
+`ContextRegisterIndex` 和 `ContextRegisterIndex` 都计算 `ring * 4096 + low_index`。低位索引限制在 `0` 到 `4095`。
 
 结果类型是 `SystemRegisterFileIndex`，所以每个 ACR 都得到一个连续的 `4096` 条目窗口。
 
 <!-- PTO-READER-BLOCK: arch-system-context-rules-interactions role=rules-interactions -->
 ## PTOv0 读取与写入
 
-`PTOv0ReadContextRegister` 返回计算所得 PTOv0 索引处的 `_ExtendedSystemRegisters`。`PTOv0WriteContextRegister` 用给定 `Word` 替换同一条目。
+`ReadContextRegister` 返回计算所得 PTOv0 索引处的 `_ExtendedSystemRegisters`。`WriteContextRegister` 用给定 `Word` 替换同一条目。
 
 <!-- PTO-READER-BLOCK: arch-system-context-boundaries role=boundaries -->
 ## 架构边界
@@ -63,24 +63,24 @@ begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-pure func PTOv0ContextRegisterIndex(ring: AccessControlRing,
+pure func ContextRegisterIndex(ring: AccessControlRing,
                                     low_index: integer {0..4095})
                                     => SystemRegisterFileIndex
 begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-readonly func PTOv0ReadContextRegister(ring: AccessControlRing,
+readonly func ReadContextRegister(ring: AccessControlRing,
                                        low_index: integer {0..4095}) => Word
 begin
     return _ExtendedSystemRegisters[[
-        PTOv0ContextRegisterIndex(ring, low_index)]];
+        ContextRegisterIndex(ring, low_index)]];
 end;
 
-func PTOv0WriteContextRegister(ring: AccessControlRing,
+func WriteContextRegister(ring: AccessControlRing,
                                low_index: integer {0..4095}, value: Word)
 begin
-    _ExtendedSystemRegisters[[PTOv0ContextRegisterIndex(ring, low_index)]] =
+    _ExtendedSystemRegisters[[ContextRegisterIndex(ring, low_index)]] =
         value;
 end;
 ```

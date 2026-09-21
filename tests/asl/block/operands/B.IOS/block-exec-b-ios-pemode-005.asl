@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-PEMODE-005","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS source paths exercise all eight PEMode encodings.","pass_condition":"Every mode produces its fixed four-bit semantic mask, while encoded mode zero has no binding effect and retains source-only SizeCode zero.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-PEMODE-005","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS source paths exercise all eight PEMode encodings.","pass_condition":"Every mode produces its fixed four-bit semantic mask, while encoded mode zero has no binding effect and retains source-only SizeCode zero.","related_sources":["asl/block/model/schema/bundle-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
 pure func BIOSPEModeStart() => bits(64)
 begin
     return Zeros{64} + 0x00011181;
@@ -29,7 +29,7 @@ begin
         else
             assert BundleSharedBindingCount() == 1;
             assert _BundleSharedBindings[[0]].pe_mask ==
-                PTOv0PEMaskOfPEMode(encoded_mode);
+                PEMaskOfPEMode(encoded_mode);
             assert _BundleSharedBindings[[0]].size_code == 0;
         end;
     end;

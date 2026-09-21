@@ -20,14 +20,14 @@ This unit defines how a ring number and a low context-register index select an e
 <!-- PTO-READER-BLOCK: arch-system-context-concepts-state role=concepts-state -->
 ## Context-register index
 
-`ContextRegisterIndex` and `PTOv0ContextRegisterIndex` both compute `ring * 4096 + low_index`. The low index is constrained to `0` through `4095`.
+`ContextRegisterIndex` and `ContextRegisterIndex` both compute `ring * 4096 + low_index`. The low index is constrained to `0` through `4095`.
 
 The result is a `SystemRegisterFileIndex`, so each ACR receives one contiguous window of `4096` entries.
 
 <!-- PTO-READER-BLOCK: arch-system-context-rules-interactions role=rules-interactions -->
 ## PTOv0 reads and writes
 
-`PTOv0ReadContextRegister` returns `_ExtendedSystemRegisters` at the computed PTOv0 index. `PTOv0WriteContextRegister` replaces that same entry with the supplied `Word`.
+`ReadContextRegister` returns `_ExtendedSystemRegisters` at the computed PTOv0 index. `WriteContextRegister` replaces that same entry with the supplied `Word`.
 
 <!-- PTO-READER-BLOCK: arch-system-context-boundaries role=boundaries -->
 ## Architectural boundaries
@@ -63,24 +63,24 @@ begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-pure func PTOv0ContextRegisterIndex(ring: AccessControlRing,
+pure func ContextRegisterIndex(ring: AccessControlRing,
                                     low_index: integer {0..4095})
                                     => SystemRegisterFileIndex
 begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-readonly func PTOv0ReadContextRegister(ring: AccessControlRing,
+readonly func ReadContextRegister(ring: AccessControlRing,
                                        low_index: integer {0..4095}) => Word
 begin
     return _ExtendedSystemRegisters[[
-        PTOv0ContextRegisterIndex(ring, low_index)]];
+        ContextRegisterIndex(ring, low_index)]];
 end;
 
-func PTOv0WriteContextRegister(ring: AccessControlRing,
+func WriteContextRegister(ring: AccessControlRing,
                                low_index: integer {0..4095}, value: Word)
 begin
-    _ExtendedSystemRegisters[[PTOv0ContextRegisterIndex(ring, low_index)]] =
+    _ExtendedSystemRegisters[[ContextRegisterIndex(ring, low_index)]] =
         value;
 end;
 ```

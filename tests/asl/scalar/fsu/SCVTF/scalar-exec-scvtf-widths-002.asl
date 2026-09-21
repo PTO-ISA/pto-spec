@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-SCVTF-WIDTHS-002","source":"asl/scalar/fsu/SCVTF.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-INST-SCALAR-SCVTF","PTO-SCVTF-DECISION-BINDING-001"],"kind":"execution","summary":"SCVTF accepts all four signed integer source widths","pass_condition":"SD, SW, SH, and SB raw encodings sign-extend negative two and publish exact FP32 negative two","related_sources":["asl/arch/profile/reference-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-SCVTF-WIDTHS-002","source":"asl/scalar/fsu/SCVTF.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-INST-SCALAR-SCVTF","PTO-SCVTF-DECISION-BINDING-001"],"kind":"execution","summary":"SCVTF accepts all four signed integer source widths","pass_condition":"SD, SW, SH, and SB raw encodings sign-extend negative two and publish exact FP32 negative two","related_sources":["asl/tile/model/numeric/reference-conversion.asl"]}
 func main() => integer
 begin
     ResetProfileState();

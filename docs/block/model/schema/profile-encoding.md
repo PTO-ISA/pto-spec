@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/block/model/schema/profile-encoding.asl -->
+<!-- GENERATED FROM: asl/block/model/schema/bundle-encoding.asl -->
 # Profile Encoding
 
-**Normative ASL source:** `asl/block/model/schema/profile-encoding.asl`
+**Normative ASL source:** `asl/block/model/schema/bundle-encoding.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING}
+## ASL unit identity {#PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 
@@ -13,10 +13,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/schema/profile-encoding.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/schema/bundle-encoding.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING","surface":"block","classification":["model","schema","profile-encoding"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-PROFILE"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"}],"schema_version":2,"surface":"command-and-boundary"}}
-pure func PTOv0BundleKindCode(kind: BundleKind) => bits(4)
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING","surface":"block","classification":["model","schema","profile-encoding"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-PROFILE"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"}],"schema_version":2,"surface":"command-and-boundary"}}
+pure func BundleKindCode(kind: BundleKind) => bits(4)
 begin
     case kind of
         when BundleKind_Standard => return '0000';
@@ -29,7 +29,7 @@ begin
     end;
 end;
 
-pure func PTOv0BundleKindOf(code: bits(4)) => BundleKind
+pure func BundleKindOf(code: bits(4)) => BundleKind
 begin
     if code == '0001' then return BundleKind_Floating;
     elsif code == '0010' then return BundleKind_System;
@@ -41,7 +41,7 @@ begin
     end;
 end;
 
-pure func PTOv0PEMaskOfPEMode(mode: bits(3)) => bits(4)
+pure func PEMaskOfPEMode(mode: bits(3)) => bits(4)
 begin
     case mode of
         when '000' => return '0000';
@@ -55,7 +55,7 @@ begin
     end;
 end;
 
-pure func PTOv0BundleTransferCode(transfer: BundleTransfer) => bits(3)
+pure func BundleTransferCode(transfer: BundleTransfer) => bits(3)
 begin
     case transfer of
         when BundleTransfer_Fallthrough => return '000';
@@ -68,7 +68,7 @@ begin
     end;
 end;
 
-pure func PTOv0BundleTransferOf(code: bits(3)) => BundleTransfer
+pure func BundleTransferOf(code: bits(3)) => BundleTransfer
 begin
     if code == '001' then return BundleTransfer_Direct;
     elsif code == '010' then return BundleTransfer_Conditional;
@@ -80,7 +80,7 @@ begin
     end;
 end;
 
-pure func PTOv0EBARGControlLegal(control: Word) => boolean
+pure func EBARGControlLegal(control: Word) => boolean
 begin
     let kind_code = UInt(control[10:7]);
     return control[63:15] == Zeros{49} &&

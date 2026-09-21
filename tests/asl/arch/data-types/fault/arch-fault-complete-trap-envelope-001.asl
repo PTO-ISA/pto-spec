@@ -56,7 +56,7 @@ begin
     // TRAP-WITNESS scall/assert-saved-restart
     assert _TrapContexts[[1]].tpc == Zeros{PTO_XLEN} + 0x404;
     // TRAP-WITNESS scall/assert-visible-restart
-    assert PTOv0ReadContextRegister(1, 0x0f43) ==
+    assert ReadContextRegister(1, 0x0f43) ==
         Zeros{PTO_XLEN} + 0x404;
     // TRAP-WITNESS scall/assert-vector-entry
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-ORDER-KEYS-EXEC-001","source":"asl/arch/features/minmax-profile.asl","requirements":[],"kind":"execution","summary":"floating order keys cover positive and negative carriers at every supported width","pass_condition":"64-, 32-, 16-, and 8-bit positive and negative order-key assertions hold","related_sources":["asl/arch/features/mx-formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-ORDER-KEYS-EXEC-001","source":"asl/arch/features/minmax.asl","requirements":[],"kind":"execution","summary":"floating order keys cover positive and negative carriers at every supported width","pass_condition":"64-, 32-, 16-, and 8-bit positive and negative order-key assertions hold","related_sources":["asl/arch/features/mx-formats.asl"]}
 func main() => integer
 begin
     let (fp64_positive_available, fp64_positive_key) =

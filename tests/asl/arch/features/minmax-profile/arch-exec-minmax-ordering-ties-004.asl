@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-ORDERING-TIES-EXEC-004","source":"asl/arch/features/minmax-profile.asl","requirements":[],"kind":"execution","summary":"ordinary min-max follows numeric key order and selects the left carrier on equal keys","pass_condition":"positive, negative, and equal-key left-tie assertions hold","related_sources":["asl/arch/features/mx-formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-ORDERING-TIES-EXEC-004","source":"asl/arch/features/minmax.asl","requirements":[],"kind":"execution","summary":"ordinary min-max follows numeric key order and selects the left carrier on equal keys","pass_condition":"positive, negative, and equal-key left-tie assertions hold","related_sources":["asl/arch/features/mx-formats.asl"]}
 func main() => integer
 begin
     let one = Zeros{PTO_XLEN} + 0x3f800000;

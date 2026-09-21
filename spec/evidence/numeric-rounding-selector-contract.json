@@ -735,7 +735,7 @@
       "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
     },
     {
-      "path": "asl/scalar/model/fsu/profile.asl",
+      "path": "asl/scalar/model/fsu/scalar-fp.asl",
       "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
     },
     {

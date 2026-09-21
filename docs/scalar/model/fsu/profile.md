@@ -1,11 +1,11 @@
-<!-- GENERATED FROM: asl/scalar/model/fsu/profile.asl -->
+<!-- GENERATED FROM: asl/scalar/model/fsu/scalar-fp.asl -->
 # Profile
 
-**Normative ASL source:** `asl/scalar/model/fsu/profile.asl`
+**Normative ASL source:** `asl/scalar/model/fsu/scalar-fp.asl`
 
 This page is a generated reference view of the normative ASL unit.
 
-## ASL unit identity {#PTO-SCALAR-MODEL-FSU-PROFILE}
+## ASL unit identity {#PTO-SCALAR-MODEL-FSU-SCALAR-FP}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 
@@ -13,9 +13,9 @@ This page is a generated reference view of the normative ASL unit.
 
 ## Normative ASL
 
-<!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/fsu/profile.asl -->
+<!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/fsu/scalar-fp.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-PROFILE","surface":"scalar","classification":["model","fsu","profile"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC","PTO-ARCH-STATE-NUMERIC-STATUS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-SCALAR-FP","surface":"scalar","classification":["model","fsu","profile"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC","PTO-ARCH-STATE-NUMERIC-STATUS"]}
 // Raw scalar floating-point execution. The portable model fixes carrier,
 // control/status, comparison, NaN, signed-zero, and destination rules. Numeric
 // operations that require a concrete floating-point implementation cross one

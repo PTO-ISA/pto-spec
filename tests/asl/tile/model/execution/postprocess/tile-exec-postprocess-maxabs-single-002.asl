@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-POST-MAXABS-SINGLE-002","source":"asl/tile/model/execution/postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"single-element RowMax and GroupMax apply MaxAbs before publication","pass_condition":"a negative one-element S32 accumulator publishes its positive magnitude to both auxiliary outputs","related_sources":["asl/arch/profile/matrix-postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-POST-MAXABS-SINGLE-002","source":"asl/tile/model/execution/postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"single-element RowMax and GroupMax apply MaxAbs before publication","pass_condition":"a negative one-element S32 accumulator publishes its positive magnitude to both auxiliary outputs","related_sources":["asl/tile/model/execution/matrix-postprocess.asl"]}
 pure func MatrixSingleMaxStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00031181;

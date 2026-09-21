@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-UCVTF-WIDTHS-002","source":"asl/scalar/fsu/UCVTF.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-INST-SCALAR-UCVTF","PTO-UCVTF-DECISION-BINDING-001"],"kind":"execution","summary":"UCVTF accepts all four unsigned integer source widths","pass_condition":"UD, UW, UH, and UB raw encodings zero-extend two and publish exact FP32 two","related_sources":["asl/arch/profile/reference-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-UCVTF-WIDTHS-002","source":"asl/scalar/fsu/UCVTF.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-INST-SCALAR-UCVTF","PTO-UCVTF-DECISION-BINDING-001"],"kind":"execution","summary":"UCVTF accepts all four unsigned integer source widths","pass_condition":"UD, UW, UH, and UB raw encodings zero-extend two and publish exact FP32 two","related_sources":["asl/tile/model/numeric/reference-conversion.asl"]}
 func main() => integer
 begin
     ResetProfileState();

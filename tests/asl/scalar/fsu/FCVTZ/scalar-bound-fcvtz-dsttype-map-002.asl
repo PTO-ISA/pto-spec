@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-INST-SCALAR-FCVTZ","PTO-FCVTZ-DECISION-BINDING-001"],"kind":"boundary","summary":"FCVTZ raw destination types map to the eight original unsigned and signed integer carriers","pass_condition":"raw zero through three map to canonical unsigned codes zero through three, raw four through seven map to signed codes eight through eleven, and every larger raw value is illegal","related_sources":["asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-INST-SCALAR-FCVTZ","PTO-FCVTZ-DECISION-BINDING-001"],"kind":"boundary","summary":"FCVTZ raw destination types map to the eight original unsigned and signed integer carriers","pass_condition":"raw zero through three map to canonical unsigned codes zero through three, raw four through seven map to signed codes eight through eleven, and every larger raw value is illegal","related_sources":["asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     for raw = 0 to 7 do

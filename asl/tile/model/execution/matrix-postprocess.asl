@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-POSTPROCESS","surface":"arch","classification":["profile","matrix-postprocess"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-PROFILE","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS","surface":"tile","classification":["model","execution","matrix-postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
 // Bit-exact B.FPATR conversion, activation, auxiliary reduction, and flags.
 // NDF-BEGIN: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted

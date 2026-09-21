@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-PROFILE-PACKED-CONVERSION","PTO-ARCH-DATA-TYPES-FP19"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","surface":"tile","classification":["model","execution","matrix-quantization"],"depends_on":["PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION","PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION","PTO-ARCH-DATA-TYPES-FP19"]}
 // Bit-exact numeric helpers for B.FPATR matrix post-processing.
 // NDF-BEGIN: PTO-MATRIX-QUANT-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted

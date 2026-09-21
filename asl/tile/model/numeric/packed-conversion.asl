@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-PACKED-CONVERSION","surface":"arch","classification":["profile","packed-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-DATA-TYPES-FORMAT-E6M2","PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION","surface":"tile","classification":["model","numeric","packed-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-DATA-TYPES-FORMAT-E6M2","PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"]}
 
 pure func ReferencePacked4FiniteValue(
     data_type: TileDataType, code: integer {0..15}) => real

@@ -7,9 +7,9 @@ begin
     let expected = ((2 * 4096) + 0x0123) as SystemRegisterFileIndex;
 
     assert ContextRegisterIndex(ring, low_index) == expected;
-    assert PTOv0ContextRegisterIndex(ring, low_index) == expected;
-    PTOv0WriteContextRegister(ring, low_index, Zeros{PTO_XLEN} + 0x5a);
-    assert PTOv0ReadContextRegister(ring, low_index) ==
+    assert ContextRegisterIndex(ring, low_index) == expected;
+    WriteContextRegister(ring, low_index, Zeros{PTO_XLEN} + 0x5a);
+    assert ReadContextRegister(ring, low_index) ==
         Zeros{PTO_XLEN} + 0x5a;
     assert _ExtendedSystemRegisters[[expected]] == Zeros{PTO_XLEN} + 0x5a;
     return 0;

@@ -26,7 +26,7 @@ begin
     WriteGPR(4, Zeros{PTO_XLEN} + 16);
     StartMemoryEventCapture(0);
     SetCurrentACR(2);
-    PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
+    WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(instruction_pc);
     ClearFault();
 

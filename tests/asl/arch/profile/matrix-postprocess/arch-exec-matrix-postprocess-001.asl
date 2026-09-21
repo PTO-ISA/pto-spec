@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-POST-001","source":"asl/arch/profile/matrix-postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"Matrix post-processing combines conversion, activation, reduction, and status without identity fallback","pass_condition":"representative S8 activation and maximum reduction return exact values and flags","related_sources":["asl/tile/model/execution/postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-POST-001","source":"asl/tile/model/execution/matrix-postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"Matrix post-processing combines conversion, activation, reduction, and status without identity fallback","pass_condition":"representative S8 activation and maximum reduction return exact values and flags","related_sources":["asl/tile/model/execution/postprocess.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

@@ -142,7 +142,7 @@ end;
 
 pure func InstructionContractRejectsBeforeEffects_ESAVE() => boolean
 begin
-    return !CommandHandlerSupportedPTOv0(
+    return !CommandHandlerSupported(
         CommandHandler_SaveExecutionContext);
 end;
 ```

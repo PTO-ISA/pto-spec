@@ -17413,7 +17413,7 @@
       "before_sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a",
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TileProfileConvert",
-      "path": "asl/arch/profile/e8m0-conversion.asl"
+      "path": "asl/tile/model/numeric/e8m0-conversion.asl"
     },
     {
       "after": [],
@@ -51566,7 +51566,7 @@
               "TileDataTypeIsFloating"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/e8m0-conversion.asl",
+            "path": "asl/tile/model/numeric/e8m0-conversion.asl",
             "sha256": "273be64cd712d7766b021f0b8d9fb80cd8775865ec234ffa3e06b1c0bb095faa"
           },
           {
@@ -134627,7 +134627,7 @@
               "TileDataTypeIsFloating"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/e8m0-conversion.asl",
+            "path": "asl/tile/model/numeric/e8m0-conversion.asl",
             "sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a"
           },
           {

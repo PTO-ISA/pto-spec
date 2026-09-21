@@ -71,8 +71,8 @@ Primary owners:
 
 - `asl/block/attributes/B.FPATR.asl`
 - `asl/arch/data-types/fp19.asl`
-- `asl/arch/profile/matrix-quantization.asl`
-- `asl/arch/profile/matrix-postprocess.asl`
+- `asl/tile/model/execution/matrix-quantization.asl`
+- `asl/tile/model/execution/matrix-postprocess.asl`
 - `asl/tile/model/legality/matrix-postprocess.asl`
 - `asl/tile/model/execution/postprocess.asl`
 

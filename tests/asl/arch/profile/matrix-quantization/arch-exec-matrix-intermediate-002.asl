@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002","source":"asl/arch/profile/matrix-quantization.asl","requirements":["PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"Matrix quantization rounds and saturates at assigned signed intermediate widths","pass_condition":"S5 S9 S17 and shifted S16 boundaries return exact values and numeric flags","related_sources":["asl/arch/profile/matrix-postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002","source":"asl/tile/model/execution/matrix-quantization.asl","requirements":["PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"execution","summary":"Matrix quantization rounds and saturates at assigned signed intermediate widths","pass_condition":"S5 S9 S17 and shifted S16 boundaries return exact values and numeric flags","related_sources":["asl/tile/model/execution/matrix-postprocess.asl"]}
 func main() => integer
 begin
     let (s5_maximum, s5_maximum_flags) =

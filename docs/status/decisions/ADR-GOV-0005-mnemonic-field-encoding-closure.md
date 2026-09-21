@@ -993,7 +993,7 @@
     "PTO-TILE-TXORS",
     "PTO-SCALAR-MODEL-DISPATCH-DECODE",
     "PTO-SCALAR-MODEL-DISPATCH-FSU",
-    "PTO-SCALAR-MODEL-FSU-PROFILE"
+    "PTO-SCALAR-MODEL-FSU-SCALAR-FP"
   ],
   "resolves": [],
   "supersedes": [],
@@ -1045,7 +1045,7 @@
         "PTO-SCALAR-FCVTP",
         "PTO-SCALAR-FCVTZ",
         "PTO-SCALAR-MODEL-DISPATCH-FSU",
-        "PTO-SCALAR-MODEL-FSU-PROFILE"
+        "PTO-SCALAR-MODEL-FSU-SCALAR-FP"
       ]
     }
   ],

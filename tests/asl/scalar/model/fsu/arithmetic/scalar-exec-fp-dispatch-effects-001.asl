@@ -92,8 +92,8 @@ begin
     binary_profile[19:15] = Zeros{5} + 2;
     binary_profile[24:20] = Zeros{5} + 3;
     binary_profile[26:25] = '01';
-    let binary_profile_status = ExecuteScalarInstruction(binary_profile, 32);
-    assert binary_profile_status == ScalarExecution_Executed;
+    let binary_behavior_status = ExecuteScalarInstruction(binary_profile, 32);
+    assert binary_behavior_status == ScalarExecution_Executed;
     assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x40700000;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 0x40000000);
@@ -105,8 +105,8 @@ begin
     fused_profile[24:20] = Zeros{5} + 3;
     fused_profile[31:27] = Zeros{5} + 4;
     fused_profile[26:25] = '01';
-    let fused_profile_status = ExecuteScalarInstruction(fused_profile, 32);
-    assert fused_profile_status == ScalarExecution_Executed;
+    let fused_behavior_status = ExecuteScalarInstruction(fused_profile, 32);
+    assert fused_behavior_status == ScalarExecution_Executed;
     assert ReadGPR(12) == Zeros{PTO_XLEN} + 0x40e00000;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 0xfffffffffffffffe);

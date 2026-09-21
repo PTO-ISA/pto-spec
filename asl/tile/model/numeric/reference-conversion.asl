@@ -1,13 +1,13 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-CONVERSION","surface":"arch","classification":["profile","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-PROFILE","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","surface":"tile","classification":["model","numeric","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 
-// NDF-BEGIN: PTO-COMMON-CONVERSION-PROFILE-001
+// NDF-BEGIN: PTO-COMMON-CONVERSION-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
 // Scalar conversion and TCVT MUST use this common result rule whenever both
 // types are in the shared FP64/FP32/FP16/E4M3 or signed/unsigned 64/32/16/8
 // set. Scalar conversion MUST supply saturation disabled. Exact, inexact,
 // underflow, overflow, saturation, wrap, signed-zero, NaN, infinity, and flag
 // results MUST be identical for equal source, destination, and control inputs.
-// NDF-END: PTO-COMMON-CONVERSION-PROFILE-001
+// NDF-END: PTO-COMMON-CONVERSION-001
 
 pure func ReferenceCommonConversionTypeSupported(
     data_type: TileDataType) => boolean

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-MINMAX-PROFILE","surface":"arch","classification":["features","minmax-profile"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-FEATURES-MINMAX","surface":"arch","classification":["features","minmax"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS"]}
 // Convert an assigned binary floating carrier into a monotonically increasing
 // unsigned key. NaNs and signed-zero ties are resolved before this helper is
 // called. The returned availability bit keeps unsupported formats explicit.

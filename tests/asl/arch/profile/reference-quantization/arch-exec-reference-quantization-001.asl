@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001","source":"asl/arch/profile/reference-quantization.asl","requirements":[],"kind":"execution","summary":"The reference quantization profile converts representative FP32 and integer values without changing their encodings","pass_condition":"FP32 one and two decode exactly, FP32 one re-encodes exactly with no flags, and signed integer normalization preserves minus one","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/numeric/formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001","source":"asl/scalar/model/fsu/reference-quantization.asl","requirements":[],"kind":"execution","summary":"The reference quantization profile converts representative FP32 and integer values without changing their encodings","pass_condition":"FP32 one and two decode exactly, FP32 one re-encodes exactly with no flags, and signed integer normalization preserves minus one","related_sources":["asl/arch/profile/reference-profile.asl","asl/tile/model/numeric/formats.asl"]}
 func main() => integer
 begin
     assert ReferenceFP32FiniteValue(Zeros{32} + 0x3f800000) == 1.0;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-SPECIAL-DELEGATION-EXEC-003","source":"asl/arch/features/minmax-profile.asl","requirements":[],"kind":"execution","summary":"floating min-max delegates NaN and signed-zero cases to the special-value owner","pass_condition":"one-NaN and signed-zero min-max results match the delegated special rules","related_sources":["asl/arch/features/mx-formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-MINMAX-SPECIAL-DELEGATION-EXEC-003","source":"asl/arch/features/minmax.asl","requirements":[],"kind":"execution","summary":"floating min-max delegates NaN and signed-zero cases to the special-value owner","pass_condition":"one-NaN and signed-zero min-max results match the delegated special rules","related_sources":["asl/arch/features/mx-formats.asl"]}
 func main() => integer
 begin
     let quiet_nan = Zeros{PTO_XLEN} + 0x7fc00000;

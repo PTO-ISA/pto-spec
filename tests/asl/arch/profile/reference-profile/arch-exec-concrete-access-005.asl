@@ -55,7 +55,7 @@ begin
     assert ReadBPC() == Zeros{PTO_XLEN} + 0x610;
     assert _BundleArgument == Zeros{PTO_XLEN} + 0x77;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x22;
-    assert PTOv0ReadContextRegister(1, 0x0f40)[4] == '0';
+    assert ReadContextRegister(1, 0x0f40)[4] == '0';
 
     let before_failed_recovery = _ArchitectureRequestEpoch;
     ClearFault();

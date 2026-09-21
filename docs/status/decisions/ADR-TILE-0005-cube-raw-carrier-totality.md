@@ -88,7 +88,7 @@
 
 - Date: 2026-07-30
 - Requirements: PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001,
-  PTO-REQ-PROFILE-001
+  PTO-REQ-RESET-001
 
 ## Context
 

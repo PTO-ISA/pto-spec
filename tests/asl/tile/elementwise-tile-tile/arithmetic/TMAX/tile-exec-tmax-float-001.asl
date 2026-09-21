@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TMAX-FLOAT-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl","requirements":["PTO-INST-TILE-TMAX"],"kind":"execution","summary":"TMAX orders ordinary floating carriers by numeric value","pass_condition":"the FP32 destination selects negative one over negative two through the mnemonic execution path","related_sources":["asl/arch/features/minmax-profile.asl","asl/tile/model/execution/minmax.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TMAX-FLOAT-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl","requirements":["PTO-INST-TILE-TMAX"],"kind":"execution","summary":"TMAX orders ordinary floating carriers by numeric value","pass_condition":"the FP32 destination selects negative one over negative two through the mnemonic execution path","related_sources":["asl/arch/features/minmax.asl","asl/tile/model/execution/minmax.asl"]}
 func main() => integer
 begin
     ResetProfileState();

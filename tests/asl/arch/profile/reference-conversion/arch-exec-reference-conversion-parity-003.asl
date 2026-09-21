@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003","source":"asl/arch/profile/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-TCVT-CONTRACT-001"],"kind":"execution","summary":"scalar conversion profiles and TCVT use the same shared conversion results","pass_condition":"representative floating, integer, half, E4M3, and range conversions produce identical scalar and Tile results and flags","related_sources":["asl/scalar/model/fsu/profile.asl","asl/tile/model/numeric/formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003","source":"asl/tile/model/numeric/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-TCVT-CONTRACT-001"],"kind":"execution","summary":"scalar conversion profiles and TCVT use the same shared conversion results","pass_condition":"representative floating, integer, half, E4M3, and range conversions produce identical scalar and Tile results and flags","related_sources":["asl/scalar/model/fsu/scalar-fp.asl","asl/tile/model/numeric/formats.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

@@ -1,6 +1,6 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-E8M0-CONVERSION","surface":"arch","classification":["profile","e8m0-conversion"],"depends_on":["PTO-ARCH-PROFILE-TCVT-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION","surface":"tile","classification":["model","numeric","e8m0-conversion"],"depends_on":["PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION","PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
 
-// NDF-BEGIN: PTO-TCVT-E8M0-PROFILE-001
+// NDF-BEGIN: PTO-TCVT-E8M0-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
 // TCVT to E8M0 MUST accept only FP16, BF16, and FP32 sources. Positive
 // finite values MUST round their base-two exponent under the selected RMode.
@@ -12,7 +12,7 @@
 // 0x00 through 0xFE denote 2^(code-127) and use the ordinary target rounding,
 // saturation, overflow, underflow, and inexact rules. Code 0xFF MUST produce
 // the target canonical quiet NaN without NV.
-// NDF-END: PTO-TCVT-E8M0-PROFILE-001
+// NDF-END: PTO-TCVT-E8M0-001
 
 // DOC-BEGIN: operation
 pure func HardwareTCVTE8M0SourceTypeSupported(

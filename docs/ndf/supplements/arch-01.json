@@ -245,8 +245,8 @@
       }
     },
     {
-      "id": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
-      "source_path": "asl/arch/profile/extension-first-use.asl",
+      "id": "PTO-ARCH-EXTENSION-FIRST-USE-001",
+      "source_path": "asl/arch/features/extension-first-use.asl",
       "title": {
         "en": "Optional extension first-use trap boundary",
         "zh-CN": "可选扩展首次使用陷阱边界"
@@ -341,8 +341,8 @@
       }
     },
     {
-      "id": "PTO-COMMON-CONVERSION-PROFILE-001",
-      "source_path": "asl/arch/profile/reference-conversion.asl",
+      "id": "PTO-COMMON-CONVERSION-001",
+      "source_path": "asl/tile/model/numeric/reference-conversion.asl",
       "title": {
         "en": "Shared scalar and Tile conversion results",
         "zh-CN": "标量与 Tile 共用的转换结果"
@@ -378,7 +378,7 @@
     },
     {
       "id": "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
-      "source_path": "asl/arch/profile/matrix-postprocess.asl",
+      "source_path": "asl/tile/model/execution/matrix-postprocess.asl",
       "title": {
         "en": "Bit-exact matrix post-processing",
         "zh-CN": "位精确矩阵后处理"
@@ -390,7 +390,7 @@
     },
     {
       "id": "PTO-MATRIX-QUANT-BITEXACT-001",
-      "source_path": "asl/arch/profile/matrix-quantization.asl",
+      "source_path": "asl/tile/model/execution/matrix-quantization.asl",
       "title": {
         "en": "Bit-exact matrix quantization",
         "zh-CN": "位精确矩阵量化"
@@ -509,8 +509,8 @@
       }
     },
     {
-      "id": "PTO-TCVT-E8M0-PROFILE-001",
-      "source_path": "asl/arch/profile/e8m0-conversion.asl",
+      "id": "PTO-TCVT-E8M0-001",
+      "source_path": "asl/tile/model/numeric/e8m0-conversion.asl",
       "title": {
         "en": "TCVT conversion to E8M0",
         "zh-CN": "TCVT 转换为 E8M0 格式"

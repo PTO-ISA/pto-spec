@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVT-NARROW-SOURCES-003","source":"asl/scalar/fsu/FCVT.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-INST-SCALAR-FCVT"],"kind":"execution","summary":"FCVT accepts FP16 and E4M3 scalar sources","pass_condition":"exact raw FH-to-FS and FB-to-FS encodings convert 1.5 to FP32 and advance once each","related_sources":["asl/arch/profile/reference-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVT-NARROW-SOURCES-003","source":"asl/scalar/fsu/FCVT.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-INST-SCALAR-FCVT"],"kind":"execution","summary":"FCVT accepts FP16 and E4M3 scalar sources","pass_condition":"exact raw FH-to-FS and FB-to-FS encodings convert 1.5 to FP32 and advance once each","related_sources":["asl/tile/model/numeric/reference-conversion.asl"]}
 func main() => integer
 begin
     ResetProfileState();

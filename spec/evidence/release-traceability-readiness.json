@@ -151,9 +151,9 @@
     },
     {
       "executable": false,
-      "id": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "id": "PTO-ARCH-EXTENSION-FIRST-USE-001",
       "owners": [
-        "asl/arch/profile/extension-first-use.asl"
+        "asl/arch/features/extension-first-use.asl"
       ],
       "readiness_subjects": [
         "ADR-BLOCK-0011",
@@ -3307,9 +3307,9 @@
     },
     {
       "executable": true,
-      "id": "PTO-COMMON-CONVERSION-PROFILE-001",
+      "id": "PTO-COMMON-CONVERSION-001",
       "owners": [
-        "asl/arch/profile/reference-conversion.asl"
+        "asl/tile/model/numeric/reference-conversion.asl"
       ],
       "readiness_subjects": [
         "ADR-SCALAR-0004"
@@ -14743,7 +14743,7 @@
       "executable": false,
       "id": "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
       "owners": [
-        "asl/arch/profile/matrix-postprocess.asl"
+        "asl/tile/model/execution/matrix-postprocess.asl"
       ],
       "readiness_subjects": [
         "ADR-CUBE-0002",
@@ -14768,7 +14768,7 @@
       "executable": false,
       "id": "PTO-MATRIX-QUANT-BITEXACT-001",
       "owners": [
-        "asl/arch/profile/matrix-quantization.asl"
+        "asl/tile/model/execution/matrix-quantization.asl"
       ],
       "readiness_subjects": [
         "ADR-CUBE-0002",
@@ -16840,9 +16840,9 @@
     },
     {
       "executable": true,
-      "id": "PTO-TCVT-E8M0-PROFILE-001",
+      "id": "PTO-TCVT-E8M0-001",
       "owners": [
-        "asl/arch/profile/e8m0-conversion.asl"
+        "asl/tile/model/numeric/e8m0-conversion.asl"
       ],
       "readiness_subjects": [
         "ADR-GOV-0002",
@@ -18508,7 +18508,7 @@
     "asl/arch/data-types/tile-data-types.asl": "70ed87af56adda4d346a76eced16dbb5d80dd53e04b1212d11aeb9d6448f94e0",
     "asl/arch/data-types/trap-context.asl": "aba39318d6277a1239966ba58d4db42b11afe3913376a6a78c65091121b8859d",
     "asl/arch/dispatch/top-level.asl": "7d045e63b9125d8b4a5016057b42a2c95bd9d514485f10a4e16e57495ae4a937",
-    "asl/arch/features/minmax-profile.asl": "11a35922a15d2222796ba5fa2735cd600f82d767dd171cefb468bf18298fe1a4",
+    "asl/arch/features/minmax.asl": "11a35922a15d2222796ba5fa2735cd600f82d767dd171cefb468bf18298fe1a4",
     "asl/arch/features/mx-formats.asl": "44639ab47cd2dec4c6a03231a07003e55835f42c9d58c622e05332e8bedfeb1d",
     "asl/arch/features/predication.asl": "3523566f5b742ba46ceef24d01db635f8d8b6edd72b759501f14fd155f03a598",
     "asl/arch/features/shared-tile-state.asl": "68cccab9e8b8d194bde2aa5a99b7ce5d1b6e69722585b5206426d76731ba580f",
@@ -18524,18 +18524,18 @@
     "asl/arch/overview/encoding-ownership.asl": "c966dc5c893b35cf6ce25ec303839f60c68f52d90bf2f5bdd74b5de115ea9083",
     "asl/arch/overview/instruction-classification.asl": "c8000b99afbcf9852bcdfeea22473246fec0060daaf1c1639f160387fe53e6c5",
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
-    "asl/arch/profile/e8m0-conversion.asl": "9ce2642d4090510a4fbd8a7407bb258b101e033c356745bc233bab46e8c55976",
-    "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
+    "asl/tile/model/numeric/e8m0-conversion.asl": "9ce2642d4090510a4fbd8a7407bb258b101e033c356745bc233bab46e8c55976",
+    "asl/arch/features/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/linx-runtime-compat.asl": "7fed94fc787bfaa80c0ccd53b69b65c5220974480cca77d9507f55a3dc23095d",
-    "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
-    "asl/arch/profile/matrix-quantization.asl": "39953db0e24797665d2deccc371753fdf7d284f0a034a1cfe49b94a5935a9e4e",
-    "asl/arch/profile/packed-conversion.asl": "1683a02aa12d9fd5f5539b5beb43af0d7ec255856dc41ad957a5139a8ab0f22d",
-    "asl/arch/profile/reference-conversion.asl": "ed1e073ec50cdc8173641e6b5978fb635748cc8516e8185ac19ce43e68c14e68",
+    "asl/tile/model/execution/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
+    "asl/tile/model/execution/matrix-quantization.asl": "39953db0e24797665d2deccc371753fdf7d284f0a034a1cfe49b94a5935a9e4e",
+    "asl/tile/model/numeric/packed-conversion.asl": "1683a02aa12d9fd5f5539b5beb43af0d7ec255856dc41ad957a5139a8ab0f22d",
+    "asl/tile/model/numeric/reference-conversion.asl": "ed1e073ec50cdc8173641e6b5978fb635748cc8516e8185ac19ce43e68c14e68",
     "asl/arch/profile/reference-profile.asl": "b3c153262b495e2f1fb5d796d5ebf1cc527afdd7b09e87fa05e88cb0e108679a",
-    "asl/arch/profile/reference-quantization.asl": "5edf34134b72d030c4281301dc9abf3aecb7b233f677e28db5e6f5829f22d5dd",
-    "asl/arch/profile/reference-scalar-fp-specials.asl": "949721ddfb69b114010b6975241196412a8708900dbbbca0086adb2cdc790204",
+    "asl/scalar/model/fsu/reference-quantization.asl": "5edf34134b72d030c4281301dc9abf3aecb7b233f677e28db5e6f5829f22d5dd",
+    "asl/scalar/model/fsu/reference-scalar-fp-specials.asl": "949721ddfb69b114010b6975241196412a8708900dbbbca0086adb2cdc790204",
     "asl/arch/profile/reset.asl": "4f138f83ea2ae58109d350e0798fa540f03dc128019510ff5a2a24b041fd8807",
-    "asl/arch/profile/tcvt-conversion.asl": "c6d176e6fd7df80a80759bc41972a335be874d331beffb44a17d7668200afbe4",
+    "asl/tile/model/numeric/tcvt-conversion.asl": "c6d176e6fd7df80a80759bc41972a335be874d331beffb44a17d7668200afbe4",
     "asl/arch/profile/trap-context-recovery.asl": "f5400c6478ae19d3e23d2fc6ee1d6eebba36244a7f6612bdae4b4a251b635eb7",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
     "asl/arch/programming-model/execution-context.asl": "d171c5e6f37ccb144eb889739979536d8bb906c75302b1dbcfdb0a4ae0920d74",
@@ -18692,7 +18692,7 @@
     "asl/block/model/schema/attributes.asl": "90dc72291f078c79f3bc5ebb44a2c18c757785ef8720d49adf552763292597a2",
     "asl/block/model/schema/dimensions.asl": "290157030cc97e2456bbccd02282c07d41a18db2a90d47c355e41e78e21e369e",
     "asl/block/model/schema/header.asl": "b7b8e69337e5ef47b748f9f937c078e95efa7ab9727defad18d7cb2275be8da1",
-    "asl/block/model/schema/profile-encoding.asl": "8c438810db3105b45d11e29e8d653e47bfb118ed7b08515f9e72eb0c4b0047c7",
+    "asl/block/model/schema/bundle-encoding.asl": "8c438810db3105b45d11e29e8d653e47bfb118ed7b08515f9e72eb0c4b0047c7",
     "asl/block/model/state/barg.asl": "58a8d5ad6d5583f7c55272fe864f4e6f3524fe684a4bf8203942e767b793eeda",
     "asl/block/model/state/binding-state.asl": "46b650a4830ca540fa274c2ad3cdfd70910d71795761f16b92160fd2d7a96a3a",
     "asl/block/model/state/control-state.asl": "609266e83fd85f5be4e6b603b447c5b35a008c1440737f8ffdf943b352667610",
@@ -19149,7 +19149,7 @@
     "asl/scalar/model/dispatch/sys.asl": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5",
     "asl/scalar/model/dispatch/top-level.asl": "ddab80194961559047af378635173792ea4855c8a7d3ce597b9ff1ea62865fd3",
     "asl/scalar/model/fsu/arithmetic.asl": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288",
-    "asl/scalar/model/fsu/profile.asl": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39",
+    "asl/scalar/model/fsu/scalar-fp.asl": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39",
     "asl/scalar/model/sys/registers.asl": "434ee033229a6587b9dcb45d0a32774ea76b4f11ef2aae6b7c68d4917aad4317",
     "asl/scalar/model/sys/semantics.asl": "5f0144ac03e6dd0f4f1efa591d8fee30b93599e19e75957b9eb21596307d8b8b",
     "asl/scalar/model/types/operands.asl": "f1bfb9a3ea9012c6895705aa0ce14c20eb17976bf0a98b1f31290786bd0c5fcb",
@@ -32031,7 +32031,7 @@
         "PTO-NUMERIC-E6M2-FORMAT-001"
       ],
       "sha256": "65c3e52f04d95cc18c32528ef254193e0e48feb866e650904a91ed743e3ba4e5",
-      "source": "asl/arch/profile/tcvt-conversion.asl"
+      "source": "asl/tile/model/numeric/tcvt-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-E6M2-DECOMP-001",
@@ -32188,10 +32188,10 @@
       "kind": "execution",
       "path": "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl",
       "requirements": [
-        "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+        "PTO-ARCH-EXTENSION-FIRST-USE-001"
       ],
       "sha256": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
-      "source": "asl/arch/profile/extension-first-use.asl"
+      "source": "asl/arch/features/extension-first-use.asl"
     },
     {
       "id": "PTO-AVS-ARCH-FEATURES-MINMAX-PROFILE-STATIC-001",
@@ -32199,7 +32199,7 @@
       "path": "tests/asl/arch/features/minmax-profile/arch-static-minmax-profile-contract-001.asl",
       "requirements": [],
       "sha256": "8f882a47dc18ee178fbd38297d9b938ce73dbd0b0d54b5788ffc8b6104c8bffc",
-      "source": "asl/arch/features/minmax-profile.asl"
+      "source": "asl/arch/features/minmax.asl"
     },
     {
       "id": "PTO-AVS-ARCH-FEATURES-MX-FORMATS-STATIC-001",
@@ -32427,7 +32427,7 @@
         "PTO-MATRIX-QUANT-BITEXACT-001"
       ],
       "sha256": "d6cb36092f0003111e8003e8e027c323e2686e8b88965bccd59e7332f5e2306e",
-      "source": "asl/arch/profile/matrix-quantization.asl"
+      "source": "asl/tile/model/execution/matrix-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MATRIX-POST-001",
@@ -32437,7 +32437,7 @@
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
       ],
       "sha256": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
-      "source": "asl/arch/profile/matrix-postprocess.asl"
+      "source": "asl/tile/model/execution/matrix-postprocess.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002",
@@ -32447,7 +32447,7 @@
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
       ],
       "sha256": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
-      "source": "asl/arch/profile/matrix-postprocess.asl"
+      "source": "asl/tile/model/execution/matrix-postprocess.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MATRIX-QUANT-001",
@@ -32457,7 +32457,7 @@
         "PTO-MATRIX-QUANT-BITEXACT-001"
       ],
       "sha256": "58ba7a5c35d1c667e57c23b82a434006709c925c88a0c91b64190cf859160c50",
-      "source": "asl/arch/profile/matrix-quantization.asl"
+      "source": "asl/tile/model/execution/matrix-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MEMORY-MODEL-ADDRESS-SPACE-STATIC-001",
@@ -32547,7 +32547,7 @@
       "path": "tests/asl/arch/features/minmax-profile/arch-bound-minmax-availability-002.asl",
       "requirements": [],
       "sha256": "9e431386d0ee57e6dbb5eb8ac03abacde6daa2d58b1d1ca9a924df3d9df22add",
-      "source": "asl/arch/features/minmax-profile.asl"
+      "source": "asl/arch/features/minmax.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MINMAX-ORDER-KEYS-EXEC-001",
@@ -32555,7 +32555,7 @@
       "path": "tests/asl/arch/features/minmax-profile/arch-exec-minmax-order-keys-001.asl",
       "requirements": [],
       "sha256": "605a42427e2a7f408170fc0537474f377092e75619ce04138774c5ead7ed196f",
-      "source": "asl/arch/features/minmax-profile.asl"
+      "source": "asl/arch/features/minmax.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MINMAX-ORDERING-TIES-EXEC-004",
@@ -32563,7 +32563,7 @@
       "path": "tests/asl/arch/features/minmax-profile/arch-exec-minmax-ordering-ties-004.asl",
       "requirements": [],
       "sha256": "71b617cf8a6faeb890d723d976f4292a774c1d15b2092989f42b0e03888ed649",
-      "source": "asl/arch/features/minmax-profile.asl"
+      "source": "asl/arch/features/minmax.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MINMAX-SPECIAL-DELEGATION-EXEC-003",
@@ -32571,7 +32571,7 @@
       "path": "tests/asl/arch/features/minmax-profile/arch-exec-minmax-special-delegation-003.asl",
       "requirements": [],
       "sha256": "237fa58d299f4b47d027ca9e63daa7914a0d8e1cc0c514aff5b06566f831c140",
-      "source": "asl/arch/features/minmax-profile.asl"
+      "source": "asl/arch/features/minmax.asl"
     },
     {
       "id": "PTO-AVS-ARCH-MX-COMPARISON-MINMAX-SPECIAL-EXEC-004",
@@ -32778,7 +32778,7 @@
         "PTO-TCVT-CONTRACT-001"
       ],
       "sha256": "a48a91a8ec8dfebdfb0788d6469ef51b933ea2cbb310cfaf8ad067e80d9226ea",
-      "source": "asl/arch/profile/packed-conversion.asl"
+      "source": "asl/tile/model/numeric/packed-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PACKED-CONVERSION-EXECUTION-001",
@@ -32788,7 +32788,7 @@
         "PTO-TCVT-CONTRACT-001"
       ],
       "sha256": "74df9a19a139fcc1207e6747ba5901a45a7b8e9e833404a88d01dd9f3f4e2913",
-      "source": "asl/arch/profile/packed-conversion.asl"
+      "source": "asl/tile/model/numeric/packed-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PREDICATE-NULL-GPR-PADDING-002",
@@ -32821,20 +32821,20 @@
       "kind": "static-invariant",
       "path": "tests/asl/arch/profile/e8m0-conversion/arch-static-e8m0-conversion-contract-001.asl",
       "requirements": [
-        "PTO-TCVT-E8M0-PROFILE-001"
+        "PTO-TCVT-E8M0-001"
       ],
       "sha256": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
-      "source": "asl/arch/profile/e8m0-conversion.asl"
+      "source": "asl/tile/model/numeric/e8m0-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-EXTENSION-FIRST-USE-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl",
       "requirements": [
-        "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+        "PTO-ARCH-EXTENSION-FIRST-USE-001"
       ],
       "sha256": "6255e5a5376b484598806d2d6ec01085ebd04110b5f65571c74860c9bca3b489",
-      "source": "asl/arch/profile/extension-first-use.asl"
+      "source": "asl/arch/features/extension-first-use.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-LINX-RUNTIME-COMPAT-ACRC-003",
@@ -32888,7 +32888,7 @@
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
       ],
       "sha256": "7f3949620ad409c9911878179425bdf2233a8d259ff2f765ff99f61aeea01392",
-      "source": "asl/arch/profile/matrix-postprocess.asl"
+      "source": "asl/tile/model/execution/matrix-postprocess.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-MATRIX-QUANTIZATION-STATIC-001",
@@ -32898,7 +32898,7 @@
         "PTO-MATRIX-QUANT-BITEXACT-001"
       ],
       "sha256": "bd64d8ee6c83946d3d622e3bede11ae210e662fba80f0793bfac6f18ad8629c8",
-      "source": "asl/arch/profile/matrix-quantization.asl"
+      "source": "asl/tile/model/execution/matrix-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-PACKED-CONVERSION-STATIC-001",
@@ -32906,17 +32906,17 @@
       "path": "tests/asl/arch/profile/packed-conversion/arch-static-packed-conversion-contract-001.asl",
       "requirements": [],
       "sha256": "54aba8167851209e95555b352f57b6872e2d315b1e7109ffa153ba2c23b3fe23",
-      "source": "asl/arch/profile/packed-conversion.asl"
+      "source": "asl/tile/model/numeric/packed-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-REFERENCE-CONVERSION-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/profile/reference-conversion/arch-static-reference-conversion-contract-001.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001"
+        "PTO-COMMON-CONVERSION-001"
       ],
       "sha256": "cfa2e2493ae02e2e34bfe50329e6b6e068c773a348eebea1623dfbc2c3b14478",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001",
@@ -32932,7 +32932,7 @@
       "path": "tests/asl/arch/profile/reference-quantization/arch-static-reference-quantization-contract-001.asl",
       "requirements": [],
       "sha256": "e5859faec80b723cccc8cd21c068ad1cd6ce6ba79c1ba1d9bf22e6365113487d",
-      "source": "asl/arch/profile/reference-quantization.asl"
+      "source": "asl/scalar/model/fsu/reference-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS-STATIC-001",
@@ -32940,7 +32940,7 @@
       "path": "tests/asl/arch/profile/reference-scalar-fp-specials/arch-static-reference-scalar-fp-specials-contract-001.asl",
       "requirements": [],
       "sha256": "72727df5fe7aa0a4d6edcd2a79c5d6e4677003e7436e2119c8a7650f179dae51",
-      "source": "asl/arch/profile/reference-scalar-fp-specials.asl"
+      "source": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-RESET-STATIC-001",
@@ -32956,7 +32956,7 @@
       "path": "tests/asl/arch/profile/tcvt-conversion/arch-static-tcvt-conversion-contract-001.asl",
       "requirements": [],
       "sha256": "1e7a520d2f52f5467578101d240dc4a7cb33f87c9f1598872cd3178aa736f4c3",
-      "source": "asl/arch/profile/tcvt-conversion.asl"
+      "source": "asl/tile/model/numeric/tcvt-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY-STATIC-001",
@@ -33076,7 +33076,7 @@
         "PTO-NUMERIC-RCPE6M2-FORMAT-001"
       ],
       "sha256": "269d2e8c839969ea4a888e8799dac43d1baf6c8dd361747668052eb4360fb864",
-      "source": "asl/arch/profile/tcvt-conversion.asl"
+      "source": "asl/tile/model/numeric/tcvt-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-RCPE6M2-DECOMP-001",
@@ -33093,32 +33093,32 @@
       "kind": "boundary",
       "path": "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-fp16-001.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-INST-SCALAR-FCVT"
       ],
       "sha256": "6d7c29d2bd4aa3f77c94280940d670c70d302ace345c4789e34702e54c1941d9",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003",
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-conversion/arch-exec-reference-conversion-parity-003.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-TCVT-CONTRACT-001"
       ],
       "sha256": "ac3099638ea2285a596615fd979225b16828aaabc5fafc57b46db7516cd279d3",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002",
       "kind": "boundary",
       "path": "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-special-002.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001"
+        "PTO-COMMON-CONVERSION-001"
       ],
       "sha256": "ccc6b9837c1d7e6de3895c4e657301f4da3fd3b0b469506e66c555e602102b8d",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004",
@@ -33126,7 +33126,7 @@
       "path": "tests/asl/arch/profile/reference-conversion/arch-exec-reference-floating-modulo-004.asl",
       "requirements": [],
       "sha256": "5317631493e3a1101b1239b565701f8158698014d3b485da6c9b0f87595f96e7",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012",
@@ -33198,7 +33198,7 @@
       "path": "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl",
       "requirements": [],
       "sha256": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
-      "source": "asl/arch/profile/reference-quantization.asl"
+      "source": "asl/scalar/model/fsu/reference-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-POWER-003",
@@ -33206,7 +33206,7 @@
       "path": "tests/asl/arch/profile/reference-quantization/arch-bound-reference-quantization-power-003.asl",
       "requirements": [],
       "sha256": "ed89c7365902fa264fe015be2ba0012a17f6979f9063062b4d095d010fd756f5",
-      "source": "asl/arch/profile/reference-quantization.asl"
+      "source": "asl/scalar/model/fsu/reference-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002",
@@ -33214,7 +33214,7 @@
       "path": "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl",
       "requirements": [],
       "sha256": "31ccf41fd250516e3b0a7b05973b92bfd72fab03c4c1b1bbf8e9bbc1a459e95e",
-      "source": "asl/arch/profile/reference-quantization.asl"
+      "source": "asl/scalar/model/fsu/reference-quantization.asl"
     },
     {
       "id": "PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005",
@@ -33222,7 +33222,7 @@
       "path": "tests/asl/arch/profile/reference-conversion/arch-exec-reference-tile-unary-005.asl",
       "requirements": [],
       "sha256": "e276e11ab46203ed40e39c9e004281a1e9831d161af7d5a7c2deaa64c3746e25",
-      "source": "asl/arch/profile/reference-conversion.asl"
+      "source": "asl/tile/model/numeric/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-STATE-DEFINEDNESS-STATIC-001",
@@ -33346,7 +33346,7 @@
         "PTO-TCVT-CONTRACT-001"
       ],
       "sha256": "0aa69603a4fa3314ab133212225233839a60692799ad4827fdc94df4f6c11ded",
-      "source": "asl/arch/profile/tcvt-conversion.asl"
+      "source": "asl/tile/model/numeric/tcvt-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-TEMPORARY-QUEUE-VALIDITY-001",
@@ -37199,7 +37199,7 @@
       "path": "tests/asl/block/model/schema/profile-encoding/block-static-profile-encoding-pemode-001.asl",
       "requirements": [],
       "sha256": "fb428ed725bbc5b9b04a4d5eaf9e88167fe845228c1a3e820e4b4e99ee43fa1f",
-      "source": "asl/block/model/schema/profile-encoding.asl"
+      "source": "asl/block/model/schema/bundle-encoding.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING-STATIC-001",
@@ -37207,7 +37207,7 @@
       "path": "tests/asl/block/model/schema/profile-encoding/block-static-profile-encoding-contract-001.asl",
       "requirements": [],
       "sha256": "91781361b3eb5f380164bac2138b91f398e9952d494b73acbfbc33c74275d299",
-      "source": "asl/block/model/schema/profile-encoding.asl"
+      "source": "asl/block/model/schema/bundle-encoding.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-MODEL-STATE-BARG-STATIC-001",
@@ -48991,7 +48991,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/fsu/FCVT/scalar-exec-fcvt-narrow-sources-003.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-INST-SCALAR-FCVT"
       ],
       "sha256": "d6d097bce7150de0986ac270120a4036edfebade4d7d47c57526a5a33eef49c6",
@@ -49063,7 +49063,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-narrow-sources-003.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-FCVTZ-DECISION-BINDING-001",
         "PTO-INST-SCALAR-FCVTZ"
       ],
@@ -53389,7 +53389,7 @@
       "path": "tests/asl/scalar/model/fsu/profile/scalar-static-profile-contract-001.asl",
       "requirements": [],
       "sha256": "03f43acc843b027876eddf985a01156ad0b8e0c5eb847d27be6189194cdefd75",
-      "source": "asl/scalar/model/fsu/profile.asl"
+      "source": "asl/scalar/model/fsu/scalar-fp.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-MODEL-SYS-REGISTERS-STATIC-001",
@@ -53978,7 +53978,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/fsu/SCVTF/scalar-exec-scvtf-widths-002.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-INST-SCALAR-SCVTF",
         "PTO-SCVTF-DECISION-BINDING-001"
       ],
@@ -55960,7 +55960,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/fsu/UCVTF/scalar-exec-ucvtf-widths-002.asl",
       "requirements": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-COMMON-CONVERSION-001",
         "PTO-INST-SCALAR-UCVTF",
         "PTO-UCVTF-DECISION-BINDING-001"
       ],
@@ -60799,7 +60799,7 @@
       "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-e8m0-source-view-008.asl",
       "requirements": [
         "PTO-TCVT-CONTRACT-001",
-        "PTO-TCVT-E8M0-PROFILE-001",
+        "PTO-TCVT-E8M0-001",
         "PTO-TILE-CARRIER-REINTERPRETATION-001"
       ],
       "sha256": "f030b65261367bb69491921dc3c3edfa8841a931b58b94aeff2839206900aa99",
@@ -65157,7 +65157,7 @@
         "minmax-profile"
       ],
       "documentation": "docs/arch/features/minmax-profile.md",
-      "id": "PTO-ARCH-FEATURES-MINMAX-PROFILE",
+      "id": "PTO-ARCH-FEATURES-MINMAX",
       "mnemonic": null,
       "readiness_subjects": [],
       "semantic_tests": [
@@ -65166,7 +65166,7 @@
         "PTO-AVS-ARCH-MINMAX-ORDERING-TIES-EXEC-004",
         "PTO-AVS-ARCH-MINMAX-SPECIAL-DELEGATION-EXEC-003"
       ],
-      "source": "asl/arch/features/minmax-profile.asl",
+      "source": "asl/arch/features/minmax.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-FEATURES-MINMAX-PROFILE-STATIC-001",
@@ -65553,7 +65553,7 @@
         "e8m0-conversion"
       ],
       "documentation": "docs/arch/profile/e8m0-conversion.md",
-      "id": "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+      "id": "PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0002",
@@ -65563,7 +65563,7 @@
         "ADR-SCALAR-0004"
       ],
       "semantic_tests": [],
-      "source": "asl/arch/profile/e8m0-conversion.asl",
+      "source": "asl/tile/model/numeric/e8m0-conversion.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-E8M0-CONVERSION-STATIC-001"
@@ -65575,7 +65575,7 @@
         "extension-first-use"
       ],
       "documentation": "docs/arch/profile/extension-first-use.md",
-      "id": "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE",
+      "id": "PTO-ARCH-FEATURES-EXTENSION-FIRST-USE",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0011",
@@ -65584,7 +65584,7 @@
       "semantic_tests": [
         "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001"
       ],
-      "source": "asl/arch/profile/extension-first-use.asl",
+      "source": "asl/arch/features/extension-first-use.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001",
@@ -65622,7 +65622,7 @@
         "matrix-postprocess"
       ],
       "documentation": "docs/arch/profile/matrix-postprocess.md",
-      "id": "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+      "id": "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-CUBE-0002",
@@ -65636,7 +65636,7 @@
         "PTO-AVS-ARCH-MATRIX-POST-001",
         "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002"
       ],
-      "source": "asl/arch/profile/matrix-postprocess.asl",
+      "source": "asl/tile/model/execution/matrix-postprocess.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-MATRIX-POST-001",
@@ -65650,7 +65650,7 @@
         "matrix-quantization"
       ],
       "documentation": "docs/arch/profile/matrix-quantization.md",
-      "id": "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+      "id": "PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-CUBE-0002",
@@ -65664,7 +65664,7 @@
         "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
         "PTO-AVS-ARCH-MATRIX-QUANT-001"
       ],
-      "source": "asl/arch/profile/matrix-quantization.asl",
+      "source": "asl/tile/model/execution/matrix-quantization.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
@@ -65678,14 +65678,14 @@
         "packed-conversion"
       ],
       "documentation": "docs/arch/profile/packed-conversion.md",
-      "id": "PTO-ARCH-PROFILE-PACKED-CONVERSION",
+      "id": "PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION",
       "mnemonic": null,
       "readiness_subjects": [],
       "semantic_tests": [
         "PTO-AVS-ARCH-PACKED-CONVERSION-BOUNDARIES-002",
         "PTO-AVS-ARCH-PACKED-CONVERSION-EXECUTION-001"
       ],
-      "source": "asl/arch/profile/packed-conversion.asl",
+      "source": "asl/tile/model/numeric/packed-conversion.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PACKED-CONVERSION-BOUNDARIES-002",
@@ -65699,7 +65699,7 @@
         "reference-conversion"
       ],
       "documentation": "docs/arch/profile/reference-conversion.md",
-      "id": "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+      "id": "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-NUM-0012",
@@ -65712,7 +65712,7 @@
         "PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004",
         "PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005"
       ],
-      "source": "asl/arch/profile/reference-conversion.asl",
+      "source": "asl/tile/model/numeric/reference-conversion.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-REFERENCE-CONVERSION-STATIC-001",
@@ -65787,7 +65787,7 @@
         "reference-quantization"
       ],
       "documentation": "docs/arch/profile/reference-quantization.md",
-      "id": "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+      "id": "PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0002",
@@ -65800,7 +65800,7 @@
         "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-POWER-003",
         "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002"
       ],
-      "source": "asl/arch/profile/reference-quantization.asl",
+      "source": "asl/scalar/model/fsu/reference-quantization.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-REFERENCE-QUANTIZATION-STATIC-001",
@@ -65815,13 +65815,13 @@
         "reference-scalar-fp-specials"
       ],
       "documentation": "docs/arch/profile/reference-scalar-fp-specials.md",
-      "id": "PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS",
+      "id": "PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-SCALAR-0004"
       ],
       "semantic_tests": [],
-      "source": "asl/arch/profile/reference-scalar-fp-specials.asl",
+      "source": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS-STATIC-001"
@@ -65860,7 +65860,7 @@
         "tcvt-conversion"
       ],
       "documentation": "docs/arch/profile/tcvt-conversion.md",
-      "id": "PTO-ARCH-PROFILE-TCVT-CONVERSION",
+      "id": "PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-NUM-0012"
@@ -65870,7 +65870,7 @@
         "PTO-AVS-ARCH-RCPE6M2-CONVERSION-EXECUTION-003",
         "PTO-AVS-ARCH-TCVT-CONVERSION-EXECUTION-001"
       ],
-      "source": "asl/arch/profile/tcvt-conversion.asl",
+      "source": "asl/tile/model/numeric/tcvt-conversion.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-E6M2-CONVERSION-BOUNDARIES-002",
@@ -71231,7 +71231,7 @@
         "profile-encoding"
       ],
       "documentation": "docs/block/model/schema/profile-encoding.md",
-      "id": "PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING",
+      "id": "PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
@@ -71239,7 +71239,7 @@
         "ADR-TILE-0004"
       ],
       "semantic_tests": [],
-      "source": "asl/block/model/schema/profile-encoding.asl",
+      "source": "asl/block/model/schema/bundle-encoding.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING-PEMODE-001",
@@ -85644,7 +85644,7 @@
         "profile"
       ],
       "documentation": "docs/scalar/model/fsu/profile.md",
-      "id": "PTO-SCALAR-MODEL-FSU-PROFILE",
+      "id": "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0005",
@@ -85652,7 +85652,7 @@
         "ADR-SCALAR-0004"
       ],
       "semantic_tests": [],
-      "source": "asl/scalar/model/fsu/profile.asl",
+      "source": "asl/scalar/model/fsu/scalar-fp.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-MODEL-FSU-PROFILE-STATIC-001"

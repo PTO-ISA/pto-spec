@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-NAN-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"state-transition","summary":"TRELU quiets signaling NaN and records invalid","pass_condition":"FP32 signaling NaN produces the profile quiet NaN and sets only invalid status","related_sources":["asl/tile/model/execution/unary.asl","asl/arch/features/mx-formats.asl","asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-NAN-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"state-transition","summary":"TRELU quiets signaling NaN and records invalid","pass_condition":"FP32 signaling NaN produces the profile quiet NaN and sets only invalid status","related_sources":["asl/tile/model/execution/unary.asl","asl/arch/features/mx-formats.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     ResetProfileState();

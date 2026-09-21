@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS","surface":"arch","classification":["profile","reference-scalar-fp-specials"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS","surface":"scalar","classification":["model","fsu","reference-scalar-fp-specials"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-REFERENCE-QUANTIZATION"]}
 // IEEE 754 special-value handling remains outside the rational finite kernel.
 
 pure func ReferenceScalarFPUnarySpecial(

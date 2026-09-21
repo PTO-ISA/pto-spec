@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002","source":"asl/arch/profile/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001"],"kind":"boundary","summary":"the common conversion profile fixes special values, range results, wrap, and saturation","pass_condition":"NaNs, infinities, signed zero, finite overflow, integer wrap, and saturation produce the accepted carriers and flags","related_sources":["asl/tile/model/numeric/formats.asl","asl/arch/profile/e8m0-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002","source":"asl/tile/model/numeric/reference-conversion.asl","requirements":["PTO-COMMON-CONVERSION-001"],"kind":"boundary","summary":"the common conversion profile fixes special values, range results, wrap, and saturation","pass_condition":"NaNs, infinities, signed zero, finite overflow, integer wrap, and saturation produce the accepted carriers and flags","related_sources":["asl/tile/model/numeric/formats.asl","asl/tile/model/numeric/e8m0-conversion.asl"]}
 func main() => integer
 begin
     let ordinary = DefaultNumericExecutionControl();

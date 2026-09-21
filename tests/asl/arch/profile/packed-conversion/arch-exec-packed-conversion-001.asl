@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-PACKED-CONVERSION-EXECUTION-001","source":"asl/arch/profile/packed-conversion.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"execution","summary":"Reference encoders implement packed FP4 and E6M2 rounding boundaries","pass_condition":"FP4 midpoint, underflow, overflow, and E6M2 exact, underflow, and positive-overflow cases return the frozen encodings and flags","related_sources":["asl/arch/data-types/formats/e2m1x2.asl","asl/arch/data-types/formats/e6m2.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-PACKED-CONVERSION-EXECUTION-001","source":"asl/tile/model/numeric/packed-conversion.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"execution","summary":"Reference encoders implement packed FP4 and E6M2 rounding boundaries","pass_condition":"FP4 midpoint, underflow, overflow, and E6M2 exact, underflow, and positive-overflow cases return the frozen encodings and flags","related_sources":["asl/arch/data-types/formats/e2m1x2.asl","asl/arch/data-types/formats/e6m2.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

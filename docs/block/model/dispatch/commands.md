@@ -38,7 +38,7 @@ begin
     let handler = CommandHandlerOfForm(form);
     let hint_trace = handler == CommandHandler_SetBundleHint &&
         CommandOperandPresent(form, CommandField_B_E);
-    if !CommandHandlerSupportedPTOv0(handler) then
+    if !CommandHandlerSupported(handler) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
@@ -179,7 +179,7 @@ begin
                 SetFault(Fault_IllegalInstruction, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            let shared_mask = PTOv0PEMaskOfPEMode(pe_mode);
+            let shared_mask = PEMaskOfPEMode(pe_mode);
             if shared_mask == Zeros{4} then
                 // Strict no-op before placement, duplicate, stream, schema,
                 // allocation, descriptor, and operation-specific checks.
@@ -238,7 +238,7 @@ begin
                 SetFault(Fault_IllegalInstruction, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            let pe_mask = PTOv0PEMaskOfPEMode(pe_mode);
+            let pe_mask = PEMaskOfPEMode(pe_mode);
             if pe_mask == Zeros{4} then
                 // Strict no-op: zero participation suppresses placement, stream,
                 // schema, allocation, and descriptor checks.
