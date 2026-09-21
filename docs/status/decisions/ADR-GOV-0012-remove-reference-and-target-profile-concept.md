@@ -91,7 +91,7 @@ separately selected implementation.
 ADR-GOV-0002 selected `pto-v0` as the active implementation profile and
 required exactly one `implementation func` for every registered `impdef`
 hook, so the executable model stayed deterministic. ADR-GOV-0011 added a
-separate opt-in Linx runtime compatibility profile. Neither profile is an
+separate opt-in runtime compatibility profile. Neither profile is an
 architecture-defined target, yet `specification.toml`, `spec/profile-hooks.json`,
 the numeric identity catalog, and the A2A3/A5 evidence materialized them as if
 they were portable PTO interfaces.
@@ -108,7 +108,7 @@ they were portable PTO interfaces.
 3. Relocate the reference helper libraries into their owner domains and drop
    the `profile` surface. Rename `PTOv0*` identifiers, `profile_status` /
    `pto_v0_status` metadata fields, and profile-named units.
-4. Remove the Linx runtime compatibility profile and its host-memory bridge;
+4. Remove the opt-in runtime compatibility profile and its host-memory bridge;
    restore the portable SYS-block, frame-stack, MSET, PEID, ACRC, and
    bounded-memory behavior.
 5. Remove the A2A3/A5 target numeric identities and their derived evidence,
@@ -137,7 +137,7 @@ ASL. No new target profile is defined.
 
 ## Compatibility and dependent-toolchain impact
 
-Downstream toolchains that referenced the `pto-v0` profile id or the Linx
+Downstream toolchains that referenced the `pto-v0` profile id or the runtime compatibility
 compatibility switches must consume the owning ASL definitions instead. No
 opcode or descriptor encoding changes.
 
@@ -197,14 +197,14 @@ target identities disappear.
 
 - Removed `[profile]`, `spec/profile-hooks.json`, and target identities.
 - Folded `implementation func` bodies into owners; removed the profile surface.
-- Removed the Linx runtime compatibility and host-memory profile.
+- Removed the runtime compatibility and host-memory profile.
 - Removed A2A3/A5 identities and derived evidence.
 
 #### 中文
 
 - 删除 `[profile]`、`spec/profile-hooks.json` 与目标身份。
 - 将 `implementation func` 折叠进 owner，移除 profile surface。
-- 移除 Linx 运行时兼容与 host memory profile。
+- 移除 runtime compatibility 运行时兼容与 host memory profile。
 - 移除 A2A3/A5 身份及其派生证据。
 
 ### Scope and boundaries / 范围与边界

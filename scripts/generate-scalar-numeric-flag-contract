@@ -188,7 +188,6 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/numeric-contracts.json"),
             *source_rows(ROOT, "asl/scalar/model/fsu/*.asl"),
             *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
-            *source_rows(ROOT, "asl/arch/profile/*.asl"),
             source(
                 "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md"
             ),

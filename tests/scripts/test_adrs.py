@@ -197,7 +197,6 @@ class AdrRecordTest(unittest.TestCase):
                 "--",
                 "asl/**",
                 "spec/catalog/**",
-                "spec/profile-hooks.json",
                 "tests/asl/**",
             ],
             cwd=ROOT,

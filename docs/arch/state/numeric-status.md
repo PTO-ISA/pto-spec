@@ -43,7 +43,7 @@ If the current five-bit status is `10000` and a later successful operation suppl
 ## Related owners
 
 - [System-register addressing](../system-registers/addressing.md) owns the `core_state` storage used here.
-- [Reference profile](../profile/reference-profile.md) supplies concrete implementations for profile-defined numeric hooks.
+- [Scalar floating point](../../scalar/model/fsu/scalar-fp.md) supplies the concrete numeric hook implementations.
 - [Architecture overview](../overview/architecture.md) establishes the current-owner hierarchy.
 <!-- SUPPLEMENTARY-END -->
 

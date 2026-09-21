@@ -15,7 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
-PROFILE_HOOKS = ROOT / "spec/profile-hooks.json"
 ROUNDING_CONTRACT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 PUBLIC_TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
@@ -34,7 +33,6 @@ SOURCE_PATHS = (
     "spec/evidence/numeric-contracts.json",
     "spec/evidence/numeric-profile-decision-inputs.json",
     "spec/catalog/numeric-profile-identities.json",
-    "spec/profile-hooks.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/numeric-format-namespace-contract.json",
     "spec/evidence/public-numeric-type-baseline.json",
@@ -188,7 +186,6 @@ def generate() -> dict[str, Any]:
     inventory = load(NUMERIC_CONTRACTS)
     decisions = load(DECISION_INPUTS)
     identities = load(IDENTITY_CATALOG)
-    profile_hooks = load(PROFILE_HOOKS)
     rounding = load(ROUNDING_CONTRACT)
     formats = load(FORMAT_CONTRACT)
     public_types = load(PUBLIC_TYPE_BASELINE)
@@ -241,13 +238,7 @@ def generate() -> dict[str, Any]:
     domain_inputs = {row["domain"]: row for row in decisions["domain_matrix"]}
     operations = {row["key"]: row for row in inventory["operations"]}
     hooks = {row["name"]: row for row in inventory["hooks"]}
-    registered_hooks = {
-        row["name"]: row
-        for row in profile_hooks["hooks"]
-        if row["maturity_target"] == "S5-T2"
-    }
     require(set(domains) == set(domain_inputs), "decision-domain coverage drift")
-    require(set(hooks) == set(registered_hooks), "profile-hook coverage drift")
     dimension_labels = {
         dimension
         for domain in domains.values()

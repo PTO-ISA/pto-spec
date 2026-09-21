@@ -54,7 +54,7 @@ For `TileDataType_S32`, `HardwareNumericSignedZeroEncodings` returns availabilit
 <!-- PTO-READER-BLOCK: arch-mx-formats-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Hardware numeric min/max](minmax-profile.md)
+- [Hardware numeric min/max](minmax.md)
 - [Numeric classification](../data-types/numeric-classification.md)
 - [Numeric format dispatch](../data-types/numeric-formats.md)
 <!-- SUPPLEMENTARY-END -->

@@ -43,7 +43,7 @@ This page is a generated reference view of the normative ASL unit.
 ## 相关所有者
 
 - [系统寄存器寻址](../system-registers/addressing.md)拥有本页使用的 `core_state` 存储。
-- [参考配置档](../profile/reference-profile.md)为配置档定义的数值钩子提供具体实现。
+- [标量浮点](../../scalar/model/fsu/scalar-fp.md)提供具体的数值钩子实现。
 - [架构概览](../overview/architecture.md)建立当前所有者层级。
 <!-- SUPPLEMENTARY-END -->
 

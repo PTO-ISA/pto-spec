@@ -102,7 +102,7 @@ The decision applies only to the listed profile, reset, numeric, extension-first
 
 该决策仅适用于所列的 Profile、复位、数值、扩展首次使用和陷阱恢复 owner。它不消除 implementation-defined 边界，不定义硬件实现，也不授权 IEEE-754 符合性声明。
 - Date: 2026-07-28
-- Requirement: PTO-REQ-RESET-001
+- Requirement: PTO-REQ-PROFILE-001
 
 ## Context
 

@@ -530,11 +530,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cf76a0e3709883c4cc100fd76796820216cc193418d2ec6563da857ddf00b762"
+      "sha256": "521f68e40cd89f2c0e992922a584a4d94ba24cf10ce79a9ecdbd0875611d0e5f"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "4a6778dbcf245464e67121b353fe0d63b04386a20bffc67f2904e20fe50ecbe1"
+      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",

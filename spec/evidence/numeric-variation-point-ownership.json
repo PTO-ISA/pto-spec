@@ -7237,7 +7237,7 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
+      "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -7248,24 +7248,20 @@
       "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
     },
     {
-      "path": "spec/profile-hooks.json",
-      "sha256": "116a799742905596b9eaaecdc6a5340b9de98228193faa3d4602f4e13fd76009"
-    },
-    {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "147b9c0d1cdba8baa85763dca85592d6dff413d03e1912219bfdf668a02bcad9"
+      "sha256": "7845b0d64ed5ac46150bcdfa2cfe630aa6166681c62feeb2549a4d1e57d6347e"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cf76a0e3709883c4cc100fd76796820216cc193418d2ec6563da857ddf00b762"
+      "sha256": "521f68e40cd89f2c0e992922a584a4d94ba24cf10ce79a9ecdbd0875611d0e5f"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "7f3a6521f784a6f2384ba03a01ac25fbf55e6c2e5e88f0c50fdede7facc17679"
+      "sha256": "2ea874b1daa5b827e780af1f58a012e72cdc8b72c35cb63fc85e9f4c3d53bdb5"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "957ea0d6cf2b45c8fd3f2542a126ae135304979c1203c732dc5caf6d89372833"
+      "sha256": "1babb869c3d481ee6c92f4a3b0aebbcb94c706ed5ba673bbba539f716982895b"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
@@ -7273,7 +7269,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
-      "sha256": "c0ff8b0a73e13fa50508921af26cebe183b4be8b923ca2871232c7a3fd5e052f"
+      "sha256": "30d01b99c1cc31c4623c611b3a425c43fb3c37fdada055f9949e065e6d8ff05a"
     }
   ],
   "summary": {

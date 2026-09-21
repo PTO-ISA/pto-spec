@@ -44,10 +44,17 @@ begin
     end;
 end;
 
-impdef func FloatingExponential(value: real) => real
+func FloatingExponential(value: real) => real
 begin
-    // The executable default is stable; a numeric profile supplies IEEE encoding.
-    return value;
+    // PTO v0 fixes an 18-term Taylor reference algorithm. It is deterministic
+    // executable evidence, not a promise of a host libm implementation.
+    var result: real = 1.0;
+    var term: real = 1.0;
+    for index = 1 to 18 do
+        term = (term * value) / Real(index);
+        result = result + term;
+    end;
+    return result;
 end;
 
 func FloatingUnary(op: FloatingUnaryOperation, value: real) => real
@@ -74,10 +81,14 @@ begin
     end;
 end;
 
-impdef func FloatingRoundNearest(value: real) => integer
+func FloatingRoundNearest(value: real) => integer
 begin
-    if value >= 0.0 then return RoundDown(value + 0.5);
-    else return RoundUp(value - 0.5);
+    let lower = RoundDown(value);
+    let fraction = value - Real(lower);
+    if fraction < 0.5 then return lower;
+    elsif fraction > 0.5 then return lower + 1;
+    elsif lower MOD 2 == 0 then return lower;
+    else return lower + 1;
     end;
 end;
 

@@ -72,7 +72,7 @@ begin
     end;
     return carrier OR sign_mask;
 end;
-impdef func TileProfileFloatingCompare(
+func TileProfileFloatingCompare(
     comparison: TileComparison,
     data_type: TileDataType,
     left: Word,
@@ -98,9 +98,8 @@ begin
     return (TileCompareBoolean(comparison, left_less, equal), Zeros{5});
 end;
 
-readonly impdef func TileProfilePredicateNullGPRPadding() => Word
+readonly func TileProfilePredicateNullGPRPadding() => Word
 begin
-    // Portable reference default for architecturally unspecified Null bits.
     return Zeros{PTO_XLEN};
 end;
 

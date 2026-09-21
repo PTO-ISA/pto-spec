@@ -15,16 +15,16 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/registers.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE"]}
 // PTO-REQ-SCALAR-SSR-001, PTO-REQ-RESET-001: canonical 24-bit
 // system-register addressing with explicit Access Control Ring checks.
 
-readonly impdef func SystemRegisterAccessPermitted(
+readonly func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
     ring: AccessControlRing) => boolean
 begin
-    // The active profile permits base registers at every ring and keeps
-    // context-family registers root-ring-only.
+    // Base registers are available at every level. Context, translation, and
+    // debug register families are ACR0-only in the PTO v0 profile.
     return UInt(address[11:0]) < 0x0f00 || ring == 0;
 end;
 
@@ -76,12 +76,6 @@ end;
 
 func ReadSystemRegisterAddress(address: SystemRegisterAddress) => Word
 begin
-    if PTOModelLinxRuntimePEIDEnabled(address) then
-        // The runtime selects the executing PE explicitly before dispatch.
-        // PEID is a read-only view of that execution context, not a second
-        // writable system-register bank.
-        return NaturalToWord(_CurrentMemoryAgent as integer {0..262144});
-    end;
     if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};

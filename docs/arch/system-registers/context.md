@@ -63,12 +63,6 @@ begin
     return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
 end;
 
-pure func ContextRegisterIndex(ring: AccessControlRing,
-                                    low_index: integer {0..4095})
-                                    => SystemRegisterFileIndex
-begin
-    return ((ring * 4096) + low_index) as SystemRegisterFileIndex;
-end;
 
 readonly func ReadContextRegister(ring: AccessControlRing,
                                        low_index: integer {0..4095}) => Word

@@ -1908,7 +1908,7 @@
     }
   ],
   "tests": [
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:ValidateNumericFormatClassification",
     "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl:TestTileRegisterMapping",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
     "tests/asl/block/model/state/descriptor-state/block-exec-operation-fields-001.asl:TestBundleOperationDescriptorFields",
@@ -1923,15 +1923,15 @@
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
-      "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
+      "sha256": "9eebaffe6147b5368664d7c1137a8d6470efe925a85d2ce6b779c0bb8aa2e41d"
     },
     {
       "path": "spec/evidence/tlsu-totality.json",
-      "sha256": "2d9b556116626bf0904b1af0d1d71ac15dd39914afe10cd05764ccbc6a5f0f72"
+      "sha256": "c68d4db3e9212a37cc873d566939945a276594e774c5b370f2933a716718e99a"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "4a6778dbcf245464e67121b353fe0d63b04386a20bffc67f2904e20fe50ecbe1"
+      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1959,11 +1959,11 @@
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d"
+      "sha256": "608dae6aca9eb2ab5a396c8b73a7235e8065f9ab539dd066e6282fd634958bf4"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
+      "sha256": "4ff0552a05f90dcc9442167370c2ac242f92bbb3999bcd97635045b73cdc8465"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
@@ -1971,7 +1971,7 @@
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
+      "sha256": "1168da252c7dedaa6ff2c34b814c6a5cbd8d38320db36ea27b125a654ae51a84"
     },
     {
       "path": "asl/arch/data-types/numeric-formats.asl",
@@ -1987,7 +1987,7 @@
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "756ed3affcdd30db52f7198d90ede0d886161e9385df3195d611f82b46545d5a"
+      "sha256": "4493903781b924264641d185c2680758d7e96b700cbc915b4c6b5815c0a1e2d4"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
@@ -1995,23 +1995,31 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "05bad845c84d9fd35d30af99137b939e70d0d7226f54374b7f5d5e71dd235b7b"
+      "sha256": "aba39318d6277a1239966ba58d4db42b11afe3913376a6a78c65091121b8859d"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
+      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
-      "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
+      "sha256": "caf8abe955be90b30655112166b5844e02e575cbbc9e447a2ce84c0284b56f96"
+    },
+    {
+      "path": "asl/scalar/model/fsu/reference-quantization.asl",
+      "sha256": "e13894a4bb0969202171ee431bf3cd490b7011282547ebce15bbfad910d8b586"
+    },
+    {
+      "path": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl",
+      "sha256": "f4005e8d87791a0479196b656d98c339e7fa66b839a50aeb7d35b39108a8c6a8"
     },
     {
       "path": "asl/scalar/model/fsu/scalar-fp.asl",
-      "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
+      "sha256": "5015671b9435e0c2cf4185071937d8150ceec9d64172b926926c1cb9a7a039fa"
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "3e188e875d392a63d6ad68de171d9fb00ac5d27296134a9d341ba170be52cde2"
+      "sha256": "228d6ed66471a3d568e2333c70fed5df35231f23b5e605c75568e92b606ac6d5"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
@@ -2055,7 +2063,7 @@
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
-      "sha256": "d876cf142b91256771a275c16c61e4272b222a7a83df01870a96fc60d9bdfc5f"
+      "sha256": "5d4cc440de0ae4e871744a1cf809aa7124986e1084659e880235384ae58b64c6"
     },
     {
       "path": "asl/tile/model/memory/restart.asl",
@@ -2063,7 +2071,7 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "36f29ee3aea9317084524bc8757f23fb6624288e3b13b34a89b7636c356d8088"
+      "sha256": "24123bd2b4bdd32d782f4b5d3f1f5960f05f61907639e66e39434d14bd032abb"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
@@ -2075,7 +2083,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "60ed5f3c9ef8adb6b516920b6502ce5c1cbef7b352ffa1e934fb9a40d23764a9"
+      "sha256": "0062606013956d17c45f18229e4306b1d6401cb0daab8ae403ef96d78f202c88"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -2091,11 +2099,11 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "8252a43ba3b4f248d701b2fb2761d159684f2652d0348d6c3e7fcbed9718b3b4"
+      "sha256": "f4523e01c260e1d8b236d7652abadb20076204e14f25d98c46e73b92e79fe1fe"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8"
+      "sha256": "6b13e2b67468e5eb8e7e956c2e7f073ef4965598c55d8365b0f7c8cda0e01fd6"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
@@ -2103,15 +2111,15 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4"
+      "sha256": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae"
+      "sha256": "ca759010d83de9bea47bf5bd3bdba496e079db4a1c516f07efdd06e4781d40ad"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
-      "sha256": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756"
+      "sha256": "b418c9b6e904c8b8136ea744be49685786df8a50d9fd7a9f41ffaeffceea448e"
     },
     {
       "path": "asl/block/model/dispatch/generation-schema.asl",
@@ -2131,11 +2139,11 @@
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "b1b28d2109be6e74f320649772708a8ecada19435767111a92517de486acdd47"
+      "sha256": "64553aa5a95ec920ed43e46b2e3e027db9eca767c811ae88a2e4a119b6df8c7c"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "d874ff5c684f6eb531505ac6029fa972ffe957ed0075febc7d6991b3526d1bf3"
+      "sha256": "00ba38c1705c3127fdab232901d3819108e1073f8eca11d32e1515ca64b38dfe"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
@@ -2143,7 +2151,7 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "651c72f5f0603799398135e3607cc90b86d4432da0f09881a669b3dde340f4fb"
+      "sha256": "7e29fa92195753fae53a08eae4c7a6b66fb71062bd8f7e17e0afb47b39223661"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
@@ -2155,7 +2163,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "15b0ac1344100a46f244b24f03d602549834c259be5c69943e965bd080249620"
+      "sha256": "d963c66e38220bd9d9756e7ea70a0980108ca0f5a48ab5f83dc0e53d88996c83"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -2163,19 +2171,19 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "1a1f5222fe16da17afad4c6259b2d623e8469b9e9dcc2c94950d604f7dbb43a1"
+      "sha256": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "19740b5e96c976d356239b5b0a8f852729d2996a1dd37c4e40559ef192036a33"
+      "sha256": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "bb750e8700e9224c0834f6e7285813da64cd0f2eb71101bc33844e83e18d2ff2"
+      "sha256": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-execution.asl",
-      "sha256": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35"
+      "sha256": "c8e1b73903e8dee4ea7239e40423dd2ed5dcc52446481c381386459a71657feb"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-schema.asl",
@@ -2183,27 +2191,27 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-      "sha256": "948946416a87f10cbe563556a857169f9574f0cddff240b9968cc381c3096828"
+      "sha256": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "0ddcbec724a75acd2fa4cc534bba788eb15fcb029d34fb75b5ecdbd0978c4c70"
+      "sha256": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "b5e5d0c65e6c0bcc1fcccb429ba3adbbb8b287ad509866c18d4cf2467daf3881"
+      "sha256": "7b53bfd9ddbe3f72e06d60d69e8d0b51644e0aa1415627d4481813a138228ba0"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "7b3e65e5276432ae8b72dad188a6b7e1b3ce3c49e5e19aea3bc61396979c8960"
+      "sha256": "5045758cde12b18c6704126efe1179644cf096e9d157c80f8f132c003bff1095"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "8300cd350d848d41095c0c024852a925782c96fd2171f1b887e444885c706d6b"
+      "sha256": "ce6b58980592140ccc80e2569d0a3f9aaa5e5981459defc1c5ea48eee413d0e1"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "289972ef6f6e495d785eab85238276333f7d5d0933feda46616d005381b3e703"
+      "sha256": "eb50c88814eb103a5b73c0ca036b3ffe34ca339dfd5dd99bbddecf1e7ca84989"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
@@ -2219,7 +2227,7 @@
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "bf9b29d428ad3e06c0a57aaf27c27a4b2986467f3f8b61579f3d876933b410b2"
+      "sha256": "55896f263568e6c2e929756c9d22f6fc5f36ec4698cdbe6828384872cd532f7e"
     },
     {
       "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
@@ -2231,19 +2239,19 @@
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "adb55aaa119e1bae5e10baa998697b524dcf36893795ca821783032138396e4f"
+      "sha256": "1884a9480fa0c961cde21b6d7425db2ca23aa423fdd9ed37dfc9c45923c63877"
     },
     {
       "path": "docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md",
-      "sha256": "97225a6df2933a3a885a0f66edca46e8c554e70931affb5af43b41d1560625c6"
+      "sha256": "e9acfae02ba1b826dd2069f151dbbe31c67b31e973e649174d18d122b7cdac93"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "bac18cc54ac49933157bb4cb28472119d619a346e4e7d286ef8c50e36543050c"
+      "sha256": "3f7c64f99f81e8507db8093ec867bb69683026336733dcc279d5d79f28dfe251"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md",
-      "sha256": "2850f7001e9e6927d84cc7ad252f3d7fe056c3d6b3aae4fa34975e309fe905f7"
+      "sha256": "300985007112bd64d1e6bfcc2f891aa2c6d866d6be3a00339bf3a0a06bb4039e"
     }
   ],
   "summary": {

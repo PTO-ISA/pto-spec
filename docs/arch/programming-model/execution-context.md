@@ -57,7 +57,7 @@ Pushing `0x33` to U then changes only U index `0`. The T values from the previou
 
 - [System-register addressing](../system-registers/addressing.md) is the declared dependency for the execution-context unit.
 - [Memory ordering](../memory-model/ordering.md) interprets the memory events stored here.
-- [Reference profile](../profile/reference-profile.md) provides concrete access and trap-context behavior for the PTO v0 profile.
+- [Trap context](../state/trap-context.md) provides the concrete access and trap-context behavior.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

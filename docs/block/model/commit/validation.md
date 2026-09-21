@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/commit/validation.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-COMMIT-VALIDATION","surface":"block","classification":["model","commit","validation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DECODE","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-COMMIT-VALIDATION","surface":"block","classification":["model","commit","validation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DECODE","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE"]}
 func CompleteBundleAtWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet, continuation: Word) => boolean
 begin
@@ -74,7 +74,7 @@ begin
     return hint_trace &&
            CommandDecodedBool(instruction, form, CommandField_B_E) &&
            _BundleActive &&
-           PTOModelLinxTraceBoundaryCompatibilityEnabled();
+           FALSE;
 end;
 
 func ExecuteLinxTraceBoundaryHint(
