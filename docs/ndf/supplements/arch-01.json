@@ -7,104 +7,206 @@
     {
       "id": "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Architecture visible global memory model scope", "zh-CN": "架构可见全局内存模型范围"},
-      "summary": {"en": "The PTO global-memory domain covers scalar, Tile, indexed/generated, and prefetch-like requests. Backend queues and caches may change timing but cannot change the required architecture-visible result.", "zh-CN": "PTO 全局内存域覆盖标量、Tile、索引或生成以及预取类请求。后端队列与缓存可以改变时序，但不得改变架构可见的规定结果。"}
+      "title": {
+        "en": "Architecture visible global memory model scope",
+        "zh-CN": "架构可见全局内存模型范围"
+      },
+      "summary": {
+        "en": "The PTO global-memory domain covers scalar, Tile, indexed/generated, and prefetch-like requests. Backend queues and caches may change timing but cannot change the required architecture-visible result.",
+        "zh-CN": "PTO 全局内存域覆盖标量、Tile、索引或生成以及预取类请求。后端队列与缓存可以改变时序，但不得改变架构可见的规定结果。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Memory request classes and provisional generated operations", "zh-CN": "内存请求类别与临时生成操作"},
-      "summary": {"en": "Memory requests are classified as Scalar, Tile, IndexedGenerated, or Prefetch. TNDDMA remains provisional and receives ordering constraints without a final opcode or encoding.", "zh-CN": "内存请求分为 Scalar、Tile、IndexedGenerated 或 Prefetch。TNDDMA 仍是临时类别，只接受顺序约束，不提前确定最终 opcode 或编码。"}
+      "title": {
+        "en": "Memory request classes and provisional generated operations",
+        "zh-CN": "内存请求类别与临时生成操作"
+      },
+      "summary": {
+        "en": "Memory requests are classified as Scalar, Tile, IndexedGenerated, or Prefetch. TNDDMA remains provisional and receives ordering constraints without a final opcode or encoding.",
+        "zh-CN": "内存请求分为 Scalar、Tile、IndexedGenerated 或 Prefetch。TNDDMA 仍是临时类别，只接受顺序约束，不提前确定最终 opcode 或编码。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Scalar and Tile memory shareability domains", "zh-CN": "标量与 Tile 内存可共享域"},
-      "summary": {"en": "Scalar accesses distinguish Private, IntraCore, and InterCore domains; Tile and indexed/generated requests are IntraCore-shareable. A possibly aliased access cannot claim Private ordering.", "zh-CN": "标量访问区分 Private、IntraCore 与 InterCore 域；Tile 及索引或生成请求属于 IntraCore 可共享域。可能别名的访问不得声明 Private 顺序保证。"}
+      "title": {
+        "en": "Scalar and Tile memory shareability domains",
+        "zh-CN": "标量与 Tile 内存可共享域"
+      },
+      "summary": {
+        "en": "Scalar accesses distinguish Private, IntraCore, and InterCore domains; Tile and indexed/generated requests are IntraCore-shareable. A possibly aliased access cannot claim Private ordering.",
+        "zh-CN": "标量访问区分 Private、IntraCore 与 InterCore 域；Tile 及索引或生成请求属于 IntraCore 可共享域。可能别名的访问不得声明 Private 顺序保证。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-RANGE-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Conservative memory access ranges", "zh-CN": "保守内存访问范围"},
-      "summary": {"en": "Access sets may be contiguous, multiple ranges, or generated sets. A conservative indexed descriptor must cover every location whose ordering matters; omitted locations receive no range guarantee.", "zh-CN": "访问集合可以是连续范围、多段范围或生成集合。索引描述符必须覆盖所有需要保护顺序的位置；省略的位置不享有范围顺序保证。"}
+      "title": {
+        "en": "Conservative memory access ranges",
+        "zh-CN": "保守内存访问范围"
+      },
+      "summary": {
+        "en": "Access sets may be contiguous, multiple ranges, or generated sets. A conservative indexed descriptor must cover every location whose ordering matters; omitted locations receive no range guarantee.",
+        "zh-CN": "访问集合可以是连续范围、多段范围或生成集合。索引描述符必须覆盖所有需要保护顺序的位置；省略的位置不享有范围顺序保证。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Memory conflict definition", "zh-CN": "内存冲突定义"},
-      "summary": {"en": "An applicable-domain overlap conflicts when at least one request writes or atomically updates; read-read overlap alone is not a conflict. Mixed-size overlap remains fail-closed.", "zh-CN": "在适用共享域中，只要重叠请求至少一个执行写或原子更新就构成冲突；仅读读重叠不构成冲突。混合宽度重叠继续采用封闭失败。"}
+      "title": {
+        "en": "Memory conflict definition",
+        "zh-CN": "内存冲突定义"
+      },
+      "summary": {
+        "en": "An applicable-domain overlap conflicts when at least one request writes or atomically updates; read-read overlap alone is not a conflict. Mixed-size overlap remains fail-closed.",
+        "zh-CN": "在适用共享域中，只要重叠请求至少一个执行写或原子更新就构成冲突；仅读读重叠不构成冲突。混合宽度重叠继续采用封闭失败。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Distinct memory dependency classes", "zh-CN": "独立的内存依赖类别"},
-      "summary": {"en": "Address, data, and control dependencies are separate ordering sources. A dependency does not replace conflict ordering, and a conflict does not replace a dependency.", "zh-CN": "地址、数据与控制依赖是彼此独立的顺序来源。依赖不能替代冲突顺序，冲突也不能替代依赖。"}
+      "title": {
+        "en": "Distinct memory dependency classes",
+        "zh-CN": "独立的内存依赖类别"
+      },
+      "summary": {
+        "en": "Address, data, and control dependencies are separate ordering sources. A dependency does not replace conflict ordering, and a conflict does not replace a dependency.",
+        "zh-CN": "地址、数据与控制依赖是彼此独立的顺序来源。依赖不能替代冲突顺序，冲突也不能替代依赖。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-QUALIFIER-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Directional memory-order qualifiers", "zh-CN": "有方向的内存顺序限定符"},
-      "summary": {"en": "After-prior and before-later qualifiers add same-thread directional edges even for non-overlapping or undescribed ranges, without defining inter-core synchronization.", "zh-CN": "after-prior 与 before-later 限定符即使面对不重叠或未描述范围，也能增加同线程方向边，但不定义跨核同步。"}
+      "title": {
+        "en": "Directional memory-order qualifiers",
+        "zh-CN": "有方向的内存顺序限定符"
+      },
+      "summary": {
+        "en": "After-prior and before-later qualifiers add same-thread directional edges even for non-overlapping or undescribed ranges, without defining inter-core synchronization.",
+        "zh-CN": "after-prior 与 before-later 限定符即使面对不重叠或未描述范围，也能增加同线程方向边，但不定义跨核同步。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-RC-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Relaxed consistency with preserved Store-to-Store order", "zh-CN": "保留 Store-to-Store 顺序的 RC 基线"},
-      "summary": {"en": "The default baseline relaxes Load-to-Load, Load-to-Store, and Store-to-Load across different locations while preserving same-thread Store-to-Store order. Explicit synchronization adds stronger edges.", "zh-CN": "默认基线放松不同地址的 Load-to-Load、Load-to-Store 与 Store-to-Load，同时保留同线程 Store-to-Store 顺序。显式同步会增加更强的顺序边。"}
+      "title": {
+        "en": "Relaxed consistency with preserved Store-to-Store order",
+        "zh-CN": "保留 Store-to-Store 顺序的 RC 基线"
+      },
+      "summary": {
+        "en": "The default baseline relaxes Load-to-Load, Load-to-Store, and Store-to-Load across different locations while preserving same-thread Store-to-Store order. Explicit synchronization adds stronger edges.",
+        "zh-CN": "默认基线放松不同地址的 Load-to-Load、Load-to-Store 与 Store-to-Load，同时保留同线程 Store-to-Store 顺序。显式同步会增加更强的顺序边。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-PREFETCH-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Prefetch request non-interference", "zh-CN": "预取请求的非干扰性"},
-      "summary": {"en": "Prefetch-like requests are performance hints unless their owner grants visible ordering, and they cannot change values returned by correctly ordered memory operations.", "zh-CN": "除非其所有者明确授予可见顺序，预取类请求只是性能提示，并且不得改变正确排序内存操作返回的值。"}
+      "title": {
+        "en": "Prefetch request non-interference",
+        "zh-CN": "预取请求的非干扰性"
+      },
+      "summary": {
+        "en": "Prefetch-like requests are performance hints unless their owner grants visible ordering, and they cannot change values returned by correctly ordered memory operations.",
+        "zh-CN": "除非其所有者明确授予可见顺序，预取类请求只是性能提示，并且不得改变正确排序内存操作返回的值。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Atomic and read-modify-write ordering", "zh-CN": "原子与读改写顺序"},
-      "summary": {"en": "Atomic and read-modify-write requests have both read and write effects and remain full ordering points unless a named owner explicitly defines a different contract.", "zh-CN": "原子与读改写请求同时具有读写效果，除非具名所有者明确规定不同契约，否则仍是完整顺序点。"}
+      "title": {
+        "en": "Atomic and read-modify-write ordering",
+        "zh-CN": "原子与读改写顺序"
+      },
+      "summary": {
+        "en": "Atomic and read-modify-write requests have both read and write effects and remain full ordering points unless a named owner explicitly defines a different contract.",
+        "zh-CN": "原子与读改写请求同时具有读写效果，除非具名所有者明确规定不同契约，否则仍是完整顺序点。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-OPEN-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
-      "title": {"en": "Intentionally open memory-model boundaries", "zh-CN": "有意保留的内存模型边界"},
-      "summary": {"en": "Inter-core visibility, qualifier transport, fence strength, mixed-size overlap, repeated scatter order, cross-agent atomic order, and precise replay faults remain open and cannot be inferred from backend behavior.", "zh-CN": "跨核可见性、限定符传输、fence 强度、混合宽度重叠、重复 scatter 顺序、跨 agent 原子顺序及精确重放故障仍未闭合，不得从后端行为推断。"}
+      "title": {
+        "en": "Intentionally open memory-model boundaries",
+        "zh-CN": "有意保留的内存模型边界"
+      },
+      "summary": {
+        "en": "Inter-core visibility, qualifier transport, fence strength, mixed-size overlap, repeated scatter order, cross-agent atomic order, and precise replay faults remain open and cannot be inferred from backend behavior.",
+        "zh-CN": "跨核可见性、限定符传输、fence 强度、混合宽度重叠、重复 scatter 顺序、跨 agent 原子顺序及精确重放故障仍未闭合，不得从后端行为推断。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
       "source_path": "asl/arch/memory-model/memory-events.asl",
-      "title": {"en": "Multi-copy atomic global-memory visibility", "zh-CN": "多副本原子全局内存可见性"},
-      "summary": {"en": "The portable GM domain is multi-copy atomic: one location has one global coherence order and any applicable agent may observe a completed write. Release/acquire pairs add cross-agent synchronizes-with, while relaxed operations keep atomicity and coherence only.", "zh-CN": "可移植 GM 域为 multi-copy atomic：同一位置只有一个全局 coherence 顺序，适用 agent 均可观察到已完成的写入。release/acquire 对建立跨 agent synchronizes-with，relaxed 操作只保留原子性与 coherence。"}
+      "title": {
+        "en": "Multi-copy atomic global-memory visibility",
+        "zh-CN": "多副本原子全局内存可见性"
+      },
+      "summary": {
+        "en": "The portable GM domain is multi-copy atomic: one location has one global coherence order and any applicable agent may observe a completed write. Release/acquire pairs add cross-agent synchronizes-with, while relaxed operations keep atomicity and coherence only.",
+        "zh-CN": "可移植 GM 域为 multi-copy atomic：同一位置只有一个全局 coherence 顺序，适用 agent 均可观察到已完成的写入。release/acquire 对建立跨 agent synchronizes-with，relaxed 操作只保留原子性与 coherence。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001",
       "source_path": "asl/arch/memory-model/memory-events.asl",
-      "title": {"en": "Fence class-mask transport and strength", "zh-CN": "Fence 类别掩码传输与强度"},
-      "summary": {"en": "Fence predecessor and successor class masks are the architecture-visible transport of fence strength. A fence orders only matching classes in the same agent and cannot create a cross-agent relation without a matching release/acquire access.", "zh-CN": "Fence 的 predecessor/successor 类别掩码是 fence 强度的架构可见传输方式。fence 只对同一 agent 中匹配的类别排序；没有匹配的 release/acquire 访问时不得建立跨 agent 关系。"}
+      "title": {
+        "en": "Fence class-mask transport and strength",
+        "zh-CN": "Fence 类别掩码传输与强度"
+      },
+      "summary": {
+        "en": "Fence predecessor and successor class masks are the architecture-visible transport of fence strength. A fence orders only matching classes in the same agent and cannot create a cross-agent relation without a matching release/acquire access.",
+        "zh-CN": "Fence 的 predecessor/successor 类别掩码是 fence 强度的架构可见传输方式。fence 只对同一 agent 中匹配的类别排序；没有匹配的 release/acquire 访问时不得建立跨 agent 关系。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001",
       "source_path": "asl/arch/memory-model/memory-events.asl",
-      "title": {"en": "Mixed-size overlap fails closed", "zh-CN": "混合宽度重叠 fail-closed"},
-      "summary": {"en": "GM locations are bytes, but this revision defines no byte-level merge or tearing. Any partial overlap between distinct access ranges fails closed; only exact address-and-size matches participate in the portable coherence relation.", "zh-CN": "GM 位置以字节为单位，但本版本不定义字节级拼接或撕裂。不同访问范围之间的任何部分重叠都 fail-closed；只有地址与宽度完全一致的匹配才进入可移植 coherence 关系。"}
+      "title": {
+        "en": "Mixed-size overlap fails closed",
+        "zh-CN": "混合宽度重叠 fail-closed"
+      },
+      "summary": {
+        "en": "GM locations are bytes, but this revision defines no byte-level merge or tearing. Any partial overlap between distinct access ranges fails closed; only exact address-and-size matches participate in the portable coherence relation.",
+        "zh-CN": "GM 位置以字节为单位，但本版本不定义字节级拼接或撕裂。不同访问范围之间的任何部分重叠都 fail-closed；只有地址与宽度完全一致的匹配才进入可移植 coherence 关系。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
       "source_path": "asl/arch/memory-model/memory-events.asl",
-      "title": {"en": "Cross-agent atomic ordering and indivisibility", "zh-CN": "跨 agent atomic 顺序与不可分割性"},
-      "summary": {"en": "An atomic or RMW access to one exact byte range is one indivisible read/write event in the global coherence order. Acquire/release atomic pairs may synchronize across agents; relaxed atomics imply no global sequentially consistent order for different locations.", "zh-CN": "对一个精确字节范围的 atomic 或 RMW 访问是全局 coherence 顺序中的单个不可分割读写事件。acquire/release atomic 对可跨 agent 同步；relaxed atomic 不为不同位置强加全局顺序一致顺序。"}
+      "title": {
+        "en": "Cross-agent atomic ordering and indivisibility",
+        "zh-CN": "跨 agent atomic 顺序与不可分割性"
+      },
+      "summary": {
+        "en": "An atomic or RMW access to one exact byte range is one indivisible read/write event in the global coherence order. Acquire/release atomic pairs may synchronize across agents; relaxed atomics imply no global sequentially consistent order for different locations.",
+        "zh-CN": "对一个精确字节范围的 atomic 或 RMW 访问是全局 coherence 顺序中的单个不可分割读写事件。acquire/release atomic 对可跨 agent 同步；relaxed atomic 不为不同位置强加全局顺序一致顺序。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
       "source_path": "asl/arch/memory-model/fault-precision.asl",
-      "title": {"en": "Precise scalar and Tile replay boundary", "zh-CN": "精确的标量与 Tile 重放边界"},
-      "summary": {"en": "A scalar fault is precise: older committed effects remain, the faulting instruction is the restart point, and younger work has no architectural effect. A Tile memory request is precise at its Block boundary, so completed beats remain visible while a retry re-executes the whole logical request.", "zh-CN": "标量故障是精确的：更早提交的效果保留，故障指令是重启点，更年轻的工作没有架构效果。Tile 内存请求在其 Block 边界上精确：已完成的 beat 保持可见，重试则整条逻辑请求重新执行。"}
+      "title": {
+        "en": "Precise scalar and Tile replay boundary",
+        "zh-CN": "精确的标量与 Tile 重放边界"
+      },
+      "summary": {
+        "en": "A scalar fault is precise: older committed effects remain, the faulting instruction is the restart point, and younger work has no architectural effect. A Tile memory request is precise at its Block boundary, so completed beats remain visible while a retry re-executes the whole logical request.",
+        "zh-CN": "标量故障是精确的：更早提交的效果保留，故障指令是重启点，更年轻的工作没有架构效果。Tile 内存请求在其 Block 边界上精确：已完成的 beat 保持可见，重试则整条逻辑请求重新执行。"
+      }
     },
     {
       "id": "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
       "source_path": "asl/arch/memory-model/fault-precision.asl",
-      "title": {"en": "Replay flush preserves committed effects", "zh-CN": "重放 flush 保留已提交效果"},
-      "summary": {"en": "A replay flush discards only uncommitted event records and younger pending work. It must never roll back committed GM writes, committed Tile payload elements, or an already admitted memory event, and recovery retries from the saved template.", "zh-CN": "重放 flush 只丢弃未提交的事件记录与更年轻的待处理工作。它不得回滚已提交的 GM 写入、已提交的 Tile 负载元素或已获准的内存事件，恢复时从保存的模板重试。"}
+      "title": {
+        "en": "Replay flush preserves committed effects",
+        "zh-CN": "重放 flush 保留已提交效果"
+      },
+      "summary": {
+        "en": "A replay flush discards only uncommitted event records and younger pending work. It must never roll back committed GM writes, committed Tile payload elements, or an already admitted memory event, and recovery retries from the saved template.",
+        "zh-CN": "重放 flush 只丢弃未提交的事件记录与更年轻的待处理工作。它不得回滚已提交的 GM 写入、已提交的 Tile 负载元素或已获准的内存事件，恢复时从保存的模板重试。"
+      }
     },
     {
       "id": "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
@@ -224,6 +326,18 @@
       "summary": {
         "en": "This clause defines one canonical source line for each current direct Tile operation and maps it to exactly one existing physical Block bundle. Expansion inherits the complete owning contract, while disassembly folds only one unique exact schema match and otherwise keeps the physical form.",
         "zh-CN": "本条款为每个当前 Direct Tile 操作定义一条规范源码行，并将其映射到恰好一个现有物理 Block Bundle。展开完整继承 owner 契约；反汇编只有在 schema 唯一精确匹配时才折叠，否则保留物理形式。"
+      }
+    },
+    {
+      "id": "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001",
+      "source_path": "asl/arch/overview/instruction-classification.asl",
+      "title": {
+        "en": "Indexed Col and ValidCol macro contract",
+        "zh-CN": "索引 Col 与 ValidCol 宏契约"
+      },
+      "summary": {
+        "en": "This clause records the canonical indexed macro boundary: Col is mandatory and maps to LB2, optional ValidCol defaults to Col and maps to LB0, and canonical folding preserves independent physical and logical column extents without runtime descriptor lookup.",
+        "zh-CN": "本条款记录索引宏的规范边界：Col 为必需字段并映射到 LB2，可选 ValidCol 默认等于 Col 并映射到 LB0；规范折叠保留独立的物理与逻辑列范围，且不查询运行时描述符。"
       }
     },
     {

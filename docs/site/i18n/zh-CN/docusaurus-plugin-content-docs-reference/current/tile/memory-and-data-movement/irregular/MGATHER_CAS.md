@@ -143,7 +143,7 @@ end;
 BSTART.MGATHER.CAS DataType
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional, default 1)
-B.DIM LB2=ValidCol
+B.DIM LB2=Col
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
 B.IOR BaseGPR, zero, zero, ->zero
@@ -168,7 +168,7 @@ end;
 ## Defaults and encoded zero
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
-- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
+- LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
 - IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality

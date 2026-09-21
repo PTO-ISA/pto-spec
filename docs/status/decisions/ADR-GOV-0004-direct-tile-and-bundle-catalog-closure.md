@@ -186,7 +186,8 @@
     "PTO-TSUBS-CONTRACT-001",
     "PTO-TTRI-CONTRACT-001",
     "PTO-TXOR-CONTRACT-001",
-    "PTO-TXORS-CONTRACT-001"
+    "PTO-TXORS-CONTRACT-001",
+    "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
   ],
   "affected_units": [
     "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
@@ -369,6 +370,21 @@
       "affected_units": [
         "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "baseline": "4f5a0c23d676ee4612a2acd4635f7fed0e85b147",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/334",
+      "affected_ndf": [
+        "PTO-AS-TILEOP-MACRO-001",
+        "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+      ]
     }
   ]
 }
@@ -450,6 +466,30 @@ singleton.
 ASL is the sole semantic owner. Catalogs, generated pages, decoder witnesses,
 requirements, and AVS points are projections or evidence and must regenerate
 together from the current ASL owners.
+
+## Indexed Col/ValidCol and atom/red Layout amendment for PTO 0.58.6
+
+### English
+
+Issue #334 amends the canonical TileOp macro interface without changing the
+physical B.DIM/B.DATR encoding or indexed execution semantics. All 23 indexed
+forms now require `Col` (mapped to `LB2`) and accept optional `ValidCol=Col`
+(mapped to `LB0`); `ValidCol`-only source syntax is intentionally rejected.
+All 19 GM atom/red forms expose `Layout?` and retain the legal set `NORM`,
+`CUBE_M16`, and `CUBE_M32`. Equal-width emitted bundles remain binary
+compatible. Macro owners, mnemonic ASL metadata, catalogs, decoder/folding
+projections, AVS, and traceability are regenerated from the authoritative
+sources; downstream consumers remain follow-up work.
+
+### 中文
+
+Issue #334 修订规范 TileOp 宏接口，但不改变 B.DIM/B.DATR 物理编码或索引
+执行语义。全部 23 个索引形式现在要求 `Col`（映射到 `LB2`），并接受默认
+为 `Col` 的可选 `ValidCol`（映射到 `LB0`）；仅有 `ValidCol` 的源语法有意拒绝。
+全部 19 个 GM 原子/归约形式暴露 `Layout?`，合法集合仍为 `NORM`、`CUBE_M16`
+和 `CUBE_M32`。等宽已发出 bundle 保持二进制兼容。宏 owner、助记符 ASL 元数据、
+目录、decoder/folding 投影、AVS 与 traceability 均从权威源重新生成；下游消费者
+仍作为后续工作。
 
 ## TileOp macro-assembly amendment for PTO 0.58.6
 

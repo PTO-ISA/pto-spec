@@ -2037,7 +2037,7 @@ def build_catalog() -> dict[str, object]:
             },
             "canonical_omission": "canonical assembly omits a Valid field only when it equals the selected form's declared default",
             "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
-            "irregular_memory": "Every MGATHER and MSCATTER form exposes ValidRow and ValidCol; physical Tile Row/Col are not macro operands, and ValidCol drives both LB0 and the canonical LB2 carrier",
+            "irregular_memory": "Every MGATHER and MSCATTER form exposes mandatory Col, ValidRow, and optional ValidCol=Col; Col drives LB2 and ValidCol drives LB0, while physical Tile Row remains outside the macro interface",
             "descriptor_inherited": "TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state",
         },
         "canonicalization_examples": [
