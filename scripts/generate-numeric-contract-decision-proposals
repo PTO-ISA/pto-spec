@@ -325,7 +325,7 @@ def generate() -> dict[str, Any]:
                 "decision_adr_ids": domain["decision_adr_ids"],
                 "proposed_profile_ids": proposed_profile_ids,
                 "portable_rule_status": "rule-required",
-                "a2a3_support_status": "operation-type-matrix-required",
+                "support_status": "operation-type-matrix-required",
                 "a5_support_status": "operation-type-matrix-required",
                 "cpu_observation_status": "capture-plan-required-not-oracle",
                 "independent_oracle_status": "qualification-required",
@@ -548,7 +548,7 @@ def generate() -> dict[str, Any]:
             },
             {
                 "id": "S5-T2-D",
-                "target": "record local CPU plus independent A2A3 and A5 target results",
+                "target": "record local CPU plus independent implementation results",
                 "current": 0,
                 "required": 42,
                 "status": "open",

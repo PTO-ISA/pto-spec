@@ -6,8 +6,8 @@
   "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
   "policy": {
     "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
-    "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
-    "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open."
+    "rejection_boundary": "The six MX CUBE negative-applicability rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
+    "parent_boundary": "This checkpoint closes only a negative MX support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open."
   },
   "contracts": [
     {
@@ -5177,11 +5177,11 @@
     },
     "direct_test": {
       "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
-      "symbol": "TestA2A3CubeMxDirectRejectionMatrix"
+      "symbol": "TestCubeMxDirectRejectionMatrix"
     },
     "bundle_test": {
       "path": "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
-      "symbol": "TestA2A3CubeMxBundleRejectionMatrix"
+      "symbol": "TestCubeMxBundleRejectionMatrix"
     }
   },
   "tests": [
@@ -5207,7 +5207,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3"
+      "sha256": "422626f8f591cc06e928b98741753de54669c316d3bf9b90b72553a1b74cb61e"
     },
     {
       "path": "spec/evidence/numeric-contract-decision-inputs.json",
@@ -5267,7 +5267,7 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "8b4f89ce7fdf1bee78f86b446f9642a9714887e47b42f597624b8519d1c4ce62"
+      "sha256": "0050120f15047421e9da2836731c9ac5acd525e17f502117ef01290d09895daa"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
@@ -5451,7 +5451,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
-      "sha256": "98cbb0b1c06795efd2a39cdb85efdd56912341af24e284ab0cab986eeecacfcc"
+      "sha256": "abfe689e40884c5b3f17d4130998f8f50a4a6b496d92cb3e3d60d2bf6352d072"
     }
   ],
   "open_parent_decisions": [

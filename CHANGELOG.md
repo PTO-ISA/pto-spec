@@ -151,7 +151,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-BLOCK-0019](docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md): BSTART.TLOAD convolution weights to Shared NK
-- [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): A2/A3 MX CUBE profile applicability
+- [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): MX CUBE negative applicability
 - [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
 - [ADR-GOV-0012](docs/status/decisions/ADR-GOV-0012-remove-reference-and-target-profile-concept.md): Remove the reference and target profile concept
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners

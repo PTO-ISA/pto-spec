@@ -24,7 +24,7 @@ This page is a generated reference view of the normative ASL unit.
 
 - `NumericRoundingMode` 包含 `RNE`、`RTM`、`RTP`、`RTZ`、`RNA`、`RTO` 和 `RHB` 七种语义模式。
 - `NumericExecutionControl` 将 `NumericRoundingMode` 与 `saturating` 布尔值组合为一条记录。
-- `NumericApplicabilityRuleSet` 表示没有额外拒绝规则，或采用有界的 `A2A3MxRejection` 规则集。
+- `NumericApplicabilityRuleSet` 表示没有额外拒绝规则，或采用有界的 `MxRejection` 规则集。
 
 <!-- PTO-READER-BLOCK: arch-rounding-rules-interactions role=rules-interactions -->
 ## 规则与交互
@@ -40,7 +40,7 @@ This page is a generated reference view of the normative ASL unit.
 
 这些类型不定义具体算术操作如何舍入某个值；精确结果算法仍由操作或配置归属单元定义。
 
-`A2A3MxRejection` 是命名的面向目标规则集，不是可以在其归属范围之外套用的可移植 PTO 行为。
+`MxRejection` 是命名的负向适用性规则集，不是可以在其归属范围之外套用的可移植 PTO 行为。
 
 <!-- PTO-READER-BLOCK: arch-rounding-example-usage role=example-usage -->
 ## 非规范阅读示例
@@ -89,9 +89,9 @@ begin
     };
 end;
 
-// Selects only a bounded set of accepted negative applicability rules. This
-// is not a complete target-profile selector: absence of a rejection does not
-// claim target support or select numeric result semantics.
+// Selects only a bounded set of accepted negative applicability rules.
+// Absence of a rejection does not claim support or select numeric result
+// semantics.
 type NumericApplicabilityRuleSet of enumeration {
     NumericApplicabilityRules_None,
     NumericApplicabilityRules_MxRejection

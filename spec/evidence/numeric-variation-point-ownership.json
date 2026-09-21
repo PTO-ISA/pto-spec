@@ -6422,19 +6422,19 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "252989bdfe3d5d6ea486823cfebea452f14c6134660c5c1066651dedbb746d6b"
+      "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "5b00ad0e5424ba218f5ebde4ac8dfa7c0e6ddd074f58b4e191d1e67817301fb0"
+      "sha256": "1db162a52ce13f5ac105c6ea11a97478c04d2ba0d100678691cf13ede9d1191d"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "a59423457a9a66a22f1adf87fd40e2af55c1a451b45e35be7ffda9e3c4368362"
+      "sha256": "afcb1120fe7f21c6279cdf77e1611c0fb4e037f55c1c53a1e9b2bc78b6dfa939"
     },
     {
       "path": "spec/evidence/numeric-contract-applicability-closure.json",
-      "sha256": "9a2cd7a41aa46a45dc500174ce96edc6331c96a0d90c0479754dc22f6ad4d293"
+      "sha256": "5a5d591f89b3b23e04c5d25879ce73603eec1b1fbc4e8927f6cc74793e1f5b4c"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",

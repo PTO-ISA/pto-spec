@@ -117,8 +117,8 @@ def generate() -> dict[str, Any]:
         type_class,
         width,
         signed,
-        _legacy_a2a3,
-        _legacy_a5,
+        _unused_target_a,
+        _unused_target_b,
         catalog_name,
     ) in PUBLIC_TYPES:
         row = {

@@ -186,7 +186,7 @@ begin
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
 end;
 
-func TestA2A3CubeMxDirectRejectionMatrix()
+func TestCubeMxDirectRejectionMatrix()
 begin
     for function_index = 0 to 5 do
         let function = CubeMxFunction(function_index);
@@ -199,7 +199,7 @@ begin
         assert !TileOperationRejectedByAcceptedApplicabilityRules(
             NumericApplicabilityRules_None, operation);
 
-        // The A2/A3 rule rejects the decoded MX operation before DataType or
+        // The negative applicability rule rejects the decoded MX operation before DataType or
         // operand inspection. One legal E4M3 operand set per selector proves
         // that the rejection is operation-wide without a redundant 25-type
         // Cartesian product in the strict ASL type checker.
@@ -223,6 +223,6 @@ begin
     ResetProfileState();
     TestCubeAliasMatrix();
     TestCubeCompositePreflight();
-    TestA2A3CubeMxDirectRejectionMatrix();
+    TestCubeMxDirectRejectionMatrix();
     return 0;
 end;

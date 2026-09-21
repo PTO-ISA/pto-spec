@@ -41,7 +41,7 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "542bc9da3db8665f7bf17e946c74cabc132d3372592a1515e30a0251effc193e",
+    "sha256": "1745ae73bf3931d6fcefc3e4aaffa7f0108521f3a297314044ec7ab9ec42ffc4",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "e4c197849e370f82c3bf3c8e87e7cc3157e62ad2577d2ddc64f84c7bfb723b0f",
+    "sha256": "bc78656e3a849f2a8b5b0bb6a075152d7e6bd84869f81dcfdf7cbad76e5931e4",
     "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3",
+    "sha256": "422626f8f591cc06e928b98741753de54669c316d3bf9b90b72553a1b74cb61e",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
@@ -116,7 +116,7 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "1db162a52ce13f5ac105c6ea11a97478c04d2ba0d100678691cf13ede9d1191d",
+    "sha256": "64b4bee6fa4863f571005b6dd771d176638c26fe2ead2939e2a077a01b30f7fe",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -133,7 +133,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "afcb1120fe7f21c6279cdf77e1611c0fb4e037f55c1c53a1e9b2bc78b6dfa939",
+    "sha256": "4752335121b65967e3fd43a770e2be0acc5281ea35a57066cb00bce50cad93a3",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -153,7 +153,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-contract-applicability-closure.json",
-    "sha256": "9a2cd7a41aa46a45dc500174ce96edc6331c96a0d90c0479754dc22f6ad4d293",
+    "sha256": "68417bc7b4b4fd2437fbaf258686219495087b4865437c38069b8fadf592c38e",
     "status": "mx-unsupported-tuples-closed-results-open",
     "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -172,7 +172,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "054454856a5efa1a5c4a4d97752cb23a180047c01a15ce955e4ce68f5f4b6109",
+    "sha256": "9e53b557adb9a2d4865278d97ddb79cf395de91f94dd75d0886b624bee377896",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
     "variation_point_count": 69,
@@ -507,7 +507,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -544,7 +544,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -581,7 +581,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -619,7 +619,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -654,7 +654,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -688,7 +688,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -745,7 +745,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -791,7 +791,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -824,7 +824,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -857,7 +857,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -903,7 +903,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -952,7 +952,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -986,7 +986,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -1035,7 +1035,7 @@
         "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
-      "a2a3_support_status": "operation-type-matrix-required",
+      "support_status": "operation-type-matrix-required",
       "a5_support_status": "operation-type-matrix-required",
       "cpu_observation_status": "capture-plan-required-not-oracle",
       "independent_oracle_status": "qualification-required",
@@ -1105,7 +1105,7 @@
     },
     {
       "id": "S5-T2-D",
-      "target": "record local CPU plus independent A2A3 and A5 target results",
+      "target": "record local CPU plus independent implementation results",
       "current": 0,
       "required": 42,
       "status": "open"

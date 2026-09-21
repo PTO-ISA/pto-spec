@@ -1983,7 +1983,7 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "8b4f89ce7fdf1bee78f86b446f9642a9714887e47b42f597624b8519d1c4ce62"
+      "sha256": "0050120f15047421e9da2836731c9ac5acd525e17f502117ef01290d09895daa"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",

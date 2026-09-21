@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed ADR-NUM-0013 A2/A3 MX applicability checkpoint."""
+"""Generate the fail-closed ADR-NUM-0013 MX negative-applicability checkpoint."""
 
 from __future__ import annotations
 
@@ -277,8 +277,8 @@ def generate() -> dict[str, Any]:
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
             "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
-            "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
-            "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open.",
+            "rejection_boundary": "The six MX CUBE negative-applicability rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
+            "parent_boundary": "This checkpoint closes only a negative MX support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open.",
         },
         "contracts": catalog["contracts"],
         "rules": rules,
@@ -309,11 +309,11 @@ def generate() -> dict[str, Any]:
             },
             "direct_test": {
                 "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
-                "symbol": "TestA2A3CubeMxDirectRejectionMatrix",
+                "symbol": "TestCubeMxDirectRejectionMatrix",
             },
             "bundle_test": {
                 "path": "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
-                "symbol": "TestA2A3CubeMxBundleRejectionMatrix",
+                "symbol": "TestCubeMxBundleRejectionMatrix",
             },
         },
         "tests": [
