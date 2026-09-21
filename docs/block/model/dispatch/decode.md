@@ -66,7 +66,7 @@ begin
     return DecodeCommandOperandRaw(instruction, form, field)[0] == '1';
 end;
 
-pure func CommandHandlerSupportedPTOv0(handler: CommandSemanticHandler)
+pure func CommandHandlerSupported(handler: CommandSemanticHandler)
                                        => boolean
 begin
     case handler of

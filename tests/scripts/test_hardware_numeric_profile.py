@@ -83,12 +83,12 @@ class HardwareNumericProfileTest(unittest.TestCase):
             ],
         )
         implementation = (
-            ROOT / "asl/arch/profile/matrix-postprocess.asl"
+            ROOT / "asl/tile/model/execution/postprocess.asl"
         ).read_text(encoding="utf-8")
         body = implementation.split(
-            "implementation func TileProfileMatrixPostProcessWithFlags", 1
+            "func TileProfileMatrixPostProcessWithFlags", 1
         )[1].split(
-            "implementation func TileProfileMatrixPostProcess(", 1
+            "func TileProfileMatrixPostProcess(", 1
         )[0]
         self.assertIn("MatrixPostQuantBaseWithFlags", body)
         self.assertNotIn("return (value, Zeros{5});", body)

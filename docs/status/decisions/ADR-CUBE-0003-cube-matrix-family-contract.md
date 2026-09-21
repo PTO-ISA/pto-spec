@@ -79,7 +79,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0065"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0003: CUBE Matrix Family Contract

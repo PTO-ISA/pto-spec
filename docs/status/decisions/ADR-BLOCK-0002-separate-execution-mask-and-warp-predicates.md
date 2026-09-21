@@ -33,7 +33,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0046"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0002: Separate execution-mask and predicate domains (superseded)

@@ -13,7 +13,7 @@ begin
     WriteGPR(2, fault_address);
     WriteGPR(5, old_destination);
     SetCurrentACR(2);
-    PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
+    WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(Zeros{PTO_XLEN} + 0x100);
     ClearFault();
 

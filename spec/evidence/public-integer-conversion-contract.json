@@ -969,32 +969,32 @@
   ],
   "sources": [
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "4151ff2d8ce47fc7f0f5c4334c1eecd783ebdcc7a3f82935081023e67376fb5d"
+      "sha256": "1db162a52ce13f5ac105c6ea11a97478c04d2ba0d100678691cf13ede9d1191d"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
+      "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "5986a701cf85d9c2c6174a284b9d54668cb164be60c254394e51ccf0c3e37440"
+      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "498887f273c87b5a16fea498ee4faf08433ed5206d5d40afe1fb8aa0d1ec09cf"
+      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
     },
     {
       "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
-      "sha256": "350d5252bed641b4a7448e995999b3104f0aa4e55ec6419e09f6c3bd7a04ee8e"
+      "sha256": "c50dd77a2fc8ce151655b19e27d80989f71d3817d163b72cb48e4d04e085b529"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
-      "sha256": "21d7d7e3e73d51249537871d33ac51401c49f9948b849b751c992993b85d950f"
+      "sha256": "ed900ee733fff21b8d97a76ffdc8ad682001c5cdb1d3f970537a97ad559306c0"
     }
   ],
   "summary": {

@@ -11,7 +11,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ## Release 0.58.6.0
 
 ### Architecture
-- [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
 - [ADR-GOV-0010](docs/status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md): PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity
 
 ### Cross-cutting
@@ -24,9 +23,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.58.5
 
-### Architecture
-- [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
-
 ### Block
 - [ADR-CUBE-0015](docs/status/decisions/ADR-CUBE-0015-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
 
@@ -37,6 +33,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-CUBE-0014](docs/status/decisions/ADR-CUBE-0014-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
 - [ADR-CUBE-0016](docs/status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 - [ADR-CUBE-0017](docs/status/decisions/ADR-CUBE-0017-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
+- [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
 - [ADR-GOV-0005](docs/status/decisions/ADR-GOV-0005-mnemonic-field-encoding-closure.md): Mnemonic and Encoded-Field Contract Closure
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
 - [ADR-SCALAR-0004](docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
@@ -141,11 +138,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ## Unassigned
 
 ### Architecture
-- [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
-- [ADR-GOV-0002](docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md): PTO v0 concrete reference profile
-- [ADR-NUM-0001](docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md): Numeric profile identity and bounded variation framework
-- [ADR-NUM-0005](docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md): Numeric variation-point ownership
-- [ADR-NUM-0010](docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md): Hardware numeric subnormal policy
 - [ADR-STATE-0004](docs/status/decisions/ADR-STATE-0004-acr-routing-and-context-reset.md): PTO v0 ACR routing and context reset
 - [ADR-STATE-0005](docs/status/decisions/ADR-STATE-0005-visible-ebarg-snapshot.md): Make EBARG the visible PTO v0 trap snapshot
 - [ADR-STATE-0007](docs/status/decisions/ADR-STATE-0007-interrupt-pending-and-timer-state.md): Define interrupt pending and timer state
@@ -159,18 +151,22 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-BLOCK-0019](docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md): BSTART.TLOAD convolution weights to Shared NK
-- [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): A2/A3 MX CUBE profile applicability
-- [ADR-GOV-0011](docs/status/decisions/ADR-GOV-0011-runtime-compatibility-profile.md): Opt-in Linx runtime compatibility profile
+- [ADR-CUBE-0001](docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md): MX CUBE negative applicability
+- [ADR-GOV-0001](docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md): Define PTO as a scalar, bundle/command, and tile ISA
+- [ADR-GOV-0012](docs/status/decisions/ADR-GOV-0012-remove-reference-and-target-profile-concept.md): Remove the reference and target profile concept
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-MEM-0006](docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-MEM-0007](docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
 - [ADR-MEM-0011](docs/status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md): Cross-agent visibility, fence transport, atomic ordering, and precise replay
+- [ADR-NUM-0001](docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md): Numeric profile identity and bounded variation framework
 - [ADR-NUM-0002](docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md): Scalar numeric flag state and producer ownership
 - [ADR-NUM-0003](docs/status/decisions/ADR-NUM-0003-numeric-rounding-selector-ownership.md): Numeric rounding selector ownership
 - [ADR-NUM-0004](docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md): Numeric format namespace ownership
+- [ADR-NUM-0005](docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md): Numeric variation-point ownership
 - [ADR-NUM-0006](docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md): Public numeric type identity and target availability
 - [ADR-NUM-0008](docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md): Numeric rounding semantics
 - [ADR-NUM-0009](docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md): Numeric format value classification
+- [ADR-NUM-0010](docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md): Hardware numeric subnormal policy
 - [ADR-NUM-0011](docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md): Hardware special-value result checkpoint
 - [ADR-SCALAR-0004](docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
 - [ADR-STATE-0001](docs/status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md): Use PTO-owned system-register names

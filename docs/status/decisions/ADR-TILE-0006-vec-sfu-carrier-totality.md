@@ -180,7 +180,8 @@
   "legacy_ids": [
     "ADR-0035"
   ],
-  "release_boundary": true
+  "release_boundary": true,
+  "amendments": []
 }
 ---
 # ADR-TILE-0006: VEC/SFU carrier totality and profile boundary

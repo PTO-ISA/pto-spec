@@ -45,7 +45,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0074"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0008: TLOAD/TSTORE GM Byte Row Stride

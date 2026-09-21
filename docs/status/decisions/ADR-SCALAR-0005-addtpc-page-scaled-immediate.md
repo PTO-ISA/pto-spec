@@ -33,7 +33,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0066"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-SCALAR-0005: ADDTPC page-scaled immediate

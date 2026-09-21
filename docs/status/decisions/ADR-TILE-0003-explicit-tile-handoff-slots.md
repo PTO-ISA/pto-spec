@@ -37,7 +37,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0015"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0003: Define explicit tile handoff slots

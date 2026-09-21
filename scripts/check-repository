@@ -83,8 +83,8 @@ required_files=(
     spec/model-closure-selection.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
-    spec/catalog/numeric-profile-identities.json
-    spec/catalog/numeric-profile-applicability.json
+    spec/catalog/numeric-contract-identities.json
+    spec/catalog/numeric-contract-applicability.json
     spec/catalog/system-registers.json
     spec/catalog/tile-operations.json
     spec/catalog/tile-macro-assembly.json

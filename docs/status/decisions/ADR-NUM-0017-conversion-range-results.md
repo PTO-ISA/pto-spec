@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-07",
     "ADR-0090"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0017: Conversion range results

@@ -121,7 +121,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0027"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-SCALAR-0003: Scalar BRU totality and target legality

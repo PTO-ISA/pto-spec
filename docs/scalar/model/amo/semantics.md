@@ -19,11 +19,10 @@ This page is a generated reference view of the normative ASL unit.
 // PTO-REQ-SCALAR-AMO-001, PTO-REQ-MEMORY-RC-001: LR/SC, CAS, and atomic
 // read-modify-write operations represented as indivisible PTO-RC memory events.
 
-readonly impdef func AtomicAddress(address: Word, far: boolean) => Word
+readonly func AtomicAddress(address: Word,
+                                            far: boolean) => Word
 begin
-    // The portable model has one flat address domain. FAR remains an explicit
-    // address-class hint so profiles can refine it without changing decoding.
-    if far then return address; else return address; end;
+    return address;
 end;
 
 pure func NormalizeAtomicReturn(value: Word,

@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-05",
     "ADR-0088"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0015: Numeric special values

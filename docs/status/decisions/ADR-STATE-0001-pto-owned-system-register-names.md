@@ -47,7 +47,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0003"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0001: Use PTO-owned system-register names

@@ -22,10 +22,9 @@
     "PTO-REQ-STATE-001"
   ],
   "affected_units": [
-    "PTO-ARCH-PROFILE-RESET",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
     "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
     "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
-    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
     "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
     "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
     "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
@@ -38,7 +37,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0010"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0004: PTO v0 ACR routing and context reset

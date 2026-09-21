@@ -36,7 +36,7 @@ begin
     assert _ACRTrapNumber[[1]] == Zeros{6} + 6;
     assert _ACRTrapCause[[1]][3:0] == '0001';
     assert _ACRTrapArgument0[[1]] == Zeros{PTO_XLEN} + 0x400;
-    assert PTOv0ReadContextRegister(1, 0x0f43) ==
+    assert ReadContextRegister(1, 0x0f43) ==
         Zeros{PTO_XLEN} + 0x404;
     assert _ArchitectureRequestEpoch == system_epoch + 1;
     ClearFault();
@@ -61,7 +61,7 @@ begin
     assert _LastFault == Fault_ServiceRequest;
     assert CurrentACR() == 0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x800;
-    assert PTOv0ReadContextRegister(0, 0x0f43) ==
+    assert ReadContextRegister(0, 0x0f43) ==
         Zeros{PTO_XLEN} + 0x504;
 
     ResetProfileState();

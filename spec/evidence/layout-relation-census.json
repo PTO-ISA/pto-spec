@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "b5f2d88f43382d666caa0374d2080c2e74aae855",
+  "candidate_head": "a26f6e3eb9a1f0ab0cb474d55dea43e019ac9571",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17118,6 +17118,25 @@
       "path": "asl/tile/model/definedness/elements.asl"
     },
     {
+      "after": [],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "44123bb84aa7203192d93bbea4475ddf4744bb75e5c18681f2757a583b9bddff"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "c5e757b3d0315803ca8247df2dfec7dcf158179c8addb7b5606fd53b137299e9"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileExponential"
+    },
+    {
       "after_layouts": [],
       "after_sha256": "884776334624c4f3c09430455ebc3825458e11a4d904844bba30cf6a052a3f12",
       "before_layouts": [],
@@ -17179,6 +17198,25 @@
       "before": [],
       "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TileInfoWithPackedRowSlack"
+    },
+    {
+      "after": [],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "742e6c3b6114188971672cf02dd4e9a596f5147efbd65bc8b4a876d993253dde"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "e4ad069eb0a529728ba4905f7155f4933c9d2eff331b611292356a395f22606e"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileLogarithm"
     },
     {
       "after_layouts": [
@@ -17407,13 +17445,436 @@
       "path": "asl/tile/model/legality/predicate-carriers.asl"
     },
     {
-      "after_layouts": [],
-      "after_sha256": "273be64cd712d7766b021f0b8d9fb80cd8775865ec234ffa3e06b1c0bb095faa",
-      "before_layouts": [],
-      "before_sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a",
-      "classification": "operation-scoped accepted layout/relation owner",
-      "name": "TileProfileConvert",
-      "path": "asl/arch/profile/e8m0-conversion.asl"
+      "after": [
+        {
+          "calls": [
+            "NormalizeTileInteger",
+            "ReferenceCommonConversionTypeSupported",
+            "ReferenceCommonConversionTypeSupported",
+            "ReferenceCommonConvert",
+            "ReferenceFloatToE8M0",
+            "ReferenceTCVTConvert",
+            "TileDataTypeIsFloating"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/numeric/formats.asl",
+          "sha256": "89e0c5286f49142053be00e6f126e85abde9583444c4f0aed82dd00d7c3e4ae7"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "NormalizeTileInteger",
+            "ReferenceCommonConversionTypeSupported",
+            "ReferenceCommonConversionTypeSupported",
+            "ReferenceCommonConvert",
+            "ReferenceFloatToE8M0",
+            "TileDataTypeIsFloating"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/e8m0-conversion.asl",
+          "sha256": "e44df38122ad781da48639e748f1aff34037fb49bc23495cd67d630f4255f13a"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/numeric/formats.asl",
+          "sha256": "3d8d8690f5ce05a8dc9a7db78e9fd233529240e663753cbad04b636bd6690c34"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileConvert"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsZero",
+            "NumericValueClassIsZero",
+            "TileCompareBoolean",
+            "TileFloatingOrderKey",
+            "TileFloatingOrderKey",
+            "TileNumericValueClass",
+            "TileNumericValueClass",
+            "UInt",
+            "UInt"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/comparison.asl",
+          "sha256": "5ca78252e3554fdb75322dab8c394d55f0b46e4a5dcc1179f843d5e41628cf36"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsZero",
+            "NumericValueClassIsZero",
+            "TileCompareBoolean",
+            "TileFloatingOrderKey",
+            "TileFloatingOrderKey",
+            "TileNumericValueClass",
+            "TileNumericValueClass",
+            "UInt",
+            "UInt"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "d32b81b04daa65bf0aad8ca7b560bf2a24832ca7c6b87bfba96258de6934fcef"
+        },
+        {
+          "calls": [
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsNaN",
+            "NumericValueClassIsZero",
+            "NumericValueClassIsZero",
+            "TileCompareBoolean",
+            "TileFloatingOrderKey",
+            "TileFloatingOrderKey",
+            "TileNumericValueClass",
+            "TileNumericValueClass",
+            "UInt",
+            "UInt"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/comparison.asl",
+          "sha256": "7783b6f5b574b61ca517d2411d4c6f90bea4d22b43d3f46831282e3cf3c83017"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileFloatingCompare"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "ReferenceTileFloatingModulo",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "0876a410d33b469fef0b231a60a1c6b85cd2d287740c2306f31523f767213c06"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "ReferenceTileFloatingModulo",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "2f1ff416aafb8e306bc427c619b0fba3ff480579fe316a915b15b6674f0e74e7"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "9a7951165e81e75c3d76cec670cdfa8cf4d35815cb7cb0a6f78a968c6f3a22f0"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileFloatingModulo"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "ReferenceTileFloatingModulo",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "402ecb8daf0a4b56818ada9f3653df1cc9386983c7e6b169cae15f696aa5413b"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "ReferenceTileFloatingModulo",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "32363e54ca064ff80bdbe76229b81807b8ae31288ed2d71f04f249d0bb970cd2"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "4f8e83058daa3e5fb176a2c77b5953d5bfb9febb7e8d0777bc1399ff3f710018"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileFloatingModuloFlags"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "HardwareNumericCanonicalNaNResult",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/fused-multiply-add.asl",
+          "sha256": "cec93f403da11eefc03e6dcff1e9a7eafe1ff915d6f8e695800c3f4bdc09c5aa"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "HardwareNumericCanonicalNaNResult",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "b3f6cd0f490c8ef5ba7c7174d159b8c32a7fe3c4198e138d67fb363d8b27e0d2"
+        },
+        {
+          "calls": [
+            "HardwareNumericCanonicalNaNResult",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/fused-multiply-add.asl",
+          "sha256": "d7fbbbd7e1725e8625cd1d043985736df41679fc55184884757104e2defc23c3"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileFusedInvalidResult"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "DefaultNumericExecutionControl",
+            "ScalarFPFusedProfile",
+            "TileDataTypeToEncoding"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/fused-multiply-add.asl",
+          "sha256": "1b166cb24e25154270f21e36837e7ba1a2d893dddc9c9adcd2b53642b4ba6e9a"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "DefaultNumericExecutionControl",
+            "ScalarFPFusedProfile",
+            "TileDataTypeToEncoding"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "c26096acc90e31cd58ccf6b3de752a090bfe9fd2e71ea0e392ceda97d25ff91e"
+        },
+        {
+          "calls": [
+            "DefaultNumericExecutionControl",
+            "ScalarFPFusedProfile",
+            "TileDataTypeToEncoding"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/fused-multiply-add.asl",
+          "sha256": "ab06523dfac4ac154934abe090f0f3db4ecd3450d637cfaa8089d6dc19d2c472"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileFusedMultiplyAdd"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "HardwareNumericMixedExpdifDiscriminator",
+            "TileProfileBinaryWithFlags",
+            "TileProfileUnary",
+            "TileSFUUnarySpecialValue",
+            "let",
+            "let",
+            "let",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/expansion.asl",
+          "sha256": "f7c9accf5306b953688178dd80966ebc36ede316cc28b9a43e7705a6c23fd850"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "HardwareNumericMixedExpdifDiscriminator",
+            "TileProfileBinaryWithFlags",
+            "TileProfileUnary",
+            "TileSFUUnarySpecialValue",
+            "let",
+            "let",
+            "let",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "c04c92cc8d455fd4f179b2e426a924c306a44739a895b6cde036d061d978ea29"
+        },
+        {
+          "calls": [
+            "TileProfileBinaryWithFlags",
+            "TileProfileUnary",
+            "TileSFUUnarySpecialValue",
+            "let",
+            "let",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/expansion.asl",
+          "sha256": "724417d41a1a8b2be431cecb7923d118f6d9b911f4d54d789f1421f3125a6361"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileMixedExpdifFP32"
+    },
+    {
+      "after": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/comparison.asl",
+          "sha256": "824197a542e5d8af0a228feafa31c2a30c57bd9a1d2958a64248cc9d3761e933"
+        }
+      ],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "68ae79d69220407fe784ed8e3473abf6711475f37c14f4c3b4826541deefdaa0"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/comparison.asl",
+          "sha256": "094e2247fa94b26c7e3c463e2558f87fa15930a1937acc8b3a74fae05e85768b"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfilePredicateNullGPRPadding"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileReductionInitialValue"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/reduction.asl",
+          "sha256": "d6c3424eeb9361ba1f434603a583afa8d16670fc551f47310f113b70e59d7f25"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "TileReductionInitialValue"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "ab97305f0863bf1921aaa50143e0bd59f270253da4cb3143838edeb88d27e6f0"
+        },
+        {
+          "calls": [
+            "TileReductionInitialValue"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/reduction.asl",
+          "sha256": "e9c75605a5d7224bb76465b27a1475ea265ad556598c88ea3a042b73a8961720"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileReductionInitial"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "ReferenceTileUnaryFinite",
+            "TileFixedUnaryValue",
+            "TileUnaryUsesClosedElementwiseContract",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/unary.asl",
+          "sha256": "edb20d4b0aaa61c9ba0585d3a9d384389c4410ac5ef9a2bc29c8638afe2f2a3e"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "ReferenceTileUnaryFinite",
+            "TileFixedUnaryValue",
+            "TileUnaryUsesClosedElementwiseContract",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "ddcb93a28e51320b444147855fa4d7c81bc780a5b6f447c2b99b7c333635f9e8"
+        },
+        {
+          "calls": [
+            "TileFixedUnaryValue",
+            "TileUnaryUsesClosedElementwiseContract",
+            "TileUnaryValue",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/unary.asl",
+          "sha256": "6bd843e02f5e89772cb400ba48baab9f19f72626656631e83a76b52c9865adf4"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileProfileUnary"
+    },
+    {
+      "after": [],
+      "before": [
+        {
+          "calls": [
+            "DivideWordUnsigned"
+          ],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "a894e0d1d7d05f76a87accb4c879f0a2831af04a9d7a5b787192ae89034d0dd0"
+        },
+        {
+          "calls": [
+            "DivideWordUnsigned"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "938709413ec444a714754cdf7e74316fa4f7d0220cb8f15f021c23413a99dfa6"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileReciprocal"
+    },
+    {
+      "after": [],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "b1559327013fa08c559c20c392dac574de885d39c2b8121f68940be212beb050"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "eddd693f435ae638748b487de43a2be886607f2ed490f0aaf02c282e30798107"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileReciprocalSquareRoot"
     },
     {
       "after": [],
@@ -17456,6 +17917,25 @@
       "path": "asl/tile/model/shape/rows-columns.asl"
     },
     {
+      "after": [],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/arch/profile/reference-profile.asl",
+          "sha256": "a9904e5f27f5403d77b97304309e2058708665c27923c51add75c890cffdf751"
+        },
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/execution/elementwise.asl",
+          "sha256": "d88a593122c9b99c78d234073c5a9574dccd5ac126c3a5c83a08069001d4f5b2"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileSquareRoot"
+    },
+    {
       "after": [
         {
           "calls": [
@@ -17495,6 +17975,27 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TileStorageIndex",
       "path": "asl/tile/model/definedness/elements.asl"
+    },
+    {
+      "after": [],
+      "before": [
+        {
+          "calls": [
+            "SInt",
+            "SInt",
+            "TileExponential",
+            "TileLogarithm",
+            "TileReciprocal",
+            "TileReciprocalSquareRoot",
+            "TileSquareRoot"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/unary.asl",
+          "sha256": "6e34c78f6877c74a370bdef69b0ea143e3a15591963afcb50525960f145405af"
+        }
+      ],
+      "classification": "reference/target profile concept removal: selected implementation folded into its owning ASL unit (ADR-GOV-0012, Issue #282)",
+      "name": "TileUnaryValue"
     },
     {
       "after_layouts": [],
@@ -48939,20 +49440,6 @@
             "sha256": "bb561ead8b320faf4da35397108208b86ab1be85d434405580f5f85e6c692a8c"
           }
         ],
-        "TileExponential": [
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "44123bb84aa7203192d93bbea4475ddf4744bb75e5c18681f2757a583b9bddff"
-          },
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "c5e757b3d0315803ca8247df2dfec7dcf158179c8addb7b5606fd53b137299e9"
-          }
-        ],
         "TileFillPadDataTypeSupported": [
           {
             "calls": [
@@ -49438,20 +49925,6 @@
             ],
             "path": "asl/tile/model/definedness/elements.asl",
             "sha256": "fab918a7278cdee617df2df6cf129fb9f0371b81394c7ab96a0140e16b0bc444"
-          }
-        ],
-        "TileLogarithm": [
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "742e6c3b6114188971672cf02dd4e9a596f5147efbd65bc8b4a876d993253dde"
-          },
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "e4ad069eb0a529728ba4905f7155f4933c9d2eff331b611292356a395f22606e"
           }
         ],
         "TileLogicalElementCapacity": [
@@ -51566,14 +52039,8 @@
               "TileDataTypeIsFloating"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/e8m0-conversion.asl",
-            "sha256": "273be64cd712d7766b021f0b8d9fb80cd8775865ec234ffa3e06b1c0bb095faa"
-          },
-          {
-            "calls": [],
-            "layouts": [],
             "path": "asl/tile/model/numeric/formats.asl",
-            "sha256": "3d8d8690f5ce05a8dc9a7db78e9fd233529240e663753cbad04b636bd6690c34"
+            "sha256": "89e0c5286f49142053be00e6f126e85abde9583444c4f0aed82dd00d7c3e4ae7"
           }
         ],
         "TileProfileFloatingCompare": [
@@ -51592,26 +52059,8 @@
               "UInt"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "d32b81b04daa65bf0aad8ca7b560bf2a24832ca7c6b87bfba96258de6934fcef"
-          },
-          {
-            "calls": [
-              "NumericValueClassIsNaN",
-              "NumericValueClassIsNaN",
-              "NumericValueClassIsZero",
-              "NumericValueClassIsZero",
-              "TileCompareBoolean",
-              "TileFloatingOrderKey",
-              "TileFloatingOrderKey",
-              "TileNumericValueClass",
-              "TileNumericValueClass",
-              "UInt",
-              "UInt"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/comparison.asl",
-            "sha256": "7783b6f5b574b61ca517d2411d4c6f90bea4d22b43d3f46831282e3cf3c83017"
+            "sha256": "5ca78252e3554fdb75322dab8c394d55f0b46e4a5dcc1179f843d5e41628cf36"
           }
         ],
         "TileProfileFloatingModulo": [
@@ -51621,14 +52070,8 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "2f1ff416aafb8e306bc427c619b0fba3ff480579fe316a915b15b6674f0e74e7"
-          },
-          {
-            "calls": [],
-            "layouts": [],
             "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "9a7951165e81e75c3d76cec670cdfa8cf4d35815cb7cb0a6f78a968c6f3a22f0"
+            "sha256": "0876a410d33b469fef0b231a60a1c6b85cd2d287740c2306f31523f767213c06"
           }
         ],
         "TileProfileFloatingModuloFlags": [
@@ -51638,14 +52081,8 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "32363e54ca064ff80bdbe76229b81807b8ae31288ed2d71f04f249d0bb970cd2"
-          },
-          {
-            "calls": [],
-            "layouts": [],
             "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "4f8e83058daa3e5fb176a2c77b5953d5bfb9febb7e8d0777bc1399ff3f710018"
+            "sha256": "402ecb8daf0a4b56818ada9f3653df1cc9386983c7e6b169cae15f696aa5413b"
           }
         ],
         "TileProfileFusedInvalidResult": [
@@ -51655,17 +52092,8 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "b3f6cd0f490c8ef5ba7c7174d159b8c32a7fe3c4198e138d67fb363d8b27e0d2"
-          },
-          {
-            "calls": [
-              "HardwareNumericCanonicalNaNResult",
-              "let"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/fused-multiply-add.asl",
-            "sha256": "d7fbbbd7e1725e8625cd1d043985736df41679fc55184884757104e2defc23c3"
+            "sha256": "cec93f403da11eefc03e6dcff1e9a7eafe1ff915d6f8e695800c3f4bdc09c5aa"
           }
         ],
         "TileProfileFusedMultiplyAdd": [
@@ -51676,18 +52104,8 @@
               "TileDataTypeToEncoding"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "c26096acc90e31cd58ccf6b3de752a090bfe9fd2e71ea0e392ceda97d25ff91e"
-          },
-          {
-            "calls": [
-              "DefaultNumericExecutionControl",
-              "ScalarFPFusedProfile",
-              "TileDataTypeToEncoding"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/fused-multiply-add.asl",
-            "sha256": "ab06523dfac4ac154934abe090f0f3db4ecd3450d637cfaa8089d6dc19d2c472"
+            "sha256": "1b166cb24e25154270f21e36837e7ba1a2d893dddc9c9adcd2b53642b4ba6e9a"
           }
         ],
         "TileProfileInternalAccumulatorPrefetchHint": [
@@ -51719,35 +52137,16 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "c04c92cc8d455fd4f179b2e426a924c306a44739a895b6cde036d061d978ea29"
-          },
-          {
-            "calls": [
-              "TileProfileBinaryWithFlags",
-              "TileProfileUnary",
-              "TileSFUUnarySpecialValue",
-              "let",
-              "let",
-              "let"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
-            "sha256": "724417d41a1a8b2be431cecb7923d118f6d9b911f4d54d789f1421f3125a6361"
+            "sha256": "f7c9accf5306b953688178dd80966ebc36ede316cc28b9a43e7705a6c23fd850"
           }
         ],
         "TileProfilePredicateNullGPRPadding": [
           {
             "calls": [],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "68ae79d69220407fe784ed8e3473abf6711475f37c14f4c3b4826541deefdaa0"
-          },
-          {
-            "calls": [],
-            "layouts": [],
             "path": "asl/tile/model/execution/comparison.asl",
-            "sha256": "094e2247fa94b26c7e3c463e2558f87fa15930a1937acc8b3a74fae05e85768b"
+            "sha256": "824197a542e5d8af0a228feafa31c2a30c57bd9a1d2958a64248cc9d3761e933"
           }
         ],
         "TileProfileReductionInitial": [
@@ -51756,16 +52155,8 @@
               "TileReductionInitialValue"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "ab97305f0863bf1921aaa50143e0bd59f270253da4cb3143838edeb88d27e6f0"
-          },
-          {
-            "calls": [
-              "TileReductionInitialValue"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/reduction.asl",
-            "sha256": "e9c75605a5d7224bb76465b27a1475ea265ad556598c88ea3a042b73a8961720"
+            "sha256": "d6c3424eeb9361ba1f434603a583afa8d16670fc551f47310f113b70e59d7f25"
           }
         ],
         "TileProfileUnary": [
@@ -51777,19 +52168,8 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "ddcb93a28e51320b444147855fa4d7c81bc780a5b6f447c2b99b7c333635f9e8"
-          },
-          {
-            "calls": [
-              "TileFixedUnaryValue",
-              "TileUnaryUsesClosedElementwiseContract",
-              "TileUnaryValue",
-              "let"
-            ],
-            "layouts": [],
             "path": "asl/tile/model/execution/unary.asl",
-            "sha256": "6bd843e02f5e89772cb400ba48baab9f19f72626656631e83a76b52c9865adf4"
+            "sha256": "edb20d4b0aaa61c9ba0585d3a9d384389c4410ac5ef9a2bc29c8638afe2f2a3e"
           }
         ],
         "TileRawElementValue": [
@@ -51849,38 +52229,6 @@
             "layouts": [],
             "path": "asl/tile/model/legality/layout-rearrangement.asl",
             "sha256": "107570a45ba034b1c2ee1cb10b6eec2610d951200e49552cb4e90019c18a6012"
-          }
-        ],
-        "TileReciprocal": [
-          {
-            "calls": [
-              "DivideWordUnsigned"
-            ],
-            "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "a894e0d1d7d05f76a87accb4c879f0a2831af04a9d7a5b787192ae89034d0dd0"
-          },
-          {
-            "calls": [
-              "DivideWordUnsigned"
-            ],
-            "layouts": [],
-            "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "938709413ec444a714754cdf7e74316fa4f7d0220cb8f15f021c23413a99dfa6"
-          }
-        ],
-        "TileReciprocalSquareRoot": [
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "b1559327013fa08c559c20c392dac574de885d39c2b8121f68940be212beb050"
-          },
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "eddd693f435ae638748b487de43a2be886607f2ed490f0aaf02c282e30798107"
           }
         ],
         "TileReductionAndExpansionDescriptorLegal": [
@@ -52139,20 +52487,6 @@
             "sha256": "7d5c9aad7a99da42dd50f6ef90770d3c209c79f3085805a7a38dd3b89ca33816"
           }
         ],
-        "TileSquareRoot": [
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/arch/profile/reference-profile.asl",
-            "sha256": "a9904e5f27f5403d77b97304309e2058708665c27923c51add75c890cffdf751"
-          },
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "d88a593122c9b99c78d234073c5a9574dccd5ac126c3a5c83a08069001d4f5b2"
-          }
-        ],
         "TileStorageBytes": [
           {
             "calls": [
@@ -52386,22 +52720,6 @@
             "layouts": [],
             "path": "asl/tile/model/execution/unary.asl",
             "sha256": "39152f711c1cd493b0e76c815d9909568bd4b34fe9bd34dea61e1d3763d49918"
-          }
-        ],
-        "TileUnaryValue": [
-          {
-            "calls": [
-              "SInt",
-              "SInt",
-              "TileExponential",
-              "TileLogarithm",
-              "TileReciprocal",
-              "TileReciprocalSquareRoot",
-              "TileSquareRoot"
-            ],
-            "layouts": [],
-            "path": "asl/tile/model/execution/unary.asl",
-            "sha256": "6e34c78f6877c74a370bdef69b0ea143e3a15591963afcb50525960f145405af"
           }
         ],
         "TileUnsignedElementValue": [
@@ -66849,7 +67167,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -66871,7 +67188,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -66973,8 +67289,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -66983,7 +67297,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -66996,7 +67309,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -67090,7 +67402,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -67108,7 +67419,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -67120,11 +67430,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -67132,7 +67439,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -73213,7 +73519,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -73240,7 +73545,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -73346,8 +73650,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -73363,7 +73665,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -73375,7 +73676,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -73467,7 +73767,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -73491,7 +73790,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -73512,8 +73810,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -73524,14 +73820,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -73910,7 +74204,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -73937,7 +74230,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -74043,8 +74335,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -74060,7 +74350,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -74072,7 +74361,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -74168,7 +74456,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74192,7 +74479,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -74213,8 +74499,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -74225,14 +74509,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -74615,7 +74897,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74642,7 +74923,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -74748,8 +75028,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -74765,7 +75043,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -74777,7 +75054,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -74873,7 +75149,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74897,7 +75172,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -74918,8 +75192,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -74930,14 +75202,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -75320,7 +75590,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75347,7 +75616,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -75453,8 +75721,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -75470,7 +75736,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -75482,7 +75747,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -75578,7 +75842,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75602,7 +75865,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -75623,8 +75885,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -75635,14 +75895,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -76025,7 +76283,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76052,7 +76309,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -76158,8 +76414,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -76175,7 +76429,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -76187,7 +76440,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -76283,7 +76535,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76307,7 +76558,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -76328,8 +76578,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -76340,14 +76588,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -76730,7 +76976,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76757,7 +77002,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -76863,8 +77107,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -76880,7 +77122,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -76892,7 +77133,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -76988,7 +77228,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77012,7 +77251,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -77033,8 +77271,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -77045,14 +77281,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -77435,7 +77669,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77462,7 +77695,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -77568,8 +77800,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -77585,7 +77815,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -77597,7 +77826,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -77693,7 +77921,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77717,7 +77944,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -77738,8 +77964,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -77750,14 +77974,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -78140,7 +78362,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78167,7 +78388,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -78273,8 +78493,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -78290,7 +78508,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -78302,7 +78519,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -78398,7 +78614,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78422,7 +78637,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -78443,8 +78657,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -78455,14 +78667,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -83344,7 +83554,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -83366,7 +83575,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -83468,8 +83676,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -83478,7 +83684,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -83491,7 +83696,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -83585,7 +83789,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -83603,7 +83806,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -83615,11 +83817,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -83627,7 +83826,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -90738,7 +90936,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -90760,7 +90957,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -90862,8 +91058,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -90872,7 +91066,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -90885,7 +91078,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -90979,7 +91171,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -90997,7 +91188,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -91009,11 +91199,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -91021,7 +91208,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -99521,7 +99707,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -99543,7 +99728,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -99645,8 +99829,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -99655,7 +99837,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -99668,7 +99849,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -99762,7 +99942,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -99780,7 +99959,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -99792,11 +99970,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -99804,7 +99979,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -100178,7 +100352,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -100200,7 +100373,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -100302,8 +100474,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -100312,7 +100482,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -100325,7 +100494,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -100419,7 +100587,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -100437,7 +100604,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -100449,11 +100615,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -100461,7 +100624,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -103871,7 +104033,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -103893,7 +104054,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -103995,8 +104155,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -104005,7 +104163,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -104018,7 +104175,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -104112,7 +104268,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -104130,7 +104285,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -104142,11 +104296,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -104154,7 +104305,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -104528,7 +104678,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -104550,7 +104699,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -104652,8 +104800,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -104662,7 +104808,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -104675,7 +104820,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -104769,7 +104913,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -104787,7 +104930,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -104799,11 +104941,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -104811,7 +104950,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -107766,7 +107904,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -107793,7 +107930,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -107899,8 +108035,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -107916,7 +108050,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -107928,7 +108061,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -108020,7 +108152,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -108044,7 +108175,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -108065,8 +108195,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -108077,14 +108205,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -108463,7 +108589,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -108490,7 +108615,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -108596,8 +108720,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -108613,7 +108735,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -108625,7 +108746,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -108721,7 +108841,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -108745,7 +108864,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -108766,8 +108884,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -108778,14 +108894,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -109168,7 +109282,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109195,7 +109308,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -109301,8 +109413,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -109318,7 +109428,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -109330,7 +109439,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -109426,7 +109534,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109450,7 +109557,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -109471,8 +109577,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -109483,14 +109587,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -109873,7 +109975,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109900,7 +110001,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -110006,8 +110106,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -110023,7 +110121,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -110035,7 +110132,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -110131,7 +110227,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110155,7 +110250,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -110176,8 +110270,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -110188,14 +110280,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -110578,7 +110668,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110605,7 +110694,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -110711,8 +110799,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -110728,7 +110814,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -110740,7 +110825,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -110836,7 +110920,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110860,7 +110943,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -110881,8 +110963,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -110893,14 +110973,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -111283,7 +111361,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111310,7 +111387,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -111416,8 +111492,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -111433,7 +111507,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -111445,7 +111518,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -111541,7 +111613,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111565,7 +111636,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -111586,8 +111656,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -111598,14 +111666,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -111988,7 +112054,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112015,7 +112080,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -112121,8 +112185,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -112138,7 +112200,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -112150,7 +112211,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -112246,7 +112306,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112270,7 +112329,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -112291,8 +112349,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -112303,14 +112359,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -112693,7 +112747,6 @@
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112720,7 +112773,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -112826,8 +112878,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -112843,7 +112893,6 @@
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -112855,7 +112904,6 @@
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -112951,7 +112999,6 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112975,7 +113022,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -112996,8 +113042,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
@@ -113008,14 +113052,12 @@
             "TileSignedModulo",
             "TileSourceContentsDefined",
             "TileSourceEncodingsValid",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
             "TileUnaryDataTypeSupported",
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -115983,7 +116025,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -116005,7 +116046,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -116107,8 +116147,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -116117,7 +116155,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -116130,7 +116167,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -116224,7 +116260,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -116242,7 +116277,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -116254,11 +116288,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -116266,7 +116297,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -121693,7 +121723,6 @@
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
             "TileExpansionOperationIsExponentialDifference",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingOrderKey",
@@ -121715,7 +121744,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileMXInputTypeNeedsScale",
@@ -121817,8 +121845,6 @@
             "TileProfileUnary",
             "TileRawElementValue",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -121827,7 +121853,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSquareRoot",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -121840,7 +121865,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -121934,7 +121958,6 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileElementwiseSourceEncodingsValidAs",
-            "TileExponential",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingUnaryCarrier",
@@ -121952,7 +121975,6 @@
             "TileLayoutIsCube",
             "TileLayoutShapeLegal",
             "TileLinearIndex",
-            "TileLogarithm",
             "TileLogicalElementCapacity",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -121964,11 +121986,8 @@
             "TilePackedLinearIndex",
             "TileProfileUnary",
             "TileReadLogicalElement",
-            "TileReciprocal",
-            "TileReciprocalSquareRoot",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
-            "TileSquareRoot",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -121976,7 +121995,6 @@
             "TileUnaryUsesClosedElementwiseContract",
             "TileUnaryUsesCompleteElementwiseSchema",
             "TileUnaryUsesSFUElementwiseContract",
-            "TileUnaryValue",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
             "TileVecArithmeticDataTypeSupported",
@@ -206055,6 +206073,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 897,
+  "source_path_count": 907,
   "tile_location_normative_refs": []
 }

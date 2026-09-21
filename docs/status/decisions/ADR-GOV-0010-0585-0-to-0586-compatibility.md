@@ -4,16 +4,26 @@
   "title": "PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity",
   "title_zh": "PTO ISA 0.58.5.0 至 0.58.6 的兼容性与发布身份",
   "status": "accepted",
-  "authors": ["Codex"],
-  "approvers": ["zhoubot"],
+  "authors": [
+    "Codex"
+  ],
+  "approvers": [
+    "zhoubot"
+  ],
   "created": "2026-09-05",
   "accepted": "2026-09-05",
   "rejected": null,
   "superseded": null,
   "baseline": "ae04395a024046e2b77395ffc2e732804181c22f",
-  "target_releases": ["0.58.6.0"],
-  "affected_ndf": ["PTO-ARCH-ENCODING-OWNERSHIP-001"],
-  "affected_units": ["PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP"],
+  "target_releases": [
+    "0.58.6.0"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-ENCODING-OWNERSHIP-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP"
+  ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],

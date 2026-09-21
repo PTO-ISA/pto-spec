@@ -25,7 +25,7 @@
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
     "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
-    "PTO-ARCH-PROFILE-APPLICABILITY"
+    "PTO-SCALAR-MODEL-SYS-REGISTERS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -35,7 +35,8 @@
   "legacy_ids": [
     "PD-04",
     "ADR-0049"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0010: Hardware numeric subnormal policy

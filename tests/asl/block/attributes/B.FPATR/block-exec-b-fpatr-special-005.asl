@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-SPECIAL-005","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR special values produce deterministic integer and floating results","pass_condition":"NaN and infinities map to the assigned integer endpoints or canonical floating NaN with exact sticky flags","related_sources":["asl/arch/profile/reference-quantization.asl","asl/arch/state/numeric-status.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-SPECIAL-005","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR special values produce deterministic integer and floating results","pass_condition":"NaN and infinities map to the assigned integer endpoints or canonical floating NaN with exact sticky flags","related_sources":["asl/scalar/model/fsu/reference-quantization.asl","asl/arch/state/numeric-status.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

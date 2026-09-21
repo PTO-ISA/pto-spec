@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/minmax.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MINMAX","surface":"tile","classification":["model","execution","minmax"],"depends_on":["PTO-ARCH-FEATURES-MINMAX-PROFILE","PTO-TILE-MODEL-STATE-TYPES"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MINMAX","surface":"tile","classification":["model","execution","minmax"],"depends_on":["PTO-ARCH-FEATURES-MINMAX","PTO-TILE-MODEL-STATE-TYPES"]}
 pure func TileFloatingMinMaxValue(
     operation: TileBinaryOperation,
     data_type: TileDataType,

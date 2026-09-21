@@ -57,7 +57,8 @@
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/302",
   "release_impact": "required",
   "interface_change": true,
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": []
 }
 ---
 # ADR-MEM-0010: PTO relaxed consistency with preserved Store-to-Store order

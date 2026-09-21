@@ -44,7 +44,7 @@ begin
     end;
 end;
 
-impdef func TileProfileReductionInitial(
+func TileProfileReductionInitial(
     operation: TileReductionOperation,
     data_type: TileDataType,
     first: Word) => Word
@@ -83,11 +83,10 @@ begin
     return (result, selected, flags);
 end;
 
-impdef func TileProfileReductionStep(
+func TileProfileReductionStep(
     operation: TileReductionOperation,
     data_type: TileDataType,
-    accumulator: Word,
-    value: Word) => (Word, boolean)
+    accumulator: Word, value: Word) => (Word, boolean)
 begin
     let (result, selected, -) = TileReductionStepWithFlags(
         operation,

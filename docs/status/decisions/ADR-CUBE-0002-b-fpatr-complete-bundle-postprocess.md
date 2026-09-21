@@ -25,8 +25,8 @@
     "PTO-MATRIX-QUANT-BITEXACT-001"
   ],
   "affected_units": [
-    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
-    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION",
     "PTO-BLOCK-B-FPATR"
   ],
   "resolves": [],
@@ -36,7 +36,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0064"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0002: B.FPATR Complete-Bundle Matrix PostProcess

@@ -7,7 +7,7 @@
 
 `pto-spec` is the executable ASL1 specification of the PTO Instruction Set
 Architecture. It defines a 64-bit scalar ISA, bundle and command forms, direct
-Tile operations, architectural state, legality, faults, completion, profiles,
+Tile operations, architectural state, legality, faults, completion,
 and memory ordering in one reviewable model.
 
 The working tree is a normative draft and may contain architecture changes for
@@ -29,7 +29,7 @@ it does not establish publication or release readiness.
 | Scalar instruction forms | 466 |
 | Active bundle and command forms | 96 |
 | Direct Tile operations | 117 |
-| Architecture and instruction ASL units | 897 |
+| Architecture and instruction ASL units | 892 |
 
 <!-- PTO-INVENTORY-END -->
 
@@ -57,7 +57,7 @@ PTO ISA specifies:
   witnesses, and architectural effects;
 - explicit legality and fault ordering before effects, including aliasing,
   rollback, restart, and instruction-granular memory completion;
-- named profiles for behavior that is not portable across implementations.
+- explicit compatibility declarations for behavior that is not portable across implementations.
 
 Hardware pipelines, physical Tile allocation, backend intrinsics, latency,
 throughput, and target scheduling are outside the portable PTO ISA contract.
@@ -66,7 +66,7 @@ throughput, and target scheduling are outside the portable PTO ISA contract.
 
 | Family | What it defines | Reference |
 | --- | --- | --- |
-| Architecture | Public types, state, profiles, memory model, traps, and classification | [`docs/arch/`](docs/arch/) |
+| Architecture | Public types, state, memory model, traps, and classification | [`docs/arch/`](docs/arch/) |
 | Block | `BSTART`, `BSTOP`, bundle configuration, bindings, and block execution | [`docs/block/`](docs/block/) |
 | Scalar | AGU, ALU, AMO, BRU, FSU, SYS, compressed, half-long, and long forms | [`docs/scalar/`](docs/scalar/) |
 | Tile | Direct Tile operations and their execution contracts | [`docs/tile/`](docs/tile/) |

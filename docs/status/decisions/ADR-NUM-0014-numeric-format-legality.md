@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-02",
     "ADR-0087"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0014: Numeric format legality

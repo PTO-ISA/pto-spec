@@ -56,7 +56,7 @@ For a release question, compare every result with the same immutable commit. A p
 
 - [Execution context](../programming-model/execution-context.md) inventories the principal architectural state and temporary-queue operations.
 - [Memory ordering](../memory-model/ordering.md) defines the event relations used to accept or reject a candidate PTO-RC execution with preserved Store-to-Store order.
-- [Reference profile](../profile/reference-profile.md) supplies deterministic profile implementations for profile-defined hooks.
+- [Trap context](../state/trap-context.md) and [scalar floating point](../../scalar/model/fsu/scalar-fp.md) supply the deterministic hook implementations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

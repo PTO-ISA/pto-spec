@@ -1,5 +1,5 @@
 // PTO-TEST: {"id":"PTO-AVS-ARCH-NUMERIC-FORMATS-DOMAIN-001","source":"asl/arch/data-types/numeric-formats.asl","requirements":["PTO-NUMERIC-FINITE-DECOMPOSITION-001","PTO-NUMERIC-FORMAT-DESCRIPTOR-001"],"kind":"boundary","summary":"The numeric-format API covers every floating and scale type and excludes integer types.","pass_condition":"All fifteen descriptors are available, all ten integer descriptors are unavailable, and capability flags agree with the numeric profile.","related_sources":["asl/arch/data-types/format-descriptor.asl","asl/arch/features/mx-formats.asl"]}
-// PTO-REQ-PROFILE-001, PTO-REQ-HARDWARE-NUMERIC-001:
+// PTO-REQ-RESET-001, PTO-REQ-HARDWARE-NUMERIC-001:
 // common exact numeric-format API evidence.
 
 func AssertNumericFormatCapabilityConsistency(data_type: TileDataType)

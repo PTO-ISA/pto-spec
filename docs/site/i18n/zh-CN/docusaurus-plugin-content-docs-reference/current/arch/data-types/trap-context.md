@@ -53,7 +53,7 @@ This page is a generated reference view of the normative ASL unit.
 ## 相关归属单元
 
 - [陷阱上下文状态](../state/trap-context.md)
-- [陷阱恢复配置](../profile/trap-context-recovery.md)
+- [陷阱恢复配置](../state/trap-context.md)
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

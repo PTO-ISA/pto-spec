@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/dispatch/decode.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-DECODE","surface":"scalar","classification":["model","dispatch","decode"],"depends_on":["generated:decoders","PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-DECODE","surface":"scalar","classification":["model","dispatch","decode"],"depends_on":["generated:decoders","PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING"]}
 // PTO-REQ-SCALAR-DISPATCH-001, PTO-REQ-SCALAR-CONSTRAINT-001: decoded scalar
 // execution with catalog-generated form and family legality.
 //

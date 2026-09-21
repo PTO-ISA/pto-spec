@@ -30,16 +30,21 @@ begin
     end;
 end;
 
-readonly impdef func TranslateInstructionAddress(address: Word) => Word
+readonly func TranslateInstructionAddress(
+    address: Word) => Word
 begin
     return address;
 end;
 
-readonly impdef func InstructionAccessPermitted(
+readonly func InstructionAccessPermitted(
     physical_address: Word,
     size_bytes: integer {2,4,6,8}) => boolean
 begin
-    return FALSE;
+    let end_address = UInt(physical_address) + size_bytes;
+    if end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
+    return TRUE;
 end;
 
 readonly func ProbeInstructionAccess(

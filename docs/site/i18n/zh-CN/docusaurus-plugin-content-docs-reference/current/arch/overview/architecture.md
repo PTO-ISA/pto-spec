@@ -56,7 +56,7 @@ Local 与 Shared Tile 分配使用彼此独立的容量池。单个 `B.IOT` Loca
 
 - [执行上下文](../programming-model/execution-context.md)列出主要架构状态和临时队列操作。
 - [内存排序](../memory-model/ordering.md)定义用于接受或拒绝 PTO-RC 候选执行的事件关系。
-- [参考配置档](../profile/reference-profile.md)为配置档定义的钩子提供确定性实现。
+- [陷阱上下文](../state/trap-context.md)与[标量浮点](../../scalar/model/fsu/scalar-fp.md)提供确定性的钩子实现。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

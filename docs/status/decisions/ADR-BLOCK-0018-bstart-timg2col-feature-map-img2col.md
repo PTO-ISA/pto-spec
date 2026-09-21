@@ -50,7 +50,8 @@
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/99",
   "release_impact": "required",
   "legacy_ids": [],
-  "title_zh": "BSTART.TIMG2COL 特征图 IMG2COL 与旧 Local-Tile 退役"
+  "title_zh": "BSTART.TIMG2COL 特征图 IMG2COL 与旧 Local-Tile 退役",
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0018: BSTART.TIMG2COL feature-map IMG2COL and legacy Local-Tile retirement

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-FLAGS-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"state-transition","summary":"TCVT publishes accumulated numeric flags with the converted destination","pass_condition":"the commit boundary ORs conversion flags into sticky status and publishes the prepared destination payload","related_sources":["asl/tile/model/numeric/formats.asl","asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-FLAGS-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-TCVT-CONTRACT-001"],"kind":"state-transition","summary":"TCVT publishes accumulated numeric flags with the converted destination","pass_condition":"the commit boundary ORs conversion flags into sticky status and publishes the prepared destination payload","related_sources":["asl/tile/model/numeric/formats.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     ResetProfileState();

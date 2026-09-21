@@ -57,7 +57,7 @@ T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修
 
 - [系统寄存器寻址](../system-registers/addressing.md)是执行上下文单元声明的依赖项。
 - [内存排序](../memory-model/ordering.md)解释这里保存的内存事件。
-- [参考配置档](../profile/reference-profile.md)为 PTO v0 配置档提供具体的访问与陷阱上下文行为。
+- [陷阱上下文](../state/trap-context.md)提供具体的访问与陷阱上下文行为。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
@@ -85,7 +85,7 @@ T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修
 // [[PTO-STATE-ARCH-TRAP-CONTEXT]].
 // NDF-END: PTO-REQ-STATE-001
 
-// Requirement references: PTO-REQ-PROFILE-001, PTO-REQ-MEMORY-RC-001.
+// Requirement references: PTO-REQ-RESET-001, PTO-REQ-MEMORY-RC-001.
 
 // A core owns four private scalar register files.  An encoded absolute GPR
 // selector is shared by the instruction, but each PE resolves that selector

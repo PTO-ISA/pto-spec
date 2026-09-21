@@ -277,7 +277,7 @@ architectural semantics.
 - `/search` — implementation-oriented search results and filters.
 - `/instructions/` — complete released instruction index with Scalar, Block,
   and Tile facets; surface subroutes retain the active facet.
-- `/architecture/` — architecture, state, memory, profile, and instruction
+- `/architecture/` — architecture, state, memory, and instruction
   classification entry points.
 - `/instructions/<surface>/<classification>/<mnemonic>/` — instruction
   workbench.

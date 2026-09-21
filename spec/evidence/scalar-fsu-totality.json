@@ -120,7 +120,7 @@
     "PTO-REQ-SCALAR-FP-001",
     "PTO-REQ-SCALAR-OPERAND-001",
     "PTO-REQ-SCALAR-EXECUTION-001",
-    "PTO-REQ-PROFILE-001"
+    "PTO-REQ-RESET-001"
   ],
   "schema_version": 1,
   "status": "closed",

@@ -32,7 +32,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0051"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0003: Predicate state namespace boundary (superseded)

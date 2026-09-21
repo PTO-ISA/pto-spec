@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-NARROW-SOURCES-003","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-COMMON-CONVERSION-PROFILE-001","PTO-FCVTZ-DECISION-BINDING-001","PTO-INST-SCALAR-FCVTZ"],"kind":"execution","summary":"FCVTZ accepts FP16 and E4M3 scalar sources","pass_condition":"raw FH-to-SB and FB-to-UB encodings round toward zero, publish normalized integers, accumulate NX, and advance","related_sources":["asl/arch/profile/reference-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-NARROW-SOURCES-003","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-COMMON-CONVERSION-001","PTO-FCVTZ-DECISION-BINDING-001","PTO-INST-SCALAR-FCVTZ"],"kind":"execution","summary":"FCVTZ accepts FP16 and E4M3 scalar sources","pass_condition":"raw FH-to-SB and FB-to-UB encodings round toward zero, publish normalized integers, accumulate NX, and advance","related_sources":["asl/tile/model/numeric/reference-conversion.asl"]}
 func main() => integer
 begin
     ResetProfileState();

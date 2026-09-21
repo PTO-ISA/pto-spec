@@ -38,7 +38,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0023"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0012: Uniform instruction-attempt status and fault isolation

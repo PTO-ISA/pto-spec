@@ -302,35 +302,28 @@
       "class": "public-conversion-round-mode",
       "source_ids": [
         "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
+        "cpu-conversion"
       ],
       "status": "accepted-explicit-translation"
     },
     {
       "class": "matrix-tf32-hf32-rounding-control",
       "source_ids": [
-        "public-target-profiles",
-        "a2a3-matrix",
-        "a5-matrix"
+        "public-portability-rules"
       ],
       "status": "operation-fixed-RNE-mapping-accepted"
     },
     {
       "class": "quantization-stochastic-control",
       "source_ids": [
-        "a2a3-quantization",
-        "a5-quantization"
+        "public-portability-rules"
       ],
       "status": "not-an-architectural-selector-in-pto-v0"
     },
     {
       "class": "backend-only-cast-round-part-controls",
       "source_ids": [
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
+        "cpu-conversion"
       ],
       "status": "non-normative-unless-profile-mapped"
     }
@@ -362,9 +355,7 @@
         "TileProfileMatrixScaledAccumulate"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition.",
@@ -385,9 +376,7 @@
         "ScalarFPBinaryProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when the exact operation result is encoded in the destination format.",
@@ -405,9 +394,7 @@
         "ScalarFPConvertProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format.",
@@ -429,9 +416,7 @@
         "ScalarFPToIntegerProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
       "rounding_rule": "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
@@ -452,9 +437,7 @@
         "ScalarFPFusedProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
@@ -473,9 +456,7 @@
         "ScalarIntegerToFPProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format; exactly representable integers are unchanged.",
@@ -495,9 +476,7 @@
         "ScalarFPUnaryProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-NUM-0018 still owns approximation bounds.",
@@ -538,9 +517,7 @@
         "TileProfileBinary"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating arithmetic rounds each operation result once using RNE; integer, bitwise, shift, comparison, minimum, and maximum results do not round.",
@@ -558,9 +535,7 @@
         "TileProfileConvert"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
       "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
@@ -593,9 +568,7 @@
         "TileProfileExpand"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating arithmetic and exponential-difference results round once using RNE at each destination element; broadcast, min, and max selection do not round.",
@@ -613,9 +586,7 @@
         "TileProfileMatrixAccumulate"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
@@ -645,9 +616,7 @@
         "TileProfileReductionStep"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Evaluate in increasing logical row-major order and round each floating sum or product step to the declared accumulator type using RNE; min, max, and arg selection do not round.",
@@ -677,9 +646,7 @@
         "TileSquareRoot"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-NUM-0018 retains approximation bounds.",
@@ -703,7 +670,7 @@
     ]
   },
   "tests": [
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:main",
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:main",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
     "scripts/generate-asl-decoders:emit_scalar_fsu_rounding_validation",
     "scripts/generate-asl-decoders:ValidateScalarFPRoundingHelpers",
@@ -719,24 +686,32 @@
       "sha256": "30d42b6246fc982f2bb092174a462a017769c5e31f73af2c94390f8e205a91a1"
     },
     {
-      "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
+      "path": "spec/catalog/numeric-contract-identities.json",
+      "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
-      "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
+      "sha256": "9eebaffe6147b5368664d7c1137a8d6470efe925a85d2ce6b779c0bb8aa2e41d"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
-      "sha256": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288"
+      "sha256": "caf8abe955be90b30655112166b5844e02e575cbbc9e447a2ce84c0284b56f96"
     },
     {
-      "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
+      "path": "asl/scalar/model/fsu/reference-quantization.asl",
+      "sha256": "e13894a4bb0969202171ee431bf3cd490b7011282547ebce15bbfad910d8b586"
+    },
+    {
+      "path": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl",
+      "sha256": "f4005e8d87791a0479196b656d98c339e7fa66b839a50aeb7d35b39108a8c6a8"
+    },
+    {
+      "path": "asl/scalar/model/fsu/scalar-fp.asl",
+      "sha256": "5015671b9435e0c2cf4185071937d8150ceec9d64172b926926c1cb9a7a039fa"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
@@ -756,11 +731,11 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "e1fbb14635d7037fdf8f9ad53d59610dff23faf39ecd57e2dc619c9a9399a647"
+      "sha256": "3ae5694456463c805871a6bcc7d6a3d08a9b5498495941c9dbed6eb784e33e9d"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "af92b1824af2047674748f967a2bc9695b5eaf7aaa35538d0e6fe5b6fa99837d"
+      "sha256": "68ce7c4ba391f84e581110ab55358004586a9d54e43b1a06eef1fe30455ec8c5"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
@@ -772,7 +747,7 @@
     },
     {
       "path": "asl/block/model/state/barg.asl",
-      "sha256": "58a8d5ad6d5583f7c55272fe864f4e6f3524fe684a4bf8203942e767b793eeda"
+      "sha256": "b4136ceee8d6874cb9a05497776dad35a5454e797b86c850050b5864f1bb902c"
     },
     {
       "path": "asl/block/model/state/binding-state.asl",
@@ -792,7 +767,7 @@
     },
     {
       "path": "asl/block/model/state/types.asl",
-      "sha256": "84b2e734d840aa7078489e16b171854a694f755c80f2953f28c9fc19ae0ba2d4"
+      "sha256": "8337e4c36b93eb57fb0e0f0634c2ce35287875351d168bd4e1839d89d9e16195"
     },
     {
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
@@ -800,7 +775,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "60ed5f3c9ef8adb6b516920b6502ce5c1cbef7b352ffa1e934fb9a40d23764a9"
+      "sha256": "0062606013956d17c45f18229e4306b1d6401cb0daab8ae403ef96d78f202c88"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -816,11 +791,11 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "8252a43ba3b4f248d701b2fb2761d159684f2652d0348d6c3e7fcbed9718b3b4"
+      "sha256": "f4523e01c260e1d8b236d7652abadb20076204e14f25d98c46e73b92e79fe1fe"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8"
+      "sha256": "6b13e2b67468e5eb8e7e956c2e7f073ef4965598c55d8365b0f7c8cda0e01fd6"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
@@ -828,15 +803,15 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4"
+      "sha256": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae"
+      "sha256": "ca759010d83de9bea47bf5bd3bdba496e079db4a1c516f07efdd06e4781d40ad"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
-      "sha256": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756"
+      "sha256": "b418c9b6e904c8b8136ea744be49685786df8a50d9fd7a9f41ffaeffceea448e"
     },
     {
       "path": "asl/block/model/dispatch/generation-schema.asl",
@@ -856,11 +831,11 @@
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "b1b28d2109be6e74f320649772708a8ecada19435767111a92517de486acdd47"
+      "sha256": "64553aa5a95ec920ed43e46b2e3e027db9eca767c811ae88a2e4a119b6df8c7c"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "d874ff5c684f6eb531505ac6029fa972ffe957ed0075febc7d6991b3526d1bf3"
+      "sha256": "00ba38c1705c3127fdab232901d3819108e1073f8eca11d32e1515ca64b38dfe"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
@@ -868,7 +843,7 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "651c72f5f0603799398135e3607cc90b86d4432da0f09881a669b3dde340f4fb"
+      "sha256": "7e29fa92195753fae53a08eae4c7a6b66fb71062bd8f7e17e0afb47b39223661"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
@@ -880,7 +855,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "15b0ac1344100a46f244b24f03d602549834c259be5c69943e965bd080249620"
+      "sha256": "d963c66e38220bd9d9756e7ea70a0980108ca0f5a48ab5f83dc0e53d88996c83"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -888,19 +863,19 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "1a1f5222fe16da17afad4c6259b2d623e8469b9e9dcc2c94950d604f7dbb43a1"
+      "sha256": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "19740b5e96c976d356239b5b0a8f852729d2996a1dd37c4e40559ef192036a33"
+      "sha256": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "bb750e8700e9224c0834f6e7285813da64cd0f2eb71101bc33844e83e18d2ff2"
+      "sha256": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-execution.asl",
-      "sha256": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35"
+      "sha256": "c8e1b73903e8dee4ea7239e40423dd2ed5dcc52446481c381386459a71657feb"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-schema.asl",
@@ -908,27 +883,27 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-      "sha256": "948946416a87f10cbe563556a857169f9574f0cddff240b9968cc381c3096828"
+      "sha256": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "0ddcbec724a75acd2fa4cc534bba788eb15fcb029d34fb75b5ecdbd0978c4c70"
+      "sha256": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "b5e5d0c65e6c0bcc1fcccb429ba3adbbb8b287ad509866c18d4cf2467daf3881"
+      "sha256": "7b53bfd9ddbe3f72e06d60d69e8d0b51644e0aa1415627d4481813a138228ba0"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "7b3e65e5276432ae8b72dad188a6b7e1b3ce3c49e5e19aea3bc61396979c8960"
+      "sha256": "5045758cde12b18c6704126efe1179644cf096e9d157c80f8f132c003bff1095"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "8300cd350d848d41095c0c024852a925782c96fd2171f1b887e444885c706d6b"
+      "sha256": "ce6b58980592140ccc80e2569d0a3f9aaa5e5981459defc1c5ea48eee413d0e1"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "289972ef6f6e495d785eab85238276333f7d5d0933feda46616d005381b3e703"
+      "sha256": "eb50c88814eb103a5b73c0ca036b3ffe34ca339dfd5dd99bbddecf1e7ca84989"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
@@ -944,7 +919,7 @@
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "bf9b29d428ad3e06c0a57aaf27c27a4b2986467f3f8b61579f3d876933b410b2"
+      "sha256": "55896f263568e6c2e929756c9d22f6fc5f36ec4698cdbe6828384872cd532f7e"
     },
     {
       "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
@@ -955,20 +930,36 @@
       "sha256": "35a4a68557fa122603f26e9aa32a4b5c64982645c43e28afeb06101055cfc55f"
     },
     {
+      "path": "asl/tile/model/numeric/e8m0-conversion.asl",
+      "sha256": "77cf18fde554db95f48330f6bc26092aa90e28aa46804c1ff57a6977fb053f1b"
+    },
+    {
       "path": "asl/tile/model/numeric/exceptions.asl",
       "sha256": "7acbde42269981937c4b34454cde84242dd6e22c4daec4c57e8318b347f7adfa"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
+      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
+    },
+    {
+      "path": "asl/tile/model/numeric/packed-conversion.asl",
+      "sha256": "34b4aa34acce70059fbebe0c45d2a260fa3309580783b6ad15b3b240437920a1"
+    },
+    {
+      "path": "asl/tile/model/numeric/reference-conversion.asl",
+      "sha256": "2e2b4d966d2e6173f231afd2530da5c169b292c11da2350e9b4dbfe8e3ecd33d"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
       "sha256": "749f652fb0fdd9dc7e87c2ef889ff7ecf5f17debdf10590a72f98bcb0e6adb6f"
     },
     {
+      "path": "asl/tile/model/numeric/tcvt-conversion.asl",
+      "sha256": "62625b9c4604139b80b1eec7c3a3fd3a757613cab1dfddade61fae7bba93027b"
+    },
+    {
       "path": "asl/tile/model/execution/cube.asl",
-      "sha256": "0597d5a1c35143a267a5e435e0014631256d613786629f0236098d399e0fc9cb"
+      "sha256": "8c2e7c7d1ddbcd233d393db1ab84a7ae0801b31ae242fa8172e9df095f67623c"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -980,11 +971,11 @@
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "adb55aaa119e1bae5e10baa998697b524dcf36893795ca821783032138396e4f"
+      "sha256": "7c9075481b0cfbe73b8ba7d923bb219d930d84978358e201f41d6d504dc01962"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "bac18cc54ac49933157bb4cb28472119d619a346e4e7d286ef8c50e36543050c"
+      "sha256": "3f7c64f99f81e8507db8093ec867bb69683026336733dcc279d5d79f28dfe251"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",

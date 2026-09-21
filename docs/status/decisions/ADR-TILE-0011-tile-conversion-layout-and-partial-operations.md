@@ -56,7 +56,8 @@
     "PRD-142",
     "PRD-143",
     "ADR-0083"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0011: Tile conversion, layout, and partial operations

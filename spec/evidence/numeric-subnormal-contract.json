@@ -2357,9 +2357,9 @@
     ]
   },
   "tests": [
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable"
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:ValidateNumericFormatClassification",
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable"
   ],
   "sources": [
     {
@@ -2367,20 +2367,20 @@
       "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "112ae9f992f9cc2d606fac0f1188ad559da05377a79c6976c786114657fa1894"
+      "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "4ddaa5f38b88649763c80443e0b0c739765b252f4574e098db87b4f40bf5ab52"
+      "sha256": "422626f8f591cc06e928b98741753de54669c316d3bf9b90b72553a1b74cb61e"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "4a6778dbcf245464e67121b353fe0d63b04386a20bffc67f2904e20fe50ecbe1"
+      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2400,11 +2400,11 @@
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d"
+      "sha256": "608dae6aca9eb2ab5a396c8b73a7235e8065f9ab539dd066e6282fd634958bf4"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
+      "sha256": "4ff0552a05f90dcc9442167370c2ac242f92bbb3999bcd97635045b73cdc8465"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
@@ -2412,7 +2412,7 @@
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
+      "sha256": "1168da252c7dedaa6ff2c34b814c6a5cbd8d38320db36ea27b125a654ae51a84"
     },
     {
       "path": "asl/arch/data-types/numeric-formats.asl",
@@ -2424,11 +2424,11 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
+      "sha256": "0050120f15047421e9da2836731c9ac5acd525e17f502117ef01290d09895daa"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "756ed3affcdd30db52f7198d90ede0d886161e9385df3195d611f82b46545d5a"
+      "sha256": "4493903781b924264641d185c2680758d7e96b700cbc915b4c6b5815c0a1e2d4"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
@@ -2436,19 +2436,19 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "05bad845c84d9fd35d30af99137b939e70d0d7226f54374b7f5d5e71dd235b7b"
+      "sha256": "aba39318d6277a1239966ba58d4db42b11afe3913376a6a78c65091121b8859d"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "321eca6b81d22f8e8d9e3eb5500005fd370a9875f2b593480e7529bcab134eaa"
+      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
     },
     {
-      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
-      "sha256": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5"
+      "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl",
+      "sha256": "77b1a6a1aa966b05fc37d5f82940832da5dee2b2cf6d18e3425596927c314bff"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
-      "sha256": "f2307dd2ff75409284d1dbebe50a96e9903dba91fa510db37275025169117f0a"
+      "sha256": "4a7f2150a4f5159dc6f376767147249573c5aa8a8e75f5a87ec8d699e4198e7d"
     }
   ],
   "summary": {

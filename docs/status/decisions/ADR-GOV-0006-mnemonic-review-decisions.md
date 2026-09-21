@@ -40,7 +40,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0062"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-GOV-0006: PTO mnemonic review decisions (historical summary)

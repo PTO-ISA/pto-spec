@@ -211,7 +211,7 @@ const ARCHITECTURE_TOPICS: ArchitectureTopicDefinition[] = [
     related: [
       {id: 'PTO-ARCH-PROFILE-APPLICABILITY', label: {en: 'Profile applicability', 'zh-CN': 'Profile 适用性'}},
       {id: 'PTO-ARCH-PROFILE-REFERENCE-PROFILE', label: {en: 'PTO v0 reference profile', 'zh-CN': 'PTO v0 reference profile'}},
-      {id: 'PTO-ARCH-PROFILE-EXTENSION-FIRST-USE', label: {en: 'Extension first-use policy', 'zh-CN': '扩展首次使用策略'}},
+      {id: 'PTO-ARCH-FEATURES-EXTENSION-FIRST-USE', label: {en: 'Extension first-use policy', 'zh-CN': '扩展首次使用策略'}},
       {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Compatibility aliases', 'zh-CN': '兼容 alias'}},
     ],
   },

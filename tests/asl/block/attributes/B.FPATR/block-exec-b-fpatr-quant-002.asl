@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-QUANT-002","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR scalar quantization multiplies, offsets, rounds, and applies Sat clamp or wrap","pass_condition":"REQ8 and QF322B8 scalar modes produce exact S8 values for ordinary, wrapping, and saturating cases","related_sources":["asl/arch/profile/reference-quantization.asl","asl/tile/model/execution/postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-QUANT-002","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR scalar quantization multiplies, offsets, rounds, and applies Sat clamp or wrap","pass_condition":"REQ8 and QF322B8 scalar modes produce exact S8 values for ordinary, wrapping, and saturating cases","related_sources":["asl/scalar/model/fsu/reference-quantization.asl","asl/tile/model/execution/postprocess.asl"]}
 func main() => integer
 begin
     let scale_two = Zeros{PTO_XLEN} + 0x40000000;

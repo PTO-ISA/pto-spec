@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0060"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0008: Restore `L.BSTOP` as the common 64-bit bundle stop

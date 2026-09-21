@@ -15,36 +15,32 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/elementwise.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-PROFILE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
 
-impdef func TileSquareRoot(value: Word) => Word
-begin
-    // A numeric profile replaces this stable raw-encoding default.
-    return value;
-end;
-
-impdef func TileLogarithm(value: Word) => Word
+func TileSquareRoot(value: Word) => Word
 begin
     return value;
 end;
 
-impdef func TileReciprocal(value: Word) => Word
+func TileLogarithm(value: Word) => Word
 begin
-    // The typed SFU special-value path handles representable signed
-    // infinities and status before this finite-profile hook is called.
+    return value;
+end;
+
+func TileReciprocal(value: Word) => Word
+begin
     return DivideWordUnsigned(Ones{PTO_XLEN}, value);
 end;
 
-impdef func TileReciprocalSquareRoot(value: Word) => Word
+func TileReciprocalSquareRoot(value: Word) => Word
 begin
-    // One profile operation; this is not two architecturally rounded steps.
     return value;
 end;
 
-impdef func TileExponential(value: Word) => Word
+func TileExponential(value: Word) => Word
 begin
-    return value;
+    return value + 1;
 end;
 
 pure func TileBinaryValue(op: TileBinaryOperation, left: Word, right: Word) => Word
@@ -283,18 +279,18 @@ begin
     end;
 end;
 
-impdef func TileProfileFloatingModulo(data_type: TileDataType,
-                                      left: Word, right: Word) => Word
+func TileProfileFloatingModulo(data_type: TileDataType,
+                                               left: Word, right: Word) => Word
 begin
-    return left;
+    let (result, -) = ReferenceTileFloatingModulo(data_type, left, right);
+    return result;
 end;
 
-impdef func TileProfileFloatingModuloFlags(
-    data_type: TileDataType,
-    left: Word,
-    right: Word) => bits(5)
+func TileProfileFloatingModuloFlags(
+    data_type: TileDataType, left: Word, right: Word) => bits(5)
 begin
-    return Zeros{5};
+    let (-, flags) = ReferenceTileFloatingModulo(data_type, left, right);
+    return flags;
 end;
 
 func TileProfileBinaryWithFlags(

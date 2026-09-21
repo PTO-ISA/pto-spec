@@ -57,7 +57,7 @@ Pushing `0x33` to U then changes only U index `0`. The T values from the previou
 
 - [System-register addressing](../system-registers/addressing.md) is the declared dependency for the execution-context unit.
 - [Memory ordering](../memory-model/ordering.md) interprets the memory events stored here.
-- [Reference profile](../profile/reference-profile.md) provides concrete access and trap-context behavior for the PTO v0 profile.
+- [Trap context](../state/trap-context.md) provides the concrete access and trap-context behavior.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
@@ -85,7 +85,7 @@ Pushing `0x33` to U then changes only U index `0`. The T values from the previou
 // [[PTO-STATE-ARCH-TRAP-CONTEXT]].
 // NDF-END: PTO-REQ-STATE-001
 
-// Requirement references: PTO-REQ-PROFILE-001, PTO-REQ-MEMORY-RC-001.
+// Requirement references: PTO-REQ-RESET-001, PTO-REQ-MEMORY-RC-001.
 
 // A core owns four private scalar register files.  An encoded absolute GPR
 // selector is shared by the instruction, but each PE resolves that selector

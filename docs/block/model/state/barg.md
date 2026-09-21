@@ -54,9 +54,9 @@ end;
 readonly func PackCurrentBARGControlWord() => Word
 begin
     var value: Word = Zeros{PTO_XLEN};
-    value[3:0] = PTOv0BundleKindCode(_BARG.block_type);
+    value[3:0] = BundleKindCode(_BARG.block_type);
     if BARGHasCandidateWord() then
-        value[6:4] = PTOv0BundleTransferCode(_BARG.transfer_type);
+        value[6:4] = BundleTransferCode(_BARG.transfer_type);
         value[7] = if _BARG.taken then '1' else '0';
     end;
     value[8] = if _BundleControlAttributes.atomic then '1' else '0';

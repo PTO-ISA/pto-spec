@@ -51,7 +51,8 @@
     "PRD-029",
     "PRD-030",
     "ADR-0076"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0013: Block scalar and tile bindings

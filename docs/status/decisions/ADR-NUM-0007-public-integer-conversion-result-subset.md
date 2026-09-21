@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0044"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0007: Public integer conversion result subset

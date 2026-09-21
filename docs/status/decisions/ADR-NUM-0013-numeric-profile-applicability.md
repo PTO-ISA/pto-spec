@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-01",
     "ADR-0086"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0013: Numeric profile applicability

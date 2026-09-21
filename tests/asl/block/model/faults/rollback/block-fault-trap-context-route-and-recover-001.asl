@@ -81,16 +81,16 @@ begin
     SetBundleControlAttributeState(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
     SetBundleDataAttributeState(Zeros{5}, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE, FALSE);
-    let saved_control = PTOv0ReadContextRegister(1, 0x0f40);
-    let saved_ecstate = PTOv0ReadContextRegister(1, 0x0f00);
+    let saved_control = ReadContextRegister(1, 0x0f40);
+    let saved_ecstate = ReadContextRegister(1, 0x0f00);
     assert CurrentACR() == 1;
     assert _TrapContexts[[1]].valid;
     assert saved_control[4] == '1';
-    assert PTOv0EBARGControlLegal(saved_control);
+    assert EBARGControlLegal(saved_control);
     assert saved_control[3:0] == saved_ecstate[3:0];
     assert saved_control[3:0] == '0010';
-    assert PTOv0ReadContextRegister(1, 0x0f41)[0] == '0';
-    assert PTOv0ReadContextRegister(1, 0x0f43)[0] == '0';
+    assert ReadContextRegister(1, 0x0f41)[0] == '0';
+    assert ReadContextRegister(1, 0x0f43)[0] == '0';
     // A direct semantic-helper invocation does not pass through
     // BeginArchitecturalInstructionAttempt(), so clear the handled fault just
     // as decoded ACRE execution does before committing its system block.

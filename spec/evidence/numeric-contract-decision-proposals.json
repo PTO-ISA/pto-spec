@@ -1,0 +1,1141 @@
+{
+  "schema_version": 11,
+  "target": "S5-T2-A",
+  "status": "proposal-complete-two-decisions-accepted",
+  "input": {
+    "path": "spec/evidence/numeric-contract-decision-inputs.json",
+    "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9",
+    "public_repository": "https://github.com/hw-native-sys/pto-isa",
+    "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
+  },
+  "identity_catalog": {
+    "path": "spec/catalog/numeric-contract-identities.json",
+    "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37",
+    "status": "identity-framework-closed-rules-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+  },
+  "scalar_flag_contract": {
+    "path": "spec/evidence/scalar-numeric-flag-contract.json",
+    "sha256": "60085126a6b1472553dc4a40806f93c1eeee4df20fd8343940cd2b2014046c96",
+    "status": "state-owner-matrix-closed-profile-production-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md",
+    "producer_owner_closed_form_count": 30,
+    "architecture_condition_closed_form_count": 11,
+    "profile_condition_open_form_count": 19,
+    "adr0089_complete": false
+  },
+  "rounding_selector_contract": {
+    "path": "spec/evidence/numeric-rounding-selector-contract.json",
+    "sha256": "ebe6e4de97b9d6f8ddea928c4a0f84e14390122b663e85e8497293e368e92c68",
+    "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
+    "scalar_active_selector_count": 8,
+    "scalar_fixed_override_count": 5,
+    "bundle_rmode_selector_count": 8,
+    "external_selector_class_count": 4,
+    "affected_domain_count": 13,
+    "affected_operation_count": 94,
+    "affected_hook_count": 21,
+    "accepted_domain_rounding_rule_count": 13,
+    "adr0047_complete": true
+  },
+  "subnormal_contract": {
+    "path": "spec/evidence/numeric-subnormal-contract.json",
+    "sha256": "1745ae73bf3931d6fcefc3e4aaffa7f0108521f3a297314044ec7ab9ec42ffc4",
+    "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
+    "subnormal_capable_type_count": 11,
+    "boundary_vector_count": 55,
+    "configuration_vector_count": 8,
+    "non_applicable_type_count": 14,
+    "affected_domain_count": 11,
+    "affected_operation_count": 87,
+    "operation_applicability_row_count": 87,
+    "conditional_operation_type_tuple_count": 957,
+    "affected_hook_count": 19,
+    "accepted_decision_count": 1,
+    "accepted_complete_domain_rule_count": 0,
+    "adr0049_complete": true,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
+  "special_value_contract": {
+    "path": "spec/evidence/numeric-special-value-contract.json",
+    "sha256": "bc78656e3a849f2a8b5b0bb6a075152d7e6bd84869f81dcfdf7cbad76e5931e4",
+    "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
+    "format_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "signed_zero_type_count": 13,
+    "comparison_operation_count": 2,
+    "minmax_operation_count": 6,
+    "operation_scope_count": 8,
+    "conditional_operation_type_tuple_count": 154,
+    "accepted_special_result_rule_count": 3,
+    "accepted_complete_domain_rule_count": 0,
+    "accepted_complete_decision_count": 0,
+    "adr0088_complete": false,
+    "s5_t2_complete": false
+  },
+  "format_namespace_contract": {
+    "path": "spec/evidence/numeric-format-namespace-contract.json",
+    "sha256": "422626f8f591cc06e928b98741753de54669c316d3bf9b90b72553a1b74cb61e",
+    "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md",
+    "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
+    "classification_acceptance_record": "docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md",
+    "tile_data_type_count": 25,
+    "tile_storage_width_counts": {
+      "4": 5,
+      "8": 8,
+      "16": 4,
+      "32": 5,
+      "64": 3
+    },
+    "scalar_source_mapped_count": 2,
+    "scalar_source_reserved_count": 2,
+    "scalar_floating_destination_mapped_count": 15,
+    "scalar_floating_destination_reserved_count": 17,
+    "scalar_integer_destination_mapped_count": 15,
+    "scalar_integer_destination_reserved_count": 17,
+    "tlsu_talloc_mapped_count": 25,
+    "tlsu_talloc_reserved_count": 39,
+    "bundle_mapped_count": 25,
+    "bundle_reserved_count": 7,
+    "four_bit_type_count": 5,
+    "value_classified_type_count": 25,
+    "nan_capable_type_count": 10,
+    "signaling_nan_capable_type_count": 7,
+    "infinity_capable_type_count": 8,
+    "subnormal_capable_type_count": 11,
+    "signed_zero_type_count": 13,
+    "internally_constrained_type_count": 4,
+    "open_residual_count": 8,
+    "adr0087_complete": false
+  },
+  "public_type_baseline": {
+    "path": "spec/evidence/public-numeric-type-baseline.json",
+    "sha256": "64b4bee6fa4863f571005b6dd771d176638c26fe2ead2939e2a077a01b30f7fe",
+    "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
+    "public_type_count": 16,
+    "public_floating_type_count": 8,
+    "public_integer_type_count": 8,
+    "accepted_catalog_binding_count": 16,
+    "non_public_catalog_type_count": 9,
+    "accepted_result_rule_count": 0,
+    "accepted_domain_rule_count": 0,
+    "open_residual_count": 4,
+    "adr0087_complete": false,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
+  "public_integer_conversion": {
+    "path": "spec/evidence/public-integer-conversion-contract.json",
+    "sha256": "4752335121b65967e3fd43a770e2be0acc5281ea35a57066cb00bce50cad93a3",
+    "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
+    "public_integer_type_count": 8,
+    "candidate_ordered_pair_count": 64,
+    "same_width_pair_count": 16,
+    "accepted_unequal_width_tuple_count": 48,
+    "accepted_widening_tuple_count": 24,
+    "accepted_narrowing_tuple_count": 24,
+    "accepted_result_rule_count": 3,
+    "accepted_domain_rule_count": 0,
+    "accepted_profile_support_rule_count": 0,
+    "open_residual_count": 6,
+    "adr0090_complete": false,
+    "tile_convert_domain_complete": false,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
+  "profile_applicability_contract": {
+    "path": "spec/evidence/numeric-contract-applicability-closure.json",
+    "sha256": "68417bc7b4b4fd2437fbaf258686219495087b4865437c38069b8fadf592c38e",
+    "status": "mx-unsupported-tuples-closed-results-open",
+    "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+    "rule_count": 6,
+    "operation_count": 6,
+    "selector_count": 6,
+    "tile_data_type_count": 25,
+    "tuple_count": 150,
+    "bundle_execution_tuple_count": 150,
+    "bundle_command_form_count": 6,
+    "command_form_count": 96,
+    "accepted_command_form_count": 93,
+    "result_rule_count": 0,
+    "parent_adr0086_complete": false,
+    "cube_matrix_complete": false,
+    "s5_t2_complete": false
+  },
+  "variation_point_contract": {
+    "path": "spec/evidence/numeric-variation-point-ownership.json",
+    "sha256": "9e53b557adb9a2d4865278d97ddb79cf395de91f94dd75d0886b624bee377896",
+    "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
+    "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
+    "variation_point_count": 69,
+    "unique_dimension_count": 30,
+    "domain_count": 14,
+    "operation_count": 96,
+    "hook_count": 24,
+    "primary_operation_hook_edge_count": 142,
+    "reference_helper_operation_edge_count": 6,
+    "portable_decision_owner_point_count": 69,
+    "selected_route_count": 13,
+    "accepted_result_rule_count": 13,
+    "accepted_bounded_result_subset_rule_count": 3,
+    "accepted_bounded_result_subset_tuple_count": 48,
+    "accepted_unsupported_tuple_count": 150,
+    "accepted_domain_result_rule_count": 0,
+    "adr0095_complete": false,
+    "s5_t2_a_complete": false,
+    "s5_t2_complete": false
+  },
+  "policy": {
+    "proposal_not_authority": "Accepted decision rows are backed by their architecture records; every other question and every incomplete domain proposal remains review input and does not select numeric results.",
+    "support_boundary": "An implementation may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
+    "bounded_variation": "A portable rule may delegate a result dimension only to a visible numeric mode with a finite or mathematically testable allowed-result contract.",
+    "cpu_boundary": "CPU observations are implementation-under-test diagnostics and are never an architectural contract or independent oracle.",
+    "fail_closed": "Unknown identities, modes, formats, operation/type tuples, and missing delegated rules reject before architectural effects.",
+    "promotion": "S5-T2-A remains open until every proposal has an accepted PTO decision record and every domain has an accepted rule."
+  },
+  "framework_acceptance": [
+    {
+      "id": "PF-01",
+      "rule": "PTO specifications are authoritative and backend behavior is evidence only",
+      "status": "accepted",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-02",
+      "rule": "support restriction is distinct from result semantics",
+      "status": "accepted",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-03",
+      "rule": "delegated numeric variation is named, visible, and bounded",
+      "status": "accepted",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-04",
+      "rule": "unknown or missing numeric selections reject before effects",
+      "status": "accepted",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "id": "PF-05",
+      "rule": "CPU observation is neither architecture nor an independent oracle",
+      "status": "accepted",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    }
+  ],
+  "profile_proposals": [
+    {
+      "partition_id": "portable-numeric",
+      "proposed_id": "pto-numeric-v1",
+      "kind": "portable-numeric-contract",
+      "role": "Portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
+      "normative": true,
+      "selection": "Applies to every PTO numeric operation; implementations may only narrow support or implement an explicitly delegated bounded variation point.",
+      "relation_to_portable_contract": "Supplies the portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
+      "rule_status": "decision-required",
+      "source_ids": [
+        "public-portability-rules"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    },
+    {
+      "partition_id": "cpu-observation",
+      "proposed_id": "pto-cpu-observation-v1",
+      "kind": "observation-only",
+      "role": "Versioned implementation-under-test observations and developer diagnostics.",
+      "normative": false,
+      "selection": "Cannot be selected as an architectural numeric profile or independent conformance oracle.",
+      "relation_to_portable_contract": "Only observes implementations; it defines neither portable results nor a target contract.",
+      "rule_status": "observation-schema-required",
+      "source_ids": [
+        "public-portability-rules"
+      ],
+      "status": "identity-accepted-rules-open",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
+    }
+  ],
+  "profile_hooks": [
+    "FloatingExponential",
+    "FloatingRoundNearest",
+    "ScalarFPBinaryProfile",
+    "ScalarFPConvertProfile",
+    "ScalarFPFusedProfile",
+    "ScalarFPToIntegerProfile",
+    "ScalarFPUnaryProfile",
+    "ScalarIntegerToFPProfile",
+    "TileExponential",
+    "TileLogarithm",
+    "TileProfileBinary",
+    "TileProfileCompare",
+    "TileProfileConvert",
+    "TileProfileExpand",
+    "TileProfileMatrixAccumulate",
+    "TileProfileMatrixBias",
+    "TileProfileMatrixPostProcess",
+    "TileProfileMatrixReductionStep",
+    "TileProfileMatrixScaledAccumulate",
+    "TileProfileReductionInitial",
+    "TileProfileReductionStep",
+    "TileProfileUnary",
+    "TileReciprocal",
+    "TileSquareRoot"
+  ],
+  "decision_proposals": [
+    {
+      "adr": "ADR-NUM-0008",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "accepted",
+      "accepted": true,
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md"
+    },
+    {
+      "adr": "ADR-NUM-0010",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fused",
+        "scalar-unary",
+        "tile-binary",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "accepted",
+      "accepted": true,
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md"
+    },
+    {
+      "adr": "ADR-NUM-0013",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0014",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0015",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0016",
+      "affected_domains": [
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0017",
+      "affected_domains": [
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+        "tile-convert"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0018",
+      "affected_domains": [
+        "scalar-binary",
+        "scalar-unary",
+        "tile-binary",
+        "tile-expand",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0019",
+      "affected_domains": [
+        "tile-compare",
+        "tile-reduction"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0021",
+      "affected_domains": [
+        "cube-matrix"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-NUM-0022",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-expand",
+        "tile-fused",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    }
+  ],
+  "domain_proposals": [
+    {
+      "domain": "scalar-binary",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fadd_32_b78b658e6740",
+        "scalar:fdiv_32_04a5bb6ab56f",
+        "scalar:fmul_32_7d521d9d65e7",
+        "scalar:fsub_32_a4479d0d4276"
+      ],
+      "hooks": [
+        "ScalarFPBinaryProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "scalar-unary",
+      "lane": "N1",
+      "operation_count": 3,
+      "operation_keys": [
+        "scalar:fexp_32_592ef5288c7d",
+        "scalar:frecip_32_3d51f4f727ea",
+        "scalar:fsqrt_32_84b3495cc6c7"
+      ],
+      "hooks": [
+        "ScalarFPUnaryProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "scalar-fused",
+      "lane": "N1",
+      "operation_count": 4,
+      "operation_keys": [
+        "scalar:fmadd_32_c616a17bcb12",
+        "scalar:fmsub_32_b83012b83148",
+        "scalar:fnmadd_32_7f45e606d299",
+        "scalar:fnmsub_32_6542d56665b3"
+      ],
+      "hooks": [
+        "ScalarFPFusedProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "scalar-fp-to-integer",
+      "lane": "N2",
+      "operation_count": 5,
+      "operation_keys": [
+        "scalar:fcvta_32_010837b9acbd",
+        "scalar:fcvtm_32_8801f1562870",
+        "scalar:fcvtn_32_8714ba358d80",
+        "scalar:fcvtp_32_84354a7aa6b1",
+        "scalar:fcvtz_32_bee01d31217c"
+      ],
+      "hooks": [
+        "ScalarFPToIntegerProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "scalar-fp-convert",
+      "lane": "N2",
+      "operation_count": 1,
+      "operation_keys": [
+        "scalar:fcvt_32_1102f5aeeda9"
+      ],
+      "hooks": [
+        "ScalarFPConvertProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "scalar-integer-to-fp",
+      "lane": "N2",
+      "operation_count": 2,
+      "operation_keys": [
+        "scalar:scvtf_32_01861bbd5ef2",
+        "scalar:ucvtf_32_987f4e019c32"
+      ],
+      "hooks": [
+        "ScalarIntegerToFPProfile"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-binary",
+      "lane": "N3",
+      "operation_count": 24,
+      "operation_keys": [
+        "tile:TEPL:TADD",
+        "tile:TEPL:TADDS",
+        "tile:TEPL:TAND",
+        "tile:TEPL:TANDS",
+        "tile:TEPL:TDIV",
+        "tile:TEPL:TDIVS",
+        "tile:TEPL:TMAX",
+        "tile:TEPL:TMAXS",
+        "tile:TEPL:TMIN",
+        "tile:TEPL:TMINS",
+        "tile:TEPL:TMUL",
+        "tile:TEPL:TMULS",
+        "tile:TEPL:TOR",
+        "tile:TEPL:TORS",
+        "tile:TEPL:TREM",
+        "tile:TEPL:TREMS",
+        "tile:TEPL:TSHL",
+        "tile:TEPL:TSHLS",
+        "tile:TEPL:TSHR",
+        "tile:TEPL:TSHRS",
+        "tile:TEPL:TSUB",
+        "tile:TEPL:TSUBS",
+        "tile:TEPL:TXOR",
+        "tile:TEPL:TXORS"
+      ],
+      "hooks": [
+        "TileProfileBinary"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-unary",
+      "lane": "N3",
+      "operation_count": 9,
+      "operation_keys": [
+        "tile:TEPL:TABS",
+        "tile:TEPL:TEXP",
+        "tile:TEPL:TLOG",
+        "tile:TEPL:TNEG",
+        "tile:TEPL:TNOT",
+        "tile:TEPL:TRECIP",
+        "tile:TEPL:TRELU",
+        "tile:TEPL:TRSQRT",
+        "tile:TEPL:TSQRT"
+      ],
+      "hooks": [
+        "TileExponential",
+        "TileLogarithm",
+        "TileProfileUnary",
+        "TileReciprocal",
+        "TileSquareRoot"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-fused",
+      "lane": "N6",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TFMA"
+      ],
+      "hooks": [
+        "TileProfileMatrixAccumulate"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-compare",
+      "lane": "N3",
+      "operation_count": 2,
+      "operation_keys": [
+        "tile:TEPL:TCMP",
+        "tile:TEPL:TCMPS"
+      ],
+      "hooks": [
+        "TileProfileCompare"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-reduction",
+      "lane": "N5",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:TEPL:TCOLARGMAX",
+        "tile:TEPL:TCOLARGMIN",
+        "tile:TEPL:TCOLMAX",
+        "tile:TEPL:TCOLMIN",
+        "tile:TEPL:TCOLPROD",
+        "tile:TEPL:TCOLSUM",
+        "tile:TEPL:TROWARGMAX",
+        "tile:TEPL:TROWARGMIN",
+        "tile:TEPL:TROWMAX",
+        "tile:TEPL:TROWMIN",
+        "tile:TEPL:TROWPROD",
+        "tile:TEPL:TROWSUM"
+      ],
+      "hooks": [
+        "TileProfileReductionInitial",
+        "TileProfileReductionStep"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-expand",
+      "lane": "N3",
+      "operation_count": 16,
+      "operation_keys": [
+        "tile:TEPL:TCOLEXPAND",
+        "tile:TEPL:TCOLEXPANDADD",
+        "tile:TEPL:TCOLEXPANDDIV",
+        "tile:TEPL:TCOLEXPANDEXPDIF",
+        "tile:TEPL:TCOLEXPANDMAX",
+        "tile:TEPL:TCOLEXPANDMIN",
+        "tile:TEPL:TCOLEXPANDMUL",
+        "tile:TEPL:TCOLEXPANDSUB",
+        "tile:TEPL:TROWEXPAND",
+        "tile:TEPL:TROWEXPANDADD",
+        "tile:TEPL:TROWEXPANDDIV",
+        "tile:TEPL:TROWEXPANDEXPDIF",
+        "tile:TEPL:TROWEXPANDMAX",
+        "tile:TEPL:TROWEXPANDMIN",
+        "tile:TEPL:TROWEXPANDMUL",
+        "tile:TEPL:TROWEXPANDSUB"
+      ],
+      "hooks": [
+        "TileProfileExpand"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "tile-convert",
+      "lane": "N4",
+      "operation_count": 1,
+      "operation_keys": [
+        "tile:TEPL:TCVT"
+      ],
+      "hooks": [
+        "TileProfileConvert"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    },
+    {
+      "domain": "cube-matrix",
+      "lane": "N6",
+      "operation_count": 12,
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ],
+      "hooks": [
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
+        "TileProfileMatrixScaledAccumulate"
+      ],
+      "decision_adr_ids": [
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0021",
+        "ADR-NUM-0022"
+      ],
+      "proposed_profile_ids": [
+        "pto-numeric-v1",
+        "pto-cpu-observation-v1"
+      ],
+      "portable_rule_status": "rule-required",
+      "support_status": "operation-type-matrix-required",
+      "a5_support_status": "operation-type-matrix-required",
+      "cpu_observation_status": "capture-plan-required-not-oracle",
+      "independent_oracle_status": "qualification-required",
+      "vector_status": "generation-required",
+      "result_status": "capture-required",
+      "review_status": "acceptance-required",
+      "accepted_profile_rule": null,
+      "status": "proposal-mapped-conformance-open"
+    }
+  ],
+  "promotion_residuals": [
+    {
+      "id": "S5-T2-A1",
+      "target": "accept all numeric configuration identities and selection-framework rules",
+      "current": 9,
+      "required": 9,
+      "status": "closed"
+    },
+    {
+      "id": "S5-T2-A2",
+      "target": "accept all numeric decision records",
+      "current": 2,
+      "required": 11,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-A3",
+      "target": "populate accepted rules for every numeric domain",
+      "current": 0,
+      "required": 14,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-A4",
+      "target": "inventory and assign the current owner for every numeric variation point",
+      "current": 69,
+      "required": 69,
+      "status": "closed"
+    },
+    {
+      "id": "S5-T2-A5",
+      "target": "bind every published numeric type identity and its target-availability baseline",
+      "current": 16,
+      "required": 16,
+      "status": "closed"
+    },
+    {
+      "id": "S5-T2-A6",
+      "target": "close every unequal-width public integer TCVT result tuple",
+      "current": 48,
+      "required": 48,
+      "status": "closed"
+    },
+    {
+      "id": "S5-T2-B",
+      "target": "qualify an independent oracle for every conformance lane",
+      "current": 0,
+      "required": 6,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-C",
+      "target": "publish normal, boundary, exceptional, and adversarial vectors for every domain",
+      "current": 0,
+      "required": 14,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-D",
+      "target": "record local CPU plus independent implementation results",
+      "current": 0,
+      "required": 42,
+      "status": "open"
+    },
+    {
+      "id": "S5-T2-E",
+      "target": "adjudicate every differential and obtain architecture/formal review",
+      "current": 0,
+      "required": 23,
+      "status": "open"
+    }
+  ],
+  "summary": {
+    "profile_proposal_count": 2,
+    "accepted_contract_identity_count": 2,
+    "accepted_framework_rule_count": 5,
+    "decision_proposal_count": 11,
+    "accepted_decision_count": 2,
+    "numeric_domain_count": 14,
+    "accepted_domain_rule_count": 0,
+    "numeric_operation_count": 96,
+    "numeric_hook_count": 24,
+    "numeric_variation_point_count": 69,
+    "selected_variation_route_count": 13,
+    "accepted_public_type_binding_count": 16,
+    "public_type_identity_count": 16,
+    "accepted_bounded_result_rule_count": 3,
+    "accepted_bounded_result_tuple_count": 48,
+    "accepted_special_result_rule_count": 3,
+    "can_close_s5_t2_a": false,
+    "can_close_s5_t2": false
+  }
+}

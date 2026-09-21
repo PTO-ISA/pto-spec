@@ -65,7 +65,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0024"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0003: PC-relative and unscaled AGU addressing

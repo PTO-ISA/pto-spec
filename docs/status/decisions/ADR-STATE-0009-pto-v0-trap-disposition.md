@@ -89,7 +89,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0018"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0009: Define the PTO v0 disposition of every trap identity

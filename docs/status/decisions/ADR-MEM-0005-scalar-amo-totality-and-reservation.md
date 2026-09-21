@@ -95,7 +95,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0030"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-MEM-0005: Scalar AMO totality, reservations, and restart

@@ -315,7 +315,7 @@ def evidence_for_scalar_family(family: str) -> list[str]:
         "ALU": ["PTO-REQ-SCALAR-ALU-001", "PTO-REQ-SCALAR-OPERAND-001"],
         "AMO": ["PTO-REQ-SCALAR-AMO-001", "PTO-REQ-MEMORY-RC-001"],
         "BRU": ["PTO-REQ-SCALAR-CONTROL-001", "PTO-REQ-SCALAR-EXECUTION-001"],
-        "FSU": ["PTO-REQ-SCALAR-FP-001", "PTO-REQ-PROFILE-001"],
+        "FSU": ["PTO-REQ-SCALAR-FP-001", "PTO-REQ-RESET-001"],
         "SYS": ["PTO-REQ-SCALAR-SYS-001", "PTO-REQ-SCALAR-SSR-001"],
     }
     return by_family.get(family, ["PTO-REQ-SCALAR-EFFECT-CLOSURE-001"])
@@ -358,7 +358,7 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
             [
                 "PTO-REQ-CUBE-001",
                 "PTO-REQ-TILE-LEGALITY-001",
-                "PTO-REQ-PROFILE-001",
+                "PTO-REQ-RESET-001",
             ],
             [
                 "spec/catalog/tile-operations.json",

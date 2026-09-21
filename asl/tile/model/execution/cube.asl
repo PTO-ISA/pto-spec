@@ -4,39 +4,6 @@
 // forms also name their Local accumulator input C explicitly;
 // C is snapshotted before D is written so D == C has read-old/write-new
 // behavior.
-impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
-                                         destination_type: TileDataType,
-                                         left_type: TileDataType,
-                                         right_type: TileDataType,
-                                         control: NumericExecutionControl)
-                                         => Word
-begin
-    return accumulator + MultiplyWord(left, right);
-end;
-impdef func TileProfileMatrixBias(value: Word, bias: Word,
-                                  destination_type: TileDataType,
-                                  bias_type: TileDataType) => Word
-begin
-    return value + bias;
-end;
-impdef func TileProfileMatrixScaledAccumulate(
-    accumulator: Word, left: Word, right: Word,
-    left_scale: Word, right_scale: Word,
-    left_scale_present: boolean, right_scale_present: boolean,
-    destination_type: TileDataType, left_type: TileDataType,
-    right_type: TileDataType, left_scale_type: TileDataType,
-    right_scale_type: TileDataType) => Word
-begin
-    let scaled_left = if left_scale_present then
-        MultiplyWord(left, left_scale)
-    else
-        left;
-    let scaled_right = if right_scale_present then
-        MultiplyWord(right, right_scale)
-    else
-        right;
-    return accumulator + MultiplyWord(scaled_left, scaled_right);
-end;
 func MarkLocalTileValidRegionDefined(tile: TileInfo) => TileInfo
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();

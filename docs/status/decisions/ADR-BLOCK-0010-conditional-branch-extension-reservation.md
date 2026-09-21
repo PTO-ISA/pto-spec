@@ -33,7 +33,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0067"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0010: conditional branch extension reservation

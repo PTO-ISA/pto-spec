@@ -15,14 +15,12 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG","PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
-impdef func ReadMonotonicTime() => Word
+func ReadMonotonicTime() => Word
 begin
-    // The default executable model uses the monotonically increasing cycle
-    // state. Implementations may override this with a nanosecond time source.
     return _SystemRegisters.cycle;
 end;
 
@@ -203,14 +201,6 @@ end;
 
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
-    if PTOModelLinxRuntimeACRCExitMarkerApplicable(
-        _BundleActive, _BARG.block_type, _BundleBodyActive,
-        request_type) then
-        _SystemBlockTerminalPending = TRUE;
-        _ArchitectureRequestEpoch = _ArchitectureRequestEpoch + 1;
-        _ControlRequestOperand[3:0] = request_type;
-        return;
-    end;
     if !ServiceRequestPermitted(CurrentACR(), request_type) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return;
@@ -326,8 +316,7 @@ begin
     end;
     if IsCommitConditionSetter(operation) then
         return _BundleActive &&
-               (PTOModelLinxRuntimeAllowsPreBodyControlSetter() ||
-                _BundleBodyActive) &&
+               _BundleBodyActive &&
                _BARG.transfer_type == BundleTransfer_Conditional &&
                !_BundleConditionSet;
     end;
@@ -337,8 +326,7 @@ begin
             // the selected block-placement policy here; the decoded handler
             // applies the request-1 Standard-bundle marker exception.
             return _BundleActive &&
-                   PTOModelLinxRuntimeSystemOperationApplicable(
-                       _BARG.block_type, _BundleBodyActive);
+                   (_BundleBodyActive && _BARG.block_type == BundleKind_System);
         when ScalarOperation_C_SETC_TGT =>
             return BundleCommitTargetWritable() &&
                    !_BundleCommitTargetSet;
@@ -349,8 +337,7 @@ begin
         otherwise =>
             if IsSystemBlockScalarOperation(operation) then
                 return _BundleActive &&
-                       PTOModelLinxRuntimeSystemOperationApplicable(
-                           _BARG.block_type, _BundleBodyActive);
+                       (_BundleBodyActive && _BARG.block_type == BundleKind_System);
             else
                 return TRUE;
             end;

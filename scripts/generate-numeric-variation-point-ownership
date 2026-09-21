@@ -13,9 +13,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
-DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
-IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
-PROFILE_HOOKS = ROOT / "spec/profile-hooks.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
+IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-contract-identities.json"
 ROUNDING_CONTRACT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
 FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 PUBLIC_TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
@@ -23,7 +22,7 @@ INTEGER_CONVERSION_CONTRACT = (
     ROOT / "spec/evidence/public-integer-conversion-contract.json"
 )
 APPLICABILITY_CONTRACT = (
-    ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+    ROOT / "spec/evidence/numeric-contract-applicability-closure.json"
 )
 ACCEPTANCE_RECORD = (
     "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md"
@@ -32,14 +31,13 @@ OUTPUT = ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 
 SOURCE_PATHS = (
     "spec/evidence/numeric-contracts.json",
-    "spec/evidence/numeric-profile-decision-inputs.json",
-    "spec/catalog/numeric-profile-identities.json",
-    "spec/profile-hooks.json",
+    "spec/evidence/numeric-contract-decision-inputs.json",
+    "spec/catalog/numeric-contract-identities.json",
     "spec/evidence/numeric-rounding-selector-contract.json",
     "spec/evidence/numeric-format-namespace-contract.json",
     "spec/evidence/public-numeric-type-baseline.json",
     "spec/evidence/public-integer-conversion-contract.json",
-    "spec/evidence/numeric-profile-applicability-closure.json",
+    "spec/evidence/numeric-contract-applicability-closure.json",
     ACCEPTANCE_RECORD,
 )
 
@@ -125,7 +123,7 @@ def source(path: str) -> dict[str, str]:
 
 
 def selector_dependencies(dimension: str) -> list[str]:
-    dependencies = ["spec/catalog/numeric-profile-identities.json"]
+    dependencies = ["spec/catalog/numeric-contract-identities.json"]
     lowered = dimension.lower()
     if "round" in lowered or dimension in {
         "single-rounding behavior",
@@ -152,11 +150,8 @@ def primary_decision(dimension: str, domain_decisions: list[str]) -> str:
 
 def admissible_routes(dimension: str) -> list[dict[str, str]]:
     routes = [
-        {"kind": "portable-rule", "profile_id": "pto-numeric-v1"},
-        {"kind": "named-profile-rule", "profile_id": "pto-a2a3-numeric-v1"},
-        {"kind": "named-profile-rule", "profile_id": "pto-a5-numeric-v1"},
-        {"kind": "unsupported-in-profile", "profile_id": "pto-a2a3-numeric-v1"},
-        {"kind": "unsupported-in-profile", "profile_id": "pto-a5-numeric-v1"},
+        {"kind": "portable-rule", "contract_id": "pto-numeric-v1"},
+        {"kind": "unsupported", "contract_id": "pto-numeric-mx-negative-v1"},
     ]
     dependencies = selector_dependencies(dimension)
     if "spec/evidence/numeric-rounding-selector-contract.json" in dependencies:
@@ -188,7 +183,6 @@ def generate() -> dict[str, Any]:
     inventory = load(NUMERIC_CONTRACTS)
     decisions = load(DECISION_INPUTS)
     identities = load(IDENTITY_CATALOG)
-    profile_hooks = load(PROFILE_HOOKS)
     rounding = load(ROUNDING_CONTRACT)
     formats = load(FORMAT_CONTRACT)
     public_types = load(PUBLIC_TYPE_BASELINE)
@@ -198,7 +192,7 @@ def generate() -> dict[str, Any]:
     require(inventory["summary"]["numeric_hook_count"] == 24, "hook count drift")
     require(inventory["summary"]["decoded_operation_count"] == 96, "operation count drift")
     require(len(inventory["contract_domains"]) == 14, "domain count drift")
-    require(identities["summary"]["accepted_identity_count"] == 4, "identity drift")
+    require(identities["summary"]["accepted_identity_count"] == 2, "identity drift")
     require(
         rounding["summary"]["accepted_domain_rounding_rule_count"] == 13
         and rounding["summary"]["adr0047_complete"] is True,
@@ -241,13 +235,7 @@ def generate() -> dict[str, Any]:
     domain_inputs = {row["domain"]: row for row in decisions["domain_matrix"]}
     operations = {row["key"]: row for row in inventory["operations"]}
     hooks = {row["name"]: row for row in inventory["hooks"]}
-    registered_hooks = {
-        row["name"]: row
-        for row in profile_hooks["hooks"]
-        if row["maturity_target"] == "S5-T2"
-    }
     require(set(domains) == set(domain_inputs), "decision-domain coverage drift")
-    require(set(hooks) == set(registered_hooks), "profile-hook coverage drift")
     dimension_labels = {
         dimension
         for domain in domains.values()
@@ -304,7 +292,7 @@ def generate() -> dict[str, Any]:
                     "admissible_routes": admissible_routes(dimension),
                     "selector_dependencies": selector_dependencies(dimension),
                     "selected_route": (
-                        {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                        {"kind": "portable-rule", "contract_id": "pto-numeric-v1"}
                         if rounding_rule_accepted
                         else None
                     ),
@@ -328,7 +316,7 @@ def generate() -> dict[str, Any]:
         operation = operations[key]
         all_hooks = operation["primary_hooks"] + operation["reference_helpers"]
         unsupported = [
-            row["profile_id"]
+            row["contract_id"]
             for row in applicability["rules"]
             if row["operation_key"] == key
         ]
@@ -380,7 +368,7 @@ def generate() -> dict[str, Any]:
                 "decision_owner_kind": "portable-architecture",
                 "decision_owner_id": "pto-numeric-v1",
                 "selected_route": (
-                    {"kind": "portable-rule", "profile_id": "pto-numeric-v1"}
+                    {"kind": "portable-rule", "contract_id": "pto-numeric-v1"}
                     if accepted_hook_points
                     else None
                 ),
@@ -440,23 +428,23 @@ def generate() -> dict[str, Any]:
         },
         "ownership_routes": [
             "portable-rule",
-            "named-profile-rule",
+            "named-contract-rule",
             "visible-selector-rule",
-            "unsupported-in-profile",
+            "unsupported",
         ],
         "selection_surfaces": {
             "portable_owner": "pto-numeric-v1",
-            "named_target_profiles": ["pto-a2a3-numeric-v1", "pto-a5-numeric-v1"],
+            "negative_applicability_contract": "pto-numeric-mx-negative-v1",
             "observation_only_identity": "pto-cpu-observation-v1",
             "rounding_selector_contract": "spec/evidence/numeric-rounding-selector-contract.json",
             "format_namespace_contract": "spec/evidence/numeric-format-namespace-contract.json",
-            "accepted_unsupported_contract": "spec/evidence/numeric-profile-applicability-closure.json",
+            "accepted_unsupported_contract": "spec/evidence/numeric-contract-applicability-closure.json",
         },
         "variation_points": variation_points,
         "operations": operation_rows,
         "hooks": hook_rows,
         "support_rules": {
-            "path": "spec/evidence/numeric-profile-applicability-closure.json",
+            "path": "spec/evidence/numeric-contract-applicability-closure.json",
             "rule_count": 6,
             "tuple_count": 150,
             "result_rule_count": 0,

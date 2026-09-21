@@ -53,7 +53,7 @@ To understand what is captured on a fault, combine this record layout with the c
 ## Related owners
 
 - [Trap-context state](../state/trap-context.md)
-- [Trap recovery profile](../profile/trap-context-recovery.md)
+- [Trap recovery profile](../state/trap-context.md)
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

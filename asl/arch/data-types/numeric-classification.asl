@@ -36,7 +36,7 @@ type TileNumericSelection of record {
     saturating: boolean
 };
 
-// PTO-REQ-PROFILE-001, PTO-REQ-HARDWARE-NUMERIC-001:
+// PTO-REQ-RESET-001, PTO-REQ-HARDWARE-NUMERIC-001:
 // bit-exact value classification for every TileDataType.
 
 pure func NumericValueClassIsNaN(value_class: NumericValueClass) => boolean

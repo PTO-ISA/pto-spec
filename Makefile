@@ -13,7 +13,7 @@ DECODER_GENERATION_INPUTS := $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
 		scripts/project_asl_catalogs.py scripts/asl_units.py \
 		scripts/asl_validation_shards.py scripts/encoding_witness.py \
 		scripts/tile_taxonomy.py \
-		spec/catalog/numeric-profile-applicability.json \
+		spec/catalog/numeric-contract-applicability.json \
 		spec/catalog/system-registers.json
 
 .PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \

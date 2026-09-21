@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-SIZECODES-003","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS destination paths cover every legal Shared SizeCode.","pass_condition":"Codes 1 through 12 reach Shared destination binding with the all-PE semantic mask.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-SIZECODES-003","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS destination paths cover every legal Shared SizeCode.","pass_condition":"Codes 1 through 12 reach Shared destination binding with the all-PE semantic mask.","related_sources":["asl/block/model/schema/bundle-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
 pure func BIOSSizeCodeStart(data_type: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00011181;

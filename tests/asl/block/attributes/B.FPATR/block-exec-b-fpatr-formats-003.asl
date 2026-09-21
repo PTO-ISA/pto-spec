@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-FORMATS-003","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR cast and scaled floating modes publish exact destination encodings","pass_condition":"FP16, BF16, E4M3, HiF8, and scaled FP32 modes encode representative exact values","related_sources":["asl/arch/profile/reference-quantization.asl","asl/arch/features/mx-formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-FORMATS-003","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR cast and scaled floating modes publish exact destination encodings","pass_condition":"FP16, BF16, E4M3, HiF8, and scaled FP32 modes encode representative exact values","related_sources":["asl/scalar/model/fsu/reference-quantization.asl","asl/arch/features/mx-formats.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

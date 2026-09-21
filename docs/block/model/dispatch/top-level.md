@@ -24,14 +24,7 @@ begin
     // 0x0800 is emitted as C.BSTART.STD FALL in ordinary fallthrough
     // bundles, but as a compressed stop at the selecting legacy entry
     // boundary. Keep the disambiguation in ASL and context-sensitive.
-    let normalized_instruction = if
-        PTOModelLinxLegacyCompressedStopEnabled() && _BundleActive &&
-        _BARG.block_type == BundleKind_Standard &&
-        _BARG.bpcn != _BundleSequentialPC &&
-        length_bits == 16 &&
-        instruction[0 +: 16] == '0000100000000000'
-        then Zeros{64}
-        else instruction;
+    let normalized_instruction = instruction;
     let decoded = DecodeCommandForm(normalized_instruction, length_bits);
     if decoded == PTO_COMMAND_FORM_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());

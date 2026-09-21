@@ -32,7 +32,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0019"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0001: Define the PTO predicate-register contract

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-RAW-SD-002","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-INST-SCALAR-FCVTZ","PTO-FCVTZ-DECISION-BINDING-001"],"kind":"execution","summary":"exact compiler FCVTZ FS-to-SD encoding publishes the signed 64-bit result","pass_condition":"raw 0x220c5feb reads FP32 16.0 from T1, maps DstType raw four to SD, pushes signed 16 to T, and advances once","related_sources":["asl/scalar/model/dispatch/fsu.asl","asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-FCVTZ-RAW-SD-002","source":"asl/scalar/fsu/FCVTZ.asl","requirements":["PTO-INST-SCALAR-FCVTZ","PTO-FCVTZ-DECISION-BINDING-001"],"kind":"execution","summary":"exact compiler FCVTZ FS-to-SD encoding publishes the signed 64-bit result","pass_condition":"raw 0x220c5feb reads FP32 16.0 from T1, maps DstType raw four to SD, pushes signed 16 to T, and advances once","related_sources":["asl/scalar/model/dispatch/fsu.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     ResetProfileState();

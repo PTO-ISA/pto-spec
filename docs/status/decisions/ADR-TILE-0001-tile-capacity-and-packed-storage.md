@@ -35,7 +35,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0013"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0001: Define tile capacity and packed storage

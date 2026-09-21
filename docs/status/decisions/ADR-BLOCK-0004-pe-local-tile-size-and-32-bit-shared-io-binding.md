@@ -49,7 +49,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0054"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0004: PE-Local Tile Size and 32-bit Shared I/O Binding

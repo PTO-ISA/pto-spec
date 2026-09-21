@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-CONTROLS-010","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"fault","summary":"B.FPATR rejects controls that conflict with fixed rounding or saturation","pass_condition":"fixed FP16 BF16 E4M3 HiF8 and shift modes reject inapplicable fields while programmable integer modes retain them","related_sources":["asl/arch/profile/matrix-postprocess.asl","asl/block/model/dispatch/tile-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-CONTROLS-010","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-MATRIX-QUANT-BITEXACT-001"],"kind":"fault","summary":"B.FPATR rejects controls that conflict with fixed rounding or saturation","pass_condition":"fixed FP16 BF16 E4M3 HiF8 and shift modes reject inapplicable fields while programmable integer modes retain them","related_sources":["asl/tile/model/execution/matrix-postprocess.asl","asl/block/model/dispatch/tile-schema.asl"]}
 func main() => integer
 begin
     assert BundleFPATRModeFixedRounding('000001');

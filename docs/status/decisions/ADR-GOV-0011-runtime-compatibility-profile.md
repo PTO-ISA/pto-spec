@@ -3,41 +3,58 @@
   "id": "ADR-GOV-0011",
   "title": "Opt-in Linx runtime compatibility profile",
   "title_zh": "可选启用的 Linx 运行时兼容配置",
-  "status": "accepted",
-  "authors": ["jiale-wangOwO"],
-  "approvers": ["zhoubot"],
+  "status": "superseded",
+  "authors": [
+    "jiale-wangOwO"
+  ],
+  "approvers": [
+    "zhoubot"
+  ],
   "created": "2026-09-09",
   "accepted": "2026-09-09",
   "rejected": null,
-  "superseded": null,
+  "superseded": "2026-09-21",
   "baseline": "dea0b75e803cffa873982c90f9aa0cd17c6d243b",
-  "target_releases": ["unassigned"],
+  "target_releases": [
+    "unassigned"
+  ],
   "affected_ndf": [
-    "PTO-B-HINT-LIFECYCLE-001",
-    "PTO-PROFILE-LINX-RUNTIME-COMPAT-001",
-    "PTO-PROFILE-LINX-PEID-SSR-001",
-    "PTO-PROFILE-LINX-NON-SYS-SYSTEM-OPS-001",
-    "PTO-PROFILE-LINX-ACRC-EXIT-OBSERVATION-001",
-    "PTO-PROFILE-HOST-MEMORY-001"
+    "PTO-B-HINT-LIFECYCLE-001"
   ],
   "affected_units": [
     "PTO-ARCH-FEATURES-TILE-ALLOCATION",
     "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
-    "PTO-ARCH-PROFILE-LINX-RUNTIME-COMPAT",
-    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
+    "PTO-ARCH-STATE-TRAP-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
+    "PTO-SCALAR-MODEL-AGU-MEMORY",
+    "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+    "PTO-SCALAR-MODEL-FSU-ARITHMETIC",
+    "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
+    "PTO-SCALAR-MODEL-SYS-SEMANTICS",
+    "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+    "PTO-TILE-MODEL-EXECUTION-CUBE",
+    "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+    "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+    "PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
+    "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+    "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+    "PTO-TILE-MODEL-EXECUTION-UNARY",
+    "PTO-TILE-MODEL-NUMERIC-FORMATS",
     "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
     "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
     "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
     "PTO-BLOCK-B-HINT",
     "PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL",
     "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
-    "PTO-SCALAR-MODEL-AGU-MEMORY",
-    "PTO-SCALAR-MODEL-SYS-REGISTERS",
-    "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+    "PTO-SCALAR-MODEL-SYS-REGISTERS"
   ],
   "resolves": [],
   "supersedes": [],
-  "superseded_by": [],
+  "superseded_by": [
+    "ADR-GOV-0012"
+  ],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/258",
   "release_impact": "required",
   "release_boundary": false,
@@ -51,8 +68,7 @@
       ],
       "issue": "https://github.com/PTO-ISA/pto-spec/issues/286",
       "affected_ndf": [
-        "PTO-B-HINT-LIFECYCLE-001",
-        "PTO-PROFILE-LINX-RUNTIME-COMPAT-001"
+        "PTO-B-HINT-LIFECYCLE-001"
       ],
       "affected_units": [
         "PTO-BLOCK-MODEL-COMMIT-VALIDATION",

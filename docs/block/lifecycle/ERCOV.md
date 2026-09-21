@@ -142,7 +142,7 @@ end;
 
 pure func InstructionContractRejectsBeforeEffects_ERCOV() => boolean
 begin
-    return !CommandHandlerSupportedPTOv0(
+    return !CommandHandlerSupported(
         CommandHandler_RecoverExecutionContext);
 end;
 ```

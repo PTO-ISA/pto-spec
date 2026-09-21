@@ -54,7 +54,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-mx-formats-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
-- [硬件数值最小值/最大值](minmax-profile.md)
+- [硬件数值最小值/最大值](minmax.md)
 - [数值分类](../data-types/numeric-classification.md)
 - [数值格式分派](../data-types/numeric-formats.md)
 <!-- SUPPLEMENTARY-END -->

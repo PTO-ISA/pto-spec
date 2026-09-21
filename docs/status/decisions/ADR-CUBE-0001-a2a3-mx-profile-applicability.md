@@ -1,8 +1,8 @@
 ---
 {
   "id": "ADR-CUBE-0001",
-  "title": "A2/A3 MX CUBE profile applicability",
-  "title_zh": "A2/A3 MX CUBE 配置适用性",
+  "title": "MX CUBE negative applicability",
+  "title_zh": "MX CUBE 负向适用性",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
@@ -53,7 +53,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0041"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-CUBE-0001: A2/A3 MX CUBE profile applicability

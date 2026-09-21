@@ -408,10 +408,9 @@ begin
     end;
 end;
 
-impdef func TileProfileUnary(
-    op: TileUnaryOperation,
-    data_type: TileDataType,
-    value: Word) => (Word, bits(5))
+func TileProfileUnary(op: TileUnaryOperation,
+                                      data_type: TileDataType,
+                                      value: Word) => (Word, bits(5))
 begin
     if TileUnaryUsesClosedElementwiseContract(op) then
         let (result, invalid) = TileFixedUnaryValue(
@@ -422,9 +421,7 @@ begin
             result,
             if invalid then Zeros{5} + 1 else Zeros{5});
     end;
-    return (
-        TileUnaryValue(op, value),
-        Zeros{5});
+    return ReferenceTileUnaryFinite(op, data_type, value);
 end;
 
 func ExecuteTileUnary(

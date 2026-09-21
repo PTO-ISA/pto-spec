@@ -33,7 +33,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0011"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0005: Make EBARG the visible PTO v0 trap snapshot

@@ -30,7 +30,7 @@
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
     "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
-    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
     "PTO-SCALAR-FMAX",
     "PTO-SCALAR-FMIN",
     "PTO-TILE-TMAX",
@@ -44,7 +44,8 @@
   "legacy_ids": [
     "PD-05-SC2",
     "ADR-0050"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0011: Hardware special-value result checkpoint

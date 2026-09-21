@@ -26,7 +26,8 @@
   "legacy_ids": [
     "PD-09",
     "ADR-0092"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-NUM-0019: Reduction order and stability

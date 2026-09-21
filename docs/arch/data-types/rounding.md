@@ -24,7 +24,7 @@ It separates mathematical mode identity from scalar `FRM`, fixed conversion over
 
 - `NumericRoundingMode` contains `RNE`, `RTM`, `RTP`, `RTZ`, `RNA`, `RTO`, and `RHB` semantic modes.
 - `NumericExecutionControl` pairs a `NumericRoundingMode` with a `saturating` boolean.
-- `NumericApplicabilityRuleSet` names no extra rejection or the bounded `A2A3MxRejection` rule set.
+- `NumericApplicabilityRuleSet` names no extra rejection or the bounded `MxRejection` rule set.
 
 <!-- PTO-READER-BLOCK: arch-rounding-rules-interactions role=rules-interactions -->
 ## Rules and interactions
@@ -40,7 +40,7 @@ The applicability enum is only a bounded negative-rule selector. Lack of rejecti
 
 These types do not define how an arithmetic operation rounds a particular value. Exact result algorithms remain with operation/profile owners.
 
-`A2A3MxRejection` is a named target-facing rule set, not portable PTO behavior that can be applied outside its selecting owner.
+`MxRejection` is a named negative applicability rule set, not portable PTO behavior that can be applied outside its selecting owner.
 
 <!-- PTO-READER-BLOCK: arch-rounding-example-usage role=example-usage -->
 ## Non-normative reading example
@@ -89,12 +89,12 @@ begin
     };
 end;
 
-// Selects only a bounded set of accepted negative applicability rules. This
-// is not a complete target-profile selector: absence of a rejection does not
-// claim target support or select numeric result semantics.
+// Selects only a bounded set of accepted negative applicability rules.
+// Absence of a rejection does not claim support or select numeric result
+// semantics.
 type NumericApplicabilityRuleSet of enumeration {
     NumericApplicabilityRules_None,
-    NumericApplicabilityRules_A2A3MxRejection
+    NumericApplicabilityRules_MxRejection
 };
 ```
 <!-- GENERATED-ASL-END: unit -->

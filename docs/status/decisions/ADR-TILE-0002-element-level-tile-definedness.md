@@ -33,7 +33,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0014"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-TILE-0002: Track tile definedness per element

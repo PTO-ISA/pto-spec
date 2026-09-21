@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0036"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-GOV-0003: Formal source and evidence boundary

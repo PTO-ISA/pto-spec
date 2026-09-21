@@ -44,7 +44,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0009"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-STATE-0003: scalar TPC and execution status

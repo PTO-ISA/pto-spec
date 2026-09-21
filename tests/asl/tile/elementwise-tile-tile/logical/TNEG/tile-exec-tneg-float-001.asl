@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TNEG-FLOAT-001","source":"asl/tile/elementwise-tile-tile/logical/TNEG.asl","requirements":["PTO-TNEG-CONTRACT-001"],"kind":"execution","summary":"TNEG toggles only the floating sign bit","pass_condition":"negative FP32 signaling NaN becomes the same positive signaling NaN payload without invalid status","related_sources":["asl/tile/model/execution/unary.asl","asl/scalar/model/fsu/profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TNEG-FLOAT-001","source":"asl/tile/elementwise-tile-tile/logical/TNEG.asl","requirements":["PTO-TNEG-CONTRACT-001"],"kind":"execution","summary":"TNEG toggles only the floating sign bit","pass_condition":"negative FP32 signaling NaN becomes the same positive signaling NaN payload without invalid status","related_sources":["asl/tile/model/execution/unary.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     ResetProfileState();

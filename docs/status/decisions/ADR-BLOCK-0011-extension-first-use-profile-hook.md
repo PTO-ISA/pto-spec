@@ -19,10 +19,10 @@
     "0.58.3"
   ],
   "affected_ndf": [
-    "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+    "PTO-ARCH-EXTENSION-FIRST-USE-001"
   ],
   "affected_units": [
-    "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE"
+    "PTO-ARCH-FEATURES-EXTENSION-FIRST-USE"
   ],
   "resolves": [],
   "supersedes": [],
@@ -31,7 +31,8 @@
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0068"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-BLOCK-0011: Extension first-use is a target-profile hook

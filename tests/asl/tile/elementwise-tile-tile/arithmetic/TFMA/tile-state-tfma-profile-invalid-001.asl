@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-PROFILE-INVALID-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"state-transition","summary":"TFMA delegates invalid fused results to the selected numeric profile.","pass_condition":"The profile hook returns a quiet NaN and records NV without fixing a normative NaN payload.","related_sources":["asl/tile/model/execution/fused-multiply-add.asl","asl/arch/profile/reference-profile.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-PROFILE-INVALID-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"state-transition","summary":"TFMA delegates invalid fused results to the selected numeric profile.","pass_condition":"The profile hook returns a quiet NaN and records NV without fixing a normative NaN payload.","related_sources":["asl/tile/model/execution/fused-multiply-add.asl","asl/scalar/model/fsu/scalar-fp.asl"]}
 func main() => integer
 begin
     let (result, flags) = TileProfileFusedInvalidResult(

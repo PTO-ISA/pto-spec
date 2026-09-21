@@ -414,7 +414,8 @@
     "PRD-172",
     "PRD-173",
     "ADR-0084"
-  ]
+  ],
+  "amendments": []
 }
 ---
 # ADR-SCALAR-0006: Scalar, system, and queue operations
