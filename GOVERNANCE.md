@@ -47,13 +47,13 @@ instruction-identity change must close its ASL-MODEL mapping before publication.
 
 - **Interface definition** changes an externally visible encoding, operand or
   bundle schema, architectural state interface, legality/fault contract,
-  ordering/commit boundary, profile contract, or assembly interface. It
+  ordering/commit boundary, or assembly interface. It
   requires an NDF issue, reviewed decision state, owning ASL/NDF change, and
   focused executable evidence. Update the existing topic ADR when one already
   owns that interface; allocate a new ADR only for a genuinely new interface
   decision.
 - **Implementation correction** fixes ASL wording, decode, dispatch, helper,
-  reference-profile implementation, model-bound leakage, or tests under an
+  reference implementation, model-bound leakage, or tests under an
   unchanged interface. Fix the owning ASL/tests directly and preserve the
   issue, commit, and executable evidence; do not allocate an ADR.
 - **Toolchain** updates the audited ASLRef pin or build environment and stays
@@ -94,7 +94,7 @@ the authorization boundary for merges and publication.
 `main` is a moving normative draft. A candidate names frozen inputs awaiting
 verification. A published release binds an immutable commit and evidence; its
 publication status does not imply that every architectural area is complete.
-Consumers read the profile, maturity and known gaps in that exact release.
+Consumers read the maturity and known gaps in that exact release.
 
 Architecture version, publication revision, encoding ABI and content digests
 are distinct identities. In the current four-part version scheme, a publication
@@ -110,7 +110,7 @@ compatibility only when the normative contract is unchanged. These declarations
 describe change impact; ASL/NDF remains the sole semantic authority.
 
 Production consumers pin the full release tag, commit, manifest digest and
-applicable profile. They verify the release evidence before updating that pin.
+applicable compatibility declarations. They verify the release evidence before updating that pin.
 Development consumers may track a commit but must not treat it as a published
 release. Downstream repositories keep their own identities and acceptance cases;
 PTO-SPEC links their obligations without copying their normative records.

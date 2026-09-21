@@ -25,7 +25,7 @@ every architectural statement. Read [Governance](GOVERNANCE.md), the
 ### ASL or specification implementation correction
 
 When the public interface is already decided and ASL, decode, dispatch,
-reference-profile code, a bounded model, or a test implements it incorrectly,
+reference implementation code, a bounded model, or a test implements it incorrectly,
 fix the owning ASL/tests directly. Link the governing interface ADR when one
 exists, but do not allocate a new ADR. The issue and commit history record why
 the correction was needed.

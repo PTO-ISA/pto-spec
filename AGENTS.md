@@ -36,7 +36,7 @@ architecture requirement.
   rerun; select current IDs with `scripts/print-asl-test-matrix --ids-file`.
 - Preserve exact mask/match, operand-piece, signedness, constraint, selector,
   decoder-witness, and semantic-handler coverage for every accepted operation.
-- Do not encode A2/A3, A5, or CPU implementation behavior as portable PTO semantics without a named target profile.
+- Do not encode target- or CPU-implementation behavior as portable PTO semantics.
 - Keep toolchain, governance, normative semantics, and mechanical refactors in separate changes.
 - Start normative work from a linked NDF architecture issue naming the baseline
   commit, changed clause IDs, defaults, unspecified behavior, compatibility,
