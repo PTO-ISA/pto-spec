@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","surface":"tile","classification":["model","execution","fused-multiply-add"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-SCALAR-MODEL-FSU-PROFILE"]}
-impdef func TileProfileFusedMultiplyAdd(
+func TileProfileFusedMultiplyAdd(
     data_type: TileDataType,
     addend: Word,
     left: Word,
@@ -14,7 +14,7 @@ begin
         right);
 end;
 
-impdef func TileProfileFusedInvalidResult(
+func TileProfileFusedInvalidResult(
     data_type: TileDataType,
     left: Word,
     right: Word,

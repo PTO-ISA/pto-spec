@@ -3,36 +3,57 @@
 // remain behind the named profile hooks while this unit owns operand routing,
 // reductions, and atomic auxiliary-output publication.
 
-impdef func TileProfileMatrixPostProcess(
+func TileProfileMatrixPostProcess(
     value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
     group_n_code: bits(4), output_type: TileDataType,
     quant_param: Word, relu_param: Word,
     control: NumericExecutionControl) => Word
 begin
-    return value;
+    let (result, -) = TileProfileMatrixPostProcessWithFlags(
+        value, pre_quant_mode, relu_mode, group_n_code,
+        output_type, quant_param, relu_param, control);
+    return result;
 end;
 
-impdef func TileProfileMatrixPostProcessWithFlags(
+func TileProfileMatrixPostProcessWithFlags(
     value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
     group_n_code: bits(4), output_type: TileDataType,
     quant_param: Word, relu_param: Word,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
-    return (value, Zeros{5});
+    let effective_control = MatrixFPATREffectiveControl(
+        pre_quant_mode, control);
+    return MatrixPostQuantBaseWithFlags(
+        value, pre_quant_mode, output_type, relu_mode,
+        quant_param, relu_param, effective_control);
 end;
 
-impdef func TileProfileMatrixReductionStep(
+func TileProfileMatrixReductionStep(
     current: Word, candidate: Word, max_abs: boolean,
     data_type: TileDataType) => Word
 begin
-    return candidate;
+    let (result, -) = TileProfileMatrixReductionStepWithFlags(
+        current, candidate, max_abs, data_type);
+    return result;
 end;
 
-impdef func TileProfileMatrixReductionStepWithFlags(
+func TileProfileMatrixReductionStepWithFlags(
     current: Word, candidate: Word, max_abs: boolean,
     data_type: TileDataType) => (Word, bits(5))
 begin
-    return (candidate, Zeros{5});
+    let (lhs_abs, lhs_flags) = if max_abs then
+        MatrixReductionAbsoluteWithFlags(current, data_type)
+    else
+        (current, Zeros{5});
+    let (rhs_abs, rhs_flags) = if max_abs then
+        MatrixReductionAbsoluteWithFlags(candidate, data_type)
+    else
+        (candidate, Zeros{5});
+    let lhs = if max_abs then lhs_abs else current;
+    let rhs = if max_abs then rhs_abs else candidate;
+    let (selected, -, flags) = TileReductionStepWithFlags(
+        TileReduction_MAX, data_type, lhs, rhs);
+    return (selected, flags OR lhs_flags OR rhs_flags);
 end;
 
 readonly func BundleMatrixLocalMathematicalSourceCount() => integer {0..6}

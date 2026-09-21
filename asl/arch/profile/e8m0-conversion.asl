@@ -218,36 +218,4 @@ begin
         if exact then Zeros{5} else Zeros{5} + 0x10);
 end;
 
-implementation func TileProfileConvert(
-    value: Word,
-    source_type: TileDataType,
-    destination_type: TileDataType,
-    control: NumericExecutionControl) => (Word, bits(5))
-begin
-    // The E6M2/RCPE6M2 scale identities and the packed X2 formats have their
-    // own closed reference policy; route them through the same dispatcher the
-    // TCVT instruction uses instead of the generic raw-encoding fallback.
-    if source_type == TileDataType_E2M1X2 ||
-       source_type == TileDataType_E1M2X2 ||
-       destination_type == TileDataType_E2M1X2 ||
-       destination_type == TileDataType_E1M2X2 ||
-       source_type == TileDataType_E6M2 ||
-       destination_type == TileDataType_E6M2 ||
-       source_type == TileDataType_RCPE6M2 then
-        return ReferenceTCVTConvert(
-            value, source_type, destination_type, control);
-    end;
-    if ReferenceCommonConversionTypeSupported(source_type) &&
-       ReferenceCommonConversionTypeSupported(destination_type) then
-        return ReferenceCommonConvert(
-            value, source_type, destination_type, control);
-    elsif destination_type == TileDataType_E8M0 then
-        return ReferenceFloatToE8M0(value, source_type, control);
-    elsif !TileDataTypeIsFloating(destination_type) then
-        return (
-            NormalizeTileInteger(value, destination_type),
-            Zeros{5});
-    end;
-    return (value, Zeros{5});
-end;
 // DOC-END: operation

@@ -2,10 +2,8 @@
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
-impdef func ReadMonotonicTime() => Word
+func ReadMonotonicTime() => Word
 begin
-    // The default executable model uses the monotonically increasing cycle
-    // state. Implementations may override this with a nanosecond time source.
     return _SystemRegisters.cycle;
 end;
 

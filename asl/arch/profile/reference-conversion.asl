@@ -325,53 +325,5 @@ begin
         result, data_type, DefaultNumericExecutionControl());
 end;
 
-implementation func ScalarFPToIntegerProfile(
-    rounding_mode: NumericRoundingMode, destination_type: bits(5),
-    source_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarConvertIntegerTypeCodeSupported(destination_type);
-    assert ScalarConvertFloatingTypeCodeSupported(source_type);
-    let control = NumericExecutionControl {
-        rounding_mode = rounding_mode,
-        saturating = FALSE
-    };
-    return ReferenceCommonConvert(
-        value,
-        ScalarConvertFloatingTileDataType(source_type),
-        ScalarConvertIntegerTileDataType(destination_type),
-        control);
-end;
 
-implementation func ScalarFPConvertProfile(
-    rounding_mode: NumericRoundingMode, destination_type: bits(5),
-    source_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarConvertFloatingTypeCodeSupported(destination_type);
-    assert ScalarConvertFloatingTypeCodeSupported(source_type);
-    let control = NumericExecutionControl {
-        rounding_mode = rounding_mode,
-        saturating = FALSE
-    };
-    return ReferenceCommonConvert(
-        value,
-        ScalarConvertFloatingTileDataType(source_type),
-        ScalarConvertFloatingTileDataType(destination_type),
-        control);
-end;
 
-implementation func ScalarIntegerToFPProfile(
-    rounding_mode: NumericRoundingMode, source_type: bits(5),
-    destination_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarConvertIntegerTypeCodeSupported(source_type);
-    assert ScalarConvertFloatingTypeCodeSupported(destination_type);
-    let control = NumericExecutionControl {
-        rounding_mode = rounding_mode,
-        saturating = FALSE
-    };
-    return ReferenceCommonConvert(
-        value,
-        ScalarConvertIntegerTileDataType(source_type),
-        ScalarConvertFloatingTileDataType(destination_type),
-        control);
-end;

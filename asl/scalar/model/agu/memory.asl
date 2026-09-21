@@ -19,24 +19,32 @@ begin
             integer {0..262144});
 end;
 
-readonly impdef func TranslateDataAddress(address: Word,
-                                          size_bytes: integer {1..262144},
-                                          write: boolean) => Word
+readonly func TranslateDataAddress(address: Word,
+                                                  size_bytes: integer {1..262144},
+                                                  write: boolean) => Word
 begin
-    // The portable model uses identity translation.
     return address;
 end;
 
-readonly impdef func DataAccessPermitted(address: Word,
-                                         size_bytes: integer {1..262144},
-                                         write: boolean) => boolean
+readonly func DataAccessPermitted(address: Word,
+                                                 size_bytes: integer {1..262144},
+                                                 write: boolean) => boolean
 begin
-    // The portable model exposes one bounded, readable, writable address space.
-    // A hosted runtime profile delegates concrete guest mapping and
-    // permissions to its host bridge. Keep this policy in the impdef itself so
-    // every ASL memory operation observes the same explicit profile gate.
-    if PTOModelHostMemoryEnabled() then return TRUE; end;
-    return UInt(address) + size_bytes <= PTO_MODEL_MEMORY_BYTES;
+    let end_address = UInt(address) + size_bytes;
+    // Hosted profiles delegate address-space bounds and permissions to the
+    // runtime bridge.  Keep the bounded byte-array check for the portable
+    // profile, but do not reject guest virtual addresses before the host
+    // primitive is reached.
+    if PTOModelHostMemoryEnabled() &&
+       !HostDataAccessPermitted(address, size_bytes, write) then return FALSE; end;
+    if !PTOModelHostMemoryEnabled() && end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
+    // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
+    // ACR15 use the bounded 3072-byte application region.
+    if CurrentACR() >= 2 then return end_address <= 3072;
+    else return TRUE;
+    end;
 end;
 
 func ProbeDataAccess(address: Word,

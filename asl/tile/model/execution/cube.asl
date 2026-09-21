@@ -4,22 +4,41 @@
 // forms also name their Local accumulator input C explicitly;
 // C is snapshotted before D is written so D == C has read-old/write-new
 // behavior.
-impdef func TileProfileMatrixAccumulate(accumulator: Word, left: Word, right: Word,
-                                         destination_type: TileDataType,
-                                         left_type: TileDataType,
-                                         right_type: TileDataType,
-                                         control: NumericExecutionControl)
-                                         => Word
+func TileProfileMatrixAccumulate(
+    accumulator: Word, left: Word, right: Word,
+    destination_type: TileDataType, left_type: TileDataType,
+    right_type: TileDataType, control: NumericExecutionControl) => Word
 begin
+    if destination_type == TileDataType_FP32 &&
+       ReferenceMatrixOrdinaryFloatingInputSupported(left_type) &&
+       ReferenceMatrixOrdinaryFloatingInputSupported(right_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(accumulator, destination_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(left, left_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(right, right_type) then
+        return ReferenceMatrixOrdinaryFloatingAccumulate(
+            accumulator, left, right, left_type, right_type, control);
+    end;
     return accumulator + MultiplyWord(left, right);
 end;
-impdef func TileProfileMatrixBias(value: Word, bias: Word,
-                                  destination_type: TileDataType,
-                                  bias_type: TileDataType) => Word
+func TileProfileMatrixBias(value: Word, bias: Word,
+                                          destination_type: TileDataType,
+                                          bias_type: TileDataType) => Word
 begin
+    if destination_type == TileDataType_FP32 &&
+       bias_type == TileDataType_FP32 &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(value, destination_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(bias, bias_type) then
+        let value_real = ReferenceFP32FiniteValue(value[31:0]);
+        let bias_real = ReferenceFP32FiniteValue(bias[31:0]);
+        let (result, -) = ReferenceMatrixFloatingEncoding(
+            value_real + bias_real,
+            TileDataType_FP32,
+            DefaultNumericExecutionControl());
+        return result;
+    end;
     return value + bias;
 end;
-impdef func TileProfileMatrixScaledAccumulate(
+func TileProfileMatrixScaledAccumulate(
     accumulator: Word, left: Word, right: Word,
     left_scale: Word, right_scale: Word,
     left_scale_present: boolean, right_scale_present: boolean,
@@ -27,6 +46,17 @@ impdef func TileProfileMatrixScaledAccumulate(
     right_type: TileDataType, left_scale_type: TileDataType,
     right_scale_type: TileDataType) => Word
 begin
+    if !left_scale_present && !right_scale_present &&
+       destination_type == TileDataType_FP32 &&
+       ReferenceMatrixOrdinaryFloatingInputSupported(left_type) &&
+       ReferenceMatrixOrdinaryFloatingInputSupported(right_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(accumulator, destination_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(left, left_type) &&
+       ReferenceMatrixOrdinaryFloatingCarrierFinite(right, right_type) then
+        return ReferenceMatrixOrdinaryFloatingAccumulate(
+            accumulator, left, right, left_type, right_type,
+            DefaultNumericExecutionControl());
+    end;
     let scaled_left = if left_scale_present then
         MultiplyWord(left, left_scale)
     else

@@ -1,8 +1,24 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE","surface":"tile","classification":["model","execution","matrix-scale"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS"]}
 
-impdef func TileProfileMatrixCScale(value: Word, exponent: bits(8)) => Word
+func TileProfileMatrixCScale(
+    value: Word, exponent: bits(8)) => Word
 begin
-    return value;
+    let value_class = ClassifyFP32(value[31:0]);
+    if NumericValueClassIsNaN(value_class) ||
+       value_class == NumericValue_PositiveInfinity ||
+       value_class == NumericValue_NegativeInfinity ||
+       value_class == NumericValue_PositiveZero ||
+       value_class == NumericValue_NegativeZero then
+        return value;
+    end;
+    var scaled = ReferenceFP32FiniteValue(value[31:0]);
+    for step = 1 to UInt(exponent) looplimit 255 do
+        scaled = scaled / 2.0;
+    end;
+    let (encoded, flags) = ReferenceFP32FiniteEncoding(
+        scaled, NumericRound_RNE);
+    RecordNumericStatusFlags(flags);
+    return encoded;
 end;
 
 func MatrixInitialAccumulatorValue(

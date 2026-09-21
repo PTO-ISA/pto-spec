@@ -37,14 +37,25 @@ begin
     pass;
 end;
 
-readonly impdef func ReadPhysicalMemoryByte(address: Word) => Byte
+readonly func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
-    return Zeros{8};
+    if PTOModelHostMemoryEnabled() then
+        return HostReadMemoryByte(address);
+    end;
+    assert IsModelAddress(address);
+    let index = UInt(address) as ModelAddress;
+    return _Memory[[index]];
 end;
 
-impdef func WritePhysicalMemoryByte(address: Word, value: Byte)
+func WritePhysicalMemoryByte(address: Word, value: Byte)
 begin
-    pass;
+    if PTOModelHostMemoryEnabled() then
+        HostWriteMemoryByte(address, value);
+        return;
+    end;
+    assert IsModelAddress(address);
+    let index = UInt(address) as ModelAddress;
+    _Memory[[index]] = value;
 end;
 
 readonly func IsModelAddress(address: Word) => boolean

@@ -8,26 +8,6 @@
 // sticky flags as one non-faulting commit.
 // NDF-END: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 
-implementation func TileProfileMatrixCScale(
-    value: Word, exponent: bits(8)) => Word
-begin
-    let value_class = ClassifyFP32(value[31:0]);
-    if NumericValueClassIsNaN(value_class) ||
-       value_class == NumericValue_PositiveInfinity ||
-       value_class == NumericValue_NegativeInfinity ||
-       value_class == NumericValue_PositiveZero ||
-       value_class == NumericValue_NegativeZero then
-        return value;
-    end;
-    var scaled = ReferenceFP32FiniteValue(value[31:0]);
-    for step = 1 to UInt(exponent) looplimit 255 do
-        scaled = scaled / 2.0;
-    end;
-    let (encoded, flags) = ReferenceFP32FiniteEncoding(
-        scaled, NumericRound_RNE);
-    RecordNumericStatusFlags(flags);
-    return encoded;
-end;
 
 pure func MatrixFloatingSignedZero(
     data_type: TileDataType, negative: boolean) => Word
@@ -272,39 +252,8 @@ begin
     return (encoded, activation_flags OR encoding_flags);
 end;
 
-implementation func TileProfileMatrixPostProcessWithFlags(
-    value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
-    group_n_code: bits(4), output_type: TileDataType,
-    quant_param: Word, relu_param: Word,
-    control: NumericExecutionControl) => (Word, bits(5))
-begin
-    let effective_control = MatrixFPATREffectiveControl(
-        pre_quant_mode, control);
-    return MatrixPostQuantBaseWithFlags(
-        value, pre_quant_mode, output_type, relu_mode,
-        quant_param, relu_param, effective_control);
-end;
 
-implementation func TileProfileMatrixPostProcess(
-    value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
-    group_n_code: bits(4), output_type: TileDataType,
-    quant_param: Word, relu_param: Word,
-    control: NumericExecutionControl) => Word
-begin
-    let (result, -) = TileProfileMatrixPostProcessWithFlags(
-        value, pre_quant_mode, relu_mode, group_n_code,
-        output_type, quant_param, relu_param, control);
-    return result;
-end;
 
-implementation func TileProfileMatrixReductionStep(
-    current: Word, candidate: Word, max_abs: boolean,
-    data_type: TileDataType) => Word
-begin
-    let (result, -) = TileProfileMatrixReductionStepWithFlags(
-        current, candidate, max_abs, data_type);
-    return result;
-end;
 
 pure func MatrixReductionAbsoluteWithFlags(
     value: Word, data_type: TileDataType) => (Word, bits(5))
@@ -328,21 +277,3 @@ begin
     return (result, if invalid then Zeros{5} + 1 else Zeros{5});
 end;
 
-implementation func TileProfileMatrixReductionStepWithFlags(
-    current: Word, candidate: Word, max_abs: boolean,
-    data_type: TileDataType) => (Word, bits(5))
-begin
-    let (lhs_abs, lhs_flags) = if max_abs then
-        MatrixReductionAbsoluteWithFlags(current, data_type)
-    else
-        (current, Zeros{5});
-    let (rhs_abs, rhs_flags) = if max_abs then
-        MatrixReductionAbsoluteWithFlags(candidate, data_type)
-    else
-        (candidate, Zeros{5});
-    let lhs = if max_abs then lhs_abs else current;
-    let rhs = if max_abs then rhs_abs else candidate;
-    let (selected, -, flags) = TileReductionStepWithFlags(
-        TileReduction_MAX, data_type, lhs, rhs);
-    return (selected, flags OR lhs_flags OR rhs_flags);
-end;

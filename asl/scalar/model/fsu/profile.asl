@@ -375,59 +375,123 @@ begin
     end;
 end;
 
-impdef func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
-                                  rounding_mode: NumericRoundingMode, source_type: bits(5),
-                                  left: Word, right: Word) => (Word, bits(5))
+func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
+                                           rounding_mode: NumericRoundingMode,
+                                           source_type: bits(5),
+                                           left: Word, right: Word)
+                                           => (Word, bits(5))
 begin
-    // Executable identity default. A named numeric profile supplies the
-    // correctly rounded arithmetic result and IEEE exception flags.
-    assert ScalarFPTypeCodeSupported(source_type);
-    return (left, Zeros{5});
+    assert ScalarFPTypeCodeSupported(source_type) ||
+           source_type == '00100' || source_type == '00101';
+    let (special, special_result, special_flags) =
+        ReferenceScalarFPBinarySpecial(
+            operation, source_type, left, right);
+    if special then return (special_result, special_flags); end;
+
+    let left_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(left, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(left, source_type);
+    let right_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(right, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(right, source_type);
+    case operation of
+        when FloatingBinary_ADD, FloatingBinary_SUB,
+             FloatingBinary_MUL, FloatingBinary_DIV =>
+            if source_type == '00101' then
+                return ReferenceBinary16Encoding(
+                    FloatingBinary(operation, left_value, right_value),
+                    TileDataType_BF16,
+                    NumericExecutionControl {
+                        rounding_mode = rounding_mode,
+                        saturating = FALSE
+                    });
+            end;
+            return ReferenceScalarFPFiniteEncoding(
+                FloatingBinary(operation, left_value, right_value),
+                source_type,
+                rounding_mode);
+        // Scalar dispatch owns MIN/MAX NaN and signed-zero behavior. These
+        // totality arms are not reached by decoded FMIN/FMAX.
+        when FloatingBinary_MIN =>
+            if left_value <= right_value then return (left, Zeros{5});
+            else return (right, Zeros{5});
+            end;
+        when FloatingBinary_MAX =>
+            if left_value >= right_value then return (left, Zeros{5});
+            else return (right, Zeros{5});
+            end;
+    end;
 end;
 
-impdef func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
-                                 rounding_mode: NumericRoundingMode, source_type: bits(5),
-                                 value: Word) => (Word, bits(5))
+func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
+                                          rounding_mode: NumericRoundingMode,
+                                          source_type: bits(5), value: Word)
+                                          => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type);
-    return (value, Zeros{5});
+    assert ScalarFPTypeCodeSupported(source_type) ||
+           source_type == '00100' || source_type == '00101';
+    return ReferenceScalarFPUnaryProfile(
+        operation, rounding_mode, source_type, value);
 end;
 
-impdef func ScalarFPFusedProfile(operation: FloatingFusedOperation,
-                                 rounding_mode: NumericRoundingMode, source_type: bits(5),
-                                 addend: Word, left: Word, right: Word)
-                                 => (Word, bits(5))
+func ScalarFPFusedProfile(operation: FloatingFusedOperation,
+                                          rounding_mode: NumericRoundingMode,
+                                          source_type: bits(5), addend: Word,
+                                          left: Word, right: Word)
+                                          => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
-    return (addend, Zeros{5});
+    return ReferenceScalarFPFusedProfile(
+        operation, rounding_mode, source_type, addend, left, right);
 end;
 
-impdef func ScalarFPToIntegerProfile(rounding_mode: NumericRoundingMode,
-                                     destination_type: bits(5),
-                                     source_type: bits(5), value: Word)
-                                     => (Word, bits(5))
+func ScalarFPToIntegerProfile(
+    rounding_mode: NumericRoundingMode, destination_type: bits(5),
+    source_type: bits(5), value: Word) => (Word, bits(5))
 begin
     assert ScalarConvertIntegerTypeCodeSupported(destination_type);
     assert ScalarConvertFloatingTypeCodeSupported(source_type);
-    return (value, Zeros{5});
+    let control = NumericExecutionControl {
+        rounding_mode = rounding_mode,
+        saturating = FALSE
+    };
+    return ReferenceCommonConvert(
+        value,
+        ScalarConvertFloatingTileDataType(source_type),
+        ScalarConvertIntegerTileDataType(destination_type),
+        control);
 end;
 
-impdef func ScalarFPConvertProfile(rounding_mode: NumericRoundingMode,
-                                   destination_type: bits(5),
-                                   source_type: bits(5), value: Word)
-                                   => (Word, bits(5))
+func ScalarFPConvertProfile(
+    rounding_mode: NumericRoundingMode, destination_type: bits(5),
+    source_type: bits(5), value: Word) => (Word, bits(5))
 begin
     assert ScalarConvertFloatingTypeCodeSupported(destination_type);
     assert ScalarConvertFloatingTypeCodeSupported(source_type);
-    return (value, Zeros{5});
+    let control = NumericExecutionControl {
+        rounding_mode = rounding_mode,
+        saturating = FALSE
+    };
+    return ReferenceCommonConvert(
+        value,
+        ScalarConvertFloatingTileDataType(source_type),
+        ScalarConvertFloatingTileDataType(destination_type),
+        control);
 end;
 
-impdef func ScalarIntegerToFPProfile(rounding_mode: NumericRoundingMode,
-                                     source_type: bits(5),
-                                     destination_type: bits(5), value: Word)
-                                     => (Word, bits(5))
+func ScalarIntegerToFPProfile(
+    rounding_mode: NumericRoundingMode, source_type: bits(5),
+    destination_type: bits(5), value: Word) => (Word, bits(5))
 begin
     assert ScalarConvertIntegerTypeCodeSupported(source_type);
     assert ScalarConvertFloatingTypeCodeSupported(destination_type);
-    return (value, Zeros{5});
+    let control = NumericExecutionControl {
+        rounding_mode = rounding_mode,
+        saturating = FALSE
+    };
+    return ReferenceCommonConvert(
+        value,
+        ScalarConvertIntegerTileDataType(source_type),
+        ScalarConvertFloatingTileDataType(destination_type),
+        control);
 end;
