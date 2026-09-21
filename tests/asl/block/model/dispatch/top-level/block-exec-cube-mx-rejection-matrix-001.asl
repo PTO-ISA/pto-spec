@@ -1,5 +1,5 @@
 // Migrated from the pre-four-surface executable test suite.
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001","source":"asl/block/model/dispatch/top-level.asl","requirements":[],"kind":"execution","summary":"Covers A2 A3 Cube Mx Bundle Rejection Matrix.","pass_condition":"TestA2A3CubeMxBundleRejectionMatrix completes without assertion failure","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBEMXREJECTIONMATRIX-EXECUTION-001","source":"asl/block/model/dispatch/top-level.asl","requirements":[],"kind":"execution","summary":"Covers the Cube MX bundle rejection matrix.","pass_condition":"TestCubeMxBundleRejectionMatrix completes without assertion failure","related_sources":[]}
 pure func BundleTestTEPLStart(selector: bits(10), data_type: bits(5))
         => bits(64)
 begin
@@ -92,7 +92,7 @@ begin
         TileLayout_RowMajor);
 end;
 
-func TestA2A3CubeMxBundleRejectionMatrix()
+func TestCubeMxBundleRejectionMatrix()
 begin
     for function_index = 0 to 5 do
         let function = BundleTestMxFunction(function_index);
@@ -103,7 +103,7 @@ begin
                 WriteTPC(Zeros{PTO_XLEN} + 0x100);
                 let named_status =
                     ExecuteBundleStartWithAcceptedApplicabilityRules(
-                    NumericApplicabilityRules_A2A3MxRejection,
+                    NumericApplicabilityRules_MxRejection,
                     BundleTestNamedMxStart(function, data_type));
                 assert named_status == CommandExecution_Rejected;
                 assert _LastFault == Fault_IllegalInstruction;
@@ -116,7 +116,7 @@ begin
                 WriteTPC(Zeros{PTO_XLEN} + 0x200);
                 let generic_status =
                     ExecuteBundleStartWithAcceptedApplicabilityRules(
-                    NumericApplicabilityRules_A2A3MxRejection,
+                    NumericApplicabilityRules_MxRejection,
                     BundleTestCUBEStart(
                         Zeros{5} + function, data_type));
                 assert generic_status == CommandExecution_Rejected;
@@ -143,7 +143,7 @@ begin
             '10', Zeros{6}, Zeros{6} + 1, TRUE), 32);
         let rejected_named =
             ExecuteBundleStartWithAcceptedApplicabilityRules(
-            NumericApplicabilityRules_A2A3MxRejection,
+            NumericApplicabilityRules_MxRejection,
             BundleTestNamedMxStart(function, Zeros{5} + 24));
         assert live_start == CommandExecution_Executed;
         assert live_binding == CommandExecution_Executed;
@@ -172,7 +172,7 @@ begin
             BundleTestTileBinding('10', Zeros{6}, Zeros{6} + 1, TRUE), 32);
         let rejected_generic =
             ExecuteBundleStartWithAcceptedApplicabilityRules(
-            NumericApplicabilityRules_A2A3MxRejection,
+            NumericApplicabilityRules_MxRejection,
             BundleTestCUBEStart(
                 Zeros{5} + function, Zeros{5} + 24));
         assert generic_live_start == CommandExecution_Executed;
@@ -193,7 +193,7 @@ begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x500);
     let reserved_type = ExecuteBundleStartWithAcceptedApplicabilityRules(
-        NumericApplicabilityRules_A2A3MxRejection,
+        NumericApplicabilityRules_MxRejection,
         BundleTestNamedMxStart(4, Ones{5}));
     assert reserved_type == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
@@ -202,7 +202,7 @@ begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x600);
     let unknown_function = ExecuteBundleStartWithAcceptedApplicabilityRules(
-        NumericApplicabilityRules_A2A3MxRejection,
+        NumericApplicabilityRules_MxRejection,
         BundleTestCUBEStart(Zeros{5} + 3, Zeros{5} + 24));
     assert unknown_function == CommandExecution_Rejected;
     assert _LastFault == Fault_IllegalInstruction;
@@ -211,6 +211,6 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    TestA2A3CubeMxBundleRejectionMatrix();
+    TestCubeMxBundleRejectionMatrix();
     return 0;
 end;

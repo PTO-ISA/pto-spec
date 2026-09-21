@@ -302,35 +302,28 @@
       "class": "public-conversion-round-mode",
       "source_ids": [
         "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
+        "cpu-conversion"
       ],
       "status": "accepted-explicit-translation"
     },
     {
       "class": "matrix-tf32-hf32-rounding-control",
       "source_ids": [
-        "public-target-profiles",
-        "a2a3-matrix",
-        "a5-matrix"
+        "public-portability-rules"
       ],
       "status": "operation-fixed-RNE-mapping-accepted"
     },
     {
       "class": "quantization-stochastic-control",
       "source_ids": [
-        "a2a3-quantization",
-        "a5-quantization"
+        "public-portability-rules"
       ],
       "status": "not-an-architectural-selector-in-pto-v0"
     },
     {
       "class": "backend-only-cast-round-part-controls",
       "source_ids": [
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
+        "cpu-conversion"
       ],
       "status": "non-normative-unless-profile-mapped"
     }
@@ -362,9 +355,7 @@
         "TileProfileMatrixScaledAccumulate"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Use RNE for each fused multiply-add into the declared accumulator in increasing logical K order and for the post-dot bias addition.",
@@ -385,9 +376,7 @@
         "ScalarFPBinaryProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when the exact operation result is encoded in the destination format.",
@@ -405,9 +394,7 @@
         "ScalarFPConvertProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format.",
@@ -429,9 +416,7 @@
         "ScalarFPToIntegerProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
       "rounding_rule": "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
@@ -452,9 +437,7 @@
         "ScalarFPFusedProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
@@ -473,9 +456,7 @@
         "ScalarIntegerToFPProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when encoding the destination floating format; exactly representable integers are unchanged.",
@@ -495,9 +476,7 @@
         "ScalarFPUnaryProfile"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
       "rounding_rule": "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-NUM-0018 still owns approximation bounds.",
@@ -538,9 +517,7 @@
         "TileProfileBinary"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating arithmetic rounds each operation result once using RNE; integer, bitwise, shift, comparison, minimum, and maximum results do not round.",
@@ -558,9 +535,7 @@
         "TileProfileConvert"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
       "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
@@ -593,9 +568,7 @@
         "TileProfileExpand"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating arithmetic and exponential-difference results round once using RNE at each destination element; broadcast, min, and max selection do not round.",
@@ -613,9 +586,7 @@
         "TileProfileMatrixAccumulate"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
@@ -645,9 +616,7 @@
         "TileProfileReductionStep"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Evaluate in increasing logical row-major order and round each floating sum or product step to the declared accumulator type using RNE; min, max, and arg selection do not round.",
@@ -677,9 +646,7 @@
         "TileSquareRoot"
       ],
       "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-NUM-0018 retains approximation bounds.",
@@ -719,12 +686,12 @@
       "sha256": "30d42b6246fc982f2bb092174a462a017769c5e31f73af2c94390f8e205a91a1"
     },
     {
-      "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
+      "path": "spec/catalog/numeric-contract-identities.json",
+      "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1004,7 +971,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "1884a9480fa0c961cde21b6d7425db2ca23aa423fdd9ed37dfc9c45923c63877"
+      "sha256": "7c9075481b0cfbe73b8ba7d923bb219d930d84978358e201f41d6d504dc01962"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",

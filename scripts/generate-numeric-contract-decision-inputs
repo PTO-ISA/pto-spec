@@ -17,7 +17,7 @@ if str(ROOT := Path(__file__).resolve().parents[1]) not in sys.path:
 from scripts.adr_records import load_adrs
 
 
-OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+OUTPUT = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
 PUBLIC_REPOSITORY = "https://github.com/hw-native-sys/pto-isa"
 # Numeric implementation evidence remains at its separately audited snapshot.
 # The public predicate/mask reconciliation advances independently because two
@@ -49,13 +49,6 @@ SOURCES = (
         "public-contract",
     ),
     source(
-        "public-target-profiles",
-        "docs/isa/machine-model/execution-agents.md",
-        "published CPU, A2A3, and A5 capability partition",
-        "d2f0e6de371a1bc7713f64e18861b565e012a5bb2290552ae00dbb2f9902571f",
-        "public-contract",
-    ),
-    source(
         "public-portability-rules",
         "docs/isa/reference/portability-and-target-profiles.md",
         "published portable-semantics and target-narrowing boundary",
@@ -67,27 +60,6 @@ SOURCES = (
         "include/pto/cpu/TCvt.hpp",
         "CPU conversion, rounding, and saturation implementation evidence",
         "5824b29148028fa9358854ce5a729571a0101dc8c07b9c1347f2fe9c76f247b4",
-        "implementation-evidence",
-    ),
-    source(
-        "a2a3-conversion",
-        "include/pto/npu/a2a3/TCvt.hpp",
-        "A2A3 conversion control and edge-case implementation evidence",
-        "442fbc7977038ef4684ec275a3d20c2f9ac79dc023771803e4f596e514d93eaf",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-conversion",
-        "include/pto/npu/a5/TCvt.hpp",
-        "A5 conversion control, format, and edge-case implementation evidence",
-        "7b87f505c3ea50066628aa2fdfd23ffb3cdbb382d16d560c8827590f8eb2ca52",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-division",
-        "include/pto/npu/a5/custom/Div754.hpp",
-        "A5 division precision, special-value, and subnormal implementation evidence",
-        "e073ea0d0bb77cc5649dd0e6d30a26fa86ca4828baa42d2efccb3c4caa89e542",
         "implementation-evidence",
     ),
     source(
@@ -105,45 +77,10 @@ SOURCES = (
         "implementation-evidence",
     ),
     source(
-        "a5-exponential",
-        "include/pto/npu/a5/custom/TExp_Custom.hpp",
-        "A5 exponential implementation evidence",
-        "b4132dfb7ab052d6333d476172a11eb68f51526ce5f8f6a87533a15e1aec6d5c",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-logarithm",
-        "include/pto/npu/a5/custom/TLog_Custom.hpp",
-        "A5 logarithm implementation evidence",
-        "92ed4c98eb340c69e5bf0ef9639a332a8dfcb123bc7648cc2ae18bcb86f76ff7",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-square-root",
-        "include/pto/npu/a5/custom/TSqrtHp.hpp",
-        "A5 high-precision square-root implementation evidence",
-        "a3a16d27f845956f332a9004a7ec508b9b1698562a615ffe96162e39f3639c9c",
-        "implementation-evidence",
-    ),
-    source(
         "cpu-reduction",
         "include/pto/cpu/TReduce.hpp",
         "CPU reduction implementation evidence",
         "d91643b4c22673dfce152c636cf8a103153fd0e08321cbc43f5d637261161508",
-        "implementation-evidence",
-    ),
-    source(
-        "a2a3-reduction",
-        "include/pto/npu/a2a3/TRowReduceOps.hpp",
-        "A2A3 reduction-tree implementation evidence",
-        "79314d0af3619961eb39b51668cbd0b375e5b5f85de24c879b6a86357ce13753",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-reduction",
-        "include/pto/npu/a5/TRowReduce.hpp",
-        "A5 reduction width, order, and narrowing implementation evidence",
-        "fb02fdf0367280465c80ab39db3272206f3d97a35f54205636e8f9a71a70584d",
         "implementation-evidence",
     ),
     source(
@@ -154,20 +91,6 @@ SOURCES = (
         "implementation-evidence",
     ),
     source(
-        "a2a3-matrix",
-        "include/pto/npu/a2a3/TMatmul.hpp",
-        "A2A3 matrix instruction implementation evidence",
-        "6efc16caad1fa9b81fe3339bbe10cfb8a3fcb40d3759a807efdaf3b00464fb7f",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-matrix",
-        "include/pto/npu/a5/TMatmul.hpp",
-        "A5 matrix instruction and MX implementation evidence",
-        "13d04641738882a5e784372ba4ad94762ab54b7d2a229666fd74399ce567c944",
-        "implementation-evidence",
-    ),
-    source(
         "cpu-quantization",
         "include/pto/cpu/TQuant.hpp",
         "CPU quantization format, scale, rounding, and special-value implementation evidence",
@@ -175,38 +98,10 @@ SOURCES = (
         "implementation-evidence",
     ),
     source(
-        "a2a3-quantization",
-        "include/pto/npu/a2a3/TQuant.hpp",
-        "A2A3 quantization implementation evidence",
-        "a6b2aab4217fa9895df331c290d85218e7726eb080e430bfbd0651e91cddc34b",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-quantization",
-        "include/pto/npu/a5/TQuant.hpp",
-        "A5 quantization format, scale, and special-value implementation evidence",
-        "7e16b3cc9892b0af496d7e1d4fbddfb86f4c2cc9bd5c43235adbca5d7ce92ae3",
-        "implementation-evidence",
-    ),
-    source(
         "cpu-dequantization",
         "include/pto/cpu/TDeQuant.hpp",
         "CPU dequantization implementation evidence",
         "f5d4e7a4c8f28845f27ec16d0092a4c9801a999d365a67c431727d8bcdd21bc4",
-        "implementation-evidence",
-    ),
-    source(
-        "a2a3-dequantization",
-        "include/pto/npu/a2a3/TDequant.hpp",
-        "A2A3 dequantization implementation evidence",
-        "4fc8c886e202a9a6cbe359659c2cbd2b80b427397958908c4381762b63b60b57",
-        "implementation-evidence",
-    ),
-    source(
-        "a5-dequantization",
-        "include/pto/npu/a5/TDeQuant.hpp",
-        "A5 dequantization implementation evidence",
-        "b4fa0abd2b5eebaecc08c29accf42a45e2909d13256961be4f121b159639e941",
         "implementation-evidence",
     ),
 )
@@ -377,7 +272,7 @@ def generate() -> dict[str, Any]:
                     "open_numeric_dimensions"
                 ],
                 "decision_adr_ids": decision_adr_ids,
-                "status": "profile-rule-required",
+                "status": "contract-rule-required",
                 "selected_profile_rule": None,
             }
         )
@@ -395,7 +290,7 @@ def generate() -> dict[str, Any]:
             "independent_comparison_role": "Executable-ISA comparison is separate evidence and does not provide S5-T2 numeric differential results or select numeric decisions.",
             "no_implicit_choice": "A missing profile rule remains open; the generator never chooses the most convenient backend behavior.",
         },
-        "profile_partition_inputs": [
+        "contract_partition_inputs": [
             {
                 "id": "portable-numeric",
                 "role": "portable result contract",
@@ -405,16 +300,6 @@ def generate() -> dict[str, Any]:
                 "id": "cpu-observation",
                 "role": "implementation-under-test observation only",
                 "status": "identity-accepted-observation-schema-required-not-an-oracle",
-            },
-            {
-                "id": "a2a3-target",
-                "role": "named target profile candidate",
-                "status": "identity-accepted-rules-required",
-            },
-            {
-                "id": "a5-target",
-                "role": "named target profile candidate",
-                "status": "identity-accepted-rules-required",
             },
         ],
         "sources": list(SOURCES),
@@ -434,8 +319,8 @@ def generate() -> dict[str, Any]:
             ),
             "numeric_domain_count": len(domain_matrix),
             "open_numeric_domain_count": len(domain_matrix),
-            "selected_profile_rule_count": 0,
-            "profile_identity_count": 4,
+            "selected_contract_rule_count": 0,
+            "contract_identity_count": 2,
         },
     }
 
@@ -456,7 +341,7 @@ def main() -> int:
         return 0
     if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != expected:
         raise SystemExit(
-            "numeric profile decision inputs are stale; run scripts/generate-numeric-profile-decision-inputs --write"
+            "numeric profile decision inputs are stale; run scripts/generate-numeric-contract-decision-inputs --write"
         )
     return 0
 

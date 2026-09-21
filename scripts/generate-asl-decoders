@@ -8132,7 +8132,7 @@ def _emit_monolithic() -> None:
         projected_catalogs[Path("spec/catalog/tile-operations.json")]
     )
     tile = tile_catalog["operations"]
-    numeric_applicability = load("spec/catalog/numeric-profile-applicability.json")
+    numeric_applicability = load("spec/catalog/numeric-contract-applicability.json")
     numeric_applicability_rules = numeric_applicability["rules"]
     system_register_catalog = load("spec/catalog/system-registers.json")
     system_registers = system_register_catalog["registers"]
@@ -8679,10 +8679,10 @@ def _emit_monolithic() -> None:
         f"tile:{row['family']}:{row['name']}": index for index, row in enumerate(tile)
     }
     applicability_rule_set_asl = {
-        "pto-a2a3-numeric-v1": "NumericApplicabilityRules_A2A3MxRejection",
+        "pto-numeric-mx-negative-v1": "NumericApplicabilityRules_MxRejection",
     }
     for rule in numeric_applicability_rules:
-        if rule["profile_id"] not in applicability_rule_set_asl:
+        if rule["contract_id"] not in applicability_rule_set_asl:
             raise ValueError(
                 f"unsupported numeric applicability profile: {rule['profile_id']}"
             )
@@ -8692,7 +8692,7 @@ def _emit_monolithic() -> None:
                 f"{rule['operation_key']}"
             )
         if (
-            rule["disposition"] != "unsupported-in-profile"
+            rule["disposition"] != "unsupported"
             or rule["rejection"]["fault"] != "IllegalInstruction"
             or rule["rejection"]["phase"] != "before-operation-effects"
             or rule["result_rule_id"] is not None
@@ -12618,7 +12618,7 @@ def _emit_monolithic() -> None:
     print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean")
     print("begin")
     for rule in numeric_applicability_rules:
-        rule_set = applicability_rule_set_asl[rule["profile_id"]]
+        rule_set = applicability_rule_set_asl[rule["contract_id"]]
         operation = tile_indices_by_key[rule["operation_key"]]
         print(
             f"    if rules == {rule_set} && operation == {operation} then "

@@ -18,7 +18,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.evidence_sources import source_rows  # noqa: E402
 
-DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
 SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
 TLSU_TOTALITY = ROOT / "spec/evidence/tlsu-totality.json"
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
@@ -451,7 +451,7 @@ def generate() -> dict[str, Any]:
             "scripts/generate-asl-decoders:emit_scalar_fsu_bounds_validation",
         ],
         "sources": [
-            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/numeric-contract-decision-inputs.json"),
             source("spec/evidence/scalar-fsu-totality.json"),
             source("spec/evidence/tlsu-totality.json"),
             source("spec/evidence/executable-model-comparison.json"),

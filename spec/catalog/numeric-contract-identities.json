@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "status": "identity-framework-closed-rules-open",
+  "policy": {
+    "authority": "PTO ASL, accepted architecture decisions, and this contract catalog define the portable numeric boundary; backend behavior is evidence only.",
+    "support_boundary": "An implementation may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
+    "bounded_variation": "A portable rule may delegate a result dimension only to a visible numeric mode with a finite or mathematically testable allowed-result contract.",
+    "unknown_selection": "Unknown identities, modes, formats, operation/type tuples, and missing delegated rules reject before architectural effects.",
+    "cpu_observation": "CPU observations are implementation-under-test diagnostics and are never an architectural contract or independent oracle."
+  },
+  "identities": [
+    {
+      "partition_id": "portable-numeric",
+      "id": "pto-numeric-v1",
+      "kind": "portable-numeric-contract",
+      "normative_identity": true,
+      "role": "Portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
+      "selection": "Applies to every PTO numeric operation; implementations may only narrow support or implement an explicitly delegated bounded variation point.",
+      "rule_status": "decision-required",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules"
+      ],
+      "relation_to_portable_contract": "Supplies the portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples."
+    },
+    {
+      "partition_id": "cpu-observation",
+      "id": "pto-cpu-observation-v1",
+      "kind": "observation-only",
+      "normative_identity": false,
+      "role": "Versioned implementation-under-test observations and developer diagnostics.",
+      "selection": "Cannot be selected as an architectural numeric profile or independent conformance oracle.",
+      "rule_status": "observation-schema-required",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
+      "source_ids": [
+        "public-portability-rules"
+      ],
+      "relation_to_portable_contract": "Only observes implementations; it defines neither portable results nor a target contract."
+    }
+  ],
+  "summary": {
+    "identity_count": 2,
+    "accepted_identity_count": 2,
+    "portable_contract_count": 1,
+    "observation_only_count": 1,
+    "complete_rule_count": 0
+  }
+}

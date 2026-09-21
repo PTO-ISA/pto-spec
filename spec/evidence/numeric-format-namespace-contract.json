@@ -1918,8 +1918,8 @@
   ],
   "sources": [
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1983,7 +1983,7 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
+      "sha256": "8b4f89ce7fdf1bee78f86b446f9642a9714887e47b42f597624b8519d1c4ce62"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
@@ -2239,7 +2239,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "1884a9480fa0c961cde21b6d7425db2ca23aa423fdd9ed37dfc9c45923c63877"
+      "sha256": "7c9075481b0cfbe73b8ba7d923bb219d930d84978358e201f41d6d504dc01962"
     },
     {
       "path": "docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md",

@@ -17,18 +17,18 @@ if str(ROOT) not in sys.path:
 
 from scripts.evidence_sources import source_rows  # noqa: E402
 
-CATALOG = ROOT / "spec/catalog/numeric-profile-applicability.json"
-PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
+CATALOG = ROOT / "spec/catalog/numeric-contract-applicability.json"
+PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-contract-identities.json"
 TILE_OPERATIONS = ROOT / "spec/catalog/tile-operations.json"
 COMMAND_FORMS = ROOT / "spec/catalog/command-forms.json"
 FORMAT_NAMESPACE = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
-DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
 RECONCILIATION = ROOT / "spec/evidence/public-source-reconciliation.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
-OUTPUT = ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+OUTPUT = ROOT / "spec/evidence/numeric-contract-applicability-closure.json"
 
 ACCEPTANCE_RECORD = "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
-EXPECTED_PROFILE = "pto-a2a3-numeric-v1"
+EXPECTED_CONTRACT = "pto-numeric-mx-negative-v1"
 EXPECTED_FUNCTIONS = {
     "tile:CUBE:TMATMUL_MX": 4,
     "tile:CUBE:TMATMUL_MX_BIAS": 5,
@@ -38,12 +38,7 @@ EXPECTED_FUNCTIONS = {
     "tile:CUBE:TGEMV_MX_ACC": 22,
 }
 EXPECTED_SOURCE_IDS = [
-    "public-target-profiles",
     "public-portability-rules",
-    "a2a3-matrix",
-    "a5-matrix",
-    "public-intrinsic-api",
-    "executable-model-comparison",
 ]
 
 
@@ -134,9 +129,9 @@ def generate() -> dict[str, Any]:
         catalog["open_parent_decisions"] == ["ADR-NUM-0013", "cube-matrix", "S5-T2"],
         "parent decision drift",
     )
-    require(len(catalog["profiles"]) == 1, "profile count drift")
+    require(len(catalog["contracts"]) == 1, "profile count drift")
     require(
-        catalog["profiles"][0]["profile_id"] == EXPECTED_PROFILE,
+        catalog["contracts"][0]["contract_id"] == EXPECTED_CONTRACT,
         "profile identity drift",
     )
     require(len(rules) == 6, "rule count drift")
@@ -145,21 +140,10 @@ def generate() -> dict[str, Any]:
         == EXPECTED_FUNCTIONS,
         "operation/function rule drift",
     )
-    profile_identity = next(
-        (row for row in identities["identities"] if row["id"] == EXPECTED_PROFILE),
-        None,
-    )
-    require(profile_identity is not None, "A2/A3 numeric profile identity missing")
-    require(
-        profile_identity["partition_id"] == "a2a3-target"
-        and profile_identity["kind"] == "target-numeric-profile"
-        and profile_identity["normative_identity"] is True,
-        "A2/A3 numeric profile identity boundary drift",
-    )
 
     input_sources = source_by_id(inputs, reconciliation)
     required_sources = {
-        source_id: input_sources[source_id] for source_id in EXPECTED_SOURCE_IDS[:-2]
+        source_id: input_sources[source_id] for source_id in EXPECTED_SOURCE_IDS
     }
     comparison_rows = direct_tile_comparison_rows(comparison)
     independent_rows = [
@@ -187,14 +171,14 @@ def generate() -> dict[str, Any]:
             operation["disposition"] == "accepted-direct-operation",
             f"operation {key} is no longer accepted",
         )
-        require(rule["profile_id"] == EXPECTED_PROFILE, f"profile drift for {key}")
+        require(rule["contract_id"] == EXPECTED_CONTRACT, f"profile drift for {key}")
         require(
             rule["type_scope"]
             == {"kind": "all_tile_data_types", "tile_data_type_count": 25},
             f"type scope drift for {key}",
         )
         require(
-            rule["disposition"] == "unsupported-in-profile",
+            rule["disposition"] == "unsupported",
             f"disposition drift for {key}",
         )
         require(
@@ -245,18 +229,18 @@ def generate() -> dict[str, Any]:
             tile_type = tile_type_row["asl_enumerator"]
             expanded_tuples.append(
                 {
-                    "profile_id": EXPECTED_PROFILE,
+                    "contract_id": EXPECTED_CONTRACT,
                     "operation_key": key,
                     "function": rule["function"],
                     "tile_data_type": tile_type,
-                    "disposition": "unsupported-in-profile",
+                    "disposition": "unsupported",
                     "rejection": rule["rejection"],
                     "result_rule_id": None,
                 }
             )
             bundle_execution_matrix.append(
                 {
-                    "profile_id": EXPECTED_PROFILE,
+                    "contract_id": EXPECTED_CONTRACT,
                     "operation_key": key,
                     "function": rule["function"],
                     "tile_data_type": tile_type,
@@ -264,7 +248,7 @@ def generate() -> dict[str, Any]:
                     "command_form_id": command["form_id"],
                     "command_mnemonic": command_mnemonic,
                     "command_encoding": command["encoding"][0],
-                    "disposition": "unsupported-in-profile",
+                    "disposition": "unsupported",
                     "rejection": {
                         "fault": "IllegalInstruction",
                         "phase": "before-bundle-descriptor-installation",
@@ -280,23 +264,23 @@ def generate() -> dict[str, Any]:
     require(adr0086["status"] == "draft", "ADR-NUM-0013 parent decision must remain draft")
     require(adr0086["acceptance_record"] is None, "ADR-NUM-0013 acceptance record must remain open")
     require(
-        cube_matrix["status"] == "profile-rule-required"
+        cube_matrix["status"] == "contract-rule-required"
         and cube_matrix["selected_profile_rule"] is None,
         "cube-matrix parent domain must remain open",
     )
 
     return {
         "schema_version": 1,
-        "artifact_id": "numeric-profile-applicability-closure",
+        "artifact_id": "numeric-contract-applicability-closure",
         "target": "S5-T2-A3:ADR-NUM-0013",
-        "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+        "status": "mx-unsupported-tuples-closed-results-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
             "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
             "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
             "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open.",
         },
-        "profiles": catalog["profiles"],
+        "contracts": catalog["contracts"],
         "rules": rules,
         "expanded_tuples": expanded_tuples,
         "bundle_execution_matrix": bundle_execution_matrix,
@@ -304,7 +288,6 @@ def generate() -> dict[str, Any]:
             "public_repository": inputs["public_repository"],
             "numeric_decision_commit": inputs["public_commit"],
             "public_reconciliation_commit": reconciliation["public_commit"],
-            "profile_identity": profile_identity,
             "decision_input_sources": required_sources,
             "public_intrinsic_api": input_sources["public-intrinsic-api"],
             "independent_executable_model": {
@@ -329,27 +312,27 @@ def generate() -> dict[str, Any]:
                 "symbol": "TestA2A3CubeMxDirectRejectionMatrix",
             },
             "bundle_test": {
-                "path": "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
+                "path": "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
                 "symbol": "TestA2A3CubeMxBundleRejectionMatrix",
             },
         },
         "tests": [
-            "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
+            "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
             "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
         ],
         "source_hashes": [
-            source("spec/catalog/numeric-profile-applicability.json"),
-            source("spec/catalog/numeric-profile-identities.json"),
+            source("spec/catalog/numeric-contract-applicability.json"),
+            source("spec/catalog/numeric-contract-identities.json"),
             source("spec/catalog/tile-operations.json"),
             source("spec/catalog/command-forms.json"),
             source("spec/evidence/numeric-format-namespace-contract.json"),
-            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/numeric-contract-decision-inputs.json"),
             source("spec/evidence/public-source-reconciliation.json"),
             source("spec/evidence/executable-model-comparison.json"),
             source("scripts/generate-asl-decoders"),
             *source_rows(ROOT, "asl/arch/data-types/*.asl"),
             *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
-            source("tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl"),
+            source("tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl"),
             source("tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl"),
             source(ACCEPTANCE_RECORD),
         ],

@@ -969,12 +969,12 @@
   ],
   "sources": [
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "7f3a6521f784a6f2384ba03a01ac25fbf55e6c2e5e88f0c50fdede7facc17679"
+      "sha256": "5b00ad0e5424ba218f5ebde4ac8dfa7c0e6ddd074f58b4e191d1e67817301fb0"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",

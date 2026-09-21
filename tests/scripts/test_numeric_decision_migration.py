@@ -118,13 +118,13 @@ class NumericDecisionMigrationTest(unittest.TestCase):
 
     def test_numeric_evidence_uses_adr_ids_and_preserves_maturity(self) -> None:
         inputs = json.loads(
-            (ROOT / "spec/evidence/numeric-profile-decision-inputs.json").read_text(
+            (ROOT / "spec/evidence/numeric-contract-decision-inputs.json").read_text(
                 encoding="utf-8"
             )
         )
         proposals = json.loads(
             (
-                ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
+                ROOT / "spec/evidence/numeric-contract-decision-proposals.json"
             ).read_text(encoding="utf-8")
         )
         rows = inputs["decisions"]
@@ -246,7 +246,7 @@ class NumericDecisionMigrationTest(unittest.TestCase):
 
     def test_failed_comparison_evidence_rejects_numeric_generation(self) -> None:
         for script_name in (
-            "generate-numeric-profile-decision-inputs",
+            "generate-numeric-contract-decision-inputs",
             "generate-numeric-subnormal-contract",
             "generate-numeric-special-value-contract",
         ):
@@ -286,7 +286,7 @@ class NumericDecisionMigrationTest(unittest.TestCase):
                     generate()
 
     def test_affected_domain_parser_rejects_unknown_duplicate_and_missing(self) -> None:
-        namespace = self.script_namespace("generate-numeric-profile-decision-inputs")
+        namespace = self.script_namespace("generate-numeric-contract-decision-inputs")
         parse = namespace["parse_affected_domains"]
         known = {"scalar-binary", "tile-unary"}
         cases = {
@@ -306,7 +306,7 @@ class NumericDecisionMigrationTest(unittest.TestCase):
                         parse(path, known)
 
     def test_affected_domain_parser_ignores_explicit_retired_domains(self) -> None:
-        namespace = self.script_namespace("generate-numeric-profile-decision-inputs")
+        namespace = self.script_namespace("generate-numeric-contract-decision-inputs")
         parse = namespace["parse_affected_domains"]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "retired.md"
@@ -319,10 +319,10 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             self.assertEqual(parse(path, {"scalar-binary"}), ("scalar-binary",))
 
     def test_generated_domains_match_adr_bullet_lists(self) -> None:
-        namespace = self.script_namespace("generate-numeric-profile-decision-inputs")
+        namespace = self.script_namespace("generate-numeric-contract-decision-inputs")
         parse = namespace["parse_affected_domains"]
         inputs = json.loads(
-            (ROOT / "spec/evidence/numeric-profile-decision-inputs.json").read_text(
+            (ROOT / "spec/evidence/numeric-contract-decision-inputs.json").read_text(
                 encoding="utf-8"
             )
         )

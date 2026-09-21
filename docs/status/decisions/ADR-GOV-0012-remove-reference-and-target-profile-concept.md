@@ -112,7 +112,7 @@ they were portable PTO interfaces.
    restore the portable SYS-block, frame-stack, MSET, PEID, ACRC, and
    bounded-memory behavior.
 5. Remove the A2A3/A5 target numeric identities and their derived evidence,
-   and rename `NumericApplicabilityRules_A2A3MxRejection` without target names.
+   and rename `NumericApplicabilityRules_MxRejection` without target names.
 
 ## Normative delta
 

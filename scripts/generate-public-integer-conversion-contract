@@ -17,7 +17,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.evidence_sources import source_rows  # noqa: E402
 
-DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+DECISION_INPUTS = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
 TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
@@ -244,7 +244,7 @@ def generate() -> dict[str, Any]:
             }
         ],
         "sources": [
-            source("spec/evidence/numeric-profile-decision-inputs.json"),
+            source("spec/evidence/numeric-contract-decision-inputs.json"),
             source("spec/evidence/public-numeric-type-baseline.json"),
             source("spec/evidence/numeric-contracts.json"),
             source("spec/evidence/executable-model-comparison.json"),

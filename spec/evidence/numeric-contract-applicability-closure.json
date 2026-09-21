@@ -1,25 +1,24 @@
 {
   "schema_version": 1,
-  "artifact_id": "numeric-profile-applicability-closure",
+  "artifact_id": "numeric-contract-applicability-closure",
   "target": "S5-T2-A3:ADR-NUM-0013",
-  "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+  "status": "mx-unsupported-tuples-closed-results-open",
   "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
   "policy": {
     "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
     "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
     "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. ADR-NUM-0013, cube-matrix result rules, and S5-T2 remain open."
   },
-  "profiles": [
+  "contracts": [
     {
-      "profile_id": "pto-a2a3-numeric-v1",
-      "role": "A2/A3 target numeric applicability",
+      "contract_id": "pto-numeric-mx-negative-v1",
+      "role": "MX support negative applicability",
       "status": "partial-applicability-closed-results-open",
-      "accepted_scope": "The six MX CUBE operation selectors are unsupported by A2/A3 for every architectural TileDataType and reject before operation effects."
+      "accepted_scope": "The six MX CUBE operation selectors are unsupported for every architectural TileDataType and reject before operation effects."
     }
   ],
   "rules": [
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "family": "CUBE",
       "function": 4,
@@ -27,24 +26,19 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "family": "CUBE",
       "function": 5,
@@ -52,24 +46,19 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "family": "CUBE",
       "function": 6,
@@ -77,24 +66,19 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "family": "CUBE",
       "function": 20,
@@ -102,24 +86,19 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "family": "CUBE",
       "function": 21,
@@ -127,24 +106,19 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "family": "CUBE",
       "function": 22,
@@ -152,30 +126,26 @@
         "kind": "all_tile_data_types",
         "tile_data_type_count": 25
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
       },
       "result_rule_id": null,
       "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-intrinsic-api",
-        "executable-model-comparison"
+        "public-portability-rules"
       ],
-      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
+      "contract_id": "pto-numeric-mx-negative-v1"
     }
   ],
   "expanded_tuples": [
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -183,11 +153,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -195,11 +165,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -207,11 +177,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -219,11 +189,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -231,11 +201,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -243,11 +213,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -255,11 +225,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -267,11 +237,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -279,11 +249,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -291,11 +261,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -303,11 +273,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -315,11 +285,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -327,11 +297,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -339,11 +309,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -351,11 +321,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -363,11 +333,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -375,11 +345,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -387,11 +357,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -399,11 +369,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -411,11 +381,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -423,11 +393,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -435,11 +405,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -447,11 +417,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -459,11 +429,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -471,11 +441,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -483,11 +453,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -495,11 +465,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -507,11 +477,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -519,11 +489,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -531,11 +501,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -543,11 +513,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -555,11 +525,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -567,11 +537,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -579,11 +549,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -591,11 +561,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -603,11 +573,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -615,11 +585,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -627,11 +597,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -639,11 +609,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -651,11 +621,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -663,11 +633,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -675,11 +645,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -687,11 +657,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -699,11 +669,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -711,11 +681,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -723,11 +693,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -735,11 +705,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -747,11 +717,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -759,11 +729,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -771,11 +741,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -783,11 +753,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -795,11 +765,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -807,11 +777,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -819,11 +789,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -831,11 +801,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -843,11 +813,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -855,11 +825,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -867,11 +837,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -879,11 +849,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -891,11 +861,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -903,11 +873,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -915,11 +885,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -927,11 +897,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -939,11 +909,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -951,11 +921,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -963,11 +933,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -975,11 +945,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -987,11 +957,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -999,11 +969,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1011,11 +981,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1023,11 +993,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1035,11 +1005,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1047,11 +1017,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1059,11 +1029,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1071,11 +1041,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1083,11 +1053,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1095,11 +1065,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1107,11 +1077,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1119,11 +1089,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1131,11 +1101,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1143,11 +1113,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1155,11 +1125,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1167,11 +1137,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1179,11 +1149,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1191,11 +1161,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1203,11 +1173,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1215,11 +1185,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1227,11 +1197,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1239,11 +1209,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1251,11 +1221,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1263,11 +1233,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1275,11 +1245,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1287,11 +1257,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1299,11 +1269,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1311,11 +1281,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1323,11 +1293,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1335,11 +1305,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1347,11 +1317,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1359,11 +1329,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1371,11 +1341,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1383,11 +1353,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1395,11 +1365,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1407,11 +1377,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1419,11 +1389,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1431,11 +1401,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1443,11 +1413,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1455,11 +1425,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1467,11 +1437,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1479,11 +1449,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1491,11 +1461,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1503,11 +1473,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1515,11 +1485,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1527,11 +1497,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1539,11 +1509,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1551,11 +1521,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1563,11 +1533,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1575,11 +1545,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1587,11 +1557,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1599,11 +1569,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1611,11 +1581,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1623,11 +1593,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1635,11 +1605,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1647,11 +1617,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1659,11 +1629,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1671,11 +1641,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1683,11 +1653,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1695,11 +1665,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_TF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1707,11 +1677,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HF32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1719,11 +1689,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1731,11 +1701,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_BF16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1743,11 +1713,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HiF8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1755,11 +1725,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E4M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1767,11 +1737,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E5M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1779,11 +1749,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E3M2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1791,11 +1761,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E2M3",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1803,11 +1773,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E2M1X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1815,11 +1785,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E1M2X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1827,11 +1797,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E8M0",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1839,11 +1809,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HiF4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1851,11 +1821,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1863,11 +1833,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1875,11 +1845,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1887,11 +1857,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1899,11 +1869,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1911,11 +1881,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U64",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1923,11 +1893,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U32",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1935,11 +1905,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U16",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1947,11 +1917,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U8",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1959,11 +1929,11 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U4X2",
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-operation-effects"
@@ -1973,7 +1943,7 @@
   ],
   "bundle_execution_matrix": [
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP64",
@@ -1986,7 +1956,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -1994,7 +1964,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP32",
@@ -2007,7 +1977,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2015,7 +1985,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_TF32",
@@ -2028,7 +1998,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2036,7 +2006,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HF32",
@@ -2049,7 +2019,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2057,7 +2027,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_FP16",
@@ -2070,7 +2040,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2078,7 +2048,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_BF16",
@@ -2091,7 +2061,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2099,7 +2069,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HiF8",
@@ -2112,7 +2082,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2120,7 +2090,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E4M3",
@@ -2133,7 +2103,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2141,7 +2111,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E5M2",
@@ -2154,7 +2124,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2162,7 +2132,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E3M2",
@@ -2175,7 +2145,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2183,7 +2153,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E2M3",
@@ -2196,7 +2166,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2204,7 +2174,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -2217,7 +2187,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2225,7 +2195,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -2238,7 +2208,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2246,7 +2216,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_E8M0",
@@ -2259,7 +2229,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2267,7 +2237,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -2280,7 +2250,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2288,7 +2258,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S64",
@@ -2301,7 +2271,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2309,7 +2279,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S32",
@@ -2322,7 +2292,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2330,7 +2300,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S16",
@@ -2343,7 +2313,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2351,7 +2321,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S8",
@@ -2364,7 +2334,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2372,7 +2342,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_S4X2",
@@ -2385,7 +2355,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2393,7 +2363,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U64",
@@ -2406,7 +2376,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2414,7 +2384,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U32",
@@ -2427,7 +2397,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2435,7 +2405,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U16",
@@ -2448,7 +2418,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2456,7 +2426,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U8",
@@ -2469,7 +2439,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2477,7 +2447,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX",
       "function": 4,
       "tile_data_type": "TileDataType_U4X2",
@@ -2490,7 +2460,7 @@
         "match": "0x00431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2498,7 +2468,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP64",
@@ -2511,7 +2481,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2519,7 +2489,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP32",
@@ -2532,7 +2502,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2540,7 +2510,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_TF32",
@@ -2553,7 +2523,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2561,7 +2531,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HF32",
@@ -2574,7 +2544,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2582,7 +2552,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_FP16",
@@ -2595,7 +2565,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2603,7 +2573,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_BF16",
@@ -2616,7 +2586,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2624,7 +2594,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HiF8",
@@ -2637,7 +2607,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2645,7 +2615,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E4M3",
@@ -2658,7 +2628,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2666,7 +2636,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E5M2",
@@ -2679,7 +2649,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2687,7 +2657,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E3M2",
@@ -2700,7 +2670,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2708,7 +2678,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E2M3",
@@ -2721,7 +2691,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2729,7 +2699,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -2742,7 +2712,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2750,7 +2720,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -2763,7 +2733,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2771,7 +2741,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_E8M0",
@@ -2784,7 +2754,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2792,7 +2762,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -2805,7 +2775,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2813,7 +2783,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S64",
@@ -2826,7 +2796,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2834,7 +2804,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S32",
@@ -2847,7 +2817,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2855,7 +2825,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S16",
@@ -2868,7 +2838,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2876,7 +2846,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S8",
@@ -2889,7 +2859,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2897,7 +2867,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_S4X2",
@@ -2910,7 +2880,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2918,7 +2888,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U64",
@@ -2931,7 +2901,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2939,7 +2909,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U32",
@@ -2952,7 +2922,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2960,7 +2930,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U16",
@@ -2973,7 +2943,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -2981,7 +2951,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U8",
@@ -2994,7 +2964,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3002,7 +2972,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
       "function": 5,
       "tile_data_type": "TileDataType_U4X2",
@@ -3015,7 +2985,7 @@
         "match": "0x00531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3023,7 +2993,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP64",
@@ -3036,7 +3006,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3044,7 +3014,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP32",
@@ -3057,7 +3027,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3065,7 +3035,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_TF32",
@@ -3078,7 +3048,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3086,7 +3056,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HF32",
@@ -3099,7 +3069,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3107,7 +3077,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_FP16",
@@ -3120,7 +3090,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3128,7 +3098,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_BF16",
@@ -3141,7 +3111,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3149,7 +3119,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HiF8",
@@ -3162,7 +3132,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3170,7 +3140,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E4M3",
@@ -3183,7 +3153,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3191,7 +3161,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E5M2",
@@ -3204,7 +3174,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3212,7 +3182,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E3M2",
@@ -3225,7 +3195,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3233,7 +3203,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E2M3",
@@ -3246,7 +3216,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3254,7 +3224,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -3267,7 +3237,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3275,7 +3245,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -3288,7 +3258,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3296,7 +3266,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_E8M0",
@@ -3309,7 +3279,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3317,7 +3287,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -3330,7 +3300,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3338,7 +3308,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S64",
@@ -3351,7 +3321,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3359,7 +3329,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S32",
@@ -3372,7 +3342,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3380,7 +3350,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S16",
@@ -3393,7 +3363,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3401,7 +3371,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S8",
@@ -3414,7 +3384,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3422,7 +3392,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_S4X2",
@@ -3435,7 +3405,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3443,7 +3413,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U64",
@@ -3456,7 +3426,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3464,7 +3434,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U32",
@@ -3477,7 +3447,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3485,7 +3455,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U16",
@@ -3498,7 +3468,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3506,7 +3476,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U8",
@@ -3519,7 +3489,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3527,7 +3497,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
       "function": 6,
       "tile_data_type": "TileDataType_U4X2",
@@ -3540,7 +3510,7 @@
         "match": "0x00631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3548,7 +3518,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP64",
@@ -3561,7 +3531,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3569,7 +3539,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP32",
@@ -3582,7 +3552,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3590,7 +3560,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_TF32",
@@ -3603,7 +3573,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3611,7 +3581,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HF32",
@@ -3624,7 +3594,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3632,7 +3602,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_FP16",
@@ -3645,7 +3615,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3653,7 +3623,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_BF16",
@@ -3666,7 +3636,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3674,7 +3644,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HiF8",
@@ -3687,7 +3657,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3695,7 +3665,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E4M3",
@@ -3708,7 +3678,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3716,7 +3686,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E5M2",
@@ -3729,7 +3699,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3737,7 +3707,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E3M2",
@@ -3750,7 +3720,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3758,7 +3728,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E2M3",
@@ -3771,7 +3741,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3779,7 +3749,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -3792,7 +3762,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3800,7 +3770,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -3813,7 +3783,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3821,7 +3791,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_E8M0",
@@ -3834,7 +3804,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3842,7 +3812,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -3855,7 +3825,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3863,7 +3833,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S64",
@@ -3876,7 +3846,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3884,7 +3854,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S32",
@@ -3897,7 +3867,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3905,7 +3875,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S16",
@@ -3918,7 +3888,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3926,7 +3896,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S8",
@@ -3939,7 +3909,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3947,7 +3917,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_S4X2",
@@ -3960,7 +3930,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3968,7 +3938,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U64",
@@ -3981,7 +3951,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -3989,7 +3959,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U32",
@@ -4002,7 +3972,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4010,7 +3980,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U16",
@@ -4023,7 +3993,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4031,7 +4001,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U8",
@@ -4044,7 +4014,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4052,7 +4022,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX",
       "function": 20,
       "tile_data_type": "TileDataType_U4X2",
@@ -4065,7 +4035,7 @@
         "match": "0x01431181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4073,7 +4043,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP64",
@@ -4086,7 +4056,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4094,7 +4064,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP32",
@@ -4107,7 +4077,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4115,7 +4085,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_TF32",
@@ -4128,7 +4098,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4136,7 +4106,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HF32",
@@ -4149,7 +4119,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4157,7 +4127,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_FP16",
@@ -4170,7 +4140,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4178,7 +4148,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_BF16",
@@ -4191,7 +4161,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4199,7 +4169,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HiF8",
@@ -4212,7 +4182,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4220,7 +4190,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E4M3",
@@ -4233,7 +4203,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4241,7 +4211,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E5M2",
@@ -4254,7 +4224,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4262,7 +4232,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E3M2",
@@ -4275,7 +4245,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4283,7 +4253,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E2M3",
@@ -4296,7 +4266,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4304,7 +4274,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -4317,7 +4287,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4325,7 +4295,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -4338,7 +4308,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4346,7 +4316,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_E8M0",
@@ -4359,7 +4329,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4367,7 +4337,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -4380,7 +4350,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4388,7 +4358,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S64",
@@ -4401,7 +4371,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4409,7 +4379,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S32",
@@ -4422,7 +4392,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4430,7 +4400,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S16",
@@ -4443,7 +4413,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4451,7 +4421,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S8",
@@ -4464,7 +4434,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4472,7 +4442,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_S4X2",
@@ -4485,7 +4455,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4493,7 +4463,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U64",
@@ -4506,7 +4476,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4514,7 +4484,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U32",
@@ -4527,7 +4497,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4535,7 +4505,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U16",
@@ -4548,7 +4518,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4556,7 +4526,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U8",
@@ -4569,7 +4539,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4577,7 +4547,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
       "function": 21,
       "tile_data_type": "TileDataType_U4X2",
@@ -4590,7 +4560,7 @@
         "match": "0x01531181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4598,7 +4568,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP64",
@@ -4611,7 +4581,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4619,7 +4589,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP32",
@@ -4632,7 +4602,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4640,7 +4610,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_TF32",
@@ -4653,7 +4623,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4661,7 +4631,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HF32",
@@ -4674,7 +4644,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4682,7 +4652,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_FP16",
@@ -4695,7 +4665,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4703,7 +4673,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_BF16",
@@ -4716,7 +4686,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4724,7 +4694,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HiF8",
@@ -4737,7 +4707,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4745,7 +4715,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E4M3",
@@ -4758,7 +4728,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4766,7 +4736,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E5M2",
@@ -4779,7 +4749,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4787,7 +4757,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E3M2",
@@ -4800,7 +4770,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4808,7 +4778,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E2M3",
@@ -4821,7 +4791,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4829,7 +4799,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E2M1X2",
@@ -4842,7 +4812,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4850,7 +4820,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E1M2X2",
@@ -4863,7 +4833,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4871,7 +4841,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_E8M0",
@@ -4884,7 +4854,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4892,7 +4862,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_HiF4X2",
@@ -4905,7 +4875,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4913,7 +4883,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S64",
@@ -4926,7 +4896,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4934,7 +4904,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S32",
@@ -4947,7 +4917,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4955,7 +4925,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S16",
@@ -4968,7 +4938,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4976,7 +4946,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S8",
@@ -4989,7 +4959,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -4997,7 +4967,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_S4X2",
@@ -5010,7 +4980,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5018,7 +4988,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U64",
@@ -5031,7 +5001,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5039,7 +5009,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U32",
@@ -5052,7 +5022,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5060,7 +5030,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U16",
@@ -5073,7 +5043,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5081,7 +5051,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U8",
@@ -5094,7 +5064,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5102,7 +5072,7 @@
       "result_rule_id": null
     },
     {
-      "profile_id": "pto-a2a3-numeric-v1",
+      "contract_id": "pto-numeric-mx-negative-v1",
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
       "function": 22,
       "tile_data_type": "TileDataType_U4X2",
@@ -5115,7 +5085,7 @@
         "match": "0x01631181",
         "width_bits": 32
       },
-      "disposition": "unsupported-in-profile",
+      "disposition": "unsupported",
       "rejection": {
         "fault": "IllegalInstruction",
         "phase": "before-bundle-descriptor-installation"
@@ -5127,31 +5097,7 @@
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "numeric_decision_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
     "public_reconciliation_commit": "1f61a9a28b375e5113761defdc66fd03554b5e0d",
-    "profile_identity": {
-      "partition_id": "a2a3-target",
-      "id": "pto-a2a3-numeric-v1",
-      "kind": "target-numeric-profile",
-      "normative_identity": true,
-      "role": "A2A3 support restrictions and explicitly delegated bounded numeric rules.",
-      "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
-      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
-      "rule_status": "decision-required",
-      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
-      "source_ids": [
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
-      ]
-    },
     "decision_input_sources": {
-      "public-target-profiles": {
-        "id": "public-target-profiles",
-        "path": "docs/isa/machine-model/execution-agents.md",
-        "role": "published CPU, A2A3, and A5 capability partition",
-        "layer": "public-contract",
-        "sha256": "d2f0e6de371a1bc7713f64e18861b565e012a5bb2290552ae00dbb2f9902571f",
-        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/machine-model/execution-agents.md"
-      },
       "public-portability-rules": {
         "id": "public-portability-rules",
         "path": "docs/isa/reference/portability-and-target-profiles.md",
@@ -5159,22 +5105,6 @@
         "layer": "public-contract",
         "sha256": "e607ab10d5b35d5f492ee187c582d3782115f195c87c0b88fc038272d52abd29",
         "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/docs/isa/reference/portability-and-target-profiles.md"
-      },
-      "a2a3-matrix": {
-        "id": "a2a3-matrix",
-        "path": "include/pto/npu/a2a3/TMatmul.hpp",
-        "role": "A2A3 matrix instruction implementation evidence",
-        "layer": "implementation-evidence",
-        "sha256": "6efc16caad1fa9b81fe3339bbe10cfb8a3fcb40d3759a807efdaf3b00464fb7f",
-        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a2a3/TMatmul.hpp"
-      },
-      "a5-matrix": {
-        "id": "a5-matrix",
-        "path": "include/pto/npu/a5/TMatmul.hpp",
-        "role": "A5 matrix instruction and MX implementation evidence",
-        "layer": "implementation-evidence",
-        "sha256": "13d04641738882a5e784372ba4ad94762ab54b7d2a229666fd74399ce567c944",
-        "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TMatmul.hpp"
       }
     },
     "public_intrinsic_api": {
@@ -5250,22 +5180,22 @@
       "symbol": "TestA2A3CubeMxDirectRejectionMatrix"
     },
     "bundle_test": {
-      "path": "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
+      "path": "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
       "symbol": "TestA2A3CubeMxBundleRejectionMatrix"
     }
   },
   "tests": [
-    "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
+    "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
     "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl"
   ],
   "source_hashes": [
     {
-      "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "970dcb1f50ad6f96ffcb1dc11243641842ec5de3fcdfd3d447aaf7af10d976f2"
+      "path": "spec/catalog/numeric-contract-applicability.json",
+      "sha256": "b900e1a8debadb7c0ef7b44ea42a4e9d9f45f18b9a22b7cc6fabaa27cfce405b"
     },
     {
-      "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
+      "path": "spec/catalog/numeric-contract-identities.json",
+      "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37"
     },
     {
       "path": "spec/catalog/tile-operations.json",
@@ -5277,11 +5207,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "cf76a0e3709883c4cc100fd76796820216cc193418d2ec6563da857ddf00b762"
+      "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
@@ -5289,11 +5219,11 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "4a6778dbcf245464e67121b353fe0d63b04386a20bffc67f2904e20fe50ecbe1"
+      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "268a4dd20c0e6c56d2442b57cfca4072a41ee19630decfab8d305c9e2697c6fd"
+      "sha256": "aa4207588d6b14605bc149f279ef3eb277aff118afb90cae20e74eaa12f89203"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -5313,11 +5243,11 @@
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d"
+      "sha256": "608dae6aca9eb2ab5a396c8b73a7235e8065f9ab539dd066e6282fd634958bf4"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
+      "sha256": "4ff0552a05f90dcc9442167370c2ac242f92bbb3999bcd97635045b73cdc8465"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
@@ -5325,7 +5255,7 @@
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
+      "sha256": "1168da252c7dedaa6ff2c34b814c6a5cbd8d38320db36ea27b125a654ae51a84"
     },
     {
       "path": "asl/arch/data-types/numeric-formats.asl",
@@ -5337,11 +5267,11 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
+      "sha256": "8b4f89ce7fdf1bee78f86b446f9642a9714887e47b42f597624b8519d1c4ce62"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "756ed3affcdd30db52f7198d90ede0d886161e9385df3195d611f82b46545d5a"
+      "sha256": "4493903781b924264641d185c2680758d7e96b700cbc915b4c6b5815c0a1e2d4"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
@@ -5349,7 +5279,7 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "05bad845c84d9fd35d30af99137b939e70d0d7226f54374b7f5d5e71dd235b7b"
+      "sha256": "aba39318d6277a1239966ba58d4db42b11afe3913376a6a78c65091121b8859d"
     },
     {
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
@@ -5357,7 +5287,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "60ed5f3c9ef8adb6b516920b6502ce5c1cbef7b352ffa1e934fb9a40d23764a9"
+      "sha256": "0062606013956d17c45f18229e4306b1d6401cb0daab8ae403ef96d78f202c88"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -5373,11 +5303,11 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "8252a43ba3b4f248d701b2fb2761d159684f2652d0348d6c3e7fcbed9718b3b4"
+      "sha256": "f4523e01c260e1d8b236d7652abadb20076204e14f25d98c46e73b92e79fe1fe"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "a5a3c732a823523e9212512123acdde973cd2c65455308a7eea1e4b69f5dd8b8"
+      "sha256": "6b13e2b67468e5eb8e7e956c2e7f073ef4965598c55d8365b0f7c8cda0e01fd6"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
@@ -5385,15 +5315,15 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "389ea67efe4c052d5bf8914a4e128938e052bf62d5ce8b5d3ba4174aab8b67f4"
+      "sha256": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "557fe42ea4e431d351c9eed4e5acad9173b4d4d23fa29097e11ab8379c08f6ae"
+      "sha256": "ca759010d83de9bea47bf5bd3bdba496e079db4a1c516f07efdd06e4781d40ad"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
-      "sha256": "db6818abbbce57de103d4aee152a1d57abf5d314298d80613f0e6af32dc22756"
+      "sha256": "b418c9b6e904c8b8136ea744be49685786df8a50d9fd7a9f41ffaeffceea448e"
     },
     {
       "path": "asl/block/model/dispatch/generation-schema.asl",
@@ -5413,11 +5343,11 @@
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "b1b28d2109be6e74f320649772708a8ecada19435767111a92517de486acdd47"
+      "sha256": "64553aa5a95ec920ed43e46b2e3e027db9eca767c811ae88a2e4a119b6df8c7c"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "d874ff5c684f6eb531505ac6029fa972ffe957ed0075febc7d6991b3526d1bf3"
+      "sha256": "00ba38c1705c3127fdab232901d3819108e1073f8eca11d32e1515ca64b38dfe"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
@@ -5425,7 +5355,7 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "651c72f5f0603799398135e3607cc90b86d4432da0f09881a669b3dde340f4fb"
+      "sha256": "7e29fa92195753fae53a08eae4c7a6b66fb71062bd8f7e17e0afb47b39223661"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
@@ -5437,7 +5367,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "15b0ac1344100a46f244b24f03d602549834c259be5c69943e965bd080249620"
+      "sha256": "d963c66e38220bd9d9756e7ea70a0980108ca0f5a48ab5f83dc0e53d88996c83"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -5445,19 +5375,19 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "1a1f5222fe16da17afad4c6259b2d623e8469b9e9dcc2c94950d604f7dbb43a1"
+      "sha256": "e7da8d466485c2df5c53f59fe4910a87a525b70c3213432d3f63ad0814f16e32"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "19740b5e96c976d356239b5b0a8f852729d2996a1dd37c4e40559ef192036a33"
+      "sha256": "19b395f187b225b3e798eafd5202c188fcd3405565ef89235fcc145e7aac1126"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "bb750e8700e9224c0834f6e7285813da64cd0f2eb71101bc33844e83e18d2ff2"
+      "sha256": "3f8c4228c39ccac184e7cf48400a9743e38af5665855f4f94639fefda1170624"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-execution.asl",
-      "sha256": "31e88f3e381035a95dfeb432ebc0094b87e719b6f4634fc2f7d5ccd5a3eebe35"
+      "sha256": "c8e1b73903e8dee4ea7239e40423dd2ed5dcc52446481c381386459a71657feb"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-schema.asl",
@@ -5465,27 +5395,27 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-      "sha256": "948946416a87f10cbe563556a857169f9574f0cddff240b9968cc381c3096828"
+      "sha256": "078891d91d947b2fec981975b20a87510b89f2106b29a740ceee10f169f27778"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "0ddcbec724a75acd2fa4cc534bba788eb15fcb029d34fb75b5ecdbd0978c4c70"
+      "sha256": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "b5e5d0c65e6c0bcc1fcccb429ba3adbbb8b287ad509866c18d4cf2467daf3881"
+      "sha256": "7b53bfd9ddbe3f72e06d60d69e8d0b51644e0aa1415627d4481813a138228ba0"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "7b3e65e5276432ae8b72dad188a6b7e1b3ce3c49e5e19aea3bc61396979c8960"
+      "sha256": "5045758cde12b18c6704126efe1179644cf096e9d157c80f8f132c003bff1095"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "8300cd350d848d41095c0c024852a925782c96fd2171f1b887e444885c706d6b"
+      "sha256": "ce6b58980592140ccc80e2569d0a3f9aaa5e5981459defc1c5ea48eee413d0e1"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "289972ef6f6e495d785eab85238276333f7d5d0933feda46616d005381b3e703"
+      "sha256": "eb50c88814eb103a5b73c0ca036b3ffe34ca339dfd5dd99bbddecf1e7ca84989"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
@@ -5501,7 +5431,7 @@
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "bf9b29d428ad3e06c0a57aaf27c27a4b2986467f3f8b61579f3d876933b410b2"
+      "sha256": "55896f263568e6c2e929756c9d22f6fc5f36ec4698cdbe6828384872cd532f7e"
     },
     {
       "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
@@ -5512,8 +5442,8 @@
       "sha256": "35a4a68557fa122603f26e9aa32a4b5c64982645c43e28afeb06101055cfc55f"
     },
     {
-      "path": "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
-      "sha256": "a8afeac6629330c6d4cbd2a54925d7f1c24b06aec598f2479ddbc45e6715d449"
+      "path": "tests/asl/block/model/dispatch/top-level/block-exec-cube-mx-rejection-matrix-001.asl",
+      "sha256": "cb87e3452f780d63005b5b6bbc77f8edcecfa649d08321fb698fdc7a66174874"
     },
     {
       "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
@@ -5521,7 +5451,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
-      "sha256": "5f1d64af375bdf62e97b9fd4ea3a46ac6ec718a366404685a173463a07e44a9f"
+      "sha256": "98cbb0b1c06795efd2a39cdb85efdd56912341af24e284ab0cab986eeecacfcc"
     }
   ],
   "open_parent_decisions": [

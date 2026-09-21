@@ -94,7 +94,7 @@ end;
 // claim target support or select numeric result semantics.
 type NumericApplicabilityRuleSet of enumeration {
     NumericApplicabilityRules_None,
-    NumericApplicabilityRules_A2A3MxRejection
+    NumericApplicabilityRules_MxRejection
 };
 ```
 <!-- GENERATED-ASL-END: unit -->

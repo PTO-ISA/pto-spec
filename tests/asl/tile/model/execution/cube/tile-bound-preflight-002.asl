@@ -195,7 +195,7 @@ begin
         assert decoded != PTO_TILE_OPERATION_COUNT;
         let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
         assert TileOperationRejectedByAcceptedApplicabilityRules(
-            NumericApplicabilityRules_A2A3MxRejection, operation);
+            NumericApplicabilityRules_MxRejection, operation);
         assert !TileOperationRejectedByAcceptedApplicabilityRules(
             NumericApplicabilityRules_None, operation);
 
@@ -207,7 +207,7 @@ begin
         WritePC(Zeros{PTO_XLEN} + 0x100);
         let (status, result) =
             ExecuteTileInstructionWithAcceptedApplicabilityRulesForTest(
-                NumericApplicabilityRules_A2A3MxRejection,
+                NumericApplicabilityRules_MxRejection,
                 TileDecode_CUBE, Zeros{12} + function,
                 CubeTotalityOperands(function));
         assert status == TileExecution_Rejected;

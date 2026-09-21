@@ -2367,8 +2367,8 @@
       "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -2376,7 +2376,7 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "521f68e40cd89f2c0e992922a584a4d94ba24cf10ce79a9ecdbd0875611d0e5f"
+      "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
@@ -2424,7 +2424,7 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
+      "sha256": "8b4f89ce7fdf1bee78f86b446f9642a9714887e47b42f597624b8519d1c4ce62"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",

@@ -12,7 +12,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
-NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-profile-identities.json"
+NUMERIC_PROFILE_IDENTITIES = ROOT / "spec/catalog/numeric-contract-identities.json"
 NUMERIC_VARIATION_OWNERSHIP = (
     ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 )
@@ -212,7 +212,7 @@ def build_evidence() -> dict[str, Any]:
     )
     require(
         identity_catalog.get("status") == "identity-framework-closed-rules-open"
-        and identity_catalog.get("summary", {}).get("accepted_identity_count") == 4
+        and identity_catalog.get("summary", {}).get("accepted_identity_count") == 2
         and identity_catalog.get("summary", {}).get("complete_rule_count") == 0,
         "numeric identity framework is not closed with result rules open",
     )
@@ -326,7 +326,7 @@ def build_evidence() -> dict[str, Any]:
                 "open_numeric_dimensions": open_dimensions,
                 "required_vector_classes": spec["required_vector_classes"],
                 "oracle_requirement": spec["oracle_requirement"],
-                "profile_identity": None,
+                "contract_identity": None,
                 "oracle_identity": None,
                 "vector_manifest": None,
                 "differential_result": None,
@@ -359,9 +359,9 @@ def build_evidence() -> dict[str, Any]:
         "target": "S5-T2",
         "status": "readiness-defined-conformance-open",
         "source_inventory": "spec/evidence/numeric-contracts.json",
-        "profile_identity_catalog": "spec/catalog/numeric-profile-identities.json",
-        "profile_decision_inputs": "spec/evidence/numeric-profile-decision-inputs.json",
-        "profile_decision_proposals": "spec/evidence/numeric-profile-decision-proposals.json",
+        "contract_identity_catalog": "spec/catalog/numeric-contract-identities.json",
+        "profile_decision_inputs": "spec/evidence/numeric-contract-decision-inputs.json",
+        "profile_decision_proposals": "spec/evidence/numeric-contract-decision-proposals.json",
         "variation_point_ownership": {
             "path": "spec/evidence/numeric-variation-point-ownership.json",
             "status": variation_ownership["status"],
@@ -402,7 +402,7 @@ def build_evidence() -> dict[str, Any]:
         },
         "identity_framework": {
             "status": "closed:S5-T2-A1",
-            "accepted_identity_count": 4,
+            "accepted_identity_count": 2,
             "accepted_selection_rule_count": 5,
             "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
             "result_decision_count": 2,
@@ -474,13 +474,13 @@ def build_evidence() -> dict[str, Any]:
         "lanes": lanes,
         "summary": {
             **actual_counts,
-            "accepted_configuration_identity_count": 4,
+            "accepted_configuration_identity_count": 2,
             "accepted_selection_framework_rule_count": 5,
             "accepted_public_type_binding_count": 16,
             "public_type_identity_count": 16,
             "accepted_bounded_result_rule_count": 3,
             "accepted_bounded_result_tuple_count": 48,
-            "profile_identity_count": 0,
+            "contract_identity_count": 0,
             "qualified_oracle_count": 0,
             "vector_manifest_count": 0,
             "differential_result_count": 0,

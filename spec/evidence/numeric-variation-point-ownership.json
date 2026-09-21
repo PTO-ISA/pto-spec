@@ -17,20 +17,17 @@
   },
   "ownership_routes": [
     "portable-rule",
-    "named-profile-rule",
+    "named-contract-rule",
     "visible-selector-rule",
-    "unsupported-in-profile"
+    "unsupported"
   ],
   "selection_surfaces": {
     "portable_owner": "pto-numeric-v1",
-    "named_target_profiles": [
-      "pto-a2a3-numeric-v1",
-      "pto-a5-numeric-v1"
-    ],
+    "negative_applicability_contract": "pto-numeric-mx-negative-v1",
     "observation_only_identity": "pto-cpu-observation-v1",
     "rounding_selector_contract": "spec/evidence/numeric-rounding-selector-contract.json",
     "format_namespace_contract": "spec/evidence/numeric-format-namespace-contract.json",
-    "accepted_unsupported_contract": "spec/evidence/numeric-profile-applicability-closure.json"
+    "accepted_unsupported_contract": "spec/evidence/numeric-contract-applicability-closure.json"
   },
   "variation_points": [
     {
@@ -73,27 +70,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -141,27 +126,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -209,23 +182,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -244,12 +205,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/cube-matrix",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -296,23 +257,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -331,7 +280,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -380,27 +329,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -436,23 +373,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -471,12 +396,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-binary",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -511,27 +436,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -567,27 +480,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -623,27 +524,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -679,27 +568,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -732,23 +609,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -762,7 +627,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -797,23 +662,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -832,12 +685,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fp-convert",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -869,27 +722,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -922,27 +763,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -975,27 +804,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1032,23 +849,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1067,12 +872,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fp-to-integer",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -1108,27 +913,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1165,27 +958,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1222,23 +1003,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1257,7 +1026,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -1295,27 +1064,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1351,23 +1108,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1386,12 +1131,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fused",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -1426,27 +1171,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1482,27 +1215,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1538,27 +1259,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1594,27 +1303,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1648,23 +1345,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1678,7 +1363,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -1714,23 +1399,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1744,7 +1417,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -1780,23 +1453,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1815,12 +1476,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-integer-to-fp",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -1853,27 +1514,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1907,27 +1556,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -1962,23 +1599,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -1997,12 +1622,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-unary",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -2036,27 +1661,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2091,27 +1704,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2146,27 +1747,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2201,27 +1790,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2277,23 +1854,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -2307,7 +1872,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -2365,23 +1930,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -2400,12 +1953,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-binary",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -2460,23 +2013,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -2495,7 +2036,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -2552,27 +2093,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2628,27 +2157,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2682,27 +2199,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2736,27 +2241,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2790,27 +2283,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -2844,23 +2325,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -2874,7 +2343,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -2909,23 +2378,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -2939,7 +2396,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -2974,23 +2431,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3009,12 +2454,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-convert",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -3046,27 +2491,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3099,27 +2532,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3152,23 +2573,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3187,7 +2596,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -3236,23 +2645,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3266,7 +2663,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -3316,23 +2713,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3351,12 +2736,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-expand",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -3403,27 +2788,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3471,27 +2844,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3539,23 +2900,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3574,7 +2923,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -3608,27 +2957,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3661,23 +2998,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3696,12 +3021,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-fused",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -3733,27 +3058,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3786,23 +3099,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -3821,7 +3122,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -3855,27 +3156,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3920,27 +3209,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -3985,27 +3262,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4050,23 +3315,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -4085,12 +3338,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-reduction",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -4134,27 +3387,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4199,27 +3440,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4264,23 +3493,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -4294,7 +3511,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-format-namespace-contract.json",
         "spec/evidence/public-numeric-type-baseline.json"
       ],
@@ -4341,23 +3558,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -4376,12 +3581,12 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-unary",
       "result_acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
@@ -4425,27 +3630,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4490,27 +3683,15 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
+        "spec/catalog/numeric-contract-identities.json"
       ],
       "selected_route": null,
       "result_rule_id": null,
@@ -4555,23 +3736,11 @@
       "admissible_routes": [
         {
           "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
+          "contract_id": "pto-numeric-v1"
         },
         {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
+          "kind": "unsupported",
+          "contract_id": "pto-numeric-mx-negative-v1"
         },
         {
           "kind": "visible-selector-rule",
@@ -4590,7 +3759,7 @@
         }
       ],
       "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
+        "spec/catalog/numeric-contract-identities.json",
         "spec/evidence/numeric-rounding-selector-contract.json"
       ],
       "selected_route": null,
@@ -5045,7 +4214,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -5069,7 +4238,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -5094,7 +4263,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -5182,7 +4351,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -5206,7 +4375,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -5231,7 +4400,7 @@
       "decision_owner_kind": "portable-architecture",
       "decision_owner_id": "pto-numeric-v1",
       "accepted_unsupported_profiles": [
-        "pto-a2a3-numeric-v1"
+        "pto-numeric-mx-negative-v1"
       ],
       "accepted_result_rule_count": 1,
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6539,7 +5708,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarFPBinaryProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6565,7 +5734,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarFPConvertProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6594,7 +5763,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarFPFusedProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6624,7 +5793,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarFPToIntegerProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6652,7 +5821,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarFPUnaryProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6679,7 +5848,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/ScalarIntegerToFPProfile",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6705,7 +5874,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileExponential",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6731,7 +5900,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileLogarithm",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6780,7 +5949,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileBinary",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6829,7 +5998,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileConvert",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6870,7 +6039,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileExpand",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6914,7 +6083,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileMatrixAccumulate",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6943,7 +6112,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileMatrixBias",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -6980,7 +6149,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileMatrixPostProcess",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7017,7 +6186,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileMatrixReductionStep",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7048,7 +6217,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileMatrixScaledAccumulate",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7085,7 +6254,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileReductionInitial",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7122,7 +6291,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileReductionStep",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7156,7 +6325,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileProfileUnary",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7183,7 +6352,7 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileReciprocal",
       "status": "rounding-rule-accepted-other-result-rules-open"
@@ -7210,14 +6379,14 @@
       "decision_owner_id": "pto-numeric-v1",
       "selected_route": {
         "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
+        "contract_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding-hook/TileSquareRoot",
       "status": "rounding-rule-accepted-other-result-rules-open"
     }
   ],
   "support_rules": {
-    "path": "spec/evidence/numeric-profile-applicability-closure.json",
+    "path": "spec/evidence/numeric-contract-applicability-closure.json",
     "rule_count": 6,
     "tuple_count": 150,
     "result_rule_count": 0,
@@ -7240,32 +6409,32 @@
       "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
     },
     {
-      "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a"
+      "path": "spec/evidence/numeric-contract-decision-inputs.json",
+      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
     },
     {
-      "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
+      "path": "spec/catalog/numeric-contract-identities.json",
+      "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "7845b0d64ed5ac46150bcdfa2cfe630aa6166681c62feeb2549a4d1e57d6347e"
+      "sha256": "ebe6e4de97b9d6f8ddea928c4a0f84e14390122b663e85e8497293e368e92c68"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "521f68e40cd89f2c0e992922a584a4d94ba24cf10ce79a9ecdbd0875611d0e5f"
+      "sha256": "252989bdfe3d5d6ea486823cfebea452f14c6134660c5c1066651dedbb746d6b"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "2ea874b1daa5b827e780af1f58a012e72cdc8b72c35cb63fc85e9f4c3d53bdb5"
+      "sha256": "5b00ad0e5424ba218f5ebde4ac8dfa7c0e6ddd074f58b4e191d1e67817301fb0"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "1babb869c3d481ee6c92f4a3b0aebbcb94c706ed5ba673bbba539f716982895b"
+      "sha256": "a59423457a9a66a22f1adf87fd40e2af55c1a451b45e35be7ffda9e3c4368362"
     },
     {
-      "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "014352e90d17b362a568e3618c131aad091f66adbd52f897f74ada233af60363"
+      "path": "spec/evidence/numeric-contract-applicability-closure.json",
+      "sha256": "9a2cd7a41aa46a45dc500174ce96edc6331c96a0d90c0479754dc22f6ad4d293"
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",

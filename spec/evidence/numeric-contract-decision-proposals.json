@@ -3,20 +3,20 @@
   "target": "S5-T2-A",
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
-    "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "51a2a7446c6a19c8e1cd44ded0ba70cad38dd892f2410dfc52f80b19c0ef618a",
+    "path": "spec/evidence/numeric-contract-decision-inputs.json",
+    "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
   "identity_catalog": {
-    "path": "spec/catalog/numeric-profile-identities.json",
-    "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be",
+    "path": "spec/catalog/numeric-contract-identities.json",
+    "sha256": "c1ce0470b5a440d9e27a39391f50a12dbcbb29ef77755360a4e80be229df1b37",
     "status": "identity-framework-closed-rules-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "72fd865e9b95949593f649122b9adf2cddb8a4e1aa9e26438434d17c4fc03886",
+    "sha256": "60085126a6b1472553dc4a40806f93c1eeee4df20fd8343940cd2b2014046c96",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "d1f2583ef1d75716f7e5ffbdc63c4f2bc770cc421eb6f321718196278fee9069",
+    "sha256": "ebe6e4de97b9d6f8ddea928c4a0f84e14390122b663e85e8497293e368e92c68",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -41,7 +41,7 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "d21a3c78892a93d92b70e95e2f281d27be54a6a3b4201427d3f9d0578574cd78",
+    "sha256": "542bc9da3db8665f7bf17e946c74cabc132d3372592a1515e30a0251effc193e",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "c9c467a847d277f2ef38232bd4a09e76421a7cf96391d51071109eb5f7d9474b",
+    "sha256": "e4c197849e370f82c3bf3c8e87e7cc3157e62ad2577d2ddc64f84c7bfb723b0f",
     "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "297d96aa03b02d928109a29db2e841771d419b5994c7a36a84f847e64bf1bb16",
+    "sha256": "efff9bab7edc20a8668e006f3a5257646ee5d59ce4f69f5ebbbadfdc7c897ff3",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
@@ -116,14 +116,12 @@
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "4151ff2d8ce47fc7f0f5c4334c1eecd783ebdcc7a3f82935081023e67376fb5d",
+    "sha256": "1db162a52ce13f5ac105c6ea11a97478c04d2ba0d100678691cf13ede9d1191d",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
     "public_floating_type_count": 8,
     "public_integer_type_count": 8,
-    "a2a3_available_type_count": 11,
-    "a5_available_type_count": 16,
     "accepted_catalog_binding_count": 16,
     "non_public_catalog_type_count": 9,
     "accepted_result_rule_count": 0,
@@ -135,7 +133,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "957ea0d6cf2b45c8fd3f2542a126ae135304979c1203c732dc5caf6d89372833",
+    "sha256": "afcb1120fe7f21c6279cdf77e1611c0fb4e037f55c1c53a1e9b2bc78b6dfa939",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -154,9 +152,9 @@
     "s5_t2_complete": false
   },
   "profile_applicability_contract": {
-    "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "246689ea145b8fe5d27765bfd8b5dc81024ec64ec3970a3389a2098dabfbad4e",
-    "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
+    "path": "spec/evidence/numeric-contract-applicability-closure.json",
+    "sha256": "9a2cd7a41aa46a45dc500174ce96edc6331c96a0d90c0479754dc22f6ad4d293",
+    "status": "mx-unsupported-tuples-closed-results-open",
     "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
     "operation_count": 6,
@@ -165,8 +163,8 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "command_form_count": 76,
-    "accepted_command_form_count": 73,
+    "command_form_count": 96,
+    "accepted_command_form_count": 93,
     "result_rule_count": 0,
     "parent_adr0086_complete": false,
     "cube_matrix_complete": false,
@@ -174,7 +172,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "0c2e0b77d9b7487b69df45e994f2db62521cf7af0f6cfcace4182d1831f4b830",
+    "sha256": "054454856a5efa1a5c4a4d97752cb23a180047c01a15ce955e4ce68f5f4b6109",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
     "variation_point_count": 69,
@@ -197,9 +195,9 @@
   },
   "policy": {
     "proposal_not_authority": "Accepted decision rows are backed by their architecture records; every other question and every incomplete domain proposal remains review input and does not select numeric results.",
-    "support_boundary": "A target profile may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
-    "bounded_variation": "A portable rule may delegate a result dimension only to a named target profile or visible numeric mode with a finite or mathematically testable allowed-result contract.",
-    "cpu_boundary": "CPU observations are implementation-under-test diagnostics and are never an architectural profile or independent oracle.",
+    "support_boundary": "An implementation may reject an operation/type tuple, but it may not silently change the portable result of an accepted tuple.",
+    "bounded_variation": "A portable rule may delegate a result dimension only to a visible numeric mode with a finite or mathematically testable allowed-result contract.",
+    "cpu_boundary": "CPU observations are implementation-under-test diagnostics and are never an architectural contract or independent oracle.",
     "fail_closed": "Unknown identities, modes, formats, operation/type tuples, and missing delegated rules reject before architectural effects.",
     "promotion": "S5-T2-A remains open until every proposal has an accepted PTO decision record and every domain has an accepted rule."
   },
@@ -242,12 +240,11 @@
       "kind": "portable-numeric-contract",
       "role": "Portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
       "normative": true,
-      "selection": "Applies to every PTO numeric operation; target profiles may only narrow support or implement an explicitly delegated bounded variation point.",
-      "relation_to_pto_v0": "Distinct from the deterministic pto-v0 raw-carrier implementation profile; it supplies the future target-conformance contract rather than changing pto-v0.",
+      "selection": "Applies to every PTO numeric operation; implementations may only narrow support or implement an explicitly delegated bounded variation point.",
+      "relation_to_portable_contract": "Supplies the portable result, legality, and pre-effect rejection contract for accepted numeric operation/type tuples.",
       "rule_status": "decision-required",
       "source_ids": [
-        "public-portability-rules",
-        "public-target-profiles"
+        "public-portability-rules"
       ],
       "status": "identity-accepted-rules-open",
       "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
@@ -259,45 +256,10 @@
       "role": "Versioned implementation-under-test observations and developer diagnostics.",
       "normative": false,
       "selection": "Cannot be selected as an architectural numeric profile or independent conformance oracle.",
-      "relation_to_pto_v0": "May observe pto-v0 or a CPU backend but defines neither one.",
+      "relation_to_portable_contract": "Only observes implementations; it defines neither portable results nor a target contract.",
       "rule_status": "observation-schema-required",
       "source_ids": [
-        "public-portability-rules",
-        "public-target-profiles"
-      ],
-      "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
-    },
-    {
-      "partition_id": "a2a3-target",
-      "proposed_id": "pto-a2a3-numeric-v1",
-      "kind": "target-numeric-profile",
-      "role": "A2A3 support restrictions and explicitly delegated bounded numeric rules.",
-      "normative": true,
-      "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
-      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
-      "rule_status": "decision-required",
-      "source_ids": [
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
-      ],
-      "status": "identity-accepted-rules-open",
-      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
-    },
-    {
-      "partition_id": "a5-target",
-      "proposed_id": "pto-a5-numeric-v1",
-      "kind": "target-numeric-profile",
-      "role": "A5 support restrictions and explicitly delegated bounded numeric rules.",
-      "normative": true,
-      "selection": "Requires a complete A5 operation/type legality matrix and one accepted result rule for every supported tuple.",
-      "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
-      "rule_status": "decision-required",
-      "source_ids": [
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+        "public-portability-rules"
       ],
       "status": "identity-accepted-rules-open",
       "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md"
@@ -542,9 +504,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -581,9 +541,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -620,9 +578,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -660,9 +616,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -697,9 +651,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -733,9 +685,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -792,9 +742,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -840,9 +788,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -875,9 +821,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -910,9 +854,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -958,9 +900,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -1009,9 +949,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -1045,9 +983,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -1096,9 +1032,7 @@
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
-        "pto-cpu-observation-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
+        "pto-cpu-observation-v1"
       ],
       "portable_rule_status": "rule-required",
       "a2a3_support_status": "operation-type-matrix-required",
@@ -1185,8 +1119,8 @@
     }
   ],
   "summary": {
-    "profile_proposal_count": 4,
-    "accepted_profile_identity_count": 4,
+    "profile_proposal_count": 2,
+    "accepted_contract_identity_count": 2,
     "accepted_framework_rule_count": 5,
     "decision_proposal_count": 11,
     "accepted_decision_count": 2,

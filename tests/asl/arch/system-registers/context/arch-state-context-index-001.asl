@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-SYSTEM-REGISTERS-CONTEXT-INDEX-001","source":"asl/arch/system-registers/context.asl","requirements":[],"kind":"state-transition","summary":"PTOv0 context access uses the ring-times-4096 plus low-index mapping","pass_condition":"both index helpers agree and PTOv0 read returns the value written at the selected extended-register entry","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-SYSTEM-REGISTERS-CONTEXT-INDEX-001","source":"asl/arch/system-registers/context.asl","requirements":[],"kind":"state-transition","summary":"context access uses the ring-times-4096 plus low-index mapping","pass_condition":"the index helper and the context read return the value written at the selected extended-register entry","related_sources":[]}
 func main() => integer
 begin
     ResetProfileState();

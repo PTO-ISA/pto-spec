@@ -11,9 +11,9 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUT = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
+INPUT = ROOT / "spec/evidence/numeric-contract-decision-inputs.json"
 READINESS = ROOT / "spec/evidence/numeric-conformance-readiness.json"
-IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
+IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-contract-identities.json"
 SCALAR_FLAG_CONTRACT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
 ROUNDING_SELECTOR_CONTRACT = (
     ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
@@ -28,12 +28,12 @@ PUBLIC_INTEGER_CONVERSION = (
     ROOT / "spec/evidence/public-integer-conversion-contract.json"
 )
 PROFILE_APPLICABILITY_CONTRACT = (
-    ROOT / "spec/evidence/numeric-profile-applicability-closure.json"
+    ROOT / "spec/evidence/numeric-contract-applicability-closure.json"
 )
 VARIATION_POINT_CONTRACT = (
     ROOT / "spec/evidence/numeric-variation-point-ownership.json"
 )
-OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
+OUTPUT = ROOT / "spec/evidence/numeric-contract-decision-proposals.json"
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -210,8 +210,6 @@ def generate() -> dict[str, Any]:
             "public_type_count": 16,
             "public_floating_type_count": 8,
             "public_integer_type_count": 8,
-            "a2a3_available_type_count": 11,
-            "a5_available_type_count": 16,
             "accepted_catalog_binding_count": 16,
             "non_public_catalog_type_count": 9,
             "accepted_result_rule_count": 0,
@@ -252,9 +250,9 @@ def generate() -> dict[str, Any]:
     require(
         profile_applicability_contract["schema_version"] == 1
         and profile_applicability_contract["artifact_id"]
-        == "numeric-profile-applicability-closure"
+        == "numeric-contract-applicability-closure"
         and profile_applicability_contract["status"]
-        == "a2a3-mx-unsupported-profile-tuples-closed-results-open"
+        == "mx-unsupported-tuples-closed-results-open"
         and profile_applicability_contract["summary"]
         == {
             "rule_count": 6,
@@ -264,8 +262,8 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "command_form_count": 76,
-            "accepted_command_form_count": 73,
+            "command_form_count": 96,
+            "accepted_command_form_count": 93,
             "result_rule_count": 0,
             "parent_adr0086_complete": False,
             "cube_matrix_complete": False,
@@ -281,7 +279,7 @@ def generate() -> dict[str, Any]:
             "role": row["role"],
             "normative": row["normative_identity"],
             "selection": row["selection"],
-            "relation_to_pto_v0": row["relation_to_pto_v0"],
+            "relation_to_portable_contract": row["relation_to_portable_contract"],
             "rule_status": row["rule_status"],
             "source_ids": row["source_ids"],
             "status": "identity-accepted-rules-open",
@@ -290,12 +288,12 @@ def generate() -> dict[str, Any]:
         for row in identity_catalog["identities"]
     ]
     require(
-        len(profile_proposals) == len(inputs["profile_partition_inputs"]),
+        len(profile_proposals) == len(inputs["contract_partition_inputs"]),
         "profile partition count drift",
     )
     require(
         {row["partition_id"] for row in profile_proposals}
-        == {row["id"] for row in inputs["profile_partition_inputs"]},
+        == {row["id"] for row in inputs["contract_partition_inputs"]},
         "profile partition identity drift",
     )
 
@@ -356,13 +354,13 @@ def generate() -> dict[str, Any]:
         "target": "S5-T2-A",
         "status": "proposal-complete-two-decisions-accepted",
         "input": {
-            "path": "spec/evidence/numeric-profile-decision-inputs.json",
+            "path": "spec/evidence/numeric-contract-decision-inputs.json",
             "sha256": hashlib.sha256(INPUT.read_bytes()).hexdigest(),
             "public_repository": inputs["public_repository"],
             "public_commit": inputs["public_commit"],
         },
         "identity_catalog": {
-            "path": "spec/catalog/numeric-profile-identities.json",
+            "path": "spec/catalog/numeric-contract-identities.json",
             "sha256": hashlib.sha256(IDENTITY_CATALOG.read_bytes()).hexdigest(),
             "status": identity_catalog["status"],
             "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
@@ -432,7 +430,7 @@ def generate() -> dict[str, Any]:
             **public_integer_conversion["summary"],
         },
         "profile_applicability_contract": {
-            "path": "spec/evidence/numeric-profile-applicability-closure.json",
+            "path": "spec/evidence/numeric-contract-applicability-closure.json",
             "sha256": hashlib.sha256(
                 PROFILE_APPLICABILITY_CONTRACT.read_bytes()
             ).hexdigest(),
@@ -565,7 +563,7 @@ def generate() -> dict[str, Any]:
         ],
         "summary": {
             "profile_proposal_count": len(profile_proposals),
-            "accepted_profile_identity_count": len(profile_proposals),
+            "accepted_contract_identity_count": len(profile_proposals),
             "accepted_framework_rule_count": 5,
             "decision_proposal_count": len(decision_proposals),
             "accepted_decision_count": sum(
@@ -618,7 +616,7 @@ def main() -> int:
         return 0
     if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != expected:
         raise SystemExit(
-            "numeric profile decision proposals are stale; run scripts/generate-numeric-profile-decision-proposals --write"
+            "numeric profile decision proposals are stale; run scripts/generate-numeric-contract-decision-proposals --write"
         )
     return 0
 
