@@ -290,7 +290,7 @@
     },
     {
       "path": "asl/block/attributes/B.FPATR.asl",
-      "sha256": "58ec651374f3aa0fe2b90960b3d7dd7080283549a31c6012b45276f5e19c7460"
+      "sha256": "d9e9bb1110df26c791c0a6a1ee3a0e39170651e6ca3a715867503d3cde7ab0b3"
     },
     {
       "path": "asl/block/attributes/C.B.DIMI.asl",
@@ -602,7 +602,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "f4523e01c260e1d8b236d7652abadb20076204e14f25d98c46e73b92e79fe1fe"
+      "sha256": "84f5541899ca9b9daf5e0d198c1b49b1b0f03189fdd124c21030cacf4e9ef581"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -650,7 +650,7 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "22c5b8fdaa941fe934aa66f0762b1a09c1ae81efbee7d9d1370c27c3e730dc7b"
+      "sha256": "0b9fdd4d8d39a9679ff275a866fff510fdc407a163b6645cfee7b3db75db6d8f"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
@@ -3262,7 +3262,7 @@
     },
     {
       "path": "asl/tile/model/legality/matrix-functions.asl",
-      "sha256": "7e3e1a236508b8fc824cad2e24870877bbfed68a2eefd3820b2dc93680e40552"
+      "sha256": "23c24fa758f0ef4db5ad20b01d9c2ddb6e4bd99f4581354d5f1d92efad894e1e"
     },
     {
       "path": "asl/tile/model/legality/matrix-info-descriptor.asl",
@@ -3606,7 +3606,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "3205a2892ee780255758d89909191dfbd1bae21d3f45ad3074648442211952bf"
+      "sha256": "e75762180f4f0e85bb73d79bf187733995391ebe72db091ed03b4a249b790d08"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3614,15 +3614,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "a50314015d1922296f7cf5b9bbfb00a7e915327cfac39834b41899dc5ddee84e"
+      "sha256": "19a339f4408b7a953d4131fd5967f3f51abd961fdb9874c8811a42b21562ef75"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "1711569cdcc1a1870374d3022672ba22edda772cacf79b0d157e3c3a401a216d"
+      "sha256": "e88375af21ae6cc3831cc4379aa070fdc685a2aa173198d704346e0335539ba5"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "42d85f5f59ea79cc9d802e1fea6908b67057ff7d78f7511e136a5c8f96389063"
+      "sha256": "82bada53bb6599a2cbeaf5c11a652cfc7f6696a5d32b44cdf9f383aa1664aa97"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3684,7 +3684,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "567702d0b6ecfb366f00c27f6ebeefae30a65836e4a5755ed797593902173165",
+  "content_sha256": "21c2dc6511c4c80c9d3343a54f68733fac84408562cbd03fa95bda9a03831d5a",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4461,7 +4461,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/cube-tmatmul.md",
-      "sha256": "e2915c79a261a5eda6a74ce3922a9945d2c98bb4462b72e319b4fc0fe58c5e3d"
+      "sha256": "bed0b974a467b2b5e31fac8c0d044049d3950ba3dac2ed31a91fb61a7a7ae941"
     },
     {
       "kind": "generated-documentation",
@@ -4521,7 +4521,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-cube-matrix.md",
-      "sha256": "8721426389f0459ec99896ac2e85f6e8b6727a452599cee6ab8e1a84ac997e7e"
+      "sha256": "71a5d087692695fb6119a946b45c3d0183ebc65062fd091f58d415a0306cf073"
     },
     {
       "kind": "generated-documentation",
@@ -7786,7 +7786,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/matrix-functions.md",
-      "sha256": "0d46461e2bfebe0c54a0e7761abc462db438f9ff639be621492064ef0f64a5b2"
+      "sha256": "b666053b31479f8d10367e3350a082609013cddb8b982c86f3af259a439ca8b0"
     },
     {
       "kind": "generated-documentation",
@@ -8425,7 +8425,7 @@
       },
       {
         "id": "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
-        "sha256": "6fc70091fea63d0a9b70a4806f17e06849dcd8dda963a003e68ed491c8064959"
+        "sha256": "457d15bfa5af547831d71f961f156b9dc67aaa11e23cd10a91a0ecab5d64d228"
       },
       {
         "id": "PTO-B-HINT-LIFECYCLE-001",
@@ -8801,7 +8801,7 @@
       },
       {
         "id": "PTO-CUBE-MATRIX-SCALE-001",
-        "sha256": "0d1789520032ce5a06428db8c606913e6ec6514e5b78382d693ef8a7eea5dd6d"
+        "sha256": "7bf124db16e3f4ef4f44155057affdea85f2f778b36f34d15a38e0d562122eed"
       },
       {
         "id": "PTO-CUBE-MATRIX-SCALE-CELL-001",
@@ -8809,7 +8809,7 @@
       },
       {
         "id": "PTO-CUBE-SHARED-TRANSPOSE-001",
-        "sha256": "c1cd304e50038c53760dc7988138189c4636f77fbb336d4b14dc5af436532649"
+        "sha256": "d579352c22ccd456c2a2d22431e7c52983cbea19d66a76e40fbe38b227ab32c7"
       },
       {
         "id": "PTO-EBREAK-DECISION-BINDING-001",
@@ -9105,7 +9105,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-FPATR",
-        "sha256": "0a7517dfc01b101c52c32dca35f3596eb59c99f94679ba021b964e617c4c840e"
+        "sha256": "9d46361861093c09468194bf5b279dc1714d6509c7ea49d9be969c34bae75ab3"
       },
       {
         "id": "PTO-INST-BLOCK-B-HINT",

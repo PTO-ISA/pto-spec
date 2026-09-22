@@ -3495,6 +3495,7 @@
       "tests": [
         "PTO-AVS-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE-STATIC-001",
         "PTO-AVS-ARCH-HIF4-SCALE-001",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
         "PTO-AVS-BLOCK-TMATMULMX-HIF4-002"
       ]
     },
@@ -3555,6 +3556,7 @@
       "tests": [
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-005",
         "PTO-AVS-BLOCK-TMATMUL-HIF4-FAULT-002",
@@ -3598,6 +3600,7 @@
         "PTO-AVS-BLOCK-B-FPATR-TRANSPOSE-011",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-005",
         "PTO-AVS-BLOCK-TGEMV-SHARED-001",
@@ -20715,7 +20718,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-noscale-001.asl": "d1be97dd7fea3cd1ce730760faf35676e1e59cd14a837a1c7dac80bd921a335e",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-rowmax-001.asl": "7db67523d292fe075cd40d869398000be7714455b37981d1d9ad0ef28e6cb487",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-both-001.asl": "caf87fbbda43b2050af0a1ef1c9e57e7788d9fa96576c796fbe851fcc6b6f66e",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-right-001.asl": "93eb546eaf951295c12043eaefda4320e83ffbd74f5604a85db98f090f1e9dab",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-right-001.asl": "90c39ab811f1919c39d1715d42a6424c3a903634f09591f47c05cc163016da3b",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-bstart-family-036.asl": "0ffa49f32046ccfb10e74c1b32da1fbcf2ba5f8cfbb837465cb59313038d6c44",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mask-015.asl": "3ae4a822e93a1345d160cf1c86d7aae1847b1cbdd9fd273b7fe9797401bc0838",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mshard-021.asl": "03ec749ec8c38fcb0cb14a72c0287c2b7ac8e48599280bee74c157380cdd3040",
@@ -20779,7 +20782,8 @@
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-control-zero-004.asl": "065085f52d029cbbee1bcf94269fcca86612f04bd1e4e486c9d5857862e89b1f",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-heterogeneous-003.asl": "30bde5c53df6b9bc87c60c9ac6e5f878dd72390bbb90e3a99d82c0a40b552e48",
-    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "ac1fe77f631b6a7b05e5800dc4e990fa564ff0161be0cb6490dc593b7bfa85d1",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-hif4-transpose-006.asl": "433e69a1bfae3cd99d2e9d2872a2ebbbe78fd41b47f63e3292b678d2091d3326",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "1a934951a810b5a2c62cea00ad83b7af9c00e531d9353ac83ef6d0432b710544",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-fault-shared-cube-scale-transpose-005.asl": "f15100800791dd57c18450e3f25df01b1118df15d11e272a0e1dc8b4221b2fed",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-static-shared-cube-matrix-contract-001.asl": "9a87138fcf0fe7bba46f6d3447358753f3997f7110d0b9785d0858890355faf7",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "b398421107121b5551c5e9cc77949c2ceed6275f03543a55a422925c0d6801aa",
@@ -24174,7 +24178,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1092,
     "status": "closed",
-    "test_count": 3967,
+    "test_count": 3968,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -41191,6 +41195,18 @@
       "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-hif4-transpose-006.asl",
+      "requirements": [
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-CUBE-HIF4-SCALE-001"
+      ],
+      "sha256": "433e69a1bfae3cd99d2e9d2872a2ebbbe78fd41b47f63e3292b678d2091d3326",
+      "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl",
@@ -41198,7 +41214,7 @@
         "PTO-CUBE-MATRIX-SCALE-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "ac1fe77f631b6a7b05e5800dc4e990fa564ff0161be0cb6490dc593b7bfa85d1",
+      "sha256": "1a934951a810b5a2c62cea00ad83b7af9c00e531d9353ac83ef6d0432b710544",
       "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
     },
     {
@@ -42369,7 +42385,7 @@
         "PTO-CUBE-SHARED-TRANSPOSE-001",
         "PTO-B-SUBVIEW-RANGE-001"
       ],
-      "sha256": "93eb546eaf951295c12043eaefda4320e83ffbd74f5604a85db98f090f1e9dab",
+      "sha256": "90c39ab811f1919c39d1715d42a6424c3a903634f09591f47c05cc163016da3b",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -69021,6 +69037,7 @@
       "semantic_tests": [
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-005"
       ],
@@ -69030,6 +69047,7 @@
         "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX-STATIC-001",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HETEROGENEOUS-003",
+        "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002",
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-005"
       ]
