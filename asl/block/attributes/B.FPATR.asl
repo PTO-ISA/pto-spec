@@ -4,7 +4,8 @@
 // ndf: kind=contract level=L1 layer=block status=accepted
 // B.FPATR MUST appear exactly once in every CUBE Matrix block and MUST precede
 // every effective B.IOR, B.IOT, or B.IOS binding. TransA and TransB MUST
-// control only the corresponding Shared primary and scale. CScaleEn MUST
+// control only the corresponding Shared primary data operand; the corresponding
+// Shared scale remains K-group-major and is never transpose-selected. CScaleEn MUST
 // control only an explicit FP32 C source on TMATMUL.ACC or TMATMULMX.ACC;
 // bit 10 and every other reserved mode value MUST
 // reject before descriptor state or effects. CCTRL[0]=1 MUST require every
@@ -18,14 +19,16 @@
 
 // NDF-BEGIN: PTO-CUBE-SHARED-TRANSPOSE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// B.FPATR bits 7 and 8 MUST independently select logical transpose for a
-// corresponding Shared A or B primary and its separately bound scale, while
-// Local-side transpose MUST remain illegal and neither source is mutated.
-// Shared A [M,K] is physically [M,K] at TransA=0 and [K,M] at TransA=1;
-// Shared B [K,N] is physically [N,K] at TransB=0 and [K,N] at TransB=1.
-// Each Shared source MUST expose the exact physical valid shape with a legal
-// padded major pitch, and every participating PE MUST pass metadata preflight
-// before any payload snapshot, destination allocation, or output effect.
+// B.FPATR bits 7 and 8 MUST independently select logical transpose for the
+// corresponding Shared A or B primary data operand only. Shared ScaleA is
+// always physically [M,G_A] and Shared ScaleB is always physically [N,G_B],
+// both K-group-major, regardless of the transpose controls. Local-side
+// transpose MUST remain illegal and neither source is mutated. Shared A [M,K]
+// is physically [M,K] at TransA=0 and [K,M] at TransA=1; Shared B [K,N] is
+// physically [N,K] at TransB=0 and [K,N] at TransB=1. Each Shared source MUST
+// expose the exact physical valid shape with a legal padded major pitch, and
+// every participating PE MUST pass metadata preflight before any payload
+// snapshot, destination allocation, or output effect.
 // NDF-END: PTO-CUBE-SHARED-TRANSPOSE-001
 
 // NDF-BEGIN: PTO-CUBE-CSCALE-001

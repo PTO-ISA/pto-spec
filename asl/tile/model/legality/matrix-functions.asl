@@ -10,9 +10,12 @@
 // Each Local scale MUST use one-block CUBE_M32 storage with a valid major no
 // greater than 32, while each Shared scale MUST remain an independently bound
 // ordinary Tile with the corresponding primary location.
-// For Shared Matrix-MX, A scale valid shape is [M,G_A] or [G_A,M] and B
-// scale valid shape is [N,G_B] or [G_B,N] for transpose control zero or one;
-// each shape is exact while physical columns MAY use legal capacity padding.
+// For Shared Matrix-MX, ScaleA has semantic shape [M,G_A] and always uses
+// the K-group-major physical shape [M,G_A]; ScaleB has semantic shape
+// [G_B,N] and always uses the K-group-major physical shape [N,G_B].
+// TransA and TransB affect only the corresponding primary data operand;
+// each physical shape is exact while physical columns MAY use legal capacity
+// padding.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-001
 
 pure func TileMXInputTypeSupported(data_type: TileDataType) => boolean

@@ -64,7 +64,7 @@ begin
     assert BundleMatrixSharedBPrimarySchemaLegal(
         2, 64, 2, TileDataType_HiF4X2, FALSE);
     let mapped_left_scale = MaterializeBundleSharedMatrixLeftScale(
-        1, 2, 64, TileDataType_E4M3, FALSE, 0);
+        1, 2, 64, TileDataType_E4M3, 0);
     let mapped_right_scale = MaterializeBundleSharedMatrixPrimary(
         3, 1, 2, TileDataType_U32, FALSE, 0);
     assert TileReadLogicalElement(mapped_left_scale,

@@ -418,7 +418,6 @@ begin
                 left_scale = MaterializeBundleSharedMatrixLeftScale(
                     shared_ordinal as integer {0..3},
                     m, k, left_type,
-                    _BundleFixedPointAttributes.trans_a,
                     _CurrentMemoryAgent);
                 shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             end;
@@ -435,8 +434,7 @@ begin
                 shared_ordinal as integer {0..3},
                 scale_groups, n,
                 TileMXScaleCarrierType(right_type),
-                _BundleFixedPointAttributes.trans_b,
-                _CurrentMemoryAgent);
+                FALSE, _CurrentMemoryAgent);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         end;
     end;

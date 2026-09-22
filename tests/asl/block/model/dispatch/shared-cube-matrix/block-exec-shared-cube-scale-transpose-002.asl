@@ -1,42 +1,33 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Shared Matrix transpose normalizes each independently bound primary and non-uniform scale.","pass_condition":"Stored transposed A, AScale, B, and BScale shapes normalize to group_MxK, group_MxG, KxN, and GxN; distinct scale values produce the exact 2x2 result [[224,320],[480,704]] without mutating Shared state.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Shared Matrix transpose changes only primary data while canonical non-uniform scales remain K-group-major.","pass_condition":"TransA=TransB=1 accepts transposed A [K,M] and B [K,N] primaries together with canonical physical ScaleA [M,G_A] and ScaleB [N,G_B]; distinct scale values produce the exact 2x2 result [[224,480],[320,704]] without mutating Shared state.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
 
 func main() => integer
 begin
     ResetProfileState();
     ConfigureTileForMask(10, 128, 64, 2, 64, 2,
         TileDataType_E4M3, TileLayout_RowMajor, '1111');
-    ConfigureTileForMask(11, 128, 64, 2, 2, 2,
+    ConfigureTileForMask(11, 128, 2, 2, 2, 2,
         TileDataType_E8M0, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(12, 128, 64, 2, 64, 2,
         TileDataType_E5M2, TileLayout_RowMajor, '1111');
-    ConfigureTileForMask(13, 128, 64, 2, 2, 2,
+    ConfigureTileForMask(13, 128, 2, 2, 2, 2,
         TileDataType_E8M0, TileLayout_RowMajor, '1111');
     for row = 0 to 63 looplimit 64 do
         for column = 0 to 1 looplimit 2 do
+            // Transposed primaries are physically [K,M] and [K,N].
             WriteTileElement(10, row, column, Zeros{PTO_XLEN} + 1);
-        end;
-    end;
-    for row = 0 to 1 looplimit 2 do
-        for column = 0 to 1 looplimit 2 do
-            // A TransA=1 is physically [G,M], so write the transpose of the
-            // normalized logical [M,G] scale matrix.
-            let left_scale = if row == 0 then
-                (if column == 0 then 1 else 3)
-                else (if column == 0 then 2 else 4);
-            let right_scale = if row == 0 then
-                (if column == 0 then 1 else 2)
-                else (if column == 0 then 3 else 4);
-            WriteTileElement(11, row, column,
-                Zeros{PTO_XLEN} + left_scale);
-            WriteTileElement(13, row, column,
-                Zeros{PTO_XLEN} + right_scale);
-        end;
-    end;
-    for row = 0 to 63 looplimit 64 do
-        for column = 0 to 1 looplimit 2 do
             WriteTileElement(12, row, column, Zeros{PTO_XLEN} + 1);
         end;
     end;
+    // Shared ScaleA is always physically [M,G_A].
+    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(11, 1, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(11, 1, 1, Zeros{PTO_XLEN} + 4);
+    // Shared ScaleB is always physically [N,G_B], representing ScaleB[g,n].
+    WriteTileElement(13, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(13, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(13, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(13, 1, 1, Zeros{PTO_XLEN} + 4);
     InstallSharedTile((Zeros{6} + 44) as SharedTileID, _Tiles[[10]], '1111');
     InstallSharedTile((Zeros{6} + 45) as SharedTileID, _Tiles[[11]], '1111');
     InstallSharedTile((Zeros{6} + 46) as SharedTileID, _Tiles[[12]], '1111');
@@ -69,8 +60,8 @@ begin
     assert _Tiles[[destination]].valid_rows == 2;
     assert _Tiles[[destination]].valid_columns == 2;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 224;
-    assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 320;
-    assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 480;
+    assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 480;
+    assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 320;
     assert ReadTileElement(destination, 1, 1) == Zeros{PTO_XLEN} + 704;
     assert SharedTileRecord((Zeros{6} + 44) as SharedTileID).published;
     assert SharedTileRecord((Zeros{6} + 45) as SharedTileID).published;
