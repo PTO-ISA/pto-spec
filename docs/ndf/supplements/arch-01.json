@@ -5,6 +5,18 @@
   "chunk": 1,
   "entries": [
     {
+      "id": "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+      "source_path": "asl/arch/features/tile-allocation.asl",
+      "title": {
+        "en": "Local virtual generation payload lifetime",
+        "zh-CN": "Local 虚拟代次的载荷生命周期"
+      },
+      "summary": {
+        "en": "Last-use may make selected-PE physical CELL backing reclaimable only after readers, aliases, and replay pins complete. The virtual generation identity and relative position remain, and a later payload use faults instead of skipping or rehydrating.",
+        "zh-CN": "仅当读取者、别名所有者及重放固定点均已完成后，last-use 才可使所选 PE 的物理 CELL backing 可回收。虚拟代次身份及相对位置继续保留，后续载荷使用会报错，而不会跳过该代次或重新装载。"
+      }
+    },
+    {
       "id": "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
       "title": {

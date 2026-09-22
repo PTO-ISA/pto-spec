@@ -204,8 +204,8 @@
     "zh-CN": "B.IOT 的 Local 流与代次顺序"
    },
    "summary": {
-    "en": "This clause defines one B.IOT stream by a common PE mask, one terminating L marker, per-PE Local capacity, and newest-first source resolution. Each successful destination becomes the newest generation in its hand while older source generations remain available.",
-    "zh-CN": "本条款以共同 PE 掩码、唯一终止 L 标记、每 PE Local 容量及“最新优先”的源解析定义一条 B.IOT 流。每个成功目标成为其 hand 中的最新代次，旧源代次仍保持可访问。"
+    "en": "This clause defines one B.IOT stream by a common PE mask, one terminating L marker, per-PE Local capacity, newest-first source resolution, and independent reuse or last-use state for every ordinary source. Successful last-use consumes selected-PE payload backing while retaining the virtual generation; duplicate sources aggregate retain-dominantly per PE.",
+    "zh-CN": "本条款以共同 PE 掩码、唯一终止 L 标记、每 PE Local 容量、“最新优先”的源解析，以及每个普通源独立的 reuse 或 last-use 状态定义一条 B.IOT 流。成功的 last-use 会消费所选 PE 的载荷 backing，但保留虚拟代次；重复源按 PE 采用 retain 优先聚合。"
    }
   },
   {

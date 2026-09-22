@@ -286,6 +286,8 @@ type BundleTileBinding of record {
     pe_mask: bits(4),
     source0_valid: boolean,
     source1_valid: boolean,
+    source0_reuse: boolean,
+    source1_reuse: boolean,
     source0_relative: boolean,
     source1_relative: boolean,
     source0: TileIndex,

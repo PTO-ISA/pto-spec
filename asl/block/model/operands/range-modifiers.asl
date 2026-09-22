@@ -203,6 +203,10 @@ begin
         if !init && !_BundleRangeGroup.destination_allowed then
             let binding = _BundleRangeGroup.tile_binding;
             if _BundleTileBindings[[binding]].source1_valid then
+                if !_BundleTileBindings[[binding]].source1_reuse then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return;
+                end;
                 _BundleTileBindings[[binding]].parent_ref_valid = TRUE;
                 _BundleTileBindings[[binding]].parent_ref_relative =
                     _BundleTileBindings[[binding]].source1_relative;
@@ -211,6 +215,10 @@ begin
                 _BundleTileBindings[[binding]].source1_valid = FALSE;
                 _BundleTileBindings[[binding]].source1_relative = FALSE;
             elsif _BundleTileBindings[[binding]].source0_valid then
+                if !_BundleTileBindings[[binding]].source0_reuse then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return;
+                end;
                 _BundleTileBindings[[binding]].parent_ref_valid = TRUE;
                 _BundleTileBindings[[binding]].parent_ref_relative =
                     _BundleTileBindings[[binding]].source0_relative;

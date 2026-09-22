@@ -5941,12 +5941,40 @@
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOS-SHARED-STATE-001",
-        "PTO-B-IOT-STREAM-001"
+        "PTO-B-IOT-STREAM-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
       ],
       "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
         "PTO-BLOCK-B-IOR",
         "PTO-BLOCK-B-IOS",
-        "PTO-BLOCK-B-IOT"
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-IOT-STREAM-001",
+            "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+            "PTO-BLOCK-B-IOT",
+            "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+            "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+            "PTO-TILE-MODEL-STATE-ALLOCATION",
+            "PTO-TILE-MODEL-CAPACITY-LOCAL"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/340"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -5957,7 +5985,8 @@
       "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-BLOCK-0013",
-      "implementation_issue": null,
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+      "interface_change": true,
       "legacy_ids": [
         "PRD-018",
         "PRD-019",
@@ -5976,7 +6005,7 @@
       ],
       "path": "docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,
@@ -6105,6 +6134,7 @@
       "accepted": "2026-08-20",
       "affected_ndf": [
         "PTO-ARCH-GM-ACCESS-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
         "PTO-B-IOS-SHARED-STATE-001",
         "PTO-B-IOT-STREAM-001",
         "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
@@ -6176,6 +6206,22 @@
           "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
           "date": "2026-09-14",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/289"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-IOT-STREAM-001",
+            "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-IOT",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/340"
         }
       ],
       "approvers": [

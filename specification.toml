@@ -17,7 +17,7 @@ formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/18"
 [architecture]
 xlen = 64
 scalar_forms = 466
-command_forms = 96
+command_forms = 104
 system_register_definitions = 72
 trap_numbers = 13
 tile_model = "one-level"

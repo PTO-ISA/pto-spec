@@ -41,6 +41,7 @@ begin
         index, allocation_mask, capacity_bytes);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     // Allocation defines TileInfo but not the payload. A producer must write
@@ -91,6 +92,7 @@ begin
         index, allocation_mask, capacity_bytes);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Predicate;
     _Tiles[[index]].contents_defined = FALSE;
@@ -178,6 +180,7 @@ begin
            n_repeat != 0 && cell_count != 0 && storage_bytes != 0;
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;
@@ -248,6 +251,7 @@ begin
     RemoveRelativeTileMapping(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = Zeros{4};
+    _TilePayloadLiveMasks[[index]] = Zeros{4};
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;

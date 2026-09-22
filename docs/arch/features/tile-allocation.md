@@ -56,6 +56,16 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // The Core also owns one
 // independent 2048-cell Shared pool.  Local and Shared allocations do not
 // compete for one combined capacity budget.
+// NDF-BEGIN: PTO-ARCH-LOCAL-VTAG-LIFETIME-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// A Local virtual generation identity, its descriptor, epoch, hand, and
+// relative-order entry MUST remain valid when selected-PE payload capacity is
+// consumed. Consumption MUST make later payload use by those PEs fault
+// TileLegality without skipping to another generation or rehydrating backing.
+// Physical CELL reclamation MAY occur only after every reader, alias owner,
+// and replay or checkpoint pin that can require the payload has completed;
+// reclamation latency is not architecturally observable.
+// NDF-END: PTO-ARCH-LOCAL-VTAG-LIFETIME-001
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;

@@ -57,6 +57,8 @@ begin
         _BundleTileBindings[[index]].destination_reused_by_generation = FALSE;
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
+        _BundleTileBindings[[index]].source0_reuse = TRUE;
+        _BundleTileBindings[[index]].source1_reuse = TRUE;
         _BundleTileBindings[[index]].source0_relative = FALSE;
         _BundleTileBindings[[index]].source1_relative = FALSE;
         _BundleTileBindings[[index]].parent_ref_valid = FALSE;

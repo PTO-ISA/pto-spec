@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "e96ae192a0beee63a95aa64df117b1f4ba22f6e8",
+  "candidate_head": "c2ae457388ae058a88271e183ae6914ff248f777",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16610,6 +16610,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "ResolveBundleTileDestinationsWithShapeAndType",
       "path": "asl/block/model/dispatch/destination-shape.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "0b41cde70bb3b3d28573c1e49720e0a291f542894eee4c000669a1979a32cdfc",
+      "before_layouts": [],
+      "before_sha256": "18b610fbfc49138cc281ff582ebda90ca751c51ea4d55a20ff8397655581f0d7",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileCapacityInUseForPE",
+      "path": "asl/tile/model/capacity/local.asl"
     },
     {
       "after_layouts": [],
@@ -48109,7 +48118,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/capacity/local.asl",
-            "sha256": "18b610fbfc49138cc281ff582ebda90ca751c51ea4d55a20ff8397655581f0d7"
+            "sha256": "0b41cde70bb3b3d28573c1e49720e0a291f542894eee4c000669a1979a32cdfc"
           }
         ],
         "TileCapacityIsLegal": [

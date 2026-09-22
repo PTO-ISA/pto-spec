@@ -208,8 +208,7 @@ begin
         when CommandHandler_BindBundleTileIO =>
             let pe_mode = DecodeCommandOperandRaw(
                 instruction, form, CommandField_PEMode)[2:0];
-            let local_destination =
-                CommandOperandPresent(form, CommandField_DstTile);
+            let local_destination = CommandOperandPresent(form, CommandField_DstTile);
             let encoded_tile_size = CommandDecodedSmall(
                 instruction, form, CommandField_SizeCode);
             if !local_destination && encoded_tile_size != 0 then
@@ -249,7 +248,7 @@ begin
                 SetFault(Fault_TileLegality, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            AddBundleTileBinding(
+            AddBundleTileBindingWithReuse(
                 local_destination,
                 if CommandOperandPresent(form, CommandField_DstTile) then
                     CommandDecodedTile(instruction, form, CommandField_DstTile)
@@ -264,6 +263,7 @@ begin
                 if CommandOperandPresent(form, CommandField_SrcTile1) then
                     CommandDecodedTile(instruction, form, CommandField_SrcTile1)
                 else 0,
+                InstructionContractSource0Reuse_B_IOT(CommandOperationOfForm(form)), InstructionContractSource1Reuse_B_IOT(CommandOperationOfForm(form)),
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
             if _LastFault == Fault_None then

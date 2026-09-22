@@ -143,6 +143,7 @@ func PrepareSelectedBundleStage2() => boolean
 begin
     if !_BundleOperation.valid then return TRUE; end;
     if !ResolveBundleRelativeTileSources() then return FALSE; end;
+    if !RequireBundleTileSourcePayloads() then return FALSE; end;
     let family = BundleTileDecodeFamily(_BundleOperation.operation_class);
     let code = BundleOperationDecodeCode(_BundleOperation);
     let decoded = DecodeTileOperation(family, code);

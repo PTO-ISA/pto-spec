@@ -111,6 +111,7 @@ begin
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         _TileFeatureMapDescriptors[[index]].valid = FALSE;
         _TileAllocationMasks[[index]] = Zeros{4};
+        _TilePayloadLiveMasks[[index]] = Zeros{4};
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].defined_elements = zero_tile_elements;

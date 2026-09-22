@@ -65,6 +65,8 @@ begin
         _BundleTileBindings[[index]].pe_mask = Zeros{4};
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
+        _BundleTileBindings[[index]].source0_reuse = TRUE;
+        _BundleTileBindings[[index]].source1_reuse = TRUE;
         _BundleTileBindings[[index]].source0_relative = FALSE;
         _BundleTileBindings[[index]].source1_relative = FALSE;
         _BundleTileBindings[[index]].source0 = 0;
