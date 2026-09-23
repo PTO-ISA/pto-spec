@@ -331,7 +331,7 @@
       "scale_type": "E8M0"
     },
     "postprocess": {
-      "order": ["raw-accumulator-row-and-group-reductions", "prequant-destination-conversion", "destination-domain-activation", "atomic-output-and-status-publication"],
+      "order": ["per-element-b-fpatr-postprocess-through-final-d-encoding", "final-d-domain-row-and-group-reductions", "atomic-output-and-status-publication"],
       "fp19": "sign:1, exponent:8 bias 127, fraction:10; positive finite nonzero scale",
       "integer_sat_disabled": "finite overflow wraps modulo destination width; NaN or infinity uses the common destination indefinite value",
       "integer_sat_enabled": "finite overflow and infinities clamp; NaN becomes zero",
