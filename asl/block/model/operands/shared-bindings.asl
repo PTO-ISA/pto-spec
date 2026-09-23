@@ -20,11 +20,57 @@ begin
             _BundleSharedBindings[[index]].shared_tile_id = shared_tile_id;
             _BundleSharedBindings[[index]].size_code = size_code;
             _BundleSharedBindings[[index]].pe_mask = pe_mask;
+            _BundleSharedBindings[[index]].source_reuse = TRUE;
             _BundleSharedBindings[[index]].consumed = FALSE;
             return;
         end;
     end;
     SetFault(Fault_BundleControl, ReadTPC());
+end;
+
+func BindBundleSharedIOWithReuse(
+    shared_tile_id: SharedTileID, size_code: integer {0..12},
+    pe_mask: bits(4), source_reuse: boolean)
+begin
+    BindBundleSharedIO(shared_tile_id, size_code, pe_mask);
+    if _LastFault == Fault_None then
+        let binding = BundleSharedBindingLastIndex();
+        _BundleSharedBindings[[binding]].source_reuse = source_reuse;
+    end;
+end;
+
+readonly func BundleSharedSourcePayloadsAvailable() => boolean
+begin
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].size_code == 0 &&
+           !BundleSharedBindingIsReusedDestination(binding) &&
+           !SharedTilePayloadIntact(
+               _BundleSharedBindings[[binding]].shared_tile_id) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RequireBundleSharedSourcePayloads() => boolean
+begin
+    if BundleSharedSourcePayloadsAvailable() then return TRUE; end;
+    SetFault(Fault_TileLegality, ReadTPC());
+    return FALSE;
+end;
+
+func FinalizeBundleSharedLastUseSources()
+begin
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].size_code == 0 &&
+           !BundleSharedBindingIsReusedDestination(binding) &&
+           !_BundleSharedBindings[[binding]].source_reuse then
+            ConsumeSharedTilePayload(
+                _BundleSharedBindings[[binding]].shared_tile_id);
+        end;
+    end;
 end;
 
 readonly func BundleSharedMaskCanAppend(pe_mask: bits(4)) => boolean

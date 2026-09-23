@@ -290,6 +290,7 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-TILE-LOCAL": (
                 "_Tiles",
                 "_TileAllocationMasks",
+                "_TilePayloadLiveMasks",
                 "_TileRelativeOrder",
                 "_TileRelativeValid",
             ),

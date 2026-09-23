@@ -88,11 +88,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Architecture
 - [ADR-BLOCK-0010](docs/status/decisions/ADR-BLOCK-0010-conditional-branch-extension-reservation.md): conditional branch extension reservation
 
-### Block
-- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
-
 ### Cross-cutting
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-BLOCK-0014](docs/status/decisions/ADR-BLOCK-0014-block-start-and-extension-reservations.md): Block start and extension reservations
 - [ADR-CUBE-0009](docs/status/decisions/ADR-CUBE-0009-cube-and-matrix-operations.md): CUBE and matrix operations
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
@@ -110,11 +108,11 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-BLOCK-0008](docs/status/decisions/ADR-BLOCK-0008-l-bstop-common-long-form.md): Restore `L.BSTOP` as the common 64-bit bundle stop
-- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 
 ### Cross-cutting
 - [ADR-BLOCK-0009](docs/status/decisions/ADR-BLOCK-0009-barg-bpcn-commit-state.md): Bundle commit state uses BARG/BPCN
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-BLOCK-0014](docs/status/decisions/ADR-BLOCK-0014-block-start-and-extension-reservations.md): Block start and extension reservations
 - [ADR-CUBE-0003](docs/status/decisions/ADR-CUBE-0003-cube-matrix-family-contract.md): CUBE Matrix Family Contract
 - [ADR-CUBE-0009](docs/status/decisions/ADR-CUBE-0009-cube-and-matrix-operations.md): CUBE and matrix operations

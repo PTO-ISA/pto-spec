@@ -20,7 +20,9 @@
   ],
   "affected_ndf": [
     "PTO-ARCH-GM-ACCESS-001",
+    "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
     "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
     "PTO-B-IOT-STREAM-001",
     "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
     "PTO-TLOAD-CUBE-001",
@@ -82,6 +84,7 @@
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/118",
   "release_impact": "required",
+  "interface_change": true,
   "legacy_ids": [
     "ADR-0096"
   ],
@@ -99,6 +102,38 @@
       ],
       "affected_units": [
         "PTO-BLOCK-B-IOT"
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
       ]
     }
   ]
@@ -164,6 +199,32 @@ bits 7..8 to zero through the form mask; a non-zero value is reserved and
 rejects with `Fault_IllegalInstruction`, consistent with the family's reserved
 wording. Recorded for issue
 [#289](https://github.com/PTO-ISA/pto-spec/issues/289).
+
+## Amendment 2026-09-22: additive B.IOT source-lifetime encodings
+
+Issue [#340](https://github.com/PTO-ISA/pto-spec/issues/340) assigns the three
+previously unused `opcode=0x13` roots `funct3=010`, `011`, and `111` to the
+remaining two-source lifetime combinations. The frozen mapping is:
+
+| funct3 | source 0 | source 1 |
+| --- | --- | --- |
+| `100` | reuse | reuse |
+| `010` | last-use | last-use |
+| `011` | reuse | last-use |
+| `111` | last-use | reuse |
+
+For one-source `funct3=101`, bit 26 zero means reuse and preserves every
+pre-amendment word; bit 26 one means last-use. Bits 31:27 remain zero.
+Destination-only `funct3=110`, `SizeCode`, `PEMode`, source selectors, and `L`
+are unchanged. Canonical assembly prints `.reuse` for retained sources and no
+suffix for last-use sources.
+
+## Amendment 2026-09-23: additive B.IOS source-lifetime bit
+
+Issue [#347](https://github.com/PTO-ISA/pto-spec/issues/347) assigns B.IOS
+bit 26 one to an ordinary Shared source's last-use state. Bit 26 zero retains
+the prior binary meaning and prints `.reuse`; bit 27 stays reserved. Bare
+source assembly encodes last-use. Destination forms do not assign bit 26.
 
 ## Consequences
 

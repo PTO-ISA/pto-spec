@@ -2,6 +2,7 @@
 func ClearBundleSharedGenerationState(shared_tile_id: SharedTileID)
 begin
     let index = SharedTileArrayIndex(shared_tile_id);
+    ReleaseSharedTileGenerationCapacity(shared_tile_id);
     _SharedGenerations[[index]].open = FALSE;
     _SharedGenerations[[index]].closed = FALSE;
     _SharedGenerations[[index]].published = FALSE;

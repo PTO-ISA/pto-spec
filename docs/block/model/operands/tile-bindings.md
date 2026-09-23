@@ -43,6 +43,8 @@ begin
     _BundleTileBindings[[index]].pe_mask = pe_mask;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
     _BundleTileBindings[[index]].source1_valid = source1_valid;
+    _BundleTileBindings[[index]].source0_reuse = TRUE;
+    _BundleTileBindings[[index]].source1_reuse = TRUE;
     _BundleTileBindings[[index]].source0_relative = FALSE;
     _BundleTileBindings[[index]].source1_relative = FALSE;
     _BundleTileBindings[[index]].source0 = source0;
@@ -230,6 +232,34 @@ begin
     return TRUE;
 end;
 
+readonly func BundleTileSourcePayloadsAvailable() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid &&
+               !TilePayloadIntactForMask(
+                   _BundleTileBindings[[binding]].source0,
+                   _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid &&
+               !TilePayloadIntactForMask(
+                   _BundleTileBindings[[binding]].source1,
+                   _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RequireBundleTileSourcePayloads() => boolean
+begin
+    if BundleTileSourcePayloadsAvailable() then return TRUE; end;
+    SetFault(Fault_TileLegality, ReadTPC());
+    return FALSE;
+end;
+
 func AddBundleTileBinding(destination_valid: boolean,
                           destination: TileIndex,
                           destination_size: integer {0..15},
@@ -254,6 +284,27 @@ begin
         end;
     end;
     if !added then SetFault(Fault_TileLegality, ReadTPC()); end;
+end;
+
+func AddBundleTileBindingWithReuse(destination_valid: boolean,
+                          destination: TileIndex,
+                          destination_size: integer {0..15},
+                          pe_mask: bits(4),
+                          source0_valid: boolean,
+                          source1_valid: boolean,
+                          source0: TileIndex,
+                          source1: TileIndex,
+                          source0_reuse: boolean,
+                          source1_reuse: boolean,
+                          last: boolean)
+begin
+    AddBundleTileBinding(destination_valid, destination, destination_size,
+        pe_mask, source0_valid, source1_valid, source0, source1, last);
+    if _LastFault == Fault_None then
+        let binding = BundleTileBindingLastIndex();
+        _BundleTileBindings[[binding]].source0_reuse = source0_reuse;
+        _BundleTileBindings[[binding]].source1_reuse = source1_reuse;
+    end;
 end;
 
 readonly func BundleTileBindingSequenceClosed() => boolean
@@ -325,6 +376,42 @@ begin
     return FALSE;
 end;
 
+readonly func BundleTileSourceReusedForPE(
+    source: TileIndex, pe: integer {0..3}) => boolean
+begin
+    let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].pe_mask[mask_bit] == '1' then
+            if _BundleTileBindings[[binding]].source0_valid &&
+               _BundleTileBindings[[binding]].source0 == source &&
+               _BundleTileBindings[[binding]].source0_reuse then
+                return TRUE;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid &&
+               _BundleTileBindings[[binding]].source1 == source &&
+               _BundleTileBindings[[binding]].source1_reuse then
+                return TRUE;
+            end;
+        end;
+    end;
+    return FALSE;
+end;
+
+func ConsumeBundleTileLastUseSource(
+    source: TileIndex, pe_mask: bits(4))
+begin
+    for pe = 0 to 3 do
+        let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+        if pe_mask[mask_bit] == '1' &&
+           !BundleTileSourceReusedForPE(source, pe) then
+            var consume_mask = Zeros{4};
+            consume_mask[mask_bit] = '1';
+            ConsumeTilePayloadForMask(source, consume_mask);
+        end;
+    end;
+end;
+
 func FinalizeBundleTileAttempt(status: TileExecutionStatus)
 begin
     if status != TileExecution_Executed then return; end;
@@ -337,6 +424,23 @@ begin
                 _BundleTileBindings[[binding]].destination);
         end;
     end;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid &&
+               !_BundleTileBindings[[binding]].source0_reuse then
+                ConsumeBundleTileLastUseSource(
+                    _BundleTileBindings[[binding]].source0,
+                    _BundleTileBindings[[binding]].pe_mask);
+            end;
+            if _BundleTileBindings[[binding]].source1_valid &&
+               !_BundleTileBindings[[binding]].source1_reuse then
+                ConsumeBundleTileLastUseSource(
+                    _BundleTileBindings[[binding]].source1,
+                    _BundleTileBindings[[binding]].pe_mask);
+            end;
+        end;
+    end;
+    FinalizeBundleSharedLastUseSources();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

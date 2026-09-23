@@ -286,6 +286,8 @@ type BundleTileBinding of record {
     pe_mask: bits(4),
     source0_valid: boolean,
     source1_valid: boolean,
+    source0_reuse: boolean,
+    source1_reuse: boolean,
     source0_relative: boolean,
     source1_relative: boolean,
     source0: TileIndex,
@@ -304,6 +306,7 @@ type BundleSharedBinding of record {
     shared_tile_id: SharedTileID,
     size_code: integer {0..12},
     pe_mask: bits(4),
+    source_reuse: boolean,
     consumed: boolean,
     source0_subview: BundleRangeModifier,
     destination_assemble: BundleRangeModifier

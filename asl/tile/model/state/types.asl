@@ -186,6 +186,9 @@ type TileInfo of record {
 // PEs in one core address the same 64 records.
 type SharedTileInfo of record {
     descriptor_valid: boolean,
+    payload_live: boolean,
+    // Pending B.ASSEMBLE capacity is a model reservation, not a second payload.
+    reserved_capacity_bytes: integer {0..262144},
     allocation_mask: bits(4),
     initialized_mask: bits(4),
     whole_parent_ready: boolean,

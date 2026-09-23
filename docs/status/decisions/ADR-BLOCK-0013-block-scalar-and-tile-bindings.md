@@ -22,20 +22,35 @@
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
-    "PTO-B-IOT-STREAM-001"
+    "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+    "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
+    "PTO-B-IOT-STREAM-001",
+    "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
   ],
   "affected_units": [
+    "PTO-ARCH-FEATURES-TILE-ALLOCATION",
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
-    "PTO-BLOCK-B-IOT"
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+    "PTO-TILE-MODEL-CAPACITY-SHARED",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-TILE-MODEL-CAPACITY-LOCAL"
   ],
   "resolves": [],
   "supersedes": [
     "ADR-GOV-0006"
   ],
   "superseded_by": [],
-  "implementation_issue": null,
-  "release_impact": "not-required",
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+  "release_impact": "required",
+  "interface_change": true,
   "legacy_ids": [
     "PRD-018",
     "PRD-019",
@@ -52,7 +67,50 @@
     "PRD-030",
     "ADR-0076"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL"
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-CAPACITY-SHARED"
+      ]
+    }
+  ]
 }
 ---
 # ADR-BLOCK-0013: Block scalar and tile bindings
@@ -168,6 +226,23 @@ block commit. Consumers refer to the renamed result through the architectural
 Local Tile queue model; they do not identify the physical allocation by
 reusing the producer's `PE_MASK`.
 
+## Amendment 2026-09-22: source payload last-use retains virtual generations
+
+Issue [#340](https://github.com/PTO-ISA/pto-spec/issues/340) restores an
+independent `.reuse` decision for every ordinary Local source. Explicit
+`.reuse` preserves the source payload; omission declares the successful block
+to be the last architectural payload consumer for the participating PEs.
+Duplicate occurrences resolving to one generation aggregate retain-dominantly
+for each PE.
+
+Last-use consumes only physical payload capacity. The virtual generation,
+epoch, descriptor, hand, and relative position remain present, so later
+relative selectors still resolve that exact generation and then fault
+`Fault_TileLegality` if the selected PE payload was consumed. They never skip
+to an older generation. Faulted, retried, squashed, and zero-participation
+attempts do not consume payload. A Local `B.ASSEMBLE` ParentRef is not an
+ordinary data consumer and must encode `.reuse`.
+
 ## Decision 027: `B.IOS` binds absolute Core-private Shared registers
 
 Each core contains one architectural bank of 256 persistent Shared Tile
@@ -179,6 +254,15 @@ index, so encoded zero names `S0` and does not mean omission.
 `B.IOS mask=PE_MASK, ->Sx<TSize>` is the destination form and requires
 `TSize=1..7`, encoding 128 B through 8 KiB per participating PE. The role
 encoded by `TSize` MUST agree with the selected operation schema.
+
+## Amendment 2026-09-23: Shared source last-use retains Sx identity
+
+Issue [#347](https://github.com/PTO-ISA/pto-spec/issues/347) adds the
+source-lifetime decision to B.IOS. Canonical `.reuse` retains a Shared source;
+bare source assembly marks last-use. Successful consumption returns the
+complete Core-wide payload capacity but retains Sx and its descriptor. A later
+use of that consumed generation faults rather than reading recycled backing.
+Fault, retry, squash, and zero participation do not consume it.
 
 ## Decision 028: `B.IOS` uses an ordered four-entry binding stream
 

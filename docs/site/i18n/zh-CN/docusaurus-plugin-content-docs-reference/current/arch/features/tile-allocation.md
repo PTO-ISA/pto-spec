@@ -56,6 +56,33 @@ Local 与 Shared 分配消耗不同的预算。`PTO_TILE_MAX_ALLOCATION_BYTES` �
 // The Core also owns one
 // independent 2048-cell Shared pool.  Local and Shared allocations do not
 // compete for one combined capacity budget.
+// NDF-BEGIN: PTO-ARCH-LOCAL-VTAG-LIFETIME-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// A Local virtual generation identity, its descriptor, epoch, hand, and
+// relative-order entry MUST remain valid when selected-PE payload capacity is
+// consumed. Consumption MUST make later payload use by those PEs fault
+// TileLegality without skipping to another generation or rehydrating backing.
+// Physical CELL reclamation MAY occur only after every reader, alias owner,
+// and replay or checkpoint pin that can require the payload has completed;
+// reclamation latency is not architecturally observable.
+// NDF-END: PTO-ARCH-LOCAL-VTAG-LIFETIME-001
+// NDF-BEGIN: PTO-ARCH-SHARED-VTAG-LIFETIME-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// A successful B.IOS last-use source MUST consume the complete Core-wide
+// payload of the exact Sx generation it read, while retaining Sx identity,
+// generation, and descriptor. Consumed payload capacity MUST cease to count
+// against the independent 256 KiB Shared pool. A later source of that
+// generation MUST fault TileLegality before payload access; no physical
+// backing may be rehydrated or confused with a newer generation. Fault,
+// retry, squash, and zero-participation attempts MUST preserve lifetime.
+// Physical reclamation MAY wait for readers, writers, aliases, and replay
+// or checkpoint pins; its timing is not architecturally observable.
+// An open Shared B.ASSEMBLE generation MUST hold its complete parent capacity
+// until publication or abort. The per-Sx charge is the greater of its old
+// live payload and open-generation reservation, not their sum, so same-size
+// replacement remains legal at a full pool while last-use cannot let a
+// competing Sx steal the pending generation's capacity.
+// NDF-END: PTO-ARCH-SHARED-VTAG-LIFETIME-001
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;

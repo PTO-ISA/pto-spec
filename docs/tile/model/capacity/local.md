@@ -29,7 +29,7 @@ begin
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if index != excluded && _Tiles[[index]].allocated then
             total = total + TileCoreAllocationBytes(
-                _TileAllocationMasks[[index]],
+                _TilePayloadLiveMasks[[index]],
                 _Tiles[[index]].capacity_bytes);
         end;
     end;
@@ -43,7 +43,7 @@ begin
     let mask_bit = PTOPEMaskBitOfPEIdentity(pe_identity);
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if _Tiles[[index]].allocated &&
-           _TileAllocationMasks[[index]][mask_bit] == '1' then
+           _TilePayloadLiveMasks[[index]][mask_bit] == '1' then
             total = total + _Tiles[[index]].capacity_bytes;
         end;
     end;
@@ -57,7 +57,7 @@ begin
     let mask_bit = PTOPEMaskBitOfPEIdentity(pe_identity);
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if index != excluded && _Tiles[[index]].allocated &&
-           _TileAllocationMasks[[index]][mask_bit] == '1' then
+           _TilePayloadLiveMasks[[index]][mask_bit] == '1' then
             total = total + _Tiles[[index]].capacity_bytes;
         end;
     end;
@@ -98,7 +98,7 @@ begin
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if _Tiles[[index]].allocated then
             total = total + TileCoreAllocationBytes(
-                _TileAllocationMasks[[index]],
+                _TilePayloadLiveMasks[[index]],
                 _Tiles[[index]].capacity_bytes);
         end;
     end;
