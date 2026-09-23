@@ -421,6 +421,8 @@ begin
             if !CommitBundleSharedGenerationCandidateRange(
                    0, SharedTileInfo {
                        descriptor_valid = TRUE,
+                       payload_live = FALSE,
+                       reserved_capacity_bytes = 0,
                        allocation_mask = mask,
                        initialized_mask = BundleTIMG2COLPEBit(),
                        whole_parent_ready = FALSE,

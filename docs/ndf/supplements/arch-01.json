@@ -17,6 +17,18 @@
       }
     },
     {
+      "id": "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+      "source_path": "asl/arch/features/tile-allocation.asl",
+      "title": {
+        "en": "Core-wide Shared payload lifetime with retained Sx identity",
+        "zh-CN": "保留 Sx 身份的 Core-wide Shared 载荷生命周期"
+      },
+      "summary": {
+        "en": "A successful B.IOS last-use returns complete Shared payload capacity while retaining the Sx identity and descriptor. Later use of that consumed generation faults; physical reclamation waits for readers and replay pins and may be delayed.",
+        "zh-CN": "B.IOS last-use 成功后返还完整 Shared 载荷容量，同时保留 Sx 身份与描述符。再次使用已消费代会报错；物理回收须等待读取者及重放固定点排空，且可以延后。"
+      }
+    },
+    {
       "id": "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
       "title": {

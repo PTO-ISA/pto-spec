@@ -27,7 +27,7 @@ it does not establish publication or release readiness.
 | Surface | Current executable inventory |
 | --- | ---: |
 | Scalar instruction forms | 466 |
-| Active bundle and command forms | 104 |
+| Active bundle and command forms | 105 |
 | Direct Tile operations | 117 |
 | Architecture and instruction ASL units | 892 |
 

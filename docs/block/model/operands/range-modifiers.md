@@ -263,6 +263,12 @@ begin
         _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
             .destination_assemble.last = last;
     else
+        if !init && !_BundleRangeGroup.destination_allowed &&
+           !_BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
+               .source_reuse then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return;
+        end;
         _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
             .destination_assemble.valid = TRUE;
         _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
@@ -292,6 +298,10 @@ end;
 readonly func BundleSharedDestinationAssemblyPolicyLegal() => boolean
 begin
     for binding = 0 to 3 do
+        if BundleSharedBindingIsReusedDestination(binding) &&
+           !_BundleSharedBindings[[binding]].source_reuse then
+            return FALSE;
+        end;
         if _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].size_code != 0 &&
            PEMaskPopulation(_BundleSharedBindings[[binding]].pe_mask) > 1 &&

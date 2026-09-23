@@ -47,6 +47,8 @@ func ExplicitSharedCandidate(tile: TileInfo, arrival: bits(4))
 begin
     return SharedTileInfo {
         descriptor_valid = TRUE,
+        payload_live = FALSE,
+        reserved_capacity_bytes = 0,
         allocation_mask = '1111',
         initialized_mask = arrival,
         whole_parent_ready = FALSE,

@@ -66,6 +66,23 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // and replay or checkpoint pin that can require the payload has completed;
 // reclamation latency is not architecturally observable.
 // NDF-END: PTO-ARCH-LOCAL-VTAG-LIFETIME-001
+// NDF-BEGIN: PTO-ARCH-SHARED-VTAG-LIFETIME-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// A successful B.IOS last-use source MUST consume the complete Core-wide
+// payload of the exact Sx generation it read, while retaining Sx identity,
+// generation, and descriptor. Consumed payload capacity MUST cease to count
+// against the independent 256 KiB Shared pool. A later source of that
+// generation MUST fault TileLegality before payload access; no physical
+// backing may be rehydrated or confused with a newer generation. Fault,
+// retry, squash, and zero-participation attempts MUST preserve lifetime.
+// Physical reclamation MAY wait for readers, writers, aliases, and replay
+// or checkpoint pins; its timing is not architecturally observable.
+// An open Shared B.ASSEMBLE generation MUST hold its complete parent capacity
+// until publication or abort. The per-Sx charge is the greater of its old
+// live payload and open-generation reservation, not their sum, so same-size
+// replacement remains legal at a full pool while last-use cannot let a
+// competing Sx steal the pending generation's capacity.
+// NDF-END: PTO-ARCH-SHARED-VTAG-LIFETIME-001
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;

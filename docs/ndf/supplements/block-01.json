@@ -72,8 +72,8 @@
     "zh-CN": "Shared 集体组装发布"
    },
    "summary": {
-    "en": "This clause keeps the current Shared object visible until every participating PE reaches a matching, complete, non-overlapping LAST generation with ready data. Successful publication atomically replaces the full descriptor and payload; rejection leaves the previous generation intact.",
-    "zh-CN": "本条款在所有参与 PE 以一致元数据到达完整、无重叠且数据就绪的 LAST 代次之前，持续保留当前 Shared 对象。成功时完整描述符与载荷原子替换；失败时上一代保持不变。"
+    "en": "This clause keeps the current Shared object visible until every participating PE reaches a matching, complete, non-overlapping LAST generation with ready data. INIT reserves parent capacity, charged as the maximum of old live payload and open working parent per Sx; LAST atomically replaces that charge and abort releases the reservation. Rejection leaves the previous generation intact.",
+    "zh-CN": "本条款在所有参与 PE 以一致元数据到达完整、无重叠且数据就绪的 LAST 代次之前，持续保留当前 Shared 对象。INIT 预约父对象容量，每个 Sx 按旧 live 载荷与开放工作父对象的较大者计费；LAST 原子替换该计费，abort 释放预约。失败时上一代保持不变。"
    }
   },
   {
@@ -192,8 +192,8 @@
     "zh-CN": "B.IOS 的 Shared 对象绑定"
    },
    "summary": {
-    "en": "This clause maps B.IOS to the absolute S0..S63 namespace and one Core-wide Shared allocation, independent of the participating-PE mask. A zero mask is inert, one issuer publishes a complete parent, multi-PE destinations use B.ASSEMBLE, and pending sources wait without consumption.",
-    "zh-CN": "本条款将 B.IOS 映射到绝对 S0..S63 命名空间和一个 Core 范围的 Shared 分配，其容量不随参与 PE 掩码倍增。零掩码无效果；单一发布者产生完整父对象，多 PE 目标使用 B.ASSEMBLE，未就绪源则等待且不消费绑定。"
+    "en": "This clause maps B.IOS to absolute S0..S63 and one Core-wide Shared allocation, independent of the participating-PE mask. A zero mask is inert, one issuer publishes a complete parent, multi-PE destinations use B.ASSEMBLE, and pending sources wait without consumption. An ordinary source with .reuse retains payload; a bare source denotes last-use without removing Sx identity.",
+    "zh-CN": "本条款将 B.IOS 映射到绝对 S0..S63 和一个 Core 范围的 Shared 分配，其容量不随参与 PE 掩码倍增。零掩码无效果；单一发布者产生完整父对象，多 PE 目标使用 B.ASSEMBLE，未就绪源则等待且不消费绑定。普通源显式 .reuse 保留载荷；无后缀源表示末次使用，但不移除 Sx 身份。"
    }
   },
   {

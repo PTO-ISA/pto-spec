@@ -147,7 +147,7 @@ earlier inventory lines.
 
 The ADR-BLOCK-0015 amendment of 2026-09-22 (issue
 [#340](https://github.com/PTO-ISA/pto-spec/issues/340)) updates the current
-projection to 466 Scalar forms, 104 active Block forms, 117 direct Tile
+projection to 466 Scalar forms, 105 active Block forms, 117 direct Tile
 operations, and 46 occupied extension reservations while preserving the
 earlier inventory lines.
 

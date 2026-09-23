@@ -139,6 +139,8 @@ begin
     end;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         _SharedTiles[[index]].descriptor_valid = FALSE;
+        _SharedTiles[[index]].payload_live = FALSE;
+        _SharedTiles[[index]].reserved_capacity_bytes = 0;
         _SharedTiles[[index]].allocation_mask = Zeros{4};
         _SharedTiles[[index]].initialized_mask = Zeros{4};
         _SharedTiles[[index]].published = FALSE;

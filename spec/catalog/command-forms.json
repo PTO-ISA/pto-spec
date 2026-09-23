@@ -1,6 +1,6 @@
 {
-  "form_count": 104,
-  "form_constraint_count": 123,
+  "form_count": 105,
+  "form_constraint_count": 124,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -3508,7 +3508,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>",
+      "asm": "B.IOS S<SharedTileID>.reuse, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>",
       "constraints": [
         {
           "field": "SizeCode",
@@ -7916,11 +7916,73 @@
       "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
       "status": "accepted",
       "state_effects": []
+    },
+    {
+      "asm": "B.IOS S<SharedTileID>, mask=<PE_MASK>",
+      "constraints": [
+        {
+          "field": "PEMode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0xfc0ff1ff",
+          "match": "0x04001013",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "SharedTileID",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 6
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 6
+        },
+        {
+          "name": "PEMode",
+          "pieces": [
+            {
+              "instruction_lsb": 9,
+              "value_lsb": 0,
+              "width": 3
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 3
+        }
+      ],
+      "form_id": "b_ios_32_last_src",
+      "length_bits": 32,
+      "mnemonic": "B.IOS",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Input & Output",
+      "semantic_handler": "BindBundleSharedIO",
+      "semantic_summary": "Binds one absolute Core-wide Shared source as its last payload use while retaining its Sx identity and descriptor.",
+      "status": "accepted"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
   "operand_field_count": 78,
-  "operand_piece_count": 229,
+  "operand_piece_count": 231,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",

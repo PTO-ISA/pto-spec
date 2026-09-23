@@ -172,9 +172,9 @@ begin
         when CommandHandler_BindBundleSharedIO =>
             let pe_mode = DecodeCommandOperandRaw(instruction, form,
                 CommandField_PEMode)[2:0];
-            let shared_size = CommandDecodedSmall(
-                instruction, form, CommandField_SizeCode)
-                as integer {0..12};
+            let shared_size = if CommandOperandPresent(form, CommandField_SizeCode) then
+                CommandDecodedSmall(instruction, form, CommandField_SizeCode) as integer {0..12}
+            else 0;
             if !TileSizeCodeIsLegal(shared_size) && shared_size != 0 then
                 SetFault(Fault_IllegalInstruction, ReadTPC());
                 return CommandExecution_Rejected;
@@ -195,11 +195,11 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            BindBundleSharedIO(
+            BindBundleSharedIOWithReuse(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_SharedTileID)[5:0] as SharedTileID,
-                shared_size,
-                shared_mask);
+                shared_size, shared_mask,
+                InstructionContractSharedSourceReuse_B_IOS(CommandOperationOfForm(form)));
             if _LastFault == Fault_None then
                 OpenBundleRangeSharedGroup(FALSE, shared_size == 0,
                     shared_size != 0);

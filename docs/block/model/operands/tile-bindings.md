@@ -440,6 +440,7 @@ begin
             end;
         end;
     end;
+    FinalizeBundleSharedLastUseSources();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

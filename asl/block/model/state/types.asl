@@ -306,6 +306,7 @@ type BundleSharedBinding of record {
     shared_tile_id: SharedTileID,
     size_code: integer {0..12},
     pe_mask: bits(4),
+    source_reuse: boolean,
     consumed: boolean,
     source0_subview: BundleRangeModifier,
     destination_assemble: BundleRangeModifier

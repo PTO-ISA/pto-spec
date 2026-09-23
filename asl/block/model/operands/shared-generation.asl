@@ -8,6 +8,9 @@
 // faulted or been squashed.  Publication MUST replace the complete Shared
 // descriptor and payload atomically; every rejection MUST preserve the prior
 // published generation.
+// INIT MUST reserve complete parent capacity, charged as the greater of old
+// live payload and open-generation reservation for that Sx. LAST MUST replace
+// the charge atomically; abort MUST release the reservation.
 // NDF-END: PTO-B-ASSEMBLE-SHARED-GENERATION-001
 // NDF-BEGIN: PTO-B-SUBVIEW-SHARED-PER-PE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -27,8 +30,7 @@ begin
     for binding = 0 to 3 do
         if _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].destination_assemble.valid then
-            AbortBundleSharedGeneration(
-                _BundleSharedBindings[[binding]].shared_tile_id);
+            AbortBundleSharedGeneration(_BundleSharedBindings[[binding]].shared_tile_id);
         end;
     end;
 end;
@@ -142,11 +144,9 @@ begin
     for binding = 0 to 3 do
         if _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].destination_assemble.valid then
-            let shared_tile_id =
-                _BundleSharedBindings[[binding]].shared_tile_id;
+            let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
             let index = SharedTileArrayIndex(shared_tile_id);
-            let assemble =
-                _BundleSharedBindings[[binding]].destination_assemble;
+            let assemble = _BundleSharedBindings[[binding]].destination_assemble;
             let writer_size = assemble.size_code;
             let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
             if writer_size < 1 || writer_size > 12 then return FALSE; end;
@@ -209,9 +209,9 @@ begin
     if assemble.init then
         let parent_size = _BundleSharedBindings[[binding]].size_code as integer {1..12};
         let parent_bytes = TileSizeCodeBytes(parent_size);
-        let parent_rows = DerivedTileRows(
-            parent_bytes, candidate.tile.columns, candidate.tile.data_type);
+        let parent_rows = DerivedTileRows(parent_bytes, candidate.tile.columns, candidate.tile.data_type);
         if parent_rows == 0 then return FALSE; end;
+        if !ReserveSharedTileGenerationCapacity(shared_tile_id, parent_bytes) then return FALSE; end;
         _SharedGenerations[[index]].open = TRUE;
         _SharedGenerations[[index]].closed = FALSE;
         _SharedGenerations[[index]].published = FALSE;
@@ -320,12 +320,13 @@ begin
         _SharedGenerations[[index]].published = TRUE;
         _SharedGenerations[[index]].working_tile.contents_defined = TRUE;
         _SharedTiles[[index]].descriptor_valid = TRUE;
+        _SharedTiles[[index]].payload_live = TRUE;
         _SharedTiles[[index]].allocation_mask = participant_mask;
         _SharedTiles[[index]].initialized_mask = participant_mask;
         _SharedTiles[[index]].whole_parent_ready = TRUE;
         _SharedTiles[[index]].published = TRUE;
-        _SharedTiles[[index]].tile =
-            _SharedGenerations[[index]].working_tile;
+        _SharedTiles[[index]].tile = _SharedGenerations[[index]].working_tile;
+        ReleaseSharedTileGenerationCapacity(shared_tile_id);
     end;
     return TRUE;
 end;
@@ -345,12 +346,12 @@ begin
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
 end;
-func BeginBundleSharedGenerationProbe(shared_tile_id: SharedTileID)
-    => SharedTileInfo
+func BeginBundleSharedGenerationProbe(shared_tile_id: SharedTileID) => SharedTileInfo
 begin
     let index = SharedTileArrayIndex(shared_tile_id);
     let prior = _SharedTiles[[index]];
     _SharedTiles[[index]].descriptor_valid = FALSE;
+    _SharedTiles[[index]].payload_live = FALSE;
     _SharedTiles[[index]].allocation_mask = Zeros{4};
     _SharedTiles[[index]].initialized_mask = Zeros{4};
     _SharedTiles[[index]].whole_parent_ready = FALSE;

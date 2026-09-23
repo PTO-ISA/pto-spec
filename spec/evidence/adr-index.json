@@ -5941,6 +5941,8 @@
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
         "PTO-B-IOT-STREAM-001",
         "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
       ],
@@ -5948,9 +5950,15 @@
         "PTO-ARCH-FEATURES-TILE-ALLOCATION",
         "PTO-BLOCK-B-IOR",
         "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
         "PTO-BLOCK-B-IOT",
         "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
         "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-CAPACITY-SHARED",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-MODEL-CAPACITY-LOCAL"
       ],
@@ -5974,6 +5982,28 @@
           "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
           "date": "2026-09-22",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/340"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-IOS-SHARED-STATE-001",
+            "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+            "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+            "PTO-BLOCK-B-IOS",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+            "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+            "PTO-TILE-MODEL-CAPACITY-SHARED"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-23",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/347"
         }
       ],
       "approvers": [
@@ -6136,6 +6166,7 @@
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
         "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
         "PTO-B-IOT-STREAM-001",
         "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
         "PTO-TLOAD-CUBE-001",
@@ -6222,6 +6253,22 @@
           "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
           "date": "2026-09-22",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/340"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-IOS-SHARED-STATE-001",
+            "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-IOS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-23",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/347"
         }
       ],
       "approvers": [
@@ -6234,6 +6281,7 @@
       "created": "2026-08-20",
       "id": "ADR-BLOCK-0015",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/118",
+      "interface_change": true,
       "legacy_ids": [
         "ADR-0096"
       ],

@@ -22,6 +22,8 @@
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+    "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
     "PTO-B-IOT-STREAM-001",
     "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
   ],
@@ -29,9 +31,15 @@
     "PTO-ARCH-FEATURES-TILE-ALLOCATION",
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
     "PTO-BLOCK-B-IOT",
     "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
     "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+    "PTO-TILE-MODEL-CAPACITY-SHARED",
     "PTO-TILE-MODEL-STATE-ALLOCATION",
     "PTO-TILE-MODEL-CAPACITY-LOCAL"
   ],
@@ -78,6 +86,28 @@
         "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-MODEL-CAPACITY-LOCAL"
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-CAPACITY-SHARED"
       ]
     }
   ]
@@ -224,6 +254,15 @@ index, so encoded zero names `S0` and does not mean omission.
 `B.IOS mask=PE_MASK, ->Sx<TSize>` is the destination form and requires
 `TSize=1..7`, encoding 128 B through 8 KiB per participating PE. The role
 encoded by `TSize` MUST agree with the selected operation schema.
+
+## Amendment 2026-09-23: Shared source last-use retains Sx identity
+
+Issue [#347](https://github.com/PTO-ISA/pto-spec/issues/347) adds the
+source-lifetime decision to B.IOS. Canonical `.reuse` retains a Shared source;
+bare source assembly marks last-use. Successful consumption returns the
+complete Core-wide payload capacity but retains Sx and its descriptor. A later
+use of that consumed generation faults rather than reading recycled backing.
+Fault, retry, squash, and zero participation do not consume it.
 
 ## Decision 028: `B.IOS` uses an ordered four-entry binding stream
 

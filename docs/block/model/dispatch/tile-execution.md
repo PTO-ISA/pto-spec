@@ -159,6 +159,7 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    if !RequireBundleSharedSourcePayloads() then return FALSE; end;
     let matrix_selected = BundleCubeMatrixSelected();
     let weight_tload_selected = BundleWeightTLOADSelected();
     var stage2_prepared = TRUE;

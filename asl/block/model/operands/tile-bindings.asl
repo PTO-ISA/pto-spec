@@ -423,4 +423,5 @@ begin
             end;
         end;
     end;
+    FinalizeBundleSharedLastUseSources();
 end;
