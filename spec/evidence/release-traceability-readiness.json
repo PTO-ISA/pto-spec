@@ -20199,7 +20199,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "d8c258b70b3d8242784b07476fce7937ea74e0d3eabfb29605cdb6438640bf37",
+    "spec/evidence/adr-index.json": "8c0b8caedc650ce464c409868664b11ddf2db586ead24a5b9d8040c46941cd98",
     "spec/evidence/instruction-contract-closure.json": "4f4b7dd1fd269350c8a5ca566e7fd096116b2f8b71b185a7b1f11acdccbafc96",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6fdc7c8ff961dbd270331b7b620c3c2d1c451b9e786d09d619f71164b027535b",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",

@@ -166,12 +166,13 @@
       "date": "2026-09-22",
       "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
       "approvers": [
-        "Issue #342 accepted owner confirmation"
+        "ckwllawliet"
       ],
       "issue": "https://github.com/PTO-ISA/pto-spec/issues/342",
       "affected_ndf": [
         "PTO-CUBE-MATRIX-SCALE-001",
-        "PTO-CUBE-SHARED-TRANSPOSE-001"
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001"
       ],
       "affected_units": [
         "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS",

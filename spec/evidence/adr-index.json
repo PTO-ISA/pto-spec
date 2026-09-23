@@ -10507,6 +10507,27 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-17",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-MATRIX-SCALE-001",
+            "PTO-CUBE-SHARED-TRANSPOSE-001",
+            "PTO-B-FPATR-MATRIX-POSTPROCESS-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS",
+            "PTO-BLOCK-B-FPATR",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+            "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/342"
         }
       ],
       "approvers": [
