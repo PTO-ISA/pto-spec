@@ -157,7 +157,6 @@ begin
         ordinal, stored_rows, stored_columns,
         stored_columns, data_type);
 end;
-
 pure func BundleMatrixCooperativeMPerPE(
     group_m: integer {1..65535}) => integer {0,16,32}
 begin
@@ -244,8 +243,7 @@ begin
             if !BundleMatrixSharedPrimarySchemaLegal(
                    ordinal as integer {0..3},
                    m, left_scale_groups,
-                   TileMXScaleCarrierType(left_type),
-                   _BundleFixedPointAttributes.trans_a) then
+                   TileMXScaleCarrierType(left_type), FALSE) then
                 return FALSE;
             end;
             ordinal = (ordinal + 1) as integer {0..4};
@@ -263,8 +261,7 @@ begin
         if !BundleMatrixSharedBPrimarySchemaLegal(
                ordinal as integer {0..3},
                right_scale_groups, n,
-               TileMXScaleCarrierType(right_type),
-               _BundleFixedPointAttributes.trans_b) then
+               TileMXScaleCarrierType(right_type), FALSE) then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..4};
@@ -336,7 +333,6 @@ readonly func MaterializeBundleSharedMatrixLeftScale(
     group_m: integer {1..65535},
     k: integer {1..65535},
     primary_type: TileDataType,
-    transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
@@ -352,7 +348,7 @@ begin
         MaterializeBundleSharedSubview(ordinal)
     else SharedTileRecord(shared_tile_id).tile;
     assert BundleMatrixSharedPrimarySchemaLegal(
-        ordinal, group_m, scale_groups, scale_type, transpose);
+        ordinal, group_m, scale_groups, scale_type, FALSE);
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -374,8 +370,8 @@ begin
         for column = 0 to scale_groups - 1 looplimit 2048 do
             let group_row = (pe_identity * m_per_pe + row)
                 as integer {0..65535};
-            let source_row = if transpose then column else group_row;
-            let source_column = if transpose then group_row else column;
+            let source_row = group_row;
+            let source_column = column;
             let source_element = TileLogicalLinearIndex(
                 source,
                 source_row as integer {0..65535},

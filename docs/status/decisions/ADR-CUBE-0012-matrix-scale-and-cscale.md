@@ -161,6 +161,27 @@
         "PTO-TILE-TMATMUL-MX-ACC",
         "PTO-TILE-TMATMUL-MX-BIAS"
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/342",
+      "affected_ndf": [
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001",
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS",
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"
+      ]
     }
   ]
 }
@@ -311,3 +332,30 @@ standalone TCVT type.
 decoder 与值分类。分配独立 E6M2/RCPE6M2 不改变 HiF4 scale-word 位布局、
 E1_8/E1_16 含义、group size、CELL layout、Matrix/MX 合法性或完整 HiF4 量化行为。
 `HiF4X2` 继续作为 Matrix-MX payload，而不是独立 TCVT 类型。
+
+## 2026-09-22 accepted amendment: Shared scale transpose independence (Issue #342)
+
+This amendment is evaluated from baseline
+`01445483d778b1bcfccba1641f71c20f00e39385` and resolves Issue #342. It
+intentionally supersedes the 2026-09-08 Shared-scale physical-schema wording
+only for Matrix-MX scale transpose coupling. `TransA` and `TransB` affect only
+the corresponding Shared primary data operands. Shared ScaleA is semantically
+`[M,G_A]` and physically `[M,G_A]`; Shared ScaleB is semantically `[G_B,N]`
+and physically `[N,G_B]`. Both are permanently K-group-major and retain their
+existing carrier, group-size, exact-valid-shape, capacity-padding, and numeric
+rules. The old transpose-selected physical forms `[G_A,M]` and `[G_B,N]`
+are illegal as Shared scale sources when the corresponding transpose bit is set.
+
+Local scale layouts, Local transpose illegality, primary Shared A/B mappings,
+encoding, opcode allocation, and Matrix-MX operand order remain unchanged.
+
+中文：本修订基于 `01445483d778b1bcfccba1641f71c20f00e39385`，用于解决 Issue
+#342，仅修订 Matrix-MX Shared scale 与 transpose 的耦合。`TransA` 与 `TransB`
+只作用于对应的 Shared primary data。Shared ScaleA 的语义形状为 `[M,G_A]`、
+物理形状固定为 `[M,G_A]`；Shared ScaleB 的语义形状为 `[G_B,N]`、物理形状
+固定为 `[N,G_B]`。二者始终按 K-group-major 存储，既有 carrier、group-size、
+exact-valid-shape、capacity-padding 与数值规则保持不变。对应 transpose bit
+置位时，旧的 `[G_A,M]` 与 `[G_B,N]` Shared scale 物理形式非法。
+
+Local scale layout、Local transpose 非法性、Shared primary A/B 映射、encoding、
+opcode allocation 与 Matrix-MX operand order 均不变。

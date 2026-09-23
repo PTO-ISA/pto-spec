@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "a26f6e3eb9a1f0ab0cb474d55dea43e019ac9571",
+  "candidate_head": "1dd8a03279226aaac51ed45639046861ac0aeb39",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16205,6 +16205,15 @@
       "path": "asl/tile/model/legality/matrix-operands.asl"
     },
     {
+      "after_layouts": [],
+      "after_sha256": "ed52e8a6f02ac122d18689b291104ce536638da116f7ab5875202da7d4999fb3",
+      "before_layouts": [],
+      "before_sha256": "4fcd6cc3e073cb92d7ebb1f88ef044d3305a5cd87faf53934b96884ca97dcf64",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleMatrixSharedSchemasLegal",
+      "path": "asl/block/model/dispatch/shared-cube-matrix.asl"
+    },
+    {
       "after_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16396,7 +16405,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "a5e4d72fee5c14da2ae787903ec5d8d30ff578188f9dac730773fc13e48bd82b",
+      "after_sha256": "9ddf5c32cb3b56268a4a04b996bcaba88a5ca2f27530ad8fe14bf9b723ba3ff9",
       "before_layouts": [],
       "before_sha256": "f8dd5ca6309cdb3e15738a5f45b6395acb5312200d7ccc21981e7bc67febacbc",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -44627,7 +44636,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-            "sha256": "4fcd6cc3e073cb92d7ebb1f88ef044d3305a5cd87faf53934b96884ca97dcf64"
+            "sha256": "ed52e8a6f02ac122d18689b291104ce536638da116f7ab5875202da7d4999fb3"
           }
         ],
         "BundleMatrixSharedSourceSchemaLegal": [
@@ -47188,7 +47197,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-            "sha256": "a5e4d72fee5c14da2ae787903ec5d8d30ff578188f9dac730773fc13e48bd82b"
+            "sha256": "9ddf5c32cb3b56268a4a04b996bcaba88a5ca2f27530ad8fe14bf9b723ba3ff9"
           }
         ],
         "ExecuteBundleTPREFETCHOperation": [
