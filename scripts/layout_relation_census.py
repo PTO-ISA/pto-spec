@@ -191,6 +191,16 @@ CUBE_AUX_CELLREG_CLASSIFICATION = (
     "Local Matrix CellReg auxiliary and narrow CUBE_N8/U64 closure "
     "(Issue #339 / ADR-CUBE-0002..0006)"
 )
+# Issue #345 adds pure B.FPATR effective-type helpers for final-D reductions.
+# They carry no layout relation; keep the allowlist strict so this semantic
+# helper closure cannot authorize a new portable layout.
+FPATR_EFFECTIVE_TYPE_HELPERS = {
+    "BundleFPATREffectiveDataType",
+    "BundleFPATRReductionDataTypeLegal",
+}
+FPATR_EFFECTIVE_TYPE_CLASSIFICATION = (
+    "B.FPATR final-D effective data-type resolution (Issue #345 / ADR-NUM-0012)"
+)
 # Issue #323 makes the generic Local M16/M32 one-physical-M-block invariant
 # authoritative and removes the reduction-local duplicate row-limit helper.
 # Keep these names explicit so the census records the owner change while
@@ -1481,6 +1491,21 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
+            if name in FPATR_EFFECTIVE_TYPE_HELPERS:
+                # This Issue #345 classification authorizes only the two new,
+                # layout-free helpers. Do not let the helper allowlist mask a
+                # removal, duplicate, relocation, or layout-bearing addition.
+                if old_defs or len(new_defs) != 1 or new_defs[0]["layouts"]:
+                    errors.append(
+                        f"unauthorized B.FPATR effective-type helper definition delta: {name}"
+                    )
+                    rows.append({"name": name, "classification": "UNCLASSIFIED",
+                                 "before": old_defs, "after": new_defs})
+                else:
+                    rows.append({"name": name,
+                                 "classification": FPATR_EFFECTIVE_TYPE_CLASSIFICATION,
+                                 "before": old_defs, "after": new_defs})
+                continue
             if (name in TCI_PHYSICAL_COLUMN_HELPERS or
                     name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS or
                     name in INDEXED_TLSU_HELPERS or
@@ -1516,6 +1541,13 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             if old["sha256"] == new["sha256"]:
                 continue
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
+            if name in FPATR_EFFECTIVE_TYPE_HELPERS:
+                if old["layouts"] or new["layouts"]:
+                    errors.append(
+                        f"unauthorized B.FPATR effective-type helper layout change: {name}"
+                    )
+                else:
+                    classification = FPATR_EFFECTIVE_TYPE_CLASSIFICATION
             if classification is None and name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
                 classification = CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
             if classification is None and name in PACKED_X2_ROW_LOCAL_HELPERS:
@@ -1905,6 +1937,34 @@ def self_test() -> None:
     result = _census_texts(base, bad_layout, "fixture-baseline", "fixture-candidate", enforce_closure=False)
     if result["pass"] or not any("unclassified layout delta" in error or "unclassified common-helper" in error for error in result["errors"]):
         raise AssertionError("common-helper layout mutation canary failed closed")
+    effective_type_helper = (
+        "pure func BundleFPATREffectiveDataType() => boolean\n"
+        "begin\n    return TRUE;\nend;\n"
+    )
+    helper_addition = dict(base)
+    common_path = "asl/tile/model/legality/common.asl"
+    helper_addition[common_path] = helper_addition[common_path].replace(
+        "readonly func Execute() => boolean\nbegin\n    return TRUE;\nend;\n",
+        "readonly func Execute() => boolean\nbegin\n    return BundleFPATREffectiveDataType();\nend;\n",
+    ) + effective_type_helper
+    result = _census_texts(base, helper_addition, "fixture-baseline", "fixture-candidate", enforce_closure=False)
+    if not result["pass"] or not any(
+        row["name"] == "BundleFPATREffectiveDataType" and
+        row["classification"] == FPATR_EFFECTIVE_TYPE_CLASSIFICATION
+        for row in result["common_helper_deltas"]
+    ):
+        raise AssertionError("Issue #345 layout-free effective-type helper was not classified")
+    layout_bearing_helper = dict(helper_addition)
+    layout_bearing_helper[common_path] = layout_bearing_helper[common_path].replace(
+        effective_type_helper,
+        effective_type_helper.replace("return TRUE;", "return TileLayout_CUBE_N8 == TileLayout_CUBE_N8;"),
+    )
+    result = _census_texts(base, layout_bearing_helper, "fixture-baseline", "fixture-candidate", enforce_closure=False)
+    if result["pass"] or not any(
+        "unauthorized B.FPATR effective-type helper definition delta" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #345 helper allowlist authorized a layout-bearing definition")
     bad_relation = dict(base)
     bad_relation["asl/tile/model/legality/shape.asl"] = bad_relation["asl/tile/model/legality/shape.asl"].replace(
         "_Tiles[[left]].layout == _Tiles[[right]].layout", "TRUE")
