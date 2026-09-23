@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "c2ae457388ae058a88271e183ae6914ff248f777",
+  "candidate_head": "01c82f749700f0b60f06587eabde3f0162ac87df",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16173,6 +16173,15 @@
     },
     {
       "after_layouts": [],
+      "after_sha256": "32d1e01dca0421f584f1c46be3fea525c6b6211b6c7e0edfc9175ec0d7605985",
+      "before_layouts": [],
+      "before_sha256": "e493895bc500b8e55b227b55b53627844476b1f61c2133f87f0b23c7ae6e2e7e",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleSharedDestinationAssemblyPolicyLegal",
+      "path": "asl/block/model/operands/range-modifiers.asl"
+    },
+    {
+      "after_layouts": [],
       "after_sha256": "bc94ad371496a00fc2fecde07b71cf109175e11a4c8ad375f37003a06376e6a0",
       "before_layouts": [],
       "before_sha256": "372a11969b41479a5ebc0d2d6e934c34e6f7d9f6318d855b536189423aa7feb9",
@@ -16186,7 +16195,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9",
+      "after_sha256": "2119f9500f4a795eefd869e1d8d2d04593cb6721fda6dc34b8d16319881cda5e",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16228,12 +16237,12 @@
       "after_layouts": [
         "RowMajor"
       ],
-      "after_sha256": "3ae87eb1ddca0fea632b794ea7f5f1260fa978b73130cebba41ce91dd051a078",
+      "after_sha256": "bdcc92c8ba46462defd241028e9b13dd26fdc11e2af45cca92229e7974651715",
       "before_layouts": [
         "RowMajor"
       ],
       "before_sha256": "eed8e80daee2bebab4407e5dba5eb70c86652fcea1eb4dc9e5c52dccab390d24",
-      "classification": "TileLocation retirement",
+      "classification": "operation-scoped accepted layout/relation owner",
       "name": "BundleWeightTLOADBuildAndPublish",
       "path": "asl/block/model/dispatch/weight-to-shared-execution.asl"
     },
@@ -16341,7 +16350,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029",
+      "after_sha256": "bdaa94023f9457e543a38acc7ae8213e3fb9310b58ad5f91429257ce77ac5ff0",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -44698,11 +44707,12 @@
         "BundleSharedDestinationAssemblyPolicyLegal": [
           {
             "calls": [
+              "BundleSharedBindingIsReusedDestination",
               "PEMaskPopulation"
             ],
             "layouts": [],
             "path": "asl/block/model/operands/range-modifiers.asl",
-            "sha256": "e493895bc500b8e55b227b55b53627844476b1f61c2133f87f0b23c7ae6e2e7e"
+            "sha256": "32d1e01dca0421f584f1c46be3fea525c6b6211b6c7e0edfc9175ec0d7605985"
           }
         ],
         "BundleSharedGenerationCapacity": [
@@ -44995,7 +45005,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "4a3ab67178c9ffd229e602a8ae0e0b3dc811021f8e75637c8b5c959d77ec87a9"
+            "sha256": "2119f9500f4a795eefd869e1d8d2d04593cb6721fda6dc34b8d16319881cda5e"
           }
         ],
         "BundleTIMG2COLC0Elements": [
@@ -45853,7 +45863,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
-            "sha256": "3ae87eb1ddca0fea632b794ea7f5f1260fa978b73130cebba41ce91dd051a078"
+            "sha256": "bdcc92c8ba46462defd241028e9b13dd26fdc11e2af45cca92229e7974651715"
           }
         ],
         "BundleWeightTLOADC0Elements": [
@@ -47085,6 +47095,7 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "RequireBundleSharedSourcePayloads",
               "ResolveBundleTileDestinationsForOperation",
               "RetireBundleConsumerDependencies",
               "RetireBundleConsumerDependencies",
@@ -47128,7 +47139,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "a21226835af5ac4985602beb0703a4243a8881b9dd425a5c05fec6e64a030029"
+            "sha256": "bdaa94023f9457e543a38acc7ae8213e3fb9310b58ad5f91429257ce77ac5ff0"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
