@@ -2,10 +2,13 @@
 // Bit-exact B.FPATR conversion, activation, auxiliary reduction, and flags.
 // NDF-BEGIN: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
-// Matrix post-processing MUST reduce the raw accumulator before conversion,
-// select an activation-dependent multiplier before destination conversion,
-// canonicalize special results, and publish D, enabled auxiliary outputs, and
-// sticky flags as one non-faulting commit.
+// Matrix post-processing MUST apply the existing CScale, activation,
+// quantization, rounding, saturation, and special-value rules to each logical
+// accumulator element and encode the final D value in EffectiveDType before
+// reduction. RowMax and GroupMax MUST consume those final encoded D values in
+// increasing-column order; MaxAbs and RowMaxInit use the same effective type.
+// The model MUST publish D, enabled auxiliary outputs, and sticky flags as one
+// non-faulting commit.
 // NDF-END: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 
 
@@ -276,4 +279,3 @@ begin
         TileUnary_ABS, data_type, value);
     return (result, if invalid then Zeros{5} + 1 else Zeros{5});
 end;
-

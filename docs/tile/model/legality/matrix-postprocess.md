@@ -21,7 +21,9 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-CUBE-AUX-CELLREG-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Local Matrix auxiliary Tiles are orientation-specific CellReg data:
-// RowMaxIn/Out and GroupMaxOut use the resolved primary M16/M32 layout;
+// RowMaxIn/Out and GroupMaxOut use EffectiveDType and the resolved primary
+// M16/M32 layout, with their physical geometry and capacity derived from that
+// effective type;
 // Bias and vector quant/PReLU parameters use CUBE_N8 with logical [1,N].
 // Vector parameters retain U64 carriers, whose only CellReg geometry is
 // CUBE_N8 K2 x N8; only vector parameter sources and ND2N8 U64 TLOAD may use
@@ -96,14 +98,14 @@ end;
 readonly func TileMatrixLocalRowMaxSchemaLegal(
     source: TileIndex,
     valid_rows: integer {1..65535},
-    accumulator_type: TileDataType,
+    effective_type: TileDataType,
     expected_layout: TileLayout) => boolean
 begin
     let tile = _Tiles[[source]];
     return tile.contents_defined && TileCubeDescriptorLegal(tile) &&
            tile.valid_rows == valid_rows &&
            tile.valid_columns == 1 &&
-           tile.data_type == accumulator_type &&
+           tile.data_type == effective_type &&
            tile.layout == expected_layout &&
            (expected_layout == TileLayout_CUBE_M16 ||
             expected_layout == TileLayout_CUBE_M32);
@@ -163,12 +165,19 @@ begin
            accumulator_type) then
         return FALSE;
     end;
+    let effective_type = BundleFPATREffectiveDataType(
+        _BundleFixedPointAttributes.pre_quant_mode, accumulator_type);
+    if (_BundleFixedPointAttributes.row_max_en ||
+        _BundleFixedPointAttributes.group_max_en) &&
+       !BundleFPATRReductionDataTypeLegal(effective_type) then
+        return FALSE;
+    end;
     var ordinal = mathematical_sources as integer {0..8};
     if _BundleFixedPointAttributes.row_max_en &&
        _BundleFixedPointAttributes.row_max_init then
         let row_max = BundleMatrixSourceAt(ordinal);
         if !TileMatrixLocalRowMaxSchemaLegal(
-               row_max, m, accumulator_type, primary_layout) then
+               row_max, m, effective_type, primary_layout) then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..8};

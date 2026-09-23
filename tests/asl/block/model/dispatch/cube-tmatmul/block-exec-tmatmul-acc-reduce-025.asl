@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-ACC-REDUCE-025","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-ACCUMULATOR-OUTPUT-001"],"kind":"execution","summary":"ACC RowMax and GroupMax observe raw P before destination conversion","pass_condition":"FP16 D contains converted values while both reductions contain the raw FP32 maximum","related_sources":["asl/tile/model/execution/postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-ACC-REDUCE-025","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-B-FPATR-MATRIX-POSTPROCESS-001","PTO-MATRIX-POSTPROCESS-BITEXACT-001","PTO-CUBE-ACCUMULATOR-OUTPUT-001"],"kind":"execution","summary":"ACC RowMax and GroupMax observe final FP16 D after round-to-nearest-even","pass_condition":"an FP32 raw maximum halfway between FP16 values rounds to the same final encoding stored in D and both auxiliary outputs","related_sources":["asl/tile/model/execution/postprocess.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -13,7 +13,7 @@ begin
     for column = 0 to 7 looplimit 8 do
         WriteTileElement(5, 0, column, Zeros{PTO_XLEN});
         WriteTileElement(6, 0, column,
-            if column == 7 then Zeros{PTO_XLEN} + 0x40000000
+            if column == 7 then Zeros{PTO_XLEN} + 0x40001000
             else Zeros{PTO_XLEN} + 0x3f800000);
     end;
 
@@ -40,11 +40,15 @@ begin
     assert _Tiles[[destination]].data_type == TileDataType_FP16;
     assert ReadTileElement(destination, 0, 7) ==
         Zeros{PTO_XLEN} + 0x4000;
+    assert _Tiles[[row_max]].data_type == TileDataType_FP16;
+    assert _Tiles[[group_max]].data_type == TileDataType_FP16;
+    assert _Tiles[[row_max]].layout == TileLayout_CUBE_M16;
+    assert _Tiles[[group_max]].layout == TileLayout_CUBE_M16;
     assert ReadTileElement(row_max, 0, 0) ==
-        Zeros{PTO_XLEN} + 0x40000000;
+        Zeros{PTO_XLEN} + 0x4000;
     assert ReadTileElement(group_max, 0, 0) ==
-        Zeros{PTO_XLEN} + 0x40000000;
+        Zeros{PTO_XLEN} + 0x4000;
     assert ReadTileElement(6, 0, 7) ==
-        Zeros{PTO_XLEN} + 0x40000000;
+        Zeros{PTO_XLEN} + 0x40001000;
     return 0;
 end;

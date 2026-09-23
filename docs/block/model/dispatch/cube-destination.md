@@ -133,7 +133,7 @@ begin
                     else n;
                 if !TileCubeDescriptorShapeLegal(
                        capacity_bytes, m, auxiliary_columns,
-                       accumulator_type, primary_layout) then
+                       output_type, primary_layout) then
                     if reused then SetFault(Fault_TileLegality, ReadTPC());
                     else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
@@ -145,7 +145,7 @@ begin
                        destination.capacity_bytes != capacity_bytes ||
                        destination.valid_rows != m ||
                        destination.valid_columns != auxiliary_columns ||
-                       destination.data_type != accumulator_type ||
+                       destination.data_type != output_type ||
                        destination.layout != primary_layout ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
@@ -189,7 +189,7 @@ begin
                         else n;
                     let configured = ConfigureCubeTileForMask(
                         resolved[[binding]], capacity_bytes, m,
-                        auxiliary_columns, accumulator_type, primary_layout,
+                        auxiliary_columns, output_type, primary_layout,
                         allocation_mask);
                     assert configured;
                 end;
@@ -226,12 +226,8 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    let output_type = if
-        UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
-        accumulator_type
-    else
-        BundleFPATROutputType(
-            _BundleFixedPointAttributes.pre_quant_mode);
+    let output_type = BundleFPATREffectiveDataType(
+        _BundleFixedPointAttributes.pre_quant_mode, accumulator_type);
     let capacity_bytes = BundleTileDestinationSizeBytes(destination_binding);
     if cube_primary then
         return ResolveBundleTMATMULCubeDestinationGroup(

@@ -25,7 +25,9 @@
     "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-NUMERIC-RCPE6M2-FORMAT-001",
     "PTO-TCVT-CONTRACT-001",
-    "PTO-TCVT-E8M0-001"
+    "PTO-TCVT-E8M0-001",
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FP19",
@@ -38,7 +40,13 @@
     "PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION",
     "PTO-BLOCK-B-FPATR",
     "PTO-TILE-MODEL-NUMERIC-FORMATS",
-    "PTO-TILE-TCVT"
+    "PTO-TILE-TCVT",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
   ],
   "resolves": [],
   "supersedes": [
@@ -100,6 +108,28 @@
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/345",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-FPATR",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
+      ]
     }
   ]
 }
@@ -138,19 +168,28 @@ packing, activation, and auxiliary-reduction results. A nonzero assigned mode
 MUST NOT fall back to an identity transform or an implementation-selected
 numeric policy.
 
-## Decision 175: B.FPATR reductions precede destination conversion and activation
+## Decision 175: B.FPATR reductions consume final D values
 
-Matrix RowMax and GroupMax consume the complete raw accumulator result before
-destination conversion or activation. `MaxAbsEn` and `RowMaxInit` affect this
-raw-accumulator reduction stage. PreQuant then converts only the primary `D`
-result, and the selected ReLU, scalar LReLU/PReLU, or vector PReLU operation
-selects the positive or negative path multiplier before the single destination
-conversion of each `D` element.
+Issue #345 supersedes the original raw-accumulator reduction rule in this
+decision. The effective D type is the accumulator type when
+`PreQuantMode=0`, and the assigned `BundleFPATROutputType` otherwise. For each
+logical valid element, the complete existing B.FPATR post-processing pipeline
+produces the final encoded D value before any enabled reduction consumes it.
+`RowMax[m]` is the maximum of those final D values across valid columns;
+`GroupMax[m,g]` is the maximum within each selected column group. The fixed
+increasing-column traversal is unchanged.
 
-PreQuant and activation do not alter RowMaxOut or GroupMaxOut. Those auxiliary
-outputs retain the accumulator data type and format. The processed `D` and all
-enabled auxiliary outputs are prepared from the same pre-commit state and
-published as one atomic output group.
+`MaxAbsEn` applies the existing maximum-absolute-value operation to candidates
+in the effective D type. `RowMaxInit` remains a read-old/write-new operation,
+and its `RowMaxIn` source has the effective D type, resolved M16/M32 layout,
+and logical `[M,1]` shape. `RowMaxOut` has that same type, layout, and shape;
+`GroupMaxOut` has that type and layout with logical shape
+`[M, ceil(N/GroupN)]`. Reductions are legal only when the effective D type is
+FP32, FP16, or BF16. Consequently, S32/U32 no-quant reductions and reductions
+whose assigned output type is integer or FP8 are illegal.
+
+The processed `D` and all enabled auxiliary outputs are prepared from the same
+pre-commit state and published as one atomic output group.
 
 ## Decision 176: B.FPATR activation selects the pre-conversion multiplier
 
@@ -266,9 +305,14 @@ inexact status are recorded.
 FP16, BF16, HiF8, E4M3, FP32, S16, and S8 use their architectural element
 encodings. Each S4X2 logical element occupies the low nibble of its model
 carrier and adjacent logical elements use the existing packed-memory nibble
-order. RowMaxOut and GroupMaxOut retain the raw accumulator data type, use
-row-major `M x 1` and `M x ceil(N/GroupN)` shapes, and observe the fixed
-increasing-column reduction order.
+order. Issue #345 supersedes this decision's original accumulator-dtype rule
+for auxiliary carriers. RowMaxIn, RowMaxOut, and GroupMaxOut use the effective
+D type and the resolved primary M16/M32 layout. Their logical shapes remain
+`[M,1]` and `[M, ceil(N/GroupN)]`, with physical CellReg geometry and capacity
+derived from that effective type. Reductions observe final encoded D values in
+the fixed increasing-column order. This uses the existing dtype-dependent CellReg
+geometry owned by ADR-CUBE-0004 and introduces no layout selector or new
+geometry rule.
 
 All post-processing and reduction flags are accumulated before commit. The
 processed D payload, enabled auxiliary payloads, descriptors, and sticky
@@ -329,27 +373,30 @@ publication cannot drift independently.
 
 ### Detailed decision / 详细决策
 
-**English.** Decisions 174–183 make assigned `B.FPATR` modes bit-exact, order
-reductions before conversion/activation, define multipliers, saturation and
-packing, close parameter and special-value handling, atomically publish status,
-expose finite decompositions, and define the accepted E8M0 conversion path.
+**English.** Decisions 174–183 make assigned `B.FPATR` modes bit-exact, define
+the final-D reduction domain accepted by Issue #345, define multipliers,
+saturation and packing, close parameter and special-value handling, atomically
+publish status, expose finite decompositions, and define the accepted E8M0
+conversion path.
 
-**中文。** 决策 174–183 使已分配 `B.FPATR` mode 位精确，规定归约先于转换/激活，
-定义 multiplier、saturation、packing、参数与特殊值处理、状态原子发布、有限值
-分解及受支持 E8M0 转换路径。
+**中文。** 决策 174–183 使已分配 `B.FPATR` mode 位精确，并纳入 Issue #345 接受的
+最终 D 域归约；同时定义 multiplier、saturation、packing、参数与特殊值处理、状态
+原子发布、有限值分解及受支持 E8M0 转换路径。
 
 ### What changed / 改动内容
 
 #### English
 
 - Closed assigned post-process mode arithmetic and output carriers.
-- Fixed reduction, activation, conversion, saturation, and packing order.
+- Defined final-D reduction, activation, conversion, saturation, and packing order.
+- Bound auxiliary carriers and RowMaxIn to the effective D type.
 - Added atomic status publication and exact format decomposition/E8M0 rules.
 
 #### 中文
 
 - 闭合已分配后处理 mode 算术与输出 carrier。
-- 固定归约、激活、转换、饱和与 packing 顺序。
+- 定义最终 D 域归约以及激活、转换、饱和与 packing 顺序。
+- 使辅助 carrier 与 RowMaxIn 使用有效 D 类型。
 - 增加状态原子发布及精确格式分解/E8M0 规则。
 
 ### Scope and boundaries / 范围与边界

@@ -11743,7 +11743,9 @@
         "PTO-NUMERIC-E6M2-FORMAT-001",
         "PTO-NUMERIC-RCPE6M2-FORMAT-001",
         "PTO-TCVT-CONTRACT-001",
-        "PTO-TCVT-E8M0-001"
+        "PTO-TCVT-E8M0-001",
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FP19",
@@ -11756,7 +11758,13 @@
         "PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION",
         "PTO-BLOCK-B-FPATR",
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
-        "PTO-TILE-TCVT"
+        "PTO-TILE-TCVT",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
       ],
       "amendments": [
         {
@@ -11797,6 +11805,28 @@
           "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
           "date": "2026-09-19",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/324"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+            "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+            "PTO-CUBE-AUX-CELLREG-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-FPATR",
+            "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+            "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-23",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/345"
         }
       ],
       "approvers": [
