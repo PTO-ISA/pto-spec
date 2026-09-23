@@ -12,7 +12,7 @@ begin
         TileDataType_E8M0, TileLayout_CUBE_M32, '1111');
     assert a_ready && a_scale_ready && b_ready && b_scale_ready;
     let bias_ready = ConfigureCubeTileForMask(5, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+        TileDataType_FP32, TileLayout_CUBE_N8, '1111');
     assert bias_ready;
     for inner = 0 to 31 looplimit 32 do
         WriteTileElement(1, 0, inner, Zeros{PTO_XLEN} + 2);

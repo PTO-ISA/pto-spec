@@ -41,5 +41,11 @@ begin
     assert !TileCubeDataTypeSupported(TileDataType_FP64);
     assert !TileCubeDataTypeSupported(TileDataType_S64);
     assert !TileCubeDataTypeSupported(TileDataType_U64);
+    assert TileCubeCellRows(TileLayout_CUBE_N8, TileDataType_U64) == 2;
+    assert TileCubeCellColumns(TileLayout_CUBE_N8, TileDataType_U64) == 8;
+    assert !TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_M16, TileDataType_U64);
+    assert TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_N8, TileDataType_U64);
     return 0;
 end;

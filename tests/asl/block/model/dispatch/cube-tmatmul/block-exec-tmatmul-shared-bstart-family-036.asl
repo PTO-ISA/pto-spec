@@ -34,10 +34,10 @@ begin
             WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 0x3f800000);
         end;
         if uses_bias then
-            // Bias must use the resolver-selected M layout (Bias.layout ==
-            // ML == D.layout); a RowMajor bias is now rejected.
+            // Bias is a distinct Local CUBE_N8 [1,N] source; D keeps
+            // the resolved M layout selected by the mathematical A operand.
             let bias_ready = ConfigureCubeTileForMask(4, 128, 1, 2,
-                TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+                TileDataType_FP32, TileLayout_CUBE_N8, '1111');
             assert bias_ready;
             WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
             WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 0x40e00000);

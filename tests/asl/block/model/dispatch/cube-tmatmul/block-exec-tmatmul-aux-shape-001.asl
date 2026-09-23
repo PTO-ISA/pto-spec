@@ -29,8 +29,9 @@ begin
     let b_ready = ConfigureCubeTileForMask(2, 128, 1, 8,
         TileDataType_FP16, TileLayout_CUBE_N8, '1111');
     assert a_ready && b_ready;
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor);
+    let row_max_in_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+    assert row_max_in_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     for column = 0 to 7 looplimit 8 do
         WriteTileElement(2, 0, column,

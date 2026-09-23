@@ -516,8 +516,8 @@
     "zh-CN": "带行偏置的 TGEMV"
    },
    "summary": {
-    "en": "This clause defines the Local-only TGEMV.BIAS form with M fixed to one and a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present source. Shared operands and transpose are excluded, while one B.FPATR closes post-processing and successful outputs publish atomically after complete preflight.",
-    "zh-CN": "本条款定义仅使用 Local 的 TGEMV.BIAS，M 固定为一，并读取一个 Local 行主序 1×N 偏置源。Shared 操作数和转置被排除；一条 B.FPATR 闭合后处理，完整预检后成功结果原子发布。"
+    "en": "This clause defines the Local-only TGEMV.BIAS form with M fixed to one and a Local CUBE_N8 bias source of logical shape 1xN in the accumulator type, broadcast by logical output column. Shared operands and transpose are excluded, while one B.FPATR closes post-processing and successful outputs publish atomically after complete preflight.",
+    "zh-CN": "本条款定义仅使用 Local 的 TGEMV.BIAS，M 固定为一，并读取一个使用逻辑 1×N accumulator 类型的 Local CUBE_N8 偏置源，按逻辑输出列广播。Shared 操作数和转置被排除；一条 B.FPATR 闭合后处理，完整预检后成功结果原子发布。"
    }
   },
   {
@@ -552,8 +552,8 @@
     "zh-CN": "带行偏置的 MX TGEMV"
    },
    "summary": {
-    "en": "This clause combines Local-only TGEMV bias processing with the E8M0 scale operands required independently by each MX matrix side. M remains one, Shared and transpose are excluded, and the bias plus matrix sources feed one atomically published post-processed result.",
-    "zh-CN": "本条款把仅使用 Local 的 TGEMV 偏置处理与 MX 两侧按需独立使用的 E8M0 缩放源结合起来。M 保持为一，Shared 与转置被排除，偏置和矩阵源共同产生一个原子发布的后处理结果。"
+    "en": "This clause combines Local-only TGEMV bias processing with a Local CUBE_N8 logical 1xN FP32 accumulator bias source and the E8M0 scale operands required independently by each MX matrix side. M remains one, Shared and transpose are excluded, and the bias plus matrix sources feed one atomically published post-processed result.",
+    "zh-CN": "本条款把仅使用 Local 的 TGEMV 偏置处理、Local CUBE_N8 逻辑 1×N FP32 accumulator 偏置源与 MX 两侧按需独立使用的 E8M0 缩放源结合起来。M 保持为一，Shared 与转置被排除，偏置和矩阵源共同产生一个原子发布的后处理结果。"
    }
   },
   {
@@ -672,8 +672,8 @@
     "zh-CN": "带行偏置的 TMATMUL"
    },
    "summary": {
-    "en": "This clause defines TMATMUL.BIAS with a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use group_M with the complete PE group; Shared physical valid shape, legal padded pitch, parent readiness, and all-PE metadata preflight precede payload and atomic output publication.",
-    "zh-CN": "本条款定义 TMATMUL.BIAS：使用 Local 行主序 1×N 偏置、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用 group_M 与完整 PE 组；Shared physical valid shape、合法 padded pitch、父对象就绪及所有 PE metadata 预检先于 payload 与输出原子发布。"
+    "en": "This clause defines TMATMUL.BIAS with a Local CUBE_N8 bias source of logical shape 1xN in the accumulator type, broadcast by logical output column, compatible A and B types, and either Local or cooperative Shared primary matrices. Cooperative forms use group_M with the complete PE group; Shared physical valid shape, legal padded pitch, parent readiness, and all-PE metadata preflight precede payload and atomic output publication.",
+    "zh-CN": "本条款定义 TMATMUL.BIAS：使用逻辑 1×N accumulator 类型的 Local CUBE_N8 偏置源并按逻辑输出列广播、兼容的 A/B 类型，以及 Local 或协作 Shared 主矩阵。协作形式使用 group_M 与完整 PE 组；Shared physical valid shape、合法 padded pitch、父对象就绪及所有 PE metadata 预检先于 payload 与输出原子发布。"
    }
   },
   {
@@ -708,8 +708,8 @@
     "zh-CN": "带行偏置的 MX TMATMUL"
    },
    "summary": {
-    "en": "This clause combines MX matrix scaling with a Local 1xN bias and supported Local or cooperative Shared-primary operands. Each matrix side contributes an E8M0 scale only when its type requires one; Shared primary/scale physical shapes, legal padded pitches, parent readiness, and complete all-PE metadata preflight precede payload and atomic post-processed output publication.",
-    "zh-CN": "本条款将 MX 矩阵缩放、Local 1×N 偏置以及受支持的 Local 或协作 Shared 主输入组合起来。每个矩阵侧仅在其类型需要时提供 E8M0 缩放源；Shared 主输入/scale 的 physical shape、合法 padded pitch、父对象就绪及所有 PE metadata 完整预检先于 payload 与后处理输出原子发布。"
+    "en": "This clause combines MX matrix scaling with a Local CUBE_N8 logical 1xN FP32 accumulator bias source and supported Local or cooperative Shared-primary operands. Each matrix side contributes an E8M0 scale only when its type requires one; Shared primary/scale physical shapes, legal padded pitches, parent readiness, and complete all-PE metadata preflight precede payload and atomic post-processed output publication.",
+    "zh-CN": "本条款将 MX 矩阵缩放、Local CUBE_N8 逻辑 1×N FP32 accumulator 偏置源以及受支持的 Local 或协作 Shared 主输入组合起来。每个矩阵侧仅在其类型需要时提供 E8M0 缩放源；Shared 主输入/scale 的 physical shape、合法 padded pitch、父对象就绪及所有 PE metadata 完整预检先于 payload 与后处理输出原子发布。"
    }
   },
   {

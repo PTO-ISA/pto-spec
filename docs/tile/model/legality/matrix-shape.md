@@ -163,15 +163,13 @@ end;
 
 readonly func TileMatrixInfoBiasLegal(left: TileInfo, right: TileInfo,
                                       bias: TileIndex,
-                                      mx: boolean,
-                                      expected_layout: TileLayout) => boolean
+                                      mx: boolean) => boolean
 begin
     if !TileElementwiseSourceContentsDefined(bias) ||
+       !TileCubeDescriptorLegal(_Tiles[[bias]]) ||
        _Tiles[[bias]].valid_rows != 1 ||
        _Tiles[[bias]].valid_columns != right.valid_columns ||
-       _Tiles[[bias]].layout != expected_layout ||
-       (expected_layout != TileLayout_CUBE_M16 &&
-        expected_layout != TileLayout_CUBE_M32) then
+       _Tiles[[bias]].layout != TileLayout_CUBE_N8 then
         return FALSE;
     end;
     let left_type = TileDataTypeFromEncoding(
@@ -301,11 +299,10 @@ readonly func TileMatrixBiasShapeLegal(left: TileIndex, right: TileIndex,
                                        bias: TileIndex) => boolean
 begin
     return TileElementwiseSourceContentsDefined(bias) &&
+           TileCubeDescriptorLegal(_Tiles[[bias]]) &&
            _Tiles[[bias]].valid_rows == 1 &&
            _Tiles[[bias]].valid_columns == _Tiles[[right]].valid_columns &&
-           _Tiles[[bias]].layout == _Tiles[[left]].layout &&
-           (_Tiles[[bias]].layout == TileLayout_CUBE_M16 ||
-            _Tiles[[bias]].layout == TileLayout_CUBE_M32);
+           _Tiles[[bias]].layout == TileLayout_CUBE_N8;
 end;
 
 readonly func TileOrdinaryMatrixBiasLegal(left: TileIndex, right: TileIndex,

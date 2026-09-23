@@ -19,13 +19,15 @@
     "0.58.3"
   ],
   "affected_ndf": [
-    "PTO-CUBE-CELL-STATE-001"
+    "PTO-CUBE-CELL-STATE-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
     "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
     "PTO-TILE-MODEL-STATE-ALLOCATION",
-    "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+    "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -67,6 +69,24 @@
         "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/339",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-STATE-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
       ]
     }
   ],
@@ -255,3 +275,13 @@ effects require separate accepted owners and cannot be inferred from the Local
 CELL geometry defined here.
 
 **中文。** Shared 布局、传输、矩阵绑定、转置、累加器标识及后处理不在本决策范围。
+
+
+## Amendment — 2026-09-22 (Issue #339)
+
+`CUBE_N8/U64` is the sole b64 Local CUBE descriptor exception. Its CELL is
+exactly `K2 x N8` (128 bytes). A logical `[1,N]` descriptor has physical rows
+2, physical columns aligned to 8, `K_repeat=1`, and one CELL per N8 column
+repeat. `CUBE_M16/M32` remain illegal for every b64 dtype, while FP64 and S64
+remain illegal in CUBE_N8. Descriptor geometry does not by itself authorize an
+operation; only the frozen vector-parameter and ND2N8-TLOAD fences may use U64.

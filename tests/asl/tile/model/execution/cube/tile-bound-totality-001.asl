@@ -43,7 +43,7 @@ begin
     ConfigureCubeUnitTile(1, accumulator_type, TileLayout_CUBE_M16, Zeros{PTO_XLEN} + 5);  // C
     ConfigureCubeUnitTile(2, data_type, TileLayout_CUBE_M16, Zeros{PTO_XLEN} + 2);  // A
     ConfigureCubeUnitTile(3, data_type, TileLayout_CUBE_N8, Zeros{PTO_XLEN} + 3);  // B
-    ConfigureCubeUnitTile(4, accumulator_type, TileLayout_CUBE_M16, Zeros{PTO_XLEN} + 7);     // Bias
+    ConfigureCubeUnitTile(4, accumulator_type, TileLayout_CUBE_N8, Zeros{PTO_XLEN} + 7);     // Bias
 end;
 
 func ResetCubeOrdinaryOperands()
@@ -61,7 +61,7 @@ begin
     ConfigureCubeUnitTile(3, TileDataType_E8M0, TileLayout_RowMajor, Zeros{PTO_XLEN} + 1);     // ScaleA
     ConfigureCubeUnitTile(4, TileDataType_E4M3, TileLayout_CUBE_N8, Zeros{PTO_XLEN} + 3);  // B
     ConfigureCubeUnitTile(5, TileDataType_E8M0, TileLayout_RowMajor, Zeros{PTO_XLEN} + 1);     // ScaleB
-    ConfigureCubeUnitTile(6, TileDataType_FP32, TileLayout_CUBE_M16, Zeros{PTO_XLEN} + 7);     // Bias
+    ConfigureCubeUnitTile(6, TileDataType_FP32, TileLayout_CUBE_N8, Zeros{PTO_XLEN} + 7);     // Bias
 end;
 
 pure func CubeTestTileDataType(index: integer {0..24}) => TileDataType

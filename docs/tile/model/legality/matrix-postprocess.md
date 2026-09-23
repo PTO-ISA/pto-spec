@@ -18,6 +18,15 @@ This page is a generated reference view of the normative ASL unit.
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS","surface":"tile","classification":["model","legality","matrix-postprocess"],"depends_on":["PTO-BLOCK-B-FPATR","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"]}
 // PTO-REQ-CUBE-POSTPROCESS-001: auxiliary Matrix operands are completely
 // descriptor- and payload-preflighted before source snapshots or allocation.
+// NDF-BEGIN: PTO-CUBE-AUX-CELLREG-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Local Matrix auxiliary Tiles are orientation-specific CellReg data:
+// RowMaxIn/Out and GroupMaxOut use the resolved primary M16/M32 layout;
+// Bias and vector quant/PReLU parameters use CUBE_N8 with logical [1,N].
+// Vector parameters retain U64 carriers, whose only CellReg geometry is
+// CUBE_N8 K2 x N8; only vector parameter sources and ND2N8 U64 TLOAD may use
+// it. All other U64 CUBE producers and consumers remain illegal.
+// NDF-END: PTO-CUBE-AUX-CELLREG-001
 
 readonly func BundleMatrixDestinationAt(
     ordinal: integer {0..2}) => TileIndex
@@ -84,19 +93,32 @@ begin
     return 0;
 end;
 
-readonly func TileMatrixAuxiliarySourceSchemaLegal(
+readonly func TileMatrixLocalRowMaxSchemaLegal(
     source: TileIndex,
     valid_rows: integer {1..65535},
-    valid_columns: integer {1..65535},
-    data_type: TileDataType) => boolean
+    accumulator_type: TileDataType,
+    expected_layout: TileLayout) => boolean
 begin
     let tile = _Tiles[[source]];
-    return TileSourceContentsDefined(source) &&
-           TileInfoDescriptorLegal(tile) &&
+    return tile.contents_defined && TileCubeDescriptorLegal(tile) &&
            tile.valid_rows == valid_rows &&
-           tile.valid_columns == valid_columns &&
-           tile.data_type == data_type &&
-           tile.layout == TileLayout_RowMajor;
+           tile.valid_columns == 1 &&
+           tile.data_type == accumulator_type &&
+           tile.layout == expected_layout &&
+           (expected_layout == TileLayout_CUBE_M16 ||
+            expected_layout == TileLayout_CUBE_M32);
+end;
+
+readonly func TileMatrixLocalVectorParameterSchemaLegal(
+    source: TileIndex,
+    n: integer {1..65535}) => boolean
+begin
+    let tile = _Tiles[[source]];
+    return tile.contents_defined && TileCubeDescriptorLegal(tile) &&
+           tile.valid_rows == 1 &&
+           tile.valid_columns == n &&
+           tile.data_type == TileDataType_U64 &&
+           tile.layout == TileLayout_CUBE_N8;
 end;
 
 readonly func TileMatrixVectorQuantContentsLegal(
@@ -133,7 +155,8 @@ readonly func BundleMatrixPostProcessSourcesLegal(
     mathematical_sources: integer {0..6},
     m: integer {1..65535},
     n: integer {1..65535},
-    accumulator_type: TileDataType) => boolean
+    accumulator_type: TileDataType,
+    primary_layout: TileLayout) => boolean
 begin
     if !BundleFPATRAccumulatorTypeLegal(
            _BundleFixedPointAttributes.pre_quant_mode,
@@ -144,8 +167,8 @@ begin
     if _BundleFixedPointAttributes.row_max_en &&
        _BundleFixedPointAttributes.row_max_init then
         let row_max = BundleMatrixSourceAt(ordinal);
-        if !TileMatrixAuxiliarySourceSchemaLegal(
-               row_max, m, 1, accumulator_type) then
+        if !TileMatrixLocalRowMaxSchemaLegal(
+               row_max, m, accumulator_type, primary_layout) then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..8};
@@ -154,8 +177,8 @@ begin
     if BundleFPATRModeUsesVectorParameter(
            _BundleFixedPointAttributes.pre_quant_mode) then
         let quant = BundleMatrixSourceAt(ordinal);
-        if !TileMatrixAuxiliarySourceSchemaLegal(
-               quant, 1, n, TileDataType_U64) ||
+        if !TileMatrixLocalVectorParameterSchemaLegal(
+               quant, n) ||
            !TileMatrixVectorQuantContentsLegal(
                quant, _BundleFixedPointAttributes.pre_quant_mode) then
             return FALSE;
@@ -166,8 +189,8 @@ begin
     if BundleFPATRReluModeUsesVectorParameter(
            _BundleFixedPointAttributes.relu_mode) then
         let relu = BundleMatrixSourceAt(ordinal);
-        if !TileMatrixAuxiliarySourceSchemaLegal(
-               relu, 1, n, TileDataType_U64) ||
+        if !TileMatrixLocalVectorParameterSchemaLegal(
+               relu, n) ||
            !TileMatrixVectorReluContentsLegal(relu) then
             return FALSE;
         end;

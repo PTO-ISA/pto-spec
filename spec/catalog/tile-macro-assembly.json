@@ -99085,7 +99085,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses Local CUBE_N8; it is a logical 1xN accumulator-type source (FP32 for MX) broadcast by logical output column.",
         "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -102239,7 +102239,7 @@
         "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
         "B.DIM LB1 N (optional, default 1)",
         "B.DIM LB2 K (optional, default 1)",
-        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias",
+        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, CUBE_N8 1xN Bias",
         "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
         "B.IOT/B.IOR postprocess operands selected by B.FPATR",
         "BSTOP or the next BSTART completion boundary"
@@ -110713,7 +110713,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Required E8M0 scales remain ordinary row-major Tiles.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias uses Local CUBE_N8; it is a logical 1xN accumulator-type source (FP32 for MX) broadcast by logical output column. Required E8M0 scales remain ordinary row-major Tiles.",
         "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -114330,7 +114330,7 @@
         "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
         "B.DIM LB1 N (optional, default 1)",
         "B.DIM LB2 K (optional, default 1)",
-        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias",
+        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, CUBE_N8 1xN Bias",
         "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
         "B.IOT/B.IOR postprocess operands selected by B.FPATR",
         "BSTOP or the next BSTART completion boundary"
@@ -143928,7 +143928,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX).",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias uses Local CUBE_N8; it is a logical 1xN accumulator-type source (FP32 for MX) broadcast by logical output column.",
         "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -153231,7 +153231,7 @@
         "B.DIM LB1 N (optional, default 1)",
         "B.DIM LB2 K (optional, default 1)",
         "B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111)",
-        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias",
+        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, CUBE_N8 1xN Bias",
         "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
         "B.IOT/B.IOR postprocess operands selected by B.FPATR",
         "BSTOP or the next BSTART completion boundary"
@@ -174773,7 +174773,7 @@
         "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
         "Omitted LB0 defaults Local M or cooperative group_M to one; omitted LB1 and LB2 default N and K to one.",
         "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize; when a Local Matrix-MX scale is required, its M/N major is at most 32 because Local scales use one-block CUBE_M32, while Shared scales remain ordinary Tiles. Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present; it is a logical 1xN accumulator-type source (FP32 for MX). Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
+        "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize; when a Local Matrix-MX scale is required, its M/N major is at most 32 because Local scales use one-block CUBE_M32, while Shared scales remain ordinary Tiles. Bias uses Local CUBE_N8; it is a logical 1xN accumulator-type source (FP32 for MX) broadcast by logical output column. Each side uses group-32 E8M0 or HiF4X2 group-64 U32 scale; Local scales use CUBE_M32 and Shared scales remain ordinary Tiles.",
         "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared.",
         "Omitted CCTRL selects 00: final D output and no transparent-cache hint."
       ],
@@ -184875,7 +184875,7 @@
         "B.DIM LB1 N (optional, default 1)",
         "B.DIM LB2 K (optional, default 1)",
         "B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111)",
-        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias",
+        "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, CUBE_N8 1xN Bias",
         "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
         "B.IOT/B.IOR postprocess operands selected by B.FPATR",
         "BSTOP or the next BSTART completion boundary"

@@ -232,7 +232,7 @@ end;
 - Start a CUBE Function 4 descriptor with encoded DataType preserved as AType.
 - At block completion execute TileOperation_TMATMUL_MX using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.
 - Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.
-- For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.
+- For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
 - Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 

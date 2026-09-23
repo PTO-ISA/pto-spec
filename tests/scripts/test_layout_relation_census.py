@@ -329,10 +329,9 @@ class LayoutRelationCensusTest(unittest.TestCase):
         for row in bias:
             bias_role = "source2" if row["mnemonic"] in {"TMATMUL_BIAS", "TGEMV_BIAS"} else "source4"
             self.assertEqual(set(row["L0"][bias_role]), {"RowMajor"})
-            self.assertEqual(set(row["L1"][bias_role]), {"CUBE_M16", "CUBE_M32"})
-            self.assertIn("Bias.layout == ML == D.layout", row["R1"])
-            self.assertIn("Local A present => A.layout == ML", row["R1"])
+            self.assertEqual(set(row["L1"][bias_role]), {"CUBE_N8"})
             self.assertEqual(row["R0"], ["destination0.layout == source0.layout"])
+            self.assertEqual(row["R1"], row["R0"])
             self.assertNotIn("primary", " ".join(row["L1"]).lower())
 
         relation_deltas = [row for row in result["delta"] if "relation" in row]
@@ -342,16 +341,13 @@ class LayoutRelationCensusTest(unittest.TestCase):
         indexed_relation_deltas = [
             row for row in relation_deltas if row["mnemonic"] in INDEXED_TLSU
         ]
-        self.assertEqual(len(bias_relation_deltas), 16)
+        self.assertEqual(len(bias_relation_deltas), 0)
         self.assertTrue(indexed_relation_deltas)
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in relation_deltas))
         self.assertTrue(all(row["owner_decision"] != "none" for row in relation_deltas))
         self.assertTrue(all(row["classification"] != "UNCLASSIFIED" for row in result["delta"]))
         self.assertTrue(all(row["owner_decision"] != "none" for row in result["delta"]))
-        self.assertEqual(
-            {row["relation"] for row in bias_relation_deltas},
-            {"Bias.layout == ML == D.layout", "Local A present => A.layout == ML"},
-        )
+        self.assertEqual({row["relation"] for row in bias_relation_deltas}, set())
 
         expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV", "TCVT"}
         self.assertEqual({row["mnemonic"] for row in changed}, expected)

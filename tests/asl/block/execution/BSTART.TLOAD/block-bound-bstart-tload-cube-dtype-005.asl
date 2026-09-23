@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-DTYPE-005","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"boundary","summary":"CUBE TLOAD rejects every assigned 64-bit type and HiF4X2 before allocation","pass_condition":"FP64 S64 U64 and HiF4X2 each raise Tile legality with no destination capacity","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-DTYPE-005","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"boundary","summary":"CUBE M-layout TLOAD rejects 64-bit types and HiF4X2 before allocation","pass_condition":"FP64 S64 U64 M-layout loads and HiF4X2 each raise Tile legality with no destination capacity","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
 pure func CubeDTypeStart(code: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;

@@ -49,17 +49,14 @@ end;
 readonly func TileMatrixLocalBiasSchemaLegal(
     source: TileIndex,
     n: integer {1..65535},
-    accumulator_type: TileDataType,
-    expected_layout: TileLayout) => boolean
+    accumulator_type: TileDataType) => boolean
 begin
     let tile = _Tiles[[source]];
-    return TileElementwiseSourceContentsDefined(source) &&
+    return tile.contents_defined && TileCubeDescriptorLegal(tile) &&
            tile.valid_rows == 1 &&
            tile.valid_columns == n &&
            tile.data_type == accumulator_type &&
-           tile.layout == expected_layout &&
-           (expected_layout == TileLayout_CUBE_M16 ||
-            expected_layout == TileLayout_CUBE_M32);
+           tile.layout == TileLayout_CUBE_N8;
 end;
 
 readonly func TileMatrixLocalCScaleSchemaLegal(
@@ -188,7 +185,7 @@ begin
         let bias = BundleMatrixSourceAt(
             ordinal as integer {0..8});
         if !TileMatrixLocalBiasSchemaLegal(
-               bias, n, accumulator_type, local_m_layout) then
+               bias, n, accumulator_type) then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..6};

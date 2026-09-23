@@ -315,11 +315,6 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !BundleMatrixPostProcessSourcesLegal(
-           mathematical_sources, pe_m, n, result_type) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
     if !BundleMatrixLocalMathematicalSourcesLegal(
            function, left_type, right_type, pe_m, n, k, shared_count,
            result_type, BundleMatrixPrimaryDestinationCapacityBytes()) then
@@ -340,6 +335,11 @@ begin
         BundleMatrixCooperativeMLayout(
             function, right_type, pe_m, shared_count);
     if !layout_found then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !BundleMatrixPostProcessSourcesLegal(
+           mathematical_sources, pe_m, n, result_type, primary_layout) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -473,8 +473,7 @@ begin
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(
-               left, right, bias, TileMatrixFunctionUsesMX(function),
-               primary_layout);
+               left, right, bias, TileMatrixFunctionUsesMX(function));
     if TileMatrixFunctionUsesAccumulator(function) &&
        BundleTMATMULAccumulatorPrefetchHint(cctrl) then
         TileProfileInternalAccumulatorPrefetchHint(

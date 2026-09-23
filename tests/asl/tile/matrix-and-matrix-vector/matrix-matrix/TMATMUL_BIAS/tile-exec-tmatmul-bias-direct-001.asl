@@ -27,7 +27,7 @@ begin
         TileLayout_CUBE_N8);
     assert cube_configuration_2;
     let bias_configuration = ConfigureCubeTile(3, 128, 1, 1,
-        TileDataType_FP32, layout);
+        TileDataType_FP32, TileLayout_CUBE_N8);
     assert bias_configuration;
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     let cube_configuration_3 = ConfigureCubeTile(4, 128, 1, 1, TileDataType_FP32,
@@ -40,6 +40,20 @@ begin
     TMATMUL_BIAS(4, 1, 2, 3);
     assert ReadTileElement(4, 0, 0) ==
         Zeros{PTO_XLEN} + 0x41300000;
+    ConfigureTile(5, 128, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
+    let m16_bias_configuration = ConfigureCubeTile(6, 128, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16);
+    assert m16_bias_configuration;
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
+    let m32_bias_configuration = ConfigureCubeTile(7, 128, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M32);
+    assert m32_bias_configuration;
+    WriteTileElement(7, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
+    assert !TileOperandsLegal_TMATMUL_BIAS(4, 1, 2, 5);
+    assert !TileOperandsLegal_TMATMUL_BIAS(4, 1, 2, 6);
+    assert !TileOperandsLegal_TMATMUL_BIAS(4, 1, 2, 7);
     return TRUE;
 end;
 

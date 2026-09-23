@@ -133,11 +133,11 @@ begin
     let bias_tile = _Tiles[[bias]];
     let bias_payload = bias_tile.payload;
     assert bias_tile.allocated && bias_tile.contents_defined;
+    assert TileCubeDescriptorLegal(bias_tile);
     assert bias_tile.valid_rows == 1;
     assert bias_tile.valid_columns == input.valid_columns;
-    assert bias_tile.layout == input.layout;
-    assert bias_tile.layout == TileLayout_CUBE_M16 ||
-           bias_tile.layout == TileLayout_CUBE_M32;
+    assert bias_tile.layout == TileLayout_CUBE_N8;
+    assert bias_tile.data_type == intermediate_type;
     var result = input;
     var result_payload = input.payload;
     for row = 0 to input.valid_rows - 1 looplimit 65536 do

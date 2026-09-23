@@ -185,7 +185,7 @@ end;
 
 - Multiply the scaled matrix and vector and accumulate into the supplied Tile.
 - After complete preflight, execute TGEMV_MX_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.
-- For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.
+- For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
 - C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 

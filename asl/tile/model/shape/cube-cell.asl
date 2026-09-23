@@ -1,21 +1,17 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-CELL","surface":"tile","classification":["model","shape","cube-cell"],"depends_on":["PTO-TILE-MODEL-SHAPE-VALID-REGION"]}
 // NDF-BEGIN: PTO-CUBE-CELL-STATE-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Local CUBE layouts MUST use the assigned 128-byte width-parametric CELL
-// mappings, derive storage independently of valid M/N/K, and reject unsupported
-// types or insufficient per-PE capacity before effects. Local M16 and M32
-// descriptors each contain exactly one physical M block; valid rows are a
-// nonzero tail within that block.
+// Local CUBE layouts MUST use assigned 128-byte width-parametric CELL mappings,
+// derive storage independently of valid M/N/K, and reject unsupported types or
+// insufficient capacity before effects; M16/M32 contain one physical M block.
+// CUBE_N8/U64 is the sole b64 exception and uses K2 x N8 CELL geometry.
 // NDF-END: PTO-CUBE-CELL-STATE-001
 
 // NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-CELL-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Matrix scale Tiles in CUBE_M32 MUST use a 128-byte CellReg grid with
-// column/K repeat fast and exactly one 32-row physical block. Partial final
-// group slots remain invalid storage tail. This generic grid MUST NOT expand
-// primary A/C/D legality beyond one M16/M32 row block.
+// column/K repeat fast and one 32-row physical block; partial groups are tail.
+// This generic grid MUST NOT expand primary A/C/D legality beyond M16/M32.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-CELL-001
-
 pure func TileLayoutIsCube(layout: TileLayout) => boolean
 begin
     return layout == TileLayout_CUBE_M16 ||
@@ -29,18 +25,24 @@ begin
     return element_bits != 64;
 end;
 
+pure func TileCubeLayoutDataTypeSupported(layout: TileLayout, data_type: TileDataType) => boolean
+begin
+    return TileCubeDataTypeSupported(data_type) || (layout == TileLayout_CUBE_N8 && data_type == TileDataType_U64);
+end;
+
 pure func TileCubeCellRows(layout: TileLayout,
                            data_type: TileDataType)
-    => integer {0,4,8,16,32}
+    => integer {0,2,4,8,16,32}
 begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) then
+       !TileCubeLayoutDataTypeSupported(layout, data_type) then
         return 0;
     end;
     if layout == TileLayout_CUBE_M16 then return 16;
     elsif layout == TileLayout_CUBE_M32 then return 32;
     end;
     case TileElementBits(data_type) of
+        when 64 => return 2;
         when 32 => return 4;
         when 16 => return 8;
         when 8 => return 16;
@@ -54,7 +56,7 @@ pure func TileCubeCellColumns(layout: TileLayout,
     => integer {0,1,2,4,8,16}
 begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) then
+       !TileCubeLayoutDataTypeSupported(layout, data_type) then
         return 0;
     end;
     if layout == TileLayout_CUBE_N8 then return 8; end;
@@ -156,7 +158,7 @@ pure func TileCubeNRepeatForColumns(layout: TileLayout,
     => integer {0..8192}
 begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) || columns == 0 then
+       !TileCubeLayoutDataTypeSupported(layout, data_type) || columns == 0 then
         return 0;
     end;
     if layout == TileLayout_CUBE_M32 then
@@ -252,7 +254,7 @@ begin
         return 0;
     end;
     if layout == TileLayout_CUBE_N8 then
-        return (physical_rows DIVRM (cell_rows as integer {4,8,16,32}))
+        return (physical_rows DIVRM (cell_rows as integer {2,4,8,16,32}))
             as integer {1..65535};
     end;
     return (physical_columns DIVRM (cell_columns as integer {1,2,4,8,16}))
@@ -333,7 +335,7 @@ readonly func TileCubeDescriptorShapeAndPhysicalLegal(
     layout: TileLayout) => boolean
 begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) ||
+       !TileCubeLayoutDataTypeSupported(layout, data_type) ||
        !TileCapacityIsLegal(capacity_bytes) ||
        physical_rows == 0 || physical_columns == 0 ||
        valid_rows == 0 || valid_columns == 0 ||
@@ -407,7 +409,7 @@ readonly func TileCubeGeometryLegalWithColumns(
     layout: TileLayout) => boolean
 begin
     if !TileLayoutIsCube(layout) ||
-       !TileCubeDataTypeSupported(data_type) ||
+       !TileCubeLayoutDataTypeSupported(layout, data_type) ||
        valid_rows == 0 ||
        valid_columns == 0 || columns == 0 || columns < valid_columns then
         return FALSE;

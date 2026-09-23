@@ -29,7 +29,8 @@
     "PTO-TLOAD-CUBE-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-CUBE-001",
-    "PTO-TSTORE-MEMORY-001"
+    "PTO-TSTORE-MEMORY-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -37,7 +38,9 @@
     "PTO-BLOCK-BSTART-TSTORE",
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -47,7 +50,25 @@
   "legacy_ids": [
     "ADR-0070"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/339",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-B-DATR",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ]
+    }
+  ]
 }
 ---
 # ADR-CUBE-0005: GM/Local CUBE Layout Transport
@@ -204,3 +225,11 @@ padding，store 从不写出 padding，并沿用精确内存重启规则。
 define Shared or CUBE-to-CUBE conversion or Matrix execution.
 
 **中文。** 转换不改变 dtype 或数值，也不定义 Shared、CUBE-to-CUBE 转换或矩阵执行。
+
+
+## Amendment — 2026-09-22 (Issue #339)
+
+The existing `ND2N8` TLOAD path accepts U64 and constructs a raw
+representation-preserving Local `CUBE_N8/U64` parameter Tile. `ND2M16`,
+`ND2M32`, `N82ND`, `M162ND`, and `M322ND` remain illegal for U64. No encoding
+or other transport capability changes.

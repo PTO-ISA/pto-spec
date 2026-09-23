@@ -20,8 +20,9 @@
 // ndf: kind=contract level=L1 layer=block status=accepted
 // B.DATR Layout codes 21 through 26 MUST select ND2M32, ND2M16, ND2N8,
 // M322ND, M162ND, and N82ND respectively.  The first three are GM-to-Local
-// CUBE loads and the last three are Local CUBE-to-GM stores.  These selectors
-// MUST NOT create distinct Tile instruction identities.
+// CUBE loads and the last three are Local CUBE-to-GM stores. ND2N8 TLOAD may
+// carry U64 into CUBE_N8; all other U64 CUBE loads/stores remain illegal. These
+// selectors MUST NOT create distinct Tile instruction identities.
 // NDF-END: PTO-CUBE-CELL-TRANSPORT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractMatches_B_DATR(operation: CommandOperation) => boolean
