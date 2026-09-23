@@ -10,11 +10,15 @@ begin
 end;
 
 pure func BundleCubeTransportDataTypeSupported(
-    data_type: TileDataType) => boolean
+    data_type: TileDataType, layout: TileLayout, function: integer {0..31})
+    => boolean
 begin
-    // HiF4X2 is accepted only by the Matrix-MX input-role contract.  It does
-    // not become a GM/Local CUBE transport type merely because the generic
-    // CUBE CellReg geometry can represent four-bit carriers.
+    // HiF4X2 is accepted only by the Matrix-MX input-role contract.  U64 is
+    // the single descriptor-level exception, and only ND2N8 TLOAD may create
+    // that Local CUBE_N8 representation.
+    if data_type == TileDataType_U64 then
+        return function == 0 && layout == TileLayout_CUBE_N8;
+    end;
     return TileCubeDataTypeSupported(data_type) &&
            data_type != TileDataType_HiF4X2;
 end;
@@ -154,7 +158,9 @@ begin
     let (type_valid, data_type) = ResolveBundleEffectiveDataType();
     let layout = TileDataLayoutCubeLayout(
         _BundleDataAttributes.data_layout);
-    if !type_valid || !BundleCubeTransportDataTypeSupported(data_type) then
+    let function = UInt(_BundleOperation.selector[4:0]);
+    if !type_valid || !BundleCubeTransportDataTypeSupported(
+           data_type, layout, function) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -168,7 +174,6 @@ begin
     let row_stride_bytes = if _BundleScalarBindings[[0]].valid then
         ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
         else TileDenseRowStrideBytes(valid_columns, data_type);
-    let function = UInt(_BundleOperation.selector[4:0]);
     if function == 0 then
         if !ResolveBundleCubeTransportDestination(
                valid_rows, valid_columns, data_type, layout) then

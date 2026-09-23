@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-CUBE-AUX-007","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-LOCAL-MATRIX-001"],"kind":"execution","summary":"Local CUBE TMATMUL accepts matching-M-layout Bias and rejects a mismatched layout","pass_condition":"ordinary FP32 M16 Bias adds to CUBE A and B while a CUBE_N8 Bias rejects before destination allocation","related_sources":["asl/tile/model/legality/matrix-operands.asl","asl/tile/model/execution/cube.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-CUBE-AUX-007","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-LOCAL-MATRIX-001"],"kind":"execution","summary":"Local CUBE TMATMUL accepts distinct CUBE_N8 Bias and rejects an M-layout Bias","pass_condition":"ordinary FP32 CUBE_N8 Bias adds to CUBE A and B while a CUBE_M16 Bias rejects before destination allocation","related_sources":["asl/tile/model/legality/matrix-operands.asl","asl/tile/model/execution/cube.asl"]}
 func PrepareCubeBiasPrimaries()
 begin
     let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
@@ -30,7 +30,7 @@ begin
     ResetProfileState();
     PrepareCubeBiasPrimaries();
     let bias_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
+        TileDataType_FP32, TileLayout_CUBE_N8, '1111');
     assert bias_ready;
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     StartCubeBiasBlock();
@@ -49,7 +49,7 @@ begin
     ResetProfileState();
     PrepareCubeBiasPrimaries();
     let cube_bias = ConfigureCubeTileForMask(3, 128, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_N8, '1111');
+        TileDataType_FP32, TileLayout_CUBE_M16, '1111');
     assert cube_bias;
     MarkTileValidRegionDefined(3);
     StartCubeBiasBlock();

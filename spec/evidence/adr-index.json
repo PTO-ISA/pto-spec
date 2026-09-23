@@ -9606,12 +9606,34 @@
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
-        "PTO-MATRIX-QUANT-BITEXACT-001"
+        "PTO-MATRIX-QUANT-BITEXACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
         "PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION",
-        "PTO-BLOCK-B-FPATR"
+        "PTO-BLOCK-B-FPATR",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+            "PTO-CUBE-AUX-CELLREG-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+            "PTO-BLOCK-B-FPATR"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/339"
+        }
       ],
       "approvers": [
         "PTO ISA maintainers"
@@ -9668,7 +9690,8 @@
         "PTO-TMATMUL-CONTRACT-001",
         "PTO-TMATMUL-MX-ACC-CONTRACT-001",
         "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
-        "PTO-TMATMUL-MX-CONTRACT-001"
+        "PTO-TMATMUL-MX-CONTRACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-BLOCK-BSTART-TGEMV",
@@ -9695,7 +9718,35 @@
         "PTO-TILE-TMATMUL-BIAS",
         "PTO-TILE-TMATMUL-MX",
         "PTO-TILE-TMATMUL-MX-ACC",
-        "PTO-TILE-TMATMUL-MX-BIAS"
+        "PTO-TILE-TMATMUL-MX-BIAS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-CUBE-LOCAL-MATRIX-001",
+            "PTO-CUBE-AUX-CELLREG-001",
+            "PTO-TMATMUL-BIAS-CONTRACT-001",
+            "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
+            "PTO-TGEMV-BIAS-CONTRACT-001",
+            "PTO-TGEMV-MX-BIAS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/339"
+        }
       ],
       "approvers": [
         "PTO ISA maintainers"
@@ -9727,13 +9778,15 @@
     {
       "accepted": "2026-08-20",
       "affected_ndf": [
-        "PTO-CUBE-CELL-STATE-001"
+        "PTO-CUBE-CELL-STATE-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
-        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS"
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
       ],
       "amendments": [
         {
@@ -9769,6 +9822,24 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-17",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-STATE-001",
+            "PTO-CUBE-AUX-CELLREG-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+            "PTO-TILE-MODEL-STATE-ALLOCATION",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/339"
         }
       ],
       "approvers": [
@@ -9812,7 +9883,8 @@
         "PTO-TLOAD-CUBE-001",
         "PTO-TLOAD-MEMORY-001",
         "PTO-TSTORE-CUBE-001",
-        "PTO-TSTORE-MEMORY-001"
+        "PTO-TSTORE-MEMORY-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -9820,7 +9892,28 @@
         "PTO-BLOCK-BSTART-TSTORE",
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-TLOAD",
-        "PTO-TILE-TSTORE"
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-TRANSPORT-001",
+            "PTO-CUBE-AUX-CELLREG-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-B-DATR",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/339"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -9877,7 +9970,8 @@
         "PTO-TMATMUL-CONTRACT-001",
         "PTO-TMATMUL-MX-ACC-CONTRACT-001",
         "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
-        "PTO-TMATMUL-MX-CONTRACT-001"
+        "PTO-TMATMUL-MX-CONTRACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
       ],
       "affected_units": [
         "PTO-BLOCK-BSTART-TGEMV",
@@ -9905,7 +9999,30 @@
         "PTO-TILE-TMATMUL-BIAS",
         "PTO-TILE-TMATMUL-MX",
         "PTO-TILE-TMATMUL-MX-ACC",
-        "PTO-TILE-TMATMUL-MX-BIAS"
+        "PTO-TILE-TMATMUL-MX-BIAS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-CUBE-LOCAL-MATRIX-001",
+            "PTO-CUBE-AUX-CELLREG-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+            "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+          "date": "2026-09-22",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/339"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"

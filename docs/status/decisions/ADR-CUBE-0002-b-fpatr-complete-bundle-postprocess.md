@@ -22,12 +22,15 @@
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
     "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
-    "PTO-MATRIX-QUANT-BITEXACT-001"
+    "PTO-MATRIX-QUANT-BITEXACT-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
     "PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION",
-    "PTO-BLOCK-B-FPATR"
+    "PTO-BLOCK-B-FPATR",
+    "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -37,7 +40,25 @@
   "legacy_ids": [
     "ADR-0064"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/339",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-B-FPATR"
+      ]
+    }
+  ]
 }
 ---
 # ADR-CUBE-0002: B.FPATR Complete-Bundle Matrix PostProcess
@@ -141,3 +162,12 @@ acceptance-time inventory counts.
 
 **中文。** 矩阵 Function selector 与数学操作数别名未改变；当前精确模式由所列
 ASL 持有，不能从接受时清单数量推断。
+
+
+## Amendment — 2026-09-22 (Issue #339)
+
+B.FPATR auxiliary representation is closed by logical orientation: RowMaxIn,
+RowMaxOut, and GroupMaxOut use the resolved primary M layout; Bias uses Local
+CUBE_N8; vector quant and vector PReLU parameters use Local CUBE_N8/U64.
+Operand ordering, numeric semantics, complete preflight, fault ordering, and
+atomic D/auxiliary publication are unchanged.

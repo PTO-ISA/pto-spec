@@ -21,7 +21,8 @@ This page is a generated reference view of the normative ASL unit.
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Local Matrix primary A, C, and D MUST use one compatible CUBE_M16 or
 // CUBE_M32 layout, primary B MUST use CUBE_N8, and their logical M/N/K
-// dimensions MUST remain independent of per-PE TSize.
+// dimensions MUST remain independent of per-PE TSize. Matrix primary roles
+// never authorize U64 CUBE descriptors; CUBE_N8/U64 is auxiliary-only.
 // NDF-END: PTO-CUBE-LOCAL-MATRIX-001
 
 pure func TileMatrixMLayoutLegal(

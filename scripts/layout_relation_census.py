@@ -27,6 +27,7 @@ KNOWN_LAYOUTS = {
 }
 ALLOWED_LAYOUTS = {"RowMajor", "CUBE_M16", "CUBE_M32"}
 LOCAL_CUBE_LAYOUTS = {"CUBE_M16", "CUBE_M32"}
+BIAS_LOCAL_LAYOUTS = {"CUBE_N8"}
 LAYOUT_RE = re.compile(r"\b(?:TileLayout_)?(RowMajor|CUBE_M16|CUBE_M32|CUBE_N8|ColumnMajor|ZN|NZ)\b")
 # ``implementation`` and ``impdef`` are authoritative ASL function
 # declarations too.  Omitting those bodies makes a bundle-only traversal
@@ -170,6 +171,25 @@ CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS = {
 CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION = (
     "CUBE reduction physical-geometry decoupling "
     "(ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)"
+)
+# Issue #339 closes Local Matrix CellReg auxiliary ownership and the
+# descriptor-level CUBE_N8/U64 exception without broadening generic CUBE
+# capability.  Keep the affected helper set explicit so the receipt records
+# this accepted contract delta while unrelated helper changes still fail closed.
+CUBE_AUX_CELLREG_HELPERS = {
+    "BundleCubeTransportDataTypeSupported",
+    "TileCubeCellColumns",
+    "TileCubeLayoutDataTypeSupported",
+    "TileMatrixAuxiliarySourceSchemaLegal",
+    "TileMatrixBiasShapeLegal",
+    "TileMatrixInfoBiasLegal",
+    "TileMatrixLocalBiasSchemaLegal",
+    "TileMatrixLocalRowMaxSchemaLegal",
+    "TileMatrixLocalVectorParameterSchemaLegal",
+}
+CUBE_AUX_CELLREG_CLASSIFICATION = (
+    "Local Matrix CellReg auxiliary and narrow CUBE_N8/U64 closure "
+    "(Issue #339 / ADR-CUBE-0002..0006)"
 )
 # Issue #323 makes the generic Local M16/M32 one-physical-M-block invariant
 # authoritative and removes the reduction-local duplicate row-limit helper.
@@ -1176,7 +1196,7 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
     # that text form-local: direct signatures must not see bundle metadata,
     # while bundle-only mutations must be reflected in the bundle signature.
     contract = json.dumps(meta, sort_keys=True) + "\n" + ndf_text(content) + "\n" + context_text
-    context_layout_names = set(LAYOUT_RE.findall(context_text)) & ALLOWED_LAYOUTS
+    context_layout_names = set(LAYOUT_RE.findall(context_text)) & KNOWN_LAYOUTS
     contract_layouts: dict[str, set[str]] = {role["field"]: set() for role in roles}
     contract_layout_names = set(LAYOUT_RE.findall(contract))
     if re.search(r"\bROWMAJOR\b", contract):
@@ -1191,11 +1211,17 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
     if ALL_SELECTED_LAYOUT_RE.search(contract):
         for role in roles:
             contract_layouts[role["field"]].update(contract_layout_names & ALLOWED_LAYOUTS)
+    bias_fields = {
+        role["field"] for role in roles
+        if re.search(r"bias", role["role"], re.IGNORECASE)
+    }
     for role in roles:
         field, description = role["field"], role["role"]
         if re.search(r"bias", f"{field} {description}", re.IGNORECASE):
             if BIAS_ML_RE.search(contract):
                 contract_layouts[field].update(LOCAL_CUBE_LAYOUTS)
+            elif re.search(r"bias[^.\n]{0,180}Local\s+CUBE_N8", contract, re.IGNORECASE):
+                contract_layouts[field].update(BIAS_LOCAL_LAYOUTS)
             elif re.search(r"bias[^.\n]{0,180}row[ -]?major", contract, re.IGNORECASE):
                 contract_layouts[field].add("RowMajor")
         # GMOV and other contracts state the complete Local set in one
@@ -1270,7 +1296,9 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
             if mnemonic in INDEXED_TLSU and ALLOWED_LAYOUTS <= contract_layout_names:
                 context_role_layouts[field] = set(ALLOWED_LAYOUTS)
             elif re.search(r"bias", text, re.IGNORECASE):
-                if re.search(r"resolved\s+M\s+layout|Bias\s+uses", context_text, re.IGNORECASE):
+                if re.search(r"Bias\s+uses\s+Local\s+CUBE_N8", context_text, re.IGNORECASE):
+                    context_role_layouts[field] = set(context_layout_names & BIAS_LOCAL_LAYOUTS)
+                elif re.search(r"resolved\s+M\s+layout", context_text, re.IGNORECASE):
                     context_role_layouts[field] = set(context_layout_names & LOCAL_CUBE_LAYOUTS)
                 elif re.search(r"row[ -]?major", context_text, re.IGNORECASE):
                     context_role_layouts[field] = {"RowMajor"}
@@ -1303,7 +1331,9 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         # mention implementation layouts (including ColumnMajor/ZN/NZ), but
         # they must not widen an elementwise operation's accepted set.
         if "TileElementwiseLayoutSupported" in reachable_names:
-            accepted_layouts[field] &= ALLOWED_LAYOUTS
+            accepted_layouts[field] &= (
+                BIAS_LOCAL_LAYOUTS if field in bias_fields
+                else ALLOWED_LAYOUTS)
         if field in indexed_layout_domains:
             accepted_layouts[field] &= indexed_layout_domains[field]
         if field in context_role_layouts:
@@ -1399,8 +1429,10 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
             return "GMOV ordinary-layout peer-copy retirement (ADR-MEM-0009)"
     if mnemonic in INDEXED_TLSU and old_values != new_values and new_values == ALLOWED_LAYOUTS:
         return INDEXED_TLSU_CLASSIFICATION
-    if mnemonic in BIAS and layout in ALLOWED_LAYOUTS and role == new_model.get("bias_role"):
-        if layout in new_values and layout not in old_values and layout in new_model.get("contract_layouts", {}).get(role, []):
+    if mnemonic in BIAS and role == new_model.get("bias_role"):
+        if layout == "CUBE_N8" and layout in new_values and layout not in old_values:
+            return CUBE_AUX_CELLREG_CLASSIFICATION
+        if layout in ALLOWED_LAYOUTS and layout in new_values and layout not in old_values and layout in new_model.get("contract_layouts", {}).get(role, []):
             return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
         if layout == "RowMajor" and layout in old_values and layout not in new_values:
             return "Matrix Bias resolved-M layout replacement (ADR-CUBE-0003/0006/0009)"
@@ -1455,7 +1487,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     name in PACKED_X2_ROW_LOCAL_HELPERS or
                     name in TCVT_PHYSICAL_SHAPE_HELPERS or
                     name in LOCAL_SINGLE_M_BLOCK_HELPERS or
-                    name in PROFILE_FOLD_HELPERS):
+                    name in PROFILE_FOLD_HELPERS or
+                    name in CUBE_AUX_CELLREG_HELPERS):
                 classification = (TCI_PHYSICAL_COLUMN_CLASSIFICATION
                                   if name in TCI_PHYSICAL_COLUMN_HELPERS
                                   else CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
@@ -1468,7 +1501,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                   if name in TCVT_PHYSICAL_SHAPE_HELPERS
                                   else LOCAL_SINGLE_M_BLOCK_CLASSIFICATION
                                   if name in LOCAL_SINGLE_M_BLOCK_HELPERS
-                                  else PROFILE_FOLD_CLASSIFICATION)
+                                  else PROFILE_FOLD_CLASSIFICATION
+                                  if name in PROFILE_FOLD_HELPERS
+                                  else CUBE_AUX_CELLREG_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
                 continue
@@ -1489,6 +1524,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = TCVT_PHYSICAL_SHAPE_CLASSIFICATION
             if classification is None and name in LOCAL_SINGLE_M_BLOCK_HELPERS:
                 classification = LOCAL_SINGLE_M_BLOCK_CLASSIFICATION
+            if classification is None and name in CUBE_AUX_CELLREG_HELPERS:
+                classification = CUBE_AUX_CELLREG_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             payload_index_inherited = (
@@ -1499,6 +1536,7 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 set(new["layouts"]) == set(old["layouts"]))
             if (set(new["layouts"]) - ALLOWED_LAYOUTS and
                     name not in LOCATION_RETIREMENT_LAYOUT_HELPERS and
+                    name not in CUBE_AUX_CELLREG_HELPERS and
                     not payload_index_inherited and
                     name not in LOCAL_SINGLE_M_BLOCK_HELPERS and
                     not packed_x2_layout_inherited):
@@ -1626,13 +1664,13 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
             if classification is None:
                 errors.append(f"unclassified relation delta for {mnemonic}/{form}: {relation}")
         if mnemonic in BIAS:
-            if "Bias.layout == ML == D.layout" not in new_rel and (
-                "Bias.layout == ML == D.layout" in old_rel or enforce_closure
-            ):
+            historical_m_layout_bias = (
+                bool(old_model.get("conditional_bias")) or
+                bool(new_model.get("conditional_bias")) or
+                "Bias.layout == ML == D.layout" in old_rel)
+            if historical_m_layout_bias and "Bias.layout == ML == D.layout" not in new_rel:
                 errors.append(f"required Bias layout equality missing for {mnemonic}/{form}")
-            if "Local A present => A.layout == ML" not in new_rel and (
-                "Local A present => A.layout == ML" in old_rel or enforce_closure
-            ):
+            if historical_m_layout_bias and "Local A present => A.layout == ML" not in new_rel:
                 errors.append(f"required Bias conditional-A relation missing for {mnemonic}/{form}")
         if tuple_delta or relation_delta:
             changed_records.append({"owner": new_rows[key]["owner"], "mnemonic": mnemonic, "form": form,
@@ -1666,7 +1704,10 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                     errors.append("GMOV scalar0 incorrectly treated as layout-bearing")
             if mnemonic in BIAS:
                 bias_role = model.get("bias_role")
-                if not bias_role or set(model.get("layouts", {}).get(bias_role, [])) != LOCAL_CUBE_LAYOUTS:
+                expected_bias_layouts = (
+                    BIAS_LOCAL_LAYOUTS if not model.get("conditional_bias")
+                    else LOCAL_CUBE_LAYOUTS)
+                if not bias_role or set(model.get("layouts", {}).get(bias_role, [])) != expected_bias_layouts:
                     errors.append(f"Bias layout closure missing for {mnemonic}/{form}")
             if mnemonic in INDEXED_TLSU:
                 for role, layouts in model.get("layouts", {}).items():

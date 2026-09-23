@@ -114,12 +114,9 @@ begin
                     else if group_auxiliary then
                         BundleGroupMaxColumns(n)
                     else n;
-                let rows = DerivedTileRows(
-                    capacity_bytes, auxiliary_columns, accumulator_type);
-                if !TileDescriptorShapeLegal(
-                       capacity_bytes, auxiliary_columns, m,
-                       auxiliary_columns, accumulator_type) ||
-                   rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS then
+                if !TileCubeDescriptorShapeLegal(
+                       capacity_bytes, m, auxiliary_columns,
+                       accumulator_type, primary_layout) then
                     if reused then SetFault(Fault_TileLegality, ReadTPC());
                     else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
@@ -127,16 +124,12 @@ begin
                 if reused then
                     let destination =
                         _Tiles[[_BundleTileBindings[[binding]].destination]];
-                    if !TileDescriptorLegal(
-                           _BundleTileBindings[[binding]].destination) ||
-                       destination.storage_kind != TileStorage_Numeric ||
+                    if !TileCubeDescriptorLegal(destination) ||
                        destination.capacity_bytes != capacity_bytes ||
-                       destination.rows != rows ||
-                       destination.columns != auxiliary_columns ||
                        destination.valid_rows != m ||
                        destination.valid_columns != auxiliary_columns ||
                        destination.data_type != accumulator_type ||
-                       destination.layout != TileLayout_RowMajor ||
+                       destination.layout != primary_layout ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
                            allocation_mask then
@@ -177,10 +170,11 @@ begin
                         else if group_auxiliary then
                             BundleGroupMaxColumns(n)
                         else n;
-                    ConfigureTileForMask(
-                        resolved[[binding]], capacity_bytes,
-                        m, auxiliary_columns, m, auxiliary_columns,
-                        accumulator_type, TileLayout_RowMajor, allocation_mask);
+                    let configured = ConfigureCubeTileForMask(
+                        resolved[[binding]], capacity_bytes, m,
+                        auxiliary_columns, accumulator_type, primary_layout,
+                        allocation_mask);
+                    assert configured;
                 end;
                 _BundleTileBindings[[binding]].destination =
                     resolved[[binding]];

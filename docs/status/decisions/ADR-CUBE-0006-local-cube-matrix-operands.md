@@ -44,7 +44,8 @@
     "PTO-TMATMUL-CONTRACT-001",
     "PTO-TMATMUL-MX-ACC-CONTRACT-001",
     "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
-    "PTO-TMATMUL-MX-CONTRACT-001"
+    "PTO-TMATMUL-MX-CONTRACT-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-BLOCK-BSTART-TGEMV",
@@ -72,7 +73,10 @@
     "PTO-TILE-TMATMUL-BIAS",
     "PTO-TILE-TMATMUL-MX",
     "PTO-TILE-TMATMUL-MX-ACC",
-    "PTO-TILE-TMATMUL-MX-BIAS"
+    "PTO-TILE-TMATMUL-MX-BIAS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+    "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -82,7 +86,26 @@
   "legacy_ids": [
     "ADR-0071"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/339",
+      "affected_ndf": [
+        "PTO-CUBE-LOCAL-MATRIX-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ]
+    }
+  ]
 }
 ---
 # ADR-CUBE-0006: Local CUBE Matrix Operand Contract
@@ -240,3 +263,15 @@ TGEMV 沿用相同角色并固定 M=1。
 post-process publication are owned by other decisions.
 
 **中文。** Shared rendezvous、转置、mask、C/D 标识及后处理原子发布由其他决策负责。
+
+
+## Amendment — 2026-09-22 (Issue #339)
+
+At baseline `01445483d778b1bcfccba1641f71c20f00e39385`, the Local Matrix
+auxiliary contract is orientation-specific. RowMaxIn/Out and GroupMaxOut use
+the resolved primary `CUBE_M16`/`CUBE_M32` layout and existing CELL geometry.
+Bias uses Local `CUBE_N8` with logical shape `[1,N]` and accumulator dtype;
+its payload is broadcast by logical output column. Vector quant and
+vector ReLU/PReLU parameters use `CUBE_N8/U64` with logical `[1,N]`; their
+carrier bits and numeric legality are unchanged. This amendment has required
+release impact and is owned by the ASL/NDF clauses named in the front matter.

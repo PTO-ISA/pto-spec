@@ -28,11 +28,14 @@ begin
     assert fp_right;
     let fp_acc = ConfigureCubeTile(47, 256, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M16);
-    assert fp_acc;
+    let fp_bias = ConfigureCubeTile(48, 256, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_N8);
+    assert fp_acc && fp_bias;
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(47, 0, 0, Zeros{PTO_XLEN} + 1);
-    TMATMUL_BIAS(47, 45, 46, 47);
+    WriteTileElement(48, 0, 0, Zeros{PTO_XLEN} + 1);
+    TMATMUL_BIAS(47, 45, 46, 48);
     assert ReadTileElement(47, 0, 0) == Zeros{PTO_XLEN} + 7;
 
     SelectTestCUBEDataType('10011');

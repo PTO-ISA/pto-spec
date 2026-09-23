@@ -125,6 +125,18 @@
       }
     },
     {
+      "id": "PTO-CUBE-AUX-CELLREG-001",
+      "source_path": "asl/tile/model/legality/matrix-postprocess.asl",
+      "title": {
+        "en": "Local Matrix auxiliary CellReg orientation",
+        "zh-CN": "Local 矩阵辅助数据的 CellReg 方向"
+      },
+      "summary": {
+        "en": "Local Matrix RowMaxIn, RowMaxOut, and GroupMaxOut inherit the resolved primary M16 or M32 layout, while Bias and vector quantization or PReLU parameters use CUBE_N8 with logical 1xN shape. U64 is reserved to vector parameter sources and ND2N8 TLOAD; other U64 CUBE producers and consumers remain illegal.",
+        "zh-CN": "Local 矩阵的 RowMaxIn、RowMaxOut 和 GroupMaxOut 继承已解析的主 CUBE_M16 或 CUBE_M32 布局；Bias 以及向量量化或 PReLU 参数使用逻辑 1xN 的 CUBE_N8。U64 仅限向量参数源和 ND2N8 TLOAD，其他 U64 CUBE 生产者与消费者仍不合法。"
+      }
+    },
+    {
       "id": "PTO-CUBE-MATRIX-SCALE-001",
       "source_path": "asl/tile/model/legality/matrix-functions.asl",
       "title": {
@@ -696,8 +708,8 @@
         "zh-CN": "TGEMV_BIAS 矩阵向量偏置"
       },
       "summary": {
-        "en": "TGEMV_BIAS uses CUBE Function 17 to compute a Local matrix-vector result with one Local bias source in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, with M fixed to one. Shared and transpose forms are excluded, one B.FPATR supplies postprocess operands and defaults, and successful output becomes visible only after complete preflight and source snapshots.",
-        "zh-CN": "TGEMV_BIAS 使用 CUBE Function 17 计算带一个 Local 行优先 1×N 偏置源的矩阵向量结果，其中 M 固定为一。Shared 与转置形式不在范围内；一个 B.FPATR 提供后处理操作数和默认值，完整预检与源快照完成后，成功输出才可见。"
+        "en": "TGEMV_BIAS uses CUBE Function 17 to compute a Local matrix-vector result with one Local CUBE_N8 bias source of logical shape 1xN in the accumulator type, broadcast by logical output column, with M fixed to one. Shared and transpose forms are excluded, one B.FPATR supplies postprocess operands and defaults, and successful output becomes visible only after complete preflight and source snapshots.",
+        "zh-CN": "TGEMV_BIAS 使用 CUBE Function 17 计算 Local 矩阵向量结果；一个 Local CUBE_N8 偏置源使用逻辑 1xN 和 accumulator 类型，并按逻辑输出列广播，M 固定为一。Shared 与转置形式不在范围内；一个 B.FPATR 提供后处理操作数和默认值，完整预检与源快照完成后，成功输出才可见。"
       }
     },
     {
@@ -732,8 +744,8 @@
         "zh-CN": "TGEMV_MX_BIAS 缩放矩阵向量偏置"
       },
       "summary": {
-        "en": "TGEMV_MX_BIAS uses CUBE Function 21 for Local Matrix-MX vector multiplication with a Local bias in the resolved M layout (CUBE_M16 or CUBE_M32), matching D and Local A when present, with M fixed to one. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and the result publishes atomically after complete preflight and source snapshots.",
-        "zh-CN": "TGEMV_MX_BIAS 使用 CUBE Function 21 执行带 Local 行优先 1×N 偏置的 Matrix-MX 矩阵向量乘法，其中 M 固定为一。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，结果在完整预检和源快照后原子发布。"
+        "en": "TGEMV_MX_BIAS uses CUBE Function 21 for Local Matrix-MX vector multiplication with one Local CUBE_N8 bias source of logical shape 1xN in the FP32 accumulator type, broadcast by logical output column, with M fixed to one. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and the result publishes atomically after complete preflight and source snapshots.",
+        "zh-CN": "TGEMV_MX_BIAS 使用 CUBE Function 21 执行 Local Matrix-MX 矩阵向量乘法；一个 Local CUBE_N8 偏置源使用逻辑 1xN 的 FP32 accumulator 类型，并按逻辑输出列广播，M 固定为一。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，结果在完整预检和源快照后原子发布。"
       }
     },
     {
