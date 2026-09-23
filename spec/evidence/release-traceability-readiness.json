@@ -1181,6 +1181,7 @@
         "PTO-AVS-BLOCK-TMATMUL-ACC-REDUCE-025",
         "PTO-AVS-BLOCK-TMATMUL-EFFECTIVE-D-M32-001",
         "PTO-AVS-BLOCK-TMATMUL-FINAL-D-REDUCTION-001",
+        "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
         "PTO-AVS-BLOCK-TMATMUL-INTEGER-FINAL-D-REDUCTION-001",
         "PTO-AVS-BLOCK-TMATMUL-SLRELU-BITS-001",
         "PTO-AVS-BLOCK-TMATMUL-SQUANT-BITS-001",
@@ -3390,6 +3391,7 @@
         "PTO-AVS-BLOCK-CUBE-TRANSPORT-U64-FENCE-001",
         "PTO-AVS-BLOCK-TMATMUL-EFFECTIVE-D-M32-001",
         "PTO-AVS-BLOCK-TMATMUL-FINAL-D-REDUCTION-001",
+        "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
         "PTO-AVS-TILE-CUBE-N8-U64-001",
         "PTO-AVS-TILE-MATRIX-BIAS-DESC-001",
         "PTO-AVS-TILE-MATRIX-ROWMAX-DESC-001",
@@ -14801,10 +14803,12 @@
         "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
         "PTO-AVS-BLOCK-TMATMUL-ACC-REDUCE-025",
         "PTO-AVS-BLOCK-TMATMUL-FINAL-D-REDUCTION-001",
+        "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
         "PTO-AVS-BLOCK-TMATMUL-INTEGER-FINAL-D-REDUCTION-001",
         "PTO-AVS-TILE-MATRIX-PARAMS-002",
         "PTO-AVS-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS-STATIC-001",
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-FINAL-D-NAN-001",
         "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
         "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
         "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003"
@@ -20738,7 +20742,7 @@
     "tests/asl/block/model/dispatch/cube-accumulator-routing/block-bound-cube-accumulator-cctrl-002.asl": "036ec0d10725fe43acc77734fba18e9ad9dbc50571b9dddac2c9230071b989f7",
     "tests/asl/block/model/dispatch/cube-accumulator-routing/block-fault-cube-raw-partial-postprocess-003.asl": "1f0398f9eb93caba6eb4d828086bfec1bf2b96c26bdfe6dc937a0bc9641e7bda",
     "tests/asl/block/model/dispatch/cube-accumulator-routing/block-static-cube-accumulator-routing-contract-001.asl": "e8b210ec05877165064b66762aed72ba5fc3e8196cab69993c20dcdd0cb3efd9",
-    "tests/asl/block/model/dispatch/cube-destination/block-bound-tmatmul-effective-d-m32-001.asl": "ce15dd6e1dd77649df179eea116114a0bff84e0c405efc871c3111d26cef1a3b",
+    "tests/asl/block/model/dispatch/cube-destination/block-exec-tmatmul-effective-d-m32-001.asl": "587b91d80cd25b018408967a3d5f4f0199ba406cbe31f062ac4218f339571d8d",
     "tests/asl/block/model/dispatch/cube-destination/block-fault-tmatmul-reused-destination-shape-011.asl": "21f7e3443ba7c408a90039452ec9f2b3d6defc1b9be56269d8681b3d17adab02",
     "tests/asl/block/model/dispatch/cube-destination/block-static-cube-destination-contract-001.asl": "22441e66fded03666f57d37aade6d83299d52d97269427606a36ebd28deffcce",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-atomic-tmatmul-shared-subview-preflight-032.asl": "7bb7309664eaacbc07876d72ebdea42afa58df4920277bd3cea1b3701b086ea8",
@@ -20754,6 +20758,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-cube-aux-007.asl": "90f44b03c5cb60bd991af238c7a7e6dca4b7f9a46d204f41b1756568c8e8b71d",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-cube-mask-010.asl": "1629301be08c4f2b9022587c8d0e0d4695504dd3fbdee617a753aaa189ad1a48",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-final-d-reduction-001.asl": "59d2069ea32ee7fab6a8da75cdd2b33fa63ac6553e99e359290239fd8ea3c15b",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-final-d-rowmax-alias-001.asl": "b51972ea2dd37a68406ff9fc04be3c6e09dfd0406681183e438cd5eb85cd0327",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-inactive-local-027.asl": "3a91292b4102042b13f32b5589b00462d7d20c559e9b5750689ee14062fe4a5c",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-noscale-001.asl": "d1be97dd7fea3cd1ce730760faf35676e1e59cd14a837a1c7dac80bd921a335e",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-rowmax-001.asl": "e1445f7ec9276c958ced7faf7694a2f97c53675ff75ef9cf79c5ec9f7fd5e73a",
@@ -23965,6 +23970,7 @@
     "tests/asl/tile/model/execution/minmax/tile-static-minmax-contract-001.asl": "af1837edf97f1aa102ee5dca492209d2f5f6d5f911dbc465542495af691f097b",
     "tests/asl/tile/model/execution/postprocess/tile-atomic-postprocess-rollback-003.asl": "b723c353dce802767f65df801a630627305cbf2043c5a8cbd1807169ccb83fd7",
     "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl": "8a4dbe166019b9f652bfdb126a688a508bdd20fe7d979aa4fff0eda1c75b2da9",
+    "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-final-d-nan-001.asl": "e77e7fa18aa3b28a4df4b1d41f78caa5bdd9d7adc0c58fef0b2490e56b4f34f1",
     "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-group-large-004.asl": "6998a4b6ce40587731846550ce854b0cb9d0d8dee09f3982bb3274d5f012fb3e",
     "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-maxabs-single-002.asl": "99cb67e9494283e11e8eb4313e143cb62a28ec386e077e5e17067cb88498bff0",
     "tests/asl/tile/model/execution/postprocess/tile-static-postprocess-contract-001.asl": "ec371dee401c5c5390f3453c33e7b1482fc758cdc2be40ee7b126cdbacf7e82f",
@@ -24221,7 +24227,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1093,
     "status": "closed",
-    "test_count": 3974,
+    "test_count": 3976,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -42246,13 +42252,13 @@
     },
     {
       "id": "PTO-AVS-BLOCK-TMATMUL-EFFECTIVE-D-M32-001",
-      "kind": "boundary",
-      "path": "tests/asl/block/model/dispatch/cube-destination/block-bound-tmatmul-effective-d-m32-001.asl",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-destination/block-exec-tmatmul-effective-d-m32-001.asl",
       "requirements": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-CUBE-AUX-CELLREG-001"
       ],
-      "sha256": "ce15dd6e1dd77649df179eea116114a0bff84e0c405efc871c3111d26cef1a3b",
+      "sha256": "587b91d80cd25b018408967a3d5f4f0199ba406cbe31f062ac4218f339571d8d",
       "source": "asl/block/model/dispatch/cube-destination.asl"
     },
     {
@@ -42276,6 +42282,18 @@
         "PTO-CUBE-AUX-CELLREG-001"
       ],
       "sha256": "59d2069ea32ee7fab6a8da75cdd2b33fa63ac6553e99e359290239fd8ea3c15b",
+      "source": "asl/block/model/dispatch/cube-tmatmul.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-final-d-rowmax-alias-001.asl",
+      "requirements": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "sha256": "b51972ea2dd37a68406ff9fc04be3c6e09dfd0406681183e438cd5eb85cd0327",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -58649,6 +58667,16 @@
       "source": "asl/tile/model/execution/postprocess.asl"
     },
     {
+      "id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-FINAL-D-NAN-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-final-d-nan-001.asl",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "e77e7fa18aa3b28a4df4b1d41f78caa5bdd9d7adc0c58fef0b2490e56b4f34f1",
+      "source": "asl/tile/model/execution/postprocess.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/execution/postprocess/tile-static-postprocess-contract-001.asl",
@@ -68768,6 +68796,7 @@
         "PTO-AVS-BLOCK-TMATMUL-CUBE-MASK-010",
         "PTO-AVS-BLOCK-TMATMUL-CUBE-POSTPROCESS-006",
         "PTO-AVS-BLOCK-TMATMUL-FINAL-D-REDUCTION-001",
+        "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-LOCAL-027",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-SHARED-029",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-STRUCTURAL-028",
@@ -68823,6 +68852,7 @@
         "PTO-AVS-BLOCK-TMATMUL-CUBE-MASK-010",
         "PTO-AVS-BLOCK-TMATMUL-CUBE-POSTPROCESS-006",
         "PTO-AVS-BLOCK-TMATMUL-FINAL-D-REDUCTION-001",
+        "PTO-AVS-BLOCK-TMATMUL-FINAL-D-ROWMAX-ALIAS-001",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-LOCAL-027",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-SHARED-029",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-STRUCTURAL-028",
@@ -90168,6 +90198,7 @@
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-FINAL-D-NAN-001",
         "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
         "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
         "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003"
@@ -90176,6 +90207,7 @@
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-FINAL-D-NAN-001",
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-STATIC-001",
         "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
         "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
