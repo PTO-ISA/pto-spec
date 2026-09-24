@@ -174,11 +174,9 @@ begin
         TileOperationUsesClosedRowReductionSchema(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1})
         else FALSE;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
-    let matrix_output_type = if matrix &&
-        UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
-        accumulator_type
-    else if matrix then
-        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode)
+    let matrix_output_type = if matrix then
+        BundleFPATREffectiveDataType(
+            _BundleFixedPointAttributes.pre_quant_mode, accumulator_type)
     else selected_type;
     let primary_output_type = if explicit_primary_type then
         primary_type
@@ -217,7 +215,7 @@ begin
                 if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
             else CurrentBundleTileLayout();
             let destination_type = if destination_ordinal == 0 then
-                primary_output_type else if matrix then accumulator_type
+                primary_output_type else if matrix then matrix_output_type
                 else TileDataType_U32;
             let auxiliary_row = matrix &&
                 _BundleFixedPointAttributes.row_max_en &&
@@ -315,7 +313,7 @@ begin
                     BundleDestinationPhysicalColumns(
                         shape_source_valid, shape_source);
                 let destination_type = if destination_ordinal == 0 then
-                    primary_output_type else if matrix then accumulator_type
+                    primary_output_type else if matrix then matrix_output_type
                     else TileDataType_U32;
                 let auxiliary_row = matrix &&
                     _BundleFixedPointAttributes.row_max_en &&

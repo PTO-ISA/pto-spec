@@ -816,9 +816,8 @@ def validate_numeric_profile() -> dict:
     if [row.get("code") for row in modes] != expected_mode_codes:
         raise SystemExit("B.FPATR postprocess mode table drift")
     if postprocess.get("order") != [
-        "raw-accumulator-row-and-group-reductions",
-        "prequant-destination-conversion",
-        "destination-domain-activation",
+        "per-element-b-fpatr-postprocess-through-final-d-encoding",
+        "final-d-domain-row-and-group-reductions",
         "atomic-output-and-status-publication",
     ]:
         raise SystemExit("B.FPATR postprocess ordering drift")

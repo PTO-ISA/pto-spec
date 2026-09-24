@@ -290,7 +290,7 @@
     },
     {
       "path": "asl/block/attributes/B.FPATR.asl",
-      "sha256": "d9e9bb1110df26c791c0a6a1ee3a0e39170651e6ca3a715867503d3cde7ab0b3"
+      "sha256": "ef5e3163cf0edf14c5b1af013507fab4c12815374ca930a21cbe28bb7797348e"
     },
     {
       "path": "asl/block/attributes/C.B.DIMI.asl",
@@ -598,7 +598,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-destination.asl",
-      "sha256": "89b471aebfc3a8076824623f9e98108bb4b0b44538a014fc3d751c2f1b23d213"
+      "sha256": "c7666bac26ad518a4f81f3670ec6c71c1ad15973bf1f9014d7079e82adf954fa"
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
@@ -618,7 +618,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "ca759010d83de9bea47bf5bd3bdba496e079db4a1c516f07efdd06e4781d40ad"
+      "sha256": "65227bb0c36ae4699b0d98e4a59b47240f06005d6df060d9b05274f7f52ae6fe"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -3198,7 +3198,7 @@
     },
     {
       "path": "asl/tile/model/execution/matrix-postprocess.asl",
-      "sha256": "6b21bdfd6014dbbed16f2703f8cfee64597439c5e698a925171c4edb6f19fba2"
+      "sha256": "5b15b66c3b6fc38c9a0e76dfd49138164aadb96bc0b60a805168da69934ba966"
     },
     {
       "path": "asl/tile/model/execution/matrix-quantization.asl",
@@ -3214,7 +3214,7 @@
     },
     {
       "path": "asl/tile/model/execution/postprocess.asl",
-      "sha256": "3c02b9c3c308b8574137c90e4eb53fd39a87f9293945cb1ca009cef9d1669157"
+      "sha256": "f91f51818de72ecad6718bf16935a798219bcdfb5ca136c37ad5816594b08c09"
     },
     {
       "path": "asl/tile/model/execution/predicate-carriers.asl",
@@ -3274,7 +3274,7 @@
     },
     {
       "path": "asl/tile/model/legality/matrix-postprocess.asl",
-      "sha256": "e037cb0586dba3c46fafef37589723ba84cc3f599207bd33a502dd098e29bdfe"
+      "sha256": "99d00d0d5d6e5abe933a8dccaff726c002c22ace979fc8a5285b6673e1106fa1"
     },
     {
       "path": "asl/tile/model/legality/matrix-shape.asl",
@@ -3606,27 +3606,27 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "f2ca685b8223d625c4ff276a308b4587eaf548adb0990e985634cbbf5d39821a"
+      "sha256": "935cf097486b9913ed53d2385ffbfcc92b5d8879c1ff59377510de93dcf4ac36"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "52d32ccf5a5318c620240c2a724d44b55da7f621d0bc0eee4a4aa0df2416739d"
+      "sha256": "9e5cc7c57fd6c641a0f9806ac036e3b87aa548169713856861ef47cbc76acad8"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "966e8eeae40460208067000facfde253779173ae75b344394dfd2c398fd432da"
+      "sha256": "7231c234be0786ee1453e1b21c2152cf29c7c7b706c9953d2529eedfc2d90dbf"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "8c2cca40d21a40b230b202b6bdd7d0f4fd0f6a80d91d3b055249b1f190745897"
+      "sha256": "189d14322dab1020fd992a414b0ea12112a8e984298fd01db1235ace6d96fdf7"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f554a80b11446e73ea105a0213a70c7be9c2c88ce3024180d304ff2b9be6a685"
+      "sha256": "47956f9e2c826dcca448c5d722270bf9489cf9dabb7eee5cafb3c214d5a79679"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
+      "sha256": "b972bcc29bc81c76d37bc5dc48b9ccb08ad2c0a144a15c99d46697c090f51ce7"
     },
     {
       "path": "spec/model-closure-selection.json",
@@ -3684,7 +3684,7 @@
     },
     "tile_operations_total": 117
   },
-  "content_sha256": "919fa1a5e0c3fb12175fabbfb4210e34ce7ea75b8b29307b6b425e07d886410f",
+  "content_sha256": "e3c309feb5f640c577a8007cf36b4f5737e821e2fa7e1060ed2e10de4b98fbf2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3709,7 +3709,7 @@
     "path": "spec/hardware-conformance-profile.json",
     "profile_id": "pto-hardware-numeric-0.58.6-ieee-v1",
     "repository_implementation_conformance": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
-    "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
+    "sha256": "b972bcc29bc81c76d37bc5dc48b9ccb08ad2c0a144a15c99d46697c090f51ce7"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -4071,7 +4071,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/attributes/B.FPATR.md",
-      "sha256": "96ed3fe83cf6bb7ea284da66e16e0095054d9fc3b6a772d462cf1a6d7dcb54d8"
+      "sha256": "22f582c538bf36302d532464d59e78801de0252d7feabceb4b6cee4620c5a1e6"
     },
     {
       "kind": "generated-documentation",
@@ -4456,7 +4456,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/cube-destination.md",
-      "sha256": "75711caf91a57b9faa792020246d96cfc99926b6388107af93e53fc6a6cc9ee4"
+      "sha256": "83f221ad0cf2cfcc34b4e49a3e863194c24e3af03746f37372ab1ba64b51fc71"
     },
     {
       "kind": "generated-documentation",
@@ -4481,7 +4481,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-shape.md",
-      "sha256": "b0f45dce843cb3fc7d0e5fd70e60e775d9586497f70e89719f112cd6a964ebf5"
+      "sha256": "8936dd132d50d7c7321ee4097d048ba4265e1e3061dea3c26048ea35e14ca1dc"
     },
     {
       "kind": "generated-documentation",
@@ -7706,7 +7706,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/matrix-postprocess.md",
-      "sha256": "c2ec5f81c26a8ffaa72753913d13dba92e198a3732aea88335aff5c6bddb7832"
+      "sha256": "6db86f424f8537ff148f066b33ba1d6c6e9d3554c1650644e16b461378fa7b84"
     },
     {
       "kind": "generated-documentation",
@@ -7726,7 +7726,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/postprocess.md",
-      "sha256": "57b23ca7c5a18ec913718c2bf4d4f14e47597222c2fc2dd75707956d5aa8bb3f"
+      "sha256": "45b4c52ab1bcc3a4e26bbb276ccd29e7cd0e6a379a67f776211980b7b9a97042"
     },
     {
       "kind": "generated-documentation",
@@ -7801,7 +7801,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/matrix-postprocess.md",
-      "sha256": "6904906b29adbd1201224234d0ef391a0d262b8f25fe675ae8d46fae0ba55855"
+      "sha256": "2a442a077f83812a8f73d39e166e9bba7ff001172669e24bc886eae52f0b3ece"
     },
     {
       "kind": "generated-documentation",
@@ -8191,7 +8191,7 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0586-hardware-numeric-vectors.json",
-      "sha256": "955881745fba90d7b98f804f115167c127975c2cc6c10d7b4bc4fbaf32400b3e"
+      "sha256": "c0133d9a3e83bef3018856aead81aaf74a95c98c106a3c1325f8c9ec64c38cb6"
     }
   ],
   "publication_version": "0.58.6.0",
@@ -8425,7 +8425,7 @@
       },
       {
         "id": "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
-        "sha256": "457d15bfa5af547831d71f961f156b9dc67aaa11e23cd10a91a0ecab5d64d228"
+        "sha256": "b4ef6fb7a979c1f796a43100350fc8af4038e2acec0bbfd9790d3a2986cafa2f"
       },
       {
         "id": "PTO-B-HINT-LIFECYCLE-001",
@@ -8773,7 +8773,7 @@
       },
       {
         "id": "PTO-CUBE-AUX-CELLREG-001",
-        "sha256": "ed27c7e42a5a4939bbb4e5d2de8d99006ec086515d63f80cf8b20f2daaf3f8a9"
+        "sha256": "8e797d4e869d3dceb22aef54f3f466d51943b6fcaff8fc633d00e3fa3ac09585"
       },
       {
         "id": "PTO-CUBE-CELL-STATE-001",
@@ -9109,7 +9109,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-FPATR",
-        "sha256": "9d46361861093c09468194bf5b279dc1714d6509c7ea49d9be969c34bae75ab3"
+        "sha256": "deffa6d2badfd2e308558bbdc0857127357d53b926d21d05f23dd76d78fa0622"
       },
       {
         "id": "PTO-INST-BLOCK-B-HINT",
@@ -11761,7 +11761,7 @@
       },
       {
         "id": "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
-        "sha256": "8955e22b59b170cd8cbf516ddb68b20c0c88da190863dad792a1c6b0cb6e1ae4"
+        "sha256": "619fa792943f8003232c9327e45574a500467473417eab5aae2016faca2f610a"
       },
       {
         "id": "PTO-MATRIX-QUANT-BITEXACT-001",

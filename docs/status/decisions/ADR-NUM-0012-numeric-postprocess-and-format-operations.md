@@ -25,7 +25,9 @@
     "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-NUMERIC-RCPE6M2-FORMAT-001",
     "PTO-TCVT-CONTRACT-001",
-    "PTO-TCVT-E8M0-001"
+    "PTO-TCVT-E8M0-001",
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-CUBE-AUX-CELLREG-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FP19",
@@ -38,7 +40,13 @@
     "PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION",
     "PTO-BLOCK-B-FPATR",
     "PTO-TILE-MODEL-NUMERIC-FORMATS",
-    "PTO-TILE-TCVT"
+    "PTO-TILE-TCVT",
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
   ],
   "resolves": [],
   "supersedes": [
@@ -100,6 +108,28 @@
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/345",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+        "PTO-CUBE-AUX-CELLREG-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-FPATR",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
+      ]
     }
   ]
 }
@@ -117,6 +147,27 @@ is added, and the existing E8M0 destination contract is unchanged.
 
 This is an additive but architecture-visible compatibility change with
 required release impact.
+
+## 2026-09-23 accepted amendment: Final-D-domain reductions
+
+Issue #345 supersedes Decision 175's raw-accumulator reduction rule and
+Decision 181's accumulator-typed auxiliary-carrier rule. `EffectiveDType` is
+the accumulator type when `PreQuantMode=0` and the assigned
+`BundleFPATROutputType` otherwise. Enabled RowMax and GroupMax reductions
+consume each final encoded D value after the existing B.FPATR post-processing
+pipeline. RowMax and GroupMax reduce the final D values in the fixed
+increasing-column traversal; `MaxAbsEn` applies to those candidates in the
+effective D type.
+
+`RowMaxIn`, `RowMaxOut`, and `GroupMaxOut` use `EffectiveDType`. RowMaxIn
+remains a read-old/write-new source. The auxiliary logical shapes remain
+`[M,1]` and `[M, ceil(N/GroupN)]`, and their resolved primary CUBE_M16/CUBE_M32
+layout is retained, with physical CellReg geometry and capacity derived from
+that dtype. Reduction is legal only for FP32, FP16, or BF16 effective D types,
+which rejects S32/U32 no-quant reductions and integer or FP8 effective output
+types. Existing preflight and atomic publication behavior remains unchanged.
+The current normative requirements are specified by the affected ASL/NDF
+clauses listed in this ADR's Issue #345 amendment metadata.
 
 ## Context
 

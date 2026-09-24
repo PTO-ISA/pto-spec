@@ -189,11 +189,8 @@ begin
     var result = input;
     var payload = input.payload;
     var flags = Zeros{5};
-    let output_type = if UInt(
-        _BundleFixedPointAttributes.pre_quant_mode) == 0 then
-        intermediate_type
-    else
-        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode);
+    let output_type = BundleFPATREffectiveDataType(
+        _BundleFixedPointAttributes.pre_quant_mode, intermediate_type);
     let operation = BundleMatrixOperationIndex();
     let operands = BundleTileInstructionOperands(operation);
     let numeric_control = ResolveTileNumericExecutionControl(operation, operands);
@@ -257,12 +254,13 @@ begin
         else BundleMatrixDestinationAt(1);
     let (row_result, row_flags) = if _BundleFixedPointAttributes.row_max_en then
         MatrixRowMaxResult(
-            result, rowmax_destination, rowmax_input,
+            processed, rowmax_destination, rowmax_input,
             _BundleFixedPointAttributes.row_max_init,
-            intermediate_type)
+            processed.data_type)
         else (_Tiles[[0]], Zeros{5});
     let (group_result, group_flags) = if _BundleFixedPointAttributes.group_max_en then
-        MatrixGroupMaxResult(result, group_destination, intermediate_type)
+        MatrixGroupMaxResult(
+            processed, group_destination, processed.data_type)
         else (_Tiles[[0]], Zeros{5});
     // Prepare every output from pre-commit state, then publish as one group.
     _Tiles[[destination]] = processed;

@@ -2472,7 +2472,8 @@
           "Func=2, ElementWiseEn=0, Reserved[10]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.",
           "Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.",
           "The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.",
-          "When matrix CCTRL[0]=1, PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn must all be zero; legal CScale remains an accumulator-input transform and D publishes the raw accumulator type."
+          "When matrix CCTRL[0]=1, PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn must all be zero; legal CScale remains an accumulator-input transform and D publishes the raw accumulator type.",
+          "EffectiveDType is the accumulator type when PreQuantMode is zero and the assigned output type otherwise. If RowMaxEn or GroupMaxEn is enabled, EffectiveDType must be FP32, FP16, or BF16; RowMaxIn, RowMaxOut, and GroupMaxOut must all use that type."
         ],
         "memory_effects": [
           "none"
@@ -2552,7 +2553,7 @@
         "state_effects": [
           "Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA, TransB, and CScaleEn.",
           "Trap save and recovery preserve the complete latched descriptor with the pending block.",
-          "Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook.",
+          "Successful execution selects any activation-dependent multiplier before destination conversion, encodes each final D value, reduces those final D values in EffectiveDType, and atomically commits all enabled outputs through the numeric-profile hook.",
           "CCTRL[0]=1 bypasses final-output post-processing and auxiliary publication while preserving legal CScale before raw accumulator-type D publication."
         ]
       },

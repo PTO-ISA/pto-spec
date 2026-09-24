@@ -397,6 +397,24 @@ begin
     end;
 end;
 
+// PreQuantMode zero preserves the actual accumulator type, including S32 and
+// U32. The mode table's code-zero FP32 entry is not an effective-type default.
+pure func BundleFPATREffectiveDataType(
+    pre_quant_mode: bits(6), accumulator_type: TileDataType)
+    => TileDataType
+begin
+    if UInt(pre_quant_mode) == 0 then return accumulator_type; end;
+    return BundleFPATROutputType(pre_quant_mode);
+end;
+
+pure func BundleFPATRReductionDataTypeLegal(
+    effective_type: TileDataType) => boolean
+begin
+    return effective_type == TileDataType_FP32 ||
+           effective_type == TileDataType_FP16 ||
+           effective_type == TileDataType_BF16;
+end;
+
 pure func BundleFPATRFieldsLegal(pre_quant: bits(6), relu: bits(3),
                                  group_n: bits(4), row_max: boolean,
                                  group_max: boolean, row_init: boolean,
@@ -449,12 +467,13 @@ end;
 - Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.
 - The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.
 - When matrix CCTRL[0]=1, PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn must all be zero; legal CScale remains an accumulator-input transform and D publishes the raw accumulator type.
+- EffectiveDType is the accumulator type when PreQuantMode is zero and the assigned output type otherwise. If RowMaxEn or GroupMaxEn is enabled, EffectiveDType must be FP32, FP16, or BF16; RowMaxIn, RowMaxOut, and GroupMaxOut must all use that type.
 
 ## State effects
 
 - Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA, TransB, and CScaleEn.
 - Trap save and recovery preserve the complete latched descriptor with the pending block.
-- Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook.
+- Successful execution selects any activation-dependent multiplier before destination conversion, encodes each final D value, reduces those final D values in EffectiveDType, and atomically commits all enabled outputs through the numeric-profile hook.
 - CCTRL[0]=1 bypasses final-output post-processing and auxiliary publication while preserving legal CScale before raw accumulator-type D publication.
 
 ## Memory effects and ordering

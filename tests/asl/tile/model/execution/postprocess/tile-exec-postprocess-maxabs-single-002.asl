@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-POST-MAXABS-SINGLE-002","source":"asl/tile/model/execution/postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"single-element RowMax and GroupMax apply MaxAbs before publication","pass_condition":"a negative one-element S32 accumulator publishes its positive magnitude to both auxiliary outputs","related_sources":["asl/tile/model/execution/matrix-postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-POST-MAXABS-SINGLE-002","source":"asl/tile/model/execution/postprocess.asl","requirements":["PTO-MATRIX-POSTPROCESS-BITEXACT-001"],"kind":"execution","summary":"single-element FP32 RowMax and GroupMax apply MaxAbs in the effective D type","pass_condition":"a negative one-element FP32 accumulator publishes its positive FP32 magnitude to both auxiliary outputs","related_sources":["asl/tile/model/execution/matrix-postprocess.asl"]}
 pure func MatrixSingleMaxStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00031181;
@@ -9,16 +9,16 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_S32,
+    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor);
-    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_S32,
+    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor);
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_S32,
+    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0,
-        Zeros{PTO_XLEN} + 0xfffffffffffffffd);
+        Zeros{PTO_XLEN} + 0xc0400000);
 
     let started = ExecuteCommandInstruction(MatrixSingleMaxStart(), 32);
     assert started == CommandExecution_Executed;
@@ -39,7 +39,7 @@ begin
     _BundleTileBindings[[2]].destination = 3;
 
     CommitMatrixResult(1, _Tiles[[0]]);
-    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 3;
-    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0x40400000;
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x40400000;
     return 0;
 end;
