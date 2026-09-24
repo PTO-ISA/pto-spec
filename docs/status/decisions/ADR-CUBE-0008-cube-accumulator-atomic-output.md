@@ -65,6 +65,20 @@
         "PTO-TILE-MODEL-EXECUTION-CUBE",
         "PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/345",
+      "affected_ndf": [
+        "PTO-CUBE-ACCUMULATOR-OUTPUT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
+      ]
     }
   ],
   "legacy_ids": [
@@ -194,6 +208,14 @@ non-binding transparent-cache use or prefetch hint for explicit C, and
 CCTRL[0]=1 may hint cache replacement with the identical published D value.
 Cache behavior cannot replace C or D or alter results, faults, allocation,
 publication, source lifetime, or ordering.
+
+## 2026-09-23 amendment: reduction-source supersession
+
+Issue #345 and the ADR-NUM-0012 amendment of the same date supersede this
+record's raw-accumulator RowMax/GroupMax statements in "Computation and
+reductions" and acceptance criterion 6. The owning ASL/NDF clauses named in
+this amendment define current reduction semantics. The explicit C/D boundary,
+raw-partial CCTRL path, and atomic publication decision remain in force.
 
 ## Bilingual decision detail / 双语决策详述
 

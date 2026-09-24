@@ -10229,6 +10229,20 @@
           "baseline": "5f1cb735aa00ad061ec77c691f6a913711316f92",
           "date": "2026-09-04",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/234#issuecomment-5529151834"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-ACCUMULATOR-OUTPUT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-23",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/345"
         }
       ],
       "approvers": [
