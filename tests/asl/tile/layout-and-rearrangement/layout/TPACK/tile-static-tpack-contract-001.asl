@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
-    // block: BSTART.SFU TPACK, U32 | B.DATR Layout (optional) | B.DIM LB0 (optional) | B.IOT source0, source1, ->destination | B.IOR pack_control | BSTOP
+    // block: BSTART.SFU TPACK, U8/U16/U32 | B.DATR Layout (optional) | B.DIM LB0 (optional) | B.IOT source0, source1, ->destination | B.IOR pack_control | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001110111') == 96;
     assert TileOperationOfIndex(96) == TileOperation_TPACK;
     assert TileHandlerOfIndex(96) == TileHandler_TPACK;

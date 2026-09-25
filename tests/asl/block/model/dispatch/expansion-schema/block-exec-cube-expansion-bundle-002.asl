@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002","source":"asl/block/model/dispatch/expansion-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWEXPAND-CONTRACT-001","PTO-TROWEXPANDADD-CONTRACT-001"],"kind":"execution","summary":"Decoded direct-layout B.DATR drives CUBE expansion schema validation, raw COPY, destination allocation, execution, and mixed-layout rejection.","pass_condition":"CUBE_M16 TROWEXPANDADD and raw TF32 TROWEXPAND bundles publish M16 destinations, while an M32 broadcast mismatch faults before destination allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/expansion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002","source":"asl/block/model/dispatch/expansion-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWEXPAND-CONTRACT-001","PTO-TROWEXPANDADD-CONTRACT-001"],"kind":"execution","summary":"Decoded direct-layout B.DATR drives CUBE expansion schema validation, raw COPY, destination allocation, execution, and mixed-layout rejection.","pass_condition":"CUBE_M16 TROWEXPANDADD ignores distinct extra broadcast columns and raw TF32 TROWEXPAND bundles publish M16 destinations, while an M32 broadcast mismatch faults before destination allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/expansion.asl"]}
 pure func CubeExpansionStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -30,7 +30,7 @@ begin
     ResetProfileState();
     let source = ConfigureCubeTile(1, 128, 2, 2,
         TileDataType_U8, TileLayout_CUBE_M16);
-    let broadcast = ConfigureCubeTile(2, 128, 2, 1,
+    let broadcast = ConfigureCubeTile(2, 128, 2, 2,
         TileDataType_U8, broadcast_layout);
     assert source && broadcast;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
@@ -38,7 +38,9 @@ begin
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 30);
     WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 40);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 99);
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(2, 1, 1, Zeros{PTO_XLEN} + 88);
     let started = ExecuteCommandInstruction(CubeExpansionStart(), 32);
     assert started == CommandExecution_Executed;
     let attributed = ExecuteCommandInstruction(
@@ -91,6 +93,7 @@ begin
     assert _Tiles[[destination]].contents_defined;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(destination, 1, 1) == Zeros{PTO_XLEN} + 42;
+    assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 21;
     assert TileElementDefined(destination, 0, 2);
     assert ReadTileElement(destination, 0, 2) == Zeros{PTO_XLEN};
 

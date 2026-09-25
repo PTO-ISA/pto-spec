@@ -1326,7 +1326,7 @@
       "mnemonic": "TCOLEXPAND",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source0",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1342,7 +1342,7 @@
       "mnemonic": "TCOLEXPAND",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
       "role": "source0",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1366,7 +1366,7 @@
       "mnemonic": "TCOLEXPANDADD",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1390,7 +1390,7 @@
       "mnemonic": "TCOLEXPANDADD",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1414,7 +1414,7 @@
       "mnemonic": "TCOLEXPANDDIV",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1438,7 +1438,7 @@
       "mnemonic": "TCOLEXPANDDIV",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1462,7 +1462,7 @@
       "mnemonic": "TCOLEXPANDEXPDIF",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1486,7 +1486,7 @@
       "mnemonic": "TCOLEXPANDEXPDIF",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1510,7 +1510,7 @@
       "mnemonic": "TCOLEXPANDMAX",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1534,7 +1534,7 @@
       "mnemonic": "TCOLEXPANDMAX",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1558,7 +1558,7 @@
       "mnemonic": "TCOLEXPANDMIN",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1582,7 +1582,7 @@
       "mnemonic": "TCOLEXPANDMIN",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1606,7 +1606,7 @@
       "mnemonic": "TCOLEXPANDMUL",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1630,7 +1630,7 @@
       "mnemonic": "TCOLEXPANDMUL",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -1654,7 +1654,7 @@
       "mnemonic": "TCOLEXPANDSUB",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "direct",
@@ -1678,7 +1678,7 @@
       "mnemonic": "TCOLEXPANDSUB",
       "owner": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl",
       "role": "source1",
-      "role_description": "persistent Local one-row broadcast source"
+      "role_description": "persistent Local column-broadcast source"
     },
     {
       "form": "bundle",
@@ -3862,7 +3862,7 @@
       "mnemonic": "TROWEXPAND",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source0",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -3878,7 +3878,7 @@
       "mnemonic": "TROWEXPAND",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
       "role": "source0",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -3902,7 +3902,7 @@
       "mnemonic": "TROWEXPANDADD",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -3926,7 +3926,7 @@
       "mnemonic": "TROWEXPANDADD",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -3950,7 +3950,7 @@
       "mnemonic": "TROWEXPANDDIV",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -3974,7 +3974,7 @@
       "mnemonic": "TROWEXPANDDIV",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -3998,7 +3998,7 @@
       "mnemonic": "TROWEXPANDEXPDIF",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -4022,7 +4022,7 @@
       "mnemonic": "TROWEXPANDEXPDIF",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -4046,7 +4046,7 @@
       "mnemonic": "TROWEXPANDMAX",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -4070,7 +4070,7 @@
       "mnemonic": "TROWEXPANDMAX",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -4094,7 +4094,7 @@
       "mnemonic": "TROWEXPANDMIN",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -4118,7 +4118,7 @@
       "mnemonic": "TROWEXPANDMIN",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -4142,7 +4142,7 @@
       "mnemonic": "TROWEXPANDMUL",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -4166,7 +4166,7 @@
       "mnemonic": "TROWEXPANDMUL",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -4190,7 +4190,7 @@
       "mnemonic": "TROWEXPANDSUB",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "direct",
@@ -4214,7 +4214,7 @@
       "mnemonic": "TROWEXPANDSUB",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
       "role": "source1",
-      "role_description": "persistent Local one-column broadcast source"
+      "role_description": "persistent Local row-broadcast source"
     },
     {
       "form": "bundle",
@@ -5017,7 +5017,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "a05c947803676cf394f67da0b1fe5305b7c11c96",
+  "candidate_head": "4a9b7bcc140ed50de2bd6cbbb1732ad6c7789ecd",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16378,6 +16378,16 @@
       "path": "asl/block/model/dispatch/tile-execution.asl"
     },
     {
+      "after_layouts": [],
+      "after_sha256": "ee386bd11988d00ca34b24b966874b7accb96eb86a20ebb3f350d1f67af146b8",
+      "before_layouts": [],
+      "before_sha256": "e35c9619ad9f94df420161c00ed39f0d2912cd07a98e4ac67510cc7a5d7d518d",
+      "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
+      "name": "ExecuteTileExpand",
+      "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses",
+      "path": "asl/tile/model/execution/expansion.asl"
+    },
+    {
       "after": [
         {
           "calls": [
@@ -16566,7 +16576,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "8a3ebf2ee562d7ee53e241b14024a9655f09fe8b70b482c3bb4c407848ccdbcb",
+      "after_sha256": "bcdfcf64e8aaf919439b8a4e57b676d940379b3e3a03fce797e8c4a1231e410a",
       "before_layouts": [],
       "before_sha256": "c993ef2f2d0aefe376a5e9af6d1e2929a3fcd1d76f49a67d73e2e142e2e4d6d3",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -16623,7 +16633,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "c721deb3ec1cd8d25815aeaedd8452186e6536411f798081b55a1c40a68a257e",
+      "after_sha256": "6f1647ea4085aa58d8999360617006470b0fb9b5e8921867209e1d855ae673fe",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -16657,6 +16667,41 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TileCarrierWidthCompatible",
       "path": "asl/tile/model/legality/dtype-layout.asl"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileCubeDataTypeSupported",
+            "TileElementBits",
+            "TileElementBits",
+            "TileElementBits"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/layout-rearrangement.asl",
+          "sha256": "86f97d223359fcf666220edee2ef17fed6f3a899c69e4f8e0177469f99f08ee4"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
+      "name": "TileCellRearrangementDataTypeLegal",
+      "owner_decision": "Issue #338 r4; ADR-CUBE-0013; PTO-TPACK-CONTRACT-001 and PTO-TUNPACK-CONTRACT-001"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileCellRearrangementByteDefined"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/layout-rearrangement.asl",
+          "sha256": "c05b68d82c450491c5ca6c5550f74a539e4e8b978ebf8f9df6ca1cb1a6f6695c"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
+      "name": "TileCellRearrangementSelectedBytesDefined",
+      "owner_decision": "Issue #338 r4; ADR-CUBE-0013; PTO-TPACK-CONTRACT-001 and PTO-TUNPACK-CONTRACT-001"
     },
     {
       "after_layouts": [
@@ -17132,6 +17177,29 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TileElementBytes",
       "path": "asl/tile/model/definedness/elements.asl"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileCarrierWidthCompatible",
+            "TileLogicalLinearIndex",
+            "TileLogicalLinearIndex",
+            "TileNumericEncodingValid",
+            "TileNumericEncodingValid",
+            "TileReadLogicalElement",
+            "TileReadLogicalElement",
+            "TileReductionAndExpansionSourceContentsDefined"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "6e8d0a19b41be91938f08ba7810540f496ec2f4a14e4ff91dcc851fa6661b3e9"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
+      "name": "TileExpansionBroadcastLegalAs",
+      "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses"
     },
     {
       "after": [],
@@ -17946,6 +18014,26 @@
       ],
       "classification": "Local M16/M32 single-physical-M-block geometry (ADR-CUBE-0004/ADR-TILE-0012/ADR-CUBE-0012 2026-09-17 amendments, Issue #323)",
       "name": "TileReductionAndExpansionRowLimitLegal"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileCarrierWidthCompatible",
+            "TileLogicalLinearIndex",
+            "TileNumericEncodingValid",
+            "TileReadLogicalElement",
+            "TileReductionAndExpansionSourceContentsDefined"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "6577c20df1d0b70c234a0272a784ef19a91fc312a2ce36ed8564c6f76c293500"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
+      "name": "TileReductionAndExpansionSourceLegalAs",
+      "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses"
     },
     {
       "after": [],
@@ -47344,8 +47432,10 @@
         "ExecuteTileExpand": [
           {
             "calls": [
+              "BundleTileOperationSelected",
               "CurrentBundlePadValue",
               "RecordNumericStatusFlags",
+              "ResolveTileSelectedOperationType",
               "TileExpandValueWithTypesAndFlags",
               "TileInfoWithLogicalElement",
               "TileLogicalLinearIndex",
@@ -47357,11 +47447,12 @@
               "TileReadLogicalElement",
               "TileWithPadding",
               "TileWithValidRegionDefined",
+              "let",
               "let"
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
-            "sha256": "e35c9619ad9f94df420161c00ed39f0d2912cd07a98e4ac67510cc7a5d7d518d"
+            "sha256": "ee386bd11988d00ca34b24b966874b7accb96eb86a20ebb3f350d1f67af146b8"
           }
         ],
         "ExecuteTileFillScalar": [
@@ -47733,29 +47824,51 @@
         "ResolveBundleCellRearrangementDestination": [
           {
             "calls": [
+              "BundleDataTypeConcrete",
               "BundleLocalDestinationAllocationBytes",
+              "BundleTileOperationSelected",
               "BundleTileSourceIndex",
               "BundleTileSourceIndex",
               "ConfigureCubeTileForMask",
+              "CurrentBundleTileOperationDataTypeCode",
               "LocalTileAllocationFitsExcept",
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
+              "ReadTPC",
+              "ReadTPC",
+              "ReadTPC",
+              "ReadTPC",
               "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
-              "TileCubeDescriptorLegal",
+              "SetFault",
+              "SetFault",
+              "SetFault",
+              "SetFault",
+              "SetFault",
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDescriptorLegal",
+              "TileCellRearrangementDescriptorLegal",
+              "TileCellRearrangementWordsPerRow",
+              "TileCellRearrangementWordsPerRow",
+              "TileCellRearrangementWordsPerRow",
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorShapeLegal",
-              "UInt"
+              "TileDataTypeFromEncoding",
+              "TileOperationOfIndex",
+              "UInt",
+              "then"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
-            "sha256": "8a3ebf2ee562d7ee53e241b14024a9655f09fe8b70b482c3bb4c407848ccdbcb"
+            "sha256": "bcdfcf64e8aaf919439b8a4e57b676d940379b3e3a03fce797e8c4a1231e410a"
           }
         ],
         "ResolveBundleCubeTransportDestination": [
@@ -48019,7 +48132,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/destination-shape.asl",
-            "sha256": "c721deb3ec1cd8d25815aeaedd8452186e6536411f798081b55a1c40a68a257e"
+            "sha256": "6f1647ea4085aa58d8999360617006470b0fb9b5e8921867209e1d855ae673fe"
           }
         ],
         "ResolveBundleTileDestinationsWithShape": [
@@ -48252,6 +48365,19 @@
             "sha256": "c1d8baf9ad39e5f7ac718da2e364a97ce33128832919538670aac757399067e1"
           }
         ],
+        "TileCellRearrangementDataTypeLegal": [
+          {
+            "calls": [
+              "TileCubeDataTypeSupported",
+              "TileElementBits",
+              "TileElementBits",
+              "TileElementBits"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/layout-rearrangement.asl",
+            "sha256": "86f97d223359fcf666220edee2ef17fed6f3a899c69e4f8e0177469f99f08ee4"
+          }
+        ],
         "TileCellRearrangementDescriptorLegal": [
           {
             "calls": [
@@ -48282,6 +48408,16 @@
             ],
             "path": "asl/tile/model/legality/layout-rearrangement.asl",
             "sha256": "ebc56292a5e796e658e7930ede97e2701414eefee860866e42e156bbe0e5d949"
+          }
+        ],
+        "TileCellRearrangementSelectedBytesDefined": [
+          {
+            "calls": [
+              "TileCellRearrangementByteDefined"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/layout-rearrangement.asl",
+            "sha256": "c05b68d82c450491c5ca6c5550f74a539e4e8b978ebf8f9df6ca1cb1a6f6695c"
           }
         ],
         "TileCellRearrangementValidBytes": [
@@ -49255,6 +49391,23 @@
             "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
             "sha256": "c36fd8461b7fb011a224b209852d3b80f0e6e179dc28b3a21ba0fdf827ff9ca5"
+          }
+        ],
+        "TileExpansionBroadcastLegalAs": [
+          {
+            "calls": [
+              "TileCarrierWidthCompatible",
+              "TileLogicalLinearIndex",
+              "TileLogicalLinearIndex",
+              "TileNumericEncodingValid",
+              "TileNumericEncodingValid",
+              "TileReadLogicalElement",
+              "TileReadLogicalElement",
+              "TileReductionAndExpansionSourceContentsDefined"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "6e8d0a19b41be91938f08ba7810540f496ec2f4a14e4ff91dcc851fa6661b3e9"
           }
         ],
         "TileExpansionOperationIsExponentialDifference": [
@@ -50581,21 +50734,35 @@
         "TileOperandsLegal_ExecuteTileExpand": [
           {
             "calls": [
+              "BundleTileOperationSelected",
+              "ResolveTileSelectedOperationType",
+              "TileOperandsLegal_ExecuteTileExpandAs",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "d7f5592afb3a58f1849dc6f20343d172e65b18eb7123eba07ec9d2fb531f68c4"
+          }
+        ],
+        "TileOperandsLegal_ExecuteTileExpandAs": [
+          {
+            "calls": [
               "TileBroadcastPayloadNonzero",
+              "TileCarrierWidthCompatible",
               "TileDataTypeIsInteger",
               "TileExpandExpdifTypePairLegal",
+              "TileExpansionBroadcastLegalAs",
+              "TileReductionAndExpansionDescriptorLegal",
+              "TileReductionAndExpansionDescriptorLegal",
               "TileReductionAndExpansionDescriptorLegal",
               "TileReductionAndExpansionLogicalShapeMatch",
               "TileReductionAndExpansionSourceContentsDefined",
-              "TileReductionAndExpansionSourceContentsDefined",
-              "TileReductionAndExpansionSourceLegal",
-              "TileReductionAndExpansionSourceLegal",
-              "TileVecArithmeticDataTypeSupported",
+              "TileReductionAndExpansionSourceLegalAs",
               "TileVecArithmeticDataTypeSupported"
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "57ae609c35db84676d57f7b44837ceb542d4b6cd91e623a75a0c9f2906d514e4"
+            "sha256": "b9da6f359672143a5618694ef59f861bcfcba1e665ebfdf219fcb4adfce4f5ed"
           }
         ],
         "TileOperandsLegal_ExecuteTileFillScalar": [
@@ -51218,19 +51385,24 @@
         "TileOperandsLegal_TPACK": [
           {
             "calls": [
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDataTypeLegal",
               "TileCellRearrangementDescriptorLegal",
               "TileCellRearrangementDescriptorLegal",
               "TileCellRearrangementDescriptorLegal",
-              "TileCellRearrangementLayoutLegal",
-              "TileCellRearrangementValidRegionDefined",
-              "TileCellRearrangementValidRegionDefined",
+              "TileCellRearrangementSelectedBytesDefined",
+              "TileCellRearrangementSelectedBytesDefined",
+              "TileCellRearrangementWordsPerRow",
+              "TileCellRearrangementWordsPerRow",
               "TileRearrangementControlWordLegal",
               "UInt",
               "UInt"
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/layout-rearrangement.asl",
-            "sha256": "ac81877629447c1be582fdfa27b399a07861a65284b763e8a21f978d1c9e2b7f"
+            "sha256": "21616cd407c68f5ee742e184dc0a6e5ddea25c77891177f3ea03315360bcad6c"
           }
         ],
         "TileOperandsLegal_TPERMUTE": [
@@ -51345,17 +51517,21 @@
         "TileOperandsLegal_TUNPACK": [
           {
             "calls": [
+              "TileCellRearrangementDataTypeLegal",
+              "TileCellRearrangementDataTypeLegal",
               "TileCellRearrangementDescriptorLegal",
               "TileCellRearrangementDescriptorLegal",
-              "TileCellRearrangementLayoutLegal",
-              "TileCellRearrangementValidRegionDefined",
+              "TileCellRearrangementSelectedBytesDefined",
+              "TileCellRearrangementValidBytes",
+              "TileCellRearrangementWordsPerRow",
               "TileRearrangementControlWordLegal",
               "UInt",
-              "UInt"
+              "UInt",
+              "then"
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/layout-rearrangement.asl",
-            "sha256": "7c014d78e89bddae22c290de60d0ce7f4c41b724fd8aa6444ac9a9360b4e0655"
+            "sha256": "115fdba14d015035e90f49d348beb2a1d2df96ecacd30d458baacf5b26789ae6"
           }
         ],
         "TileOperationOfIndex": [],
@@ -52130,6 +52306,20 @@
             ],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
             "sha256": "4251dc9ed1056a1e413e95b081a48f66b43270a336af0610ccb88f96aff1d1a0"
+          }
+        ],
+        "TileReductionAndExpansionSourceLegalAs": [
+          {
+            "calls": [
+              "TileCarrierWidthCompatible",
+              "TileLogicalLinearIndex",
+              "TileNumericEncodingValid",
+              "TileReadLogicalElement",
+              "TileReductionAndExpansionSourceContentsDefined"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "6577c20df1d0b70c234a0272a784ef19a91fc312a2ce36ed8564c6f76c293500"
           }
         ],
         "TileReductionInitialValue": [
@@ -52909,6 +53099,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -53488,6 +53683,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -54089,6 +54289,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -54672,6 +54877,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -55255,6 +55465,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -55846,6 +56061,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -56429,6 +56649,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -57012,6 +57237,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -57595,6 +57825,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -58209,6 +58444,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -58792,6 +59032,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -59375,6 +59620,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -59958,6 +60208,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -60541,6 +60796,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -61138,6 +61398,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -61729,6 +61994,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -62320,6 +62590,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -62911,6 +63186,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -63502,6 +63782,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -64111,6 +64396,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -64702,6 +64992,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -65293,6 +65588,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -65884,6 +66184,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -66467,6 +66772,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -67059,6 +67369,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -67712,6 +68027,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -68362,6 +68682,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -69006,6 +69331,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -69656,6 +69986,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -70296,6 +70631,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -70884,6 +71224,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -71524,6 +71869,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -72157,6 +72507,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -72809,6 +73164,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -73460,6 +73820,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -73529,6 +73894,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -73604,6 +73970,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -73666,7 +74033,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -73676,7 +74043,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -73713,7 +74079,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -73743,6 +74109,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -73750,6 +74117,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -73780,6 +74148,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -73809,6 +74178,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -73827,12 +74197,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -73864,7 +74233,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -74150,6 +74519,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -74219,6 +74593,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -74294,6 +74669,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -74356,7 +74732,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -74366,7 +74742,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -74407,7 +74782,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -74437,6 +74812,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -74444,6 +74820,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -74474,6 +74851,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74503,6 +74881,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -74521,12 +74900,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -74562,7 +74940,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -74848,6 +75226,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -74917,6 +75300,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -74992,6 +75376,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -75054,7 +75439,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -75064,7 +75449,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -75105,7 +75489,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -75135,6 +75519,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -75142,6 +75527,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -75172,6 +75558,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75201,6 +75588,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -75219,12 +75607,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -75260,7 +75647,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -75546,6 +75933,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -75615,6 +76007,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -75690,6 +76083,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -75752,7 +76146,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -75762,7 +76156,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -75803,7 +76196,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -75833,6 +76226,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -75840,6 +76234,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -75870,6 +76265,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75899,6 +76295,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -75917,12 +76314,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -75958,7 +76354,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -76244,6 +76640,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -76313,6 +76714,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -76388,6 +76790,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -76450,7 +76853,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -76460,7 +76863,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -76501,7 +76903,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -76531,6 +76933,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -76538,6 +76941,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -76568,6 +76972,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76597,6 +77002,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -76615,12 +77021,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -76656,7 +77061,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -76942,6 +77347,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -77011,6 +77421,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -77086,6 +77497,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -77148,7 +77560,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -77158,7 +77570,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -77199,7 +77610,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -77229,6 +77640,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -77236,6 +77648,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -77266,6 +77679,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77295,6 +77709,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -77313,12 +77728,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -77354,7 +77768,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -77640,6 +78054,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -77709,6 +78128,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -77784,6 +78204,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -77846,7 +78267,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -77856,7 +78277,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -77897,7 +78317,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -77927,6 +78347,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -77934,6 +78355,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -77964,6 +78386,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77993,6 +78416,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -78011,12 +78435,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -78052,7 +78475,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -78338,6 +78761,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -78407,6 +78835,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -78482,6 +78911,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -78544,7 +78974,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -78554,7 +78984,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -78595,7 +79024,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -78625,6 +79054,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -78632,6 +79062,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -78662,6 +79093,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78691,6 +79123,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -78709,12 +79142,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -78750,7 +79182,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "roots": [
@@ -79037,6 +79469,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -79689,6 +80126,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -80341,6 +80783,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -80993,6 +81440,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -81643,6 +82095,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCommitConversionResult",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
@@ -82280,6 +82737,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -82930,6 +83392,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -83571,6 +84038,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -84221,6 +84693,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -84815,6 +85292,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -85452,6 +85934,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -86063,6 +86550,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -86661,6 +87153,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -87271,6 +87768,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -87893,6 +88395,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -88525,6 +89032,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -89169,6 +89681,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -89818,6 +90335,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -90415,6 +90937,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -91013,6 +91540,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -91663,6 +92195,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -92259,6 +92796,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -92867,6 +93409,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -93487,6 +94034,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -94117,6 +94669,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -94759,6 +95316,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -95410,6 +95972,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -96060,6 +96627,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -96704,6 +97276,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -97354,6 +97931,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -97994,6 +98576,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -98562,6 +99149,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -99212,6 +99804,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -99853,6 +100450,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -100503,6 +101105,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -101156,6 +101763,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -101806,6 +102418,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -102447,10 +103064,12 @@
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementSelectedBytesDefined",
             "TileCellRearrangementValidBytes",
-            "TileCellRearrangementValidRegionDefined",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -102522,6 +103141,8 @@
             "TileGenericIndexingPermitted",
             "TileHandlerOfIndex",
             "TileInfoDescriptorLegal",
+            "TileInfoWithCellByte",
+            "TileInfoWithCellWord",
             "TileInfoWithLogicalElement",
             "TileInfoWithLogicalElementAndDefined",
             "TileInfoWithPackedRowSlack",
@@ -102629,6 +103250,7 @@
             "TileProfileInternalAccumulatorReplacementHint",
             "TileProfilePredicateNullGPRPadding",
             "TileRawElementValue",
+            "TileReadCellByte",
             "TileReadLogicalElement",
             "TileRearrangementControlWordLegal",
             "TileReductionOperationReturnsIndex",
@@ -102704,10 +103326,12 @@
             "TileCapacityIsLegal",
             "TileCapacityLimitBytes",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementSelectedBytesDefined",
             "TileCellRearrangementValidBytes",
-            "TileCellRearrangementValidRegionDefined",
+            "TileCellRearrangementWordsPerRow",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -102728,6 +103352,8 @@
             "TileElementBytes",
             "TileFractalInnerElements",
             "TileGenericIndexingPermitted",
+            "TileInfoWithCellByte",
+            "TileInfoWithCellWord",
             "TileInfoWithLogicalElement",
             "TileInfoWithLogicalElementAndDefined",
             "TileInfoWithPackedRowSlack",
@@ -102744,6 +103370,7 @@
             "TilePackedRowSlackIndex",
             "TilePackedRowsHavePhysicalSlack",
             "TilePadValueForDataType",
+            "TileReadCellByte",
             "TileReadLogicalElement",
             "TileRearrangementControlWordLegal",
             "TileStorageIndex",
@@ -103057,10 +103684,12 @@
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
             "TileCellRearrangementRowBytes",
             "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -103676,6 +104305,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -104213,6 +104847,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -104863,6 +105502,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -105516,6 +106160,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -106166,6 +106815,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -106810,6 +107464,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -107462,6 +108121,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -108113,6 +108777,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -108182,6 +108851,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -108257,6 +108927,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -108319,7 +108990,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -108329,7 +109000,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -108366,7 +109036,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -108396,6 +109066,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -108403,6 +109074,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -108433,6 +109105,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -108462,6 +109135,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -108480,12 +109154,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -108517,7 +109190,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -108803,6 +109476,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -108872,6 +109550,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -108947,6 +109626,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -109009,7 +109689,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -109019,7 +109699,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -109060,7 +109739,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -109090,6 +109769,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -109097,6 +109777,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -109127,6 +109808,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109156,6 +109838,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -109174,12 +109857,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -109215,7 +109897,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -109501,6 +110183,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -109570,6 +110257,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -109645,6 +110333,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -109707,7 +110396,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -109717,7 +110406,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -109758,7 +110446,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -109788,6 +110476,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -109795,6 +110484,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -109825,6 +110515,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109854,6 +110545,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -109872,12 +110564,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -109913,7 +110604,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -110199,6 +110890,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -110268,6 +110964,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -110343,6 +111040,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -110405,7 +111103,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -110415,7 +111113,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -110456,7 +111153,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -110486,6 +111183,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -110493,6 +111191,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -110523,6 +111222,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110552,6 +111252,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -110570,12 +111271,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -110611,7 +111311,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -110897,6 +111597,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -110966,6 +111671,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -111041,6 +111747,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -111103,7 +111810,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -111113,7 +111820,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -111154,7 +111860,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -111184,6 +111890,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -111191,6 +111898,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -111221,6 +111929,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111250,6 +111959,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -111268,12 +111978,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -111309,7 +112018,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -111595,6 +112304,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -111664,6 +112378,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -111739,6 +112454,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -111801,7 +112517,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -111811,7 +112527,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -111852,7 +112567,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -111882,6 +112597,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -111889,6 +112605,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -111919,6 +112636,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111948,6 +112666,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -111966,12 +112685,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -112007,7 +112725,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -112293,6 +113011,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -112362,6 +113085,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -112437,6 +113161,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -112499,7 +113224,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -112509,7 +113234,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -112550,7 +113274,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -112580,6 +113304,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -112587,6 +113312,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -112617,6 +113343,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112646,6 +113373,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -112664,12 +113392,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -112705,7 +113432,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -112991,6 +113718,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -113060,6 +113792,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
@@ -113135,6 +113868,7 @@
             "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
             "TileOperandsLegal_ExecuteTileCompareGPRAs",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
             "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
             "TileOperandsLegal_GMOV",
@@ -113197,7 +113931,7 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionOperationReturnsIndex",
             "TileRegularTLSUDataTypeSupported",
             "TileSFUUnarySpecialValue",
@@ -113207,7 +113941,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -113248,7 +113981,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -113278,6 +114011,7 @@
             "TileOperandsLegal_ExecuteTileExpand"
           ],
           "common_helpers": [
+            "BundleTileOperationSelected",
             "CurrentBundlePadValue",
             "ExecuteTileExpand",
             "TileBroadcastPayloadNonzero",
@@ -113285,6 +114019,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -113315,6 +114050,7 @@
             "TileExpandBinaryOperation",
             "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastLegalAs",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -113344,6 +114080,7 @@
             "TileNumericValueClass",
             "TileNumericValueClassIsNegative",
             "TileOperandsLegal_ExecuteTileExpand",
+            "TileOperandsLegal_ExecuteTileExpandAs",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
             "TilePackedLinearIndex",
@@ -113362,12 +114099,11 @@
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionLogicalShapeMatch",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileSFUUnarySpecialValue",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileTNegDataTypeSupported",
             "TileTReluDataTypeSupported",
@@ -113403,7 +114139,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "roots": [
@@ -113690,6 +114426,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -114342,6 +115083,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -114994,6 +115740,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -115646,6 +116397,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -116295,6 +117051,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -116944,6 +117705,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -117548,6 +118314,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -118193,6 +118964,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -118833,6 +119609,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -119483,6 +120264,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -120127,6 +120913,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -120777,6 +121568,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -121418,6 +122214,7 @@
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
             "TileCellRearrangementValidBytes",
@@ -122038,6 +122835,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -122688,6 +123490,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -123277,6 +124084,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -123927,6 +124739,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -124567,6 +125384,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -125155,10 +125977,12 @@
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementSelectedBytesDefined",
             "TileCellRearrangementValidBytes",
-            "TileCellRearrangementValidRegionDefined",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -125230,6 +126054,8 @@
             "TileGenericIndexingPermitted",
             "TileHandlerOfIndex",
             "TileInfoDescriptorLegal",
+            "TileInfoWithCellByte",
+            "TileInfoWithCellWord",
             "TileInfoWithLogicalElement",
             "TileInfoWithLogicalElementAndDefined",
             "TileInfoWithPackedRowSlack",
@@ -125337,6 +126163,7 @@
             "TileProfileInternalAccumulatorReplacementHint",
             "TileProfilePredicateNullGPRPadding",
             "TileRawElementValue",
+            "TileReadCellByte",
             "TileReadLogicalElement",
             "TileRearrangementControlWordLegal",
             "TileReductionOperationReturnsIndex",
@@ -125408,10 +126235,12 @@
             "TileCapacityIsLegal",
             "TileCapacityLimitBytes",
             "TileCellRearrangementByteDefined",
+            "TileCellRearrangementDataTypeLegal",
             "TileCellRearrangementDescriptorLegal",
             "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementSelectedBytesDefined",
             "TileCellRearrangementValidBytes",
-            "TileCellRearrangementValidRegionDefined",
+            "TileCellRearrangementWordsPerRow",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -125432,6 +126261,8 @@
             "TileElementBytes",
             "TileFractalInnerElements",
             "TileGenericIndexingPermitted",
+            "TileInfoWithCellByte",
+            "TileInfoWithCellWord",
             "TileInfoWithLogicalElement",
             "TileInfoWithLogicalElementAndDefined",
             "TileInfoWithPackedRowSlack",
@@ -125448,6 +126279,7 @@
             "TilePackedRowSlackIndex",
             "TilePackedRowsHavePhysicalSlack",
             "TilePadValueForDataType",
+            "TileReadCellByte",
             "TileReadLogicalElement",
             "TileRearrangementControlWordLegal",
             "TileStorageIndex",
@@ -125760,6 +126592,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",
@@ -126410,6 +127247,11 @@
             "TileCarrierOnlyDataTypeSupported",
             "TileCarrierOrPackedBaselineDataTypeSupported",
             "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
             "TileCompareBoolean",
             "TileCompareCUBEScalarToGPRAs",
             "TileCompareCUBEToGPRAs",

@@ -30,6 +30,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-BLOCK-0009](docs/status/decisions/ADR-BLOCK-0009-barg-bpcn-commit-state.md): Bundle commit state uses BARG/BPCN
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
 - [ADR-BLOCK-0017](docs/status/decisions/ADR-BLOCK-0017-local-single-object-cap.md): Local single-object cap versus aggregate Local pool
+- [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Local CUBE execution and CELL rearrangement
 - [ADR-CUBE-0014](docs/status/decisions/ADR-CUBE-0014-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
 - [ADR-CUBE-0016](docs/status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 - [ADR-CUBE-0017](docs/status/decisions/ADR-CUBE-0017-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
@@ -44,9 +45,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Scalar
 - [ADR-MEM-0004](docs/status/decisions/ADR-MEM-0004-scalar-agu-totality-and-restart.md): Scalar AGU totality, aliases, and restart
 - [ADR-SCALAR-0001](docs/status/decisions/ADR-SCALAR-0001-scalar-bitfield-and-reverse-bounds.md): Scalar bitfield and byte-reversal bounds
-
-### Tile
-- [ADR-CUBE-0013](docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md): Local CUBE execution and CELL rearrangement
 
 ## Release 0.58.5.0
 

@@ -101,7 +101,11 @@
     "PTO-TILE-TROWMIN",
     "PTO-TILE-TROWPROD",
     "PTO-TILE-TROWSUM",
-    "PTO-TILE-TTRI"
+    "PTO-TILE-TTRI",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+    "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+    "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
   ],
   "amendments": [
     {
@@ -127,6 +131,54 @@
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-TCI"
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897",
+      "affected_ndf": [
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDSUB-CONTRACT-001",
+        "PTO-TROWEXPANDMUL-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TROWEXPANDMAX-CONTRACT-001",
+        "PTO-TROWEXPANDMIN-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TCOLEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPANDADD-CONTRACT-001",
+        "PTO-TCOLEXPANDSUB-CONTRACT-001",
+        "PTO-TCOLEXPANDMUL-CONTRACT-001",
+        "PTO-TCOLEXPANDDIV-CONTRACT-001",
+        "PTO-TCOLEXPANDMAX-CONTRACT-001",
+        "PTO-TCOLEXPANDMIN-CONTRACT-001",
+        "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TROWEXPAND",
+        "PTO-TILE-TROWEXPANDADD",
+        "PTO-TILE-TROWEXPANDSUB",
+        "PTO-TILE-TROWEXPANDMUL",
+        "PTO-TILE-TROWEXPANDDIV",
+        "PTO-TILE-TROWEXPANDMAX",
+        "PTO-TILE-TROWEXPANDMIN",
+        "PTO-TILE-TROWEXPANDEXPDIF",
+        "PTO-TILE-TCOLEXPAND",
+        "PTO-TILE-TCOLEXPANDADD",
+        "PTO-TILE-TCOLEXPANDSUB",
+        "PTO-TILE-TCOLEXPANDMUL",
+        "PTO-TILE-TCOLEXPANDDIV",
+        "PTO-TILE-TCOLEXPANDMAX",
+        "PTO-TILE-TCOLEXPANDMIN",
+        "PTO-TILE-TCOLEXPANDEXPDIF",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
       ]
     }
   ],
@@ -599,6 +651,12 @@ destination `1 x source.ValidCol` valid shape, destination physical shape,
 `PadValueOrByteId` applicability, prohibited `B.IOR`/`B.IOS`, equal and zero
 mask rules, source persistence, snapshot behavior, complete preflight,
 numeric-status transaction, rollback, and atomic publication follow Decision 111 in ADR-TILE-0010.
+
+## 2026-09-24 accepted amendment (Issue #338): expansion source operation views
+
+Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) amends only the sixteen `TROWEXPAND*` and `TCOLEXPAND*` instruction contracts. It supersedes their earlier exact one-column/one-row broadcast extents and exact source backing-type statements. A source backing DataType may differ from the selected source operation DataType under the existing equal-width, non-packed rule, with no descriptor retag or conversion. Row expansion consumes broadcast `[r,0]` when the broadcast has at least one valid column; column expansion consumes `[0,c]` when it has at least one valid row. Other valid-region elements remain defined but are ignored. Full-shape geometry, existing EXPDIF pairs and sequence, and transaction/publication rules remain owned by the affected ASL/NDF clauses. This amendment does not change reductions or `TEXPANDS`.
+
+中文：Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) 仅修订十六个 `TROWEXPAND*` 与 `TCOLEXPAND*` 指令契约。源 backing DataType 可按既有等宽、非 packed 规则不同于所选源操作 DataType，不重新标记描述符，也不做数值转换。广播至少有一列时，行扩展消费 `[r,0]`；广播至少有一行时，列扩展消费 `[0,c]`。有效区域中的其他元素仍须已定义，但不会被使用。完整源几何、既有 EXPDIF 类型对及序列、事务/发布规则仍由受影响 ASL/NDF 子句负责。本修订不改变归约或 `TEXPANDS`。
 
 ## Bilingual decision detail / 双语决策详述
 

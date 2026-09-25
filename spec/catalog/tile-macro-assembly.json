@@ -57108,7 +57108,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -57276,7 +57276,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "32cb1cd4b1b8f66e65e8db30847c0f6749a1f5f5849575ab7c537c86ded1ae87",
+                "fold_signature_sha256": "1a6dd80bb2265e1a49ec393cee1c4820c45624899f9a3e0db89626e32e46b880",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -57336,7 +57336,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -57357,7 +57357,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -57525,7 +57525,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "df73417f2a8e936002c3b66f84bc70ed54ae37129c28e9740cc7ba713b5fd75a",
+                "fold_signature_sha256": "92d1a21e229f18abe23a0dc9611ad610932574713d5b1363e0c4d217047a0fda",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -57585,7 +57585,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -57606,7 +57606,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -57822,7 +57822,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "304cbacd2733daaa4d85c238f97a14a6efc07de0b47a500223b1374bd96d03d2",
+                "fold_signature_sha256": "c32ea5bb55b51fa4b0a212f2c337849936f97ab4c2113abfb93a5514063f1c99",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -57882,7 +57882,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -57903,7 +57903,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -58119,7 +58119,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "005e8efaa7af1e61c32b4ae566c48b684ed962660c1370ee9932ca9762a8cab7",
+                "fold_signature_sha256": "2f86af4aa3cc3fc43cde05c81958ed361daca75fb08f3a6526fde22ef3c1dbb6",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -58179,7 +58179,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -58200,7 +58200,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -58611,7 +58611,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 0,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -58673,7 +58673,7 @@
           },
           {
             "field": "source0",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -58687,7 +58687,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
@@ -58701,7 +58701,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 0,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -58857,7 +58857,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -59025,7 +59025,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -59099,7 +59099,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -59134,7 +59134,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -59302,7 +59302,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -59376,7 +59376,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -59411,7 +59411,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -59627,7 +59627,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -59701,7 +59701,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -59736,7 +59736,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -59952,7 +59952,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -60026,7 +60026,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -60061,7 +60061,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -60526,7 +60526,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -60593,7 +60593,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -60611,7 +60611,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl",
@@ -60639,7 +60639,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -60796,7 +60796,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -60964,7 +60964,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -61038,7 +61038,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -61073,7 +61073,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -61241,7 +61241,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -61315,7 +61315,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -61350,7 +61350,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -61566,7 +61566,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -61640,7 +61640,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -61675,7 +61675,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -61891,7 +61891,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -61965,7 +61965,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -62000,7 +62000,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -62465,7 +62465,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -62532,7 +62532,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -62550,7 +62550,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl",
@@ -62578,7 +62578,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -62732,7 +62732,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -62900,7 +62900,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "8cfc8a646bd0228e32210b1d1a2abed4ccd7041c67078f628bcaabcb4e8914ea",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -62974,7 +62974,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -63009,7 +63009,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -63177,7 +63177,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "bbcd51d52b7f0b52f481a27265170f248e77fa81460a7794a7188d815fbfa0a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -63251,7 +63251,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -63286,7 +63286,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -63502,7 +63502,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "9d5d4976e0ae00008f932e040482745829c954c7e9f504cdc04981cc0c07cea5",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -63576,7 +63576,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -63611,7 +63611,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -63827,7 +63827,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "f0afc5b51eabd622cb16f8a0f7ff8461baed2dddf9360435b90e9479be70c309",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -63901,7 +63901,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -63936,7 +63936,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -64401,7 +64401,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -64469,7 +64469,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -64487,7 +64487,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl",
@@ -64515,7 +64515,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -64671,7 +64671,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -64839,7 +64839,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -64913,7 +64913,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -64948,7 +64948,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -65116,7 +65116,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -65190,7 +65190,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -65225,7 +65225,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -65441,7 +65441,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -65515,7 +65515,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -65550,7 +65550,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -65766,7 +65766,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -65840,7 +65840,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -65875,7 +65875,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -66340,7 +66340,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -66407,7 +66407,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -66425,7 +66425,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl",
@@ -66453,7 +66453,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -66609,7 +66609,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -66777,7 +66777,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -66851,7 +66851,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -66886,7 +66886,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -67054,7 +67054,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -67128,7 +67128,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -67163,7 +67163,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -67379,7 +67379,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -67453,7 +67453,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -67488,7 +67488,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -67704,7 +67704,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -67778,7 +67778,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -67813,7 +67813,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -68278,7 +68278,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -68345,7 +68345,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -68363,7 +68363,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl",
@@ -68391,7 +68391,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -68547,7 +68547,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -68715,7 +68715,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -68789,7 +68789,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -68824,7 +68824,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -68992,7 +68992,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -69066,7 +69066,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -69101,7 +69101,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -69317,7 +69317,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -69391,7 +69391,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -69426,7 +69426,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -69642,7 +69642,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -69716,7 +69716,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -69751,7 +69751,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -70216,7 +70216,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -70283,7 +70283,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -70301,7 +70301,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl",
@@ -70329,7 +70329,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -70485,7 +70485,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -70653,7 +70653,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "245754052ae72d314e8c9276bab65d5c6a0bb6776be54bb74192cc2e38ad7d24",
+                "fold_signature_sha256": "226fc5b615f0214b7982c25a032cf55d7d170a0b401b2631a41c242252e758ee",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -70727,7 +70727,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -70762,7 +70762,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -70930,7 +70930,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fd7cef68e112cdc23cca349db361bc2fb92280c7561964af993f0bb862eb2a5a",
+                "fold_signature_sha256": "07790e1d653436a569d1e99034e2c2b3056c6785dd843b3069a277d969993bd9",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -71004,7 +71004,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -71039,7 +71039,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -71255,7 +71255,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "3919ab731eb451d1f0125dc5591a36faaf5962d91bbabfaa065850ea2ffe7b75",
+                "fold_signature_sha256": "51f218248609f104f143180eb21b47469dc7a0ff9d08c893f649843b3a6fc01f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -71329,7 +71329,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -71364,7 +71364,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -71580,7 +71580,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "1cdab1b42e1db5ef81b368bc50799d094184da0e7f77c213497ea87c2aaeb2c6",
+                "fold_signature_sha256": "305f3853c4f283d581905a96dbd0c62833a53ae16ed49328b3f9f7c67bba4220",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -71654,7 +71654,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-row broadcast source",
+                    "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -71689,7 +71689,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-row broadcast source",
+                  "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -72154,7 +72154,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-row broadcast source",
+              "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -72221,7 +72221,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -72239,7 +72239,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl",
@@ -72267,7 +72267,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-row broadcast source",
+          "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -204861,7 +204861,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "Illegal field widths reject with Fault_TileLegality before effects.",
+        "Unsupported storage, layout, or backing width; unequal raw-word counts; an out-of-span or undefined selected byte; or illegal field widths reject with Fault_TileLegality before effects.",
         "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -206595,7 +206595,7 @@
       "macro_format": "TPACK <U32, Layout?, PEMask=AllPE>, SrcTile0, SrcTile1, ScalarGPR0, ->DstTile<Size>",
       "mnemonic": "TPACK",
       "physical_bundle": [
-        "BSTART.SFU TPACK, U32",
+        "BSTART.SFU TPACK, U8/U16/U32",
         "B.DATR Layout (optional)",
         "B.DIM LB0/LB1/LB2 (optional)",
         "B.IOT source0, source1, ->destination",
@@ -219711,7 +219711,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -219879,7 +219879,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "a9bd918e7a688ffc09cced559a97d1c9fad632181580016623574b32d870d9ac",
+                "fold_signature_sha256": "198f850eb0ec59b78addcaef9740a680abdf7db66f7f69f141bfb58e0453eb12",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -219939,7 +219939,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -219960,7 +219960,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -220128,7 +220128,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b1e70f436969e0d40781d390b0f2912b5f252d9bdbe0e4b5f3de58fbfe62ca80",
+                "fold_signature_sha256": "5941e71c5a40cefa7bc882b22841e0592ea05f6b35601eebcef71011008c40db",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -220188,7 +220188,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -220209,7 +220209,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -220425,7 +220425,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d991f0685afebdc1ffc1dd99070cfdf06942add20746f88f36ffe4edb2364191",
+                "fold_signature_sha256": "0bfa7d5270823faca7cb258f411eda3e8635adbe23d33865f3f5fb31fe44e612",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -220485,7 +220485,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -220506,7 +220506,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -220722,7 +220722,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "4fefb4ccd91c8838c561ef8f6d599f213de73d3eca00b5b3025585c85183cea2",
+                "fold_signature_sha256": "0638893058f8be9578036714d8d15c027c43b2a5f913978a57dd042d7cf5c317",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -220782,7 +220782,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -220803,7 +220803,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -221214,7 +221214,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 0,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -221276,7 +221276,7 @@
           },
           {
             "field": "source0",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -221290,7 +221290,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
@@ -221304,7 +221304,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 0,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -221460,7 +221460,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -221628,7 +221628,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -221702,7 +221702,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -221737,7 +221737,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -221905,7 +221905,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -221979,7 +221979,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -222014,7 +222014,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -222230,7 +222230,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -222304,7 +222304,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -222339,7 +222339,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -222555,7 +222555,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -222629,7 +222629,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -222664,7 +222664,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -223129,7 +223129,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -223196,7 +223196,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -223214,7 +223214,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
@@ -223242,7 +223242,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -223399,7 +223399,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -223567,7 +223567,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -223641,7 +223641,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -223676,7 +223676,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -223844,7 +223844,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -223918,7 +223918,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -223953,7 +223953,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -224169,7 +224169,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -224243,7 +224243,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -224278,7 +224278,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -224494,7 +224494,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -224568,7 +224568,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -224603,7 +224603,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -225068,7 +225068,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -225135,7 +225135,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -225153,7 +225153,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
@@ -225181,7 +225181,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -225335,7 +225335,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -225503,7 +225503,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "7e63491837e09351e8bb30d231f1805c9b4a4150266dc27adac0334c486beec0",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -225577,7 +225577,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -225612,7 +225612,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -225780,7 +225780,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "173d2c6df0f3ee7d6cfbf9aef2c51c2c115912af19f46f6ad3f042ae624aa057",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -225854,7 +225854,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -225889,7 +225889,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -226105,7 +226105,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "225e771129527a296259d87cf0e332c5ed67e07159c904948f1c166941d1f55b",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -226179,7 +226179,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -226214,7 +226214,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -226430,7 +226430,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "78e61ef9ba51840e375d98eba19c390c9e33fb7f7e10bb6f7eff45f07df82eb4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -226504,7 +226504,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -226539,7 +226539,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -227004,7 +227004,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -227072,7 +227072,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -227090,7 +227090,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
@@ -227118,7 +227118,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -227274,7 +227274,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -227442,7 +227442,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -227516,7 +227516,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -227551,7 +227551,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -227719,7 +227719,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -227793,7 +227793,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -227828,7 +227828,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228044,7 +228044,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -228118,7 +228118,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -228153,7 +228153,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228369,7 +228369,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -228443,7 +228443,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -228478,7 +228478,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228943,7 +228943,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -229010,7 +229010,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -229028,7 +229028,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
@@ -229056,7 +229056,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -229212,7 +229212,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -229380,7 +229380,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -229454,7 +229454,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -229489,7 +229489,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -229657,7 +229657,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -229731,7 +229731,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -229766,7 +229766,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -229982,7 +229982,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -230056,7 +230056,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -230091,7 +230091,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -230307,7 +230307,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -230381,7 +230381,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -230416,7 +230416,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -230881,7 +230881,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -230948,7 +230948,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -230966,7 +230966,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
@@ -230994,7 +230994,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -231150,7 +231150,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -231318,7 +231318,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231392,7 +231392,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -231427,7 +231427,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -231595,7 +231595,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231669,7 +231669,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -231704,7 +231704,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -231920,7 +231920,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231994,7 +231994,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -232029,7 +232029,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -232245,7 +232245,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -232319,7 +232319,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -232354,7 +232354,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -232819,7 +232819,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -232886,7 +232886,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -232904,7 +232904,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
@@ -232932,7 +232932,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -233088,7 +233088,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+        "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
         "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
       ],
@@ -233256,7 +233256,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ac6e830b24ce7ba91d789f5effc5ccbe76c383e0f4dae82d0010de9836ca24f1",
+                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233330,7 +233330,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233365,7 +233365,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -233533,7 +233533,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "2bb721ddceeb41d59d5ab5d701ec4f69db524f5a0dce64016f635d4563a33268",
+                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233607,7 +233607,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233642,7 +233642,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -233858,7 +233858,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c479da98b37740b0167972721c0c0c171b57a8bd0becdd15c452236b1c15e4ff",
+                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233932,7 +233932,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233967,7 +233967,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -234183,7 +234183,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "40bd1df0f58daeb41a69a570d10029fcd06ce99a168109713b96ac5e276d0ec9",
+                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -234257,7 +234257,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local one-column broadcast source",
+                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -234292,7 +234292,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local one-column broadcast source",
+                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -234757,7 +234757,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local one-column broadcast source",
+              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -234824,7 +234824,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row-broadcast source"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -234842,7 +234842,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
@@ -234870,7 +234870,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local one-column broadcast source",
+          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -275074,7 +275074,7 @@
       ],
       "engine": "SFU",
       "exceptions": [
-        "Illegal offset/count fields reject with Fault_TileLegality before effects.",
+        "Unsupported storage, layout, or backing width; a selected interval outside a source word logical valid-byte span; an undefined selected byte; or illegal offset/count fields reject with Fault_TileLegality before effects.",
         "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -276582,7 +276582,7 @@
       "macro_format": "TUNPACK <U32, Layout?, PEMask=AllPE>, SrcTile0, ScalarGPR0, ->DstTile<Size>",
       "mnemonic": "TUNPACK",
       "physical_bundle": [
-        "BSTART.SFU TUNPACK, U32",
+        "BSTART.SFU TUNPACK, U8/U16/U32",
         "B.DATR Layout (optional)",
         "B.DIM LB0/LB1/LB2 (optional)",
         "B.IOT source, ->destination",

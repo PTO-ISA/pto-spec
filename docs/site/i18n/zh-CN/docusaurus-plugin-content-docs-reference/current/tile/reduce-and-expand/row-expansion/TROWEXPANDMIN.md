@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl`
 
-Take the typed minimum of a full-shape source and a broadcast one-column vector.
+Take the typed minimum of a full-shape source and a first-column row-broadcast source.
 
 ## Normative identity {#PTO-INST-TILE-TROWEXPANDMIN}
 
@@ -120,7 +120,7 @@ Carries the operation-selected PadValue or ByteId union field.
 | --- | --- |
 | destination0 | new Local same-type numeric destination |
 | source0 | persistent Local full-shape numeric source |
-| source1 | persistent Local one-column broadcast source |
+| source1 | persistent Local row broadcast source; only column zero supplies values through the BSTART operation view |
 
 ## Decode
 
@@ -202,18 +202,18 @@ end;
 ## Legality
 
 - TROWEXPANDMIN is selected by the TEPL raw encoding carrier Mode 2 Function 10; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
-- Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.
+- Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.
 - The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.
-- The destination and both sources use exactly the selected DataType.
-- The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.
+- The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.
+- The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.
 - The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
-- Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
+- All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
-- For every valid destination element, compute typed min(source0[r,c], BroadcastTile[r,0]) at the selected element width.
+- For every valid destination element, compute typed min(source0[r,c], operation-view BroadcastTile[r,0]) at the selected element width.
 - Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMIN typed operation.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.
 - Publish the complete renamed destination atomically after every element succeeds.
@@ -232,7 +232,7 @@ end;
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 

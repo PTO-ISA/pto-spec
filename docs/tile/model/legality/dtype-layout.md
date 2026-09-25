@@ -41,19 +41,19 @@ end;
 // when the physical element width is unchanged.
 // NDF-BEGIN: PTO-TILE-CARRIER-REINTERPRETATION-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Cross-type source interpretation MUST require equal element width and MUST
-// exclude packed types. Exact backing/operation type identity MUST remain legal.
-// Comparison/select sources participate in this equal-width reinterpretation:
-// source backing DataType and operation type remain distinct. Compare payload
-// validation and interpretation use the operation type; select copies raw
-// carrier data while its architectural destination type is the operation type.
+// Cross-type source interpretation is scoped to the instruction families that
+// explicitly select an operation DataType. It MUST require equal element width
+// and MUST exclude packed types; exact backing/operation type identity remains
+// legal. Comparison/select retain their existing operation-view rules, and
+// TCVT retains its existing CUBE_M16/M32 operation-view rules.
+// TROWEXPAND*/TCOLEXPAND* additionally interpret each source's unchanged raw
+// backing carrier as the selected source operation DataType when widths match.
+// Arithmetic/EXPDIF validate under that operation type; COPY uses raw bits.
+// Expansion sources are not retagged and no numeric conversion occurs.
 // An active bundle with no resolvable operation type MUST reject rather than
 // substituting the source backing type. Direct semantic wrappers use
 // deterministic operation-specific fallbacks: TCMP left backing, TCMPS source
 // backing, and TSEL/TSELS destination backing.
-// TCVT alone extends this view to CUBE_M16/M32 sources: the source operation
-// type may differ from the persistent backing descriptor only when both are
-// non-packed, equal-width, and accepted here. The view never retags the source.
 // NDF-END: PTO-TILE-CARRIER-REINTERPRETATION-001
 pure func TileCarrierWidthCompatible(
     stored_type: TileDataType, operation_type: TileDataType) => boolean
@@ -81,6 +81,21 @@ begin
         return (TRUE, source_backing_type);
     end;
     return (FALSE, source_backing_type);
+end;
+
+readonly func ResolveTileSelectedOperationType(
+    direct_fallback_type: TileDataType) => (boolean, TileDataType)
+begin
+    if BundleTileOperationSelected() &&
+       _BundleOperation.data_type_valid &&
+       BundleDataTypeConcrete(_BundleOperation.data_type) then
+        return (TRUE, TileDataTypeFromEncoding(
+            _BundleOperation.data_type as TileDataTypeEncoding));
+    end;
+    if !BundleIsActive() && !_BundleOperation.valid then
+        return (TRUE, direct_fallback_type);
+    end;
+    return (FALSE, direct_fallback_type);
 end;
 
 pure func TileOperationUsesSourceBackingDestination(

@@ -225,6 +225,29 @@ begin
     return TRUE;
 end;
 
+pure func TileCellRearrangementDataTypeLegal(
+    data_type: TileDataType) => boolean
+begin
+    return TileCubeDataTypeSupported(data_type) &&
+           (TileElementBits(data_type) == 8 ||
+            TileElementBits(data_type) == 16 ||
+            TileElementBits(data_type) == 32);
+end;
+
+readonly func TileCellRearrangementSelectedBytesDefined(
+    tile: TileInfo, row: integer {0..65535},
+    byte_offset: integer {0..262143},
+    byte_count: integer {0..4}) => boolean
+begin
+    for byte_index = 0 to byte_count - 1 looplimit 4 do
+        if !TileCellRearrangementByteDefined(
+            tile, row, (byte_offset + byte_index) as integer {0..262143}) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func TileOperandsLegal_TPACK(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, control: Word) => boolean
@@ -238,25 +261,51 @@ begin
     let right = _Tiles[[source1]];
     let left_bytes = UInt(control[7:0]);
     let right_bytes = UInt(control[15:8]);
-    return destination_tile.storage_kind == TileStorage_Numeric &&
-           left.storage_kind == TileStorage_Numeric &&
-           right.storage_kind == TileStorage_Numeric &&
-           TileCellRearrangementLayoutLegal(destination_tile.layout) &&
-           destination_tile.layout == left.layout &&
-           destination_tile.layout == right.layout &&
-           destination_tile.data_type == TileDataType_U32 &&
-           left.data_type == TileDataType_U32 &&
-           right.data_type == TileDataType_U32 &&
-           destination_tile.valid_rows == left.valid_rows &&
-           destination_tile.valid_rows == right.valid_rows &&
-           destination_tile.valid_columns == left.valid_columns &&
-           destination_tile.valid_columns == right.valid_columns &&
-           left_bytes >= 1 && left_bytes <= 3 &&
-           right_bytes >= 1 && right_bytes <= 3 &&
-           left_bytes + right_bytes <= 4 &&
-           TileRearrangementControlWordLegal(control) &&
-           TileCellRearrangementValidRegionDefined(left) &&
-           TileCellRearrangementValidRegionDefined(right);
+    if left.storage_kind != TileStorage_Numeric ||
+       right.storage_kind != TileStorage_Numeric ||
+       !TileCellRearrangementDataTypeLegal(left.data_type) ||
+       !TileCellRearrangementDataTypeLegal(right.data_type) then
+        return FALSE;
+    end;
+    let words = TileCellRearrangementWordsPerRow(left);
+    let destination_elements_per_word =
+        if destination_tile.data_type == TileDataType_U8 then 4
+        else if destination_tile.data_type == TileDataType_U16 then 2
+        else if destination_tile.data_type == TileDataType_U32 then 1
+        else 0;
+    if destination_tile.storage_kind != TileStorage_Numeric ||
+       left.storage_kind != TileStorage_Numeric ||
+       right.storage_kind != TileStorage_Numeric ||
+       !TileCellRearrangementDataTypeLegal(left.data_type) ||
+       !TileCellRearrangementDataTypeLegal(right.data_type) ||
+       destination_elements_per_word == 0 ||
+       destination_tile.layout != left.layout ||
+       destination_tile.layout != right.layout ||
+       destination_tile.valid_rows != left.valid_rows ||
+       destination_tile.valid_rows != right.valid_rows ||
+       TileCellRearrangementWordsPerRow(right) != words ||
+       destination_tile.valid_columns !=
+           words * destination_elements_per_word ||
+       left_bytes < 1 || left_bytes > 3 ||
+       right_bytes < 1 || right_bytes > 3 ||
+       left_bytes + right_bytes > 4 ||
+       !TileRearrangementControlWordLegal(control) then
+        return FALSE;
+    end;
+    for row = 0 to left.valid_rows - 1 looplimit 65536 do
+        for word_index = 0 to words - 1 looplimit 65536 do
+            let word_start = (word_index * 4) as integer {0..262143};
+            if !TileCellRearrangementSelectedBytesDefined(
+                left, row as integer {0..65535}, word_start,
+                left_bytes as integer {0..4}) ||
+               !TileCellRearrangementSelectedBytesDefined(
+                right, row as integer {0..65535}, word_start,
+                right_bytes as integer {0..4}) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
 end;
 
 readonly func TileOperandsLegal_TUNPACK(
@@ -270,15 +319,44 @@ begin
     let source_tile = _Tiles[[source]];
     let offset = UInt(control[7:0]);
     let count = UInt(control[15:8]);
-    return destination_tile.storage_kind == TileStorage_Numeric &&
-           source_tile.storage_kind == TileStorage_Numeric &&
-           TileCellRearrangementLayoutLegal(destination_tile.layout) &&
-           destination_tile.layout == source_tile.layout &&
-           destination_tile.data_type == TileDataType_U32 &&
-           source_tile.data_type == TileDataType_U32 &&
-           destination_tile.valid_rows == source_tile.valid_rows &&
-           destination_tile.valid_columns == source_tile.valid_columns &&
-           offset <= 3 && count >= 1 && count <= 4 && offset + count <= 4 &&
-           TileRearrangementControlWordLegal(control) &&
-           TileCellRearrangementValidRegionDefined(source_tile);
+    if source_tile.storage_kind != TileStorage_Numeric ||
+       !TileCellRearrangementDataTypeLegal(source_tile.data_type) then
+        return FALSE;
+    end;
+    let words = TileCellRearrangementWordsPerRow(source_tile);
+    let destination_elements_per_word =
+        if destination_tile.data_type == TileDataType_U8 then 4
+        else if destination_tile.data_type == TileDataType_U16 then 2
+        else if destination_tile.data_type == TileDataType_U32 then 1
+        else 0;
+    if destination_tile.storage_kind != TileStorage_Numeric ||
+       source_tile.storage_kind != TileStorage_Numeric ||
+       !TileCellRearrangementDataTypeLegal(source_tile.data_type) ||
+       destination_elements_per_word == 0 ||
+       destination_tile.layout != source_tile.layout ||
+       destination_tile.valid_rows != source_tile.valid_rows ||
+       destination_tile.valid_columns !=
+           words * destination_elements_per_word ||
+       offset > 3 || count < 1 || count > 4 || offset + count > 4 ||
+       !TileRearrangementControlWordLegal(control) then
+        return FALSE;
+    end;
+    let valid_bytes = TileCellRearrangementValidBytes(source_tile);
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        for word_index = 0 to words - 1 looplimit 65536 do
+            let word_start = (word_index * 4) as integer {0..262143};
+            let word_valid = if valid_bytes > word_start then
+                (if valid_bytes - word_start > 4 then 4
+                 else valid_bytes - word_start)
+            else 0;
+            if offset + count > word_valid ||
+               !TileCellRearrangementSelectedBytesDefined(
+                   source_tile, row as integer {0..65535},
+                   (word_start + offset) as integer {0..262143},
+                   count as integer {0..4}) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
 end;

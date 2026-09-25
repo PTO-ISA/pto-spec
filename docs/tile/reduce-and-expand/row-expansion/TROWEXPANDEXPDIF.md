@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl`
 
-Exponentiate the typed difference between a full-shape source and a broadcast one-column vector.
+Exponentiate the SrcDataType difference using the selected row broadcast element.
 
 ## Normative identity {#PTO-INST-TILE-TROWEXPANDEXPDIF}
 
@@ -163,7 +163,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | --- | --- |
 | destination0 | new Local DstDataType destination |
 | source0 | persistent Local full-shape numeric source |
-| source1 | persistent Local one-column broadcast source |
+| source1 | persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values |
 
 ## Decode
 
@@ -245,18 +245,18 @@ end;
 ## Legality
 
 - TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
-- BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.
-- Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
-- The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.
-- The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.
+- BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.
+- Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
+- The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.
+- The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies the row value, while later valid columns remain defined but are ignored.
 - The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
-- Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
+- All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.
 - Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
-- For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.
+- For each destination [r,c], interpret source0[r,c] and BroadcastTile[r,0] as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then subtract and exponentiate at FP32; same-type pairs retain the existing sequence.
 - The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.
 - Publish the complete renamed destination atomically after every element succeeds.
@@ -275,7 +275,7 @@ end;
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 

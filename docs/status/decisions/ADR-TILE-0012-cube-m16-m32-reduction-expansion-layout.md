@@ -119,7 +119,9 @@
     "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
     "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
-    "PTO-TILE-MODEL-EXECUTION-REDUCTION"
+    "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+    "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+    "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"
   ],
   "resolves": [],
   "supersedes": [],
@@ -207,6 +209,54 @@
         "PTO-TILE-TCOLMIN",
         "PTO-TILE-TCOLARGMAX",
         "PTO-TILE-TCOLARGMIN"
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897",
+      "affected_ndf": [
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDSUB-CONTRACT-001",
+        "PTO-TROWEXPANDMUL-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TROWEXPANDMAX-CONTRACT-001",
+        "PTO-TROWEXPANDMIN-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TCOLEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPANDADD-CONTRACT-001",
+        "PTO-TCOLEXPANDSUB-CONTRACT-001",
+        "PTO-TCOLEXPANDMUL-CONTRACT-001",
+        "PTO-TCOLEXPANDDIV-CONTRACT-001",
+        "PTO-TCOLEXPANDMAX-CONTRACT-001",
+        "PTO-TCOLEXPANDMIN-CONTRACT-001",
+        "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TROWEXPAND",
+        "PTO-TILE-TROWEXPANDADD",
+        "PTO-TILE-TROWEXPANDSUB",
+        "PTO-TILE-TROWEXPANDMUL",
+        "PTO-TILE-TROWEXPANDDIV",
+        "PTO-TILE-TROWEXPANDMAX",
+        "PTO-TILE-TROWEXPANDMIN",
+        "PTO-TILE-TROWEXPANDEXPDIF",
+        "PTO-TILE-TCOLEXPAND",
+        "PTO-TILE-TCOLEXPANDADD",
+        "PTO-TILE-TCOLEXPANDSUB",
+        "PTO-TILE-TCOLEXPANDMUL",
+        "PTO-TILE-TCOLEXPANDDIV",
+        "PTO-TILE-TCOLEXPANDMAX",
+        "PTO-TILE-TCOLEXPANDMIN",
+        "PTO-TILE-TCOLEXPANDEXPDIF",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
       ]
     }
   ],
@@ -374,3 +424,9 @@ The accepted contract adds direct Local M32 and M16 selectors and closes same-la
 This decision is limited to the affected PTO ASL/NDF owners and their required generated projections, focused executable evidence, and catalogs. It does not specify backend behavior, software splitting, or unrelated operations.
 
 本决策仅限于受影响的 PTO ASL/NDF 所有者及其所需生成投影、重点可执行证据和目录；不规定后端行为、软件拆分或无关操作。
+
+### 2026-09-24 accepted amendment (Issue #338): Local CUBE expansion views
+
+Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) amends the expansion subset of this Local CUBE layout closure and supersedes the prior exact `[R,1]` / `[1,C]` broadcast geometry and exact backing-type requirement. A row broadcast may have multiple valid columns but uses only logical column zero; a column broadcast may have multiple valid rows but uses only logical row zero. Each expansion source may use an equal-width, non-packed backing carrier distinct from its selected source operation type, without changing generic CUBE geometry. The existing operation-specific row limits, same-layout rule, full-shape geometry, and EXPDIF pairs remain unchanged. Current semantics reside in the sixteen expansion ASL/NDF owners.
+
+中文：Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) 修订本 Local CUBE 布局闭合中的扩展子集。行广播可有多列有效数据，但仅使用逻辑第 0 列；列广播可有多行有效数据，但仅使用逻辑第 0 行。扩展源可使用与所选源操作类型不同但等宽、非 packed 的 backing 载体，不改变通用 CUBE 几何。既有操作特定行数限制、同布局规则、完整源几何和 EXPDIF 类型对保持不变。当前语义由十六个扩展 ASL/NDF 所有者定义。

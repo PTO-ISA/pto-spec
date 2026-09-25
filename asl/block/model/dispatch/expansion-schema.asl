@@ -85,9 +85,9 @@ begin
     let valid_rows = UInt(_BundleDimensions[[1]]);
     if TileOperationUsesClosedRowExpansionSchema(operation) then
         return _Tiles[[broadcast]].valid_rows == valid_rows &&
-               _Tiles[[broadcast]].valid_columns == 1;
+               _Tiles[[broadcast]].valid_columns >= 1;
     end;
-    return _Tiles[[broadcast]].valid_rows == 1 &&
+    return _Tiles[[broadcast]].valid_rows >= 1 &&
            _Tiles[[broadcast]].valid_columns == valid_columns;
 end;
 
@@ -136,9 +136,15 @@ begin
            CurrentBundleTileLayout()) ||
        _Tiles[[broadcast]].layout != CurrentBundleTileLayout() ||
        !(if copy then
-             TileReductionAndExpansionSourceContentsDefined(broadcast)
-         else TileReductionAndExpansionSourceLegal(broadcast)) ||
-       _Tiles[[broadcast]].data_type != source_data_type ||
+             TileReductionAndExpansionSourceContentsDefined(broadcast) &&
+             TileCarrierWidthCompatible(
+                 _Tiles[[broadcast]].data_type, source_data_type)
+         else TileExpansionBroadcastLegalAs(
+             broadcast,
+             if TileOperationUsesClosedRowExpansionSchema(operation) then
+                 TileAxis_Row
+             else TileAxis_Column,
+             source_data_type)) ||
        !SelectedBundleExpansionBroadcastShapeMatches(
            operation, broadcast) then
         return FALSE;
@@ -148,8 +154,8 @@ begin
         return TRUE;
     end;
     return _Tiles[[binding.source0]].layout == CurrentBundleTileLayout() &&
-           TileReductionAndExpansionSourceLegal(binding.source0) &&
-           _Tiles[[binding.source0]].data_type == source_data_type &&
+           TileReductionAndExpansionSourceLegalAs(
+               binding.source0, source_data_type) &&
            SelectedBundleComparisonShapeMatches(binding.source0) &&
            ((TileOperationOfIndex(operation) != TileOperation_TROWEXPANDDIV &&
              TileOperationOfIndex(operation) != TileOperation_TCOLEXPANDDIV) ||

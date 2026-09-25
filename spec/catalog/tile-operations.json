@@ -2521,7 +2521,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2529,7 +2529,7 @@
       "semantic_handler": "ExecuteTileExpand",
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
-        "operand:source0:persistent-local-one-column-broadcast-source",
+        "operand:source0:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2581,7 +2581,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2590,7 +2590,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2642,7 +2642,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2651,7 +2651,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2703,7 +2703,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2712,7 +2712,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2764,7 +2764,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2773,7 +2773,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2825,7 +2825,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2834,7 +2834,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2886,7 +2886,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2895,7 +2895,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-column-broadcast-source",
+        "operand:source1:persistent-local-row-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -2948,7 +2948,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-column broadcast source"
+          "role": "persistent Local row-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3323,7 +3323,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3331,7 +3331,7 @@
       "semantic_handler": "ExecuteTileExpand",
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
-        "operand:source0:persistent-local-one-row-broadcast-source",
+        "operand:source0:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3383,7 +3383,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3392,7 +3392,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3444,7 +3444,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3453,7 +3453,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3505,7 +3505,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3514,7 +3514,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3566,7 +3566,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3575,7 +3575,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3627,7 +3627,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3636,7 +3636,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3688,7 +3688,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -3697,7 +3697,7 @@
       "state_effects": [
         "operand:destination0:new-local-same-type-destination",
         "operand:source0:persistent-local-full-shape-source",
-        "operand:source1:persistent-local-one-row-broadcast-source",
+        "operand:source1:persistent-local-column-broadcast-source",
         "runtime:CurrentBundlePadValue:numeric-padding"
       ],
       "classification": "reduce-and-expand",
@@ -3750,7 +3750,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local one-row broadcast source"
+          "role": "persistent Local column-broadcast source"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",

@@ -428,7 +428,7 @@ begin
        decoded_operation == TileOperation_TSHUF ||
        decoded_operation == TileOperation_TPACK ||
        decoded_operation == TileOperation_TUNPACK then
-        return ResolveBundleCellRearrangementDestination();
+        return ResolveBundleCellRearrangementDestination(operation);
     end;
     if TileOperationUsesSourceBackingDestination(decoded_operation) then
         let source = BundleTileSourceIndex(0, FALSE);

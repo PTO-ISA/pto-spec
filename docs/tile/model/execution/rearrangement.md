@@ -216,26 +216,26 @@ begin
     assert TileOperandsLegal_TPACK(destination, source0, source1, control);
     let source0_bytes = UInt(control[7:0]);
     let source1_bytes = UInt(control[15:8]);
+    let words = TileCellRearrangementWordsPerRow(source0_tile);
     var result = destination_tile;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for word_index = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let left_element = TileLogicalLinearIndex(source0_tile,
-                row as integer {0..65535}, word_index as integer {0..65535});
-            let right_element = TileLogicalLinearIndex(source1_tile,
-                row as integer {0..65535}, word_index as integer {0..65535});
-            let left_word = TileReadLogicalElement(source0_tile, left_element);
-            let right_word = TileReadLogicalElement(source1_tile, right_element);
+    for row = 0 to source0_tile.valid_rows - 1 looplimit 65536 do
+        for word_index = 0 to words - 1 looplimit 65536 do
+            let word_start = (word_index * 4) as integer {0..262143};
             var packed = Zeros{PTO_XLEN};
             for byte_index = 0 to source0_bytes - 1 looplimit 3 do
-                packed[(byte_index * 8) +: 8] = left_word[(byte_index * 8) +: 8];
+                packed[(byte_index * 8) +: 8] = TileReadCellByte(
+                    source0_tile, row as integer {0..65535},
+                    (word_start + byte_index) as integer {0..262143});
             end;
             for byte_index = 0 to source1_bytes - 1 looplimit 3 do
                 packed[((source0_bytes + byte_index) * 8) +: 8] =
-                    right_word[(byte_index * 8) +: 8];
+                    TileReadCellByte(source1_tile,
+                        row as integer {0..65535},
+                        (word_start + byte_index) as integer {0..262143});
             end;
-            let destination_element = TileLogicalLinearIndex(result,
-                row as integer {0..65535}, word_index as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, destination_element, packed);
+            result = TileInfoWithCellWord(result,
+                row as integer {0..65535},
+                word_index as integer {0..65535}, packed);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -250,20 +250,22 @@ begin
     assert TileOperandsLegal_TUNPACK(destination, source, control);
     let byte_offset = UInt(control[7:0]);
     let byte_count = UInt(control[15:8]);
+    let words = TileCellRearrangementWordsPerRow(source_tile);
     var result = destination_tile;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for word_index = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLogicalLinearIndex(source_tile,
-                row as integer {0..65535}, word_index as integer {0..65535});
-            let source_word = TileReadLogicalElement(source_tile, source_element);
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        for word_index = 0 to words - 1 looplimit 65536 do
+            let word_start = (word_index * 4) as integer {0..262143};
             var unpacked = Zeros{PTO_XLEN};
             for byte_index = 0 to byte_count - 1 looplimit 4 do
                 unpacked[(byte_index * 8) +: 8] =
-                    source_word[((byte_offset + byte_index) * 8) +: 8];
+                    TileReadCellByte(source_tile,
+                        row as integer {0..65535},
+                        (word_start + byte_offset + byte_index)
+                            as integer {0..262143});
             end;
-            let destination_element = TileLogicalLinearIndex(result,
-                row as integer {0..65535}, word_index as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, destination_element, unpacked);
+            result = TileInfoWithCellWord(result,
+                row as integer {0..65535},
+                word_index as integer {0..65535}, unpacked);
         end;
     end;
     result = TileWithValidRegionDefined(result);

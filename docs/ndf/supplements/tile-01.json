@@ -468,8 +468,8 @@
         "zh-CN": "TCOLEXPAND 单行广播"
       },
       "summary": {
-        "en": "TCOLEXPAND broadcasts one Local source row down the destination rows without changing its carrier bits. The bundle uses one terminating Local B.IOT and no B.IOR or B.IOS records, and publishes the renamed result with padding and descriptor only after preflight and source snapshot.",
-        "zh-CN": "TCOLEXPAND 将一个 Local 源行按位不变地广播到目标各行。该块使用一个终止型 Local B.IOT，不使用 B.IOR 或 B.IOS；预检和源快照完成后，重命名结果连同填充和描述符一并发布。"
+        "en": "TCOLEXPAND copies the row-zero value at each column down that destination column without changing carrier bits. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPAND 将每列广播源第 0 行的载体位原样复制到目标列的所有行。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可通过所选源操作类型解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -480,8 +480,8 @@
         "zh-CN": "TCOLEXPANDADD 行广播加法"
       },
       "summary": {
-        "en": "TCOLEXPANDADD broadcasts a one-row Local source across rows and adds it to the corresponding elements of a full-shape Local source at the selected DataType. The closed B.IOT-only schema and complete preflight keep source snapshots, status, padding, descriptor, and renamed result publication coherent.",
-        "zh-CN": "TCOLEXPANDADD 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状 Local 源的对应元素相加。封闭的纯 B.IOT 模式和完整预检使源快照、状态、填充、描述符及重命名结果保持一致发布。"
+        "en": "TCOLEXPANDADD adds each full-shape source element and the row-zero value from the same column under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDADD 按所选源操作类型，将完整形状源的每个元素与同一列广播源第 0 行的值相加。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -492,8 +492,8 @@
         "zh-CN": "TCOLEXPANDDIV 行广播除法"
       },
       "summary": {
-        "en": "TCOLEXPANDDIV broadcasts a one-row Local divisor across rows and divides each corresponding full-shape source element at the selected DataType. The operation accepts only its listed types and uses a terminating Local B.IOT, with preflight and source snapshots preceding atomic result publication.",
-        "zh-CN": "TCOLEXPANDDIV 将一行 Local 除数沿行方向广播，并按选定 DataType 对完整形状源的对应元素执行除法。操作仅接受其列出的类型并使用终止型 Local B.IOT；预检和源快照先于结果的原子发布。"
+        "en": "TCOLEXPANDDIV divides each full-shape source element by the row-zero value from the same column under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDDIV 按所选源操作类型，将完整形状源的每个元素除以同一列广播源第 0 行的值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -504,8 +504,8 @@
         "zh-CN": "TCOLEXPANDEXPDIF 广播指数差"
       },
       "summary": {
-        "en": "TCOLEXPANDEXPDIF subtracts a broadcast one-row source from a full-shape source, then exponentiates the difference at the resolved destination type. The source and destination type pair is limited to the listed FP16, BF16, and FP32 combinations, and invalid pairs are rejected before source snapshots or publication.",
-        "zh-CN": "TCOLEXPANDEXPDIF 从完整形状源中减去沿行广播的一行源，再按解析后的目标类型对差值求指数。源与目标类型仅限条款列出的 FP16、BF16 和 FP32 组合；无效组合在源快照或结果发布之前被拒绝。"
+        "en": "TCOLEXPANDEXPDIF subtracts each row-zero broadcast value from the corresponding full-shape element using SrcDataType, then exponentiates using DstDataType; its existing FP16, BF16, and FP32 pairs and widening sequence remain unchanged. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDEXPDIF 使用 SrcDataType 从完整形状源每个元素中减去对应列广播源第 0 行的值，再使用 DstDataType 计算指数；既有 FP16、BF16 和 FP32 类型对及扩宽顺序保持不变。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -516,8 +516,8 @@
         "zh-CN": "TCOLEXPANDMAX 行广播最大值"
       },
       "summary": {
-        "en": "TCOLEXPANDMAX broadcasts a one-row Local source across rows and selects the elementwise maximum against a full-shape source at the selected DataType. The B.IOT-only schema and preflight ensure the complete renamed destination, status, padding, and descriptor appear together.",
-        "zh-CN": "TCOLEXPANDMAX 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源逐元素选择最大值。纯 B.IOT 模式和预检保证完整的重命名目标、状态、填充和描述符一同可见。"
+        "en": "TCOLEXPANDMAX selects the typed maximum of each full-shape source element and the row-zero value from the same column. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDMAX 对完整形状源的每个元素与同一列广播源第 0 行的值，按类型选择最大值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -528,8 +528,8 @@
         "zh-CN": "TCOLEXPANDMIN 行广播最小值"
       },
       "summary": {
-        "en": "TCOLEXPANDMIN broadcasts a one-row Local source across rows and selects the elementwise minimum against a full-shape source at the selected DataType. The B.IOT-only schema and preflight ensure the complete renamed destination, status, padding, and descriptor appear together.",
-        "zh-CN": "TCOLEXPANDMIN 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源逐元素选择最小值。纯 B.IOT 模式和预检保证完整的重命名目标、状态、填充和描述符一同可见。"
+        "en": "TCOLEXPANDMIN selects the typed minimum of each full-shape source element and the row-zero value from the same column. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDMIN 对完整形状源的每个元素与同一列广播源第 0 行的值，按类型选择最小值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -540,8 +540,8 @@
         "zh-CN": "TCOLEXPANDMUL 行广播乘法"
       },
       "summary": {
-        "en": "TCOLEXPANDMUL broadcasts a one-row Local source across rows and multiplies it with the corresponding elements of a full-shape source at the selected DataType. Complete preflight and source snapshots precede coherent publication of the renamed result and its accompanying state.",
-        "zh-CN": "TCOLEXPANDMUL 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源的对应元素相乘。完整预检和源快照先于重命名结果及其伴随状态的一致发布。"
+        "en": "TCOLEXPANDMUL multiplies each full-shape source element and the row-zero value from the same column under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDMUL 按所选源操作类型，将完整形状源的每个元素与同一列广播源第 0 行的值相乘。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -552,8 +552,8 @@
         "zh-CN": "TCOLEXPANDSUB 行广播减法"
       },
       "summary": {
-        "en": "TCOLEXPANDSUB broadcasts a one-row Local source across rows and subtracts it from the corresponding elements of a full-shape source at the selected DataType. The closed operand schema and preflight ensure no destination state becomes visible before both sources are validated and snapshotted.",
-        "zh-CN": "TCOLEXPANDSUB 将一行 Local 源沿行方向广播，并按选定 DataType 从完整形状源的对应元素中减去该值。封闭的操作数模式和预检保证在两个源完成校验与快照之前，不会有任何目标状态可见。"
+        "en": "TCOLEXPANDSUB subtracts the row-zero value from each full-shape source element in the same column under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast rows are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TCOLEXPANDSUB 按所选源操作类型，从完整形状源的每个元素中减去同一列广播源第 0 行的值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播行会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {

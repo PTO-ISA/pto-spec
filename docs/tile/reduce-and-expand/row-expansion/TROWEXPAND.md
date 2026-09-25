@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl`
 
-Broadcast one one-column vector source bit-for-bit into a new Local destination.
+Copy the first logical column of a row broadcast source bit-for-bit into a new Local destination.
 
 ## Normative identity {#PTO-INST-TILE-TROWEXPAND}
 
@@ -115,7 +115,7 @@ Carries the operation-selected PadValue or ByteId union field.
 | Field | Architectural role |
 | --- | --- |
 | destination0 | new Local same-type numeric destination |
-| source0 | persistent Local one-column broadcast source |
+| source0 | persistent Local row broadcast source; only column zero supplies values |
 
 ## Decode
 
@@ -194,18 +194,18 @@ end;
 ## Legality
 
 - TROWEXPAND is selected by the TEPL raw encoding carrier Mode 2 Function 4; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
-- Exactly one terminating Local B.IOT supplies one persistent one-column source and one newly allocated Local destination; no full-shape second source exists.
+- Exactly one terminating Local B.IOT supplies one persistent row broadcast source with at least one valid column and one newly allocated Local destination; no full-shape second source exists.
 - The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.
-- The destination DataType equals the broadcast source DataType.
-- The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.
+- The destination DataType is the BSTART operation DataType. The broadcast source backing may differ only through an equal-width non-packed carrier view.
+- The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only logical column zero supplies values, while later valid columns remain defined but ignored.
 - The destination geometry is the B.DIM-derived geometry.
-- Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.
+- The source valid region is fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout; COPY does not validate arithmetic encodings.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
-- For every valid destination element, copy BroadcastTile[r,0] bit-for-bit.
+- For every valid destination element, copy the raw operation-view bits of BroadcastTile[r,0] bit-for-bit.
 - The copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.
 - Publish the complete renamed destination atomically after every element succeeds.
@@ -224,7 +224,7 @@ end;
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 
