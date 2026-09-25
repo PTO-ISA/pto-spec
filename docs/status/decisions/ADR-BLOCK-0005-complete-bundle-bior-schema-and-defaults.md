@@ -338,4 +338,6 @@ mask selector from an unused encoded-zero field without changing the
 absolute-selector domain or omission-versus-zero distinction. Per-operation
 schemas determine the exact word count and reject surplus, non-final, or
 misplaced flags and records before effects. `PredInv` and `Zero` remain
-B.DATR controls.
+B.DATR controls. For `TPACK` and `TUNPACK`, the operation-owned mask word count
+is derived from the source CELL-word coordinate span; it is independent of the
+selected destination element type.

@@ -291,7 +291,14 @@ ExecutionMask as the final Local B.IOT source after every existing Tile
 source role. The schema then places any destination on the final B.IOT record.
 The existing ordered source and destination fields are reused; this does not
 add a physical B.IOT form or change the four-record stream bound. The frozen
-91-mnemonic census needs no more than two records.
+92-name semantic census has 89 mnemonics with applicable Local CUBE forms and
+needs no more than two records; `TGATHER`, `TSCATTER`, and `TTRI` have no
+applicable forms under their existing layout rules.
+
+For `TPACK` and `TUNPACK`, the final PredicateCell source has the source
+`ValidRow` and source CELL-words-per-row shape, even when the destination's
+logical `ValidCol` differs for U8/U16/U32 grouping. The detailed operation
+coordinate and effect rules remain owned by ADR-TILE-0008 and its ASL/NDF.
 
 For the GPR carrier, predicate word(s) are named by the complete B.IOR schema
 after that operation's existing GPR inputs. One or two immediately contiguous

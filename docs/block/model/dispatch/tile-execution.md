@@ -23,7 +23,7 @@ This page is a generated reference view of the normative ASL unit.
 // numeric padding checks belong to the TGPR2T complete schema before handler
 // execution and atomic result publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
-// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -74,19 +74,39 @@ begin
         when TileOperation_TCMP =>
             let left = BundleTileSourceIndex(0, FALSE);
             let right = BundleTileSourceIndex(0, TRUE);
-            let value = TileCompareCUBEToGPRAs(
+            let gpr_destination = _BundleScalarBindings[[0]].destination
+                as GPRIndex;
+            var value = TileCompareCUBEToGPRAs(
                 left, right, BundleComparisonCodeAsTileComparison(),
                 selected_high, operation_type);
-            WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
+            if _BundleExecutionMask.valid then
+                let old_value = ReadGPR(gpr_destination);
+                let tile = _Tiles[[left]];
+                value = TileExecutionMaskPredicateGPRResult(
+                    value, old_value, operation_type, tile.layout,
+                    tile.valid_rows as integer {1..65535},
+                    tile.valid_columns as integer {1..65535}, selected_high);
+            end;
+            WriteGPR(gpr_destination, value);
         when TileOperation_TCMPS =>
             let source = BundleTileSourceIndex(0, FALSE);
             let scalar = ReadScalarRegisterOperand(
                 _BundleScalarBindings[[0]].source0);
-            let value = TileCompareCUBEScalarToGPRAs(
+            let gpr_destination = _BundleScalarBindings[[0]].destination
+                as GPRIndex;
+            var value = TileCompareCUBEScalarToGPRAs(
                 source, scalar,
                 BundleComparisonCodeAsTileComparison(), selected_high,
                 operation_type);
-            WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
+            if _BundleExecutionMask.valid then
+                let old_value = ReadGPR(gpr_destination);
+                let tile = _Tiles[[source]];
+                value = TileExecutionMaskPredicateGPRResult(
+                    value, old_value, operation_type, tile.layout,
+                    tile.valid_rows as integer {1..65535},
+                    tile.valid_columns as integer {1..65535}, selected_high);
+            end;
+            WriteGPR(gpr_destination, value);
         when TileOperation_TSEL =>
             let source_true = BundleTileSourceIndex(0, FALSE);
             let mask_words = SelectedBundleComparisonGPRMaskWordCount(
@@ -176,6 +196,54 @@ begin
        !ReuseBundleLocalGenerationDestination() then
         DiscardBundleSubviewMaterializations();
         return FALSE;
+    end;
+    if !SelectedBundleTileMaskIsZero() && _BundleOperation.valid &&
+       !timg2col_selected then
+        let mask_family = BundleTileDecodeFamily(
+            _BundleOperation.operation_class);
+        let mask_code = BundleOperationDecodeCode(_BundleOperation);
+        let mask_operation = DecodeTileOperation(mask_family, mask_code);
+        if mask_operation != PTO_TILE_OPERATION_COUNT &&
+           TileOperationExecutionMaskEligible(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) &&
+           !MarkSelectedBundleExecutionMaskCarrier(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            DiscardBundleSubviewMaterializations();
+            return FALSE;
+        end;
+        if mask_operation != PTO_TILE_OPERATION_COUNT &&
+           TileOperationExecutionMaskEligible(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) &&
+           !CaptureSelectedBundleExecutionMask(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            DiscardBundleSubviewMaterializations();
+            return FALSE;
+        end;
+        if mask_operation != PTO_TILE_OPERATION_COUNT &&
+           TileOperationExecutionMaskEligible(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) &&
+           _BundleExecutionMask.valid &&
+           !BundleExecutionMaskDataAttributesLegal(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            DiscardBundleSubviewMaterializations();
+            return FALSE;
+        end;
+        if _BundleExecutionMask.valid &&
+           (weight_tload_selected || BundleCubeTransportSelected() ||
+            BundleGMOVSelected() || BundleMGATHERCASSelected() ||
+            BundleGMAtomRedSelected() || BundleMGATHERMASKSelected() ||
+            BundleMGATHERSelected() || BundleMSCATTERSelected() ||
+            BundleMSCATTERMASKSelected() || BundleTPREFETCHSelected() ||
+            BundleSharedTLSUSelected()) &&
+           !PrepareSelectedBundleExecutionMaskMerge(
+               mask_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            DiscardBundleSubviewMaterializations();
+            return FALSE;
+        end;
     end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
@@ -278,6 +346,10 @@ begin
         return TRUE;
     end;
     if !SelectedBundleTileMasksLegal() then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !PrepareSelectedBundleExecutionMaskMerge(operation) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
