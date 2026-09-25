@@ -1,16 +1,21 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","surface":"tile","classification":["model","execution","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
-// PTO-REQ-TEPL-PREDICATE-CARRIER-001: CUBE predicate carrier layouts.
-
-pure func TileCubePredicateGPRBit(
-    low: Word, high: Word, layout: TileLayout,
-    row: integer {0..65535}, column: integer {0..65535}) => boolean
-begin
-    let rows = TileCubePredicateRowBits(layout);
-    assert row < rows && column * rows < 128;
-    let packed_index = (row + column * rows) as integer {0..127};
-    if packed_index < 64 then return low[packed_index] == '1'; end;
-    return high[packed_index - 64] == '1';
-end;
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","surface":"tile","classification":["model","execution","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
+// PTO-REQ-TEPL-PREDICATE-CARRIER-001: CUBE predicate carriers and explicit ExecutionMask.
+// Eligible Local CUBE_M16/CUBE_M32 TileOps use an explicit ExecutionMask
+// operand represented either by the existing one/two-word GPR mapping or by a
+// canonical U8 TileStorage_PredicateCell with 0x00/0x01 values. PredicateCell
+// consumer compatibility uses logical layout and valid rows and columns;
+// generic ExecutionMask consumption MUST NOT require the producer's
+// predicate_basis_type to equal the consumer operation type. Generic GPR
+// binding schemas use TileOperationExecutionMaskEligible as the exact 91-op
+// applicability set, excluding reductions, contractions, GMOV, and TPREFETCH.
+// The carrier is
+// snapshotted before an overlapping predicate destination is allocated or
+// published. Effective activity is PE_MASK[pe] AND (mask_bit XOR PredInv),
+// with PredInv and inactive ZERO/MERGE selected by B.DATR. Inactive effects
+// MUST not read element-only source payloads, contribute numeric status, probe
+// or fault on memory, or modify a destination except to preserve its old value
+// (MERGE) or write zero (ZERO). No implicit mask state, packed-i1 storage,
+// P0..P7 consumption, or mask stack is introduced.
 
 readonly func TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
     source: TileIndex, scalar: Word, operation_type: TileDataType) => boolean
@@ -109,7 +114,10 @@ begin
         let column = base + field;
         if column < tile.valid_columns then
             for row = 0 to rows - 1 looplimit 32 do
-                if row < tile.valid_rows then
+                if row < tile.valid_rows &&
+                   BundleExecutionMaskActiveAt(
+                       tile.layout, row as integer {0..65535},
+                       column as integer {0..65535}) then
                     let element = TileLogicalLinearIndex(tile,
                         row as integer {0..65535},
                         column as integer {0..65535});
@@ -137,6 +145,35 @@ begin
         source, scalar, comparison, high, operation_type);
 end;
 
+func TileExecutionMaskPredicateGPRResult(
+    result: Word, old_value: Word, data_type: TileDataType,
+    layout: TileLayout, valid_rows: integer {1..65535},
+    valid_columns: integer {1..65535}, high: boolean) => Word
+begin
+    if !_BundleExecutionMask.valid then return result; end;
+    var masked = result;
+    let rows = TileCubePredicateRowBits(layout);
+    let fields = TileCubePredicateFieldCount(data_type, layout);
+    let base = TileCubePredicateColumnBase(data_type, layout, high);
+    for field = 0 to fields - 1 looplimit 8 do
+        let column = base + field;
+        if column < valid_columns then
+            for row = 0 to rows - 1 looplimit 32 do
+                if row < valid_rows &&
+                   !BundleExecutionMaskActiveAt(
+                       layout, row as integer {0..65535},
+                       column as integer {0..65535}) then
+                    let bit_index = (row + field * rows)
+                        as integer {0..63};
+                    masked[bit_index] = if _BundleExecutionMask.zero_inactive
+                        then '0' else old_value[bit_index];
+                end;
+            end;
+        end;
+    end;
+    return masked;
+end;
+
 func ExecuteTileSelectCUBEGPRAs(destination: TileIndex, mask_low: Word,
                                 mask_high: Word, source_true: TileIndex,
                                 source_false: TileIndex,
@@ -151,12 +188,23 @@ begin
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(true_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let selected = TileCubePredicateGPRBit(
-                mask_low, mask_high, true_tile.layout,
-                row as integer {0..65535}, column as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, element,
-                if selected then TileReadLogicalElement(true_tile, element)
-                else TileReadLogicalElement(false_tile, element));
+            var value = Zeros{PTO_XLEN};
+            if BundleExecutionMaskActiveAt(
+                   true_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let selected = TileCubePredicateGPRBit(
+                    mask_low, mask_high, true_tile.layout,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+                value = if selected then
+                    TileReadLogicalElement(true_tile, element)
+                    else TileReadLogicalElement(false_tile, element);
+            else
+                value = BundleExecutionMaskDestinationValue(
+                    true_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            end;
+            result = TileInfoWithLogicalElement(result, element, value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -190,12 +238,23 @@ begin
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(true_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let selected = TileCubePredicateGPRBit(
-                mask_low, mask_high, true_tile.layout,
-                row as integer {0..65535}, column as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, element,
-                if selected then TileReadLogicalElement(true_tile, element)
-                else normalized_scalar);
+            var value = Zeros{PTO_XLEN};
+            if BundleExecutionMaskActiveAt(
+                   true_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let selected = TileCubePredicateGPRBit(
+                    mask_low, mask_high, true_tile.layout,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+                value = if selected then
+                    TileReadLogicalElement(true_tile, element)
+                    else normalized_scalar;
+            else
+                value = BundleExecutionMaskDestinationValue(
+                    true_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            end;
+            result = TileInfoWithLogicalElement(result, element, value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -213,7 +272,6 @@ begin
         destination, mask_low, mask_high, source_true, scalar_false,
         operation_type);
 end;
-
 
 pure func TileTGPR2TEncodingLegal(mask: integer, match: integer) => boolean
 begin
@@ -338,7 +396,14 @@ begin
         for column = 0 to result.valid_columns - 1 looplimit 8 do
             let index = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            result.payload[[index]] = pad;
+            let value = if BundleExecutionMaskActiveAt(
+                result.layout, row as integer {0..65535},
+                column as integer {0..65535}) then pad else
+                BundleExecutionMaskDestinationValue(
+                    result.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            result = TileInfoWithLogicalElementAndDefined(
+                result, index, value, TRUE);
         end;
     end;
     let offset = TileTGPR2TByteOffset(
@@ -350,7 +415,11 @@ begin
             var value = Zeros{PTO_XLEN};
             value[7:0] = TileTGPR2TPackedRowByte(
                 gpr0, gpr1, gpr2, gpr3, row as integer {0..31});
-            result.payload[[index]] = value;
+            if BundleExecutionMaskActiveAt(
+                   result.layout, row as integer {0..65535}, offset) then
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, index, value, TRUE);
+            end;
         end;
     else
         for row = 0 to 15 looplimit 16 do
@@ -362,13 +431,48 @@ begin
             var low_value = Zeros{PTO_XLEN};
             low_value[7:0] = TileTGPR2TPackedRowHalf(
                 gpr0, gpr1, gpr2, gpr3, row as integer {0..15}, FALSE);
-            result.payload[[low]] = low_value;
+            if BundleExecutionMaskActiveAt(
+                   result.layout, row as integer {0..65535},
+                   pair_start) then
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, low, low_value, TRUE);
+            end;
             var high_value = Zeros{PTO_XLEN};
             high_value[7:0] = TileTGPR2TPackedRowHalf(
                 gpr0, gpr1, gpr2, gpr3, row as integer {0..15}, TRUE);
-            result.payload[[high]] = high_value;
+            if BundleExecutionMaskActiveAt(
+                   result.layout, row as integer {0..65535},
+                   pair_start + 1) then
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, high, high_value, TRUE);
+            end;
         end;
     end;
     result = TileWithValidRegionDefined(result);
     _Tiles[[destination]] = result;
+end;
+
+pure func TileOperationExecutionMaskEligible(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let decoded = TileOperationOfIndex(operation);
+    return            decoded == TileOperation_MGATHER || decoded == TileOperation_MGATHER_ADD || decoded == TileOperation_MGATHER_AND || decoded == TileOperation_MGATHER_CAS || decoded == TileOperation_MGATHER_DEC ||
+           decoded == TileOperation_MGATHER_EXCH || decoded == TileOperation_MGATHER_INC || decoded == TileOperation_MGATHER_MASK || decoded == TileOperation_MGATHER_MAX || decoded == TileOperation_MGATHER_MIN ||
+           decoded == TileOperation_MGATHER_OR || decoded == TileOperation_MGATHER_XOR || decoded == TileOperation_MSCATTER || decoded == TileOperation_MSCATTER_ADD || decoded == TileOperation_MSCATTER_AND ||
+           decoded == TileOperation_MSCATTER_DEC || decoded == TileOperation_MSCATTER_INC || decoded == TileOperation_MSCATTER_MASK || decoded == TileOperation_MSCATTER_MAX || decoded == TileOperation_MSCATTER_MIN ||
+           decoded == TileOperation_MSCATTER_OR || decoded == TileOperation_MSCATTER_POPC || decoded == TileOperation_MSCATTER_XOR || decoded == TileOperation_TABS || decoded == TileOperation_TADD ||
+           decoded == TileOperation_TADDS || decoded == TileOperation_TAND || decoded == TileOperation_TANDS || decoded == TileOperation_TCI || decoded == TileOperation_TCMP ||
+           decoded == TileOperation_TCMPS || decoded == TileOperation_TCOLEXPAND || decoded == TileOperation_TCOLEXPANDADD || decoded == TileOperation_TCOLEXPANDDIV || decoded == TileOperation_TCOLEXPANDEXPDIF ||
+           decoded == TileOperation_TCOLEXPANDMAX || decoded == TileOperation_TCOLEXPANDMIN || decoded == TileOperation_TCOLEXPANDMUL || decoded == TileOperation_TCOLEXPANDSUB || decoded == TileOperation_TCVT ||
+           decoded == TileOperation_TDIV || decoded == TileOperation_TDIVS || decoded == TileOperation_TEXP || decoded == TileOperation_TEXPANDS || decoded == TileOperation_TFMA ||
+           decoded == TileOperation_TGATHER || decoded == TileOperation_TGPR2T || decoded == TileOperation_TLOAD || decoded == TileOperation_TLOG || decoded == TileOperation_TMAX ||
+           decoded == TileOperation_TMAXS || decoded == TileOperation_TMIN || decoded == TileOperation_TMINS || decoded == TileOperation_TMOV || decoded == TileOperation_TMUL ||
+           decoded == TileOperation_TMULS || decoded == TileOperation_TNEG || decoded == TileOperation_TNOT || decoded == TileOperation_TOR || decoded == TileOperation_TORS ||
+           decoded == TileOperation_TPACK || decoded == TileOperation_TPERMUTE || decoded == TileOperation_TRECIP || decoded == TileOperation_TRELU || decoded == TileOperation_TREM ||
+           decoded == TileOperation_TREMS || decoded == TileOperation_TROWEXPAND || decoded == TileOperation_TROWEXPANDADD || decoded == TileOperation_TROWEXPANDDIV || decoded == TileOperation_TROWEXPANDEXPDIF ||
+           decoded == TileOperation_TROWEXPANDMAX || decoded == TileOperation_TROWEXPANDMIN || decoded == TileOperation_TROWEXPANDMUL || decoded == TileOperation_TROWEXPANDSUB || decoded == TileOperation_TRSQRT ||
+           decoded == TileOperation_TSCATTER || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS || decoded == TileOperation_TSHL || decoded == TileOperation_TSHLS ||
+           decoded == TileOperation_TSHR || decoded == TileOperation_TSHRS || decoded == TileOperation_TSHUF || decoded == TileOperation_TSQRT || decoded == TileOperation_TSTORE ||
+           decoded == TileOperation_TSUB || decoded == TileOperation_TSUBS || decoded == TileOperation_TTRI || decoded == TileOperation_TUNPACK || decoded == TileOperation_TXOR ||
+           decoded == TileOperation_TXORS;
 end;

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
 // NDF-BEGIN: PTO-MGATHER-CAS-ATOMIC-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // The legacy MGATHER_CAS spelling aliases mgather.cas and MUST accept only
@@ -203,9 +203,9 @@ readonly func TileOperandsLegal_GM_ATOM_CAS(
 begin
     let data_type = _Tiles[[destination]].data_type;
     return IndexedTLSUNumericDescriptorLegal(destination) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
-           IndexedTLSUNumericContentsDefined(expected) &&
-           IndexedTLSUNumericContentsDefined(replacement) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(expected) &&
+           IndexedTLSUExecutionMaskContentsDefined(replacement) &&
            GMAtomicOperationDataTypeLegal(operation, data_type) &&
            _Tiles[[expected]].data_type == data_type &&
            _Tiles[[replacement]].data_type == data_type &&
@@ -228,8 +228,8 @@ readonly func TileOperandsLegal_GM_ATOM_VALUE(
 begin
     let data_type = _Tiles[[destination]].data_type;
     return IndexedTLSUNumericDescriptorLegal(destination) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
-           IndexedTLSUNumericContentsDefined(value) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(value) &&
            GMAtomicOperationDataTypeLegal(operation, data_type) &&
            _Tiles[[value]].data_type == data_type &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
@@ -246,8 +246,8 @@ readonly func TileOperandsLegal_GM_RED_VALUE(
     operation: GMReductionOperation, base_address: Word, indices: TileIndex, value: TileIndex,
     pad_value: TilePadValue) => boolean
 begin
-    return IndexedTLSUNumericContentsDefined(indices) &&
-           IndexedTLSUNumericContentsDefined(value) &&
+    return IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(value) &&
            GMReductionOperationDataTypeLegal(
                operation, _Tiles[[value]].data_type) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
@@ -260,7 +260,7 @@ end;
 readonly func TileOperandsLegal_GM_RED_POPC(
     operation: GMReductionOperation, base_address: Word, indices: TileIndex) => boolean
 begin
-    return IndexedTLSUNumericContentsDefined(indices) &&
+    return IndexedTLSUExecutionMaskContentsDefined(indices) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
                _Tiles[[indices]].data_type);
 end;

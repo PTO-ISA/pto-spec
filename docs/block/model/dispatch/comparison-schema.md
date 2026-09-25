@@ -112,11 +112,9 @@ end;
 readonly func SelectedBundleComparisonGPRMaskWordCount(
     operation_type: TileDataType) => integer {1..2}
 begin
-    // GPR masks are target-shape complete: U32/U16/BF16 fit one 64-bit
-    // carrier (a one-cell U32 form uses only low32), while every CUBE U8
-    // shape consumes the two complete 64-bit words covering its Low/High
-    // predicate halves.
-    return if operation_type == TileDataType_U8 then 2 else 1;
+    // 8-bit operation types consume the two complete 64-bit words covering
+    // the CUBE Low/High predicate halves. Wider 16/32-bit types use one word.
+    return if TileElementBits(operation_type) == 8 then 2 else 1;
 end;
 
 pure func BundleComparisonGPRSelectorLegal(selector: Reg5Selector) => boolean
@@ -271,7 +269,7 @@ begin
                _BundleScalarBindings[[0]].destination) &&
            !binding.destination_valid &&
            (!_BundleDataAttributes.canonicalize) &&
-           (data_type == TileDataType_U8 ||
+           (TileElementBits(data_type) == 8 ||
             !_BundleDataAttributes.saturating) &&
            TileOperandsLegal_ExecuteTileCompareGPRAs(
                source_left, source_right,

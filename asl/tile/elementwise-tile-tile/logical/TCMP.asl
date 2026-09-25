@@ -12,7 +12,12 @@
 // MUST be derived from that type. Compare payloads MUST be validated under the
 // operation type before canonical predicate publication. The three carriers
 // MUST be mutually exclusive; complete legality preflight MUST precede source
-// snapshots, allocation, flag updates, and atomic carrier publication.
+// snapshots, allocation, flag updates, and atomic carrier publication. An
+// eligible Local CUBE_M16/CUBE_M32 TCMP MAY consume an explicit ExecutionMask;
+// its predicate GPR or PredicateCell carrier MUST be snapshotted before an
+// overlapping destination is allocated or published. Active coordinates
+// compare normally; inactive MERGE preserves old predicate bits/cells and
+// inactive ZERO writes zero. Inactive compares contribute no numeric status.
 // NDF-END: PTO-TCMP-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TCMP() => TileOperation

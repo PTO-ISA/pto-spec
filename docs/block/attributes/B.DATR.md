@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/attributes/B.DATR.asl`
 
-Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.
+Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero.
 
 ## Normative identity {#PTO-INST-BLOCK-B-DATR}
 
@@ -64,14 +64,14 @@ Assume an active compatible header with no earlier conflicting `B.DATR` command.
 ## Assembly
 
 ```asm
-B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
+B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c707f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c107f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
 
 ### Fields
 
@@ -84,6 +84,8 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 | b_datr_32_c161a042ff38 | DataType | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | b_datr_32_c161a042ff38 | RMode | 3 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":3}] |
 | b_datr_32_c161a042ff38 | Layout | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
+| b_datr_32_c161a042ff38 | PredInv | 1 | encoding-defined | [{"instruction_lsb":14,"value_lsb":0,"width":1}] |
+| b_datr_32_c161a042ff38 | Zero | 1 | encoding-defined | [{"instruction_lsb":13,"value_lsb":0,"width":1}] |
 
 ## Encoding class
 
@@ -182,6 +184,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | DataType | 5 | 0–21, 24–28, 31 | none | 22–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
 | b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB | operation-defined default rounding |
 | b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–11, 17–18, 20–31 | none | 2, 5, 7, 12–16, 19 | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
+| b_datr_32_c161a042ff38 | PredInv | 1 | 0–1 | none | none | ExecutionMask polarity control: zero preserves, one inverts the logical predicate | Normal ExecutionMask polarity; zero means do not invert. |
+| b_datr_32_c161a042ff38 | Zero | 1 | 0–1 | none | none | inactive ExecutionMask destination policy: zero MERGE, one ZERO | MERGE inactive-destination policy; zero preserves the prior destination coordinate. |
 
 - `b_datr_32_c161a042ff38.CMode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_datr_32_c161a042ff38.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -198,6 +202,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | RMode | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB |
 | Sat | saturation enable |
 | Canonicalize | TCVT private-format canonicalization enable |
+| PredInv | ExecutionMask polarity control: zero preserves, one inverts the logical predicate |
+| Zero | inactive ExecutionMask destination policy: zero MERGE, one ZERO |
 
 ## Decode
 
@@ -220,7 +226,11 @@ Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the firs
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.DATR.asl -->
 ```asl
-// B.DATR fields retain their operation-selected meanings. For matrix/CUBE
+// B.DATR fields retain their operation-selected meanings. Bits [14:13] encode
+// carrier-independent ExecutionMask controls PredInv and Zero; bit 12 remains
+// fixed. Omission supplies both as zero. Nonzero controls are legal only when
+// an eligible Local CUBE_M16/CUBE_M32 complete operation schema binds an
+// explicit ExecutionMask. For matrix/CUBE
 // operation schemas, PadValueOrByteId is selected as CCTRL[1:0]: CCTRL[0]
 // selects raw-partial D plus a cache-replacement hint and CCTRL[1] is an
 // explicit-C cache-use/prefetch hint; omission selects 00. For TGPR2T,
@@ -253,9 +263,10 @@ end;
 
 ## Defaults and encoded zero
 
-- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.
+- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, Canonicalize, PredInv, and Zero retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.
 - An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.
 - For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint.
+- For an eligible Local CUBE_M16/CUBE_M32 operation with an explicit ExecutionMask, PredInv=0 selects normal mask polarity and Zero=0 selects MERGE for inactive destinations. Nonzero PredInv or Zero without an explicit eligible ExecutionMask is illegal.
 
 ## Legality
 
@@ -266,6 +277,7 @@ end;
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
 - Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.
+- PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one.
 
 ## State effects
 
@@ -285,8 +297,9 @@ end;
 
 - A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.
 - Reserved DataType or CMode, unassigned Layout, unsupported Layout, or operation-inapplicable nonzero fields raise an architectural fault before effects.
+- PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects.
 
 ## Examples
 
-- B.DATR {NORM, FP32, Zero, None, RNE, 0, 0}
-- B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0}
+- B.DATR {NORM, FP32, Zero, None, RNE, 0, 0, 0, 0}
+- B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0, 0, 0}

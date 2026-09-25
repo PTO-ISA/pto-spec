@@ -16,7 +16,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/state/control-state.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleRangeGroup","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_LocalGenerations","_SharedGenerations","_BundleExecutionDomainToken","_NextBundleExecutionDomainToken","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleRangeGroup","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleExecutionMask","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_LocalGenerations","_SharedGenerations","_BundleExecutionDomainToken","_NextBundleExecutionDomainToken","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
 
 // NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -52,6 +52,7 @@ var _BundleZeroParticipationSeen : boolean;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
 var _BundleDataAttributesPresent : boolean;
+var _BundleExecutionMask : BundleExecutionMaskBinding;
 var _BundleHint : BundleHintAttributes;
 var _BundleFixedPointAttributes : BundleFixedPointAttributes;
 var _MemoryCopyTemplate : MemoryCopyTemplateState;
@@ -360,6 +361,8 @@ begin
     _BundleDataAttributes.rounding_mode = rounding_mode;
     _BundleDataAttributes.saturating = saturating;
     _BundleDataAttributes.canonicalize = canonicalize;
+    _BundleDataAttributes.execution_mask_invert = FALSE;
+    _BundleDataAttributes.execution_mask_zero = FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

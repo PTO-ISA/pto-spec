@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","surface":"tile","classification":["model","legality","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","surface":"tile","classification":["model","legality","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
 
 pure func TileCubePredicateDataTypeSupported(
     data_type: TileDataType) => boolean
@@ -23,7 +23,10 @@ pure func TileCubePredicateGPRDataTypeSupported(
 begin
     return TileElementBits(data_type) == 32 ||
            TileElementBits(data_type) == 16 ||
-           data_type == TileDataType_U8;
+           data_type == TileDataType_U8 ||
+           data_type == TileDataType_S8 ||
+           data_type == TileDataType_E4M3 ||
+           data_type == TileDataType_E5M2;
 end;
 
 pure func TileCubePredicateFieldCount(
@@ -48,7 +51,7 @@ begin
        !TileCubePredicateGPRDataTypeSupported(tile.data_type) then
         return FALSE;
     end;
-    let words = if tile.data_type == TileDataType_U8 then 2 else 1;
+    let words = if TileElementBits(tile.data_type) == 8 then 2 else 1;
     return tile.valid_rows <= TileCubePredicateRowBits(tile.layout) &&
            tile.valid_columns <=
                TileCubePredicateFieldCount(tile.data_type, tile.layout) * words;
@@ -57,10 +60,29 @@ end;
 readonly func TileCubeNumericContentsDefined(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
-    return TileCubeDescriptorLegal(tile) &&
-           tile.storage_kind == TileStorage_Numeric &&
-           tile.contents_defined &&
-           TileCubePredicateDataTypeSupported(tile.data_type);
+    if !TileCubeDescriptorLegal(tile) ||
+       tile.storage_kind != TileStorage_Numeric ||
+       !TileCubePredicateDataTypeSupported(tile.data_type) then
+        return FALSE;
+    end;
+    if !_BundleExecutionMask.valid then return tile.contents_defined; end;
+    if tile.layout != _BundleExecutionMask.layout ||
+       tile.valid_rows != _BundleExecutionMask.valid_rows ||
+       tile.valid_columns != _BundleExecutionMask.valid_columns then
+        return FALSE;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) &&
+               !TileElementDefined(index, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
 end;
 
 readonly func TileCubeNumericSourceLegal(index: TileIndex) => boolean
@@ -71,13 +93,17 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   tile.data_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                if !TileNumericEncodingValid(
+                       tile.data_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -110,13 +136,17 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   operation_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                if !TileNumericEncodingValid(
+                       operation_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -155,7 +185,7 @@ begin
        !TileCarrierWidthCompatible(tile.data_type, operation_type) then
         return FALSE;
     end;
-    let words = if operation_type == TileDataType_U8 then 2 else 1;
+    let words = if TileElementBits(operation_type) == 8 then 2 else 1;
     return tile.valid_rows <= TileCubePredicateRowBits(tile.layout) &&
            tile.valid_columns <=
                TileCubePredicateFieldCount(operation_type, tile.layout) * words;
@@ -211,6 +241,21 @@ begin
            mask.layout == source.layout;
 end;
 
+readonly func TileExecutionMaskPredicateCellShapeLegal(
+    predicate: TileIndex, layout: TileLayout,
+    valid_rows: integer {1..65535},
+    valid_columns: integer {1..65535}) => boolean
+begin
+    let mask = _Tiles[[predicate]];
+    return TilePredicateCellDescriptorLegal(predicate) &&
+           (layout == TileLayout_CUBE_M16 ||
+            layout == TileLayout_CUBE_M32) &&
+           mask.layout == layout &&
+           mask.valid_rows == valid_rows &&
+           mask.valid_columns == valid_columns &&
+           TilePredicateCellValuesLegal(predicate);
+end;
+
 readonly func TilePredicateCellValuesLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
@@ -251,16 +296,33 @@ end;
 readonly func IndexedTLSUPredicateValuesLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
-    if !IndexedTLSUPredicateDescriptorLegal(index) ||
-       !tile.contents_defined then return FALSE; end;
+    if !IndexedTLSUPredicateDescriptorLegal(index) then return FALSE; end;
+    if !_BundleExecutionMask.valid && !tile.contents_defined then
+        return FALSE;
+    end;
+    if _BundleExecutionMask.valid &&
+       (tile.layout != _BundleExecutionMask.layout ||
+        tile.valid_rows != _BundleExecutionMask.valid_rows ||
+        tile.valid_columns != _BundleExecutionMask.valid_columns) then
+        return FALSE;
+    end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535},
-                column as integer {0..65535});
-            let value = TileReadLogicalElement(tile, element)[7:0];
-            if value != '00000000' && value != '00000001' then
-                return FALSE;
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                if !TileElementDefined(index, row as integer {0..65535},
+                       column as integer {0..65535}) then
+                    return FALSE;
+                end;
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                let value = TileReadLogicalElement(tile, element)[7:0];
+                if value != '00000000' && value != '00000001' then
+                    return FALSE;
+                end;
             end;
         end;
     end;

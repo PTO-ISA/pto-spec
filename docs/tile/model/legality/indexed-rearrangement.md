@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/indexed-rearrangement.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","legality","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","legality","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA"]}
 
 pure func InstructionContractValueDataTypeLegal_TGATHER(
     data_type: TileDataType) => boolean
@@ -88,6 +88,9 @@ begin
     let index_tile = _Tiles[[indices]];
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   index_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let index_element = TileLogicalLinearIndex(
                 index_tile,
                 row as integer {0..65535},
@@ -108,6 +111,7 @@ begin
                 column as integer {0..65535});
             if !TileLogicalElementDefined(source_tile, source_element) then
                 return FALSE;
+            end;
             end;
         end;
     end;
@@ -176,8 +180,8 @@ begin
        destination_tile.valid_rows != index_tile.valid_rows ||
        destination_tile.valid_columns != index_tile.valid_columns ||
        source_tile.valid_columns < destination_tile.valid_columns ||
-       !TileSourceContentsDefined(indices) ||
-       !TileSourceEncodingsValid(indices) then
+       !TileElementwiseSourceContentsDefined(indices) ||
+       !TileElementwiseSourceEncodingsValid(indices) then
         return FALSE;
     end;
     return TileGatherReferencesLegal(source, indices);

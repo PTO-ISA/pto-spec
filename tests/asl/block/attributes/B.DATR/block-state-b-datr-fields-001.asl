@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-DATR-FIELDS-001","source":"asl/block/attributes/B.DATR.asl","requirements":["PTO-INST-BLOCK-B-DATR"],"kind":"state-transition","summary":"Every B.DATR field has one explicit pending-state meaning.","pass_condition":"The accepted DataType, PadValue, CMode, RMode, Sat, Canonicalize, and Layout values latch without reinterpretation.","related_sources":["asl/block/model/state/control-state.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-DATR-FIELDS-001","source":"asl/block/attributes/B.DATR.asl","requirements":["PTO-INST-BLOCK-B-DATR"],"kind":"state-transition","summary":"Every B.DATR field has one explicit pending-state meaning.","pass_condition":"The accepted DataType, PadValue, CMode, RMode, Sat, Canonicalize, Layout, PredInv, and Zero values latch without reinterpretation.","related_sources":["asl/block/model/state/control-state.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -11,6 +11,8 @@ begin
     instruction[28:27] = '10';
     instruction[26] = '1';
     instruction[25] = '1';
+    instruction[14] = '1';
+    instruction[13] = '1';
     instruction[24:20] = Zeros{5} + 24;
     instruction[17:15] = '111';
     let status = ExecuteCommandInstruction(instruction, 32);
@@ -22,6 +24,8 @@ begin
     assert _BundleDataAttributes.rounding_mode == '111';
     assert _BundleDataAttributes.saturating;
     assert CurrentBundleCanonicalize();
+    assert _BundleDataAttributes.execution_mask_invert;
+    assert _BundleDataAttributes.execution_mask_zero;
     assert CurrentBundleDataLayout() == TileDataLayout_NORM;
     return 0;
 end;

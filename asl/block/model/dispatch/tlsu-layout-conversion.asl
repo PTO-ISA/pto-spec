@@ -73,15 +73,23 @@ begin
     end;
     let function = UInt(_BundleOperation.selector[4:0]);
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.valid || !binding.last then return FALSE; end;
     if function == 0 then
         return binding.destination_valid &&
                !binding.destination_allocated_by_bundle &&
                BundleTileDestinationSizeLegal(0) &&
-               !binding.source0_valid && !binding.source1_valid;
+               (binding.source0_valid == execution_mask_tile) &&
+               !binding.source1_valid &&
+               (!execution_mask_tile ||
+                _BundleExecutionMask.predicate_source_ordinal == 0);
     elsif function == 1 then
         return !binding.destination_valid &&
-               binding.source0_valid && !binding.source1_valid;
+               binding.source0_valid &&
+               (binding.source1_valid == execution_mask_tile) &&
+               (!execution_mask_tile ||
+                _BundleExecutionMask.predicate_source_ordinal == 1);
     end;
     return FALSE;
 end;
@@ -150,6 +158,7 @@ begin
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if !BundleCubeTransportDimensionsLegal() ||
        !BundleCubeTransportDataAttributesLegal() ||
+       !BundleExecutionMaskDataAttributesLegal(operation) ||
        !BundleCubeTransportBindingsLegal(operation) ||
        _BundleFixedPointAttributes.valid then
         SetFault(Fault_TileLegality, ReadTPC());
