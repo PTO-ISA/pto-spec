@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import bisect
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -399,16 +400,15 @@ def _ref_texts(ref: str, paths: Iterable[str]) -> dict[str, str]:
     paths = list(paths)
     if ref == "working-tree":
         return {p: ((ROOT / p).read_text(encoding="utf-8") if (ROOT / p).is_file() else "") for p in paths}
-    process = subprocess.Popen(
+    process = subprocess.run(
         ["git", "cat-file", "--batch"], cwd=ROOT,
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        input="".join(f"{ref}:{p}\n" for p in paths).encode(),
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
     )
-    assert process.stdin is not None and process.stdout is not None
-    process.stdin.write("".join(f"{ref}:{p}\n" for p in paths).encode())
-    process.stdin.close()
+    output = io.BytesIO(process.stdout)
     result: dict[str, str] = {}
     for path in paths:
-        header = process.stdout.readline()
+        header = output.readline()
         if not header:
             result[path] = ""
             continue
@@ -416,13 +416,9 @@ def _ref_texts(ref: str, paths: Iterable[str]) -> dict[str, str]:
         if len(fields) < 3 or fields[1] == b"missing":
             result[path] = ""
             continue
-        data = process.stdout.read(int(fields[2]))
-        process.stdout.readline()
+        data = output.read(int(fields[2]))
+        output.readline()
         result[path] = data.decode("utf-8")
-    process.wait()
-    process.stdout.close()
-    if process.stderr is not None:
-        process.stderr.close()
     return result
 
 
