@@ -312,6 +312,131 @@ FPATR_EFFECTIVE_TYPE_HELPERS = {
 FPATR_EFFECTIVE_TYPE_CLASSIFICATION = (
     "B.FPATR final-D effective data-type resolution (Issue #345 / ADR-NUM-0012)"
 )
+# Issue #277/#349 adds a carrier-independent ExecutionMask to existing Local
+# CUBE operations. These definitions enter or leave the shared-helper closure
+# without changing any operation's accepted layout tuple or same-layout
+# relation. Keep the exact owner paths and lexical layout domains here so an
+# unrelated helper, relocation, duplicate, or layout-bearing mutation still
+# fails closed. Current meaning is owned by ADR-TILE-0008 and
+# PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001.
+EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
+    "BundleExecutionMaskActiveAt": {
+        "before": [],
+        "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
+    },
+    "BundleExecutionMaskCoordinateBit": {
+        "before": [],
+        "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
+    },
+    "BundleExecutionMaskDataAttributesLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/command-data-attributes.asl", LOCAL_CUBE_LAYOUTS)],
+    },
+    "BundleExecutionMaskDestinationValue": {
+        "before": [],
+        "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
+    },
+    "BundleExecutionMaskGPRBindingSchemaLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/scalar-schema.asl", LOCAL_CUBE_LAYOUTS)],
+    },
+    "BundleExecutionMaskGPRSourceSelector": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/scalar-schema.asl", set())],
+    },
+    "BundleExecutionMaskGPRWordCount": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/scalar-schema.asl", {"CUBE_M32"})],
+    },
+    "BundleExecutionMaskOperationGPRSourceCount": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/scalar-schema.asl", set())],
+    },
+    "BundleTileInstructionOperands": {
+        "before": [("asl/block/model/dispatch/tile-schema.asl", set())],
+        "after": [("asl/block/model/dispatch/tile-instruction-operands.asl", LOCAL_CUBE_LAYOUTS)],
+    },
+    "ExecuteTileCompareCellAs": {
+        "before": [("asl/tile/model/execution/comparison.asl", set())],
+        "after": [("asl/tile/model/execution/execution-mask-comparison.asl", set())],
+    },
+    "ExecuteTileCompareCellScalarAs": {
+        "before": [("asl/tile/model/execution/comparison.asl", set())],
+        "after": [("asl/tile/model/execution/execution-mask-comparison.asl", set())],
+    },
+    "IndexedTLSUExecutionMaskContentsDefined": {
+        "before": [],
+        "after": [("asl/tile/model/legality/memory-schema.asl", set())],
+    },
+    "TileBroadcastPayloadNonzero": {
+        "before": [("asl/tile/model/legality/allocation-capacity.asl", set())],
+        "after": [],
+    },
+    "TileCubePredicateGPRBit": {
+        "before": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+        "after": [("asl/tile/model/execution/execution-mask-state.asl", {"CUBE_M32"})],
+    },
+    "TileElementDefined": {
+        "before": [],
+        "after": [("asl/tile/model/definedness/elements.asl", set())],
+    },
+    "TileElementwiseSourceContentsDefined": {
+        "before": [("asl/tile/model/legality/operand-schema.asl", set())],
+        "after": [("asl/tile/model/legality/execution-mask-source-schema.asl", set())],
+    },
+    "TileElementwiseSourceEncodingsValid": {
+        "before": [("asl/tile/model/legality/operand-schema.asl", set())],
+        "after": [("asl/tile/model/legality/execution-mask-source-schema.asl", set())],
+    },
+    "TileElementwiseSourceEncodingsValidAs": {
+        "before": [("asl/tile/model/legality/operand-schema.asl", set())],
+        "after": [("asl/tile/model/legality/execution-mask-source-schema.asl", set())],
+    },
+    "TileExecutionMaskPredicateGPRResult": {
+        "before": [],
+        "after": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+    },
+    "TileExpansionBroadcastElementsLegalAs": {
+        "before": [],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl", set())],
+    },
+    "TileExpansionBroadcastNonzero": {
+        "before": [],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl", set())],
+    },
+    "TileOperationExecutionMaskEligible": {
+        "before": [],
+        "after": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+    },
+    "TilePackedRowPaddingColumn": {
+        "before": [],
+        "after": [("asl/tile/model/definedness/packed-boundary.asl", set())],
+    },
+}
+EXECUTION_MASK_HELPER_BODY_CHANGES = {
+    "ExecuteTileFillScalar": (
+        "asl/tile/model/execution/elementwise.asl", set(),
+    ),
+    "ExecuteTileSelectAs": (
+        "asl/tile/model/execution/comparison.asl", set(),
+    ),
+    "ExecuteTileSelectScalarAs": (
+        "asl/tile/model/execution/comparison.asl", set(),
+    ),
+    "TileGatherReferencesLegal": (
+        "asl/tile/model/legality/indexed-rearrangement.asl", set(),
+    ),
+    "TileReductionAndExpansionSourceContentsDefined": (
+        "asl/tile/model/legality/reduction-and-expansion.asl", set(),
+    ),
+    "TileReductionAndExpansionSourceLegal": (
+        "asl/tile/model/legality/reduction-and-expansion.asl", {"RowMajor"},
+    ),
+}
+EXECUTION_MASK_HELPER_CLASSIFICATION = (
+    "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, "
+    "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
+)
 # Issue #323 makes the generic Local M16/M32 one-physical-M-block invariant
 # authoritative and removes the reduction-local duplicate row-limit helper.
 # Keep these names explicit so the census records the owner change while
@@ -1714,6 +1839,39 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                  "before": old_defs, "after": new_defs,
                                  "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
                 continue
+            if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
+                spec = EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                valid = (old_shape == expected_old_shape and
+                         new_shape == expected_new_shape)
+                if not valid:
+                    errors.append(
+                        f"unauthorized ExecutionMask support helper definition delta: {name}"
+                    )
+                    rows.append({"name": name, "classification": "UNCLASSIFIED",
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": EXECUTION_MASK_HELPER_CLASSIFICATION})
+                else:
+                    rows.append({"name": name,
+                                 "classification": EXECUTION_MASK_HELPER_CLASSIFICATION,
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": EXECUTION_MASK_HELPER_CLASSIFICATION})
+                continue
             if allow_texpdif_changes and name in TEXPDIF_COMMON_HELPERS:
                 valid_change = False
                 if name == "TileExpandExpdifTypePairLegal":
@@ -1783,6 +1941,20 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             if old["sha256"] == new["sha256"]:
                 continue
             classification = "TileLocation retirement" if _without_location(old_body) == _without_location(new_body) else None
+            if name in EXECUTION_MASK_HELPER_BODY_CHANGES:
+                expected_path, expected_layouts = EXECUTION_MASK_HELPER_BODY_CHANGES[name]
+                valid = (
+                    old["path"] == expected_path and new["path"] == expected_path and
+                    set(old["layouts"]) == set(expected_layouts) and
+                    set(new["layouts"]) == set(expected_layouts)
+                )
+                if not valid:
+                    errors.append(
+                        f"unauthorized ExecutionMask support helper owner/layout change: {name}"
+                    )
+                    classification = None
+                else:
+                    classification = EXECUTION_MASK_HELPER_CLASSIFICATION
             if name in FPATR_EFFECTIVE_TYPE_HELPERS:
                 if old["layouts"] or new["layouts"]:
                     errors.append(
@@ -2490,6 +2662,76 @@ def _real_relation_mutation_canaries() -> None:
         raise AssertionError("r4 new-helper extra-caller mutation did not fail closed")
 
 
+def _execution_mask_support_mutation_canaries() -> None:
+    """Keep the ExecutionMask helper exception finite and layout-closed."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-execution-mask-support-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == EXECUTION_MASK_HELPER_CLASSIFICATION
+    }
+    expected_classified = (set(EXECUTION_MASK_HELPER_DEFINITION_DELTAS) |
+                           set(EXECUTION_MASK_HELPER_BODY_CHANGES))
+    if not result["pass"] or classified != expected_classified:
+        raise AssertionError(
+            "ExecutionMask helper owner/layout classification is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    state_path = "asl/tile/model/execution/execution-mask-state.asl"
+    active_line = (
+        "    return BundleExecutionMaskCoordinateBit(layout, row, column) !=\n"
+        "           _BundleExecutionMask.invert;"
+    )
+    unauthorized_call = (
+        "    return BundleExecutionMaskCoordinateBit(layout, row, column) !=\n"
+        "           _BundleExecutionMask.invert &&\n"
+        "           TileUnauthorizedExecutionMaskCensusHelper();"
+    )
+    mutated = dict(candidate)
+    if active_line not in candidate.get(state_path, ""):
+        raise AssertionError("ExecutionMask unknown-helper canary source is missing")
+    mutated[state_path] = candidate[state_path].replace(active_line, unauthorized_call, 1) + (
+        "\npure func TileUnauthorizedExecutionMaskCensusHelper() => boolean\n"
+        "begin\n    return TRUE;\nend;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-execution-mask-unknown-helper", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "common-helper definition set changed: TileUnauthorizedExecutionMaskCensusHelper" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unrelated ExecutionMask helper addition did not fail closed")
+
+    attributes_path = "asl/block/model/dispatch/command-data-attributes.asl"
+    layout_line = "CurrentBundleTileLayout() != TileLayout_CUBE_M32)"
+    layout_widened = (
+        "CurrentBundleTileLayout() != TileLayout_CUBE_M32 &&\n"
+        "         CurrentBundleTileLayout() != TileLayout_RowMajor)"
+    )
+    mutated = dict(candidate)
+    if layout_line not in candidate.get(attributes_path, ""):
+        raise AssertionError("ExecutionMask layout-domain canary source is missing")
+    mutated[attributes_path] = candidate[attributes_path].replace(layout_line, layout_widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-execution-mask-layout-domain", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "unauthorized ExecutionMask support helper definition delta: "
+        "BundleExecutionMaskDataAttributesLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("ExecutionMask Local-layout expansion did not fail closed")
+
+
 def self_test() -> None:
     base = _fixture()
     good = _census_texts(base, base, "fixture-baseline", "fixture-candidate", enforce_closure=False)
@@ -2565,7 +2807,8 @@ def self_test() -> None:
     if result["pass"] or not any("missing authoritative PTO-INSTRUCTION" in error or "inventory changed" in error for error in result["errors"]):
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner mutations rejected")
+    _execution_mask_support_mutation_canaries()
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner and ExecutionMask helper/layout mutations rejected")
 
 
 def main() -> int:
