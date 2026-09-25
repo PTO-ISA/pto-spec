@@ -72,6 +72,11 @@ readonly func BundleExecutionMaskCoordinateSourceOrdinal(
     => integer {0..31}
 begin
     let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TSEL || decoded == TileOperation_TSELS then
+        let first = BundleExecutionMaskTileSourceAt(0);
+        return if _Tiles[[first]].storage_kind == TileStorage_PredicateCell
+            then 1 else 0;
+    end;
     if decoded == TileOperation_TGATHER ||
        decoded == TileOperation_TSCATTER ||
        decoded == TileOperation_MSCATTER ||

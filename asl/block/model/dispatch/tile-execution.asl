@@ -27,21 +27,30 @@ end;
 readonly func SelectedBundleClosedSchemasLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    return SelectedBundleClosedBinarySchemaLegal(operation) &&
-           SelectedBundleClosedUnarySchemaLegal(operation) &&
-           SelectedBundleClosedTFMASchemaLegal(operation) &&
-           SelectedBundleCellRearrangementSchemaLegal(operation) &&
-           SelectedBundleClosedGenerationSchemaLegal(operation) &&
-           SelectedBundleClosedReductionSchemaLegal(operation) &&
-           SelectedBundleClosedExpansionSchemaLegal(operation) &&
-           SelectedBundleClosedTCVTSchemaLegal(operation) &&
-           SelectedBundleClosedTCMPSchemaLegal(operation) &&
-           SelectedBundleClosedTSELSchemaLegal(operation) &&
-           SelectedBundleClosedTGPR2TSchemaLegal(operation) &&
-           SelectedBundleClosedTileScalarBinarySchemaLegal(operation) &&
-           SelectedBundleClosedTCMPSSchemaLegal(operation) &&
-           SelectedBundleClosedTSELSSchemaLegal(operation) &&
-           SelectedBundleClosedTEXPANDSSchemaLegal(operation);
+    // These four selector/comparison operations have complete mutually
+    // exclusive schemas; generic tile arity predicates are not applicable.
+    case TileOperationOfIndex(operation) of
+        when TileOperation_TCMP =>
+            return SelectedBundleClosedTCMPSchemaLegal(operation);
+        when TileOperation_TCMPS =>
+            return SelectedBundleClosedTCMPSSchemaLegal(operation);
+        when TileOperation_TSEL =>
+            return SelectedBundleClosedTSELSchemaLegal(operation);
+        when TileOperation_TSELS =>
+            return SelectedBundleClosedTSELSSchemaLegal(operation);
+        otherwise =>
+            return SelectedBundleClosedBinarySchemaLegal(operation) &&
+                   SelectedBundleClosedUnarySchemaLegal(operation) &&
+                   SelectedBundleClosedTFMASchemaLegal(operation) &&
+                   SelectedBundleCellRearrangementSchemaLegal(operation) &&
+                   SelectedBundleClosedGenerationSchemaLegal(operation) &&
+                   SelectedBundleClosedReductionSchemaLegal(operation) &&
+                   SelectedBundleClosedExpansionSchemaLegal(operation) &&
+                   SelectedBundleClosedTCVTSchemaLegal(operation) &&
+                   SelectedBundleClosedTGPR2TSchemaLegal(operation) &&
+                   SelectedBundleClosedTileScalarBinarySchemaLegal(operation) &&
+                   SelectedBundleClosedTEXPANDSSchemaLegal(operation);
+    end;
 end;
 
 func ExecuteBundleComparisonGPRCarrier(
