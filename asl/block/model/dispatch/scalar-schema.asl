@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
     instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
     => boolean
@@ -140,9 +140,7 @@ begin
            TileOperandPresent(operation, TileOperand_scalar0);
 end;
 
-// Complete-bundle GPR inputs are packed in the architectural order
-// address, scalar0, diagonal, flag0.  Tile operands that are not
-// present in the selected operation do not consume a B.IOR source slot.
+// Complete-bundle GPR inputs pack present address, scalar0, diagonal, and flag0 operands densely.
 readonly func BundleOperationGPRInputCount(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..7}
 begin
@@ -177,6 +175,20 @@ end;
 readonly func BundleExecutionMaskGPRWordCount(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {1..2}
 begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TPACK ||
+       decoded == TileOperation_TUNPACK then
+        let binding = _BundleTileBindings[[0]];
+        let tile_index = if binding.source0_subview.materialized then binding.source0_subview.materialized_index else binding.source0;
+        let tile = _Tiles[[tile_index]];
+        let bytes_per_element = (TileElementBits(tile.data_type) DIVRM 8) as integer {0..4};
+        let valid_bytes = (tile.valid_columns * bytes_per_element) as integer {0..262140};
+        let words_per_row = ((valid_bytes + 3) DIVRM 4) as integer {0..65535};
+        if tile.valid_rows == 0 || words_per_row == 0 then return 1; end;
+        let row_bits = if tile.layout == TileLayout_CUBE_M32 then 32 else 16;
+        let final_bit = ((words_per_row - 1) * row_bits + tile.valid_rows) as integer {0..2097120};
+        return if final_bit <= 64 then 1 else 2;
+    end;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return if TileOperationExecutionMaskEligible(operation) &&
@@ -190,16 +202,11 @@ begin
     if decoded == TileOperation_TCMP then return 0; end;
     if decoded == TileOperation_TCMPS then return 1; end;
     if decoded == TileOperation_TSEL then
-        // One B.IOT carries the GPR-selection form; two carry the
-        // PredicateCell-selection form. The operation-owned select mask is
-        // therefore present only in the former.
         return if BundleTileBindingCount() == 1 then
             BundleExecutionMaskGPRWordCount(operation) else 0;
     end;
     if decoded == TileOperation_TSELS then
-        // The scalar-false role remains before ExecutionMask. A GPR select
-        // carrier contributes one/two more operation-owned source words;
-        // the PredicateCell form contributes only scalar-false.
+        // Scalar-false precedes the GPR mask; PredicateCell form has no GPR select mask.
         return (1 + (if _BundleTileBindings[[0]].source1_valid then 0
                     else BundleExecutionMaskGPRWordCount(operation)))
             as integer {0..5};
@@ -318,7 +325,6 @@ begin
        decoded == TileOperation_TCMPS ||
        decoded == TileOperation_TSEL ||
        decoded == TileOperation_TSELS then
-        // These operations have operation-specific carrier arity and roles.
         return TRUE;
     end;
     if decoded == TileOperation_TGPR2T then
@@ -345,8 +351,7 @@ begin
     if decoded == TileOperation_TCI &&
        (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
         CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
-        // CUBE TCI uses the second physical B.IOR source as a packed raw
-        // Step2D word rather than as the RowMajor boolean direction.
+        // CUBE TCI uses source1 as packed raw Step2D, not RowMajor direction.
         if !_BundleScalarBindings[[0]].valid ||
            _BundleScalarBindings[[0]].source0 >= PTO_ABSOLUTE_GPR_COUNT ||
            _BundleScalarBindings[[0]].source1 >= PTO_ABSOLUTE_GPR_COUNT then
@@ -370,10 +375,6 @@ begin
     if TileOperationExecutionMaskEligible(operation) &&
        (_BundleScalarBindings[[0]].execution_mask_present ||
         _BundleScalarBindings[[1]].execution_mask_present) then
-        // The complete ExecutionMask schema already checked every consumed
-        // selector and every unused field. Validate only the operation-owned
-        // raw boolean and diagonal values here; appended mask words must not
-        // be mistaken for unused ordinary scalar selectors.
         if TileOperandPresent(operation, TileOperand_flag0) then
             let slot = BundleOperationGPRInputSlot(
                 operation, TileOperand_flag0);
@@ -470,8 +471,7 @@ begin
     if decoded == TileOperation_TCI &&
        (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
         CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
-        // CUBE TCI has exactly one canonical B.IOR: two absolute GPR
-        // selectors, an explicit zero source2, and an explicit zero dst.
+        // CUBE TCI has two absolute selectors and explicit zero source2/destination.
         return _BundleScalarBindings[[0]].valid &&
                !_BundleScalarBindings[[1]].valid &&
                _BundleScalarBindings[[0]].source_count == 3 &&

@@ -179,35 +179,66 @@ begin
     if !TileOperationUsesCellRearrangementSchema(operation) then return TRUE; end;
     if SelectedBundleTileMaskIsZero() then return TRUE; end;
     let decoded = TileOperationOfIndex(operation);
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR;
     if decoded == TileOperation_TPERMUTE then
         if BundleTileBindingCount() != 2 || BundleSharedBindingCount() != 0 ||
-           _BundleScalarBindings[[0]].valid then return FALSE; end;
+           (_BundleScalarBindings[[0]].valid != execution_mask_gpr) ||
+           (execution_mask_gpr &&
+            !BundleExecutionMaskGPRBindingSchemaLegal(operation)) then
+            return FALSE;
+        end;
         let first = _BundleTileBindings[[0]];
         let second = _BundleTileBindings[[1]];
         return !first.destination_valid && first.source0_valid &&
                first.source1_valid && !first.last && second.destination_valid &&
                !second.destination_allocated_by_bundle && second.source0_valid &&
-               !second.source1_valid && second.last &&
+               (second.source1_valid == execution_mask_tile) && second.last &&
+               (!execution_mask_tile ||
+                _BundleExecutionMask.predicate_source_ordinal == 3) &&
                second.source0 != first.source0 &&
                second.source0 != first.source1 &&
                BundleTileDestinationSizeLegal(1);
     end;
-    if BundleTileBindingCount() != 1 || BundleSharedBindingCount() != 0 ||
+    let split_final_binding = execution_mask_tile &&
+        decoded == TileOperation_TSHUF;
+    let expected_binding_count = if split_final_binding then 2 else 1;
+    if BundleTileBindingCount() != expected_binding_count ||
+       BundleSharedBindingCount() != 0 ||
        !_BundleScalarBindings[[0]].valid ||
-       _BundleScalarBindings[[0]].source1 != 0 ||
-       _BundleScalarBindings[[0]].source2 != 0 ||
+       (!execution_mask_gpr &&
+        (_BundleScalarBindings[[0]].source1 != 0 ||
+         _BundleScalarBindings[[0]].source2 != 0)) ||
+       (execution_mask_gpr &&
+        !BundleExecutionMaskGPRBindingSchemaLegal(operation)) ||
        _BundleScalarBindings[[0]].destination != 0 then
         return FALSE;
     end;
     let binding = _BundleTileBindings[[0]];
-    if !binding.destination_valid || binding.destination_allocated_by_bundle ||
-       !BundleTileDestinationSizeLegal(0) || !binding.last then
+    let final_binding = if split_final_binding then
+        _BundleTileBindings[[1]] else binding;
+    if !final_binding.destination_valid ||
+       final_binding.destination_allocated_by_bundle ||
+       !BundleTileDestinationSizeLegal(
+           if split_final_binding then 1 else 0) ||
+       (if split_final_binding then
+            binding.destination_valid || !binding.source0_valid ||
+            !binding.source1_valid || binding.last ||
+            !final_binding.source0_valid || final_binding.source1_valid ||
+            !final_binding.last
+        else
+            !binding.source0_valid ||
+            (binding.source1_valid !=
+                (decoded == TileOperation_TSHUF || execution_mask_tile)) ||
+            !binding.last) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal !=
+            (if decoded == TileOperation_TSHUF then 2 else 1)) then
         return FALSE;
     end;
-    if decoded == TileOperation_TUNPACK then
-        return binding.source0_valid && !binding.source1_valid;
-    end;
-    return binding.source0_valid && binding.source1_valid;
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

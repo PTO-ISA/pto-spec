@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 ```asl
 // NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// ExecutionMask MUST apply only to an operation's already-legal Local CUBE_M16 or CUBE_M32 forms and MUST NOT add layout support. TGATHER and TSCATTER have no baseline CUBE_M16/CUBE_M32 form under their owning indexed-operation schemas; TTRI is RowMajor-only. Any ExecutionMask carrier on those forms MUST reject before operation effects. This census excludes these three names from the applicable forms in the 91-name semantic classification without removing their existing unpredicated forms.
+// ExecutionMask MUST apply only to an operation's already-legal Local CUBE_M16 or CUBE_M32 forms and MUST NOT add layout support. Of the 92 semantically classified mnemonics, 89 have an applicable baseline CUBE form; TGATHER and TSCATTER have none under their indexed-operation schemas, and TTRI is RowMajor-only. Any ExecutionMask carrier on those forms MUST reject before operation effects. These three names remain classified with zero applicable forms and retain their existing unpredicated behavior. TEXPDIF is included in the applicable intersection.
 // NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","surface":"tile","classification":["model","legality","execution-mask-source-schema"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
 readonly func TileElementwiseSourceContentsDefined(index: TileIndex)

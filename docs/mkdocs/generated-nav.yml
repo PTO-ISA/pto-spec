@@ -172,6 +172,7 @@ nav:
           - Dispatch:
               - Binary Operation Classification: block/model/dispatch/binary-operation-classification.md
               - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
+              - Command Data Attributes: block/model/dispatch/command-data-attributes.md
               - Commands: block/model/dispatch/commands.md
               - Comparison Schema: block/model/dispatch/comparison-schema.md
               - CUBE Accumulator Routing: block/model/dispatch/cube-accumulator-routing.md
@@ -182,6 +183,7 @@ nav:
               - Destination Auxiliary: block/model/dispatch/destination-auxiliary.md
               - Destination Operation: block/model/dispatch/destination-operation.md
               - Destination Shape: block/model/dispatch/destination-shape.md
+              - Execution Mask Schema: block/model/dispatch/execution-mask-schema.md
               - Expansion Schema: block/model/dispatch/expansion-schema.md
               - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
@@ -197,6 +199,7 @@ nav:
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
               - Tgpr2t Schema: block/model/dispatch/tgpr2t-schema.md
               - Tile Execution: block/model/dispatch/tile-execution.md
+              - Tile Instruction Operands: block/model/dispatch/tile-instruction-operands.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
               - Timg2col Execution: block/model/dispatch/timg2col-execution.md
@@ -869,6 +872,9 @@ nav:
               - Comparison: tile/model/execution/comparison.md
               - CUBE: tile/model/execution/cube.md
               - Elementwise: tile/model/execution/elementwise.md
+              - Execution Mask Comparison: tile/model/execution/execution-mask-comparison.md
+              - Execution Mask State: tile/model/execution/execution-mask-state.md
+              - Execution Mask: tile/model/execution/execution-mask.md
               - Expansion: tile/model/execution/expansion.md
               - Expdif: tile/model/execution/expdif.md
               - Fused Multiply Add: tile/model/execution/fused-multiply-add.md
@@ -888,6 +894,7 @@ nav:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
               - Data Type Layout: tile/model/legality/dtype-layout.md
+              - Execution Mask Source Schema: tile/model/legality/execution-mask-source-schema.md
               - Expdif Operands: tile/model/legality/expdif-operands.md
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md

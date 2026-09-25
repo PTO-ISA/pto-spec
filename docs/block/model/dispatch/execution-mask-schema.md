@@ -15,12 +15,28 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/execution-mask-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+readonly func BundleExecutionMaskLocalTileSourceCount() => integer {0..32}
+begin
+    var count: integer {0..32} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid then
+                count = (count + 1) as integer {0..32};
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                count = (count + 1) as integer {0..32};
+            end;
+        end;
+    end;
+    return count;
+end;
+
 readonly func BundleExecutionMaskOrdinaryTileSourceCount(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..9}
 begin
     let decoded = TileOperationOfIndex(operation);
-    let encoded_sources = BundleLocalTileSourceCount();
+    let encoded_sources = BundleExecutionMaskLocalTileSourceCount();
     if decoded == TileOperation_TGPR2T then return 0; end;
     if decoded == TileOperation_TCMP then return 2; end;
     if decoded == TileOperation_TCMPS then return 1; end;
@@ -82,6 +98,37 @@ begin
     return 0;
 end;
 
+readonly func BundleExecutionMaskCoordinateValidRows(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
+    => integer {0..65535}
+begin
+    let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
+    if ordinary != 0 then
+        return _Tiles[[BundleExecutionMaskTileSourceAt(
+            BundleExecutionMaskCoordinateSourceOrdinal(operation))]].valid_rows;
+    end;
+    let rows = UInt(_BundleDimensions[[1]]);
+    return if rows == 0 then 1 else rows as integer {0..65535};
+end;
+
+readonly func BundleExecutionMaskCoordinateValidColumns(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
+    => integer {0..65535}
+begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TPACK || decoded == TileOperation_TUNPACK then
+        let source = BundleExecutionMaskTileSourceAt(0);
+        return TileCellRearrangementWordsPerRow(_Tiles[[source]])
+            as integer {0..65535};
+    end;
+    let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
+    if ordinary != 0 then
+        return _Tiles[[BundleExecutionMaskTileSourceAt(
+            BundleExecutionMaskCoordinateSourceOrdinal(operation))]].valid_columns;
+    end;
+    return UInt(_BundleDimensions[[0]]) as integer {0..65535};
+end;
+
 readonly func BundleExecutionMaskCoordinateLayout(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => TileLayout
 begin
@@ -99,7 +146,7 @@ begin
        _BundleScalarBindings[[0]].execution_mask_present ||
        _BundleScalarBindings[[1]].execution_mask_present then return FALSE; end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
-    if BundleLocalTileSourceCount() != ordinary + 1 then return FALSE; end;
+    if BundleExecutionMaskLocalTileSourceCount() != ordinary + 1 then return FALSE; end;
     return _Tiles[[BundleExecutionMaskTileSourceAt(ordinary)]]
         .storage_kind == TileStorage_PredicateCell;
 end;
@@ -111,22 +158,15 @@ begin
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     let predicate = BundleExecutionMaskTileSourceAt(ordinary);
     var consumer_layout = CurrentBundleTileLayout();
-    var valid_rows: integer {1..65535} = 1;
-    var valid_columns: integer {1..65535} = 1;
+    let valid_rows_raw = BundleExecutionMaskCoordinateValidRows(operation);
+    let valid_columns_raw = BundleExecutionMaskCoordinateValidColumns(operation);
+    if valid_rows_raw < 1 || valid_rows_raw > 65535 ||
+       valid_columns_raw < 1 || valid_columns_raw > 65535 then return FALSE; end;
+    let valid_rows = valid_rows_raw as integer {1..65535};
+    let valid_columns = valid_columns_raw as integer {1..65535};
     if ordinary != 0 then
-        let consumer = _Tiles[[BundleExecutionMaskTileSourceAt(
-            BundleExecutionMaskCoordinateSourceOrdinal(operation))]];
-        consumer_layout = consumer.layout;
-        valid_rows = consumer.valid_rows as integer {1..65535};
-        valid_columns = consumer.valid_columns as integer {1..65535};
-    else
-        let raw_columns = UInt(_BundleDimensions[[0]]);
-        let raw_rows = UInt(_BundleDimensions[[1]]);
-        if raw_columns < 1 || raw_columns > 65535 || raw_rows > 65535 then
-            return FALSE;
-        end;
-        valid_columns = raw_columns as integer {1..65535};
-        valid_rows = if raw_rows == 0 then 1 else raw_rows as integer {1..65535};
+        consumer_layout = _Tiles[[BundleExecutionMaskTileSourceAt(
+            BundleExecutionMaskCoordinateSourceOrdinal(operation))]].layout;
     end;
     return TileExecutionMaskPredicateCellShapeLegal(
         predicate, consumer_layout, valid_rows, valid_columns);
@@ -139,25 +179,25 @@ begin
     let coordinate_layout = BundleExecutionMaskCoordinateLayout(operation);
     if coordinate_layout != TileLayout_CUBE_M16 &&
        coordinate_layout != TileLayout_CUBE_M32 then return FALSE; end;
-    var valid_rows: integer {1..65535} = 1;
-    var valid_columns: integer {1..65535} = 1;
-    if ordinary != 0 then
-        let consumer = _Tiles[[BundleExecutionMaskTileSourceAt(
-            BundleExecutionMaskCoordinateSourceOrdinal(operation))]];
-        valid_rows = consumer.valid_rows as integer {1..65535};
-        valid_columns = consumer.valid_columns as integer {1..65535};
-    else
-        let raw_columns = UInt(_BundleDimensions[[0]]);
-        let raw_rows = UInt(_BundleDimensions[[1]]);
-        if raw_columns < 1 || raw_columns > 65535 || raw_rows > 65535 then
-            return FALSE;
-        end;
-        valid_columns = raw_columns as integer {1..65535};
-        valid_rows = if raw_rows == 0 then 1 else raw_rows as integer {1..65535};
-    end;
+    let valid_rows_raw = BundleExecutionMaskCoordinateValidRows(operation);
+    let valid_columns_raw = BundleExecutionMaskCoordinateValidColumns(operation);
+    if valid_rows_raw < 1 || valid_rows_raw > 65535 ||
+       valid_columns_raw < 1 || valid_columns_raw > 65535 then return FALSE; end;
+    let valid_rows = valid_rows_raw as integer {1..65535};
+    let valid_columns = valid_columns_raw as integer {1..65535};
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     let words = BundleExecutionMaskGPRWordCount(operation);
+    if TileOperationOfIndex(operation) == TileOperation_TPACK ||
+       TileOperationOfIndex(operation) == TileOperation_TUNPACK then
+        if valid_rows > TileCubePredicateRowBits(coordinate_layout) then
+            return FALSE;
+        end;
+        let final_bit = ((valid_columns - 1) *
+            TileCubePredicateRowBits(coordinate_layout) + valid_rows)
+            as integer {0..4194303};
+        return final_bit <= words * 64;
+    end;
     return valid_rows <= TileCubePredicateRowBits(coordinate_layout) &&
            valid_columns <= TileCubePredicateFieldCount(
                data_type, coordinate_layout) * words;
@@ -180,20 +220,10 @@ begin
             BundleExecutionMaskGPRWordCount(operation);
         _BundleExecutionMask.layout =
             BundleExecutionMaskCoordinateLayout(operation);
-        if BundleExecutionMaskOrdinaryTileSourceCount(operation) == 0 then
-            let raw_rows = UInt(_BundleDimensions[[1]]);
-            let raw_columns = UInt(_BundleDimensions[[0]]);
-            _BundleExecutionMask.valid_rows = if raw_rows == 0 then 1
-                else raw_rows as integer {1..65535};
-            _BundleExecutionMask.valid_columns =
-                raw_columns as integer {1..65535};
-        else
-            let consumer = BundleExecutionMaskTileSourceAt(
-                BundleExecutionMaskCoordinateSourceOrdinal(operation));
-            _BundleExecutionMask.valid_rows = _Tiles[[consumer]].valid_rows;
-            _BundleExecutionMask.valid_columns =
-                _Tiles[[consumer]].valid_columns;
-        end;
+        _BundleExecutionMask.valid_rows =
+            BundleExecutionMaskCoordinateValidRows(operation) as integer {1..65535};
+        _BundleExecutionMask.valid_columns =
+            BundleExecutionMaskCoordinateValidColumns(operation) as integer {1..65535};
         _BundleExecutionMask.invert = _BundleDataAttributes.execution_mask_invert;
         _BundleExecutionMask.zero_inactive = _BundleDataAttributes.execution_mask_zero;
         return TRUE;
@@ -209,8 +239,10 @@ begin
         _BundleExecutionMask.predicate_source_ordinal = ordinary;
         _BundleExecutionMask.word_count = 0;
         _BundleExecutionMask.layout = tile.layout;
-        _BundleExecutionMask.valid_rows = tile.valid_rows;
-        _BundleExecutionMask.valid_columns = tile.valid_columns;
+        _BundleExecutionMask.valid_rows =
+            BundleExecutionMaskCoordinateValidRows(operation) as integer {1..65535};
+        _BundleExecutionMask.valid_columns =
+            BundleExecutionMaskCoordinateValidColumns(operation) as integer {1..65535};
         _BundleExecutionMask.invert = _BundleDataAttributes.execution_mask_invert;
         _BundleExecutionMask.zero_inactive = _BundleDataAttributes.execution_mask_zero;
     end;
@@ -271,24 +303,29 @@ begin
     if !destination_found then return TRUE; end;
     let hand = UInt(_BundleTileBindings[[destination_binding]].destination_hand)
         as integer {0..3};
+    let destination = _BundleTileBindings[[destination_binding]].destination;
+    let destination_tile = _Tiles[[destination]];
     if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
     let base = _TileRelativeOrder[[hand]][[0]];
     let tile = _Tiles[[base]];
-    if !tile.allocated || !tile.contents_defined ||
+    if !destination_tile.allocated || !TileCubeDescriptorLegal(destination_tile) ||
+       !tile.allocated || !tile.contents_defined ||
        !TileCubeDescriptorLegal(tile) then return FALSE; end;
-    if tile.layout != _BundleExecutionMask.layout ||
-       tile.valid_rows != _BundleExecutionMask.valid_rows ||
-       tile.valid_columns != _BundleExecutionMask.valid_columns then
+    if tile.layout != destination_tile.layout ||
+       tile.valid_rows != destination_tile.valid_rows ||
+       tile.valid_columns != destination_tile.valid_columns then
         return FALSE;
     end;
     if TileOperationOfIndex(operation) == TileOperation_TCMP ||
        TileOperationOfIndex(operation) == TileOperation_TCMPS then
-        if !TilePredicateCellDescriptorLegal(base) then return FALSE; end;
+        if !TilePredicateCellDescriptorLegal(base) ||
+           destination_tile.storage_kind != TileStorage_PredicateCell then
+            return FALSE;
+        end;
     else
-        let data_type = TileDataTypeFromEncoding(
-            CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
         if tile.storage_kind != TileStorage_Numeric ||
-           tile.data_type != data_type then return FALSE; end;
+           destination_tile.storage_kind != TileStorage_Numeric ||
+           tile.data_type != destination_tile.data_type then return FALSE; end;
     end;
     _BundleExecutionMask.merge_base = base;
     _BundleExecutionMask.merge_base_valid = TRUE;

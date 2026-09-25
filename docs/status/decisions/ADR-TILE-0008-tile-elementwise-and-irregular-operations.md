@@ -146,7 +146,11 @@
     "PTO-TROWEXPANDMUL-CONTRACT-001",
     "PTO-TROWEXPANDSUB-CONTRACT-001",
     "PTO-INST-TILE-TEXPDIF",
-    "PTO-TEXPDIF-CONTRACT-001"
+    "PTO-TEXPDIF-CONTRACT-001",
+    "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+    "PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001",
+    "PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001",
+    "PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -258,6 +262,7 @@
     "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
     "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
     "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+    "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
     "PTO-TILE-TCOLEXPAND",
     "PTO-TILE-TCOLEXPANDADD",
     "PTO-TILE-TCOLEXPANDDIV",
@@ -1894,3 +1899,23 @@ Issue #333 为 `TEXPDIF` 增加完整形状的二元 Tile 操作，计算自然�
 且不修改源描述符。同类型形式执行类型化 SUB 后接自然 EXP。混合形式先将两个
 16 位输入精确扩宽，再执行 FP32 SUB 和自然 EXP。两个 expansion 形式也使用共享
 的 EXPDIF 数值 owner，以保持既有行为。
+
+## 2026-09-26 accepted amendment: Local CUBE ExecutionMask operation closure
+
+For Issues #277 and #349, ExecutionMask applies to the intersection of the
+92 semantically classified mnemonics and their already-legal Local
+CUBE_M16/CUBE_M32 forms. That intersection has 89 mnemonics; `TGATHER`,
+`TSCATTER`, and `TTRI` remain classified with zero applicable forms and keep
+their existing layout legality and unpredicated behavior. `TEXPDIF` is in the
+applicable set and gates source validation, reads, arithmetic, and numeric
+status by active result coordinate; inactive destination coordinates follow
+the common MERGE/ZERO rule.
+
+`TPACK` and `TUNPACK` use the source CELL word as their effect unit, with mask
+coordinate `(row, word_index)` and `word_index` bounded by the source words per
+row. PredicateCell shape is source `ValidRow` by source words per row, and the
+GPR mapping uses `word_index` as the CUBE column. One bit gates the complete
+destination word group of four U8, two U16, or one U32 element. Inactive groups
+do not read selected source bytes and follow MERGE/ZERO against the new
+destination shape. The operation owners retain the detailed applicability,
+legality, and execution clauses.

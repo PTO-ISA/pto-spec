@@ -480,7 +480,7 @@ begin
            decoded == TileOperation_MSCATTER_OR || decoded == TileOperation_MSCATTER_POPC || decoded == TileOperation_MSCATTER_XOR || decoded == TileOperation_TABS || decoded == TileOperation_TADD ||
            decoded == TileOperation_TADDS || decoded == TileOperation_TAND || decoded == TileOperation_TANDS || decoded == TileOperation_TCI || decoded == TileOperation_TCMP ||
            decoded == TileOperation_TCMPS || decoded == TileOperation_TCOLEXPAND || decoded == TileOperation_TCOLEXPANDADD || decoded == TileOperation_TCOLEXPANDDIV || decoded == TileOperation_TCOLEXPANDEXPDIF ||
-           decoded == TileOperation_TCOLEXPANDMAX || decoded == TileOperation_TCOLEXPANDMIN || decoded == TileOperation_TCOLEXPANDMUL || decoded == TileOperation_TCOLEXPANDSUB || decoded == TileOperation_TCVT ||
+           decoded == TileOperation_TCOLEXPANDMAX || decoded == TileOperation_TCOLEXPANDMIN || decoded == TileOperation_TCOLEXPANDMUL || decoded == TileOperation_TCOLEXPANDSUB || decoded == TileOperation_TCVT || decoded == TileOperation_TEXPDIF ||
            decoded == TileOperation_TDIV || decoded == TileOperation_TDIVS || decoded == TileOperation_TEXP || decoded == TileOperation_TEXPANDS || decoded == TileOperation_TFMA ||
            decoded == TileOperation_TGATHER || decoded == TileOperation_TGPR2T || decoded == TileOperation_TLOAD || decoded == TileOperation_TLOG || decoded == TileOperation_TMAX ||
            decoded == TileOperation_TMAXS || decoded == TileOperation_TMIN || decoded == TileOperation_TMINS || decoded == TileOperation_TMOV || decoded == TileOperation_TMUL ||

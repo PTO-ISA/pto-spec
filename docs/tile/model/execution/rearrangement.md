@@ -15,7 +15,11 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/rearrangement.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","surface":"tile","classification":["model","execution","rearrangement"],"depends_on":["PTO-TILE-MODEL-NUMERIC-EXCEPTIONS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
+// NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// For TPACK/TUNPACK, ExecutionMask coordinates are (source row, source CELL word index), with word_index below the source words-per-row. PredicateCell shape is source ValidRow by source words-per-row; GPR mapping uses word_index as the column. One bit gates the complete destination CELL word group (4 U8, 2 U16, or 1 U32 elements). Active groups perform the existing selected-byte reads and whole-word write; inactive groups do not read selected source bytes and apply the common MERGE/ZERO destination rule. Source/destination shape, type, control, word-count, capacity, and allocation checks remain in force for every mask value.
+// NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","surface":"tile","classification":["model","execution","rearrangement"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-NUMERIC-EXCEPTIONS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
 // PTO-REQ-TEPL-REARRANGE-001: direct tile layout and indexing operations.
 
 readonly func TileInfoWithCellByte(tile: TileInfo,
@@ -221,21 +225,44 @@ begin
     for row = 0 to source0_tile.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};
-            var packed = Zeros{PTO_XLEN};
-            for byte_index = 0 to source0_bytes - 1 looplimit 3 do
-                packed[(byte_index * 8) +: 8] = TileReadCellByte(
-                    source0_tile, row as integer {0..65535},
-                    (word_start + byte_index) as integer {0..262143});
-            end;
-            for byte_index = 0 to source1_bytes - 1 looplimit 3 do
-                packed[((source0_bytes + byte_index) * 8) +: 8] =
-                    TileReadCellByte(source1_tile,
-                        row as integer {0..65535},
+            if BundleExecutionMaskActiveAt(
+                   source0_tile.layout, row as integer {0..65535},
+                   word_index as integer {0..65535}) then
+                var packed = Zeros{PTO_XLEN};
+                for byte_index = 0 to source0_bytes - 1 looplimit 3 do
+                    packed[(byte_index * 8) +: 8] = TileReadCellByte(
+                        source0_tile, row as integer {0..65535},
                         (word_start + byte_index) as integer {0..262143});
+                end;
+                for byte_index = 0 to source1_bytes - 1 looplimit 3 do
+                    packed[((source0_bytes + byte_index) * 8) +: 8] =
+                        TileReadCellByte(source1_tile,
+                            row as integer {0..65535},
+                            (word_start + byte_index) as integer {0..262143});
+                end;
+                result = TileInfoWithCellWord(result,
+                    row as integer {0..65535},
+                    word_index as integer {0..65535}, packed);
+            else
+                let group_width = if destination_tile.data_type == TileDataType_U8 then 4
+                    else if destination_tile.data_type == TileDataType_U16 then 2
+                    else 1;
+                for group_element = 0 to group_width - 1 looplimit 4 do
+                    let column = (word_index * group_width + group_element)
+                        as integer {0..65535};
+                    let destination_element = TileLogicalLinearIndex(
+                        result, row as integer {0..65535}, column);
+                    var value = Zeros{PTO_XLEN};
+                    if !_BundleExecutionMask.zero_inactive then
+                        let base = _Tiles[[_BundleExecutionMask.merge_base]];
+                        let base_element = TileLogicalLinearIndex(
+                            base, row as integer {0..65535}, column);
+                        value = TileReadLogicalElement(base, base_element);
+                    end;
+                    result = TileInfoWithLogicalElementAndDefined(
+                        result, destination_element, value, TRUE);
+                end;
             end;
-            result = TileInfoWithCellWord(result,
-                row as integer {0..65535},
-                word_index as integer {0..65535}, packed);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -255,17 +282,40 @@ begin
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};
-            var unpacked = Zeros{PTO_XLEN};
-            for byte_index = 0 to byte_count - 1 looplimit 4 do
-                unpacked[(byte_index * 8) +: 8] =
-                    TileReadCellByte(source_tile,
-                        row as integer {0..65535},
-                        (word_start + byte_offset + byte_index)
-                            as integer {0..262143});
+            if BundleExecutionMaskActiveAt(
+                   source_tile.layout, row as integer {0..65535},
+                   word_index as integer {0..65535}) then
+                var unpacked = Zeros{PTO_XLEN};
+                for byte_index = 0 to byte_count - 1 looplimit 4 do
+                    unpacked[(byte_index * 8) +: 8] =
+                        TileReadCellByte(source_tile,
+                            row as integer {0..65535},
+                            (word_start + byte_offset + byte_index)
+                                as integer {0..262143});
+                end;
+                result = TileInfoWithCellWord(result,
+                    row as integer {0..65535},
+                    word_index as integer {0..65535}, unpacked);
+            else
+                let group_width = if destination_tile.data_type == TileDataType_U8 then 4
+                    else if destination_tile.data_type == TileDataType_U16 then 2
+                    else 1;
+                for group_element = 0 to group_width - 1 looplimit 4 do
+                    let column = (word_index * group_width + group_element)
+                        as integer {0..65535};
+                    let destination_element = TileLogicalLinearIndex(
+                        result, row as integer {0..65535}, column);
+                    var value = Zeros{PTO_XLEN};
+                    if !_BundleExecutionMask.zero_inactive then
+                        let base = _Tiles[[_BundleExecutionMask.merge_base]];
+                        let base_element = TileLogicalLinearIndex(
+                            base, row as integer {0..65535}, column);
+                        value = TileReadLogicalElement(base, base_element);
+                    end;
+                    result = TileInfoWithLogicalElementAndDefined(
+                        result, destination_element, value, TRUE);
+                end;
             end;
-            result = TileInfoWithCellWord(result,
-                row as integer {0..65535},
-                word_index as integer {0..65535}, unpacked);
         end;
     end;
     result = TileWithValidRegionDefined(result);

@@ -1,4 +1,8 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Predicated expansion reads and validates source coordinates only when the mapped output coordinate is active. A broadcast element is read only if at least one active output consumes it; inactive outputs use the common MERGE/ZERO rule and contribute no numeric flags. Integer division-by-zero checks apply only to active outputs.
+// NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 // PTO-REQ-TEPL-EXPAND-001: exact typed row and column broadcast operations.
 
 pure func TileExpandBinaryOperation(
@@ -110,33 +114,43 @@ begin
 
     for row = 0 to result_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to result_tile.valid_columns - 1 looplimit 65536 do
-            let broadcast_row = if axis == TileAxis_Row then row else 0;
-            let broadcast_column = if axis == TileAxis_Row then 0 else column;
-            let broadcast_element = TileLogicalLinearIndex(broadcast_tile,
-                broadcast_row as integer {0..65535},
-                broadcast_column as integer {0..65535});
-            var left = TileReadLogicalElement(broadcast_tile,
-                broadcast_element);
-            if op != TileExpand_COPY then
-                let source_element = TileLogicalLinearIndex(
-                    source_tile,
-                    row as integer {0..65535},
-                    column as integer {0..65535});
-                left = TileReadLogicalElement(source_tile, source_element);
-            end;
-            let (value, element_flags) = TileExpandValueWithTypesAndFlags(
-                op,
-                source_operation_type,
-                destination_operation_type,
-                left,
-                TileReadLogicalElement(broadcast_tile, broadcast_element));
             let destination_element = TileLogicalLinearIndex(
                 result_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result_tile = TileInfoWithLogicalElement(result_tile,
-                destination_element, value);
-            accumulated_flags = accumulated_flags OR element_flags;
+            if BundleExecutionMaskActiveAt(
+                   result_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let broadcast_row = if axis == TileAxis_Row then row else 0;
+                let broadcast_column = if axis == TileAxis_Row then 0 else column;
+                let broadcast_element = TileLogicalLinearIndex(broadcast_tile,
+                    broadcast_row as integer {0..65535},
+                    broadcast_column as integer {0..65535});
+                var left = TileReadLogicalElement(broadcast_tile,
+                    broadcast_element);
+                if op != TileExpand_COPY then
+                    let source_element = TileLogicalLinearIndex(
+                        source_tile,
+                        row as integer {0..65535},
+                        column as integer {0..65535});
+                    left = TileReadLogicalElement(source_tile, source_element);
+                end;
+                let (value, element_flags) = TileExpandValueWithTypesAndFlags(
+                    op,
+                    source_operation_type,
+                    destination_operation_type,
+                    left,
+                    TileReadLogicalElement(broadcast_tile, broadcast_element));
+                result_tile = TileInfoWithLogicalElement(result_tile,
+                    destination_element, value);
+                accumulated_flags = accumulated_flags OR element_flags;
+            else
+                let value = BundleExecutionMaskDestinationValue(
+                    result_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+                result_tile = TileInfoWithLogicalElement(
+                    result_tile, destination_element, value);
+            end;
         end;
     end;
 

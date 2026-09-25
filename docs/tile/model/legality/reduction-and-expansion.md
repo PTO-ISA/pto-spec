@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/reduction-and-expansion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION","surface":"tile","classification":["model","legality","reduction-and-expansion"],"depends_on":["PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION","surface":"tile","classification":["model","legality","reduction-and-expansion"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 
 pure func TileReductionAndExpansionLayoutSupported(layout: TileLayout)
     => boolean
@@ -43,9 +43,25 @@ readonly func TileReductionAndExpansionSourceContentsDefined(index: TileIndex)
 begin
     let tile = _Tiles[[index]];
     if !TileReductionAndExpansionDescriptorLegal(index) ||
-       tile.storage_kind != TileStorage_Numeric ||
-       !tile.contents_defined then
+       tile.storage_kind != TileStorage_Numeric then
         return FALSE;
+    end;
+    if !_BundleExecutionMask.valid then return tile.contents_defined; end;
+    if tile.layout != _BundleExecutionMask.layout ||
+       tile.valid_rows != _BundleExecutionMask.valid_rows ||
+       tile.valid_columns != _BundleExecutionMask.valid_columns then
+        return FALSE;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) &&
+               !TileElementDefined(index, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                return FALSE;
+            end;
+        end;
     end;
     return TRUE;
 end;
@@ -62,13 +78,18 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   tile.data_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                if !TileNumericEncodingValid(
+                       tile.data_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -85,13 +106,102 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   operation_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                if !TileNumericEncodingValid(
+                       operation_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func TileExpansionBroadcastElementsLegalAs(
+    index: TileIndex, axis: TileAxis,
+    operation_type: TileDataType, validate_encoding: boolean) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TileReductionAndExpansionDescriptorLegal(index) ||
+       tile.storage_kind != TileStorage_Numeric ||
+       !TileCarrierWidthCompatible(tile.data_type, operation_type) then
+        return FALSE;
+    end;
+    if !_BundleExecutionMask.valid && !tile.contents_defined then
+        return FALSE;
+    end;
+    if _BundleExecutionMask.valid &&
+       tile.layout != _BundleExecutionMask.layout then
+        return FALSE;
+    end;
+    if axis == TileAxis_Row then
+        if _BundleExecutionMask.valid &&
+           tile.valid_rows != _BundleExecutionMask.valid_rows then
+            return FALSE;
+        end;
+        for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+            var consumed = !_BundleExecutionMask.valid;
+            if _BundleExecutionMask.valid then
+                for column = 0 to _BundleExecutionMask.valid_columns - 1
+                    looplimit 65536 do
+                    if BundleExecutionMaskActiveAt(
+                           tile.layout, row as integer {0..65535},
+                           column as integer {0..65535}) then
+                        consumed = TRUE;
+                    end;
+                end;
+            end;
+            if consumed then
+                if !TileElementDefined(index, row as integer {0..65535}, 0) then
+                    return FALSE;
+                end;
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535}, 0);
+                if validate_encoding &&
+                   !TileNumericEncodingValid(
+                       operation_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
+            end;
+        end;
+    else
+        if _BundleExecutionMask.valid &&
+           tile.valid_columns != _BundleExecutionMask.valid_columns then
+            return FALSE;
+        end;
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            var consumed = !_BundleExecutionMask.valid;
+            if _BundleExecutionMask.valid then
+                for row = 0 to _BundleExecutionMask.valid_rows - 1
+                    looplimit 65536 do
+                    if BundleExecutionMaskActiveAt(
+                           tile.layout, row as integer {0..65535},
+                           column as integer {0..65535}) then
+                        consumed = TRUE;
+                    end;
+                end;
+            end;
+            if consumed then
+                if !TileElementDefined(index, 0,
+                       column as integer {0..65535}) then
+                    return FALSE;
+                end;
+                let element = TileLogicalLinearIndex(
+                    tile, 0, column as integer {0..65535});
+                if validate_encoding &&
+                   !TileNumericEncodingValid(
+                       operation_type,
+                       TileReadLogicalElement(tile, element)) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -102,29 +212,32 @@ readonly func TileExpansionBroadcastLegalAs(
     index: TileIndex, axis: TileAxis,
     operation_type: TileDataType) => boolean
 begin
-    let tile = _Tiles[[index]];
-    if !TileReductionAndExpansionSourceContentsDefined(index) ||
-       !TileCarrierWidthCompatible(tile.data_type, operation_type) then
-        return FALSE;
-    end;
-    if axis == TileAxis_Row then
-        for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, row as integer {0..65535}, 0);
-            if !TileNumericEncodingValid(
-                   operation_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
-            end;
-        end;
-    else
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(
-                tile, 0, column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   operation_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
+    return TileExpansionBroadcastElementsLegalAs(
+        index, axis, operation_type, TRUE);
+end;
+
+readonly func TileExpansionBroadcastNonzero(
+    axis: TileAxis, source: TileIndex, broadcast: TileIndex) => boolean
+begin
+    let source_tile = _Tiles[[source]];
+    let broadcast_tile = _Tiles[[broadcast]];
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   source_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let broadcast_row = if axis == TileAxis_Row then row else 0;
+                let broadcast_column = if axis == TileAxis_Row then 0 else column;
+                let element = TileLogicalLinearIndex(broadcast_tile,
+                    broadcast_row as integer {0..65535},
+                    broadcast_column as integer {0..65535});
+                if !TileElementDefined(broadcast,
+                       broadcast_row as integer {0..65535},
+                       broadcast_column as integer {0..65535}) ||
+                   IsZero(TileReadLogicalElement(broadcast_tile, element)) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -258,9 +371,8 @@ begin
 
     if copy then
         if source != broadcast_source ||
-           !TileReductionAndExpansionSourceContentsDefined(broadcast_source) ||
-           !TileCarrierWidthCompatible(
-               broadcast_tile.data_type, destination_operation_type) then
+           !TileExpansionBroadcastElementsLegalAs(
+               broadcast_source, axis, destination_operation_type, FALSE) then
             return FALSE;
         end;
     else
@@ -293,7 +405,7 @@ begin
 
     if operation == TileExpand_DIV &&
        TileDataTypeIsInteger(destination_operation_type) then
-        return TileBroadcastPayloadNonzero(
+        return TileExpansionBroadcastNonzero(
             axis, source, broadcast_source);
     end;
     return TRUE;
