@@ -1971,6 +1971,54 @@
     {
       "form": "bundle",
       "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "destination0",
+      "role_description": "new Local DstDataType numeric destination"
+    },
+    {
+      "form": "bundle",
+      "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "source0",
+      "role_description": "persistent Local SrcOperationType minuend"
+    },
+    {
+      "form": "bundle",
+      "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "source1",
+      "role_description": "persistent Local SrcOperationType subtrahend"
+    },
+    {
+      "form": "direct",
+      "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "destination0",
+      "role_description": "new Local DstDataType numeric destination"
+    },
+    {
+      "form": "direct",
+      "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "source0",
+      "role_description": "persistent Local SrcOperationType minuend"
+    },
+    {
+      "form": "direct",
+      "layout_bearing": true,
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "source1",
+      "role_description": "persistent Local SrcOperationType subtrahend"
+    },
+    {
+      "form": "bundle",
+      "layout_bearing": true,
       "mnemonic": "TFMA",
       "owner": "asl/block/execution/BSTART.VEC.asl",
       "role": "destination0",
@@ -5017,7 +5065,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "4a9b7bcc140ed50de2bd6cbbb1732ad6c7789ecd",
+  "candidate_head": "f629c25a26252781bd3da6afaf7bf9e9228d8382",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -12006,6 +12054,182 @@
       ]
     },
     {
+      "L0": {},
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "relation_deltas": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TEXPDIF",
+          "bundle",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "bundle",
+          "source1",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
+      "L0": {},
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "relation_deltas": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "tuple_deltas": [
+        [
+          "TEXPDIF",
+          "direct",
+          "destination0",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "destination0",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "destination0",
+          "RowMajor"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source0",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source0",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source0",
+          "RowMajor"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source1",
+          "CUBE_M16"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source1",
+          "CUBE_M32"
+        ],
+        [
+          "TEXPDIF",
+          "direct",
+          "source1",
+          "RowMajor"
+        ]
+      ]
+    },
+    {
       "L0": {
         "destination0": [
           "RowMajor"
@@ -16184,12 +16408,21 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "e339a4e6616fbf3666b533aafd0f92bf7560f121964479e89a00863f3d1a7ae7",
+      "after_sha256": "408442af10e86b5578df7d78dafbe09abe16be60437b88f16c55ddd27985cee5",
       "before_layouts": [],
       "before_sha256": "37e0bf183ec66817a055aebed3fddad254e51c7a946e143511533466680c1268",
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "BundleOperationScalarBindingSchemaLegal",
       "path": "asl/block/model/dispatch/scalar-schema.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "2e0c913fa41d420060aba4efc39055166046d02965dd7e338a6c38188aaf9ea6",
+      "before_layouts": [],
+      "before_sha256": "b9669356a4d879fa0770cbfc455b1d912d2e2df8ae188547f6684662b9bbe3bc",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "BundleProducerEffectClassOfHandler",
+      "path": "asl/block/model/operands/portable-carriers.asl"
     },
     {
       "after_layouts": [],
@@ -16379,6 +16612,15 @@
     },
     {
       "after_layouts": [],
+      "after_sha256": "69ed572fe2db44bc7feee1b6636088175434032451dc0c55a2ebd2484b3a8def",
+      "before_layouts": [],
+      "before_sha256": "1d83b15814137001e3d2e6106a684418027ff0ea79b55566f1b4b6261189ccec",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "ExecuteTileBinary",
+      "path": "asl/tile/model/execution/elementwise.asl"
+    },
+    {
+      "after_layouts": [],
       "after_sha256": "ee386bd11988d00ca34b24b966874b7accb96eb86a20ebb3f350d1f67af146b8",
       "before_layouts": [],
       "before_sha256": "e35c9619ad9f94df420161c00ed39f0d2912cd07a98e4ac67510cc7a5d7d518d",
@@ -16386,6 +16628,35 @@
       "name": "ExecuteTileExpand",
       "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses",
       "path": "asl/tile/model/execution/expansion.asl"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "CurrentBundlePadValue",
+            "RecordNumericStatusFlags",
+            "TileExpdifSourceOperationType",
+            "TileExpdifValueWithTypesAndFlags",
+            "TileInfoWithLogicalElement",
+            "TileLogicalLinearIndex",
+            "TileLogicalLinearIndex",
+            "TileLogicalLinearIndex",
+            "TileOperandsLegal_ExecuteTileExpdif",
+            "TileReadLogicalElement",
+            "TileReadLogicalElement",
+            "TileWithPadding",
+            "TileWithValidRegionDefined",
+            "let",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/expdif.asl",
+          "sha256": "a208b94e009b7908c04944890e8f3efd4399d3b4f171d6ac52f1e287d62dbc3a"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "ExecuteTileExpdif"
     },
     {
       "after": [
@@ -16628,21 +16899,134 @@
       "path": "asl/block/model/dispatch/cube-destination.asl"
     },
     {
-      "after_layouts": [
-        "CUBE_M16",
-        "CUBE_M32",
-        "RowMajor"
+      "after": [
+        {
+          "calls": [
+            "BundleComparisonSelectTrueSource",
+            "BundleDestinationPhysicalColumns",
+            "BundleDestinationPhysicalColumns",
+            "BundleDestinationValidColumns",
+            "BundleDestinationValidRows",
+            "BundleTileSourceIndex",
+            "BundleTileSourceIndex",
+            "ReadTPC",
+            "ReadTPC",
+            "ReadTPC",
+            "ResolveBundleCUBESelectDestination",
+            "ResolveBundleCellRearrangementDestination",
+            "ResolveBundleEffectiveDataType",
+            "ResolveBundlePredicateDestination",
+            "ResolveBundleTCVTCubeDestination",
+            "ResolveBundleTileDestinations",
+            "ResolveBundleTileDestinationsWithShape",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "SelectedBundleComparisonCUBE",
+            "SelectedBundleExponentialDifferenceTypes",
+            "SelectedBundleExponentialDifferenceTypes",
+            "SetFault",
+            "SetFault",
+            "SetFault",
+            "TileExpansionOperationIsExponentialDifference",
+            "TileOperationOfIndex",
+            "TileOperationUsesClosedBinarySchema",
+            "TileOperationUsesClosedComparisonSchema",
+            "TileOperationUsesClosedExpansionSchema",
+            "TileOperationUsesClosedGenerationSchema",
+            "TileOperationUsesClosedReductionSchema",
+            "TileOperationUsesClosedRowReductionSchema",
+            "TileOperationUsesClosedTCMPSSchema",
+            "TileOperationUsesClosedTCMPSchema",
+            "TileOperationUsesClosedTCVTSchema",
+            "TileOperationUsesClosedTCVTSchema",
+            "TileOperationUsesClosedTFMASchema",
+            "TileOperationUsesClosedTSELSSchema",
+            "TileOperationUsesClosedTSELSchema",
+            "TileOperationUsesClosedTileScalarSchema",
+            "TileOperationUsesClosedUnarySchema",
+            "TileOperationUsesSourceBackingDestination",
+            "TileReductionOperationReturnsIndex",
+            "UInt",
+            "UInt",
+            "UInt",
+            "UInt",
+            "UInt",
+            "let",
+            "let",
+            "let"
+          ],
+          "layouts": [
+            "CUBE_M16",
+            "CUBE_M32",
+            "RowMajor"
+          ],
+          "path": "asl/block/model/dispatch/destination-operation.asl",
+          "sha256": "b26cd61371f87570830be316197d7eeb2d6e7fa7c0480cec005bda3b346cc56e"
+        }
       ],
-      "after_sha256": "6f1647ea4085aa58d8999360617006470b0fb9b5e8921867209e1d855ae673fe",
-      "before_layouts": [
-        "CUBE_M16",
-        "CUBE_M32",
-        "RowMajor"
+      "before": [
+        {
+          "calls": [
+            "BundleComparisonSelectTrueSource",
+            "BundleTileSourceIndex",
+            "BundleTileSourceIndex",
+            "ReadTPC",
+            "ReadTPC",
+            "ResolveBundleCUBESelectDestination",
+            "ResolveBundleCellRearrangementDestination",
+            "ResolveBundleEffectiveDataType",
+            "ResolveBundlePredicateDestination",
+            "ResolveBundleTCVTCubeDestination",
+            "ResolveBundleTileDestinations",
+            "ResolveBundleTileDestinationsWithShape",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "SelectedBundleComparisonCUBE",
+            "SelectedBundleExpansionExponentialDifferenceTypes",
+            "SetFault",
+            "SetFault",
+            "TileExpansionOperationIsExponentialDifference",
+            "TileOperationOfIndex",
+            "TileOperationUsesClosedBinarySchema",
+            "TileOperationUsesClosedComparisonSchema",
+            "TileOperationUsesClosedExpansionSchema",
+            "TileOperationUsesClosedGenerationSchema",
+            "TileOperationUsesClosedReductionSchema",
+            "TileOperationUsesClosedRowReductionSchema",
+            "TileOperationUsesClosedTCMPSSchema",
+            "TileOperationUsesClosedTCMPSchema",
+            "TileOperationUsesClosedTCVTSchema",
+            "TileOperationUsesClosedTCVTSchema",
+            "TileOperationUsesClosedTFMASchema",
+            "TileOperationUsesClosedTSELSSchema",
+            "TileOperationUsesClosedTSELSchema",
+            "TileOperationUsesClosedTileScalarSchema",
+            "TileOperationUsesClosedUnarySchema",
+            "TileOperationUsesSourceBackingDestination",
+            "TileReductionOperationReturnsIndex",
+            "UInt",
+            "UInt",
+            "UInt",
+            "UInt",
+            "UInt",
+            "UInt",
+            "let",
+            "let"
+          ],
+          "layouts": [
+            "CUBE_M16",
+            "CUBE_M32",
+            "RowMajor"
+          ],
+          "path": "asl/block/model/dispatch/destination-shape.asl",
+          "sha256": "fa2ce48c16eeefcb384cf729699dd0800e28a806769f95404013e7f69aa9cf72"
+        }
       ],
-      "before_sha256": "fa2ce48c16eeefcb384cf729699dd0800e28a806769f95404013e7f69aa9cf72",
-      "classification": "operation-scoped accepted layout/relation owner",
-      "name": "ResolveBundleTileDestinationsForOperation",
-      "path": "asl/block/model/dispatch/destination-shape.asl"
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "ResolveBundleTileDestinationsForOperation"
     },
     {
       "after_layouts": [
@@ -16658,6 +17042,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "ResolveBundleTileDestinationsWithShapeAndType",
       "path": "asl/block/model/dispatch/destination-shape.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "2604444014385f66a42a66f37d478b4ab6b29b606b9fdae631f1557ef70e2061",
+      "before_layouts": [],
+      "before_sha256": "8d447872f13cbdb4d30e2347b8e209a69edf287b4e77bdd03e33a1b4aec044f3",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileBinaryDataTypeSupported",
+      "path": "asl/tile/model/legality/dtype-layout.asl"
     },
     {
       "after_layouts": [],
@@ -17179,6 +17572,28 @@
       "path": "asl/tile/model/definedness/elements.asl"
     },
     {
+      "after": [],
+      "before": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "4427351a746f3e0b505b5ffb3d852e8a68cc75efcebcf1d8135b78f8a7d54f86"
+        }
+      ],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpandExpdifTypePairLegal"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "8ec2d39e6386d4300e2150382c86d54ccb60070018769486b4429878e35acec4",
+      "before_layouts": [],
+      "before_sha256": "c36fd8461b7fb011a224b209852d3b80f0e6e179dc28b3a21ba0fdf827ff9ca5",
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpandValueWithTypesAndFlags",
+      "path": "asl/tile/model/execution/expansion.asl"
+    },
+    {
       "after": [
         {
           "calls": [
@@ -17200,6 +17615,122 @@
       "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
       "name": "TileExpansionBroadcastLegalAs",
       "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "BundleTileOperationSelected",
+            "CurrentBundleTileLayout",
+            "TileCubeStorageColumns",
+            "TileLayoutIsCube",
+            "UInt",
+            "UInt",
+            "UInt"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/expdif-operands.asl",
+          "sha256": "452a4a97c5085aacb54ee66b730e4a56758e1616fdae52a14513a99cc4914a4d"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifBundleGeometryMatches"
+    },
+    {
+      "after": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/legality/expdif-operands.asl",
+          "sha256": "44a733b96e2bc53be017e7832dcab2d0829bb941c7caac00858a1ac9ecac56d7"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifLogicalShapeMatch"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "BundleTileOperationSelected",
+            "CurrentBundleTileOperationDataTypeCode",
+            "TileDataTypeFromEncoding"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/expdif-operands.asl",
+          "sha256": "0d81eae1b80b618b6ad1d58c409f447970d7d7ce6d70dc5d4ef5c9fd6f9b9951"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifSourceOperationType"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "BundleTileOperationSelected",
+            "CurrentBundleTileLayout",
+            "TileElementwiseDescriptorLegal",
+            "TileElementwiseDescriptorLegal",
+            "TileElementwiseLayoutSupported",
+            "TileElementwiseSourceEncodingsValidAs",
+            "TileElementwiseSourceEncodingsValidAs",
+            "TileExpdifBundleGeometryMatches",
+            "TileExpdifBundleGeometryMatches",
+            "TileExpdifLogicalShapeMatch",
+            "TileExpdifSourceOperationType",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/expdif-operands.asl",
+          "sha256": "cab78f757a47629aaaedaa1fbc69cec2cf1ed4914c3616986fd164dd84b93a6e"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifSourcesLegal"
+    },
+    {
+      "after": [
+        {
+          "calls": [],
+          "layouts": [],
+          "path": "asl/tile/model/legality/dtype-layout.asl",
+          "sha256": "15af0b5eccf292115d2f1d3bebb6dc446eaacd601741369b5df3329f03e9d8ad"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifTypePairLegal"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "ExactWidenBF16ToFP32",
+            "ExactWidenBF16ToFP32",
+            "ExactWidenFP16ToFP32",
+            "ExactWidenFP16ToFP32",
+            "TileExpdifTypePairLegal",
+            "TileProfileBinaryWithFlags",
+            "TileProfileMixedExpdifFP32",
+            "TileProfileUnary",
+            "TileSFUUnarySpecialValue",
+            "let",
+            "let",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/execution/expdif.asl",
+          "sha256": "018eeabb054eca2f8a5e5f5dc389df08385428f23b2553018a82fe12af7c0eaa"
+        }
+      ],
+      "before": [],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileExpdifValueWithTypesAndFlags"
     },
     {
       "after": [],
@@ -17282,6 +17813,15 @@
       "before": [],
       "classification": "TCVT packed-X2 row-local pairing (ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment, Issue #254)",
       "name": "TileInfoWithPackedRowSlack"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "c2c28e4f0b9fd47d0d17001a033dca7491fe16e0230ecf83720e1c99ee2a97a6",
+      "before_layouts": [],
+      "before_sha256": "d920000bf69426cf0f7f2ab2328d461d39716f10e744074f651cd0554e1df833",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileIntegerBinaryValue",
+      "path": "asl/tile/model/execution/elementwise.asl"
     },
     {
       "after": [],
@@ -17477,6 +18017,30 @@
       "path": "asl/arch/features/mx-formats.asl"
     },
     {
+      "after": [
+        {
+          "calls": [
+            "TileOperationOfIndex"
+          ],
+          "layouts": [],
+          "path": "asl/block/model/dispatch/binary-operation-classification.asl",
+          "sha256": "be949953eb45372fa01dac5727dd76c5006dd84a1a8794c860daabad1402e0a0"
+        }
+      ],
+      "before": [
+        {
+          "calls": [
+            "TileOperationOfIndex"
+          ],
+          "layouts": [],
+          "path": "asl/block/model/dispatch/tile-schema.asl",
+          "sha256": "5eb0967c299e3bcb77a5bdf6965e284d1f3a50d344f62c7d0fe0ad69294de816"
+        }
+      ],
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "name": "TileOperationUsesClosedBinarySchema"
+    },
+    {
       "after_layouts": [
         "ColumnMajor",
         "NZ",
@@ -17564,6 +18128,15 @@
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "TilePredicateCellDescriptorLegal",
       "path": "asl/tile/model/legality/predicate-carriers.asl"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "67c87d652688846fa29d14abc6513f7a4621c98922083b621178d2586aed2eb4",
+      "before_layouts": [],
+      "before_sha256": "e59139ee7b11c423e5b1f31179960d810f9f9c240b3a4a00c2418343d27c284e",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileProfileBinaryWithFlags",
+      "path": "asl/tile/model/execution/elementwise.asl"
     },
     {
       "after": [
@@ -17819,8 +18392,8 @@
             "let"
           ],
           "layouts": [],
-          "path": "asl/tile/model/execution/expansion.asl",
-          "sha256": "f7c9accf5306b953688178dd80966ebc36ede316cc28b9a43e7705a6c23fd850"
+          "path": "asl/tile/model/execution/expdif.asl",
+          "sha256": "d4b14d614b5231d2d564832dec6c8e4dfb457974f11877895b43dbd1e45677dc"
         }
       ],
       "before": [
@@ -18238,6 +18811,22 @@
       "relation": "destination0.layout == source0.layout"
     },
     {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "relation": "destination0.layout == source0.layout"
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "relation": "destination0.layout == source0.layout"
+    },
+    {
       "classification": "indexed TLSU byte-displacement and Local layout closure (ADR-MEM-0009 2026-09-16 amendment, Issue #301)",
       "form": "direct",
       "mnemonic": "MGATHER",
@@ -18563,6 +19152,22 @@
       "mnemonic": "MSCATTER_XOR",
       "owner": "asl/block/execution/BSTART.MSCATTER.XOR.asl",
       "owner_decision": "ADR-MEM-0009 2026-09-16 amendment / Issue #301",
+      "relation": "source0.layout == source1.layout"
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "relation": "source0.layout == source1.layout"
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
       "relation": "source0.layout == source1.layout"
     },
     {
@@ -27467,6 +28072,240 @@
         "direct",
         "source0",
         "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "bundle",
+        "source1",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "destination0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "destination0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "destination0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source0",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source0",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source0",
+        "RowMajor"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source1",
+        "CUBE_M16"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source1",
+        "CUBE_M32"
+      ]
+    },
+    {
+      "classification": "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract (Issue #333 / ADR-TILE-0008)",
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "owner_decision": "Issue #333 / ADR-TILE-0008 accepted amendment",
+      "tuple": [
+        "TEXPDIF",
+        "direct",
+        "source1",
+        "RowMajor"
       ]
     },
     {
@@ -32468,6 +33307,42 @@
       "mnemonic": "TEXPANDS",
       "owner": "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl",
       "role": "destination0"
+    },
+    {
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "destination0"
+    },
+    {
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "source0"
+    },
+    {
+      "form": "bundle",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/block/execution/BSTART.SFU.asl",
+      "role": "source1"
+    },
+    {
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "destination0"
+    },
+    {
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "source0"
+    },
+    {
+      "form": "direct",
+      "mnemonic": "TEXPDIF",
+      "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "role": "source1"
     },
     {
       "form": "bundle",
@@ -38585,6 +39460,60 @@
       "R1": [],
       "form": "direct",
       "mnemonic": "TEXPANDS"
+    },
+    {
+      "L0": {},
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "form": "bundle",
+      "mnemonic": "TEXPDIF"
+    },
+    {
+      "L0": {},
+      "L1": {
+        "destination0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source0": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ],
+        "source1": [
+          "CUBE_M16",
+          "CUBE_M32",
+          "RowMajor"
+        ]
+      },
+      "R0": [],
+      "R1": [
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout"
+      ],
+      "form": "direct",
+      "mnemonic": "TEXPDIF"
     },
     {
       "L0": {
@@ -44708,7 +45637,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/scalar-schema.asl",
-            "sha256": "e339a4e6616fbf3666b533aafd0f92bf7560f121964479e89a00863f3d1a7ae7"
+            "sha256": "408442af10e86b5578df7d78dafbe09abe16be60437b88f16c55ddd27985cee5"
           }
         ],
         "BundleProducerEffectClassOfHandler": [
@@ -44716,7 +45645,7 @@
             "calls": [],
             "layouts": [],
             "path": "asl/block/model/operands/portable-carriers.asl",
-            "sha256": "b9669356a4d879fa0770cbfc455b1d912d2e2df8ae188547f6684662b9bbe3bc"
+            "sha256": "2e0c913fa41d420060aba4efc39055166046d02965dd7e338a6c38188aaf9ea6"
           }
         ],
         "BundleProducerEffectClassOfOperation": [
@@ -47322,7 +48251,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "1d83b15814137001e3d2e6106a684418027ff0ea79b55566f1b4b6261189ccec"
+            "sha256": "69ed572fe2db44bc7feee1b6636088175434032451dc0c55a2ebd2484b3a8def"
           }
         ],
         "ExecuteTileCompare": [
@@ -47453,6 +48382,30 @@
             "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
             "sha256": "ee386bd11988d00ca34b24b966874b7accb96eb86a20ebb3f350d1f67af146b8"
+          }
+        ],
+        "ExecuteTileExpdif": [
+          {
+            "calls": [
+              "CurrentBundlePadValue",
+              "RecordNumericStatusFlags",
+              "TileExpdifSourceOperationType",
+              "TileExpdifValueWithTypesAndFlags",
+              "TileInfoWithLogicalElement",
+              "TileLogicalLinearIndex",
+              "TileLogicalLinearIndex",
+              "TileLogicalLinearIndex",
+              "TileOperandsLegal_ExecuteTileExpdif",
+              "TileReadLogicalElement",
+              "TileReadLogicalElement",
+              "TileWithPadding",
+              "TileWithValidRegionDefined",
+              "let",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/execution/expdif.asl",
+            "sha256": "a208b94e009b7908c04944890e8f3efd4399d3b4f171d6ac52f1e287d62dbc3a"
           }
         ],
         "ExecuteTileFillScalar": [
@@ -48081,8 +49034,12 @@
             "calls": [
               "BundleComparisonSelectTrueSource",
               "BundleDestinationPhysicalColumns",
+              "BundleDestinationPhysicalColumns",
+              "BundleDestinationValidColumns",
+              "BundleDestinationValidRows",
               "BundleTileSourceIndex",
               "BundleTileSourceIndex",
+              "ReadTPC",
               "ReadTPC",
               "ReadTPC",
               "ResolveBundleCUBESelectDestination",
@@ -48095,8 +49052,11 @@
               "ResolveBundleTileDestinationsWithShapeAndType",
               "ResolveBundleTileDestinationsWithShapeAndType",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "ResolveBundleTileDestinationsWithShapeAndType",
               "SelectedBundleComparisonCUBE",
-              "SelectedBundleExpansionExponentialDifferenceTypes",
+              "SelectedBundleExponentialDifferenceTypes",
+              "SelectedBundleExponentialDifferenceTypes",
+              "SetFault",
               "SetFault",
               "SetFault",
               "TileExpansionOperationIsExponentialDifference",
@@ -48124,6 +49084,7 @@
               "UInt",
               "UInt",
               "let",
+              "let",
               "let"
             ],
             "layouts": [
@@ -48131,8 +49092,8 @@
               "CUBE_M32",
               "RowMajor"
             ],
-            "path": "asl/block/model/dispatch/destination-shape.asl",
-            "sha256": "6f1647ea4085aa58d8999360617006470b0fb9b5e8921867209e1d855ae673fe"
+            "path": "asl/block/model/dispatch/destination-operation.asl",
+            "sha256": "b26cd61371f87570830be316197d7eeb2d6e7fa7c0480cec005bda3b346cc56e"
           }
         ],
         "ResolveBundleTileDestinationsWithShape": [
@@ -48247,7 +49208,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/dtype-layout.asl",
-            "sha256": "8d447872f13cbdb4d30e2347b8e209a69edf287b4e77bdd03e33a1b4aec044f3"
+            "sha256": "2604444014385f66a42a66f37d478b4ab6b29b606b9fdae631f1557ef70e2061"
           }
         ],
         "TileBinaryUsesClosedElementwiseContract": [
@@ -49362,35 +50323,16 @@
             "sha256": "f2d0c9149b060ae08f5b797e4ca8676f310e1bac3d77fce7c8cc14d8887a84e2"
           }
         ],
-        "TileExpandExpdifTypePairLegal": [
-          {
-            "calls": [],
-            "layouts": [],
-            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "4427351a746f3e0b505b5ffb3d852e8a68cc75efcebcf1d8135b78f8a7d54f86"
-          }
-        ],
         "TileExpandValueWithTypesAndFlags": [
           {
             "calls": [
-              "ExactWidenBF16ToFP32",
-              "ExactWidenBF16ToFP32",
-              "ExactWidenFP16ToFP32",
-              "ExactWidenFP16ToFP32",
               "TileExpandBinaryOperation",
-              "TileProfileBinaryWithFlags",
-              "TileProfileBinaryWithFlags",
-              "TileProfileMixedExpdifFP32",
-              "TileProfileUnary",
-              "TileSFUUnarySpecialValue",
-              "let",
-              "let",
-              "let",
-              "let"
+              "TileExpdifValueWithTypesAndFlags",
+              "TileProfileBinaryWithFlags"
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
-            "sha256": "c36fd8461b7fb011a224b209852d3b80f0e6e179dc28b3a21ba0fdf827ff9ca5"
+            "sha256": "8ec2d39e6386d4300e2150382c86d54ccb60070018769486b4429878e35acec4"
           }
         ],
         "TileExpansionBroadcastLegalAs": [
@@ -49418,6 +50360,92 @@
             "layouts": [],
             "path": "asl/block/model/dispatch/expansion-schema.asl",
             "sha256": "bb561ead8b320faf4da35397108208b86ab1be85d434405580f5f85e6c692a8c"
+          }
+        ],
+        "TileExpdifBundleGeometryMatches": [
+          {
+            "calls": [
+              "BundleTileOperationSelected",
+              "CurrentBundleTileLayout",
+              "TileCubeStorageColumns",
+              "TileLayoutIsCube",
+              "UInt",
+              "UInt",
+              "UInt"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/expdif-operands.asl",
+            "sha256": "452a4a97c5085aacb54ee66b730e4a56758e1616fdae52a14513a99cc4914a4d"
+          }
+        ],
+        "TileExpdifLogicalShapeMatch": [
+          {
+            "calls": [],
+            "layouts": [],
+            "path": "asl/tile/model/legality/expdif-operands.asl",
+            "sha256": "44a733b96e2bc53be017e7832dcab2d0829bb941c7caac00858a1ac9ecac56d7"
+          }
+        ],
+        "TileExpdifSourceOperationType": [
+          {
+            "calls": [
+              "BundleTileOperationSelected",
+              "CurrentBundleTileOperationDataTypeCode",
+              "TileDataTypeFromEncoding"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/expdif-operands.asl",
+            "sha256": "0d81eae1b80b618b6ad1d58c409f447970d7d7ce6d70dc5d4ef5c9fd6f9b9951"
+          }
+        ],
+        "TileExpdifSourcesLegal": [
+          {
+            "calls": [
+              "BundleTileOperationSelected",
+              "CurrentBundleTileLayout",
+              "TileElementwiseDescriptorLegal",
+              "TileElementwiseDescriptorLegal",
+              "TileElementwiseLayoutSupported",
+              "TileElementwiseSourceEncodingsValidAs",
+              "TileElementwiseSourceEncodingsValidAs",
+              "TileExpdifBundleGeometryMatches",
+              "TileExpdifBundleGeometryMatches",
+              "TileExpdifLogicalShapeMatch",
+              "TileExpdifSourceOperationType",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/expdif-operands.asl",
+            "sha256": "cab78f757a47629aaaedaa1fbc69cec2cf1ed4914c3616986fd164dd84b93a6e"
+          }
+        ],
+        "TileExpdifTypePairLegal": [
+          {
+            "calls": [],
+            "layouts": [],
+            "path": "asl/tile/model/legality/dtype-layout.asl",
+            "sha256": "15af0b5eccf292115d2f1d3bebb6dc446eaacd601741369b5df3329f03e9d8ad"
+          }
+        ],
+        "TileExpdifValueWithTypesAndFlags": [
+          {
+            "calls": [
+              "ExactWidenBF16ToFP32",
+              "ExactWidenBF16ToFP32",
+              "ExactWidenFP16ToFP32",
+              "ExactWidenFP16ToFP32",
+              "TileExpdifTypePairLegal",
+              "TileProfileBinaryWithFlags",
+              "TileProfileMixedExpdifFP32",
+              "TileProfileUnary",
+              "TileSFUUnarySpecialValue",
+              "let",
+              "let",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/execution/expdif.asl",
+            "sha256": "018eeabb054eca2f8a5e5f5dc389df08385428f23b2553018a82fe12af7c0eaa"
           }
         ],
         "TileFillPadDataTypeSupported": [
@@ -49764,7 +50792,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "d920000bf69426cf0f7f2ab2328d461d39716f10e744074f651cd0554e1df833"
+            "sha256": "c2c28e4f0b9fd47d0d17001a033dca7491fe16e0230ecf83720e1c99ee2a97a6"
           }
         ],
         "TileIntegerDivRemValue": [
@@ -50617,7 +51645,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/operand-schema.asl",
-            "sha256": "7d0043a1c3db1419b95fef13f9c1bd1da515c12f939f71e3749dc101ff187901"
+            "sha256": "f305625cdcbb6dc4dfeaed8b43159cbd61a7adce0c35ede3464302d33224c23b"
           }
         ],
         "TileOperandsLegal_ExecuteTileCompare": [
@@ -50750,8 +51778,8 @@
               "TileBroadcastPayloadNonzero",
               "TileCarrierWidthCompatible",
               "TileDataTypeIsInteger",
-              "TileExpandExpdifTypePairLegal",
               "TileExpansionBroadcastLegalAs",
+              "TileExpdifTypePairLegal",
               "TileReductionAndExpansionDescriptorLegal",
               "TileReductionAndExpansionDescriptorLegal",
               "TileReductionAndExpansionDescriptorLegal",
@@ -50762,7 +51790,25 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "b9da6f359672143a5618694ef59f861bcfcba1e665ebfdf219fcb4adfce4f5ed"
+            "sha256": "191a26c790773648b7b778e31c3a6daae039be4066f660689869b6ecac48707d"
+          }
+        ],
+        "TileOperandsLegal_ExecuteTileExpdif": [
+          {
+            "calls": [
+              "BundleTileOperationSelected",
+              "CurrentBundleTileLayout",
+              "TileElementwiseDescriptorLegal",
+              "TileExpdifBundleGeometryMatches",
+              "TileExpdifLogicalShapeMatch",
+              "TileExpdifSourceOperationType",
+              "TileExpdifSourcesLegal",
+              "TileExpdifTypePairLegal",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/expdif-operands.asl",
+            "sha256": "6b51d437aa48ca6df7ebfa3775aae373020142d70f5c51eb5de0c6e05528b78d"
           }
         ],
         "TileOperandsLegal_ExecuteTileFillScalar": [
@@ -50814,7 +51860,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/operand-schema.asl",
-            "sha256": "4a5c3817874dfcd9256c7065693132a9bde39fefc7baa0a7275adcf0e2672346"
+            "sha256": "1859332668664d6fd0566bb852d1473db8186a83c87802c392534b864eb3e48c"
           }
         ],
         "TileOperandsLegal_ExecuteTileSelect": [
@@ -51551,8 +52597,8 @@
               "TileOperationOfIndex"
             ],
             "layouts": [],
-            "path": "asl/block/model/dispatch/tile-schema.asl",
-            "sha256": "5eb0967c299e3bcb77a5bdf6965e284d1f3a50d344f62c7d0fe0ad69294de816"
+            "path": "asl/block/model/dispatch/binary-operation-classification.asl",
+            "sha256": "be949953eb45372fa01dac5727dd76c5006dd84a1a8794c860daabad1402e0a0"
           }
         ],
         "TileOperationUsesClosedColumnExpansionSchema": [
@@ -52038,7 +53084,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/elementwise.asl",
-            "sha256": "e59139ee7b11c423e5b1f31179960d810f9f9c240b3a4a00c2418343d27c284e"
+            "sha256": "67c87d652688846fa29d14abc6513f7a4621c98922083b621178d2586aed2eb4"
           }
         ],
         "TileProfileConvert": [
@@ -52151,8 +53197,8 @@
               "let"
             ],
             "layouts": [],
-            "path": "asl/tile/model/execution/expansion.asl",
-            "sha256": "f7c9accf5306b953688178dd80966ebc36ede316cc28b9a43e7705a6c23fd850"
+            "path": "asl/tile/model/execution/expdif.asl",
+            "sha256": "d4b14d614b5231d2d564832dec6c8e4dfb457974f11877895b43dbd1e45677dc"
           }
         ],
         "TileProfilePredicateNullGPRPadding": [
@@ -73892,10 +74938,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74146,9 +75193,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74591,10 +75639,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -74849,9 +75898,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75298,10 +76348,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -75556,9 +76607,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76005,10 +77057,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76263,9 +77316,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76712,10 +77766,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -76970,9 +78025,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77419,10 +78475,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -77677,9 +78734,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78126,10 +79184,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78384,9 +79443,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -78833,10 +79893,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -79091,9 +80152,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -85015,6 +86077,715 @@
           "roots": [
             "ExecuteTileFillScalar",
             "TileOperandsLegal_ExecuteTileFillScalar"
+          ]
+        },
+        {
+          "bundle_roots": [
+            "CompleteBundleAtWithAcceptedApplicabilityRules",
+            "ConfigureBundleTileDestination",
+            "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+            "ExecuteTileExpdif",
+            "InstructionContractAcceptsTileOperation_BSTART_SFU",
+            "InstructionContractAliasEngine_BSTART_SFU",
+            "InstructionContractHandler_BSTART_SFU",
+            "InstructionContractMatches_BSTART_SFU",
+            "ResolveBundleTileDestinationsForOperation",
+            "TileOperandsLegal_ExecuteTileExpdif"
+          ],
+          "common_helpers": [
+            "BundleAssembleOutputStructureLegal",
+            "BundleComparisonCodeAsTileComparison",
+            "BundleComparisonSelectTrueSource",
+            "BundleCubeDimensionValue",
+            "BundleCubeMatrixSelected",
+            "BundleCubeTransportBindingsLegal",
+            "BundleCubeTransportDataAttributesLegal",
+            "BundleCubeTransportDataTypeSupported",
+            "BundleCubeTransportDimensionsLegal",
+            "BundleCubeTransportSelected",
+            "BundleDataTypeConcrete",
+            "BundleDescriptorHasTIMG2COLFormIdentity",
+            "BundleDescriptorSelectsTIMG2COL",
+            "BundleDescriptorSelectsTMOV",
+            "BundleDestinationIsOrdinaryTCVT",
+            "BundleDestinationPhysicalColumns",
+            "BundleDestinationValidColumns",
+            "BundleDestinationValidRows",
+            "BundleDimensionIndexOfRegister",
+            "BundleFPATRAccumulatorTypeLegal",
+            "BundleFPATREffectiveDataType",
+            "BundleFPATRGroupN",
+            "BundleFPATRModeUsesFP32Accumulator",
+            "BundleFPATRModeUsesS32Accumulator",
+            "BundleFPATRModeUsesScalarParameter",
+            "BundleFPATRModeUsesVectorParameter",
+            "BundleFPATROutputType",
+            "BundleFPATRPreQuantModeLegal",
+            "BundleFPATRQuantParameterWordLegal",
+            "BundleFPATRReductionDataTypeLegal",
+            "BundleFPATRReluModeUsesScalarParameter",
+            "BundleFPATRReluModeUsesVectorParameter",
+            "BundleFPATRReluParameterWordLegal",
+            "BundleFirstDestinationBinding",
+            "BundleFreeDestinationIndex",
+            "BundleGMAtomRedDataTypeLegal",
+            "BundleGMAtomRedSelected",
+            "BundleGMOVCore4SourceReady",
+            "BundleGMOVSelected",
+            "BundleGroupMaxColumns",
+            "BundleHasAssembleModifier",
+            "BundleLocalDestinationAllocationBytes",
+            "BundleLocalDestinationCapacityGroupFits",
+            "BundleLocalGenerationCellCount",
+            "BundleLocalTileDestinationCount",
+            "BundleLocalTileParentRefCount",
+            "BundleLocalTileParentRefIsFinal",
+            "BundleLocalTileSourceCount",
+            "BundleMGATHERCASBindingsLegal",
+            "BundleMGATHERCASSelected",
+            "BundleMGATHERDimensionsLegal",
+            "BundleMGATHERMASKBindingsLegal",
+            "BundleMGATHERMASKSelected",
+            "BundleMGATHERSelected",
+            "BundleMSCATTERBindingsLegal",
+            "BundleMSCATTERMASKBindingsLegal",
+            "BundleMSCATTERMASKSelected",
+            "BundleMSCATTERSelected",
+            "BundleMatrixAccumulatorDestinationIndicesDistinct",
+            "BundleMatrixArchitecturalSourceAt",
+            "BundleMatrixCScaleDestinationIndicesDistinct",
+            "BundleMatrixCooperativeCurrentPEMask",
+            "BundleMatrixCooperativeMLayout",
+            "BundleMatrixCooperativeMPerPE",
+            "BundleMatrixCooperativeValidM",
+            "BundleMatrixDestinationAt",
+            "BundleMatrixDestinationCount",
+            "BundleMatrixDynamicBindingsComplete",
+            "BundleMatrixLocalMathematicalSourcesLegal",
+            "BundleMatrixPostProcessSourceCount",
+            "BundleMatrixPostProcessSourcesLegal",
+            "BundleMatrixPrimaryDestinationCapacityBytes",
+            "BundleMatrixPrimaryDestinationHand",
+            "BundleMatrixSharedBPrimarySchemaLegal",
+            "BundleMatrixSharedLeftPrimarySchemaLegal",
+            "BundleMatrixSharedPrimarySchemaLegal",
+            "BundleMatrixSharedSchemasLegal",
+            "BundleMatrixSharedSourceSchemaLegal",
+            "BundleMatrixSharedSourcesReady",
+            "BundleMatrixSourceAt",
+            "BundleOperationBindingsComplete",
+            "BundleOperationDecodeCode",
+            "BundleOperationGPRBindingValuesLegal",
+            "BundleOperationGPRInputCount",
+            "BundleOperationGPRInputSelector",
+            "BundleOperationGPRInputSlot",
+            "BundleOperationScalarBindingSchemaLegal",
+            "BundleProducerEffectClassOfHandler",
+            "BundleProducerEffectClassOfOperation",
+            "BundleProducerEffectEligible",
+            "BundleReusedDestinationDescriptorMatches",
+            "BundleSelectorCode",
+            "BundleSharedBindingCount",
+            "BundleSharedBindingId",
+            "BundleSharedBindingIsDestination",
+            "BundleSharedBindingIsReusedDestination",
+            "BundleSharedBindingMask",
+            "BundleSharedBindingPhysicalCount",
+            "BundleSharedBindingSize",
+            "BundleSharedBindingsUnconsumed",
+            "BundleSharedDestinationAssemblyPolicyLegal",
+            "BundleSharedGenerationCapacity",
+            "BundleSharedPhysicalDestinationCount",
+            "BundleSharedReusedDestinationCount",
+            "BundleSharedReusedDestinationIsFinal",
+            "BundleSharedStoreColumns",
+            "BundleSharedStoreValidColumns",
+            "BundleSharedStoreValidRows",
+            "BundleSharedSubviewLegal",
+            "BundleSharedSubviewMatrixMetadataLegalForPE",
+            "BundleSharedSubviewOffsetRawForPE",
+            "BundleSharedTLSUSelected",
+            "BundleSharedTMOVDestinationSchemaLegal",
+            "BundleSharedTMOVLocalSchemaLegal",
+            "BundleTCVTCubeDestinationCapacityGroupFits",
+            "BundleTIMG2COLAbortFailedAttempt",
+            "BundleTIMG2COLBaseParameterExtensionLegal",
+            "BundleTIMG2COLBuildAndPublish",
+            "BundleTIMG2COLC0Elements",
+            "BundleTIMG2COLC1",
+            "BundleTIMG2COLCell",
+            "BundleTIMG2COLCinLaneDefined",
+            "BundleTIMG2COLCurrentPE",
+            "BundleTIMG2COLDataTypeSupported",
+            "BundleTIMG2COLDestinationShapeLegal",
+            "BundleTIMG2COLEffectiveKernelH",
+            "BundleTIMG2COLEffectiveKernelW",
+            "BundleTIMG2COLGMIndexDN",
+            "BundleTIMG2COLGMIndexND",
+            "BundleTIMG2COLGenerationCoverage",
+            "BundleTIMG2COLGenerationMetadata",
+            "BundleTIMG2COLHout",
+            "BundleTIMG2COLIORBindingsPreflight",
+            "BundleTIMG2COLIORRecordIsSourceOnly",
+            "BundleTIMG2COLIORRecordsLegal",
+            "BundleTIMG2COLIORStreamPreflight",
+            "BundleTIMG2COLKValid",
+            "BundleTIMG2COLLayoutIsDN",
+            "BundleTIMG2COLMPerPE",
+            "BundleTIMG2COLMPerPEForOutput",
+            "BundleTIMG2COLPEBit",
+            "BundleTIMG2COLPERowStart",
+            "BundleTIMG2COLPEValidRow",
+            "BundleTIMG2COLParametersFromWords",
+            "BundleTIMG2COLParametersLegal",
+            "BundleTIMG2COLParticipantValuesEqual",
+            "BundleTIMG2COLPreflightGM",
+            "BundleTIMG2COLRowStartForOutput",
+            "BundleTIMG2COLSelected",
+            "BundleTIMG2COLShapeLegal",
+            "BundleTIMG2COLSpatialInBounds",
+            "BundleTIMG2COLStateLegal",
+            "BundleTIMG2COLStateOutput",
+            "BundleTIMG2COLValidRowForOutput",
+            "BundleTIMG2COLWout",
+            "BundleTMATMULAccumulatorControlLegal",
+            "BundleTMATMULAccumulatorPrefetchHint",
+            "BundleTMATMULCCTRL",
+            "BundleTMATMULCooperativeMaskValueLegal",
+            "BundleTMATMULCooperativeMasksLegal",
+            "BundleTMATMULCooperativeSelected",
+            "BundleTMATMULCurrentPEInactive",
+            "BundleTMATMULDataAttributesLegal",
+            "BundleTMATMULDestinationCapacityGroupFits",
+            "BundleTMATMULDimensionsLegal",
+            "BundleTMATMULMasksAgree",
+            "BundleTMATMULPartialPostProcessLegal",
+            "BundleTMATMULRawPartialOutput",
+            "BundleTMATMULSelectedMask",
+            "BundleTMATMULSharedMasksAreZero",
+            "BundleTMOVSelected",
+            "BundleTPREFETCHDimensionsLegal",
+            "BundleTPREFETCHSelected",
+            "BundleTileArchitecturalSourceIndex",
+            "BundleTileBindingCount",
+            "BundleTileBindingStreamTerminated",
+            "BundleTileDataType",
+            "BundleTileDecodeFamily",
+            "BundleTileDestinationSizeBytes",
+            "BundleTileDestinationSizeLegal",
+            "BundleTileInstructionOperands",
+            "BundleTileOperationSelected",
+            "BundleTileSourceIndex",
+            "BundleWeightTLOADAbortFailedAttempt",
+            "BundleWeightTLOADBuildAndPublish",
+            "BundleWeightTLOADC0Elements",
+            "BundleWeightTLOADC1",
+            "BundleWeightTLOADCell",
+            "BundleWeightTLOADCurrentPERank",
+            "BundleWeightTLOADDataTypeSupported",
+            "BundleWeightTLOADFirstPE",
+            "BundleWeightTLOADGenerationCoverage",
+            "BundleWeightTLOADGenerationMetadata",
+            "BundleWeightTLOADKFull",
+            "BundleWeightTLOADLastPE",
+            "BundleWeightTLOADPEBit",
+            "BundleWeightTLOADParametersFromWords",
+            "BundleWeightTLOADParentSizeCode",
+            "BundleWeightTLOADParticipantValuesEqual",
+            "BundleWeightTLOADPreflightGM",
+            "BundleWeightTLOADRowStartForRank",
+            "BundleWeightTLOADRowsForRank",
+            "BundleWeightTLOADSelected",
+            "BundleWeightTLOADSelectedPECount",
+            "BundleWeightTLOADShapeLegal",
+            "BundleWeightTLOADShapeReservedBitsLegal",
+            "BundleWeightTLOADStateLegal",
+            "BundleWeightTLOADWriterCells",
+            "ConfigureBundleTileDestination",
+            "CurrentBundleDataLayout",
+            "CurrentBundleMemoryOrder",
+            "CurrentBundlePadValue",
+            "CurrentBundleTileLayout",
+            "CurrentBundleTileOperationDataTypeCode",
+            "ExecuteBundleComparisonGPRCarrier",
+            "ExecuteBundleCubeTransportOperation",
+            "ExecuteBundleGMAtomRedOperation",
+            "ExecuteBundleGMOVOperation",
+            "ExecuteBundleMGATHERCASOperation",
+            "ExecuteBundleMGATHERMASKOperation",
+            "ExecuteBundleMGATHEROperation",
+            "ExecuteBundleMSCATTERMASKOperation",
+            "ExecuteBundleMSCATTEROperation",
+            "ExecuteBundleSharedTLSUOperation",
+            "ExecuteBundleTIMG2COLOperation",
+            "ExecuteBundleTMATMULOperation",
+            "ExecuteBundleTPREFETCHOperation",
+            "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+            "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+            "ExecuteBundleWeightTLOADOperation",
+            "ExecuteTileExpdif",
+            "ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules",
+            "ExecuteTileSelectCUBEGPRAs",
+            "ExecuteTileSelectScalarCUBEGPRAs",
+            "IndexedTLSUDataShapeMatchesIndex",
+            "IndexedTLSULayoutSupported",
+            "IndexedTLSUMemoryIndexDataTypeLegal",
+            "IndexedTLSUNumericContentsDefined",
+            "IndexedTLSUNumericDescriptorLegal",
+            "IndexedTLSUOrdinaryTransferDataTypeLegal",
+            "IndexedTLSUPhysicalShapeLegal",
+            "IndexedTLSUPredicateDescriptorLegal",
+            "IndexedTLSUPredicateValuesLegal",
+            "IndexedTLSUTransferDataTypeLegal",
+            "ResolveBundleCUBESelectDestination",
+            "ResolveBundleCellRearrangementDestination",
+            "ResolveBundleCubeTransportDestination",
+            "ResolveBundleEffectiveDataType",
+            "ResolveBundlePredicateDestination",
+            "ResolveBundleTCVTCubeDestination",
+            "ResolveBundleTMATMULCubeDestinationGroup",
+            "ResolveBundleTMATMULDestination",
+            "ResolveBundleTileDestinations",
+            "ResolveBundleTileDestinationsForOperation",
+            "ResolveBundleTileDestinationsWithShape",
+            "ResolveBundleTileDestinationsWithShapeAndType",
+            "TileCapacityInUseForPE",
+            "TileCapacityIsLegal",
+            "TileCapacityLimitBytes",
+            "TileCarrierBinaryValue",
+            "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierOrPackedBaselineDataTypeSupported",
+            "TileCarrierWidthCompatible",
+            "TileCellRearrangementDataTypeLegal",
+            "TileCellRearrangementDescriptorLegal",
+            "TileCellRearrangementLayoutLegal",
+            "TileCellRearrangementValidBytes",
+            "TileCellRearrangementWordsPerRow",
+            "TileCompareBoolean",
+            "TileCompareCUBEScalarToGPRAs",
+            "TileCompareCUBEToGPRAs",
+            "TileCompareDataTypeSupported",
+            "TileCompareElement",
+            "TileCubeAlignedExtent",
+            "TileCubeCellColumns",
+            "TileCubeCellCountForColumns",
+            "TileCubeCellElementIndex",
+            "TileCubeCellRows",
+            "TileCubeDataTypeSupported",
+            "TileCubeDescriptorLegal",
+            "TileCubeDescriptorShapeAndPhysicalLegal",
+            "TileCubeDescriptorShapeLegal",
+            "TileCubeGeometryLegalWithColumns",
+            "TileCubeKRepeatForColumns",
+            "TileCubeLayoutDataTypeSupported",
+            "TileCubeNRepeatForColumns",
+            "TileCubeNumericContentsDefined",
+            "TileCubeNumericShapeMatch",
+            "TileCubeNumericSourceEncodingsValidAs",
+            "TileCubeNumericSourceLegalAs",
+            "TileCubePayloadIndex",
+            "TileCubePhysicalCellCount",
+            "TileCubePhysicalKRepeat",
+            "TileCubePhysicalNRepeat",
+            "TileCubePhysicalRequiredBytes",
+            "TileCubePhysicalStorageElements",
+            "TileCubePredicateColumnBase",
+            "TileCubePredicateDataTypeSupported",
+            "TileCubePredicateFieldCount",
+            "TileCubePredicateGPRBit",
+            "TileCubePredicateGPRDataTypeSupported",
+            "TileCubePredicateGPRShapeLegalAs",
+            "TileCubePredicateRowBits",
+            "TileCubeStorageColumns",
+            "TileCubeStorageElementsForColumns",
+            "TileCubeStorageRows",
+            "TileDataLayoutCodeAccepted",
+            "TileDataLayoutConversionIsLoad",
+            "TileDataLayoutConversionIsStore",
+            "TileDataLayoutCubeLayout",
+            "TileDataLayoutDestinationLayout",
+            "TileDataLayoutIsCubeConversion",
+            "TileDataLayoutIsWeightTLOAD",
+            "TileDataLayoutOfCode",
+            "TileDataTypeAllowsOddPhysicalColumns",
+            "TileDataTypeEncodingValid",
+            "TileDataTypeFromEncoding",
+            "TileDataTypeIsFloating",
+            "TileDataTypeIsFourBit",
+            "TileDataTypeIsInteger",
+            "TileDataTypeIsSigned",
+            "TileDataTypeIsUnsignedInteger",
+            "TileDataTypeToEncoding",
+            "TileDenseRowStrideBytes",
+            "TileDescriptorConfigured",
+            "TileDescriptorLegal",
+            "TileDescriptorPhysicalShapeLegal",
+            "TileDescriptorShapeLegal",
+            "TileElementBits",
+            "TileElementBytes",
+            "TileElementwiseDescriptorLegal",
+            "TileElementwiseLayoutSupported",
+            "TileElementwiseShapeMatch",
+            "TileElementwiseSourceContentsDefined",
+            "TileElementwiseSourceEncodingsValidAs",
+            "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifBundleGeometryMatches",
+            "TileExpdifLogicalShapeMatch",
+            "TileExpdifSourceOperationType",
+            "TileExpdifSourcesLegal",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
+            "TileFixedUnaryValue",
+            "TileFloatingElementwiseDataTypeSupported",
+            "TileFloatingMinMaxValue",
+            "TileFloatingOrderKey",
+            "TileFloatingUnaryCarrier",
+            "TileFloatingUnaryInfinityEncoding",
+            "TileFloatingUnaryOneEncoding",
+            "TileFloatingUnarySignMask",
+            "TileFloatingUnaryUnboundedResult",
+            "TileFloatingUnaryValue",
+            "TileFractalInnerElements",
+            "TileGenericIndexingPermitted",
+            "TileHandlerOfIndex",
+            "TileInfoDescriptorLegal",
+            "TileInfoWithLogicalElement",
+            "TileInfoWithLogicalElementAndDefined",
+            "TileInfoWithPackedRowSlack",
+            "TileIntegerBinaryValue",
+            "TileIntegerDivRemValue",
+            "TileIntegerMinMaxValue",
+            "TileIntegerOperandValue",
+            "TileIntegerShiftAmount",
+            "TileIntegerUnaryValue",
+            "TileLayoutIsCube",
+            "TileLayoutShapeLegal",
+            "TileLinearIndex",
+            "TileLogicalElementCapacity",
+            "TileLogicalLinearIndex",
+            "TileMXInputTypeNeedsScale",
+            "TileMXInputTypeSupported",
+            "TileMXOperandPairLegal",
+            "TileMXScaleCarrierType",
+            "TileMXScaleGroupCount",
+            "TileMXScaleGroupSize",
+            "TileMatrixAccumulatorDataType",
+            "TileMatrixCubeInfosMatchDimensions",
+            "TileMatrixFunctionAllowsCScale",
+            "TileMatrixFunctionAssigned",
+            "TileMatrixFunctionIsGEMV",
+            "TileMatrixFunctionUsesAccumulator",
+            "TileMatrixFunctionUsesBias",
+            "TileMatrixFunctionUsesMX",
+            "TileMatrixInfoBiasLegal",
+            "TileMatrixInfoOptionalScalesLegal",
+            "TileMatrixInfoShapeLegal",
+            "TileMatrixInfosMatchDimensions",
+            "TileMatrixLeftGroupSourceCount",
+            "TileMatrixLocalAScaleSchemaLegal",
+            "TileMatrixLocalBScaleSchemaLegal",
+            "TileMatrixLocalBiasSchemaLegal",
+            "TileMatrixLocalCScaleSchemaLegal",
+            "TileMatrixLocalCubeAccumulatorSchemaLegal",
+            "TileMatrixLocalMOperandSchemaLegal",
+            "TileMatrixLocalMathematicalSourceCount",
+            "TileMatrixLocalNOperandSchemaLegal",
+            "TileMatrixLocalPrimaryInfoLegal",
+            "TileMatrixLocalRowMaxSchemaLegal",
+            "TileMatrixLocalVectorParameterSchemaLegal",
+            "TileMatrixMLayoutLegal",
+            "TileMatrixMathematicalSourceCount",
+            "TileMatrixMixedInfosMatchDimensions",
+            "TileMatrixRightGroupSourceCount",
+            "TileMatrixSharedSourceCountLegal",
+            "TileMatrixVectorQuantContentsLegal",
+            "TileMatrixVectorReluContentsLegal",
+            "TileMemoryElementBytes",
+            "TileMemoryStridedByteHighNibble",
+            "TileNumericEncodingValid",
+            "TileNumericValueClass",
+            "TileNumericValueClassIsNegative",
+            "TileOperandPresent",
+            "TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs",
+            "TileOperandsLegal_ExecuteTileCompareGPRAs",
+            "TileOperandsLegal_ExecuteTileExpdif",
+            "TileOperandsLegal_ExecuteTileSelectCUBEGPRAs",
+            "TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs",
+            "TileOperandsLegal_GMOV",
+            "TileOperandsLegal_GM_ATOM_CAS",
+            "TileOperandsLegal_GM_ATOM_VALUE",
+            "TileOperandsLegal_GM_RED_POPC",
+            "TileOperandsLegal_GM_RED_VALUE",
+            "TileOperandsLegal_MGATHER",
+            "TileOperandsLegal_MGATHER_CAS",
+            "TileOperandsLegal_MGATHER_MASK",
+            "TileOperandsLegal_MSCATTER",
+            "TileOperandsLegal_MSCATTER_MASK",
+            "TileOperandsLegal_TCICube",
+            "TileOperationOfIndex",
+            "TileOperationUsesCellRearrangementSchema",
+            "TileOperationUsesClosedBinarySchema",
+            "TileOperationUsesClosedColumnExpansionSchema",
+            "TileOperationUsesClosedColumnReductionSchema",
+            "TileOperationUsesClosedComparisonSchema",
+            "TileOperationUsesClosedExpansionSchema",
+            "TileOperationUsesClosedGenerationSchema",
+            "TileOperationUsesClosedReductionSchema",
+            "TileOperationUsesClosedRowExpansionSchema",
+            "TileOperationUsesClosedRowReductionSchema",
+            "TileOperationUsesClosedTCMPSSchema",
+            "TileOperationUsesClosedTCMPSchema",
+            "TileOperationUsesClosedTCVTSchema",
+            "TileOperationUsesClosedTEXPANDSSchema",
+            "TileOperationUsesClosedTFMASchema",
+            "TileOperationUsesClosedTSELSSchema",
+            "TileOperationUsesClosedTSELSchema",
+            "TileOperationUsesClosedTileScalarBinarySchema",
+            "TileOperationUsesClosedTileScalarSchema",
+            "TileOperationUsesClosedUnarySchema",
+            "TileOperationUsesSourceBackingDestination",
+            "TileOrdinaryMatrixAccumulatorType",
+            "TileOrdinaryMatrixInputTypeSupported",
+            "TileOrdinaryMatrixInputTypesSameClass",
+            "TilePackedCarrierIndex",
+            "TilePackedLaneIndex",
+            "TilePackedLinearIndex",
+            "TilePackedRowPairIndex",
+            "TilePackedRowSlackIndex",
+            "TilePackedRowsHavePhysicalSlack",
+            "TilePadValueForDataType",
+            "TilePredicateCellDescriptorLegal",
+            "TilePredicateGPRPaddingValue",
+            "TileProfileBinaryWithFlags",
+            "TileProfileFloatingCompare",
+            "TileProfileFloatingModulo",
+            "TileProfileFloatingModuloFlags",
+            "TileProfileInternalAccumulatorPrefetchHint",
+            "TileProfileInternalAccumulatorReplacementHint",
+            "TileProfileMixedExpdifFP32",
+            "TileProfilePredicateNullGPRPadding",
+            "TileProfileUnary",
+            "TileRawElementValue",
+            "TileReadLogicalElement",
+            "TileReductionOperationReturnsIndex",
+            "TileRegularTLSUDataTypeSupported",
+            "TileSFUUnarySpecialValue",
+            "TileSelectDataTypeSupported",
+            "TileShapeMatchesCapacity",
+            "TileSignedModulo",
+            "TileSizeCodeBytes",
+            "TileSizeCodeIsLegal",
+            "TileSourceContentsDefined",
+            "TileStorageBytes",
+            "TileStorageFitsCapacity",
+            "TileStorageIndex",
+            "TileTCIDataTypeSupported",
+            "TileTEPLAliasAcceptsOperation",
+            "TileTNegDataTypeSupported",
+            "TileTReluDataTypeSupported",
+            "TileTeplRawCarrierTypeSupported",
+            "TileUnaryDataTypeSupported",
+            "TileUnaryUsesClosedElementwiseContract",
+            "TileUnaryUsesSFUElementwiseContract",
+            "TileUnsignedElementValue",
+            "TileUsesPackedCarrierRepresentation",
+            "TileVecArithmeticDataTypeSupported",
+            "TileVecScalarIntegerDataTypeSupported",
+            "TileWithPadding",
+            "TileWithValidRegionDefined"
+          ],
+          "direct_roots": [
+            "ExecuteTileExpdif",
+            "TileOperandsLegal_ExecuteTileExpdif"
+          ],
+          "form": "bundle",
+          "key": [
+            "TEXPDIF",
+            "bundle"
+          ],
+          "mnemonic": "TEXPDIF",
+          "owner": "asl/block/execution/BSTART.SFU.asl",
+          "roles": [
+            {
+              "field": "destination0",
+              "role": "new Local DstDataType numeric destination"
+            },
+            {
+              "field": "source0",
+              "role": "persistent Local SrcOperationType minuend"
+            },
+            {
+              "field": "source1",
+              "role": "persistent Local SrcOperationType subtrahend"
+            }
+          ],
+          "roots": [
+            "CompleteBundleAtWithAcceptedApplicabilityRules",
+            "ConfigureBundleTileDestination",
+            "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+            "ExecuteTileExpdif",
+            "InstructionContractAcceptsTileOperation_BSTART_SFU",
+            "InstructionContractAliasEngine_BSTART_SFU",
+            "InstructionContractHandler_BSTART_SFU",
+            "InstructionContractMatches_BSTART_SFU",
+            "ResolveBundleTileDestinationsForOperation",
+            "TileOperandsLegal_ExecuteTileExpdif"
+          ]
+        },
+        {
+          "bundle_roots": [
+            "CompleteBundleAtWithAcceptedApplicabilityRules",
+            "ConfigureBundleTileDestination",
+            "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+            "ExecuteTileExpdif",
+            "InstructionContractAcceptsTileOperation_BSTART_SFU",
+            "InstructionContractAliasEngine_BSTART_SFU",
+            "InstructionContractHandler_BSTART_SFU",
+            "InstructionContractMatches_BSTART_SFU",
+            "ResolveBundleTileDestinationsForOperation",
+            "TileOperandsLegal_ExecuteTileExpdif"
+          ],
+          "common_helpers": [
+            "BundleTileOperationSelected",
+            "CurrentBundleDataLayout",
+            "CurrentBundlePadValue",
+            "CurrentBundleTileLayout",
+            "CurrentBundleTileOperationDataTypeCode",
+            "ExecuteTileExpdif",
+            "TileCapacityIsLegal",
+            "TileCapacityLimitBytes",
+            "TileCarrierBinaryValue",
+            "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
+            "TileCubeAlignedExtent",
+            "TileCubeCellColumns",
+            "TileCubeCellElementIndex",
+            "TileCubeCellRows",
+            "TileCubeDataTypeSupported",
+            "TileCubeDescriptorLegal",
+            "TileCubeDescriptorShapeAndPhysicalLegal",
+            "TileCubeLayoutDataTypeSupported",
+            "TileCubePayloadIndex",
+            "TileCubePhysicalCellCount",
+            "TileCubePhysicalKRepeat",
+            "TileCubePhysicalNRepeat",
+            "TileCubePhysicalRequiredBytes",
+            "TileCubePhysicalStorageElements",
+            "TileCubeStorageColumns",
+            "TileCubeStorageRows",
+            "TileDataLayoutCodeAccepted",
+            "TileDataLayoutDestinationLayout",
+            "TileDataLayoutOfCode",
+            "TileDataTypeAllowsOddPhysicalColumns",
+            "TileDataTypeEncodingValid",
+            "TileDataTypeFromEncoding",
+            "TileDataTypeIsFloating",
+            "TileDataTypeIsFourBit",
+            "TileDataTypeIsInteger",
+            "TileDataTypeIsSigned",
+            "TileDataTypeIsUnsignedInteger",
+            "TileDataTypeToEncoding",
+            "TileDescriptorConfigured",
+            "TileDescriptorLegal",
+            "TileElementBits",
+            "TileElementBytes",
+            "TileElementwiseDescriptorLegal",
+            "TileElementwiseLayoutSupported",
+            "TileElementwiseSourceContentsDefined",
+            "TileElementwiseSourceEncodingsValidAs",
+            "TileExpdifBundleGeometryMatches",
+            "TileExpdifLogicalShapeMatch",
+            "TileExpdifSourceOperationType",
+            "TileExpdifSourcesLegal",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
+            "TileFixedUnaryValue",
+            "TileFloatingElementwiseDataTypeSupported",
+            "TileFloatingMinMaxValue",
+            "TileFloatingUnaryCarrier",
+            "TileFloatingUnaryInfinityEncoding",
+            "TileFloatingUnaryOneEncoding",
+            "TileFloatingUnarySignMask",
+            "TileFloatingUnaryUnboundedResult",
+            "TileFloatingUnaryValue",
+            "TileFractalInnerElements",
+            "TileGenericIndexingPermitted",
+            "TileInfoWithLogicalElement",
+            "TileInfoWithLogicalElementAndDefined",
+            "TileInfoWithPackedRowSlack",
+            "TileIntegerBinaryValue",
+            "TileIntegerDivRemValue",
+            "TileIntegerMinMaxValue",
+            "TileIntegerOperandValue",
+            "TileIntegerShiftAmount",
+            "TileIntegerUnaryValue",
+            "TileLayoutIsCube",
+            "TileLayoutShapeLegal",
+            "TileLinearIndex",
+            "TileLogicalElementCapacity",
+            "TileLogicalLinearIndex",
+            "TileNumericEncodingValid",
+            "TileNumericValueClass",
+            "TileNumericValueClassIsNegative",
+            "TileOperandsLegal_ExecuteTileExpdif",
+            "TilePackedCarrierIndex",
+            "TilePackedLaneIndex",
+            "TilePackedLinearIndex",
+            "TilePackedRowPairIndex",
+            "TilePackedRowSlackIndex",
+            "TilePackedRowsHavePhysicalSlack",
+            "TilePadValueForDataType",
+            "TileProfileBinaryWithFlags",
+            "TileProfileFloatingModulo",
+            "TileProfileFloatingModuloFlags",
+            "TileProfileMixedExpdifFP32",
+            "TileProfileUnary",
+            "TileRawElementValue",
+            "TileReadLogicalElement",
+            "TileSFUUnarySpecialValue",
+            "TileShapeMatchesCapacity",
+            "TileSignedModulo",
+            "TileStorageIndex",
+            "TileTNegDataTypeSupported",
+            "TileTReluDataTypeSupported",
+            "TileUnaryDataTypeSupported",
+            "TileUnaryUsesClosedElementwiseContract",
+            "TileUnaryUsesSFUElementwiseContract",
+            "TileUnsignedElementValue",
+            "TileUsesPackedCarrierRepresentation",
+            "TileVecArithmeticDataTypeSupported",
+            "TileVecScalarIntegerDataTypeSupported",
+            "TileWithPadding",
+            "TileWithValidRegionDefined"
+          ],
+          "direct_roots": [
+            "ExecuteTileExpdif",
+            "TileOperandsLegal_ExecuteTileExpdif"
+          ],
+          "form": "direct",
+          "key": [
+            "TEXPDIF",
+            "direct"
+          ],
+          "mnemonic": "TEXPDIF",
+          "owner": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+          "roles": [
+            {
+              "field": "destination0",
+              "role": "new Local DstDataType numeric destination"
+            },
+            {
+              "field": "source0",
+              "role": "persistent Local SrcOperationType minuend"
+            },
+            {
+              "field": "source1",
+              "role": "persistent Local SrcOperationType subtrahend"
+            }
+          ],
+          "roots": [
+            "ExecuteTileExpdif",
+            "TileOperandsLegal_ExecuteTileExpdif"
           ]
         },
         {
@@ -108849,10 +110620,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109103,9 +110875,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109548,10 +111321,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -109806,9 +111580,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110255,10 +112030,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110513,9 +112289,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -110962,10 +112739,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111220,9 +112998,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111669,10 +113448,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -111927,9 +113707,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112376,10 +114157,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -112634,9 +114416,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -113083,10 +114866,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -113341,9 +115125,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -113790,10 +115575,11 @@
             "TileElementwiseShapeMatch",
             "TileElementwiseSourceContentsDefined",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionOperationIsExponentialDifference",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -114048,9 +115834,10 @@
             "TileElementBits",
             "TileElementBytes",
             "TileExpandBinaryOperation",
-            "TileExpandExpdifTypePairLegal",
             "TileExpandValueWithTypesAndFlags",
             "TileExpansionBroadcastLegalAs",
+            "TileExpdifTypePairLegal",
+            "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
             "TileFloatingElementwiseDataTypeSupported",
             "TileFloatingMinMaxValue",
@@ -127626,6 +129413,7 @@
         "ExecuteTileCompare",
         "ExecuteTileCompareScalar",
         "ExecuteTileExpand",
+        "ExecuteTileExpdif",
         "ExecuteTileFillScalar",
         "ExecuteTileReduction",
         "ExecuteTileScalar",
@@ -127855,6 +129643,7 @@
         "TileOperandsLegal_ExecuteTileCompare",
         "TileOperandsLegal_ExecuteTileCompareScalar",
         "TileOperandsLegal_ExecuteTileExpand",
+        "TileOperandsLegal_ExecuteTileExpdif",
         "TileOperandsLegal_ExecuteTileFillScalar",
         "TileOperandsLegal_ExecuteTileReduction",
         "TileOperandsLegal_ExecuteTileScalar",
@@ -207336,6 +209125,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 907,
+  "source_path_count": 913,
   "tile_location_normative_refs": []
 }

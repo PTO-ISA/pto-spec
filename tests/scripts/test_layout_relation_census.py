@@ -274,6 +274,30 @@ class LayoutRelationCensusTest(unittest.TestCase):
             for side in ("L0", "L1"):
                 self.assertTrue(all(values for values in signature[side].values()),
                                 (signature["mnemonic"], signature["form"], side))
+        texpdif = [row for row in result["operation_signatures"]
+                   if row["mnemonic"] == "TEXPDIF"]
+        self.assertEqual({row["form"] for row in texpdif}, {"direct", "bundle"})
+        for signature in texpdif:
+            self.assertEqual(signature["L0"], {})
+            self.assertEqual(
+                {role: set(layouts) for role, layouts in signature["L1"].items()},
+                {
+                    "destination0": {"RowMajor", "CUBE_M16", "CUBE_M32"},
+                    "source0": {"RowMajor", "CUBE_M16", "CUBE_M32"},
+                    "source1": {"RowMajor", "CUBE_M16", "CUBE_M32"},
+                },
+            )
+            self.assertEqual(
+                set(signature["R1"]),
+                {
+                    "destination0.layout == source0.layout",
+                    "source0.layout == source1.layout",
+                },
+            )
+        texpdif_inventory = [row for row in result["authoritative_inventory"]
+                             if row["mnemonic"] == "TEXPDIF"]
+        self.assertEqual(len(texpdif_inventory), 6)
+        self.assertTrue(all(row["layout_bearing"] for row in texpdif_inventory))
         rows = result["reachability"]["after"]["operation_reachability"]
         for mnemonic in ("TADD", "GMOV", "TMATMUL_BIAS"):
             direct = next(row for row in rows if row["mnemonic"] == mnemonic and row["form"] == "direct")
@@ -349,11 +373,24 @@ class LayoutRelationCensusTest(unittest.TestCase):
         self.assertTrue(all(row["owner_decision"] != "none" for row in result["delta"]))
         self.assertEqual({row["relation"] for row in bias_relation_deltas}, set())
 
+        texpdif_is_committed = any(
+            row["mnemonic"] == "TEXPDIF" for row in result["operation_signatures"]
+        )
         expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV", "TCVT"}
+        if texpdif_is_committed:
+            expected.add("TEXPDIF")
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)
         self.assertEqual(len(bias), 8)
+        if texpdif_is_committed:
+            texpdif = [row for row in changed if row["mnemonic"] == "TEXPDIF"]
+            self.assertEqual({row["form"] for row in texpdif}, {"direct", "bundle"})
+            self.assertTrue(all(
+                set(row["L1"][role]) == {"RowMajor", "CUBE_M16", "CUBE_M32"}
+                for row in texpdif
+                for role in ("destination0", "source0", "source1")
+            ))
         tcvt = [row for row in changed if row["mnemonic"] == "TCVT"]
         self.assertEqual({row["form"] for row in tcvt}, {"direct", "bundle"})
         for row in tcvt:

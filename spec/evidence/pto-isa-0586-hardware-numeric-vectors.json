@@ -1,6 +1,6 @@
 {
   "hardware_profile_id": "pto-hardware-numeric-0.58.6-ieee-v1",
-  "hardware_profile_sha256": "b972bcc29bc81c76d37bc5dc48b9ccb08ad2c0a144a15c99d46697c090f51ce7",
+  "hardware_profile_sha256": "3639f52e0614ce09d4e819a3493a419db7f436928211802b339fcf91db320755",
   "implementation_conformance_status": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
   "reference_profile": {
     "bit_exact_surfaces": [
@@ -462,7 +462,8 @@
     "mixed_expdif": {
       "accepted_operations": [
         "TROWEXPANDEXPDIF",
-        "TCOLEXPANDEXPDIF"
+        "TCOLEXPANDEXPDIF",
+        "TEXPDIF"
       ],
       "accepted_source_destination_pairs": [
         [

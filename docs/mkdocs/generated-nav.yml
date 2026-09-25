@@ -170,6 +170,7 @@ nav:
               - Effects: block/model/commit/effects.md
               - Validation: block/model/commit/validation.md
           - Dispatch:
+              - Binary Operation Classification: block/model/dispatch/binary-operation-classification.md
               - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
               - Commands: block/model/dispatch/commands.md
               - Comparison Schema: block/model/dispatch/comparison-schema.md
@@ -179,8 +180,10 @@ nav:
               - Decode: block/model/dispatch/decode.md
               - Descriptor Legality: block/model/dispatch/descriptor-legality.md
               - Destination Auxiliary: block/model/dispatch/destination-auxiliary.md
+              - Destination Operation: block/model/dispatch/destination-operation.md
               - Destination Shape: block/model/dispatch/destination-shape.md
               - Expansion Schema: block/model/dispatch/expansion-schema.md
+              - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
@@ -779,6 +782,7 @@ nav:
           - Transcendental:
               - TDIV: tile/elementwise-tile-tile/transcendental/TDIV.md
               - TEXP: tile/elementwise-tile-tile/transcendental/TEXP.md
+              - TEXPDIF: tile/elementwise-tile-tile/transcendental/TEXPDIF.md
               - TLOG: tile/elementwise-tile-tile/transcendental/TLOG.md
               - TRECIP: tile/elementwise-tile-tile/transcendental/TRECIP.md
               - TREM: tile/elementwise-tile-tile/transcendental/TREM.md
@@ -866,6 +870,7 @@ nav:
               - CUBE: tile/model/execution/cube.md
               - Elementwise: tile/model/execution/elementwise.md
               - Expansion: tile/model/execution/expansion.md
+              - Expdif: tile/model/execution/expdif.md
               - Fused Multiply Add: tile/model/execution/fused-multiply-add.md
               - Generation: tile/model/execution/generation.md
               - Indexed Rearrangement: tile/model/execution/indexed-rearrangement.md
@@ -883,6 +888,7 @@ nav:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
               - Data Type Layout: tile/model/legality/dtype-layout.md
+              - Expdif Operands: tile/model/legality/expdif-operands.md
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md

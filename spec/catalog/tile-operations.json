@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 117,
+  "operation_count": 118,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [
@@ -6949,6 +6949,63 @@
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
+    },
+    {
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        }
+      ],
+      "command_mnemonic": "BSTART.TEPL",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "Layout",
+          "DataType",
+          "PadValueOrByteId"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "ExecuteTileExpdif",
+      "family": "TEPL",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 29,
+      "legality_handler": "TileOperandsLegal_ExecuteTileExpdif",
+      "mode": 0,
+      "name": "TEXPDIF",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "new Local DstDataType numeric destination"
+        },
+        {
+          "field": "source0",
+          "role": "persistent Local SrcOperationType minuend"
+        },
+        {
+          "field": "source1",
+          "role": "persistent Local SrcOperationType subtrahend"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "selector": "0x01D",
+      "semantic_handler": "ExecuteTileExpdif",
+      "state_effects": [
+        "operand:destination0:new-local-DstDataType-destination",
+        "operand:source0:persistent-local-SrcOperationType-minuend",
+        "operand:source1:persistent-local-SrcOperationType-subtrahend",
+        "runtime:CurrentBundlePadValue:numeric-padding",
+        "runtime:NumericStatusFlags:profile-status"
+      ],
+      "classification": "elementwise-tile-tile",
+      "engine": "SFU"
     }
   ],
   "reserved": {
@@ -6980,7 +7037,7 @@
         "0x019"
       ],
       [
-        "0x01D",
+        "0x01E",
         "0x01F"
       ],
       [

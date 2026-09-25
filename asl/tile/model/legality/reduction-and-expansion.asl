@@ -208,20 +208,6 @@ begin
                destination_tile.data_type);
 end;
 
-pure func TileExpandExpdifTypePairLegal(
-    source_type: TileDataType,
-    destination_type: TileDataType) => boolean
-begin
-    return (source_type == TileDataType_FP16 &&
-            (destination_type == TileDataType_FP16 ||
-             destination_type == TileDataType_FP32)) ||
-           (source_type == TileDataType_BF16 &&
-            (destination_type == TileDataType_BF16 ||
-             destination_type == TileDataType_FP32)) ||
-           (source_type == TileDataType_FP32 &&
-            destination_type == TileDataType_FP32);
-end;
-
 readonly func TileOperandsLegal_ExecuteTileExpandAs(
     operation: TileExpandOperation,
     axis: TileAxis,
@@ -269,7 +255,7 @@ begin
         end;
     end;
 
-    if (expdif && !TileExpandExpdifTypePairLegal(
+    if (expdif && !TileExpdifTypePairLegal(
                       source_operation_type, destination_operation_type)) ||
        (!expdif && source_operation_type != destination_operation_type) then
         return FALSE;

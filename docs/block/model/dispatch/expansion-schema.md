@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/expansion-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","surface":"block","classification":["model","dispatch","expansion-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"]}
+// PTO-UNIT: {"classification":["model","dispatch","expansion-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"],"id":"PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","surface":"block"}
 
 pure func TileOperationUsesClosedRowExpansionSchema(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
@@ -68,32 +68,6 @@ begin
            decoded == TileOperation_TCOLEXPANDEXPDIF;
 end;
 
-readonly func SelectedBundleExpansionExponentialDifferenceTypes()
-    => (boolean, TileDataType, TileDataType)
-begin
-    let default_type = TileDataType_FP64;
-    if !_BundleOperation.data_type_valid ||
-       !BundleDataTypeConcrete(_BundleOperation.data_type) then
-        return (FALSE, default_type, default_type);
-    end;
-    let source_type = BundleTileDataType(_BundleOperation.data_type);
-    var destination_type = source_type;
-    if _BundleDataAttributesPresent then
-        if _BundleDataAttributes.data_type == DTYPE_NONE then
-            destination_type = source_type;
-        elsif !BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
-            return (FALSE, default_type, default_type);
-        else
-            destination_type = BundleTileDataType(
-                _BundleDataAttributes.data_type);
-        end;
-    end;
-    return (
-        TileExpandExpdifTypePairLegal(source_type, destination_type),
-        source_type,
-        destination_type);
-end;
-
 readonly func SelectedBundleExpansionBroadcastShapeMatches(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     broadcast: TileIndex) => boolean
@@ -141,7 +115,7 @@ begin
     var source_data_type = data_type;
     if expdif then
         let (types_legal, selected_source_type, selected_destination_type) =
-            SelectedBundleExpansionExponentialDifferenceTypes();
+            SelectedBundleExponentialDifferenceTypes();
         if !types_legal then
             return FALSE;
         end;

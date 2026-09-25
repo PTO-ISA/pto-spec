@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import bisect
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -147,6 +148,36 @@ OWNER_DECISIONS = {
     "EXACT_34": "ADR-CUBE-0013",
     "R4_PACK_UNPACK": R4_OWNER_DECISIONS["pack_unpack"],
     "R4_EXPANSION": R4_OWNER_DECISIONS["expansion"],
+    "TEXPDIF": "Issue #333 / ADR-TILE-0008 accepted amendment",
+}
+TEXPDIF_LAYOUT_CLASSIFICATION = (
+    "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract "
+    "(Issue #333 / ADR-TILE-0008)"
+)
+TEXPDIF_COMMON_HELPERS = {
+    "ExecuteTileExpdif",
+    "ResolveBundleTileDestinationsForOperation",
+    "TileExpandExpdifTypePairLegal",
+    "TileExpdifBundleGeometryMatches",
+    "TileExpdifLogicalShapeMatch",
+    "TileExpdifSourceOperationType",
+    "TileExpdifSourcesLegal",
+    "TileExpdifTypePairLegal",
+    "TileExpdifValueWithTypesAndFlags",
+    "TileOperationUsesClosedBinarySchema",
+    "TileExpandValueWithTypesAndFlags",
+}
+TEXPDIF_COMMON_HELPER_PATHS = {
+    "ExecuteTileExpdif": "asl/tile/model/execution/expdif.asl",
+    "ResolveBundleTileDestinationsForOperation": "asl/block/model/dispatch/destination-operation.asl",
+    "TileExpdifBundleGeometryMatches": "asl/tile/model/legality/expdif-operands.asl",
+    "TileExpdifLogicalShapeMatch": "asl/tile/model/legality/expdif-operands.asl",
+    "TileExpdifSourceOperationType": "asl/tile/model/legality/expdif-operands.asl",
+    "TileExpdifSourcesLegal": "asl/tile/model/legality/expdif-operands.asl",
+    "TileExpdifTypePairLegal": "asl/tile/model/legality/dtype-layout.asl",
+    "TileExpdifValueWithTypesAndFlags": "asl/tile/model/execution/expdif.asl",
+    "TileOperationUsesClosedBinarySchema": "asl/block/model/dispatch/binary-operation-classification.asl",
+    "TileExpandValueWithTypesAndFlags": "asl/tile/model/execution/expansion.asl",
 }
 COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
@@ -369,16 +400,15 @@ def _ref_texts(ref: str, paths: Iterable[str]) -> dict[str, str]:
     paths = list(paths)
     if ref == "working-tree":
         return {p: ((ROOT / p).read_text(encoding="utf-8") if (ROOT / p).is_file() else "") for p in paths}
-    process = subprocess.Popen(
+    process = subprocess.run(
         ["git", "cat-file", "--batch"], cwd=ROOT,
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        input="".join(f"{ref}:{p}\n" for p in paths).encode(),
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
     )
-    assert process.stdin is not None and process.stdout is not None
-    process.stdin.write("".join(f"{ref}:{p}\n" for p in paths).encode())
-    process.stdin.close()
+    output = io.BytesIO(process.stdout)
     result: dict[str, str] = {}
     for path in paths:
-        header = process.stdout.readline()
+        header = output.readline()
         if not header:
             result[path] = ""
             continue
@@ -386,13 +416,9 @@ def _ref_texts(ref: str, paths: Iterable[str]) -> dict[str, str]:
         if len(fields) < 3 or fields[1] == b"missing":
             result[path] = ""
             continue
-        data = process.stdout.read(int(fields[2]))
-        process.stdout.readline()
+        data = output.read(int(fields[2]))
+        output.readline()
         result[path] = data.decode("utf-8")
-    process.wait()
-    process.stdout.close()
-    if process.stderr is not None:
-        process.stderr.close()
     return result
 
 
@@ -1469,6 +1495,36 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
             accepted_layouts[field] &= indexed_layout_domains[field]
         if field in context_role_layouts:
             accepted_layouts[field] &= context_role_layouts[field]
+    if mnemonic == "TEXPDIF":
+        if not re.search(
+            r"Only\s+RowMajor,\s*CUBE_M16,\s+and\s+CUBE_M32\s+are\s+legal",
+            contract,
+            re.IGNORECASE,
+        ):
+            errors.append("TEXPDIF authoritative contract does not name its exact Local layout set")
+        if not {"TileExpdifSourcesLegal", "TileExpdifBundleGeometryMatches",
+                "TileElementwiseLayoutSupported"} <= reachable_names:
+            errors.append("TEXPDIF Local layout owner is not reachable from its legality root")
+        supported_layouts: set[str] = set()
+        if roles:
+            for definition in definitions.get("TileElementwiseLayoutSupported", []):
+                found, _relations, _unresolved = _layout_atoms(
+                    definition["body"],
+                    {"layout": f"rolelayout:{roles[0]['field']}"},
+                )
+                supported_layouts.update(
+                    layout for _field, layout in found
+                )
+        if supported_layouts != ALLOWED_LAYOUTS:
+            errors.append(
+                "TEXPDIF shared elementwise layout helper does not admit exactly "
+                "RowMajor/CUBE_M16/CUBE_M32"
+            )
+        else:
+            for role in roles:
+                field = role["field"]
+                accepted_layouts[field] = set(supported_layouts)
+                contract_layouts[field] = set(supported_layouts)
     # Relation graph transitivity is retained for canonical Bias wording and
     # for stable normalized same-layout predicates in every operation.
     graph: dict[str, set[str]] = {}
@@ -1521,6 +1577,13 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         relations.add("Bias.layout == ML == D.layout")
         if conditional_bias:
             relations.add("Local A present => A.layout == ML")
+    if mnemonic == "TEXPDIF":
+        required_relations = {
+            "destination0.layout == source0.layout",
+            "source0.layout == source1.layout",
+        }
+        if relations != required_relations:
+            errors.append("TEXPDIF Local logical-layout relations are not closed")
     return {"layouts": {field: sorted(values) for field, values in sorted(accepted_layouts.items())},
             "relations": sorted(relations),
             "contract_layouts": {field: sorted(values) for field, values in sorted(contract_layouts.items())},
@@ -1541,6 +1604,8 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
         return None
     old_values = set(old_model.get("layouts", {}).get(role, []))
     new_values = set(new_model.get("layouts", {}).get(role, []))
+    if mnemonic == "TEXPDIF" and layout in ALLOWED_LAYOUTS:
+        return TEXPDIF_LAYOUT_CLASSIFICATION
     if mnemonic == "TCVT" and layout == "RowMajor":
         return TCVT_PHYSICAL_SHAPE_CLASSIFICATION
     if mnemonic in EXACT_34 and layout in ALLOWED_LAYOUTS:
@@ -1580,6 +1645,11 @@ def _classify_relation(mnemonic: str, relation: str) -> str | None:
     """
     if mnemonic == "TCVT":
         return TCVT_PHYSICAL_SHAPE_CLASSIFICATION
+    if mnemonic == "TEXPDIF" and relation in {
+        "destination0.layout == source0.layout",
+        "source0.layout == source1.layout",
+    }:
+        return TEXPDIF_LAYOUT_CLASSIFICATION
     if mnemonic in BIAS and relation in {
         "Bias.layout == ML == D.layout",
         "Local A present => A.layout == ML",
@@ -1611,7 +1681,7 @@ def _direct_callers(
     }
 
 
-def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str]) -> tuple[list[dict[str, Any]], list[str]]:
+def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
     for name in sorted(set(before["helpers"]) | set(after["helpers"])):
@@ -1643,6 +1713,25 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     rows.append({"name": name, "classification": R4_LAYOUT_CLASSIFICATION,
                                  "before": old_defs, "after": new_defs,
                                  "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
+                continue
+            if allow_texpdif_changes and name in TEXPDIF_COMMON_HELPERS:
+                valid_change = False
+                if name == "TileExpandExpdifTypePairLegal":
+                    valid_change = len(old_defs) == 1 and not new_defs
+                elif name in TEXPDIF_COMMON_HELPER_PATHS:
+                    valid_change = (
+                        len(new_defs) == 1 and
+                        new_defs[0]["path"] == TEXPDIF_COMMON_HELPER_PATHS[name] and
+                        len(old_defs) <= 1
+                    )
+                if not valid_change:
+                    errors.append(f"unauthorized TEXPDIF common-helper definition change: {name}")
+                    rows.append({"name": name, "classification": "UNCLASSIFIED",
+                                 "before": old_defs, "after": new_defs})
+                else:
+                    rows.append({"name": name,
+                                 "classification": TEXPDIF_LAYOUT_CLASSIFICATION,
+                                 "before": old_defs, "after": new_defs})
                 continue
             if name in FPATR_EFFECTIVE_TYPE_HELPERS:
                 # This Issue #345 classification authorizes only the two new,
@@ -1711,6 +1800,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = LOCAL_SINGLE_M_BLOCK_CLASSIFICATION
             if classification is None and name in CUBE_AUX_CELLREG_HELPERS:
                 classification = CUBE_AUX_CELLREG_CLASSIFICATION
+            if (classification is None and allow_texpdif_changes and
+                    name in TEXPDIF_COMMON_HELPERS):
+                classification = TEXPDIF_LAYOUT_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             if name == R4_EXECUTION_HELPER["name"]:
@@ -1894,7 +1986,21 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     errors.extend(e)
     after_inventory, e = _inventory(after_meta)
     errors.extend(e)
-    if before_inventory["keys"] != after_inventory["keys"]:
+    before_keys = set(before_inventory["keys"])
+    after_keys = set(after_inventory["keys"])
+    before_has_texpdif = any(mnemonic == "TEXPDIF" for mnemonic, _form, _role in before_keys)
+    after_has_texpdif = any(mnemonic == "TEXPDIF" for mnemonic, _form, _role in after_keys)
+    expected_texpdif_addition = (
+        {
+            ("TEXPDIF", form, role)
+            for form in ("direct", "bundle")
+            for role in ("destination0", "source0", "source1")
+        }
+        if after_has_texpdif and not before_has_texpdif
+        else set()
+    )
+    if (before_keys - after_keys or
+            after_keys - before_keys != expected_texpdif_addition):
         errors.append("authoritative inventory changed: missing/unknown/duplicate mnemonic/form/role ownership")
     before_reach, e, before_defs = _helper_snapshot(before_map, before_meta)
     errors.extend(e)
@@ -1906,23 +2012,29 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     operation_models_before: dict[tuple[str, str], dict[str, Any]] = {}
     operation_models_after: dict[tuple[str, str], dict[str, Any]] = {}
     for key in sorted(set(old_rows) | set(new_rows)):
-        if key not in old_rows or key not in new_rows:
+        if key not in new_rows:
             continue
-        old = old_rows[key]; new = new_rows[key]
+        new = new_rows[key]
         mnemonic, form = key
-        old_context = before_map.get(old.get("bundle_owner", ""), "") if form == "bundle" else ""
         new_context = after_map.get(new.get("bundle_owner", ""), "") if form == "bundle" else ""
-        if baseline_fixture is not None:
-            fixture_row = baseline_fixture[key]
-            old_model = {"layouts": fixture_row.get("L0", {}),
-                         "relations": fixture_row.get("R0", []),
-                         "contract_layouts": fixture_row.get("L0", {}),
+        if key not in old_rows:
+            old_model = {"layouts": {}, "relations": [], "contract_layouts": {},
                          "context_layouts": {}, "conditional_bias": False}
-            e = []
         else:
-            old_model, e = _operation_model(old["meta"], before_map.get(old["path"], ""), before_reach, before_defs,
-                                            context_text=old_context)
-            errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
+            old = old_rows[key]
+            old_context = before_map.get(old.get("bundle_owner", ""), "") if form == "bundle" else ""
+            if baseline_fixture is not None:
+                fixture_row = baseline_fixture[key]
+                old_model = {"layouts": fixture_row.get("L0", {}),
+                             "relations": fixture_row.get("R0", []),
+                             "contract_layouts": fixture_row.get("L0", {}),
+                             "context_layouts": {}, "conditional_bias": False}
+                e = []
+            else:
+                old_model, e = _operation_model(
+                    old["meta"], before_map.get(old["path"], ""), before_reach, before_defs,
+                    context_text=old_context)
+                errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
         new_model, e = _operation_model(new["meta"], after_map.get(new["path"], ""), after_reach, after_defs,
                                         context_text=new_context)
         errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
@@ -1935,6 +2047,18 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         operation_models_before[key], operation_models_after[key] = old_model, new_model
 
     for (mnemonic, form), model in operation_models_after.items():
+        if mnemonic == "TEXPDIF":
+            roles = set(model.get("layouts", {}))
+            if roles != {"destination0", "source0", "source1"}:
+                errors.append(f"TEXPDIF Local layout-role closure missing for {form}")
+            if any(set(model.get("layouts", {}).get(role, [])) != ALLOWED_LAYOUTS
+                   for role in roles):
+                errors.append(f"TEXPDIF Local layout set is not closed for {form}")
+            if set(model.get("relations", [])) != {
+                "destination0.layout == source0.layout",
+                "source0.layout == source1.layout",
+            }:
+                errors.append(f"TEXPDIF Local layout relations are not closed for {form}")
         if mnemonic not in INDEXED_TLSU:
             continue
         role_fields = list(model.get("layouts", {}))
@@ -2025,13 +2149,19 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                     if mnemonic in R4_LAYOUT_OPERATIONS:
                         if mnemonic in R4_EXPANSION_OPERATIONS and r4_contract_valid:
                             authorized_helpers.add(R4_EXECUTION_HELPER["name"])
+                    elif mnemonic == "TEXPDIF":
+                        authorized_helpers.update(
+                            set(row["common_helpers"]) & TEXPDIF_COMMON_HELPERS
+                        )
                     else:
                         authorized_helpers.update(row["common_helpers"])
 
-    # Existing helper authorization still follows classified operation deltas.
-    # The r4 closure pre-authorizes only ExecuteTileExpand after verifying its
-    # exact sixteen-operation handler set and owner path above.
-    helper_deltas, helper_errors = _helper_deltas(before_reach, after_reach, before_defs, after_defs, authorized_helpers)
+    # Keep the accepted r4 expansion helper and TEXPDIF helper changes scoped
+    # to their independently classified operation deltas.
+    helper_deltas, helper_errors = _helper_deltas(
+        before_reach, after_reach, before_defs, after_defs, authorized_helpers,
+        allow_texpdif_changes=after_has_texpdif and not before_has_texpdif,
+    )
     errors.extend(helper_errors)
     if enforce_closure:
         expected = set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV"}
@@ -2068,7 +2198,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT"} | R4_LAYOUT_OPERATIONS:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT", "TEXPDIF"} | R4_LAYOUT_OPERATIONS:
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;

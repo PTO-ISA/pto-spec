@@ -1,6 +1,6 @@
 # PTO TileOp macro assembly
 
-This reference defines the canonical PTO 0.58.6 macro-assembly format for all 117 current direct Tile operations.
+This reference defines the canonical PTO 0.58.6 macro-assembly format for all 118 current direct Tile operations.
 It is generated from the `PTO-TILEOP-MACRO` owners in `asl/arch/overview/instruction-classification.asl`; each physical mapping is cross-checked against the operation's owning `PTO-INSTRUCTION` metadata and `spec/catalog/tile-operations.json`.
 
 ## Syntax model
@@ -91,6 +91,7 @@ Destination metavariables likewise become physical binding operands. A Local des
 | --- | --- | --- |
 | `TDIV` | `SFU` | `TDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `TEXP` | `SFU` | `TEXP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
+| `TEXPDIF` | `SFU` | `TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 | `TLOG` | `SFU` | `TLOG <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
 | `TRECIP` | `SFU` | `TRECIP <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
 | `TREM` | `SFU` | `TREM <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |

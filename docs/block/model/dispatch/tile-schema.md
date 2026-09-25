@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tile-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-UNARY"]}
+// PTO-UNIT: {"classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block"}
 func BundleTileInstructionOperands(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
     => TileInstructionOperands
@@ -343,18 +343,6 @@ begin
     end;
     return count;
 end;
-pure func TileOperationUsesClosedBinarySchema(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
-begin
-    let decoded = TileOperationOfIndex(operation);
-    return decoded == TileOperation_TADD ||
-           decoded == TileOperation_TSUB ||
-           decoded == TileOperation_TMUL ||
-           decoded == TileOperation_TDIV ||
-           decoded == TileOperation_TREM ||
-           decoded == TileOperation_TMAX ||
-           decoded == TileOperation_TMIN;
-end;
 readonly func SelectedBundleClosedBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -362,6 +350,7 @@ begin
     if BundleTileBindingCount() != 1 || BundleSharedBindingCount() != 0 then
         return FALSE;
     end;
+    if TileOperationOfIndex(operation) == TileOperation_TEXPDIF && !_BundleDimensionPresent[[0]] then return FALSE; end;
     if !_BundleTileBindings[[0]].destination_valid ||
        _BundleTileBindings[[0]].destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
@@ -375,6 +364,15 @@ begin
            UInt(_BundleDimensions[[dimension]]) > 65535 then
             return FALSE;
         end;
+    end;
+    if TileOperationOfIndex(operation) == TileOperation_TEXPDIF then
+        let (types_legal, -, -) =
+            SelectedBundleExponentialDifferenceTypes();
+        return types_legal &&
+               TileElementwiseLayoutSupported(CurrentBundleTileLayout()) &&
+               TileExpdifSourcesLegal(
+                   _BundleTileBindings[[0]].source0,
+                   _BundleTileBindings[[0]].source1);
     end;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);

@@ -119,5 +119,6 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(114) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(115) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_SFU(116) == FALSE;
+    assert InstructionContractAcceptsTileOperation_BSTART_SFU(117) == TRUE;
     return 0;
 end;

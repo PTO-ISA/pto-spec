@@ -806,7 +806,8 @@
         "PTO-TTRI-CONTRACT-001",
         "PTO-TXOR-CONTRACT-001",
         "PTO-TXORS-CONTRACT-001",
-        "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
+        "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001",
+        "PTO-INST-TILE-TEXPDIF"
       ],
       "affected_units": [
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
@@ -964,7 +965,18 @@
         "PTO-TILE-TSUBS",
         "PTO-TILE-TTRI",
         "PTO-TILE-TXOR",
-        "PTO-TILE-TXORS"
+        "PTO-TILE-TXORS",
+        "PTO-TILE-TEXPDIF",
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+        "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS"
       ],
       "amendments": [
         {
@@ -995,6 +1007,29 @@
           "baseline": "4f5a0c23d676ee4612a2acd4635f7fed0e85b147",
           "date": "2026-09-20",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/334"
+        },
+        {
+          "affected_ndf": [
+            "PTO-INST-TILE-TEXPDIF"
+          ],
+          "affected_units": [
+            "PTO-TILE-TEXPDIF",
+            "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+            "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+            "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS"
+          ],
+          "approvers": [
+            "Kevin Zhou <zhoubot@gmail.com>"
+          ],
+          "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/333"
         }
       ],
       "approvers": [
@@ -8392,7 +8427,9 @@
         "PTO-TROWEXPANDMAX-CONTRACT-001",
         "PTO-TROWEXPANDMIN-CONTRACT-001",
         "PTO-TROWEXPANDMUL-CONTRACT-001",
-        "PTO-TROWEXPANDSUB-CONTRACT-001"
+        "PTO-TROWEXPANDSUB-CONTRACT-001",
+        "PTO-INST-TILE-TEXPDIF",
+        "PTO-TEXPDIF-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -8519,7 +8556,16 @@
         "PTO-TILE-TROWEXPANDMAX",
         "PTO-TILE-TROWEXPANDMIN",
         "PTO-TILE-TROWEXPANDMUL",
-        "PTO-TILE-TROWEXPANDSUB"
+        "PTO-TILE-TROWEXPANDSUB",
+        "PTO-TILE-TEXPDIF",
+        "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+        "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
       ],
       "amendments": [
         {
@@ -8861,6 +8907,36 @@
           "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
           "date": "2026-09-24",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
+        },
+        {
+          "affected_ndf": [
+            "PTO-INST-TILE-TEXPDIF",
+            "PTO-TEXPDIF-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TEXPDIF",
+            "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+            "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+            "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+            "PTO-TILE-MODEL-STATE-TYPES",
+            "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+            "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+            "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/333"
         }
       ],
       "approvers": [

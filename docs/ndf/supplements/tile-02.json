@@ -425,6 +425,18 @@
       }
     },
     {
+      "id": "PTO-TEXPDIF-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "title": {
+        "en": "TEXPDIF full-shape exponential difference",
+        "zh-CN": "TEXPDIF 完整形状指数差"
+      },
+      "summary": {
+        "en": "This instruction is the direct full-shape binary form of the exponential-difference operation. The mnemonic owner describes its type pairing, source carrier interpretation, destination geometry, and execution sequence; this supplement provides navigation context only.",
+        "zh-CN": "该指令是指数差操作的直接完整形状二元形式。助记符 owner 定义其类型配对、源载体解释、目标几何和执行顺序；本补充仅提供导航背景。"
+      }
+    },
+    {
       "id": "PTO-TROWEXPANDMAX-CONTRACT-001",
       "source_path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
       "title": {

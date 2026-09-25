@@ -596,6 +596,7 @@ def expected_operand_bindings(
 HEADER_CONFIGURATION_FIELDS = {
     "DataType",
     "SrcDataType",
+    "SrcOperationType",
     "ValueDataType",
     "AType",
     "U8",

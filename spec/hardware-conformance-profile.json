@@ -220,7 +220,8 @@
   "mixed_expdif": {
     "accepted_operations": [
       "TROWEXPANDEXPDIF",
-      "TCOLEXPANDEXPDIF"
+      "TCOLEXPANDEXPDIF",
+      "TEXPDIF"
     ],
     "accepted_source_destination_pairs": [
       ["FP16", "FP16"],

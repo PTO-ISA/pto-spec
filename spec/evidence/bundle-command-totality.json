@@ -1886,8 +1886,8 @@
     },
     "counts": {
       "TEPL": {
-        "total": 77,
-        "representable": 77,
+        "total": 78,
+        "representable": 78,
         "commit_rejected": 0
       },
       "TLSU": {
@@ -7441,6 +7441,42 @@
           "address": "RegSrc0"
         },
         "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x01D",
+        "operation": "TEXPDIF",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,

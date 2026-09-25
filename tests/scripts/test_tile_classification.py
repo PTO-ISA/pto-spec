@@ -9,7 +9,7 @@ from scripts.instruction_docs import ROOT, load_instruction_index
 
 
 EXPECTED_CLASSES = {
-    "elementwise-tile-tile": "TABS TADD TAND TCMP TCVT TDIV TEXP TFMA TLOG TMAX TMIN TMUL TNEG TNOT TOR TRECIP TRELU TREM TRSQRT TSEL TSHL TSHR TSQRT TSUB TXOR",
+    "elementwise-tile-tile": "TABS TADD TAND TCMP TCVT TDIV TEXP TEXPDIF TFMA TLOG TMAX TMIN TMUL TNEG TNOT TOR TRECIP TRELU TREM TRSQRT TSEL TSHL TSHR TSQRT TSUB TXOR",
     "tile-scalar-and-immediate": "TADDS TANDS TCMPS TDIVS TEXPANDS TMAXS TMINS TMULS TORS TREMS TSELS TSHLS TSHRS TSUBS TXORS",
     "reduce-and-expand": "TCOLARGMAX TCOLARGMIN TCOLEXPAND TCOLEXPANDADD TCOLEXPANDDIV TCOLEXPANDEXPDIF TCOLEXPANDMAX TCOLEXPANDMIN TCOLEXPANDMUL TCOLEXPANDSUB TCOLMAX TCOLMIN TCOLPROD TCOLSUM TROWARGMAX TROWARGMIN TROWEXPAND TROWEXPANDADD TROWEXPANDDIV TROWEXPANDEXPDIF TROWEXPANDMAX TROWEXPANDMIN TROWEXPANDMUL TROWEXPANDSUB TROWMAX TROWMIN TROWPROD TROWSUM",
     "memory-and-data-movement": "MGATHER_ADD MGATHER_AND MGATHER_CAS MGATHER_DEC MGATHER_EXCH MGATHER_INC MGATHER_MAX MGATHER_MIN MGATHER_OR MGATHER_XOR GMOV MGATHER MGATHER_MASK MSCATTER MSCATTER_MASK MSCATTER_ADD MSCATTER_AND MSCATTER_DEC MSCATTER_INC MSCATTER_MAX MSCATTER_MIN MSCATTER_OR MSCATTER_POPC MSCATTER_XOR TLOAD TPREFETCH TSTORE",
@@ -24,7 +24,7 @@ EXPECTED_CLASSES = {
 }
 
 SFU_ELEMENTWISE = frozenset(
-    {"TDIV", "TEXP", "TLOG", "TRECIP", "TREM", "TRSQRT", "TSQRT"}
+    {"TDIV", "TEXP", "TEXPDIF", "TLOG", "TRECIP", "TREM", "TRSQRT", "TSQRT"}
 )
 
 EXPECTED_VEC = frozenset(
@@ -52,7 +52,7 @@ class TileClassificationTest(unittest.TestCase):
         self.assertEqual(
             Counter(record.classification[0] for record in self.tile),
             {
-                "elementwise-tile-tile": 25,
+                "elementwise-tile-tile": 26,
                 "tile-scalar-and-immediate": 15,
                 "reduce-and-expand": 28,
                 "memory-and-data-movement": 27,
@@ -76,7 +76,7 @@ class TileClassificationTest(unittest.TestCase):
             if record.mnemonic in SFU_ELEMENTWISE:
                 self.assertEqual(engine, "SFU")
 
-        self.assertEqual(by_engine, {"VEC": 31, "SFU": 46, "TLSU": 28, "CUBE": 12})
+        self.assertEqual(by_engine, {"VEC": 31, "SFU": 47, "TLSU": 28, "CUBE": 12})
 
         actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
         self.assertEqual(actual_vec, EXPECTED_VEC)

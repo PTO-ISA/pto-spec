@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/operand-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"],"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile"}
 readonly func TileElementwiseDescriptorLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
@@ -98,10 +98,12 @@ begin
            !TileDataTypeIsFourBit(tile.data_type) &&
            TileCarrierWidthCompatible(tile.data_type, operation_type);
 end;
+
 readonly func TileOperandsLegal_ExecuteTileBinary(
     op: TileBinaryOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
 begin
+    if op == TileBinary_EXPDIF then return FALSE; end;
     let operation_type = if BundleTileOperationSelected() &&
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)
@@ -175,6 +177,7 @@ readonly func TileOperandsLegal_ExecuteTileScalar(
     op: TileBinaryOperation, destination: TileIndex,
     source: TileIndex, scalar: Word) => boolean
 begin
+    if op == TileBinary_EXPDIF then return FALSE; end;
     let operation_type = if BundleTileOperationSelected() &&
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)

@@ -11,7 +11,10 @@ type TileBinaryOperation of enumeration {
     TileBinary_SHL,
     TileBinary_SHR,
     TileBinary_DIV,
-    TileBinary_REM
+    TileBinary_REM,
+    // TEXPDIF is a dedicated typed binary operation. It must not enter the
+    // generic integer, Tile-binary, or Tile-scalar execution helpers.
+    TileBinary_EXPDIF
 };
 
 type TileUnaryOperation of enumeration {

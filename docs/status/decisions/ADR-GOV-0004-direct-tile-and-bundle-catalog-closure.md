@@ -187,7 +187,8 @@
     "PTO-TTRI-CONTRACT-001",
     "PTO-TXOR-CONTRACT-001",
     "PTO-TXORS-CONTRACT-001",
-    "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001"
+    "PTO-AS-TILEOP-INDEXED-COL-VALIDCOL-001",
+    "PTO-INST-TILE-TEXPDIF"
   ],
   "affected_units": [
     "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
@@ -345,7 +346,18 @@
     "PTO-TILE-TSUBS",
     "PTO-TILE-TTRI",
     "PTO-TILE-TXOR",
-    "PTO-TILE-TXORS"
+    "PTO-TILE-TXORS",
+    "PTO-TILE-TEXPDIF",
+    "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+    "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+    "PTO-TILE-MODEL-STATE-TYPES",
+    "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -384,6 +396,29 @@
       ],
       "affected_units": [
         "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/333",
+      "affected_ndf": [
+        "PTO-INST-TILE-TEXPDIF"
+      ],
+      "affected_units": [
+        "PTO-TILE-TEXPDIF",
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS"
       ]
     }
   ]
@@ -554,3 +589,17 @@ PTO 0.58.6 为当前 Direct Tile 操作清单定义一套生成式宏汇编表�
   mnemonic contract.
 - Current instruction pages embed the exact ASL decode and operation regions;
   no parallel prose catalog defines instruction behavior.
+
+
+## 2026-09-24 accepted amendment: TEXPDIF selector ownership
+
+Issue #333 assigns TEPL Mode 0 / Function 29 (`0x01D`) to the SFU operation
+`TEXPDIF`. `TFMA` remains at `0x01C`; `0x01E..0x01F` remain reserved. The direct
+Tile inventory grows from 117 to 118 operations and TEPL grows from 77 to 78.
+Mnemonic ASL owns the operation; selector catalogs, decoder witnesses, macro
+surfaces, counts, and release evidence are generated projections of that owner.
+
+Issue #333 将 TEPL Mode 0 / Function 29（`0x01D`）分配给 SFU 操作 `TEXPDIF`。
+`TFMA` 仍位于 `0x01C`；`0x01E..0x01F` 继续保留。Direct Tile 清单从 117 个操作
+增加到 118 个，TEPL 从 77 个增加到 78 个。助记符 ASL 拥有该操作；选择器目录、
+decoder witness、宏表面、计数和发布证据均为该 owner 的生成投影。
