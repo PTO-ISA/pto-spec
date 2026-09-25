@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/expansion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 // PTO-REQ-TEPL-EXPAND-001: exact typed row and column broadcast operations.
 
 pure func TileExpandBinaryOperation(
@@ -234,6 +234,14 @@ begin
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast_source]];
     var result_tile = _Tiles[[destination]];
+    let expdif = op == TileExpand_EXPDIF;
+    let (operation_type_valid, selected_type) =
+        ResolveTileSelectedOperationType(result_tile.data_type);
+    assert operation_type_valid;
+    let source_operation_type = if expdif && !BundleTileOperationSelected() then
+        source_tile.data_type else selected_type;
+    let destination_operation_type = if expdif then
+        result_tile.data_type else selected_type;
     var accumulated_flags = Zeros{5};
 
     for row = 0 to result_tile.valid_rows - 1 looplimit 65536 do
@@ -254,8 +262,8 @@ begin
             end;
             let (value, element_flags) = TileExpandValueWithTypesAndFlags(
                 op,
-                source_tile.data_type,
-                result_tile.data_type,
+                source_operation_type,
+                destination_operation_type,
                 left,
                 TileReadLogicalElement(broadcast_tile, broadcast_element));
             let destination_element = TileLogicalLinearIndex(

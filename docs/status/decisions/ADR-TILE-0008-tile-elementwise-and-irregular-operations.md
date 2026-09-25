@@ -128,7 +128,23 @@
     "PTO-INST-TILE-TCMPS",
     "PTO-INST-TILE-TGPR2T",
     "PTO-INST-TILE-TSEL",
-    "PTO-INST-TILE-TSELS"
+    "PTO-INST-TILE-TSELS",
+    "PTO-TCOLEXPAND-CONTRACT-001",
+    "PTO-TCOLEXPANDADD-CONTRACT-001",
+    "PTO-TCOLEXPANDDIV-CONTRACT-001",
+    "PTO-TCOLEXPANDEXPDIF-CONTRACT-001",
+    "PTO-TCOLEXPANDMAX-CONTRACT-001",
+    "PTO-TCOLEXPANDMIN-CONTRACT-001",
+    "PTO-TCOLEXPANDMUL-CONTRACT-001",
+    "PTO-TCOLEXPANDSUB-CONTRACT-001",
+    "PTO-TROWEXPAND-CONTRACT-001",
+    "PTO-TROWEXPANDADD-CONTRACT-001",
+    "PTO-TROWEXPANDDIV-CONTRACT-001",
+    "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+    "PTO-TROWEXPANDMAX-CONTRACT-001",
+    "PTO-TROWEXPANDMIN-CONTRACT-001",
+    "PTO-TROWEXPANDMUL-CONTRACT-001",
+    "PTO-TROWEXPANDSUB-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -237,7 +253,25 @@
     "PTO-TILE-TCMPS",
     "PTO-TILE-TSELS",
     "PTO-TILE-TGPR2T",
-    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS"
+    "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+    "PTO-TILE-TCOLEXPAND",
+    "PTO-TILE-TCOLEXPANDADD",
+    "PTO-TILE-TCOLEXPANDDIV",
+    "PTO-TILE-TCOLEXPANDEXPDIF",
+    "PTO-TILE-TCOLEXPANDMAX",
+    "PTO-TILE-TCOLEXPANDMIN",
+    "PTO-TILE-TCOLEXPANDMUL",
+    "PTO-TILE-TCOLEXPANDSUB",
+    "PTO-TILE-TROWEXPAND",
+    "PTO-TILE-TROWEXPANDADD",
+    "PTO-TILE-TROWEXPANDDIV",
+    "PTO-TILE-TROWEXPANDEXPDIF",
+    "PTO-TILE-TROWEXPANDMAX",
+    "PTO-TILE-TROWEXPANDMIN",
+    "PTO-TILE-TROWEXPANDMUL",
+    "PTO-TILE-TROWEXPANDSUB"
   ],
   "resolves": [],
   "supersedes": [
@@ -570,6 +604,55 @@
         "PTO-TILE-MODEL-NUMERIC-FORMATS",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-09-24",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897",
+      "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDSUB-CONTRACT-001",
+        "PTO-TROWEXPANDMUL-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TROWEXPANDMAX-CONTRACT-001",
+        "PTO-TROWEXPANDMIN-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TCOLEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPANDADD-CONTRACT-001",
+        "PTO-TCOLEXPANDSUB-CONTRACT-001",
+        "PTO-TCOLEXPANDMUL-CONTRACT-001",
+        "PTO-TCOLEXPANDDIV-CONTRACT-001",
+        "PTO-TCOLEXPANDMAX-CONTRACT-001",
+        "PTO-TCOLEXPANDMIN-CONTRACT-001",
+        "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TROWEXPAND",
+        "PTO-TILE-TROWEXPANDADD",
+        "PTO-TILE-TROWEXPANDSUB",
+        "PTO-TILE-TROWEXPANDMUL",
+        "PTO-TILE-TROWEXPANDDIV",
+        "PTO-TILE-TROWEXPANDMAX",
+        "PTO-TILE-TROWEXPANDMIN",
+        "PTO-TILE-TROWEXPANDEXPDIF",
+        "PTO-TILE-TCOLEXPAND",
+        "PTO-TILE-TCOLEXPANDADD",
+        "PTO-TILE-TCOLEXPANDSUB",
+        "PTO-TILE-TCOLEXPANDMUL",
+        "PTO-TILE-TCOLEXPANDDIV",
+        "PTO-TILE-TCOLEXPANDMAX",
+        "PTO-TILE-TCOLEXPANDMIN",
+        "PTO-TILE-TCOLEXPANDEXPDIF",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
+      ]
     }
   ],
   "release_boundary": true
@@ -577,19 +660,26 @@
 ---
 # ADR-TILE-0008: Tile elementwise and irregular operations
 
-## 2026-09-19 accepted amendment: TCVT-only source operation view
+## 2026-09-19 accepted amendment: TCVT CUBE-source operation view
 
-Issue #324 permits a zero-instruction source operation view only for TCVT.
-For RowMajor, CUBE_M16, and CUBE_M32 sources, the persistent backing DataType
-may differ from the selected BSTART source operation DataType only when both
-are non-packed, equal-width, and carrier-compatible. Existing geometry,
-capacity, definedness, numeric-encoding, alias, fault, and TCVT pair rules
-still apply, and the view never mutates the backing descriptor.
+Issue #324 permits a zero-instruction source operation view for TCVT. For
+RowMajor, CUBE_M16, and CUBE_M32 sources, the persistent backing DataType may
+differ from the selected BSTART source operation DataType only when both are
+non-packed, equal-width, and carrier-compatible. Existing geometry, capacity,
+definedness, numeric-encoding, alias, fault, and TCVT pair rules still apply,
+and the view never mutates the backing descriptor.
 
-TFMA, TNOT, tile-scalar, reduction, expansion, TMOV, TLSU, Matrix,
+At that decision boundary, expansion retained exact backing-type matching.
+The separately accepted Issue #338 amendment below adds a scoped expansion
+source operation view. TFMA, TNOT, tile-scalar, reduction, TMOV, TLSU, Matrix,
 PredicateCell, and every other family remain unchanged. No bitcast instruction
-is introduced. This is an additive but architecture-visible compatibility
-change and therefore has required release impact.
+is introduced. Both amendments have required release impact.
+
+## 2026-09-24 accepted amendment: expansion source operation views (Issue #338)
+
+Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) separately scopes the existing equal-width, non-packed carrier rule to all eight `TROWEXPAND*` and eight `TCOLEXPAND*` operations. Each source retains its backing descriptor; consumed bits use the selected source operation DataType. Row expansion consumes logical column zero with a nonempty broadcast column extent, and column expansion consumes row zero with a nonempty broadcast row extent. Full valid-region definedness remains, numeric-encoding preflight applies only to consumed arithmetic/EXPDIF elements, and COPY remains raw and status-free. The accepted ASL/NDF owners listed in this amendment carry the current semantics; this record only records the decision scope and compatibility boundary.
+
+中文：Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) 将现有等宽、非 packed 载体规则单独限定到全部八个 `TROWEXPAND*` 和八个 `TCOLEXPAND*` 操作。每个源 Tile 保留其 backing 描述符，已消费的位按所选源操作 DataType 解释。行扩展只消费逻辑第 0 列且广播列范围非空；列扩展只消费逻辑第 0 行且广播行范围非空。完整有效区域仍须已定义；算术/EXPDIF 仅对消费的元素执行编码预检；COPY 仍是无状态变化的原始位复制。当前语义由此修订列出的 ASL/NDF 所有者定义；本记录仅保留决策范围和兼容性边界。
 
 ## Context
 

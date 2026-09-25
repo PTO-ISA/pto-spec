@@ -52,6 +52,84 @@ EXACT_34 = (
     "TABS TEXP TLOG TNEG TNOT TRECIP TRELU TRSQRT TSQRT "
     "TADDS TANDS TDIVS TMAXS TMINS TMULS TORS TREMS TSHLS TSHRS TSUBS TXORS TFMA"
 ).split()
+R4_PACK_UNPACK_OPERATIONS = {"TPACK", "TUNPACK"}
+R4_ROW_EXPANSION_OPERATIONS = {
+    "TROWEXPAND", "TROWEXPANDADD", "TROWEXPANDSUB", "TROWEXPANDMUL",
+    "TROWEXPANDDIV", "TROWEXPANDMAX", "TROWEXPANDMIN", "TROWEXPANDEXPDIF",
+}
+R4_COLUMN_EXPANSION_OPERATIONS = {
+    "TCOLEXPAND", "TCOLEXPANDADD", "TCOLEXPANDSUB", "TCOLEXPANDMUL",
+    "TCOLEXPANDDIV", "TCOLEXPANDMAX", "TCOLEXPANDMIN", "TCOLEXPANDEXPDIF",
+}
+R4_EXPANSION_OPERATIONS = R4_ROW_EXPANSION_OPERATIONS | R4_COLUMN_EXPANSION_OPERATIONS
+R4_LAYOUT_OPERATIONS = R4_PACK_UNPACK_OPERATIONS | R4_EXPANSION_OPERATIONS
+R4_UNARY_LAYOUT_OPERATIONS = {"TUNPACK", "TROWEXPAND", "TCOLEXPAND"}
+R4_LAYOUT_CLASSIFICATION = (
+    "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure"
+)
+R4_OWNER_DECISIONS = {
+    "pack_unpack": (
+        "Issue #338 r4; ADR-CUBE-0013; PTO-TPACK-CONTRACT-001 and "
+        "PTO-TUNPACK-CONTRACT-001"
+    ),
+    "expansion": (
+        "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; "
+        "the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses"
+    ),
+}
+R4_LAYOUT_DOMAIN_HELPERS = {
+    "TileCellRearrangementLayoutLegal": {
+        "path": "asl/tile/model/legality/layout-rearrangement.asl",
+        "layouts": LOCAL_CUBE_LAYOUTS,
+    },
+    "TileReductionAndExpansionLayoutSupported": {
+        "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+        "layouts": ALLOWED_LAYOUTS,
+    },
+}
+R4_NEW_HELPERS = {
+    "TileCellRearrangementDataTypeLegal": {
+        "path": "asl/tile/model/legality/layout-rearrangement.asl",
+        "layouts": set(),
+        "decision": "pack_unpack",
+        "callers": {
+            ("ResolveBundleCellRearrangementDestination", "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
+            ("TileOperandsLegal_TPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
+            ("TileOperandsLegal_TUNPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
+        },
+    },
+    "TileCellRearrangementSelectedBytesDefined": {
+        "path": "asl/tile/model/legality/layout-rearrangement.asl",
+        "layouts": set(),
+        "decision": "pack_unpack",
+        "callers": {
+            ("TileOperandsLegal_TPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
+            ("TileOperandsLegal_TUNPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
+        },
+    },
+    "TileExpansionBroadcastLegalAs": {
+        "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+        "layouts": set(),
+        "decision": "expansion",
+        "callers": {
+            ("SelectedBundleClosedExpansionSchemaLegal", "asl/block/model/dispatch/expansion-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileExpandAs", "asl/tile/model/legality/reduction-and-expansion.asl"),
+        },
+    },
+    "TileReductionAndExpansionSourceLegalAs": {
+        "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+        "layouts": set(),
+        "decision": "expansion",
+        "callers": {
+            ("SelectedBundleClosedExpansionSchemaLegal", "asl/block/model/dispatch/expansion-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileExpandAs", "asl/tile/model/legality/reduction-and-expansion.asl"),
+        },
+    },
+}
+R4_EXECUTION_HELPER = {
+    "name": "ExecuteTileExpand",
+    "path": "asl/tile/model/execution/expansion.asl",
+}
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
 INDEXED_TLSU = {
     "MGATHER", "MGATHER_MASK", "MGATHER_CAS",
@@ -67,6 +145,8 @@ OWNER_DECISIONS = {
     "BIAS": "ADR-CUBE-0003, ADR-CUBE-0006, ADR-CUBE-0009",
     "TCVT": "ADR-TILE-0008/ADR-CUBE-0017 2026-09-16 amendment / Issue #254",
     "EXACT_34": "ADR-CUBE-0013",
+    "R4_PACK_UNPACK": R4_OWNER_DECISIONS["pack_unpack"],
+    "R4_EXPANSION": R4_OWNER_DECISIONS["expansion"],
 }
 COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
@@ -1129,6 +1209,36 @@ def _layout_predicate_function(name: str) -> bool:
     return False
 
 
+def _static_layout_domain(
+    definitions: dict[str, list[dict[str, Any]]], name: str, expected_path: str,
+) -> tuple[set[str], str | None]:
+    """Extract a closed enum-equality layout domain from one exact helper."""
+    rows = definitions.get(name, [])
+    if len(rows) != 1 or rows[0].get("path") != expected_path:
+        return set(), f"{name} definition must be unique at {expected_path}"
+    row = rows[0]
+    if row.get("params") != ["layout"]:
+        return set(), f"{name} must have only the layout parameter"
+    returns = re.findall(r"\breturn\s+(.*?);", row.get("body", ""), re.DOTALL)
+    if len(returns) != 1:
+        return set(), f"{name} must have one closed return expression"
+    terms = [term.strip() for term in returns[0].split("||")]
+    layouts: list[str] = []
+    term_pattern = re.compile(
+        r"\(?\s*layout\s*==\s*(?:TileLayout_)?"
+        r"(RowMajor|CUBE_M16|CUBE_M32|CUBE_N8|ColumnMajor|ZN|NZ)\s*\)?"
+    )
+    for term in terms:
+        match = term_pattern.fullmatch(term)
+        if match is None:
+            return set(), f"{name} contains a non-enum or non-equality layout term"
+        layouts.append(match.group(1))
+    domain = set(layouts)
+    if len(domain) != len(layouts) or set(LAYOUT_RE.findall(row["body"])) != domain:
+        return set(), f"{name} has duplicate or unbound layout constants"
+    return domain, None
+
+
 def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], definitions: dict[str, list[dict[str, Any]]],
                      context_text: str = "") -> tuple[dict[str, Any], list[str]]:
     roles = _layout_roles_for_op(meta)
@@ -1269,12 +1379,23 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
         for role in roles:
             if re.search(r"scale", role["role"], re.IGNORECASE):
                 contract_layouts[role["field"]].add("CUBE_M32")
-    # The rearrangement owner is the authoritative layout predicate for the
-    # U32 pack/unpack pair; its reachable LayoutLegal helper supplies the
-    # exact two persistent Local layouts to every Tile role in the schema.
-    if re.search(r"accepts\s+only\s+Local\s+U32\s+CUBE_M16\s+or\s+CUBE_M32", contract, re.IGNORECASE):
+    # Issue #338 r4 keeps TPACK/TUNPACK on the two CUBE_M layouts while
+    # changing only their raw-word DataType contract. Bind those NDF names to
+    # the operation roles only when their authoritative layout predicate is
+    # reachable; the closed helper domain is independently checked below.
+    if (mnemonic in R4_PACK_UNPACK_OPERATIONS and
+            "TileCellRearrangementLayoutLegal" in reachable_names and
+            contract_layout_names == LOCAL_CUBE_LAYOUTS):
         for role in roles:
             contract_layouts[role["field"]].update(LOCAL_CUBE_LAYOUTS)
+    # The Issue #338 r4 expansion contracts retain the existing RowMajor and
+    # CUBE_M16/M32 set. The operation-specific NDF names all three layouts;
+    # the reachable closed layout helper supplies the predicate side.
+    if (mnemonic in R4_EXPANSION_OPERATIONS and
+            "TileReductionAndExpansionLayoutSupported" in reachable_names and
+            contract_layout_names == ALLOWED_LAYOUTS):
+        for role in roles:
+            contract_layouts[role["field"]].update(ALLOWED_LAYOUTS)
     # TGPR2T's destination dimensions select the two CUBE layouts; its
     # source fields are excluded above as GPR planes.
     if re.search(r"select\s+an?\s+ordinary\s+numeric\s+CUBE_M32.*?CUBE_M16", contract, re.IGNORECASE | re.DOTALL):
@@ -1478,6 +1599,18 @@ def _helper_snapshot(source_map: dict[str, str], metadata: list[tuple[str, dict[
     return _operation_reachability(source_map, metadata)
 
 
+def _direct_callers(
+    definitions: dict[str, list[dict[str, Any]]], target: str,
+) -> set[tuple[str, str]]:
+    return {
+        (name, row["path"])
+        for name, rows in definitions.items()
+        for row in rows
+        for call, _args in row["calls"]
+        if call == target
+    }
+
+
 def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str]) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -1491,6 +1624,26 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
+            if name in R4_NEW_HELPERS:
+                spec = R4_NEW_HELPERS[name]
+                expected_layouts = set(spec["layouts"])
+                actual_callers = _direct_callers(after_defs, name)
+                valid = (
+                    not old_defs and len(new_defs) == 1 and
+                    new_defs[0]["path"] == spec["path"] and
+                    set(new_defs[0]["layouts"]) == expected_layouts and
+                    actual_callers == set(spec["callers"])
+                )
+                if not valid:
+                    errors.append(f"unauthorized Issue #338 helper definition delta: {name}")
+                    rows.append({"name": name, "classification": "UNCLASSIFIED",
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
+                else:
+                    rows.append({"name": name, "classification": R4_LAYOUT_CLASSIFICATION,
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
+                continue
             if name in FPATR_EFFECTIVE_TYPE_HELPERS:
                 # This Issue #345 classification authorizes only the two new,
                 # layout-free helpers. Do not let the helper allowlist mask a
@@ -1560,6 +1713,16 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = CUBE_AUX_CELLREG_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
+            if name == R4_EXECUTION_HELPER["name"]:
+                expected_path = R4_EXECUTION_HELPER["path"]
+                if (name not in authorized_helper_names or len(old_defs) != 1 or
+                        len(new_defs) != 1 or old_defs[0]["path"] != expected_path or
+                        new_defs[0]["path"] != expected_path or old["layouts"] or
+                        new["layouts"]):
+                    errors.append(f"unauthorized Issue #338 operation-scoped helper change: {name}")
+                    classification = None
+                else:
+                    classification = R4_LAYOUT_CLASSIFICATION
             payload_index_inherited = (
                 name in TCI_PAYLOAD_INDEX_HELPERS and
                 (set(new["layouts"]) - ALLOWED_LAYOUTS) <= (set(old["layouts"]) - ALLOWED_LAYOUTS))
@@ -1582,7 +1745,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 errors.append(f"unclassified common-helper change: {name} ({old['path']})")
             rows.append({"name": name, "path": old["path"], "classification": classification or "UNCLASSIFIED",
                          "before_sha256": old["sha256"], "after_sha256": new["sha256"],
-                         "before_layouts": old["layouts"], "after_layouts": new["layouts"]})
+                         "before_layouts": old["layouts"], "after_layouts": new["layouts"],
+                         **({"owner_decision": R4_OWNER_DECISIONS["expansion"]}
+                            if name == R4_EXECUTION_HELPER["name"] and classification is not None else {})})
     return rows, errors
 
 
@@ -1591,6 +1756,133 @@ def _operation_key_rows(inventory: dict[str, Any]) -> dict[tuple[str, str], dict
             for row in [{"mnemonic": m, "form": f, "owner": op["form_owners"].get(f, op["path"]),
                          "meta": op["meta"], "roles": op["roles"], "path": op["path"],
                          "bundle_owner": op["form_owners"].get("bundle")}]}
+
+
+def _r4_layout_relation_closure(
+    before_inventory: dict[str, Any], after_inventory: dict[str, Any],
+    before_reach: dict[str, Any], after_reach: dict[str, Any],
+    before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]],
+    operation_models_before: dict[tuple[str, str], dict[str, Any]],
+    operation_models_after: dict[tuple[str, str], dict[str, Any]],
+) -> tuple[list[str], set[str]]:
+    """Check the frozen r4 layout/relation and operation-helper owner contract."""
+    available = set(after_inventory["operations"])
+    if not (available & R4_LAYOUT_OPERATIONS):
+        # Small synthetic census fixtures do not model PTO instruction owners.
+        return [], set()
+
+    errors: list[str] = []
+    expected_keys = {(mnemonic, form) for mnemonic in R4_LAYOUT_OPERATIONS
+                     for form in ("direct", "bundle")}
+    actual_keys = {key for key in operation_models_after if key[0] in R4_LAYOUT_OPERATIONS}
+    if actual_keys != expected_keys:
+        errors.append("Issue #338 r4 inventory must contain direct and bundle forms for exactly its 18 operations")
+
+    for mnemonic in sorted(R4_LAYOUT_OPERATIONS):
+        old_op = before_inventory["operations"].get(mnemonic)
+        new_op = after_inventory["operations"].get(mnemonic)
+        if old_op is None or new_op is None:
+            errors.append(f"Issue #338 r4 operation is missing from baseline or candidate: {mnemonic}")
+            continue
+        if set(new_op.get("forms", [])) != {"direct", "bundle"}:
+            errors.append(f"Issue #338 r4 operation forms changed: {mnemonic}")
+        expected_roles = (
+            ["destination0", "source0"] if mnemonic in R4_UNARY_LAYOUT_OPERATIONS
+            else ["destination0", "source0", "source1"]
+        )
+        actual_roles = [role["field"] for role in new_op.get("roles", [])]
+        if actual_roles != expected_roles:
+            errors.append(f"Issue #338 r4 layout-bearing operand roles changed: {mnemonic}")
+        expected_layouts = (LOCAL_CUBE_LAYOUTS if mnemonic in R4_PACK_UNPACK_OPERATIONS
+                            else ALLOWED_LAYOUTS)
+        expected_by_role = {role: set(expected_layouts) for role in expected_roles}
+        expected_relations = {
+            f"destination0.layout == {role}.layout" for role in expected_roles[1:]
+        }
+        for form in ("direct", "bundle"):
+            key = (mnemonic, form)
+            old_model = operation_models_before.get(key)
+            new_model = operation_models_after.get(key)
+            if old_model is None or new_model is None:
+                continue
+            actual_layouts = {role: set(values) for role, values in new_model.get("layouts", {}).items()}
+            contract_layouts = {role: set(values) for role, values in new_model.get("contract_layouts", {}).items()}
+            if actual_layouts != expected_by_role or contract_layouts != expected_by_role:
+                errors.append(f"Issue #338 r4 layout closure mismatch: {mnemonic}/{form}")
+            old_relations = set(old_model.get("relations", []))
+            new_relations = set(new_model.get("relations", []))
+            if new_relations != expected_relations:
+                errors.append(f"Issue #338 r4 same-layout relation closure mismatch: {mnemonic}/{form}")
+            if old_relations != new_relations:
+                errors.append(f"Issue #338 r4 relation changed from baseline: {mnemonic}/{form}")
+
+    # The closed predicates remain the sole layout-domain owners for these
+    # contracts. Compare both sides so hidden helper widening cannot pass.
+    for name, spec in R4_LAYOUT_DOMAIN_HELPERS.items():
+        old_domain, old_error = _static_layout_domain(before_defs, name, spec["path"])
+        new_domain, new_error = _static_layout_domain(after_defs, name, spec["path"])
+        if old_error:
+            errors.append(f"Issue #338 r4 baseline layout owner invalid: {old_error}")
+        elif old_domain != set(spec["layouts"]):
+            errors.append(f"Issue #338 r4 baseline layout domain mismatch: {name}")
+        if new_error:
+            errors.append(f"Issue #338 r4 candidate layout owner invalid: {new_error}")
+        elif new_domain != set(spec["layouts"]):
+            errors.append(f"Issue #338 r4 candidate layout domain mismatch: {name}")
+        if not old_error and not new_error and old_domain != new_domain:
+            errors.append(f"Issue #338 r4 layout domain changed from baseline: {name}")
+
+    for name, spec in R4_NEW_HELPERS.items():
+        old_rows = before_defs.get(name, [])
+        new_rows = after_defs.get(name, [])
+        helper_rows = after_reach.get("helpers", {}).get(name, [])
+        valid = (
+            not old_rows and len(new_rows) == 1 and
+            new_rows[0].get("path") == spec["path"] and
+            not LAYOUT_RE.findall(new_rows[0].get("body", "")) and
+            len(helper_rows) == 1 and not helper_rows[0].get("layouts") and
+            _direct_callers(after_defs, name) == set(spec["callers"])
+        )
+        if not valid:
+            errors.append(f"Issue #338 r4 helper owner/layout/caller closure mismatch: {name}")
+
+    # ExecuteTileExpand is authorized only for the semantic handlers of the
+    # sixteen frozen expansion operations, with one owner-path caller each.
+    expected_execution_callers: set[tuple[str, str]] = set()
+    handled_expansions: set[str] = set()
+    for mnemonic, op in after_inventory["operations"].items():
+        records = op.get("meta", {}).get("catalog_records", [])
+        handlers = {record.get("semantic_handler") for record in records if isinstance(record, dict)}
+        if "ExecuteTileExpand" in handlers:
+            handled_expansions.add(mnemonic)
+            expected_execution_callers.add((f"InstructionContractExecute_{mnemonic}", op["path"]))
+    expected_before_callers: set[tuple[str, str]] = set()
+    handled_before_expansions: set[str] = set()
+    for mnemonic, op in before_inventory["operations"].items():
+        records = op.get("meta", {}).get("catalog_records", [])
+        handlers = {record.get("semantic_handler") for record in records if isinstance(record, dict)}
+        if "ExecuteTileExpand" in handlers:
+            handled_before_expansions.add(mnemonic)
+            expected_before_callers.add((f"InstructionContractExecute_{mnemonic}", op["path"]))
+    old_execution_defs = before_defs.get(R4_EXECUTION_HELPER["name"], [])
+    new_execution_defs = after_defs.get(R4_EXECUTION_HELPER["name"], [])
+    old_execution_helpers = before_reach.get("helpers", {}).get(R4_EXECUTION_HELPER["name"], [])
+    new_execution_helpers = after_reach.get("helpers", {}).get(R4_EXECUTION_HELPER["name"], [])
+    execution_valid = (
+        handled_expansions == R4_EXPANSION_OPERATIONS and
+        _direct_callers(after_defs, R4_EXECUTION_HELPER["name"]) == expected_execution_callers and
+        handled_before_expansions == R4_EXPANSION_OPERATIONS and
+        _direct_callers(before_defs, R4_EXECUTION_HELPER["name"]) == expected_before_callers and
+        len(old_execution_defs) == 1 and len(new_execution_defs) == 1 and
+        old_execution_defs[0].get("path") == R4_EXECUTION_HELPER["path"] and
+        new_execution_defs[0].get("path") == R4_EXECUTION_HELPER["path"] and
+        len(old_execution_helpers) == 1 and len(new_execution_helpers) == 1 and
+        not old_execution_helpers[0].get("layouts") and
+        not new_execution_helpers[0].get("layouts")
+    )
+    if not execution_valid:
+        errors.append("Issue #338 r4 ExecuteTileExpand must remain scoped to the sixteen expansion operations")
+    return errors, ({R4_EXECUTION_HELPER["name"]} if not errors else set())
 
 
 def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baseline: str, candidate: str,
@@ -1656,9 +1948,16 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 f"for {mnemonic}/{form}"
             )
 
+    r4_errors, r4_authorized_helpers = _r4_layout_relation_closure(
+        before_inventory, after_inventory, before_reach, after_reach,
+        before_defs, after_defs, operation_models_before, operation_models_after,
+    )
+    errors.extend(r4_errors)
+    r4_contract_valid = not r4_errors
+
     changed_records: list[dict[str, Any]] = []
     deltas: list[dict[str, Any]] = []
-    authorized_helpers: set[str] = set()
+    authorized_helpers: set[str] = set(r4_authorized_helpers)
     for key in sorted(set(operation_models_before) | set(operation_models_after)):
         if key not in operation_models_before or key not in operation_models_after:
             continue
@@ -1674,13 +1973,22 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         for item in tuple_delta:
             _m, _f, role, layout = item
             classification = _classify_tuple(mnemonic, role, layout, old_model, new_model)
+            if (classification is None and r4_contract_valid and
+                    mnemonic in R4_LAYOUT_OPERATIONS and
+                    item in (new_tuples - old_tuples)):
+                expected_layouts = (LOCAL_CUBE_LAYOUTS if mnemonic in R4_PACK_UNPACK_OPERATIONS
+                                    else ALLOWED_LAYOUTS)
+                if layout in expected_layouts:
+                    classification = R4_LAYOUT_CLASSIFICATION
             deltas.append({"tuple": list(item), "owner": new_rows[key]["owner"], "mnemonic": mnemonic, "form": form,
                            "classification": classification or "UNCLASSIFIED",
                            "owner_decision": OWNER_DECISIONS.get(
                                "BIAS" if mnemonic in BIAS else
-                               "EXACT_34" if mnemonic in EXACT_34 else
-                               "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
-                               mnemonic, "none")})
+                                "EXACT_34" if mnemonic in EXACT_34 else
+                                "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
+                                "R4_PACK_UNPACK" if mnemonic in R4_PACK_UNPACK_OPERATIONS else
+                                "R4_EXPANSION" if mnemonic in R4_EXPANSION_OPERATIONS else
+                                mnemonic, "none")})
             if classification is None:
                 tuple_delta_classified = False
                 errors.append(f"unclassified layout delta for {mnemonic}/{form} ({role}): {item}")
@@ -1691,8 +1999,10 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                            "classification": classification or "UNCLASSIFIED",
                            "owner_decision": OWNER_DECISIONS.get(
                                "BIAS" if mnemonic in BIAS else
-                               "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
-                               mnemonic, "none")})
+                                "INDEXED_TLSU" if mnemonic in INDEXED_TLSU else
+                                "R4_PACK_UNPACK" if mnemonic in R4_PACK_UNPACK_OPERATIONS else
+                                "R4_EXPANSION" if mnemonic in R4_EXPANSION_OPERATIONS else
+                                mnemonic, "none")})
             if classification is None:
                 errors.append(f"unclassified relation delta for {mnemonic}/{form}: {relation}")
         if mnemonic in BIAS:
@@ -1712,11 +2022,15 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         if tuple_delta or relation_delta:
             for row in after_reach["operation_reachability"]:
                 if row["mnemonic"] == mnemonic and row["form"] == form and tuple_delta_classified:
-                    authorized_helpers.update(row["common_helpers"])
+                    if mnemonic in R4_LAYOUT_OPERATIONS:
+                        if mnemonic in R4_EXPANSION_OPERATIONS and r4_contract_valid:
+                            authorized_helpers.add(R4_EXECUTION_HELPER["name"])
+                    else:
+                        authorized_helpers.update(row["common_helpers"])
 
-    # A helper is authorized only when the operation-scoped extraction above
-    # produced a classified, contract-backed delta for every consumer.  This
-    # makes a common-helper mutation visible even when metadata is unchanged.
+    # Existing helper authorization still follows classified operation deltas.
+    # The r4 closure pre-authorizes only ExecuteTileExpand after verifying its
+    # exact sixteen-operation handler set and owner path above.
     helper_deltas, helper_errors = _helper_deltas(before_reach, after_reach, before_defs, after_defs, authorized_helpers)
     errors.extend(helper_errors)
     if enforce_closure:
@@ -1754,7 +2068,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT"}:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT"} | R4_LAYOUT_OPERATIONS:
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;
@@ -1925,6 +2239,126 @@ def _real_relation_mutation_canaries() -> None:
     ):
         raise AssertionError("real TPERMUTE equality mutation did not fail closed")
 
+    mutated = dict(candidate)
+    widened = "           layout == TileLayout_CUBE_M32;"
+    widened_to = ("           layout == TileLayout_CUBE_M32 ||\n"
+                  "           layout == TileLayout_RowMajor;")
+    if widened not in candidate.get(rearrangement_path, ""):
+        raise AssertionError("TPACK/TUNPACK layout-domain canary source is missing")
+    mutated[rearrangement_path] = candidate[rearrangement_path].replace(widened, widened_to, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-cell-rearrangement-layout",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 candidate layout domain mismatch: TileCellRearrangementLayoutLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 pack/unpack layout widening did not fail closed")
+
+    pack_path = "asl/tile/layout-and-rearrangement/layout/TPACK.asl"
+    pack_layout_phrase = "TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing"
+    pack_layout_widened = (
+        "TPACK accepts Local Numeric CUBE_M16, CUBE_M32, or RowMajor source backing"
+    )
+    if pack_layout_phrase not in candidate.get(pack_path, ""):
+        raise AssertionError("TPACK contract layout canary source is missing")
+    mutated = dict(candidate)
+    mutated[pack_path] = candidate[pack_path].replace(pack_layout_phrase, pack_layout_widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-pack-contract-layout",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 layout closure mismatch: TPACK/direct" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 pack contract layout widening did not fail closed")
+
+    expansion_path = "asl/tile/model/legality/reduction-and-expansion.asl"
+    mutated = dict(candidate)
+    expansion_domain = (
+        "           layout == TileLayout_CUBE_M32;"
+    )
+    expansion_widened = (
+        "           layout == TileLayout_CUBE_M32 ||\n"
+        "           layout == TileLayout_NZ;"
+    )
+    if expansion_domain not in candidate.get(expansion_path, ""):
+        raise AssertionError("expansion layout-domain canary source is missing")
+    mutated[expansion_path] = candidate[expansion_path].replace(expansion_domain, expansion_widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-expansion-layout",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 candidate layout domain mismatch: TileReductionAndExpansionLayoutSupported" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 expansion layout widening did not fail closed")
+
+    mutated = dict(candidate)
+    source_relations = (
+        "       broadcast_tile.storage_kind != TileStorage_Numeric ||\n"
+        "       broadcast_tile.layout != destination_tile.layout ||\n"
+        "       source_tile.layout != destination_tile.layout then"
+    )
+    relations_removed = (
+        "       broadcast_tile.storage_kind != TileStorage_Numeric then"
+    )
+    if source_relations not in candidate.get(expansion_path, ""):
+        raise AssertionError("expansion same-layout relation canary source is missing")
+    mutated[expansion_path] = candidate[expansion_path].replace(source_relations, relations_removed, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-expansion-relation",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 same-layout relation closure mismatch" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 expansion relation removal did not fail closed")
+
+    mutated = dict(candidate)
+    helper_layout_line = "            TileElementBits(data_type) == 32);"
+    helper_layout_mutation = (
+        "            TileElementBits(data_type) == 32) &&\n"
+        "           TileLayout_RowMajor == TileLayout_RowMajor;"
+    )
+    if helper_layout_line not in candidate.get(rearrangement_path, ""):
+        raise AssertionError("r4 new-helper layout canary source is missing")
+    mutated[rearrangement_path] = candidate[rearrangement_path].replace(
+        helper_layout_line, helper_layout_mutation, 1
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-helper-layout",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 helper owner/layout/caller closure mismatch: "
+        "TileCellRearrangementDataTypeLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 new-helper layout mutation did not fail closed")
+
+    mutated = dict(candidate)
+    mutated[rearrangement_path] += (
+        "\npure func UnauthorizedIssue338HelperCaller(data_type: TileDataType) => boolean\n"
+        "begin\n"
+        "    return TileCellRearrangementDataTypeLegal(data_type);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT, "real-mutated-r4-helper-caller",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 helper owner/layout/caller closure mismatch: "
+        "TileCellRearrangementDataTypeLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("r4 new-helper extra-caller mutation did not fail closed")
+
 
 def self_test() -> None:
     base = _fixture()
@@ -2001,7 +2435,7 @@ def self_test() -> None:
     if result["pass"] or not any("missing authoritative PTO-INSTRUCTION" in error or "inventory changed" in error for error in result["errors"]):
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner mutations rejected")
 
 
 def main() -> int:

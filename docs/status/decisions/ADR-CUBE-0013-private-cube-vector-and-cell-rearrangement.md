@@ -29,7 +29,11 @@
     "PTO-TILE-TPACK",
     "PTO-TILE-TPERMUTE",
     "PTO-TILE-TSHUF",
-    "PTO-TILE-TUNPACK"
+    "PTO-TILE-TUNPACK",
+    "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+    "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"
   ],
   "resolves": [],
   "supersedes": [],
@@ -39,7 +43,28 @@
   "legacy_ids": [
     "ADR-0103"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-24",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897",
+      "affected_ndf": [
+        "PTO-TPACK-CONTRACT-001",
+        "PTO-TUNPACK-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TPACK",
+        "PTO-TILE-TUNPACK",
+        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+        "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+        "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE"
+      ]
+    }
+  ]
 }
 ---
 
@@ -200,3 +225,9 @@ normal dispatch. Before this closure the materialized RowMajor view was
 rejected with `Fault_TileLegality` before effects; the generated operation
 matrix expectation model records the corrected commit outcome (cases
 0253-0255, 0257-0258, 0260-0261, 0263).
+
+### 2026-09-24 accepted amendment (Issue #338): raw-word pack/unpack types
+
+Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) supersedes the earlier U32-only pack/unpack type statements and complete-source-word requirement. It keeps the original independent 32-bit raw-word fields and CELL traversal while admitting non-packed 8/16/32-bit Local CUBE source backing and U8/U16/U32 destination operation types. Selected bytes alone must be logically valid and defined; a partial final source word is legal when the selected field fits. Each participating source word still produces a complete zero-filled destination word, and TPACK still pairs equal raw-word slot counts. Only the TPACK/TUNPACK instruction contracts and their operation-aware destination resolution are amended. The normative ASL/NDF clauses own the current rules.
+
+中文：Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) 保留原有独立 32 位 raw-word 字段和 CELL 遍历，同时允许非 packed 的 8/16/32 位 Local CUBE 源 backing，以及 U8/U16/U32 目的操作类型。仅被选中的字节必须逻辑有效且已定义；只要选中字段位于有效字节范围内，末尾部分 word 即合法。每个参与源 word 仍产生完整的零填充目的 word，TPACK 仍要求相同的 raw-word 槽数。仅修订 TPACK/TUNPACK 指令契约及其操作类型感知的目的解析。当前规则由规范 ASL/NDF 子句定义。

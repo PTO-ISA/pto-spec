@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TUNPACK.asl`
 
-Extract and zero-extend a raw byte field from Local U32 CUBE words.
+Extract selected byte fields from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TUNPACK}
 
@@ -81,7 +81,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TUNPACK, U32
+BSTART.SFU TUNPACK, U8/U16/U32
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source, ->destination
@@ -101,7 +101,9 @@ end;
 pure func InstructionContractDataTypeLegal_TUNPACK(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_U32;
+    return data_type == TileDataType_U8 ||
+           data_type == TileDataType_U16 ||
+           data_type == TileDataType_U32;
 end;
 
 readonly func InstructionContractOperandsLegal_TUNPACK(
@@ -125,13 +127,13 @@ end;
 
 ## Legality
 
-- TUNPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.
-- The control selects one contiguous byte field with offset 0..3 and count 1..4 within a U32 word.
-- The result is zero-extended raw extraction.
+- TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements.
+- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.
+- Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one complete zero-filled destination word.
 
 ## State effects
 
-- Extract and zero-extend one byte field in each active CUBE word group.
+- Extract the selected byte field independently from each participating 32-bit raw-word slot, zero-fill the remainder, and publish one complete destination word per source word.
 
 ## Memory effects and ordering
 
@@ -145,9 +147,9 @@ end;
 
 ## Exceptions
 
-- Illegal offset/count fields reject with Fault_TileLegality before effects.
+- Unsupported storage, layout, or backing width; a selected interval outside a source word logical valid-byte span; an undefined selected byte; or illegal offset/count fields reject with Fault_TileLegality before effects.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior.
 
 ## Examples
 
-- BSTART.SFU TUNPACK, U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TUNPACK, U8/U16/U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP

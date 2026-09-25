@@ -8376,7 +8376,23 @@
         "PTO-INST-TILE-TCMPS",
         "PTO-INST-TILE-TGPR2T",
         "PTO-INST-TILE-TSEL",
-        "PTO-INST-TILE-TSELS"
+        "PTO-INST-TILE-TSELS",
+        "PTO-TCOLEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPANDADD-CONTRACT-001",
+        "PTO-TCOLEXPANDDIV-CONTRACT-001",
+        "PTO-TCOLEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TCOLEXPANDMAX-CONTRACT-001",
+        "PTO-TCOLEXPANDMIN-CONTRACT-001",
+        "PTO-TCOLEXPANDMUL-CONTRACT-001",
+        "PTO-TCOLEXPANDSUB-CONTRACT-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TROWEXPANDMAX-CONTRACT-001",
+        "PTO-TROWEXPANDMIN-CONTRACT-001",
+        "PTO-TROWEXPANDMUL-CONTRACT-001",
+        "PTO-TROWEXPANDSUB-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -8485,7 +8501,25 @@
         "PTO-TILE-TCMPS",
         "PTO-TILE-TSELS",
         "PTO-TILE-TGPR2T",
-        "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS"
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-TCOLEXPAND",
+        "PTO-TILE-TCOLEXPANDADD",
+        "PTO-TILE-TCOLEXPANDDIV",
+        "PTO-TILE-TCOLEXPANDEXPDIF",
+        "PTO-TILE-TCOLEXPANDMAX",
+        "PTO-TILE-TCOLEXPANDMIN",
+        "PTO-TILE-TCOLEXPANDMUL",
+        "PTO-TILE-TCOLEXPANDSUB",
+        "PTO-TILE-TROWEXPAND",
+        "PTO-TILE-TROWEXPANDADD",
+        "PTO-TILE-TROWEXPANDDIV",
+        "PTO-TILE-TROWEXPANDEXPDIF",
+        "PTO-TILE-TROWEXPANDMAX",
+        "PTO-TILE-TROWEXPANDMIN",
+        "PTO-TILE-TROWEXPANDMUL",
+        "PTO-TILE-TROWEXPANDSUB"
       ],
       "amendments": [
         {
@@ -8778,6 +8812,55 @@
           "baseline": "be5afa4df626384f7259b282b40cf32cc8085d51",
           "date": "2026-09-19",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/324"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-TROWEXPAND-CONTRACT-001",
+            "PTO-TROWEXPANDADD-CONTRACT-001",
+            "PTO-TROWEXPANDSUB-CONTRACT-001",
+            "PTO-TROWEXPANDMUL-CONTRACT-001",
+            "PTO-TROWEXPANDDIV-CONTRACT-001",
+            "PTO-TROWEXPANDMAX-CONTRACT-001",
+            "PTO-TROWEXPANDMIN-CONTRACT-001",
+            "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+            "PTO-TCOLEXPAND-CONTRACT-001",
+            "PTO-TCOLEXPANDADD-CONTRACT-001",
+            "PTO-TCOLEXPANDSUB-CONTRACT-001",
+            "PTO-TCOLEXPANDMUL-CONTRACT-001",
+            "PTO-TCOLEXPANDDIV-CONTRACT-001",
+            "PTO-TCOLEXPANDMAX-CONTRACT-001",
+            "PTO-TCOLEXPANDMIN-CONTRACT-001",
+            "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TROWEXPAND",
+            "PTO-TILE-TROWEXPANDADD",
+            "PTO-TILE-TROWEXPANDSUB",
+            "PTO-TILE-TROWEXPANDMUL",
+            "PTO-TILE-TROWEXPANDDIV",
+            "PTO-TILE-TROWEXPANDMAX",
+            "PTO-TILE-TROWEXPANDMIN",
+            "PTO-TILE-TROWEXPANDEXPDIF",
+            "PTO-TILE-TCOLEXPAND",
+            "PTO-TILE-TCOLEXPANDADD",
+            "PTO-TILE-TCOLEXPANDSUB",
+            "PTO-TILE-TCOLEXPANDMUL",
+            "PTO-TILE-TCOLEXPANDDIV",
+            "PTO-TILE-TCOLEXPANDMAX",
+            "PTO-TILE-TCOLEXPANDMIN",
+            "PTO-TILE-TCOLEXPANDEXPDIF",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
         }
       ],
       "approvers": [
@@ -9059,7 +9142,11 @@
         "PTO-TILE-TROWMIN",
         "PTO-TILE-TROWPROD",
         "PTO-TILE-TROWSUM",
-        "PTO-TILE-TTRI"
+        "PTO-TILE-TTRI",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
       ],
       "amendments": [
         {
@@ -9086,6 +9173,54 @@
           "baseline": "1fae7c5d715a0468e941e5bb42f03399336cb465",
           "date": "2026-09-15",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/233"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TROWEXPAND-CONTRACT-001",
+            "PTO-TROWEXPANDADD-CONTRACT-001",
+            "PTO-TROWEXPANDSUB-CONTRACT-001",
+            "PTO-TROWEXPANDMUL-CONTRACT-001",
+            "PTO-TROWEXPANDDIV-CONTRACT-001",
+            "PTO-TROWEXPANDMAX-CONTRACT-001",
+            "PTO-TROWEXPANDMIN-CONTRACT-001",
+            "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+            "PTO-TCOLEXPAND-CONTRACT-001",
+            "PTO-TCOLEXPANDADD-CONTRACT-001",
+            "PTO-TCOLEXPANDSUB-CONTRACT-001",
+            "PTO-TCOLEXPANDMUL-CONTRACT-001",
+            "PTO-TCOLEXPANDDIV-CONTRACT-001",
+            "PTO-TCOLEXPANDMAX-CONTRACT-001",
+            "PTO-TCOLEXPANDMIN-CONTRACT-001",
+            "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TROWEXPAND",
+            "PTO-TILE-TROWEXPANDADD",
+            "PTO-TILE-TROWEXPANDSUB",
+            "PTO-TILE-TROWEXPANDMUL",
+            "PTO-TILE-TROWEXPANDDIV",
+            "PTO-TILE-TROWEXPANDMAX",
+            "PTO-TILE-TROWEXPANDMIN",
+            "PTO-TILE-TROWEXPANDEXPDIF",
+            "PTO-TILE-TCOLEXPAND",
+            "PTO-TILE-TCOLEXPANDADD",
+            "PTO-TILE-TCOLEXPANDSUB",
+            "PTO-TILE-TCOLEXPANDMUL",
+            "PTO-TILE-TCOLEXPANDDIV",
+            "PTO-TILE-TCOLEXPANDMAX",
+            "PTO-TILE-TCOLEXPANDMIN",
+            "PTO-TILE-TCOLEXPANDEXPDIF",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
         }
       ],
       "approvers": [
@@ -9314,7 +9449,9 @@
         "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
         "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
         "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
-        "PTO-TILE-MODEL-EXECUTION-REDUCTION"
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"
       ],
       "amendments": [
         {
@@ -9397,6 +9534,54 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-17",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/323"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TROWEXPAND-CONTRACT-001",
+            "PTO-TROWEXPANDADD-CONTRACT-001",
+            "PTO-TROWEXPANDSUB-CONTRACT-001",
+            "PTO-TROWEXPANDMUL-CONTRACT-001",
+            "PTO-TROWEXPANDDIV-CONTRACT-001",
+            "PTO-TROWEXPANDMAX-CONTRACT-001",
+            "PTO-TROWEXPANDMIN-CONTRACT-001",
+            "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+            "PTO-TCOLEXPAND-CONTRACT-001",
+            "PTO-TCOLEXPANDADD-CONTRACT-001",
+            "PTO-TCOLEXPANDSUB-CONTRACT-001",
+            "PTO-TCOLEXPANDMUL-CONTRACT-001",
+            "PTO-TCOLEXPANDDIV-CONTRACT-001",
+            "PTO-TCOLEXPANDMAX-CONTRACT-001",
+            "PTO-TCOLEXPANDMIN-CONTRACT-001",
+            "PTO-TCOLEXPANDEXPDIF-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TROWEXPAND",
+            "PTO-TILE-TROWEXPANDADD",
+            "PTO-TILE-TROWEXPANDSUB",
+            "PTO-TILE-TROWEXPANDMUL",
+            "PTO-TILE-TROWEXPANDDIV",
+            "PTO-TILE-TROWEXPANDMAX",
+            "PTO-TILE-TROWEXPANDMIN",
+            "PTO-TILE-TROWEXPANDEXPDIF",
+            "PTO-TILE-TCOLEXPAND",
+            "PTO-TILE-TCOLEXPANDADD",
+            "PTO-TILE-TCOLEXPANDSUB",
+            "PTO-TILE-TCOLEXPANDMUL",
+            "PTO-TILE-TCOLEXPANDDIV",
+            "PTO-TILE-TCOLEXPANDMAX",
+            "PTO-TILE-TCOLEXPANDMIN",
+            "PTO-TILE-TCOLEXPANDEXPDIF",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
         }
       ],
       "approvers": [
@@ -10701,7 +10886,33 @@
         "PTO-TILE-TPACK",
         "PTO-TILE-TPERMUTE",
         "PTO-TILE-TSHUF",
-        "PTO-TILE-TUNPACK"
+        "PTO-TILE-TUNPACK",
+        "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TPACK-CONTRACT-001",
+            "PTO-TUNPACK-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TPACK",
+            "PTO-TILE-TUNPACK",
+            "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+            "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+            "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+          "date": "2026-09-24",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
+        }
       ],
       "approvers": [
         "zhoubot"

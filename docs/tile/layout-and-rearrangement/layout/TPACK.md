@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TPACK.asl`
 
-Pack two low-order raw byte fields into Local U32 CUBE words.
+Pack selected raw byte prefixes from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TPACK}
 
@@ -82,7 +82,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TPACK, U32
+BSTART.SFU TPACK, U8/U16/U32
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source0, source1, ->destination
@@ -102,7 +102,9 @@ end;
 pure func InstructionContractDataTypeLegal_TPACK(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_U32;
+    return data_type == TileDataType_U8 ||
+           data_type == TileDataType_U16 ||
+           data_type == TileDataType_U32;
 end;
 
 readonly func InstructionContractOperandsLegal_TPACK(
@@ -129,13 +131,13 @@ end;
 
 ## Legality
 
-- TPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.
-- The control selects two low-order byte fields with widths 1..3 whose sum is at most four.
-- The result is raw zero-filled field assembly with no numeric conversion.
+- TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.
+- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.
+- Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one complete zero-filled destination word.
 
 ## State effects
 
-- Pack corresponding source U32 words independently in every active CUBE word group.
+- Pair corresponding 32-bit raw-word slots independently in each row, assemble the selected low-byte prefixes, and zero every unselected destination byte.
 
 ## Memory effects and ordering
 
@@ -149,9 +151,9 @@ end;
 
 ## Exceptions
 
-- Illegal field widths reject with Fault_TileLegality before effects.
+- Unsupported storage, layout, or backing width; unequal raw-word counts; an out-of-span or undefined selected byte; or illegal field widths reject with Fault_TileLegality before effects.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior.
 
 ## Examples
 
-- BSTART.SFU TPACK, U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TPACK, U8/U16/U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP

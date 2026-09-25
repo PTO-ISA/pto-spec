@@ -127791,7 +127791,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -127799,7 +127799,7 @@
           "semantic_handler": "ExecuteTileExpand",
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
-            "operand:source0:persistent-local-one-row-broadcast-source",
+            "operand:source0:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -127833,7 +127833,7 @@
           "BSTART.SFU TCOLEXPAND, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -127869,12 +127869,12 @@
         ],
         "legality": [
           "TCOLEXPAND is selected by the TEPL raw encoding carrier Mode 2 Function 20; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent one-row source and one newly allocated Local destination; no full-shape second source exists.",
+          "Exactly one terminating Local B.IOT supplies one persistent column broadcast source with at least one valid row and one newly allocated Local destination; no full-shape second source exists.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination DataType equals the broadcast source DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The destination DataType is the BSTART operation DataType. The broadcast source backing may differ only through an equal-width non-packed carrier view.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only logical row zero supplies values, while later valid rows remain defined but ignored.",
           "The destination geometry is the B.DIM-derived geometry.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "The source valid region is fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout; COPY does not validate arithmetic encodings.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -127888,7 +127888,7 @@
           },
           {
             "field": "source0",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values"
           }
         ],
         "ordering": [
@@ -127898,7 +127898,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, copy BroadcastTile[0,c] bit-for-bit.",
+          "For every valid destination element, copy the raw operation-view bits of BroadcastTile[0,c] bit-for-bit.",
           "The copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -127909,7 +127909,7 @@
       "mnemonic": "TCOLEXPAND",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPAND",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
-      "summary": "Broadcast one one-row vector source bit-for-bit into a new Local destination.",
+      "summary": "Copy the first logical row of a column broadcast source bit-for-bit into a new Local destination.",
       "surface": "tile"
     },
     {
@@ -127964,7 +127964,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -127973,7 +127973,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -128007,7 +128007,7 @@
           "BSTART.SFU TCOLEXPANDADD, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -128043,12 +128043,12 @@
         ],
         "legality": [
           "TCOLEXPANDADD is selected by the TEPL raw encoding carrier Mode 2 Function 21; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -128066,7 +128066,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -128076,7 +128076,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] + BroadcastTile[0,c] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] + operation-view BroadcastTile[0,c] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TADD typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -128087,7 +128087,7 @@
       "mnemonic": "TCOLEXPANDADD",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDADD",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl",
-      "summary": "Add a broadcast one-row vector to a full-shape source with exact typed semantics.",
+      "summary": "Add a first-row column-broadcast source to a full-shape source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -128142,7 +128142,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -128151,7 +128151,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -128186,7 +128186,7 @@
           "BSTART.SFU TCOLEXPANDDIV, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -128222,12 +128222,12 @@
         ],
         "legality": [
           "TCOLEXPANDDIV is selected by the TEPL raw encoding carrier Mode 2 Function 24; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -128245,7 +128245,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -128255,7 +128255,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] / BroadcastTile[0,c] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] / operation-view BroadcastTile[0,c] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TDIV typed operation.",
           "A selected zero integer broadcast element is illegal before effects; floating positive and negative zero use the floating profile.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
@@ -128267,7 +128267,7 @@
       "mnemonic": "TCOLEXPANDDIV",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDDIV",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl",
-      "summary": "Divide a full-shape source by a broadcast one-row vector with exact typed semantics.",
+      "summary": "Divide a full-shape source by a first-row column-broadcast source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -128323,7 +128323,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -128364,7 +128364,7 @@
           "BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR Layout, DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -128526,12 +128526,12 @@
         ],
         "legality": [
           "TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.",
-          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.",
-          "Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
-          "The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.",
+          "Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
+          "The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies the column value, while later valid rows remain defined but are ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -128549,7 +128549,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source interpreted through SrcDataType; only row zero supplies values"
           }
         ],
         "ordering": [
@@ -128559,7 +128559,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.",
+          "For each destination [r,c], interpret source0[r,c] and BroadcastTile[0,c] as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then subtract and exponentiate at FP32; same-type pairs retain the existing sequence.",
           "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -128570,7 +128570,7 @@
       "mnemonic": "TCOLEXPANDEXPDIF",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDEXPDIF",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl",
-      "summary": "Exponentiate the typed difference between a full-shape source and a broadcast one-row vector.",
+      "summary": "Exponentiate the SrcDataType difference using the selected column broadcast element.",
       "surface": "tile"
     },
     {
@@ -128625,7 +128625,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -128634,7 +128634,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -128668,7 +128668,7 @@
           "BSTART.SFU TCOLEXPANDMAX, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -128704,12 +128704,12 @@
         ],
         "legality": [
           "TCOLEXPANDMAX is selected by the TEPL raw encoding carrier Mode 2 Function 25; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -128727,7 +128727,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -128737,7 +128737,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute typed max(source0[r,c], BroadcastTile[0,c]) at the selected element width.",
+          "For every valid destination element, compute typed max(source0[r,c], operation-view BroadcastTile[0,c]) at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMAX typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -128748,7 +128748,7 @@
       "mnemonic": "TCOLEXPANDMAX",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDMAX",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl",
-      "summary": "Take the typed maximum of a full-shape source and a broadcast one-row vector.",
+      "summary": "Take the typed maximum of a full-shape source and a first-row column-broadcast source.",
       "surface": "tile"
     },
     {
@@ -128803,7 +128803,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -128812,7 +128812,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -128846,7 +128846,7 @@
           "BSTART.SFU TCOLEXPANDMIN, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -128882,12 +128882,12 @@
         ],
         "legality": [
           "TCOLEXPANDMIN is selected by the TEPL raw encoding carrier Mode 2 Function 26; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -128905,7 +128905,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -128915,7 +128915,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute typed min(source0[r,c], BroadcastTile[0,c]) at the selected element width.",
+          "For every valid destination element, compute typed min(source0[r,c], operation-view BroadcastTile[0,c]) at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMIN typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -128926,7 +128926,7 @@
       "mnemonic": "TCOLEXPANDMIN",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDMIN",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl",
-      "summary": "Take the typed minimum of a full-shape source and a broadcast one-row vector.",
+      "summary": "Take the typed minimum of a full-shape source and a first-row column-broadcast source.",
       "surface": "tile"
     },
     {
@@ -128981,7 +128981,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -128990,7 +128990,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -129024,7 +129024,7 @@
           "BSTART.SFU TCOLEXPANDMUL, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -129060,12 +129060,12 @@
         ],
         "legality": [
           "TCOLEXPANDMUL is selected by the TEPL raw encoding carrier Mode 2 Function 23; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -129083,7 +129083,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -129093,7 +129093,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] * BroadcastTile[0,c] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] * operation-view BroadcastTile[0,c] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMUL typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -129104,7 +129104,7 @@
       "mnemonic": "TCOLEXPANDMUL",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDMUL",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl",
-      "summary": "Multiply a full-shape source by a broadcast one-row vector with exact typed semantics.",
+      "summary": "Multiply a full-shape source by a first-row column-broadcast source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -129159,7 +129159,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-row broadcast source"
+              "role": "persistent Local column-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -129168,7 +129168,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:source1:persistent-local-column-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -129202,7 +129202,7 @@
           "BSTART.SFU TCOLEXPANDSUB, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -129238,12 +129238,12 @@
         ],
         "legality": [
           "TCOLEXPANDSUB is selected by the TEPL raw encoding carrier Mode 2 Function 22; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent column broadcast source with at least one valid row, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has logical ValidRow equal to one and ValidCol equal to the destination; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows >= 1 and ValidColumns equal to destination.ValidColumns; only BroadcastTile[0,c] supplies values, while later valid rows remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -129261,7 +129261,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-row broadcast source"
+            "role": "persistent Local column broadcast source; only row zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -129271,7 +129271,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] - BroadcastTile[0,c] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] - operation-view BroadcastTile[0,c] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TSUB typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -129282,7 +129282,7 @@
       "mnemonic": "TCOLEXPANDSUB",
       "ndf_clause": "PTO-INST-TILE-TCOLEXPANDSUB",
       "source": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl",
-      "summary": "Subtract a broadcast one-row vector from a full-shape source with exact typed semantics.",
+      "summary": "Subtract a first-row column-broadcast source from a full-shape source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -136063,7 +136063,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TPACK, U32",
+          "BSTART.SFU TPACK, U8/U16/U32",
           "B.DATR Layout (optional)",
           "B.DIM LB0/LB1/LB2 (optional)",
           "B.IOT source0, source1, ->destination",
@@ -136079,17 +136079,17 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TPACK, U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP"
+          "BSTART.SFU TPACK, U8/U16/U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP"
         ],
         "exceptions": [
-          "Illegal field widths reject with Fault_TileLegality before effects.",
+          "Unsupported storage, layout, or backing width; unequal raw-word counts; an out-of-span or undefined selected byte; or illegal field widths reject with Fault_TileLegality before effects.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
         ],
         "field_domains": [],
         "legality": [
-          "TPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.",
-          "The control selects two low-order byte fields with widths 1..3 whose sum is at most four.",
-          "The result is raw zero-filled field assembly with no numeric conversion."
+          "TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.",
+          "BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.",
+          "Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one complete zero-filled destination word."
         ],
         "memory_effects": [
           "none"
@@ -136117,7 +136117,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Pack corresponding source U32 words independently in every active CUBE word group."
+          "Pair corresponding 32-bit raw-word slots independently in each row, assemble the selected low-byte prefixes, and zero every unselected destination byte."
         ]
       },
       "documentation": "docs/tile/layout-and-rearrangement/layout/TPACK.md",
@@ -136125,7 +136125,7 @@
       "mnemonic": "TPACK",
       "ndf_clause": "PTO-INST-TILE-TPACK",
       "source": "asl/tile/layout-and-rearrangement/layout/TPACK.asl",
-      "summary": "Pack two low-order raw byte fields into Local U32 CUBE words.",
+      "summary": "Pack selected raw byte prefixes from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.",
       "surface": "tile"
     },
     {
@@ -137494,7 +137494,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -137502,7 +137502,7 @@
           "semantic_handler": "ExecuteTileExpand",
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
-            "operand:source0:persistent-local-one-column-broadcast-source",
+            "operand:source0:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -137536,7 +137536,7 @@
           "BSTART.SFU TROWEXPAND, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -137572,12 +137572,12 @@
         ],
         "legality": [
           "TROWEXPAND is selected by the TEPL raw encoding carrier Mode 2 Function 4; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent one-column source and one newly allocated Local destination; no full-shape second source exists.",
+          "Exactly one terminating Local B.IOT supplies one persistent row broadcast source with at least one valid column and one newly allocated Local destination; no full-shape second source exists.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination DataType equals the broadcast source DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The destination DataType is the BSTART operation DataType. The broadcast source backing may differ only through an equal-width non-packed carrier view.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only logical column zero supplies values, while later valid columns remain defined but ignored.",
           "The destination geometry is the B.DIM-derived geometry.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "The source valid region is fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout; COPY does not validate arithmetic encodings.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -137591,7 +137591,7 @@
           },
           {
             "field": "source0",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values"
           }
         ],
         "ordering": [
@@ -137601,7 +137601,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, copy BroadcastTile[r,0] bit-for-bit.",
+          "For every valid destination element, copy the raw operation-view bits of BroadcastTile[r,0] bit-for-bit.",
           "The copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -137612,7 +137612,7 @@
       "mnemonic": "TROWEXPAND",
       "ndf_clause": "PTO-INST-TILE-TROWEXPAND",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
-      "summary": "Broadcast one one-column vector source bit-for-bit into a new Local destination.",
+      "summary": "Copy the first logical column of a row broadcast source bit-for-bit into a new Local destination.",
       "surface": "tile"
     },
     {
@@ -137667,7 +137667,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -137676,7 +137676,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -137710,7 +137710,7 @@
           "BSTART.SFU TROWEXPANDADD, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -137746,12 +137746,12 @@
         ],
         "legality": [
           "TROWEXPANDADD is selected by the TEPL raw encoding carrier Mode 2 Function 5; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -137769,7 +137769,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -137779,7 +137779,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] + BroadcastTile[r,0] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] + operation-view BroadcastTile[r,0] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TADD typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -137790,7 +137790,7 @@
       "mnemonic": "TROWEXPANDADD",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDADD",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
-      "summary": "Add a broadcast one-column vector to a full-shape source with exact typed semantics.",
+      "summary": "Add a first-column row-broadcast source to a full-shape source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -137845,7 +137845,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -137854,7 +137854,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -137889,7 +137889,7 @@
           "BSTART.SFU TROWEXPANDDIV, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -137925,12 +137925,12 @@
         ],
         "legality": [
           "TROWEXPANDDIV is selected by the TEPL raw encoding carrier Mode 2 Function 8; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -137948,7 +137948,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -137958,7 +137958,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] / BroadcastTile[r,0] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] / operation-view BroadcastTile[r,0] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TDIV typed operation.",
           "A selected zero integer broadcast element is illegal before effects; floating positive and negative zero use the floating profile.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
@@ -137970,7 +137970,7 @@
       "mnemonic": "TROWEXPANDDIV",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDDIV",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
-      "summary": "Divide a full-shape source by a broadcast one-column vector with exact typed semantics.",
+      "summary": "Divide a full-shape source by a first-column row-broadcast source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -138026,7 +138026,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -138067,7 +138067,7 @@
           "BSTART.SFU TROWEXPANDEXPDIF, SrcDataType; B.DATR Layout, DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -138229,12 +138229,12 @@
         ],
         "legality": [
           "TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.",
-          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.",
-          "Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
-          "The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.",
+          "Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
+          "The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies the row value, while later valid columns remain defined but are ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -138252,7 +138252,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values"
           }
         ],
         "ordering": [
@@ -138262,7 +138262,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.",
+          "For each destination [r,c], interpret source0[r,c] and BroadcastTile[r,0] as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then subtract and exponentiate at FP32; same-type pairs retain the existing sequence.",
           "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -138273,7 +138273,7 @@
       "mnemonic": "TROWEXPANDEXPDIF",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDEXPDIF",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
-      "summary": "Exponentiate the typed difference between a full-shape source and a broadcast one-column vector.",
+      "summary": "Exponentiate the SrcDataType difference using the selected row broadcast element.",
       "surface": "tile"
     },
     {
@@ -138328,7 +138328,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -138337,7 +138337,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -138371,7 +138371,7 @@
           "BSTART.SFU TROWEXPANDMAX, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -138407,12 +138407,12 @@
         ],
         "legality": [
           "TROWEXPANDMAX is selected by the TEPL raw encoding carrier Mode 2 Function 9; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -138430,7 +138430,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -138440,7 +138440,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute typed max(source0[r,c], BroadcastTile[r,0]) at the selected element width.",
+          "For every valid destination element, compute typed max(source0[r,c], operation-view BroadcastTile[r,0]) at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMAX typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -138451,7 +138451,7 @@
       "mnemonic": "TROWEXPANDMAX",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDMAX",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
-      "summary": "Take the typed maximum of a full-shape source and a broadcast one-column vector.",
+      "summary": "Take the typed maximum of a full-shape source and a first-column row-broadcast source.",
       "surface": "tile"
     },
     {
@@ -138506,7 +138506,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -138515,7 +138515,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -138549,7 +138549,7 @@
           "BSTART.SFU TROWEXPANDMIN, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -138585,12 +138585,12 @@
         ],
         "legality": [
           "TROWEXPANDMIN is selected by the TEPL raw encoding carrier Mode 2 Function 10; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -138608,7 +138608,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -138618,7 +138618,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute typed min(source0[r,c], BroadcastTile[r,0]) at the selected element width.",
+          "For every valid destination element, compute typed min(source0[r,c], operation-view BroadcastTile[r,0]) at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMIN typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -138629,7 +138629,7 @@
       "mnemonic": "TROWEXPANDMIN",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDMIN",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
-      "summary": "Take the typed minimum of a full-shape source and a broadcast one-column vector.",
+      "summary": "Take the typed minimum of a full-shape source and a first-column row-broadcast source.",
       "surface": "tile"
     },
     {
@@ -138684,7 +138684,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -138693,7 +138693,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -138727,7 +138727,7 @@
           "BSTART.SFU TROWEXPANDMUL, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -138763,12 +138763,12 @@
         ],
         "legality": [
           "TROWEXPANDMUL is selected by the TEPL raw encoding carrier Mode 2 Function 7; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -138786,7 +138786,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -138796,7 +138796,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] * BroadcastTile[r,0] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] * operation-view BroadcastTile[r,0] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMUL typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -138807,7 +138807,7 @@
       "mnemonic": "TROWEXPANDMUL",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDMUL",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
-      "summary": "Multiply a full-shape source by a broadcast one-column vector with exact typed semantics.",
+      "summary": "Multiply a full-shape source by a first-column row-broadcast source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -138862,7 +138862,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local one-column broadcast source"
+              "role": "persistent Local row-broadcast source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -138871,7 +138871,7 @@
           "state_effects": [
             "operand:destination0:new-local-same-type-destination",
             "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:source1:persistent-local-row-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -138905,7 +138905,7 @@
           "BSTART.SFU TROWEXPANDSUB, DataType; B.DATR Layout, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported, mixed, or mismatched source layout, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -138941,12 +138941,12 @@
         ],
         "legality": [
           "TROWEXPANDSUB is selected by the TEPL raw encoding carrier Mode 2 Function 6; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
+          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent row broadcast source with at least one valid column, and one newly allocated Local destination.",
           "The exact legal DataTypes are FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, and U8.",
-          "The destination and both sources use exactly the selected DataType.",
-          "The broadcast source has ValidRow equal to the destination and logical orthogonal valid extent equal to one; physical extents are derived from the selected layout.",
+          "The BSTART DataType is both the source operation DataType and destination DataType. Each source backing DataType may differ only through an equal-width non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.",
+          "The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies values, while later valid columns remain defined but ignored.",
           "The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.",
-          "Every source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout with valid numeric encodings.",
+          "All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid encodings; ignored extra broadcast elements need definedness but are not encoding-validated.",
           "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
@@ -138964,7 +138964,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local one-column broadcast source"
+            "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
           }
         ],
         "ordering": [
@@ -138974,7 +138974,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, compute source0[r,c] - BroadcastTile[r,0] at the selected element width.",
+          "For every valid destination element, compute source0[r,c] - operation-view BroadcastTile[r,0] at the selected element width.",
           "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TSUB typed operation.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -138985,7 +138985,7 @@
       "mnemonic": "TROWEXPANDSUB",
       "ndf_clause": "PTO-INST-TILE-TROWEXPANDSUB",
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
-      "summary": "Subtract a broadcast one-column vector from a full-shape source with exact typed semantics.",
+      "summary": "Subtract a first-column row-broadcast source from a full-shape source with exact typed semantics.",
       "surface": "tile"
     },
     {
@@ -142850,7 +142850,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TUNPACK, U32",
+          "BSTART.SFU TUNPACK, U8/U16/U32",
           "B.DATR Layout (optional)",
           "B.DIM LB0/LB1/LB2 (optional)",
           "B.IOT source, ->destination",
@@ -142866,17 +142866,17 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TUNPACK, U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP"
+          "BSTART.SFU TUNPACK, U8/U16/U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP"
         ],
         "exceptions": [
-          "Illegal offset/count fields reject with Fault_TileLegality before effects.",
+          "Unsupported storage, layout, or backing width; a selected interval outside a source word logical valid-byte span; an undefined selected byte; or illegal offset/count fields reject with Fault_TileLegality before effects.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
         ],
         "field_domains": [],
         "legality": [
-          "TUNPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.",
-          "The control selects one contiguous byte field with offset 0..3 and count 1..4 within a U32 word.",
-          "The result is zero-extended raw extraction."
+          "TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements.",
+          "BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.",
+          "Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one complete zero-filled destination word."
         ],
         "memory_effects": [
           "none"
@@ -142900,7 +142900,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Extract and zero-extend one byte field in each active CUBE word group."
+          "Extract the selected byte field independently from each participating 32-bit raw-word slot, zero-fill the remainder, and publish one complete destination word per source word."
         ]
       },
       "documentation": "docs/tile/layout-and-rearrangement/layout/TUNPACK.md",
@@ -142908,7 +142908,7 @@
       "mnemonic": "TUNPACK",
       "ndf_clause": "PTO-INST-TILE-TUNPACK",
       "source": "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl",
-      "summary": "Extract and zero-extend a raw byte field from Local U32 CUBE words.",
+      "summary": "Extract selected byte fields from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.",
       "surface": "tile"
     },
     {

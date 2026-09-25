@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001","source":"asl/block/model/dispatch/expansion-schema.asl","requirements":["PTO-TROWEXPAND-CONTRACT-001"],"kind":"boundary","summary":"TROWEXPAND accepts one terminating destination and one one-column source only.","pass_condition":"The exact COPY schema is legal with source0 alone and rejects an added source1 before allocation.","related_sources":["asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001","source":"asl/block/model/dispatch/expansion-schema.asl","requirements":["PTO-TROWEXPAND-CONTRACT-001"],"kind":"boundary","summary":"TROWEXPAND COPY accepts one terminating destination and exactly one broadcast source.","pass_condition":"The exact COPY schema is legal with source0 alone and rejects an added source1 before allocation.","related_sources":["asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl"]}
 pure func TROWEXPANDSchemaStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;

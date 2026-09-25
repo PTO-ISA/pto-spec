@@ -22,11 +22,11 @@ begin
         TileLayout_RowMajor);
     ConfigureTile(
         2,
-        128,
-        128,
-        1,
+        256,
         2,
-        1,
+        2,
+        2,
+        2,
         TileDataType_U8,
         TileLayout_RowMajor);
     for row = 0 to 1 looplimit 2 do
@@ -34,6 +34,9 @@ begin
             WriteTileElement(1, row, column, Zeros{PTO_XLEN} + 8);
         end;
         WriteTileElement(2, row, 0, Zeros{PTO_XLEN} + 2);
+        // The extra broadcast column is defined but ignored; its zero value
+        // must not be treated as a division denominator.
+        WriteTileElement(2, row, 1, Zeros{PTO_XLEN});
     end;
 
     let started = ExecuteCommandInstruction(
@@ -60,6 +63,7 @@ begin
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
     assert SelectedBundleClosedExpansionSchemaLegal(operation);
 
+    // The selected first column is the denominator; zero there rejects.
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     assert !SelectedBundleClosedExpansionSchemaLegal(operation);
     return 0;

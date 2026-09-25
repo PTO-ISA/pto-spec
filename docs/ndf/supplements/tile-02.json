@@ -12,8 +12,8 @@
         "zh-CN": "跨类型 Tile 载体解释"
       },
       "summary": {
-        "en": "This clause explains when an operation may interpret a non-packed source through a different data type: the source and operation element widths stay equal. Packed carriers remain outside this path, and an active bundle with no resolvable operation type is rejected instead of silently inheriting the source type; a direct semantic call may use the backing type as its explicit interpretation.",
-        "zh-CN": "本条说明操作何时可以用不同数据类型解释非打包源：源类型与操作类型的元素位宽保持一致。打包载体不走这一路径；活动 bundle 无法解析操作类型时会被拒绝，而不会静默继承源类型；直接语义调用则可以把 backing type 作为显式解释类型。"
+        "en": "Expansion and other explicitly selected operation views may interpret an unchanged, non-packed source carrier through a different type only at equal element width. Expansion checks arithmetic encodings under the selected source operation type, keeps every source valid region defined, and ignores numeric encodings in unselected extra broadcast elements.",
+        "zh-CN": "扩展及其他明确选择操作类型的视图，仅可在元素位宽相等时用不同类型解释未改变的非打包源载体。扩展按所选源操作类型检查算术编码，要求所有源有效区域均已定义，并忽略广播源中未选额外元素的数值编码。"
       }
     },
     {
@@ -276,8 +276,8 @@
         "zh-CN": "TPACK 字节字段组装"
       },
       "summary": {
-        "en": "TPACK combines low-order byte fields from two corresponding source elements into each U32 result word. Each explicit field width is between one and three bytes, and the two widths together occupy at most four bytes. Result bits outside the selected fields are observable as zero.",
-        "zh-CN": "TPACK 从两个源的对应元素中取低位字节字段，并将它们组合成每个 U32 结果字。两个显式字段宽度各为一到三个字节，合计不超过四个字节。未被字段占用的结果位可观察为零。"
+        "en": "TPACK pairs sources by independent raw 32-bit word slot, reads only the selected low-byte prefixes that are valid and defined, and emits one zero-filled destination word per paired slot. U8, U16, or U32 selects the destination type and shape; a partial final source word is allowed.",
+        "zh-CN": "TPACK 按独立的 32 位原始字槽配对源，只读取有效且已定义的选定低位字节前缀，并为每个配对槽生成一个零填充目标字。U8、U16 或 U32 选择目标类型和形状；源的末尾部分字也可参与。"
       }
     },
     {
@@ -384,8 +384,8 @@
         "zh-CN": "TROWEXPAND 单列广播"
       },
       "summary": {
-        "en": "TROWEXPAND broadcasts each row's single source column bit-for-bit across the destination columns. The bundle uses one terminating Local B.IOT and no B.IOR or B.IOS, and only the data types listed by the instruction owner participate. Full preflight and the source snapshot precede atomic publication of payload, status, padding, and the renamed destination descriptor.",
-        "zh-CN": "TROWEXPAND 将每一行唯一源列的位模式原样广播到目标各列。bundle 使用一个终止 Local B.IOT，不使用 B.IOR 或 B.IOS，且只接受该指令 owner 列出的数据类型。完整预检与源快照先于载荷、状态、填充和重命名目标描述符的一次性发布。"
+        "en": "TROWEXPAND copies the column-zero value from each row broadcast across that row of the destination without changing carrier bits. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPAND 将每行广播源第 0 列的载体位原样复制到目标行的所有列。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可通过所选源操作类型解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -396,8 +396,8 @@
         "zh-CN": "TROWEXPANDADD 行广播加法"
       },
       "summary": {
-        "en": "TROWEXPANDADD adds each full-shape source element to the one-column value from the same row under the selected data type. Its bundle terminates with one Local B.IOT, excludes B.IOR and B.IOS, and stays within the owner's supported type set. Preflight and both source snapshots finish before the complete renamed result, status, padding, and descriptor become visible.",
-        "zh-CN": "TROWEXPANDADD 按所选数据类型，将 full-shape 源的每个元素与同一行的一列源值相加。其 bundle 由一个 Local B.IOT 终止，不包含 B.IOR 或 B.IOS，并限于 owner 支持的类型集合。预检和两个源快照完成后，完整的重命名结果、状态、填充和描述符才会可见。"
+        "en": "TROWEXPANDADD adds each full-shape source element and the column-zero value from the same row under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDADD 按所选源操作类型，将完整形状源的每个元素与同一行广播源第 0 列的值相加。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -408,8 +408,8 @@
         "zh-CN": "TROWEXPANDDIV 行广播除法"
       },
       "summary": {
-        "en": "TROWEXPANDDIV divides each full-shape source element by the one-column value from the same row under the selected data type. Its bundle terminates with one Local B.IOT, excludes B.IOR and B.IOS, and stays within the owner's supported type set. Preflight and both source snapshots finish before the complete renamed result, status, padding, and descriptor become visible.",
-        "zh-CN": "TROWEXPANDDIV 按所选数据类型，将 full-shape 源的每个元素除以同一行的一列源值。其 bundle 由一个 Local B.IOT 终止，不包含 B.IOR 或 B.IOS，并限于 owner 支持的类型集合。预检和两个源快照完成后，完整的重命名结果、状态、填充和描述符才会可见。"
+        "en": "TROWEXPANDDIV divides each full-shape source element by the column-zero value from the same row under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDDIV 按所选源操作类型，将完整形状源的每个元素除以同一行广播源第 0 列的值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -420,8 +420,8 @@
         "zh-CN": "TROWEXPANDEXPDIF 行广播指数差"
       },
       "summary": {
-        "en": "TROWEXPANDEXPDIF subtracts the one-column value from each full-shape element in the same row using SrcDataType, then exponentiates the difference using DstDataType. Its legal type pairs are FP16, BF16, or FP32 to the same type, plus FP16 or BF16 to FP32; omitted destination type inherits the source type. Other pairs or non-Local binding schemas are rejected before snapshots, and a valid complete result publishes atomically.",
-        "zh-CN": "TROWEXPANDEXPDIF 先按 SrcDataType 将同一行的一列源值从每个 full-shape 元素中减去，再按 DstDataType 对差值求指数。合法类型对包括 FP16、BF16、FP32 到同类型，以及 FP16 或 BF16 到 FP32；省略目标类型时继承源类型。其他类型对或非 Local 绑定 schema 会在快照前被拒绝，合法的完整结果一次性发布。"
+        "en": "TROWEXPANDEXPDIF subtracts the column-zero broadcast value from each full-shape element using SrcDataType, then exponentiates using DstDataType; its existing FP16, BF16, and FP32 pairs and widening sequence remain unchanged. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDEXPDIF 使用 SrcDataType 从完整形状源每个元素中减去同一行广播源第 0 列的值，再使用 DstDataType 计算指数；既有 FP16、BF16 和 FP32 类型对及扩宽顺序保持不变。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -432,8 +432,8 @@
         "zh-CN": "TROWEXPANDMAX 行广播最大值"
       },
       "summary": {
-        "en": "TROWEXPANDMAX compares each full-shape source element with the one-column value from the same row and selects the typed maximum. Its bundle uses one terminating Local B.IOT, no B.IOR or B.IOS, and the data types listed by the owner. Preflight and source snapshots complete before the renamed payload, status, padding, and descriptor appear atomically.",
-        "zh-CN": "TROWEXPANDMAX 将 full-shape 源的每个元素与同一行的一列源值比较，并选择带类型的最大值。其 bundle 使用一个终止 Local B.IOT，不使用 B.IOR 或 B.IOS，数据类型限于 owner 列出的集合。预检与源快照完成后，重命名载荷、状态、填充和描述符一次性可见。"
+        "en": "TROWEXPANDMAX selects the typed maximum of each full-shape source element and the column-zero value from the same row. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDMAX 对完整形状源的每个元素与同一行广播源第 0 列的值，按类型选择最大值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -444,8 +444,8 @@
         "zh-CN": "TROWEXPANDMIN 行广播最小值"
       },
       "summary": {
-        "en": "TROWEXPANDMIN compares each full-shape source element with the one-column value from the same row and selects the typed minimum. Its bundle uses one terminating Local B.IOT, no B.IOR or B.IOS, and the data types listed by the owner. Preflight and source snapshots complete before the renamed payload, status, padding, and descriptor appear atomically.",
-        "zh-CN": "TROWEXPANDMIN 将 full-shape 源的每个元素与同一行的一列源值比较，并选择带类型的最小值。其 bundle 使用一个终止 Local B.IOT，不使用 B.IOR 或 B.IOS，数据类型限于 owner 列出的集合。预检与源快照完成后，重命名载荷、状态、填充和描述符一次性可见。"
+        "en": "TROWEXPANDMIN selects the typed minimum of each full-shape source element and the column-zero value from the same row. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDMIN 对完整形状源的每个元素与同一行广播源第 0 列的值，按类型选择最小值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -456,8 +456,8 @@
         "zh-CN": "TROWEXPANDMUL 行广播乘法"
       },
       "summary": {
-        "en": "TROWEXPANDMUL multiplies each full-shape source element by the one-column value from the same row under the selected data type. Its bundle terminates with one Local B.IOT, excludes B.IOR and B.IOS, and stays within the owner's supported type set. Preflight and both source snapshots finish before the complete renamed result, status, padding, and descriptor become visible.",
-        "zh-CN": "TROWEXPANDMUL 按所选数据类型，将 full-shape 源的每个元素乘以同一行的一列源值。其 bundle 由一个 Local B.IOT 终止，不包含 B.IOR 或 B.IOS，并限于 owner 支持的类型集合。预检和两个源快照完成后，完整的重命名结果、状态、填充和描述符才会可见。"
+        "en": "TROWEXPANDMUL multiplies each full-shape source element and the column-zero value from the same row under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDMUL 按所选源操作类型，将完整形状源的每个元素与同一行广播源第 0 列的值相乘。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -468,8 +468,8 @@
         "zh-CN": "TROWEXPANDSUB 行广播减法"
       },
       "summary": {
-        "en": "TROWEXPANDSUB subtracts the one-column value from each full-shape source element in the same row under the selected data type. Its bundle terminates with one Local B.IOT, excludes B.IOR and B.IOS, and stays within the owner's supported type set. Preflight and both source snapshots finish before the complete renamed result, status, padding, and descriptor become visible.",
-        "zh-CN": "TROWEXPANDSUB 按所选数据类型，将同一行的一列源值从 full-shape 源的每个元素中减去。其 bundle 由一个 Local B.IOT 终止，不包含 B.IOR 或 B.IOS，并限于 owner 支持的类型集合。预检和两个源快照完成后，完整的重命名结果、状态、填充和描述符才会可见。"
+        "en": "TROWEXPANDSUB subtracts the column-zero value from each full-shape source element in the same row under the selected source operation type. Every source keeps its backing descriptor; a different backing type is interpreted through the selected source operation type only when element widths match and the carrier is non-packed. Source valid regions remain fully defined, while extra broadcast columns are ignored and are not checked for numeric encodings. The result and status publish atomically after preflight and source snapshots.",
+        "zh-CN": "TROWEXPANDSUB 按所选源操作类型，从完整形状源的每个元素中减去同一行广播源第 0 列的值。每个源描述符保持不变；仅当元素位宽相等且载体未打包时，才可解释不同 backing 类型。所有源有效区域必须保持已定义；额外广播列会被忽略且不检查数值编码。预检和源快照完成后，结果及状态原子发布。"
       }
     },
     {
@@ -704,12 +704,12 @@
       "id": "PTO-TUNPACK-CONTRACT-001",
       "source_path": "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl",
       "title": {
-        "en": "TUNPACK U32 byte-field extraction",
-        "zh-CN": "TUNPACK U32 字节字段提取"
+        "en": "TUNPACK raw-word field extraction",
+        "zh-CN": "TUNPACK 原始字字段提取"
       },
       "summary": {
-        "en": "TUNPACK extracts one contiguous byte field from each U32 CUBE source word and zero-extends that field into the corresponding U32 result. The explicit byte offset and count delimit the field. Both controls are checked before effects, preventing an invalid field selection from producing a partial destination.",
-        "zh-CN": "TUNPACK 从每个 U32 CUBE 源字中提取一个连续字节字段，并把该字段零扩展到对应的 U32 结果。显式字节 offset 与 count 界定字段范围。两个控制值都在产生效果前检查，非法字段选择不会生成部分目标。"
+        "en": "TUNPACK extracts the controlled byte interval from each participating raw 32-bit word and emits one zero-filled destination word per slot. U8, U16, or U32 selects the destination type and shape; only logically valid, defined selected bytes are read, including bytes in a partial final word.",
+        "zh-CN": "TUNPACK 从每个参与的 32 位原始字中提取控制字段指定的字节区间，并为每个槽生成一个零填充目标字。U8、U16 或 U32 选择目标类型和形状；只读取逻辑有效且已定义的选中字节，包括末尾部分字中的字节。"
       }
     },
     {
