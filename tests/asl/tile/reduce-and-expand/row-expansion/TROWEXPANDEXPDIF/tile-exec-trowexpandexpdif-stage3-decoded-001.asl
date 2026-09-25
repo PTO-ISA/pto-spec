@@ -181,7 +181,7 @@ begin
         else Zeros{12} + 0x05B)
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let (types_legal, selected_source_type, selected_destination_type) =
-        SelectedBundleExpansionExponentialDifferenceTypes();
+        SelectedBundleExponentialDifferenceTypes();
     assert types_legal;
     assert selected_source_type == source_type;
     assert selected_destination_type == destination_type;

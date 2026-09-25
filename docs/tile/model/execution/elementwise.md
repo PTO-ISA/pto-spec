@@ -60,6 +60,7 @@ begin
         when TileBinary_SHR => return LSR(left, UInt(right[5:0]));
         when TileBinary_DIV => return DivideWordUnsigned(left, right);
         when TileBinary_REM => return left - MultiplyWord(DivideWordUnsigned(left, right), right);
+        when TileBinary_EXPDIF => unreachable;
     end;
 end;
 
@@ -222,6 +223,7 @@ begin
                     LSR(left_value,
                         TileIntegerShiftAmount(right_value, data_type));
             return TileUnsignedElementValue(shifted, data_type);
+        when TileBinary_EXPDIF => unreachable;
         otherwise =>
             unreachable;
     end;
@@ -299,6 +301,7 @@ func TileProfileBinaryWithFlags(
     left: Word,
     right: Word) => (Word, bits(5))
 begin
+    assert op != TileBinary_EXPDIF;
     if (op == TileBinary_AND || op == TileBinary_OR ||
        op == TileBinary_XOR) &&
        TileCarrierOnlyDataTypeSupported(data_type) then
@@ -332,6 +335,7 @@ begin
             when TileBinary_SUB => operation = FloatingBinary_SUB;
             when TileBinary_MUL => operation = FloatingBinary_MUL;
             when TileBinary_DIV => operation = FloatingBinary_DIV;
+            when TileBinary_EXPDIF => unreachable;
             otherwise => unreachable;
         end;
         return ScalarFPBinaryProfile(
@@ -357,6 +361,7 @@ end;
 func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
                        source_left: TileIndex, source_right: TileIndex)
 begin
+    assert op != TileBinary_EXPDIF;
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     let operation_type = _Tiles[[destination]].data_type;

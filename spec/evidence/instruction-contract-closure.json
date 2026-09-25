@@ -131195,6 +131195,302 @@
             },
             {
               "operand": "source1"
+            }
+          ],
+          "classification": "elementwise-tile-tile",
+          "command_mnemonic": "BSTART.TEPL",
+          "contract_status": "reviewed-complete",
+          "datr_contract": {
+            "allowed_nonzero_fields": [
+              "Layout",
+              "DataType",
+              "PadValueOrByteId"
+            ],
+            "pad_union": "pad-value"
+          },
+          "disposition": "accepted-direct-operation",
+          "effect_contract": "ExecuteTileExpdif",
+          "engine": "SFU",
+          "family": "TEPL",
+          "fault_contract": "ExecuteTileInstruction",
+          "function": 29,
+          "legality_handler": "TileOperandsLegal_ExecuteTileExpdif",
+          "mode": 0,
+          "name": "TEXPDIF",
+          "operands": [
+            {
+              "field": "destination0",
+              "role": "new Local DstDataType numeric destination"
+            },
+            {
+              "field": "source0",
+              "role": "persistent Local SrcOperationType minuend"
+            },
+            {
+              "field": "source1",
+              "role": "persistent Local SrcOperationType subtrahend"
+            }
+          ],
+          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "selector": "0x01D",
+          "semantic_handler": "ExecuteTileExpdif",
+          "state_effects": [
+            "operand:destination0:new-local-DstDataType-destination",
+            "operand:source0:persistent-local-SrcOperationType-minuend",
+            "operand:source1:persistent-local-SrcOperationType-subtrahend",
+            "runtime:CurrentBundlePadValue:numeric-padding",
+            "runtime:NumericStatusFlags:profile-status"
+          ]
+        }
+      ],
+      "classification": [
+        "elementwise-tile-tile",
+        "transcendental"
+      ],
+      "contract": {
+        "block_composition": [
+          "BSTART.SFU TEXPDIF, SrcOperationType",
+          "B.DATR Layout, DataType, PadValue (optional)",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow (optional)",
+          "B.DIM LB2=Col (optional)",
+          "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+        ],
+        "canonical_assembly": [
+          "TEXPDIF <bundle operands>"
+        ],
+        "defaults": [
+          "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero and legal under the selected descriptor geometry.",
+          "Omitted B.DATR selects Layout=NORM (RowMajor), DstDataType=SrcOperationType, and PadValue=Null. When B.DATR is present, DataType=DTYPE_NONE inherits SrcOperationType and a concrete DataType selects DstDataType; encoded DataType zero selects FP64 and is not absence."
+        ],
+        "encoded_fields": [],
+        "encoding_class": "selector-encoded-block-operation",
+        "examples": [
+          "BSTART.SFU TEXPDIF, SrcOperationType; B.DATR Layout, DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+        ],
+        "exceptions": [
+          "Malformed Local bindings, B.IOR or B.IOS presence, extra bindings, unsupported or reserved type pairs, packed or width-changing source carriers, invalid source encodings, undefined source contents, layout or logical-shape mismatch, invalid dimensions, or illegal source descriptors raise Fault_TileLegality before effects.",
+          "An unrepresentable destination shape, insufficient TSize/capacity, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before publication.",
+          "Rejection publishes no destination payload, padding, descriptor, or numeric status."
+        ],
+        "field_domains": [
+          {
+            "assigned": [
+              {
+                "meaning": "FP64",
+                "value": 0
+              },
+              {
+                "meaning": "FP32",
+                "value": 1
+              },
+              {
+                "meaning": "TF32",
+                "value": 2
+              },
+              {
+                "meaning": "HF32",
+                "value": 3
+              },
+              {
+                "meaning": "FP16",
+                "value": 4
+              },
+              {
+                "meaning": "BF16",
+                "value": 5
+              },
+              {
+                "meaning": "HiF8",
+                "value": 6
+              },
+              {
+                "meaning": "E4M3",
+                "value": 7
+              },
+              {
+                "meaning": "E5M2",
+                "value": 8
+              },
+              {
+                "meaning": "E3M2",
+                "value": 9
+              },
+              {
+                "meaning": "E2M3",
+                "value": 10
+              },
+              {
+                "meaning": "E2M1X2",
+                "value": 11
+              },
+              {
+                "meaning": "E1M2X2",
+                "value": 12
+              },
+              {
+                "meaning": "E8M0",
+                "value": 13
+              },
+              {
+                "meaning": "HiF4X2",
+                "value": 14
+              },
+              {
+                "meaning": "E6M2",
+                "value": 15
+              },
+              {
+                "meaning": "S64",
+                "value": 16
+              },
+              {
+                "meaning": "S32",
+                "value": 17
+              },
+              {
+                "meaning": "S16",
+                "value": 18
+              },
+              {
+                "meaning": "S8",
+                "value": 19
+              },
+              {
+                "meaning": "S4X2",
+                "value": 20
+              },
+              {
+                "meaning": "RCPE6M2",
+                "value": 21
+              },
+              {
+                "meaning": "U64",
+                "value": 24
+              },
+              {
+                "meaning": "U32",
+                "value": 25
+              },
+              {
+                "meaning": "U16",
+                "value": 26
+              },
+              {
+                "meaning": "U8",
+                "value": 27
+              },
+              {
+                "meaning": "U4X2",
+                "value": 28
+              }
+            ],
+            "field": "B.DATR.DataType",
+            "id": "PTO-FIELD-BLOCK-DATATYPE",
+            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "reserved": [
+              22,
+              23,
+              29,
+              30,
+              31
+            ],
+            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
+            "source": "asl/arch/data-types/tile-data-types.asl",
+            "width": 5,
+            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+          },
+          {
+            "assigned": [
+              {
+                "meaning": "Zero-or-ByteId0",
+                "value": 0
+              },
+              {
+                "meaning": "Max-or-ByteId1",
+                "value": 1
+              },
+              {
+                "meaning": "Min-or-ByteId2",
+                "value": 2
+              },
+              {
+                "meaning": "Null-or-ByteId3",
+                "value": 3
+              }
+            ],
+            "field": "B.DATR.PadValueOrByteId",
+            "id": "PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID",
+            "rejection": "All four encodings are assigned; the selected operation separately validates whether the field is PadValue, ByteId, or inapplicable.",
+            "reserved": [],
+            "role": "Carries the operation-selected PadValue or ByteId union field.",
+            "source": "asl/block/attributes/B.DATR.asl",
+            "width": 2,
+            "zero_meaning": "For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero."
+          }
+        ],
+        "legality": [
+          "TEXPDIF is TEPL Mode 0 Function 29 (selector 0x01D) on SFU; 0x01C remains TFMA and 0x01E..0x01F remain reserved.",
+          "Exactly one terminating Local B.IOT supplies two ordered persistent Local numeric sources and one newly allocated Local numeric destination. B.IOR, B.IOS, additional bindings, and shared operands are illegal.",
+          "The exact legal (SrcOperationType,DstDataType) pairs are (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32). All other pairs reject.",
+          "Each source backing type may differ independently from SrcOperationType only when both types are non-packed, have equal element width, and TileCarrierWidthCompatible is true. Source payloads are validated and interpreted as SrcOperationType without retagging the source descriptors.",
+          "The result for every valid coordinate is natural exp(src0-src1), with source0 as minuend and source1 as subtrahend. TEXPDIF does not broadcast.",
+          "Same-type pairs perform typed SUB followed by typed natural EXP. Mixed FP16/BF16-to-FP32 pairs exactly widen both inputs to FP32 before FP32 SUB and FP32 natural EXP; widening is not TCVT and adds no conversion-inexact status.",
+          "Only RowMajor, CUBE_M16, and CUBE_M32 are legal. CUBE_N8, Shared, unsupported layouts, and mixed operand layouts reject. Sources and destination share the selected layout and logical ValidRow x ValidCol; each descriptor's physical geometry is checked using its own backing/destination type.",
+          "B.DATR Layout, DataType, and PadValueOrByteId are the only applicable nonzero fields. CMode, RMode, Sat, Canonicalize, and unrelated fields are illegal.",
+          "PE_MASK=0000 is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "destination0",
+            "role": "new Local DstDataType numeric destination"
+          },
+          {
+            "field": "source0",
+            "role": "persistent Local SrcOperationType minuend"
+          },
+          {
+            "field": "source1",
+            "role": "persistent Local SrcOperationType subtrahend"
+          }
+        ],
+        "ordering": [
+          "For nonzero participation, decode and validate commands, dimensions, type pair, source descriptors/carriers/definedness/encodings, destination size/capacity/name allocation, and destination geometry before result publication.",
+          "Snapshot both complete sources before computing results. Legal same-width source/destination aliasing observes read-old/write-new behavior; source Tiles remain unchanged.",
+          "For each valid element, OR SUB and EXP status; OR status across elements. Apply destination padding and publish the full destination descriptor, payload, definedness, and accumulated status atomically."
+        ],
+        "standalone_opcode": false,
+        "state_effects": [
+          "For every valid logical coordinate compute exp(src0-src1) using the shared typed EXPDIF numeric owner and the selected natural-EXP profile.",
+          "Mixed FP16/BF16-to-FP32 results use exact widening before FP32 subtraction; the destination has independently derived FP32 geometry and capacity.",
+          "Apply the selected PadValue outside the valid result rectangle, then atomically publish destination state and accumulated numeric status."
+        ]
+      },
+      "documentation": "docs/tile/elementwise-tile-tile/transcendental/TEXPDIF.md",
+      "engine": "SFU",
+      "mnemonic": "TEXPDIF",
+      "ndf_clause": "PTO-INST-TILE-TEXPDIF",
+      "source": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "summary": "Compute natural exp(src0-src1) elementwise over two full-shape Local Tiles.",
+      "surface": "tile"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "arguments": [
+            {
+              "operand": "destination0"
+            },
+            {
+              "operand": "source0"
+            },
+            {
+              "operand": "source1"
             },
             {
               "operand": "source2"
@@ -143337,9 +143633,9 @@
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
     "encoded_form_count": 562,
-    "mnemonic_count": 662,
+    "mnemonic_count": 663,
     "placeholder_count": 0,
-    "selector_operation_count": 117,
+    "selector_operation_count": 118,
     "status": "closed",
     "unresolved_field_count": 0
   }

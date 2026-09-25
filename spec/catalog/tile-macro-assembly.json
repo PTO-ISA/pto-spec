@@ -87876,6 +87876,1935 @@
     {
       "classification": [
         "elementwise-tile-tile",
+        "transcendental"
+      ],
+      "commit_boundaries": [
+        "next non-modifier Block instruction",
+        "end of section",
+        "explicit BSTOP compatibility boundary"
+      ],
+      "configuration": [
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "Derived",
+          "field": "Row",
+          "optional": true,
+          "ordinal": 0,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "Row=Derived",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": null,
+          "field": "Col",
+          "optional": false,
+          "ordinal": 1,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "Col",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "Row",
+          "field": "ValidRow",
+          "optional": true,
+          "ordinal": 2,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidRow=Row",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "dimension",
+          "constraint": null,
+          "default": "Col",
+          "field": "ValidCol",
+          "optional": true,
+          "ordinal": 3,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "ValidCol=Col",
+          "value_style": "named-assignment"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
+          "default": null,
+          "field": "SrcOperationType",
+          "optional": false,
+          "ordinal": 4,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "SrcOperationType",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
+          "default": null,
+          "field": "DstDataType",
+          "optional": true,
+          "ordinal": 5,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "DstDataType?",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
+          "default": null,
+          "field": "Layout",
+          "optional": true,
+          "ordinal": 6,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "Layout?",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
+          "default": null,
+          "field": "PadValue",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "PadValue?",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
+          "default": "AllPE",
+          "field": "PEMask",
+          "optional": true,
+          "ordinal": 8,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "PEMask=AllPE",
+          "value_style": "bare-value"
+        }
+      ],
+      "defaults": [
+        "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero and legal under the selected descriptor geometry.",
+        "Omitted B.DATR selects Layout=NORM (RowMajor), DstDataType=SrcOperationType, and PadValue=Null. When B.DATR is present, DataType=DTYPE_NONE inherits SrcOperationType and a concrete DataType selects DstDataType; encoded DataType zero selects FP64 and is not absence."
+      ],
+      "destinations": [
+        {
+          "binding_kind": "tile-destination-binding",
+          "condition": null,
+          "configuration_kind": null,
+          "constraint": null,
+          "default": null,
+          "field": "DstTile",
+          "optional": false,
+          "ordinal": 0,
+          "role": "new Local DstDataType numeric destination",
+          "size": "Size",
+          "syntax": "->DstTile<Size>",
+          "value_style": null
+        }
+      ],
+      "engine": "SFU",
+      "exceptions": [
+        "Malformed Local bindings, B.IOR or B.IOS presence, extra bindings, unsupported or reserved type pairs, packed or width-changing source carriers, invalid source encodings, undefined source contents, layout or logical-shape mismatch, invalid dimensions, or illegal source descriptors raise Fault_TileLegality before effects.",
+        "An unrepresentable destination shape, insufficient TSize/capacity, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before publication.",
+        "Rejection publishes no destination payload, padding, descriptor, or numeric status."
+      ],
+      "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+      "forms": [
+        {
+          "assemble_variants": [
+            {
+              "assemble_phase": "INIT",
+              "destinations": [
+                {
+                  "assemble_phase": "INIT",
+                  "binding_kind": "tile-destination-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "DstTile",
+                  "optional": false,
+                  "ordinal": 0,
+                  "parent_capacity": "ParentCapacity",
+                  "role": "new Local DstDataType numeric destination",
+                  "size": "ParentCapacity",
+                  "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                  "value_style": null,
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                }
+              ],
+              "expansion": {
+                "assemble_lowering": {
+                  "command": "B.ASSEMBLE",
+                  "fields": {
+                    "RegSrc": "RegSrc",
+                    "WriterSizeCode": "WriterSizeCode",
+                    "uimm11": "uimm11"
+                  },
+                  "init_bit": true,
+                  "last_bit": false,
+                  "parent_capacity": {
+                    "allocation": true,
+                    "command": "B.IOT",
+                    "field": "SizeCode",
+                    "slot": "Role2",
+                    "value": "ParentCapacity"
+                  },
+                  "parent_ref": null,
+                  "phase": "INIT",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent": {
+                  "assemble_command": "B.ASSEMBLE",
+                  "assemble_phase": "INIT",
+                  "binding_kind": "tile-destination-binding",
+                  "canonical_suffixes": [
+                    "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                  ],
+                  "carrier": "final-source-form-binder",
+                  "concrete_examples": {
+                    "Local": {
+                      "INIT": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+                      "INIT_LAST": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+                      "LAST": "->T#3[assemble=LAST,a0+4096:2KB]",
+                      "MIDDLE": "->T#3[assemble=MIDDLE,a0+2048:2KB]"
+                    },
+                    "Shared": {
+                      "INIT": "->S7<64KB>[assemble=INIT,zero+0:64KB]",
+                      "INIT_LAST": "->S7<64KB>[assemble=INIT_LAST,zero+0:64KB]",
+                      "LAST": "->S7[assemble=LAST,a1+32768:32KB]",
+                      "MIDDLE": "->S7[assemble=MIDDLE,a1+32768:32KB]"
+                    }
+                  },
+                  "field": "DstTile",
+                  "folding": "unique-exact-match-or-retain-physical-assembly",
+                  "handler_source_argument": false,
+                  "handler_source_arguments_unchanged": true,
+                  "local_capacity": {
+                    "ordinary_sources": 7,
+                    "physical_slots": 8
+                  },
+                  "no_allocation": false,
+                  "ordinary_source_ordinal": false,
+                  "parent_capacity": "allocating-binder-SizeCode-or-selected-Local-ParentRef-or-open-Shared-generation",
+                  "parent_capacity_field": "ParentCapacity",
+                  "parent_identity": "new destination identity",
+                  "parent_kind": "Local",
+                  "parent_ref_physical_role": "assemble-parent-ref",
+                  "parent_ref_size_code": 0,
+                  "parent_ref_slot": "final-source-form",
+                  "phases": {
+                    "allocating": [
+                      "INIT",
+                      "INIT_LAST"
+                    ],
+                    "continuation": [
+                      "MIDDLE",
+                      "LAST"
+                    ]
+                  },
+                  "physical_binding": null,
+                  "physical_role": "destination0",
+                  "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+                  "role_kind": "destination",
+                  "semantic_source": false,
+                  "semantic_sources_unchanged": true,
+                  "shared_capacity": {
+                    "ordinary_sources": 3,
+                    "physical_slots": 4
+                  },
+                  "shared_continuation": {
+                    "binding_kind": "shared-assemble-destination-reuse",
+                    "carrier": "owning-destination-binder",
+                    "field": "owning-Shared-destination",
+                    "handler_source_argument": false,
+                    "no_allocation": true,
+                    "ordinary_source_ordinal": false,
+                    "parent_capacity": "open-Shared-generation-ParentCapacity",
+                    "physical_role": "shared-assemble-destination-reuse",
+                    "role_kind": "destination",
+                    "semantic_source": false,
+                    "size_code": 0,
+                    "subview_allowed": false
+                  },
+                  "size_code": "ParentCapacity",
+                  "subview_allowed": false,
+                  "writer_field": "WriterSizeCode",
+                  "writer_mask": "writer-mask",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "capacity_audit": {
+                  "INIT": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 8,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 0,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  },
+                  "continuation": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 7,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 1,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  }
+                },
+                "fold": {
+                  "key_fields": [
+                    "assemble_phase",
+                    "writer_range",
+                    "parent_identity",
+                    "semantic_source_list",
+                    "no_allocation"
+                  ],
+                  "on_ambiguity": "retain physical assembly",
+                  "policy": "unique-exact-match-or-physical",
+                  "requires_complete_boundary": true
+                },
+                "fold_signature_sha256": "88b099042ba7394a5dcbff888dda9e9b275c0a737f78601f30a02d9b0c9ed532",
+                "handler_source_arguments": [
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "DstTile",
+                        "slot": "Role2"
+                      }
+                    ],
+                    "physical_role": "destination0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile0",
+                        "slot": "Role0"
+                      }
+                    ],
+                    "physical_role": "source0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile1",
+                        "slot": "Role1"
+                      }
+                    ],
+                    "physical_role": "source1"
+                  }
+                ],
+                "no_allocation": false,
+                "parent_identity": "new destination identity",
+                "rejected_allocating_destinations": [],
+                "semantic_sources": [
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile0",
+                    "optional": false,
+                    "ordinal": 0,
+                    "role": "persistent Local SrcOperationType minuend",
+                    "size": null,
+                    "syntax": "SrcTile0",
+                    "value_style": null
+                  },
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile1",
+                    "optional": false,
+                    "ordinal": 1,
+                    "role": "persistent Local SrcOperationType subtrahend",
+                    "size": null,
+                    "syntax": "SrcTile1",
+                    "value_style": null
+                  }
+                ],
+                "structural_fault": null,
+                "writer_range": "RegSrc+uimm11:WriterSize"
+              },
+              "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+              "sources": [
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile0",
+                  "optional": false,
+                  "ordinal": 0,
+                  "role": "persistent Local SrcOperationType minuend",
+                  "size": null,
+                  "syntax": "SrcTile0",
+                  "value_style": null
+                },
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile1",
+                  "optional": false,
+                  "ordinal": 1,
+                  "role": "persistent Local SrcOperationType subtrahend",
+                  "size": null,
+                  "syntax": "SrcTile1",
+                  "value_style": null
+                }
+              ],
+              "spelling": "TEXPDIF"
+            },
+            {
+              "assemble_phase": "INIT_LAST",
+              "destinations": [
+                {
+                  "assemble_phase": "INIT_LAST",
+                  "binding_kind": "tile-destination-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "DstTile",
+                  "optional": false,
+                  "ordinal": 0,
+                  "parent_capacity": "ParentCapacity",
+                  "role": "new Local DstDataType numeric destination",
+                  "size": "ParentCapacity",
+                  "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                  "value_style": null,
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                }
+              ],
+              "expansion": {
+                "assemble_lowering": {
+                  "command": "B.ASSEMBLE",
+                  "fields": {
+                    "RegSrc": "RegSrc",
+                    "WriterSizeCode": "WriterSizeCode",
+                    "uimm11": "uimm11"
+                  },
+                  "init_bit": true,
+                  "last_bit": true,
+                  "parent_capacity": {
+                    "allocation": true,
+                    "command": "B.IOT",
+                    "field": "SizeCode",
+                    "slot": "Role2",
+                    "value": "ParentCapacity"
+                  },
+                  "parent_ref": null,
+                  "phase": "INIT_LAST",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent": {
+                  "assemble_command": "B.ASSEMBLE",
+                  "assemble_phase": "INIT_LAST",
+                  "binding_kind": "tile-destination-binding",
+                  "canonical_suffixes": [
+                    "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                  ],
+                  "carrier": "final-source-form-binder",
+                  "concrete_examples": {
+                    "Local": {
+                      "INIT": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+                      "INIT_LAST": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+                      "LAST": "->T#3[assemble=LAST,a0+4096:2KB]",
+                      "MIDDLE": "->T#3[assemble=MIDDLE,a0+2048:2KB]"
+                    },
+                    "Shared": {
+                      "INIT": "->S7<64KB>[assemble=INIT,zero+0:64KB]",
+                      "INIT_LAST": "->S7<64KB>[assemble=INIT_LAST,zero+0:64KB]",
+                      "LAST": "->S7[assemble=LAST,a1+32768:32KB]",
+                      "MIDDLE": "->S7[assemble=MIDDLE,a1+32768:32KB]"
+                    }
+                  },
+                  "field": "DstTile",
+                  "folding": "unique-exact-match-or-retain-physical-assembly",
+                  "handler_source_argument": false,
+                  "handler_source_arguments_unchanged": true,
+                  "local_capacity": {
+                    "ordinary_sources": 7,
+                    "physical_slots": 8
+                  },
+                  "no_allocation": false,
+                  "ordinary_source_ordinal": false,
+                  "parent_capacity": "allocating-binder-SizeCode-or-selected-Local-ParentRef-or-open-Shared-generation",
+                  "parent_capacity_field": "ParentCapacity",
+                  "parent_identity": "new destination identity",
+                  "parent_kind": "Local",
+                  "parent_ref_physical_role": "assemble-parent-ref",
+                  "parent_ref_size_code": 0,
+                  "parent_ref_slot": "final-source-form",
+                  "phases": {
+                    "allocating": [
+                      "INIT",
+                      "INIT_LAST"
+                    ],
+                    "continuation": [
+                      "MIDDLE",
+                      "LAST"
+                    ]
+                  },
+                  "physical_binding": null,
+                  "physical_role": "destination0",
+                  "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+                  "role_kind": "destination",
+                  "semantic_source": false,
+                  "semantic_sources_unchanged": true,
+                  "shared_capacity": {
+                    "ordinary_sources": 3,
+                    "physical_slots": 4
+                  },
+                  "shared_continuation": {
+                    "binding_kind": "shared-assemble-destination-reuse",
+                    "carrier": "owning-destination-binder",
+                    "field": "owning-Shared-destination",
+                    "handler_source_argument": false,
+                    "no_allocation": true,
+                    "ordinary_source_ordinal": false,
+                    "parent_capacity": "open-Shared-generation-ParentCapacity",
+                    "physical_role": "shared-assemble-destination-reuse",
+                    "role_kind": "destination",
+                    "semantic_source": false,
+                    "size_code": 0,
+                    "subview_allowed": false
+                  },
+                  "size_code": "ParentCapacity",
+                  "subview_allowed": false,
+                  "writer_field": "WriterSizeCode",
+                  "writer_mask": "writer-mask",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "capacity_audit": {
+                  "INIT": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 8,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 0,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  },
+                  "continuation": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 7,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 1,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  }
+                },
+                "fold": {
+                  "key_fields": [
+                    "assemble_phase",
+                    "writer_range",
+                    "parent_identity",
+                    "semantic_source_list",
+                    "no_allocation"
+                  ],
+                  "on_ambiguity": "retain physical assembly",
+                  "policy": "unique-exact-match-or-physical",
+                  "requires_complete_boundary": true
+                },
+                "fold_signature_sha256": "f1912677d0c165f3c6daedcb134187dd86c8f83e027a7dd7752c45e84a963f1e",
+                "handler_source_arguments": [
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "DstTile",
+                        "slot": "Role2"
+                      }
+                    ],
+                    "physical_role": "destination0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile0",
+                        "slot": "Role0"
+                      }
+                    ],
+                    "physical_role": "source0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile1",
+                        "slot": "Role1"
+                      }
+                    ],
+                    "physical_role": "source1"
+                  }
+                ],
+                "no_allocation": false,
+                "parent_identity": "new destination identity",
+                "rejected_allocating_destinations": [],
+                "semantic_sources": [
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile0",
+                    "optional": false,
+                    "ordinal": 0,
+                    "role": "persistent Local SrcOperationType minuend",
+                    "size": null,
+                    "syntax": "SrcTile0",
+                    "value_style": null
+                  },
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile1",
+                    "optional": false,
+                    "ordinal": 1,
+                    "role": "persistent Local SrcOperationType subtrahend",
+                    "size": null,
+                    "syntax": "SrcTile1",
+                    "value_style": null
+                  }
+                ],
+                "structural_fault": null,
+                "writer_range": "RegSrc+uimm11:WriterSize"
+              },
+              "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+              "sources": [
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile0",
+                  "optional": false,
+                  "ordinal": 0,
+                  "role": "persistent Local SrcOperationType minuend",
+                  "size": null,
+                  "syntax": "SrcTile0",
+                  "value_style": null
+                },
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile1",
+                  "optional": false,
+                  "ordinal": 1,
+                  "role": "persistent Local SrcOperationType subtrahend",
+                  "size": null,
+                  "syntax": "SrcTile1",
+                  "value_style": null
+                }
+              ],
+              "spelling": "TEXPDIF"
+            },
+            {
+              "assemble_phase": "MIDDLE",
+              "destinations": [
+                {
+                  "assemble_phase": "MIDDLE",
+                  "binding_kind": "assemble-parent-reuse",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "AssembleParent",
+                  "optional": false,
+                  "ordinal": 0,
+                  "physical_role": "assemble-parent-ref",
+                  "role": "reused assemble parent destination identity",
+                  "semantic_source": false,
+                  "size": null,
+                  "subview_allowed": false,
+                  "syntax": "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                  "value_style": null,
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                }
+              ],
+              "expansion": {
+                "assemble_lowering": {
+                  "command": "B.ASSEMBLE",
+                  "fields": {
+                    "RegSrc": "RegSrc",
+                    "WriterSizeCode": "WriterSizeCode",
+                    "uimm11": "uimm11"
+                  },
+                  "init_bit": false,
+                  "last_bit": false,
+                  "parent_capacity": {
+                    "allocation": false,
+                    "command": "B.IOT",
+                    "field": "SizeCode",
+                    "slot": "Role2",
+                    "value": "selected-ParentRef"
+                  },
+                  "parent_ref": {
+                    "final_source_form": true,
+                    "pe_mask": "writer-mask",
+                    "physical_role": "assemble-parent-ref",
+                    "size_code": 0
+                  },
+                  "phase": "MIDDLE",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent": {
+                  "assemble_command": "B.ASSEMBLE",
+                  "assemble_phase": "MIDDLE",
+                  "binding_kind": "assemble-parent-reuse",
+                  "canonical_suffixes": [
+                    "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                  ],
+                  "carrier": "final-source-form-binder",
+                  "concrete_examples": {
+                    "Local": {
+                      "INIT": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+                      "INIT_LAST": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+                      "LAST": "->T#3[assemble=LAST,a0+4096:2KB]",
+                      "MIDDLE": "->T#3[assemble=MIDDLE,a0+2048:2KB]"
+                    },
+                    "Shared": {
+                      "INIT": "->S7<64KB>[assemble=INIT,zero+0:64KB]",
+                      "INIT_LAST": "->S7<64KB>[assemble=INIT_LAST,zero+0:64KB]",
+                      "LAST": "->S7[assemble=LAST,a1+32768:32KB]",
+                      "MIDDLE": "->S7[assemble=MIDDLE,a1+32768:32KB]"
+                    }
+                  },
+                  "field": "AssembleParent",
+                  "folding": "unique-exact-match-or-retain-physical-assembly",
+                  "handler_source_argument": false,
+                  "handler_source_arguments_unchanged": true,
+                  "local_capacity": {
+                    "ordinary_sources": 7,
+                    "physical_slots": 8
+                  },
+                  "no_allocation": true,
+                  "ordinary_source_ordinal": false,
+                  "parent_capacity": "allocating-binder-SizeCode-or-selected-Local-ParentRef-or-open-Shared-generation",
+                  "parent_capacity_field": "ParentCapacity",
+                  "parent_identity": "selected relative-or-absolute parent",
+                  "parent_kind": "Local",
+                  "parent_ref_physical_role": "assemble-parent-ref",
+                  "parent_ref_size_code": 0,
+                  "parent_ref_slot": "final-source-form",
+                  "phases": {
+                    "allocating": [
+                      "INIT",
+                      "INIT_LAST"
+                    ],
+                    "continuation": [
+                      "MIDDLE",
+                      "LAST"
+                    ]
+                  },
+                  "physical_binding": {
+                    "binding_kind": "assemble-parent-reuse",
+                    "command": "B.IOT",
+                    "field": "AssembleParent",
+                    "members": [
+                      {
+                        "command_group": 0,
+                        "final": true,
+                        "handler_source_argument": false,
+                        "pe_mask": "writer-mask",
+                        "physical_role": "assemble-parent-ref",
+                        "semantic_source": false,
+                        "size_code": 0,
+                        "slot": "final-source-form",
+                        "source_form": true,
+                        "subview_allowed": false
+                      }
+                    ],
+                    "role_kind": "destination",
+                    "syntax": "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]"
+                  },
+                  "physical_role": "assemble-parent-ref",
+                  "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
+                  "role_kind": "destination",
+                  "semantic_source": false,
+                  "semantic_sources_unchanged": true,
+                  "shared_capacity": {
+                    "ordinary_sources": 3,
+                    "physical_slots": 4
+                  },
+                  "shared_continuation": {
+                    "binding_kind": "shared-assemble-destination-reuse",
+                    "carrier": "owning-destination-binder",
+                    "field": "owning-Shared-destination",
+                    "handler_source_argument": false,
+                    "no_allocation": true,
+                    "ordinary_source_ordinal": false,
+                    "parent_capacity": "open-Shared-generation-ParentCapacity",
+                    "physical_role": "shared-assemble-destination-reuse",
+                    "role_kind": "destination",
+                    "semantic_source": false,
+                    "size_code": 0,
+                    "subview_allowed": false
+                  },
+                  "size_code": 0,
+                  "subview_allowed": false,
+                  "writer_field": "WriterSizeCode",
+                  "writer_mask": "writer-mask",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent_binding": {
+                  "binding_kind": "assemble-parent-reuse",
+                  "command": "B.IOT",
+                  "field": "AssembleParent",
+                  "members": [
+                    {
+                      "command_group": 0,
+                      "final": true,
+                      "handler_source_argument": false,
+                      "pe_mask": "writer-mask",
+                      "physical_role": "assemble-parent-ref",
+                      "semantic_source": false,
+                      "size_code": 0,
+                      "slot": "final-source-form",
+                      "source_form": true,
+                      "subview_allowed": false
+                    }
+                  ],
+                  "role_kind": "destination",
+                  "syntax": "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]"
+                },
+                "capacity_audit": {
+                  "INIT": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 8,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 0,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  },
+                  "continuation": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 7,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 1,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  }
+                },
+                "fold": {
+                  "key_fields": [
+                    "assemble_phase",
+                    "writer_range",
+                    "parent_identity",
+                    "semantic_source_list",
+                    "no_allocation"
+                  ],
+                  "on_ambiguity": "retain physical assembly",
+                  "policy": "unique-exact-match-or-physical",
+                  "requires_complete_boundary": true
+                },
+                "fold_signature_sha256": "31c541502163df629ac29c3b2805996c819df8528977e0e3ace95316f93b1b7e",
+                "handler_source_arguments": [
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "DstTile",
+                        "slot": "Role2"
+                      }
+                    ],
+                    "physical_role": "destination0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile0",
+                        "slot": "Role0"
+                      }
+                    ],
+                    "physical_role": "source0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile1",
+                        "slot": "Role1"
+                      }
+                    ],
+                    "physical_role": "source1"
+                  }
+                ],
+                "no_allocation": true,
+                "parent_identity": "selected relative-or-absolute parent",
+                "rejected_allocating_destinations": [],
+                "semantic_sources": [
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile0",
+                    "optional": false,
+                    "ordinal": 0,
+                    "role": "persistent Local SrcOperationType minuend",
+                    "size": null,
+                    "syntax": "SrcTile0",
+                    "value_style": null
+                  },
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile1",
+                    "optional": false,
+                    "ordinal": 1,
+                    "role": "persistent Local SrcOperationType subtrahend",
+                    "size": null,
+                    "syntax": "SrcTile1",
+                    "value_style": null
+                  }
+                ],
+                "structural_fault": "Fault_BundleControl",
+                "writer_range": "RegSrc+uimm11:WriterSize"
+              },
+              "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
+              "sources": [
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile0",
+                  "optional": false,
+                  "ordinal": 0,
+                  "role": "persistent Local SrcOperationType minuend",
+                  "size": null,
+                  "syntax": "SrcTile0",
+                  "value_style": null
+                },
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile1",
+                  "optional": false,
+                  "ordinal": 1,
+                  "role": "persistent Local SrcOperationType subtrahend",
+                  "size": null,
+                  "syntax": "SrcTile1",
+                  "value_style": null
+                }
+              ],
+              "spelling": "TEXPDIF"
+            },
+            {
+              "assemble_phase": "LAST",
+              "destinations": [
+                {
+                  "assemble_phase": "LAST",
+                  "binding_kind": "assemble-parent-reuse",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "AssembleParent",
+                  "optional": false,
+                  "ordinal": 0,
+                  "physical_role": "assemble-parent-ref",
+                  "role": "reused assemble parent destination identity",
+                  "semantic_source": false,
+                  "size": null,
+                  "subview_allowed": false,
+                  "syntax": "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+                  "value_style": null,
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                }
+              ],
+              "expansion": {
+                "assemble_lowering": {
+                  "command": "B.ASSEMBLE",
+                  "fields": {
+                    "RegSrc": "RegSrc",
+                    "WriterSizeCode": "WriterSizeCode",
+                    "uimm11": "uimm11"
+                  },
+                  "init_bit": false,
+                  "last_bit": true,
+                  "parent_capacity": {
+                    "allocation": false,
+                    "command": "B.IOT",
+                    "field": "SizeCode",
+                    "slot": "Role2",
+                    "value": "selected-ParentRef"
+                  },
+                  "parent_ref": {
+                    "final_source_form": true,
+                    "pe_mask": "writer-mask",
+                    "physical_role": "assemble-parent-ref",
+                    "size_code": 0
+                  },
+                  "phase": "LAST",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent": {
+                  "assemble_command": "B.ASSEMBLE",
+                  "assemble_phase": "LAST",
+                  "binding_kind": "assemble-parent-reuse",
+                  "canonical_suffixes": [
+                    "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+                    "->Sx<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+                    "->Sx[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                  ],
+                  "carrier": "final-source-form-binder",
+                  "concrete_examples": {
+                    "Local": {
+                      "INIT": "->T<8KB>[assemble=INIT,a0+0:2KB]",
+                      "INIT_LAST": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
+                      "LAST": "->T#3[assemble=LAST,a0+4096:2KB]",
+                      "MIDDLE": "->T#3[assemble=MIDDLE,a0+2048:2KB]"
+                    },
+                    "Shared": {
+                      "INIT": "->S7<64KB>[assemble=INIT,zero+0:64KB]",
+                      "INIT_LAST": "->S7<64KB>[assemble=INIT_LAST,zero+0:64KB]",
+                      "LAST": "->S7[assemble=LAST,a1+32768:32KB]",
+                      "MIDDLE": "->S7[assemble=MIDDLE,a1+32768:32KB]"
+                    }
+                  },
+                  "field": "AssembleParent",
+                  "folding": "unique-exact-match-or-retain-physical-assembly",
+                  "handler_source_argument": false,
+                  "handler_source_arguments_unchanged": true,
+                  "local_capacity": {
+                    "ordinary_sources": 7,
+                    "physical_slots": 8
+                  },
+                  "no_allocation": true,
+                  "ordinary_source_ordinal": false,
+                  "parent_capacity": "allocating-binder-SizeCode-or-selected-Local-ParentRef-or-open-Shared-generation",
+                  "parent_capacity_field": "ParentCapacity",
+                  "parent_identity": "selected relative-or-absolute parent",
+                  "parent_kind": "Local",
+                  "parent_ref_physical_role": "assemble-parent-ref",
+                  "parent_ref_size_code": 0,
+                  "parent_ref_slot": "final-source-form",
+                  "phases": {
+                    "allocating": [
+                      "INIT",
+                      "INIT_LAST"
+                    ],
+                    "continuation": [
+                      "MIDDLE",
+                      "LAST"
+                    ]
+                  },
+                  "physical_binding": {
+                    "binding_kind": "assemble-parent-reuse",
+                    "command": "B.IOT",
+                    "field": "AssembleParent",
+                    "members": [
+                      {
+                        "command_group": 0,
+                        "final": true,
+                        "handler_source_argument": false,
+                        "pe_mask": "writer-mask",
+                        "physical_role": "assemble-parent-ref",
+                        "semantic_source": false,
+                        "size_code": 0,
+                        "slot": "final-source-form",
+                        "source_form": true,
+                        "subview_allowed": false
+                      }
+                    ],
+                    "role_kind": "destination",
+                    "syntax": "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                  },
+                  "physical_role": "assemble-parent-ref",
+                  "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
+                  "role_kind": "destination",
+                  "semantic_source": false,
+                  "semantic_sources_unchanged": true,
+                  "shared_capacity": {
+                    "ordinary_sources": 3,
+                    "physical_slots": 4
+                  },
+                  "shared_continuation": {
+                    "binding_kind": "shared-assemble-destination-reuse",
+                    "carrier": "owning-destination-binder",
+                    "field": "owning-Shared-destination",
+                    "handler_source_argument": false,
+                    "no_allocation": true,
+                    "ordinary_source_ordinal": false,
+                    "parent_capacity": "open-Shared-generation-ParentCapacity",
+                    "physical_role": "shared-assemble-destination-reuse",
+                    "role_kind": "destination",
+                    "semantic_source": false,
+                    "size_code": 0,
+                    "subview_allowed": false
+                  },
+                  "size_code": 0,
+                  "subview_allowed": false,
+                  "writer_field": "WriterSizeCode",
+                  "writer_mask": "writer-mask",
+                  "writer_range": "RegSrc+uimm11:WriterSize"
+                },
+                "assemble_parent_binding": {
+                  "binding_kind": "assemble-parent-reuse",
+                  "command": "B.IOT",
+                  "field": "AssembleParent",
+                  "members": [
+                    {
+                      "command_group": 0,
+                      "final": true,
+                      "handler_source_argument": false,
+                      "pe_mask": "writer-mask",
+                      "physical_role": "assemble-parent-ref",
+                      "semantic_source": false,
+                      "size_code": 0,
+                      "slot": "final-source-form",
+                      "source_form": true,
+                      "subview_allowed": false
+                    }
+                  ],
+                  "role_kind": "destination",
+                  "syntax": "->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]"
+                },
+                "capacity_audit": {
+                  "INIT": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 8,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 0,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  },
+                  "continuation": {
+                    "fault_order": "before-resolution-effects",
+                    "ordinary_source_max": 7,
+                    "ordinary_source_min": 0,
+                    "overflow_fault": "Fault_BundleControl",
+                    "parent_ref_count": 1,
+                    "physical_slots": 8,
+                    "reused_destination_count": 0
+                  }
+                },
+                "fold": {
+                  "key_fields": [
+                    "assemble_phase",
+                    "writer_range",
+                    "parent_identity",
+                    "semantic_source_list",
+                    "no_allocation"
+                  ],
+                  "on_ambiguity": "retain physical assembly",
+                  "policy": "unique-exact-match-or-physical",
+                  "requires_complete_boundary": true
+                },
+                "fold_signature_sha256": "f210a967514bd9cf192880951e5a500b8aac2deb9fb3a87da5cab0980012e02a",
+                "handler_source_arguments": [
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "DstTile",
+                        "slot": "Role2"
+                      }
+                    ],
+                    "physical_role": "destination0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile0",
+                        "slot": "Role0"
+                      }
+                    ],
+                    "physical_role": "source0"
+                  },
+                  {
+                    "kind": "operand-member",
+                    "members": [
+                      {
+                        "command": "B.IOT",
+                        "command_group": 0,
+                        "field": "SrcTile1",
+                        "slot": "Role1"
+                      }
+                    ],
+                    "physical_role": "source1"
+                  }
+                ],
+                "no_allocation": true,
+                "parent_identity": "selected relative-or-absolute parent",
+                "rejected_allocating_destinations": [],
+                "semantic_sources": [
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile0",
+                    "optional": false,
+                    "ordinal": 0,
+                    "role": "persistent Local SrcOperationType minuend",
+                    "size": null,
+                    "syntax": "SrcTile0",
+                    "value_style": null
+                  },
+                  {
+                    "binding_kind": "tile-source-binding",
+                    "condition": null,
+                    "configuration_kind": null,
+                    "constraint": null,
+                    "default": null,
+                    "field": "SrcTile1",
+                    "optional": false,
+                    "ordinal": 1,
+                    "role": "persistent Local SrcOperationType subtrahend",
+                    "size": null,
+                    "syntax": "SrcTile1",
+                    "value_style": null
+                  }
+                ],
+                "structural_fault": "Fault_BundleControl",
+                "writer_range": "RegSrc+uimm11:WriterSize"
+              },
+              "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
+              "sources": [
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile0",
+                  "optional": false,
+                  "ordinal": 0,
+                  "role": "persistent Local SrcOperationType minuend",
+                  "size": null,
+                  "syntax": "SrcTile0",
+                  "value_style": null
+                },
+                {
+                  "binding_kind": "tile-source-binding",
+                  "condition": null,
+                  "configuration_kind": null,
+                  "constraint": null,
+                  "default": null,
+                  "field": "SrcTile1",
+                  "optional": false,
+                  "ordinal": 1,
+                  "role": "persistent Local SrcOperationType subtrahend",
+                  "size": null,
+                  "syntax": "SrcTile1",
+                  "value_style": null
+                }
+              ],
+              "spelling": "TEXPDIF"
+            }
+          ],
+          "configuration": [
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "Derived",
+              "field": "Row",
+              "optional": true,
+              "ordinal": 0,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "Row=Derived",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": null,
+              "field": "Col",
+              "optional": false,
+              "ordinal": 1,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "Col",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "Row",
+              "field": "ValidRow",
+              "optional": true,
+              "ordinal": 2,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidRow=Row",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "dimension",
+              "constraint": null,
+              "default": "Col",
+              "field": "ValidCol",
+              "optional": true,
+              "ordinal": 3,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "ValidCol=Col",
+              "value_style": "named-assignment"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "SrcOperationType",
+              "optional": false,
+              "ordinal": 4,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "SrcOperationType",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "DstDataType",
+              "optional": true,
+              "ordinal": 5,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "DstDataType?",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "Layout",
+              "optional": true,
+              "ordinal": 6,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "Layout?",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": null,
+              "field": "PadValue",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "PadValue?",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
+              "default": "AllPE",
+              "field": "PEMask",
+              "optional": true,
+              "ordinal": 8,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "PEMask=AllPE",
+              "value_style": "bare-value"
+            }
+          ],
+          "destinations": [
+            {
+              "binding_kind": "tile-destination-binding",
+              "condition": null,
+              "configuration_kind": null,
+              "constraint": null,
+              "default": null,
+              "field": "DstTile",
+              "optional": false,
+              "ordinal": 0,
+              "role": "new Local DstDataType numeric destination",
+              "size": "Size",
+              "syntax": "->DstTile<Size>",
+              "value_style": null
+            }
+          ],
+          "expansion": {
+            "argument_bindings": [
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOT",
+                    "command_group": 0,
+                    "field": "DstTile",
+                    "slot": "Role2"
+                  }
+                ],
+                "physical_role": "destination0"
+              },
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOT",
+                    "command_group": 0,
+                    "field": "SrcTile0",
+                    "slot": "Role0"
+                  }
+                ],
+                "physical_role": "source0"
+              },
+              {
+                "kind": "operand-member",
+                "members": [
+                  {
+                    "command": "B.IOT",
+                    "command_group": 0,
+                    "field": "SrcTile1",
+                    "slot": "Role1"
+                  }
+                ],
+                "physical_role": "source1"
+              }
+            ],
+            "boundary": {
+              "accepted": [
+                "next non-modifier Block instruction",
+                "end of section",
+                "explicit BSTOP compatibility boundary"
+              ],
+              "command_range": "half-open; the following non-modifier instruction closes the macro bundle but belongs to the next Block instruction"
+            },
+            "command_order": [
+              "header",
+              "B.DATR",
+              "B.FPATR",
+              "B.DIM",
+              "B.IOR/B.IOT/B.IOS",
+              "boundary"
+            ],
+            "configuration_bindings": [
+              {
+                "field": "Row",
+                "resolution": {
+                  "canonical_output": "derive Row from destination TSize for RowMajor or from encoded ValidRow for CUBE; an omitted Layout with no integral RowMajor capacity solution is necessarily CUBE",
+                  "expression": "Layout=RowMajor?DstTile.TSize/Col/DstDataType:ValidRow",
+                  "kind": "layout-dependent-check",
+                  "requires_runtime_state": false
+                },
+                "syntax": "Row=Derived",
+                "targets": []
+              },
+              {
+                "field": "Col",
+                "syntax": "Col",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB2"
+                  }
+                ]
+              },
+              {
+                "field": "ValidRow",
+                "syntax": "ValidRow=Row",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB1"
+                  }
+                ]
+              },
+              {
+                "field": "ValidCol",
+                "syntax": "ValidCol=Col",
+                "targets": [
+                  {
+                    "command": "B.DIM",
+                    "group": null,
+                    "slot": "LB0"
+                  }
+                ]
+              },
+              {
+                "field": "SrcOperationType",
+                "syntax": "SrcOperationType",
+                "targets": [
+                  {
+                    "command": "BSTART.SFU",
+                    "group": null,
+                    "slot": "DataType"
+                  }
+                ]
+              },
+              {
+                "field": "DstDataType",
+                "syntax": "DstDataType?",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "DataType"
+                  }
+                ]
+              },
+              {
+                "field": "Layout",
+                "syntax": "Layout?",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "Layout"
+                  }
+                ]
+              },
+              {
+                "field": "PadValue",
+                "syntax": "PadValue?",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "PadValueOrByteId"
+                  }
+                ]
+              },
+              {
+                "field": "PEMask",
+                "syntax": "PEMask=AllPE",
+                "targets": [
+                  {
+                    "command": "B.IOT",
+                    "group": 0,
+                    "slot": "PE_MASK"
+                  }
+                ]
+              }
+            ],
+            "fold": {
+              "canonical_without_runtime_state": true,
+              "policy": "canonical-exact-match",
+              "requires_complete_boundary": true,
+              "unique_without_runtime_state": true
+            },
+            "fold_signature_sha256": "43764e7cc057f193b722a7cb6b194c100d453853ea41083b84ffbd07eaec84fa",
+            "form_id": "pto0586-texpdif-cc968394a253d633",
+            "header": {
+              "command": "BSTART.SFU",
+              "family": "TEPL",
+              "function": 29,
+              "mode": 0,
+              "selector": "0x01D"
+            },
+            "modifier_bindings": [
+              {
+                "command_group": 0,
+                "evidence_case": "RANGE-MATRIX-CASE-0314",
+                "field": "SrcTile0",
+                "modifier": "B.SUBVIEW",
+                "physical_role": "source0",
+                "slot": "Role0"
+              },
+              {
+                "command_group": 0,
+                "evidence_case": "RANGE-MATRIX-CASE-0315",
+                "field": "SrcTile1",
+                "modifier": "B.SUBVIEW",
+                "physical_role": "source1",
+                "slot": "Role1"
+              },
+              {
+                "command_group": 0,
+                "evidence_case": "RANGE-MATRIX-CASE-0316",
+                "field": "DstTile",
+                "modifier": "B.ASSEMBLE INIT_LAST",
+                "physical_role": "destination0",
+                "slot": "Role2"
+              }
+            ],
+            "operand_bindings": [
+              {
+                "binding_kind": "tile-source-binding",
+                "command": "B.IOT",
+                "field": "SrcTile0",
+                "members": [
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [
+                      {
+                        "evidence_case": "RANGE-MATRIX-CASE-0314",
+                        "modifier": "B.SUBVIEW"
+                      }
+                    ],
+                    "optional": false,
+                    "physical_role": "source0",
+                    "slot": "Role0",
+                    "syntax": "SrcTile0"
+                  }
+                ],
+                "role_kind": "source",
+                "syntax": "SrcTile0"
+              },
+              {
+                "binding_kind": "tile-source-binding",
+                "command": "B.IOT",
+                "field": "SrcTile1",
+                "members": [
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [
+                      {
+                        "evidence_case": "RANGE-MATRIX-CASE-0315",
+                        "modifier": "B.SUBVIEW"
+                      }
+                    ],
+                    "optional": false,
+                    "physical_role": "source1",
+                    "slot": "Role1",
+                    "syntax": "SrcTile1"
+                  }
+                ],
+                "role_kind": "source",
+                "syntax": "SrcTile1"
+              },
+              {
+                "binding_kind": "tile-destination-binding",
+                "command": "B.IOT",
+                "field": "DstTile",
+                "members": [
+                  {
+                    "command_group": 0,
+                    "condition": null,
+                    "default": null,
+                    "eligible_modifiers": [
+                      {
+                        "evidence_case": "RANGE-MATRIX-CASE-0316",
+                        "modifier": "B.ASSEMBLE INIT_LAST"
+                      }
+                    ],
+                    "optional": false,
+                    "physical_role": "destination0",
+                    "slot": "Role2",
+                    "syntax": "->DstTile<Size>"
+                  }
+                ],
+                "role_kind": "destination",
+                "syntax": "->DstTile<Size>"
+              }
+            ],
+            "operand_commands": [
+              {
+                "command": "B.IOT",
+                "group": 0,
+                "members": [
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "SrcTile0",
+                    "optional": false,
+                    "physical_role": "source0",
+                    "slot": "Role0"
+                  },
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "SrcTile1",
+                    "optional": false,
+                    "physical_role": "source1",
+                    "slot": "Role1"
+                  },
+                  {
+                    "condition": null,
+                    "default": null,
+                    "field": "DstTile",
+                    "optional": false,
+                    "physical_role": "destination0",
+                    "slot": "Role2"
+                  }
+                ]
+              }
+            ]
+          },
+          "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "sources": [
+            {
+              "binding_kind": "tile-source-binding",
+              "condition": null,
+              "configuration_kind": null,
+              "constraint": null,
+              "default": null,
+              "field": "SrcTile0",
+              "optional": false,
+              "ordinal": 0,
+              "role": "persistent Local SrcOperationType minuend",
+              "size": null,
+              "syntax": "SrcTile0",
+              "value_style": null
+            },
+            {
+              "binding_kind": "tile-source-binding",
+              "condition": null,
+              "configuration_kind": null,
+              "constraint": null,
+              "default": null,
+              "field": "SrcTile1",
+              "optional": false,
+              "ordinal": 1,
+              "role": "persistent Local SrcOperationType subtrahend",
+              "size": null,
+              "syntax": "SrcTile1",
+              "value_style": null
+            }
+          ],
+          "spelling": "TEXPDIF"
+        }
+      ],
+      "macro_format": "TEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, SrcOperationType, DstDataType?, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "mnemonic": "TEXPDIF",
+      "physical_bundle": [
+        "BSTART.SFU TEXPDIF, SrcOperationType",
+        "B.DATR Layout, DataType, PadValue (optional)",
+        "B.DIM LB0=ValidCol",
+        "B.DIM LB1=ValidRow (optional)",
+        "B.DIM LB2=Col (optional)",
+        "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+      ],
+      "physical_schema": {
+        "arguments": [
+          {
+            "operand": "destination0"
+          },
+          {
+            "operand": "source0"
+          },
+          {
+            "operand": "source1"
+          }
+        ],
+        "command_mnemonic": "BSTART.TEPL",
+        "datr_contract": {
+          "allowed_nonzero_fields": [
+            "Layout",
+            "DataType",
+            "PadValueOrByteId"
+          ],
+          "pad_union": "pad-value"
+        },
+        "engine": "SFU",
+        "family": "TEPL",
+        "fixture_case_ids": [
+          "RANGE-MATRIX-CASE-0314",
+          "RANGE-MATRIX-CASE-0315",
+          "RANGE-MATRIX-CASE-0316"
+        ],
+        "function": 29,
+        "legality_handler": "TileOperandsLegal_ExecuteTileExpdif",
+        "mode": 0,
+        "operands": [
+          {
+            "field": "destination0",
+            "role": "new Local DstDataType numeric destination"
+          },
+          {
+            "field": "source0",
+            "role": "persistent Local SrcOperationType minuend"
+          },
+          {
+            "field": "source1",
+            "role": "persistent Local SrcOperationType subtrahend"
+          }
+        ],
+        "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+        "selector": "0x01D",
+        "semantic_handler": "ExecuteTileExpdif"
+      },
+      "semantic_operands": [
+        {
+          "field": "destination0",
+          "role": "new Local DstDataType numeric destination"
+        },
+        {
+          "field": "source0",
+          "role": "persistent Local SrcOperationType minuend"
+        },
+        {
+          "field": "source1",
+          "role": "persistent Local SrcOperationType subtrahend"
+        }
+      ],
+      "source": "asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl",
+      "sources": [
+        {
+          "binding_kind": "tile-source-binding",
+          "condition": null,
+          "configuration_kind": null,
+          "constraint": null,
+          "default": null,
+          "field": "SrcTile0",
+          "optional": false,
+          "ordinal": 0,
+          "role": "persistent Local SrcOperationType minuend",
+          "size": null,
+          "syntax": "SrcTile0",
+          "value_style": null
+        },
+        {
+          "binding_kind": "tile-source-binding",
+          "condition": null,
+          "configuration_kind": null,
+          "constraint": null,
+          "default": null,
+          "field": "SrcTile1",
+          "optional": false,
+          "ordinal": 1,
+          "role": "persistent Local SrcOperationType subtrahend",
+          "size": null,
+          "syntax": "SrcTile1",
+          "value_style": null
+        }
+      ],
+      "spelling": "TEXPDIF"
+    },
+    {
+      "classification": [
+        "elementwise-tile-tile",
         "arithmetic"
       ],
       "commit_boundaries": [
@@ -280458,8 +282387,8 @@
   "source_of_truth": "PTO-TILEOP-MACRO records and the unit-level PTO-TILEOP-MACRO-CONTRACT in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
   "status": "accepted-0.58.6",
   "summary": {
-    "form_count": 142,
-    "operation_count": 117
+    "form_count": 143,
+    "operation_count": 118
   },
   "symbolic_values": {
     "PEMask": {

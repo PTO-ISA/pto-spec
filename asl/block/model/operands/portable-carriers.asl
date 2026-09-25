@@ -436,7 +436,7 @@ pure func BundleProducerEffectClassOfHandler(
     handler: TileSemanticHandler) => BundleProducerEffectClass
 begin
     case handler of
-        when TileHandler_ExecuteTileBinary,
+        when TileHandler_ExecuteTileBinary, TileHandler_ExecuteTileExpdif,
              TileHandler_ExecuteTileCompare,
              TileHandler_ExecuteTileCompareScalar,
              TileHandler_ExecuteTileExpand,

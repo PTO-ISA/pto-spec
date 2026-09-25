@@ -276,6 +276,20 @@ begin
            operation == TileBinary_SHR;
 end;
 
+pure func TileExpdifTypePairLegal(
+    source_operation_type: TileDataType,
+    destination_type: TileDataType) => boolean
+begin
+    return (source_operation_type == TileDataType_FP16 &&
+            (destination_type == TileDataType_FP16 ||
+             destination_type == TileDataType_FP32)) ||
+           (source_operation_type == TileDataType_BF16 &&
+            (destination_type == TileDataType_BF16 ||
+             destination_type == TileDataType_FP32)) ||
+           (source_operation_type == TileDataType_FP32 &&
+            destination_type == TileDataType_FP32);
+end;
+
 // The closed elementwise family is also defined for Local CUBE M16/M32.
 // CUBE_N8 remains a matrix/transport layout and is not an elementwise class.
 pure func TileElementwiseLayoutSupported(layout: TileLayout) => boolean
@@ -300,6 +314,9 @@ pure func TileBinaryDataTypeSupported(
     operation: TileBinaryOperation,
     data_type: TileDataType) => boolean
 begin
+    // EXPDIF belongs only to ExecuteTileExpdif and never to generic binary or
+    // Tile-scalar execution.
+    if operation == TileBinary_EXPDIF then return FALSE; end;
     if operation == TileBinary_AND ||
        operation == TileBinary_OR ||
        operation == TileBinary_XOR then

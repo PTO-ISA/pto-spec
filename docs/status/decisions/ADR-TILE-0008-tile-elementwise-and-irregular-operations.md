@@ -144,7 +144,9 @@
     "PTO-TROWEXPANDMAX-CONTRACT-001",
     "PTO-TROWEXPANDMIN-CONTRACT-001",
     "PTO-TROWEXPANDMUL-CONTRACT-001",
-    "PTO-TROWEXPANDSUB-CONTRACT-001"
+    "PTO-TROWEXPANDSUB-CONTRACT-001",
+    "PTO-INST-TILE-TEXPDIF",
+    "PTO-TEXPDIF-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -271,7 +273,16 @@
     "PTO-TILE-TROWEXPANDMAX",
     "PTO-TILE-TROWEXPANDMIN",
     "PTO-TILE-TROWEXPANDMUL",
-    "PTO-TILE-TROWEXPANDSUB"
+    "PTO-TILE-TROWEXPANDSUB",
+    "PTO-TILE-TEXPDIF",
+    "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+    "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+    "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+    "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+    "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+    "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
   ],
   "resolves": [],
   "supersedes": [
@@ -652,6 +663,36 @@
         "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
         "PTO-TILE-MODEL-EXECUTION-EXPANSION",
         "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/333",
+      "affected_ndf": [
+        "PTO-INST-TILE-TEXPDIF",
+        "PTO-TEXPDIF-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TEXPDIF",
+        "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+        "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
       ]
     }
   ],
@@ -1833,3 +1874,23 @@ Issue #254 修订 Decision 080。TCVT 不再把每个已分配 Tile DataType 自
 `[valid | padding]`；缺失 lane 不读取、不解码且不贡献数值状态。E6M2 仅接受已
 声明的 FP16/BF16 转换对。RCPE6M2 仅作为 FP16/BF16 的源，并且只允许 E6M2 或
 RCPE6M2 backing code。`Canonicalize=1` 继续保留非法。
+
+## 2026-09-24 accepted amendment: TEXPDIF
+
+Issue #333 adds `TEXPDIF`, a full-shape binary Tile operation computing natural
+`exp(src0 - src1)`. Its only legal source-operation/destination pairs are
+`(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)`.
+Each source may independently use an equal-width, non-packed, carrier-compatible
+backing type; validation and interpretation use the selected source-operation
+type without changing source descriptors. Same-type forms perform typed SUB then
+natural EXP. Mixed forms exactly widen both 16-bit inputs before FP32 SUB and
+natural EXP. The shared EXPDIF numeric owner is also used by both expansion
+forms, preserving their established behavior.
+
+Issue #333 为 `TEXPDIF` 增加完整形状的二元 Tile 操作，计算自然指数
+`exp(src0 - src1)`。其唯一合法的源操作类型/目标类型组合为 `(FP16,FP16)`、
+`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 和 `(BF16,FP32)`。两个源可分别使用
+等宽、非打包且载体兼容的 backing 类型；验证和解释均使用选定的源操作类型，
+且不修改源描述符。同类型形式执行类型化 SUB 后接自然 EXP。混合形式先将两个
+16 位输入精确扩宽，再执行 FP32 SUB 和自然 EXP。两个 expansion 形式也使用共享
+的 EXPDIF 数值 owner，以保持既有行为。

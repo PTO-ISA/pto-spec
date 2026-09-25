@@ -318,6 +318,10 @@ readonly func BundleOperationScalarBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TEXPDIF then
+        return !_BundleScalarBindings[[0]].valid &&
+               !_BundleScalarBindings[[1]].valid;
+    end;
     if decoded == TileOperation_TCI &&
        (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
         CurrentBundleTileLayout() == TileLayout_CUBE_M32) then

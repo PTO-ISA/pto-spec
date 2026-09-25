@@ -92,14 +92,14 @@ class TileMacroAssemblyTest(unittest.TestCase):
             operation["mnemonic"]: operation["engine"]
             for operation in self.operations
         }
-        self.assertEqual(inventory["operation_count"], 117)
+        self.assertEqual(inventory["operation_count"], 118)
         self.assertEqual(actual, expected)
         self.assertEqual(
             Counter(actual.values()),
-            {"VEC": 31, "SFU": 46, "TLSU": 28, "CUBE": 12},
+            {"VEC": 31, "SFU": 47, "TLSU": 28, "CUBE": 12},
         )
         self.assertEqual(
-            self.catalog["summary"], {"operation_count": 117, "form_count": 142}
+            self.catalog["summary"], {"operation_count": 118, "form_count": 143}
         )
 
     def test_every_macro_instruction_is_exactly_one_line(self) -> None:
@@ -194,7 +194,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         owner = (
             ROOT / "asl/arch/overview/instruction-classification.asl"
         ).read_text(encoding="utf-8")
-        self.assertEqual(owner.count("// PTO-TILEOP-MACRO: "), 117)
+        self.assertEqual(owner.count("// PTO-TILEOP-MACRO: "), 118)
         self.assertEqual(owner.count("// PTO-TILEOP-MACRO-CONTRACT: "), 1)
         self.assertIn("are the sole owners of canonical", owner)
         definitions = self.generator["load_macro_form_definitions"]()
@@ -872,7 +872,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                         (operation["mnemonic"], form["spelling"])
                     )
         self.assertEqual(set(layout_dependent_forms), expected_layout_dependent)
-        self.assertEqual(len(layout_dependent_forms), 29)
+        self.assertEqual(len(layout_dependent_forms), 30)
         self.assertEqual(len(runtime_forms), 3)
         self.assertFalse(
             any(mnemonic in {"TCMP", "TCMPS"} for mnemonic, _, _ in runtime_forms)
@@ -1296,7 +1296,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
 
     def test_reference_is_0586_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        self.assertIn("all 117 current direct Tile operations", reference)
+        self.assertIn("all 118 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
         self.assertIn(
             "predicate and descriptor-preserving forms require source descriptor state",

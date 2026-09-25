@@ -232,8 +232,8 @@
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
-    "spec/evidence/architecture-readiness.json": "488eef340ac0c83fb1a4df5cd7988e2661c045bad47d990eb1b3b61115b2848f",
-    "spec/evidence/release-traceability-readiness.json": "bdb1ba855744fb91235d38c908e358866607885f8411971bd90c5805b6b6f886",
+    "spec/evidence/architecture-readiness.json": "26f9bedec6396e97036876059853cdcb4525a2b74cd0fa68f84468aa90b29dc9",
+    "spec/evidence/release-traceability-readiness.json": "aa9d4b352be933fe6792d5a9dfebdfd28c5dc39d79cfb1d8f22be13b9f37453c",
     "spec/model-closure-selection.json": "2bfb6f1386e1b9a28197c9fbcd01d8953979392a890c16bf7faee80cdfe502ba",
     "spec/release-inputs.json": "c739ae0180d9435a2fe112f77dc9c65c35a9602789b9ecc3d610adfbcec10294",
     "spec/release-selection.json": "d335cdbb83291cf5a80ed97452268b0f82b9c6a8b40179ad01ad4692f4c5261c",
@@ -244,16 +244,16 @@
     "spec/schemas/pto-spec-release-event-v1.schema.json": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
   },
   "summary": {
-    "documentation_page_count": 892,
-    "executable_requirement_count": 668,
+    "documentation_page_count": 898,
+    "executable_requirement_count": 669,
     "gate_count": 14,
-    "mnemonic_count": 662,
+    "mnemonic_count": 663,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3983,
-    "test_page_count": 40,
+    "test_count": 4004,
+    "test_page_count": 41,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 892
+    "unit_count": 898
   }
 }

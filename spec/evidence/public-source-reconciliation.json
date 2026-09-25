@@ -310,8 +310,8 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 117,
-      "closed": 117,
+      "count": 118,
+      "closed": 118,
       "open": 0,
       "public_exact_name": 85,
       "public_spelling_mapping": 0
@@ -322,7 +322,7 @@
     },
     "closure_basis": {
       "public_source_supported": 84,
-      "catalog_defined_direct_binary": 32,
+      "catalog_defined_direct_binary": 33,
       "public_api_aligned": 0,
       "explicit_layer_difference": 1,
       "open": 0
@@ -4760,6 +4760,16 @@
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
       "public_symbol": "MSCATTER_POPC",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TEXPDIF",
+      "family": "TEPL",
+      "selector": "0x01D",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TEXPDIF",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     }
