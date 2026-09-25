@@ -332,6 +332,22 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
         "before": [],
         "after": [("asl/block/model/dispatch/command-data-attributes.asl", LOCAL_CUBE_LAYOUTS)],
     },
+    "BundleExecutionMaskCoordinateLayout": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskCoordinateSourceOrdinal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskCoordinateValidColumns": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskCoordinateValidRows": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
     "BundleExecutionMaskDestinationValue": {
         "before": [],
         "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
@@ -339,6 +355,10 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
     "BundleExecutionMaskGPRBindingSchemaLegal": {
         "before": [],
         "after": [("asl/block/model/dispatch/scalar-schema.asl", LOCAL_CUBE_LAYOUTS)],
+    },
+    "BundleExecutionMaskGPRCarrierShapeLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", LOCAL_CUBE_LAYOUTS)],
     },
     "BundleExecutionMaskGPRSourceSelector": {
         "before": [],
@@ -348,9 +368,29 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
         "before": [],
         "after": [("asl/block/model/dispatch/scalar-schema.asl", {"CUBE_M32"})],
     },
+    "BundleExecutionMaskLocalTileSourceCount": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskOrdinaryTileSourceCount": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
     "BundleExecutionMaskOperationGPRSourceCount": {
         "before": [],
         "after": [("asl/block/model/dispatch/scalar-schema.asl", set())],
+    },
+    "BundleExecutionMaskTileCarrierPresent": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskTileCarrierSchemaLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
+    },
+    "BundleExecutionMaskTileSourceAt": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/execution-mask-schema.asl", set())],
     },
     "BundleTileInstructionOperands": {
         "before": [("asl/block/model/dispatch/tile-schema.asl", set())],
@@ -395,6 +435,10 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
     "TileExecutionMaskPredicateGPRResult": {
         "before": [],
         "after": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+    },
+    "TileExecutionMaskPredicateCellShapeLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", LOCAL_CUBE_LAYOUTS)],
     },
     "TileExpansionBroadcastElementsLegalAs": {
         "before": [],
@@ -1109,6 +1153,13 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
                     errors.append(f"{op['path']}: missing bundle pipeline root {pipeline_root}")
                 else:
                     bundle_roots.add(pipeline_root)
+            # ExecutionMask carrier validation is invoked from the shared
+            # bundle pipeline through this operation-independent dispatcher.
+            # Its name is intentionally outside COMMON_PREFIXES, so bridge
+            # this one exact call path to include its layout-bearing helper
+            # closure without following arbitrary non-helper functions.
+            if "MarkSelectedBundleExecutionMaskCarrier" in index:
+                bundle_roots.add("MarkSelectedBundleExecutionMaskCarrier")
         for form, roots in (("direct", direct_roots), ("bundle", bundle_roots)):
             if form not in op["forms"]:
                 continue
@@ -2711,10 +2762,10 @@ def _execution_mask_support_mutation_canaries() -> None:
         raise AssertionError("unrelated ExecutionMask helper addition did not fail closed")
 
     attributes_path = "asl/block/model/dispatch/command-data-attributes.asl"
-    layout_line = "CurrentBundleTileLayout() != TileLayout_CUBE_M32)"
+    layout_line = "                 _Tiles[[left]].layout == TileLayout_CUBE_M32) &&"
     layout_widened = (
-        "CurrentBundleTileLayout() != TileLayout_CUBE_M32 &&\n"
-        "         CurrentBundleTileLayout() != TileLayout_RowMajor)"
+        "                 _Tiles[[left]].layout == TileLayout_CUBE_M32 ||\n"
+        "                 _Tiles[[left]].layout == TileLayout_RowMajor) &&"
     )
     mutated = dict(candidate)
     if layout_line not in candidate.get(attributes_path, ""):
@@ -2730,6 +2781,58 @@ def _execution_mask_support_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("ExecutionMask Local-layout expansion did not fail closed")
+
+    schema_path = "asl/block/model/dispatch/execution-mask-schema.asl"
+    carrier_layout_line = (
+        "       coordinate_layout != TileLayout_CUBE_M32 then return FALSE; end;"
+    )
+    carrier_layout_widened = (
+        "       coordinate_layout != TileLayout_CUBE_M32 &&\n"
+        "       coordinate_layout != TileLayout_RowMajor then return FALSE; end;"
+    )
+    mutated = dict(candidate)
+    if carrier_layout_line not in candidate.get(schema_path, ""):
+        raise AssertionError("ExecutionMask GPR-carrier layout canary source is missing")
+    mutated[schema_path] = candidate[schema_path].replace(
+        carrier_layout_line, carrier_layout_widened, 1
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-execution-mask-gpr-carrier-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "unauthorized ExecutionMask support helper definition delta: "
+        "BundleExecutionMaskGPRCarrierShapeLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("ExecutionMask GPR-carrier layout expansion did not fail closed")
+
+    predicate_path = "asl/tile/model/legality/predicate-carriers.asl"
+    predicate_layout_line = (
+        "           (layout == TileLayout_CUBE_M16 ||\n"
+        "            layout == TileLayout_CUBE_M32) &&"
+    )
+    predicate_layout_widened = (
+        "           (layout == TileLayout_CUBE_M16 ||\n"
+        "            layout == TileLayout_CUBE_M32 ||\n"
+        "            layout == TileLayout_RowMajor) &&"
+    )
+    mutated = dict(candidate)
+    if predicate_layout_line not in candidate.get(predicate_path, ""):
+        raise AssertionError("ExecutionMask PredicateCell layout canary source is missing")
+    mutated[predicate_path] = candidate[predicate_path].replace(
+        predicate_layout_line, predicate_layout_widened, 1
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-execution-mask-predicate-carrier-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "unauthorized ExecutionMask support helper definition delta: "
+        "TileExecutionMaskPredicateCellShapeLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
 
 
 def self_test() -> None:

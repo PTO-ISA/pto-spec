@@ -27,11 +27,46 @@ from scripts.layout_relation_census import (
 
 class LayoutRelationCensusTest(unittest.TestCase):
     def test_execution_mask_helper_allowlist_is_finite_and_fail_closed(self) -> None:
-        self.assertEqual(len(EXECUTION_MASK_HELPER_DEFINITION_DELTAS), 23)
+        self.assertEqual(len(EXECUTION_MASK_HELPER_DEFINITION_DELTAS), 34)
         self.assertEqual(len(EXECUTION_MASK_HELPER_BODY_CHANGES), 6)
         self.assertIn("ADR-TILE-0008", EXECUTION_MASK_HELPER_CLASSIFICATION)
         self.assertIn("PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
                       EXECUTION_MASK_HELPER_CLASSIFICATION)
+        descriptor_helpers = {
+            "BundleExecutionMaskCoordinateLayout",
+            "BundleExecutionMaskCoordinateSourceOrdinal",
+            "BundleExecutionMaskLocalTileSourceCount",
+            "BundleExecutionMaskOrdinaryTileSourceCount",
+            "BundleExecutionMaskTileCarrierPresent",
+            "BundleExecutionMaskTileSourceAt",
+        }
+        self.assertTrue(descriptor_helpers.issubset(
+            EXECUTION_MASK_HELPER_DEFINITION_DELTAS))
+        for name in descriptor_helpers:
+            self.assertEqual(
+                EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name],
+                {"before": [], "after": [(
+                    "asl/block/model/dispatch/execution-mask-schema.asl", set())]},
+            )
+        newly_reachable_helpers = {
+            "BundleExecutionMaskCoordinateValidColumns": (
+                "asl/block/model/dispatch/execution-mask-schema.asl", set()),
+            "BundleExecutionMaskCoordinateValidRows": (
+                "asl/block/model/dispatch/execution-mask-schema.asl", set()),
+            "BundleExecutionMaskGPRCarrierShapeLegal": (
+                "asl/block/model/dispatch/execution-mask-schema.asl",
+                {"CUBE_M16", "CUBE_M32"}),
+            "BundleExecutionMaskTileCarrierSchemaLegal": (
+                "asl/block/model/dispatch/execution-mask-schema.asl", set()),
+            "TileExecutionMaskPredicateCellShapeLegal": (
+                "asl/tile/model/legality/predicate-carriers.asl",
+                {"CUBE_M16", "CUBE_M32"}),
+        }
+        for name, (path, layouts) in newly_reachable_helpers.items():
+            self.assertEqual(
+                EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name],
+                {"before": [], "after": [(path, layouts)]},
+            )
         _execution_mask_support_mutation_canaries()
 
     def test_common_helper_layout_mutation_is_rejected_end_to_end(self) -> None:
