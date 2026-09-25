@@ -1,6 +1,6 @@
 {
   "form_count": 96,
-  "form_constraint_count": 107,
+  "form_constraint_count": 108,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -98,7 +98,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}",
+      "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}",
       "constraints": [
         {
           "field": "CMode",
@@ -179,7 +179,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x000c707f",
+          "mask": "0x000c107f",
           "match": "0x00001023",
           "width_bits": 32
         }
@@ -269,6 +269,30 @@
           ],
           "signedness": "encoding-defined",
           "width": 5
+        },
+        {
+          "name": "PredInv",
+          "pieces": [
+            {
+              "instruction_lsb": 14,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "Zero",
+          "pieces": [
+            {
+              "instruction_lsb": 13,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
         }
       ],
       "form_id": "b_datr_32_c161a042ff38",
@@ -277,7 +301,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Data Attribute",
       "semantic_handler": "SetBundleDataAttributes",
-      "semantic_summary": "Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.",
+      "semantic_summary": "Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero.",
       "status": "accepted"
     },
     {
@@ -636,7 +660,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]",
+      "asm": "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>][, ExecMaskPresent]",
       "complete_bundle_schema": {
         "encoded_surplus_rule": "RegSrc2, RegDst, and all unconsumed source fields must be zero",
         "evidence": "spec/evidence/bundle-command-totality.json",
@@ -645,7 +669,8 @@
           "scalar LReLUParam"
         ],
         "omission_default": "R0/zero for each consumed slot",
-        "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+        "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "execution_mask_order": "ExecutionMask GPR word(s) follow all operation-owned GPR inputs and ExecMaskPresent is set only on the final binding record."
       },
       "constraints": [
         {
@@ -767,12 +792,20 @@
             22,
             23
           ]
+        },
+        {
+          "field": "ExecMaskPresent",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x0600707f",
+          "mask": "0x0200707f",
           "match": "0x00000013",
           "width_bits": 32
         }
@@ -826,6 +859,18 @@
           ],
           "signedness": "encoding-defined",
           "width": 5
+        },
+        {
+          "name": "ExecMaskPresent",
+          "pieces": [
+            {
+              "instruction_lsb": 26,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
         }
       ],
       "form_id": "b_ior_32_c3ea71404eb3",
@@ -834,7 +879,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleScalarIO",
-      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.",
+      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; ExecMaskPresent marks final-record GPR ExecutionMask words.",
       "status": "accepted"
     },
     {
@@ -7047,8 +7092,8 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 78,
-  "operand_piece_count": 191,
+  "operand_field_count": 81,
+  "operand_piece_count": 194,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOR.asl`
 
-Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.
+Bind up to three absolute GPR inputs and one absolute GPR output per record; ExecMaskPresent marks final-record GPR ExecutionMask words.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOR}
 
@@ -61,14 +61,14 @@ B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
 ## Assembly
 
 ```asm
-B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
+B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>][, ExecMaskPresent]
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_ior_32_c3ea71404eb3 | L32 | 32 | 0x00000013 / 0x0600707f | [{"field":"RegDst","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc0","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc1","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc2","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]}] |
+| b_ior_32_c3ea71404eb3 | L32 | 32 | 0x00000013 / 0x0200707f | [{"field":"RegDst","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc0","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc1","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"RegSrc2","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]},{"field":"ExecMaskPresent","operator":"one-of","values":[0,1]}] |
 
 ### Fields
 
@@ -78,6 +78,7 @@ B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
 | b_ior_32_c3ea71404eb3 | RegSrc0 | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":5}] |
+| b_ior_32_c3ea71404eb3 | ExecMaskPresent | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
 
 ## Encoding class
 
@@ -268,6 +269,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_ior_32_c3ea71404eb3 | RegSrc0 | 5 | 0–23 | none | 24–31 | first absolute GPR source | Encoded zero names the architectural zero GPR. |
 | b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | 0–23 | none | 24–31 | second absolute GPR source | Encoded zero names the architectural zero GPR. |
 | b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | 0–23 | none | 24–31 | third absolute GPR source | Encoded zero names the architectural zero GPR. |
+| b_ior_32_c3ea71404eb3 | ExecMaskPresent | 1 | 0–1 | none | none | marks that the final B.IOR record supplies the GPR ExecutionMask word(s) declared by the selected complete schema | No GPR ExecutionMask carrier is bound by this record. |
 
 - `b_ior_32_c3ea71404eb3.RegDst` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_ior_32_c3ea71404eb3.RegSrc0` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -282,6 +284,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | RegSrc0 | first absolute GPR source |
 | RegSrc1 | second absolute GPR source |
 | RegSrc2 | third absolute GPR source |
+| ExecMaskPresent | marks that the final B.IOR record supplies the GPR ExecutionMask word(s) declared by the selected complete schema |
 
 ## Decode
 
@@ -297,7 +300,7 @@ end;
 ## Block composition
 
 ```asm
-One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. TGPR2T instead requires exactly two immediately contiguous source-only records before its destination B.IOT.
+One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. Eligible Local CUBE ExecutionMask forms may use one or two immediately contiguous records; TGPR2T and TIMG2COL retain their separately owned two-record forms.
 ```
 
 ## Operation
@@ -305,17 +308,24 @@ One B.IOR may appear after BSTART and before the block body when the complete sc
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.IOR.asl -->
 ```asl
 // B.IOR's complete selected schema is authoritative for record count, source
-// and destination role, omitted fields, and surplus rejection. TGPR2T is the
-// explicit multi-record form: exactly two contiguous source-only records with
-// source arity 3+1; a third record, a destination, or another split is illegal.
+// and destination role, omitted fields, and surplus rejection. TGPR2T uses
+// exactly two contiguous source-only records with source arity 3+1. Eligible
+// Local CUBE ExecutionMask GPR forms append one or two source words after all
+// operation-owned GPR inputs and may use at most two contiguous records; the
+// second is source-only, and the two words (when required) are one carrier.
+// A third record, a misplaced record, a non-final presence flag, or any
+// nonzero unconsumed selector is illegal. ExecMaskPresent is B.IOR[26];
+// B.IOR[25] remains fixed zero. PredInv and Zero belong to B.DATR and are
+// not encoded by B.IOR.
 // All four selectors name complete 64-bit architectural GPRs in GPR0..GPR23.
 // Canonical <gpr> spellings are zero, sp, a0..a7, ra, s0..s8, and x0..x3.
 // Relative T/U queue selectors are not legal in any B.IOR field.
-// B.IOR binds at most three dense input slots, RegSrc0..RegSrc2, in the
-// operation-independent logical order address, scalar0, diagonal,
-// flag0. Omission is distinct from an encoded zero selector. Consumers own
-// raw-value validation before constrained assignment; a second non-TGPR2T
-// B.IOR faults with Fault_BundleControl and preserves the first binding.
+// Each B.IOR record binds up to three dense input slots, RegSrc0..RegSrc2.
+// For eligible Local CUBE ExecutionMask forms, complete schemas concatenate
+// up to two records in operation-owned order followed by mask word(s).
+// Omission is distinct from an encoded zero selector. Consumers own raw-value
+// validation before constrained assignment; a second B.IOR is accepted only
+// by TGPR2T, TIMG2COL, or an eligible ExecutionMask GPR schema.
 // Matrix complete-bundle consumers append optional scalar QuantParam then
 // scalar LReLUParam in the same dense RegSrc order. Their omission/default,
 // surplus-zero, and raw-carrier policy is owned by the dynamic schema at
@@ -375,14 +385,15 @@ end;
 ## Legality
 
 - B.IOR is legal only after BSTART and before the block body when the complete selected schema declares GPR operands; an explicitly encoded zero selector names GPR0 and is not omission.
-- Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.
 - RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.
 - Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.
 - Indexed TLSU consumes RegSrc0 as BaseGPR. RegSrc1, RegSrc2, and RegDst must be zero before memory or destination effects.
+- Every ordinary block accepts at most one B.IOR. TGPR2T and TIMG2COL retain their exact two-record exceptions. An eligible Local CUBE ExecutionMask GPR form appends one or two words after all operation-owned GPR inputs and may use one or two contiguous records, in dense source order, for up to six GPR inputs. Any GPR destination is allowed only in the first record; the second record is source-only.
+- ExecMaskPresent is one only on the final contiguous B.IOR record when a GPR ExecutionMask is bound. Earlier records, unpredicated forms, and Predicate-Tile forms require it to be zero. Selector GPR0 is legal and is distinguished from an unused zero selector by the final-record flag and exact schema arity.
 
 ## State effects
 
-- Record the schema-permitted B.IOR selector state: one record for ordinary consumers or two contiguous source-only records for TGPR2T. Effective arity and roles derive from the complete operation schema.
+- Record the schema-permitted B.IOR selector state: one record for ordinary consumers or up to two immediately contiguous records for TGPR2T, TIMG2COL, or eligible Local CUBE ExecutionMask forms. Effective arity, roles, and ExecMaskPresent applicability derive from the complete operation schema.
 - Inputs are read according to the selected operation before destination publication; executing B.IOR itself modifies no GPR.
 
 ## Memory effects and ordering
@@ -397,10 +408,10 @@ end;
 
 ## Exceptions
 
-- An out-of-range selector raises Fault_IllegalInstruction before binding state changes.
-- Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. A duplicate non-TGPR2T record, a TGPR2T third record, or any command between TGPR2T's first and second B.IOR raises Fault_BundleControl and preserves accepted prior state.
 - A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects.
+- An out-of-range selector raises Fault_IllegalInstruction before binding state changes. Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. Duplicate, noncontiguous, third, misplaced, or schema-inapplicable records and a non-final or inapplicable ExecMaskPresent flag raise Fault_BundleControl or Fault_TileLegality before effects.
 
 ## Examples
 
 - B.IOR a0, a1, zero, ->zero
+- B.IOR zero, ExecMaskPresent

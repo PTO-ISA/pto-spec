@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS"]}
 readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
     instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
     => boolean
@@ -77,10 +77,28 @@ begin
                TileOperation_TGPR2T;
 end;
 
+
+readonly func BundleExecutionMaskGPRStreamSelected() => boolean
+begin
+    if !_BundleOperation.valid ||
+       (_BundleOperation.operation_class != BundleOperation_TileElement &&
+        _BundleOperation.operation_class != BundleOperation_TileMemory &&
+        _BundleOperation.operation_class != BundleOperation_TileMatrix) then
+        return FALSE;
+    end;
+    let decoded = DecodeTileOperation(
+        BundleTileDecodeFamily(_BundleOperation.operation_class),
+        BundleOperationDecodeCode(_BundleOperation));
+    return decoded != PTO_TILE_OPERATION_COUNT &&
+           TileOperationExecutionMaskEligible(
+               decoded as integer {0..PTO_TILE_OPERATION_COUNT-1});
+end;
+
 readonly func BundleMultiIORSelected() => boolean
 begin
     return BundleTGPR2TSelected() ||
-           BundleDescriptorSelectsTIMG2COL(_BundleOperation);
+           BundleDescriptorSelectsTIMG2COL(_BundleOperation) ||
+           BundleExecutionMaskGPRStreamSelected();
 end;
 
 readonly func BundleMultiIORBindingIndex() => integer {0..1}
@@ -95,10 +113,17 @@ readonly func BundleMultiIORScalarCommandCanBePlaced(
     binding_index: integer {0..1}, instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
 begin
-    return BundleTGPR2TScalarCommandCanBePlaced(
-               binding_index, instruction, form) &&
-           BundleTIMG2COLScalarCommandCanBePlaced(
-               binding_index, instruction, form);
+    if !BundleTGPR2TScalarCommandCanBePlaced(
+           binding_index, instruction, form) ||
+       !BundleTIMG2COLScalarCommandCanBePlaced(
+           binding_index, instruction, form) then
+        return FALSE;
+    end;
+    if BundleExecutionMaskGPRStreamSelected() && binding_index == 1 then
+        return CommandDecodedReg5(instruction, form, CommandField_RegDst) == 0 &&
+               !_BundleScalarBindings[[0]].execution_mask_present;
+    end;
+    return TRUE;
 end;
 
 pure func BundleOperationConsumesScalarSource0(
@@ -149,6 +174,100 @@ begin
     return count;
 end;
 
+readonly func BundleExecutionMaskGPRWordCount(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {1..2}
+begin
+    let data_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    return if TileOperationExecutionMaskEligible(operation) &&
+        TileElementBits(data_type) == 8 then 2 else 1;
+end;
+
+readonly func BundleExecutionMaskOperationGPRSourceCount(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..5}
+begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TCMP then return 0; end;
+    if decoded == TileOperation_TCMPS then return 1; end;
+    if decoded == TileOperation_TSEL then
+        // One B.IOT carries the GPR-selection form; two carry the
+        // PredicateCell-selection form. The operation-owned select mask is
+        // therefore present only in the former.
+        return if BundleTileBindingCount() == 1 then
+            BundleExecutionMaskGPRWordCount(operation) else 0;
+    end;
+    if decoded == TileOperation_TSELS then
+        // The scalar-false role remains before ExecutionMask. A GPR select
+        // carrier contributes one/two more operation-owned source words;
+        // the PredicateCell form contributes only scalar-false.
+        return (1 + (if _BundleTileBindings[[0]].source1_valid then 0
+                    else BundleExecutionMaskGPRWordCount(operation)))
+            as integer {0..5};
+    end;
+    if decoded == TileOperation_TGPR2T then return 4; end;
+    return BundleOperationGPRInputCount(operation) as integer {0..5};
+end;
+
+readonly func BundleExecutionMaskGPRSourceSelector(
+    slot: integer {0..5}) => Reg5Selector
+begin
+    if slot < 3 then
+        case slot of
+            when 0 => return _BundleScalarBindings[[0]].source0;
+            when 1 => return _BundleScalarBindings[[0]].source1;
+            when 2 => return _BundleScalarBindings[[0]].source2;
+        end;
+    end;
+    case slot - 3 of
+        when 0 => return _BundleScalarBindings[[1]].source0;
+        when 1 => return _BundleScalarBindings[[1]].source1;
+        when 2 => return _BundleScalarBindings[[1]].source2;
+    end;
+    unreachable;
+end;
+
+readonly func BundleExecutionMaskGPRBindingSchemaLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    if !TileOperationExecutionMaskEligible(operation) ||
+       (CurrentBundleTileLayout() != TileLayout_CUBE_M16 &&
+        CurrentBundleTileLayout() != TileLayout_CUBE_M32) then
+        return FALSE;
+    end;
+    let operation_sources = BundleExecutionMaskOperationGPRSourceCount(operation);
+    let mask_words = BundleExecutionMaskGPRWordCount(operation);
+    let total_sources = operation_sources + mask_words;
+    if total_sources > 6 || !_BundleScalarBindings[[0]].valid then
+        return FALSE;
+    end;
+    let uses_second = total_sources > 3;
+    if _BundleScalarBindings[[1]].valid != uses_second ||
+       _BundleScalarBindings[[0]].execution_mask_present == uses_second ||
+       (uses_second &&
+        !_BundleScalarBindings[[1]].execution_mask_present) then
+        return FALSE;
+    end;
+    if (TileOperationOfIndex(operation) == TileOperation_TCMP ||
+        TileOperationOfIndex(operation) == TileOperation_TCMPS) then
+        if _BundleScalarBindings[[0]].destination >= PTO_ABSOLUTE_GPR_COUNT ||
+           (uses_second && _BundleScalarBindings[[1]].destination != 0) then
+            return FALSE;
+        end;
+    elsif _BundleScalarBindings[[0]].destination != 0 ||
+          (uses_second && _BundleScalarBindings[[1]].destination != 0) then
+        return FALSE;
+    end;
+    for slot = 0 to 5 looplimit 6 do
+        let selector = BundleExecutionMaskGPRSourceSelector(slot);
+        if slot < total_sources then
+            if selector >= PTO_ABSOLUTE_GPR_COUNT then return FALSE; end;
+        elsif selector != 0 then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 pure func BundleOperationGPRInputSlot(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     field: TileOperandField) => integer {0..5}
@@ -189,6 +308,12 @@ readonly func BundleOperationGPRBindingValuesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     let decoded = TileOperationOfIndex(operation);
+    if _BundleScalarBindings[[0]].execution_mask_present ||
+       _BundleScalarBindings[[1]].execution_mask_present then
+        if !BundleExecutionMaskGPRBindingSchemaLegal(operation) then
+            return FALSE;
+        end;
+    end;
     if decoded == TileOperation_TCMP ||
        decoded == TileOperation_TCMPS ||
        decoded == TileOperation_TSEL ||
@@ -197,6 +322,10 @@ begin
         return TRUE;
     end;
     if decoded == TileOperation_TGPR2T then
+        if _BundleScalarBindings[[0]].execution_mask_present ||
+           _BundleScalarBindings[[1]].execution_mask_present then
+            return TRUE;
+        end;
         if !_BundleScalarBindings[[0]].valid ||
            !_BundleScalarBindings[[1]].valid ||
            _BundleScalarBindings[[0]].destination != 0 ||
@@ -235,6 +364,33 @@ begin
                     return FALSE;
                 end;
             end;
+        end;
+        return TRUE;
+    end;
+    if TileOperationExecutionMaskEligible(operation) &&
+       (_BundleScalarBindings[[0]].execution_mask_present ||
+        _BundleScalarBindings[[1]].execution_mask_present) then
+        // The complete ExecutionMask schema already checked every consumed
+        // selector and every unused field. Validate only the operation-owned
+        // raw boolean and diagonal values here; appended mask words must not
+        // be mistaken for unused ordinary scalar selectors.
+        if TileOperandPresent(operation, TileOperand_flag0) then
+            let slot = BundleOperationGPRInputSlot(
+                operation, TileOperand_flag0);
+            let raw = ReadScalarRegisterOperand(
+                BundleExecutionMaskGPRSourceSelector(
+                    slot as integer {0..5}));
+            let value = UInt(raw);
+            if value != 0 && value != 1 then return FALSE; end;
+        end;
+        if TileOperandPresent(operation, TileOperand_diagonal) then
+            let slot = BundleOperationGPRInputSlot(
+                operation, TileOperand_diagonal);
+            let raw = ReadScalarRegisterOperand(
+                BundleExecutionMaskGPRSourceSelector(
+                    slot as integer {0..5}));
+            let value = SInt(raw);
+            if value < -65535 || value > 65535 then return FALSE; end;
         end;
         return TRUE;
     end;
@@ -301,9 +457,15 @@ readonly func BundleOperationScalarBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     let decoded = TileOperationOfIndex(operation);
-    if decoded == TileOperation_TEXPDIF then
+    if decoded == TileOperation_TEXPDIF &&
+       !_BundleScalarBindings[[0]].execution_mask_present &&
+       !_BundleScalarBindings[[1]].execution_mask_present then
         return !_BundleScalarBindings[[0]].valid &&
                !_BundleScalarBindings[[1]].valid;
+    end;
+    if _BundleScalarBindings[[0]].execution_mask_present ||
+       _BundleScalarBindings[[1]].execution_mask_present then
+        return BundleExecutionMaskGPRBindingSchemaLegal(operation);
     end;
     if decoded == TileOperation_TCI &&
        (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||

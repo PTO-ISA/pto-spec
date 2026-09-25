@@ -71,26 +71,48 @@ begin
     if !TileOperationUsesClosedExpansionSchema(operation) then
         return TRUE;
     end;
-    if BundleTileBindingCount() != 1 ||
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR;
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    let copy = TileExpansionOperationIsCopy(operation);
+    let split_final_binding = execution_mask_tile && !copy;
+    if BundleTileBindingCount() != (if split_final_binding then 2 else 1) ||
        BundleSharedBindingCount() != 0 ||
-       _BundleScalarBindings[[0]].valid ||
+       (_BundleScalarBindings[[0]].valid != execution_mask_gpr) ||
+       (execution_mask_gpr &&
+        !BundleExecutionMaskGPRBindingSchemaLegal(operation)) ||
        !SelectedBundleComparisonDimensionsLegal() then
         return FALSE;
     end;
 
     let binding = _BundleTileBindings[[0]];
-    let copy = TileExpansionOperationIsCopy(operation);
-    if !binding.destination_valid ||
-       binding.destination_allocated_by_bundle ||
-       !BundleTileDestinationSizeLegal(0) ||
+    let final_binding = if split_final_binding then
+        _BundleTileBindings[[1]] else binding;
+    if BundleTileBindingCount() != (if split_final_binding then 2 else 1) ||
+       !final_binding.destination_valid ||
+       final_binding.destination_allocated_by_bundle ||
+       !BundleTileDestinationSizeLegal(
+           if split_final_binding then 1 else 0) ||
        !binding.source0_valid ||
-       binding.source1_valid != !copy ||
-       !binding.last then
+       (if copy then
+            binding.source1_valid != execution_mask_tile
+        else if split_final_binding then
+            !binding.source1_valid || binding.destination_valid || binding.last ||
+            final_binding.source0_valid != execution_mask_tile ||
+            final_binding.source1_valid || !final_binding.last
+        else
+            !binding.source1_valid || !binding.last) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal !=
+            (if copy then 1 else 2)) then
         return FALSE;
     end;
 
+    let operation_sources = if split_final_binding then
+        binding else final_binding;
     let broadcast = if copy then
-        binding.source0 else binding.source1;
+        binding.source0 else operation_sources.source1;
     var data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
@@ -127,10 +149,10 @@ begin
     if copy then
         return TRUE;
     end;
-    return _Tiles[[binding.source0]].layout == CurrentBundleTileLayout() &&
+    return _Tiles[[operation_sources.source0]].layout == CurrentBundleTileLayout() &&
            TileReductionAndExpansionSourceLegalAs(
-               binding.source0, source_data_type) &&
-           SelectedBundleComparisonShapeMatches(binding.source0) &&
+               operation_sources.source0, source_data_type) &&
+           SelectedBundleComparisonShapeMatches(operation_sources.source0) &&
            ((TileOperationOfIndex(operation) != TileOperation_TROWEXPANDDIV &&
              TileOperationOfIndex(operation) != TileOperation_TCOLEXPANDDIV) ||
             !TileDataTypeIsInteger(data_type) ||
@@ -139,6 +161,6 @@ begin
                     TileAxis_Row
                 else
                     TileAxis_Column,
-                binding.source0,
-                binding.source1));
+                operation_sources.source0,
+                operation_sources.source1));
 end;

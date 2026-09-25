@@ -13,11 +13,14 @@ begin
     if BundleTileBindingCount() != 2 then return FALSE; end;
     let first = _BundleTileBindings[[0]];
     let second = _BundleTileBindings[[1]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     return first.valid && !first.destination_valid &&
            first.source0_valid && first.source1_valid && !first.last &&
            first.destination_size == 0 &&
            second.valid && second.destination_valid &&
-           second.source0_valid && !second.source1_valid && second.last;
+           second.source0_valid &&
+           (second.source1_valid == execution_mask_tile) && second.last;
 end;
 
 func ExecuteBundleMGATHERCASOperation() => boolean

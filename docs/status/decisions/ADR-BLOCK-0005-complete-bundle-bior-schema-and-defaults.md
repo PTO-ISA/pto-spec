@@ -16,7 +16,7 @@
   "superseded": null,
   "baseline": "8a77c9f0eab36cc41051519366ff163171f81463",
   "target_releases": [
-    "unassigned"
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",
@@ -140,7 +140,24 @@
   "legacy_ids": [
     "ADR-0055"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-25",
+      "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/277",
+      "affected_ndf": [
+        "PTO-B-IOR-BINDING-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+      ]
+    }
+  ]
 }
 ---
 # ADR-BLOCK-0005: Complete-Bundle B.IOR Schema and Defaults
@@ -306,3 +323,19 @@ The operation schema determines whether `B.IOR` is present, which fields are use
 This record governs GPR/address binding for the listed Bundle operations. It does not reassign Shared metadata owned by `B.IOS`, Local Tile operands owned by `B.IOT`, or operation-specific arithmetic semantics.
 
 本记录管理所列 Bundle 操作的 GPR/地址绑定；不重新分配由 `B.IOS` 管理的 Shared 元数据、由 `B.IOT` 管理的 Local Tile 操作数，也不定义操作特有的算术语义。
+
+## 2026-09-25 accepted amendment: ExecutionMask GPR source extension
+
+For the scoped PTO 0.59 Local CUBE ExecutionMask decision in ADR-TILE-0008,
+the prior one-record B.IOR ceiling is superseded only for eligible complete
+schemas that bind GPR-carried ExecutionMask words. Up to two immediately
+contiguous existing B.IOR records provide up to six ordered GPR inputs; mask
+word(s) follow all operation-owned inputs. `B.IOR[26]=ExecMaskPresent` is
+one only on the final record that supplies the GPR mask word(s); `B.IOR[25]`
+remains fixed zero. Earlier records, unpredicated forms, and Predicate-Tile
+forms require the presence flag to be zero. This distinguishes a legal GPR0
+mask selector from an unused encoded-zero field without changing the
+absolute-selector domain or omission-versus-zero distinction. Per-operation
+schemas determine the exact word count and reject surplus, non-final, or
+misplaced flags and records before effects. `PredInv` and `Zero` remain
+B.DATR controls.

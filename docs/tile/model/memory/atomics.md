@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/atomics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
 func MGATHER_CAS(destination: TileIndex, base_address: Word,
                  indices: TileIndex,
                  expected: TileIndex, replacement: TileIndex,
@@ -26,9 +26,9 @@ begin
     let expected_payload = _Tiles[[expected]].payload;
     let replacement_payload = _Tiles[[replacement]].payload;
     assert IndexedTLSUNumericDescriptorLegal(destination);
-    assert IndexedTLSUNumericContentsDefined(indices);
-    assert IndexedTLSUNumericContentsDefined(expected);
-    assert IndexedTLSUNumericContentsDefined(replacement);
+    assert IndexedTLSUExecutionMaskContentsDefined(indices);
+    assert IndexedTLSUExecutionMaskContentsDefined(expected);
+    assert IndexedTLSUExecutionMaskContentsDefined(replacement);
     assert destination_tile.valid_rows == index_tile.valid_rows;
     assert destination_tile.valid_columns == index_tile.valid_columns;
     assert IndexedTLSUMemoryIndexDataTypeLegal(index_tile.data_type);
@@ -44,6 +44,9 @@ begin
     var result = destination_tile;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   destination_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let destination_element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileStorageIndex(index_tile,
@@ -76,15 +79,29 @@ begin
             lane_order[[lane_count]] = NaturalToWord(destination_element);
             lane_count = (lane_count + 1) as
                 integer {0..PTO_MODEL_TILE_ELEMENTS};
+            end;
         end;
     end;
     for row = 0 to destination_tile.rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            result = TileInfoWithLogicalElementAndDefined(result, element,
-                TilePadValueForDataType(pad_value, destination_tile.data_type),
-                TRUE);
+            var inactive = FALSE;
+            if row < destination_tile.valid_rows &&
+               column < destination_tile.valid_columns then
+                inactive = !BundleExecutionMaskActiveAt(
+                    destination_tile.layout,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+            end;
+            let initial_value = if inactive then
+                BundleExecutionMaskDestinationValue(
+                    destination_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN})
+            else TilePadValueForDataType(
+                pad_value, destination_tile.data_type);
+            result = TileInfoWithLogicalElementAndDefined(
+                result, element, initial_value, TRUE);
         end;
     end;
     // Duplicate addresses are serialized in an implementation-defined order.

@@ -10,10 +10,22 @@ end;
 
 readonly func BundleMGATHERMASKBindingsLegal() => boolean
 begin
-    if BundleTileBindingCount() != 1 then return FALSE; end;
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    if BundleTileBindingCount() != (if execution_mask_tile then 2 else 1) then
+        return FALSE;
+    end;
     let binding = _BundleTileBindings[[0]];
-    return binding.valid && binding.destination_valid &&
-           binding.source0_valid && binding.source1_valid && binding.last;
+    if !binding.valid || !binding.source0_valid ||
+       !binding.source1_valid then return FALSE; end;
+    if !execution_mask_tile then
+        return binding.destination_valid && binding.last;
+    end;
+    if binding.destination_valid || binding.last then return FALSE; end;
+    let mask_binding = _BundleTileBindings[[1]];
+    return mask_binding.valid && mask_binding.destination_valid &&
+           mask_binding.source0_valid && !mask_binding.source1_valid &&
+           mask_binding.last;
 end;
 
 func ExecuteBundleMGATHERMASKOperation() => boolean
@@ -74,7 +86,10 @@ begin
     if !ValidateBundleLocalGenerationWriters() then
         RollBackBundleTileDestinations(); return FALSE;
     end;
-    let destination = _BundleTileBindings[[0]].destination;
+    let destination = if _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile
+        then _BundleTileBindings[[1]].destination
+        else _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER_MASK(destination, Zeros{PTO_XLEN},
            indices, mask, pad_value) then

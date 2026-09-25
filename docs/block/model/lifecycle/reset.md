@@ -53,6 +53,7 @@ begin
         _BundleScalarBindings[[index]].source1 = 0;
         _BundleScalarBindings[[index]].source2 = 0;
         _BundleScalarBindings[[index]].source_count = 0;
+        _BundleScalarBindings[[index]].execution_mask_present = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;
@@ -165,7 +166,24 @@ begin
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
+    _BundleDataAttributes.execution_mask_invert = FALSE;
+    _BundleDataAttributes.execution_mask_zero = FALSE;
     _BundleDataAttributesPresent = FALSE;
+    _BundleExecutionMask.valid = FALSE;
+    _BundleExecutionMask.carrier = BundleExecutionMask_None;
+    _BundleExecutionMask.predicate_tile = 0;
+    _BundleExecutionMask.predicate_source_ordinal = 0;
+    _BundleExecutionMask.low_word = Zeros{PTO_XLEN};
+    _BundleExecutionMask.high_word = Zeros{PTO_XLEN};
+    _BundleExecutionMask.word_count = 0;
+    _BundleExecutionMask.layout = TileLayout_CUBE_M32;
+    _BundleExecutionMask.valid_rows = 0;
+    _BundleExecutionMask.valid_columns = 0;
+    _BundleExecutionMask.invert = FALSE;
+    _BundleExecutionMask.zero_inactive = FALSE;
+    _BundleExecutionMask.merge_base_valid = FALSE;
+    _BundleExecutionMask.merge_base = 0;
+    _BundleExecutionMask.predicate_tile_snapshot = Zeros{524288};
     _BundleHint.present = FALSE;
     _BundleHint.trace = FALSE;
     _BundleHint.trace_end = FALSE;

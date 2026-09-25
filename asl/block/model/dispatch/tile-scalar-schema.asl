@@ -114,11 +114,15 @@ begin
     end;
 
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid ||
        binding.destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
        !binding.source0_valid ||
-       binding.source1_valid ||
+       (binding.source1_valid != execution_mask_tile) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal != 1) ||
        !binding.last then
         return FALSE;
     end;
@@ -164,12 +168,20 @@ begin
     if BundleTileBindingCount() != 1 || BundleSharedBindingCount() != 0 ||
        !SelectedBundleComparisonDimensionsLegal() then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
-    if !binding.source0_valid || binding.source1_valid || !binding.last ||
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    if !binding.source0_valid ||
+       (binding.source1_valid != execution_mask_tile) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal != 1) ||
+       !binding.last ||
        UInt(_BundleDataAttributes.comparison_mode) > 5 then return FALSE; end;
     let source = BundleTileSourceIndex(0, FALSE);
     let (operation_type_valid, data_type) = ResolveBundleEffectiveDataType();
     let scalar_present = _BundleScalarBindings[[0]].valid;
     let cube = SelectedBundleComparisonCUBE(source);
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR;
     if !operation_type_valid ||
        !TileCompareDataTypeSupported(data_type) ||
        _Tiles[[source]].storage_kind != TileStorage_Numeric ||
@@ -192,8 +204,11 @@ begin
                !_BundleScalarBindings[[1]].valid &&
                (!scalar_present ||
                 (_BundleScalarBindings[[0]].destination == 0 &&
-                 BundleComparisonBindingUsesOneSource(
-                     _BundleScalarBindings[[0]])));
+                 (if execution_mask_gpr then
+                      BundleExecutionMaskGPRBindingSchemaLegal(operation)
+                  else
+                      BundleComparisonBindingUsesOneSource(
+                          _BundleScalarBindings[[0]]))));
     end;
     if binding.destination_valid then
         let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
@@ -207,18 +222,25 @@ begin
                !_BundleDataAttributes.canonicalize &&
                (!scalar_present ||
                 (_BundleScalarBindings[[0]].destination == 0 &&
-                 BundleComparisonBindingUsesOneSource(
-                     _BundleScalarBindings[[0]]))) &&
+                 (if execution_mask_gpr then
+                      BundleExecutionMaskGPRBindingSchemaLegal(operation)
+                  else
+                      BundleComparisonBindingUsesOneSource(
+                          _BundleScalarBindings[[0]])))) &&
                !_BundleScalarBindings[[1]].valid;
     end;
     // GPR form consumes the scalar compare source and writes one B.IOR dst.
     return scalar_present &&
-           BundleComparisonBindingUsesOneSource(
-               _BundleScalarBindings[[0]]) &&
+           (if execution_mask_gpr then
+                BundleExecutionMaskGPRBindingSchemaLegal(operation)
+            else
+                BundleComparisonBindingUsesOneSource(
+                    _BundleScalarBindings[[0]])) &&
            BundleComparisonGPRSelectorLegal(
                _BundleScalarBindings[[0]].destination) &&
            !_BundleDataAttributes.canonicalize &&
-           (data_type == TileDataType_U8 || !_BundleDataAttributes.saturating) &&
+           (TileElementBits(data_type) == 8 ||
+            !_BundleDataAttributes.saturating) &&
            TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
                source, SelectedBundleTileScalarRawValue(), data_type) &&
            !_BundleScalarBindings[[1]].valid;
@@ -235,38 +257,56 @@ begin
     if !operation_type_valid || !TileSelectDataTypeSupported(data_type) then
         return FALSE;
     end;
-    if BundleTileBindingCount() != 1 then return FALSE; end;
-    let binding = _BundleTileBindings[[0]];
-    if !binding.destination_valid || binding.destination_allocated_by_bundle ||
-       !BundleTileDestinationSizeLegal(0) || !binding.source0_valid ||
-       !binding.last then return FALSE; end;
-    let first = BundleTileSourceIndex(0, FALSE);
-    let cube = SelectedBundleComparisonCUBE(
-        if binding.source1_valid then BundleTileSourceIndex(0, TRUE) else first);
-    let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
-    if !cube then
-        if !binding.source1_valid then return FALSE; end;
-        let source_true = BundleTileSourceIndex(0, TRUE);
-        return !_BundleScalarBindings[[1]].valid &&
-               (!_BundleScalarBindings[[0]].valid ||
-                (_BundleScalarBindings[[0]].destination == 0 &&
-                 BundleComparisonBindingUsesOneSource(
-                     _BundleScalarBindings[[0]]))) &&
-               TileSelectDataTypeSupported(data_type) &&
-               TilePredicateValuesLegal(first) &&
-               TileRowMajorNumericCarrierLegal(source_true, data_type) &&
-               TileElementwiseSourceContentsDefined(source_true) &&
-               TileLogicalShapeMatch(first, source_true);
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR;
+    let inputs = _BundleTileBindings[[0]];
+    let cell_select = inputs.source0_valid &&
+        _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+            TileStorage_PredicateCell;
+    let split_final_binding = cell_select && execution_mask_tile;
+    if BundleTileBindingCount() != (if split_final_binding then 2 else 1) then
+        return FALSE;
     end;
-    if binding.source1_valid then
-        // CellReg mask is the first B.IOT source; B.IOR is only scalar-false.
-        let source_true = BundleTileSourceIndex(0, TRUE);
+    let result = if split_final_binding then
+        _BundleTileBindings[[1]] else inputs;
+    if !inputs.source0_valid ||
+       (if cell_select then
+            !inputs.source1_valid
+        else
+            inputs.source1_valid != execution_mask_tile) ||
+       (if split_final_binding then
+            inputs.destination_valid || inputs.last ||
+            !result.source0_valid || result.source1_valid || !result.last
+        else
+            !inputs.destination_valid || !inputs.last) ||
+       !result.destination_valid || result.destination_allocated_by_bundle ||
+       !BundleTileDestinationSizeLegal(
+           if split_final_binding then 1 else 0) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal !=
+            (if cell_select then 2 else 1)) then
+        return FALSE;
+    end;
+    let first = BundleTileSourceIndex(0, FALSE);
+    let source_true = if cell_select then BundleTileSourceIndex(0, TRUE)
+        else first;
+    let cube = SelectedBundleComparisonCUBE(source_true);
+    let capacity_bytes = BundleLocalDestinationAllocationBytes(
+        if split_final_binding then 1 else 0);
+    if cell_select then
         return cube && TileCubePredicateDataTypeSupported(data_type) &&
-               (!_BundleScalarBindings[[0]].valid ||
-                (_BundleScalarBindings[[0]].destination == 0 &&
-                 BundleComparisonBindingUsesOneSource(
-                     _BundleScalarBindings[[0]]))) &&
-               !_BundleScalarBindings[[1]].valid &&
+               (!execution_mask_gpr ||
+                (_BundleScalarBindings[[0]].valid &&
+                 _BundleScalarBindings[[0]].destination == 0 &&
+                 BundleExecutionMaskGPRBindingSchemaLegal(operation))) &&
+               (execution_mask_gpr ||
+                (!_BundleScalarBindings[[1]].valid &&
+                 (!_BundleScalarBindings[[0]].valid ||
+                  (_BundleScalarBindings[[0]].destination == 0 &&
+                   BundleComparisonBindingUsesOneSource(
+                       _BundleScalarBindings[[0]]))))) &&
                TilePredicateCellValuesLegal(first) &&
                TilePredicateCellShapeMatchesNumericAs(
                    first, source_true, data_type) &&
@@ -278,28 +318,44 @@ begin
                    _Tiles[[source_true]].valid_columns, data_type,
                    _Tiles[[source_true]].layout);
     end;
-    // GPR mask is in the predicate-specific B.IOR role; the same B.IOR may
-    // carry the independent scalar-false source in slot one.
-    let mask_words = if cube &&
-        TileCubePredicateGPRDataTypeSupported(data_type) then
-            SelectedBundleComparisonGPRMaskWordCount(data_type) else 1;
-    return cube && TileCubePredicateGPRDataTypeSupported(data_type) &&
+
+    if !cube then
+        return inputs.source1_valid && !execution_mask_tile &&
+               (!_BundleScalarBindings[[1]].valid) &&
+               (!_BundleScalarBindings[[0]].valid ||
+                (_BundleScalarBindings[[0]].destination == 0 &&
+                 BundleComparisonBindingUsesOneSource(
+                     _BundleScalarBindings[[0]]))) &&
+               TilePredicateValuesLegal(first) &&
+               TileRowMajorNumericCarrierLegal(source_true, data_type) &&
+               TileElementwiseSourceContentsDefined(source_true) &&
+               TileLogicalShapeMatch(first, source_true);
+    end;
+
+    // The GPR selection predicate stays operation-owned; any ExecutionMask
+    // GPR words follow it, while a PredicateCell ExecutionMask is the final
+    // B.IOT source and is filtered from the arithmetic operand list.
+    let mask_words = if TileCubePredicateGPRDataTypeSupported(data_type) then
+        SelectedBundleComparisonGPRMaskWordCount(data_type) else 1;
+    return TileCubePredicateGPRDataTypeSupported(data_type) &&
            _BundleScalarBindings[[0]].valid &&
            _BundleScalarBindings[[0]].destination == 0 &&
-           (if mask_words == 2 then
+           (if execution_mask_gpr then
+                BundleExecutionMaskGPRBindingSchemaLegal(operation)
+            else if mask_words == 2 then
                 BundleComparisonBindingUsesThreeSources(
                     _BundleScalarBindings[[0]])
             else
                 BundleComparisonBindingUsesTwoSources(
                     _BundleScalarBindings[[0]])) &&
-           _Tiles[[first]].storage_kind == TileStorage_Numeric &&
-           TileRowMajorOrCUBENumericCarrierLegal(first, data_type) &&
-           TileCubePredicateGPRShapeLegalAs(first, data_type) &&
-           SelectedBundleComparisonSourceContentsDefined(first) &&
+           _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+           TileRowMajorOrCUBENumericCarrierLegal(source_true, data_type) &&
+           TileCubePredicateGPRShapeLegalAs(source_true, data_type) &&
+           SelectedBundleComparisonSourceContentsDefined(source_true) &&
            TileCubeDescriptorShapeLegal(
-               capacity_bytes, _Tiles[[first]].valid_rows,
-               _Tiles[[first]].valid_columns, data_type,
-               _Tiles[[first]].layout) &&
+               capacity_bytes, _Tiles[[source_true]].valid_rows,
+               _Tiles[[source_true]].valid_columns, data_type,
+               _Tiles[[source_true]].layout) &&
            !_BundleScalarBindings[[1]].valid;
 end;
 
@@ -314,11 +370,15 @@ begin
     end;
 
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid ||
        binding.destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
-       binding.source0_valid ||
+       (binding.source0_valid != execution_mask_tile) ||
        binding.source1_valid ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal != 0) ||
        !binding.last then
         return FALSE;
     end;

@@ -10,11 +10,23 @@ end;
 
 readonly func BundleMSCATTERBindingsLegal() => boolean
 begin
-    if BundleTileBindingCount() != 1 then return FALSE; end;
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    if BundleTileBindingCount() != (if execution_mask_tile then 2 else 1) then
+        return FALSE;
+    end;
     let binding = _BundleTileBindings[[0]];
-    return binding.valid && !binding.destination_valid &&
-           binding.destination_size == 0 &&
-           binding.source0_valid && binding.source1_valid && binding.last;
+    if !binding.valid || binding.destination_valid ||
+       binding.destination_size != 0 || !binding.source0_valid ||
+       !binding.source1_valid || (binding.last == execution_mask_tile) then
+        return FALSE;
+    end;
+    if !execution_mask_tile then return TRUE; end;
+    let mask_binding = _BundleTileBindings[[1]];
+    return mask_binding.valid && !mask_binding.destination_valid &&
+           mask_binding.destination_size == 0 &&
+           mask_binding.source0_valid && !mask_binding.source1_valid &&
+           mask_binding.last;
 end;
 
 func ExecuteBundleMSCATTEROperation() => boolean

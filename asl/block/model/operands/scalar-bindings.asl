@@ -30,4 +30,20 @@ begin
     _BundleScalarBindings[[index]].source1 = source1;
     _BundleScalarBindings[[index]].source2 = source2;
     _BundleScalarBindings[[index]].source_count = source_count;
+    _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+end;
+
+func SetBundleScalarBindingWithExecutionMask(
+    index: BundleScalarBindingIndex,
+    destination: Reg5Selector,
+    source0: Reg5Selector,
+    source1: Reg5Selector,
+    source2: Reg5Selector,
+    source_count: integer {0..3},
+    execution_mask_present: boolean)
+begin
+    SetBundleScalarBinding(index, destination, source0, source1, source2,
+        source_count);
+    _BundleScalarBindings[[index]].execution_mask_present =
+        execution_mask_present;
 end;

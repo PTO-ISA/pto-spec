@@ -235,7 +235,8 @@ begin
            BundleComparisonGPRSelectorLegal(
                _BundleScalarBindings[[0]].destination) &&
            !_BundleDataAttributes.canonicalize &&
-           (data_type == TileDataType_U8 || !_BundleDataAttributes.saturating) &&
+           (TileElementBits(data_type) == 8 ||
+            !_BundleDataAttributes.saturating) &&
            TileOperandsLegal_ExecuteTileCompareCUBEScalarGPRAs(
                source, SelectedBundleTileScalarRawValue(), data_type) &&
            !_BundleScalarBindings[[1]].valid;
