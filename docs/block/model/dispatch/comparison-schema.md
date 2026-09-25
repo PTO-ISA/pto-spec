@@ -76,7 +76,12 @@ readonly func SelectedBundleComparisonSourceContentsDefined(
 begin
     let tile = _Tiles[[source]];
     if TileLayoutIsCube(tile.layout) then
-        return TileCubeDescriptorLegal(tile) && tile.contents_defined;
+        // Keep the CUBE descriptor check, but let the shared elementwise
+        // definedness rule inspect only ExecutionMask-active coordinates.
+        // With no ExecutionMask that rule remains equivalent to the original
+        // full-source contents_defined requirement.
+        return TileCubeDescriptorLegal(tile) &&
+               TileElementwiseSourceContentsDefined(source);
     end;
     return TileSourceContentsDefined(source);
 end;
