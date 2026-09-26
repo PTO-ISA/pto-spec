@@ -5065,7 +5065,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "230f22929ee6805555d2fed5ff372bd58ec4a30b",
+  "candidate_head": "7fad79858c31a68e6b30826200332dd93263b05f",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
