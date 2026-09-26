@@ -807,6 +807,54 @@
         "en": "This clause defines the accepted source types and result classes for TCVT-to-E8M0, including exponent rounding, invalid inputs, saturation choice, range endpoints, and numeric flags. The observable byte result and OF, UF, NX, or NV status therefore follow one shared conversion path.",
         "zh-CN": "本条款定义 TCVT 转换为 E8M0 时接受的源类型与结果类别，包括指数舍入、无效输入、饱和选择、范围端点和数值标志。因此，可观察的字节结果以及 OF、UF、NX 或 NV 状态都来自同一转换路径。"
       }
+    },
+    {
+      "id": "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+      "source_path": "asl/tile/model/legality/execution-mask-source-schema.asl",
+      "title": {
+        "en": "ExecutionMask applicability to legal CUBE forms",
+        "zh-CN": "ExecutionMask 对合法 CUBE 形式的适用范围"
+      },
+      "summary": {
+        "en": "ExecutionMask applies only to already-legal Local CUBE_M16 or CUBE_M32 forms and does not add layout support. TGATHER, TSCATTER, and TTRI remain classified with no applicable baseline CUBE form, while TEXPDIF is included in the applicable intersection.",
+        "zh-CN": "ExecutionMask 仅适用于原本合法的 Local CUBE_M16 或 CUBE_M32 形式，不增加布局支持。TGATHER、TSCATTER 和 TTRI 仍保留分类但没有适用的基线 CUBE 形式，TEXPDIF 则包含在适用交集中。"
+      }
+    },
+    {
+      "id": "PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001",
+      "source_path": "asl/tile/model/execution/expansion.asl",
+      "title": {
+        "en": "ExecutionMask behavior for expansion",
+        "zh-CN": "扩展操作中的 ExecutionMask 行为"
+      },
+      "summary": {
+        "en": "Predicated expansion reads and validates source coordinates only for active mapped outputs. A broadcast element is read only when an active output consumes it; inactive outputs follow the common MERGE or ZERO rule and add no numeric flags, and division-by-zero checks apply only to active outputs.",
+        "zh-CN": "带谓词的扩展仅为映射到活动输出的坐标读取并验证源。只有被活动输出使用的广播元素才会读取；非活动输出遵循通用 MERGE 或 ZERO 规则且不增加数值标志，除零检查也仅适用于活动输出。"
+      }
+    },
+    {
+      "id": "PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001",
+      "source_path": "asl/tile/model/execution/expdif.asl",
+      "title": {
+        "en": "ExecutionMask behavior for TEXPDIF",
+        "zh-CN": "TEXPDIF 中的 ExecutionMask 行为"
+      },
+      "summary": {
+        "en": "Predicated TEXPDIF evaluates source encodings, reads, arithmetic, and numeric-status contributions only at active logical result coordinates. Inactive destination coordinates follow the common MERGE or ZERO rule and add no numeric flags; the existing source-operation and destination type-pair contract remains in force.",
+        "zh-CN": "带谓词的 TEXPDIF 仅在活动逻辑结果坐标处检查源编码、读取源、执行算术并贡献数值状态。非活动目标坐标遵循通用 MERGE 或 ZERO 规则且不增加数值标志；既有源操作与目标类型配对约定继续有效。"
+      }
+    },
+    {
+      "id": "PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001",
+      "source_path": "asl/tile/model/execution/rearrangement.asl",
+      "title": {
+        "en": "ExecutionMask behavior for TPACK and TUNPACK",
+        "zh-CN": "TPACK 与 TUNPACK 中的 ExecutionMask 行为"
+      },
+      "summary": {
+        "en": "TPACK and TUNPACK map mask coordinates to source row and source CELL word index; one bit gates a complete destination CELL word group. Active groups perform the selected-byte reads and whole-word write, while inactive groups avoid those source-byte reads and use the common MERGE or ZERO rule; existing shape, type, control, word-count, capacity, and allocation checks remain in force.",
+        "zh-CN": "TPACK 和 TUNPACK 将掩码坐标映射到源行与源 CELL 字索引，每个位控制一个完整的目标 CELL 字组。活动组执行所选字节读取和整字写入；非活动组不读取这些源字节并采用通用 MERGE 或 ZERO 规则。既有形状、类型、控制、字数、容量和分配检查仍然有效。"
+      }
     }
   ]
 }
