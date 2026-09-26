@@ -3375,7 +3375,10 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
             ? data.metadata.contract as Record<string, PtoJsonValue>
             : {};
           const assemblyCount = Array.isArray(data.metadata.assembly)
-            ? data.metadata.assembly.length : 0;
+            ? data.metadata.assembly.length
+            : typeof data.metadata.assembly === 'string' && data.metadata.assembly.trim().length > 0
+              ? 1
+              : 0;
           const bundleLines = Array.isArray(data.metadata.block)
             ? data.metadata.block.filter((line) => typeof line === 'string' && !line.startsWith('#')).length
             : 0;
