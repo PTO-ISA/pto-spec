@@ -3,6 +3,15 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.59.0
+
+### Block
+- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
+
+### Cross-cutting
+- [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+
 ## Release 0.58.6
 
 ### Cross-cutting
@@ -142,7 +151,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0008](docs/status/decisions/ADR-STATE-0008-system-register-behavior-classes.md): Classify every visible system register behavior
 
 ### Block
-- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
 - [ADR-STATE-0011](docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
 
 ### Cross-cutting
