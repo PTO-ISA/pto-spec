@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA"]}
 // PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
 // PTO-REQ-MEMORY-RC-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
@@ -343,6 +343,9 @@ begin
     let source_tile = _Tiles[[source]];
     assert source_tile.allocated;
     assert TileShapesMatch(_Tiles[[destination]], source_tile);
+    if _BundleExecutionMask.valid then
+        assert TileElementwiseSourceContentsDefined(source);
+    end;
     _Tiles[[destination]].payload = source_tile.payload;
     _Tiles[[destination]].defined_elements = source_tile.defined_elements;
     _Tiles[[destination]].packed_defined_elements =
@@ -350,6 +353,28 @@ begin
     _Tiles[[destination]].defined_valid_elements =
         source_tile.defined_valid_elements;
     _Tiles[[destination]].contents_defined = source_tile.contents_defined;
+    if _BundleExecutionMask.valid then
+        var result = _Tiles[[destination]];
+        for row = 0 to result.valid_rows - 1 looplimit 65536 do
+            for column = 0 to result.valid_columns - 1 looplimit 65536 do
+                if !BundleExecutionMaskActiveAt(
+                       result.layout, row as integer {0..65535},
+                       column as integer {0..65535}) then
+                    let element = TileLogicalLinearIndex(result,
+                        row as integer {0..65535},
+                        column as integer {0..65535});
+                    result = TileInfoWithLogicalElementAndDefined(
+                        result, element,
+                        BundleExecutionMaskDestinationValue(
+                            result.layout, row as integer {0..65535},
+                            column as integer {0..65535}, Zeros{PTO_XLEN}),
+                        TRUE);
+                end;
+            end;
+        end;
+        result = TileWithValidRegionDefined(result);
+        _Tiles[[destination]] = result;
+    end;
 end;
 
 // The direct-operation carrier binds source to the Core4 snapshot already

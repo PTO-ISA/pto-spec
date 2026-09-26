@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "5a1c4f4cb733ab2468e240433340e55bff40698434139431d77e2612c96d8bec",
+  "ownerSourceSha256": "ce704d8891f7b77bebcba6c099c9ac33a48094d7900a2f4983253b0f6dbc9aec",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -981,7 +981,7 @@
         },
         "sharedRegions": [
           {
-            "sourcePath": "asl/block/model/dispatch/tile-schema.asl",
+            "sourcePath": "asl/block/model/dispatch/tile-instruction-operands.asl",
             "label": {
               "en": "B.IOR operand resolution",
               "zh-CN": "B.IOR 操作数解析"

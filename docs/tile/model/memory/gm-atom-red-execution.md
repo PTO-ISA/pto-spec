@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/gm-atom-red-execution.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION","surface":"tile","classification":["model","memory","gm-atom-red-execution"],"depends_on":["PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION","surface":"tile","classification":["model","memory","gm-atom-red-execution"],"depends_on":["PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
 func GMRunAtomic(destination: TileIndex, base_address: Word, indices: TileIndex,
                 value: TileIndex, expected: TileIndex, replacement: TileIndex,
                 data_type: TileDataType, operation: GMAtomicOperation,
@@ -34,8 +34,15 @@ begin
     var expecteds: TilePayload;
     var replacements: TilePayload;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
+    assert IndexedTLSUExecutionMaskContentsDefined(indices);
+    assert IndexedTLSUExecutionMaskContentsDefined(value);
+    assert IndexedTLSUExecutionMaskContentsDefined(expected);
+    assert IndexedTLSUExecutionMaskContentsDefined(replacement);
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   destination_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileStorageIndex(index_tile,
@@ -64,6 +71,7 @@ begin
             replacements[[element]] = replacement_tile.payload[[replacement_element]];
             lane_order[[lane_count]] = NaturalToWord(element);
             lane_count = (lane_count + 1) as integer {0..PTO_MODEL_TILE_ELEMENTS};
+            end;
         end;
     end;
     var result = destination_tile.payload;
@@ -71,7 +79,19 @@ begin
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
             let element = TileStorageIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            result[[element]] = TilePadValueForDataType(pad_value, data_type);
+            var inactive = FALSE;
+            if row < destination_tile.valid_rows &&
+               column < destination_tile.valid_columns then
+                inactive = !BundleExecutionMaskActiveAt(
+                    destination_tile.layout,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+            end;
+            result[[element]] = if inactive then
+                BundleExecutionMaskDestinationValue(
+                    destination_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN})
+            else TilePadValueForDataType(pad_value, data_type);
         end;
     end;
     // Duplicate addresses are serialized in an implementation-defined order.
@@ -166,8 +186,13 @@ begin
     var lane_order: ScatterLaneOrder;
     var values: TilePayload;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
+    assert IndexedTLSUExecutionMaskContentsDefined(indices);
+    assert IndexedTLSUExecutionMaskContentsDefined(value);
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   index_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
@@ -188,6 +213,7 @@ begin
             values[[element]] = value_tile.payload[[value_element]];
             lane_order[[lane_count]] = NaturalToWord(element);
             lane_count = (lane_count + 1) as integer {0..PTO_MODEL_TILE_ELEMENTS};
+            end;
         end;
     end;
     for position = 0 to lane_count - 1 looplimit PTO_MODEL_TILE_ELEMENTS do
@@ -229,8 +255,12 @@ begin
     var original_addresses: TilePayload;
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
+    assert IndexedTLSUExecutionMaskContentsDefined(indices);
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   index_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
@@ -248,6 +278,7 @@ begin
             write_translated_addresses[[element]] = write_probe.translated_address;
             lane_order[[lane_count]] = NaturalToWord(element);
             lane_count = (lane_count + 1) as integer {0..PTO_MODEL_TILE_ELEMENTS};
+            end;
         end;
     end;
     for position = 0 to lane_count - 1 looplimit PTO_MODEL_TILE_ELEMENTS do

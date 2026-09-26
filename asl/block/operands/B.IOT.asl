@@ -9,12 +9,21 @@
 // through 64 KiB and MUST charge the encoded capacity independently to each
 // selected PE's 256 KiB Local pool; codes 11..15 MUST remain reserved.
 // Every source selector MUST resolve newest-first within its encoded T/U/M/N
-// hand before destination allocation. A Local continuation may consume at most
-// seven ordinary data-source bindings plus one final source-form
-// AssembleParentRef; the ParentRef occupies one physical slot but is removed
-// before operation source-schema handling. Each successfully published destination
-// MUST become #1 of its selected hand while existing source generations
-// persist and shift toward older relative indices.
+// hand before destination allocation. An eligible Local CUBE_M16/CUBE_M32
+// schema MAY append exactly one explicit ExecutionMaskTile as the final Local
+// source role after every operation-owned source, including selection and
+// operation-owned predicate Tiles. It occupies one existing source slot and
+// MUST remain within the current four-effective-record limit. It is separately
+// typed and MUST NOT be
+// checked or consumed as a numeric operation source. The final effective
+// record still has L=1 and carries any destination on that record; earlier
+// records have L=0. A Local continuation may consume at most seven ordinary
+// data-source bindings plus one final source-form AssembleParentRef; the
+// ParentRef occupies one physical slot but is removed before operation
+// source-schema handling. Each successfully published destination MUST become
+// #1 of its selected hand while existing source generations persist and shift
+// toward older relative indices. Missing, duplicate, misplaced, unsupported,
+// or surplus ExecutionMask bindings MUST reject before allocation or effects.
 // NDF-END: PTO-B-IOT-STREAM-001
 // DOC-BEGIN: decode
 readonly func InstructionContractMatches_B_IOT(operation: CommandOperation) => boolean

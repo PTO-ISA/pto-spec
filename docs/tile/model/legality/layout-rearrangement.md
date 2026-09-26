@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/layout-rearrangement.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","surface":"tile","classification":["model","legality","layout-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","surface":"tile","classification":["model","legality","layout-rearrangement"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 
 pure func TileCellRearrangementLayoutLegal(layout: TileLayout) => boolean
 begin
@@ -312,13 +312,18 @@ begin
     for row = 0 to left.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};
-            if !TileCellRearrangementSelectedBytesDefined(
-                left, row as integer {0..65535}, word_start,
-                left_bytes as integer {0..4}) ||
-               !TileCellRearrangementSelectedBytesDefined(
-                right, row as integer {0..65535}, word_start,
-                right_bytes as integer {0..4}) then
-                return FALSE;
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   left.layout, row as integer {0..65535},
+                   word_index as integer {0..65535}) then
+                if !TileCellRearrangementSelectedBytesDefined(
+                    left, row as integer {0..65535}, word_start,
+                    left_bytes as integer {0..4}) ||
+                   !TileCellRearrangementSelectedBytesDefined(
+                    right, row as integer {0..65535}, word_start,
+                    right_bytes as integer {0..4}) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -366,7 +371,13 @@ begin
                 (if valid_bytes - word_start > 4 then 4
                  else valid_bytes - word_start)
             else 0;
-            if offset + count > word_valid ||
+            if offset + count > word_valid then
+                return FALSE;
+            end;
+            if (!_BundleExecutionMask.valid ||
+                BundleExecutionMaskActiveAt(
+                    source_tile.layout, row as integer {0..65535},
+                    word_index as integer {0..65535})) &&
                !TileCellRearrangementSelectedBytesDefined(
                    source_tile, row as integer {0..65535},
                    (word_start + offset) as integer {0..262143},

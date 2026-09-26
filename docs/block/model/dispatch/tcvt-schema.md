@@ -26,18 +26,26 @@ readonly func SelectedBundleClosedTCVTSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     if !TileOperationUsesClosedTCVTSchema(operation) then return TRUE; end;
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR;
     if BundleTileBindingCount() != 1 ||
        BundleSharedBindingCount() != 0 ||
-       _BundleScalarBindings[[0]].valid then
+       (_BundleScalarBindings[[0]].valid != execution_mask_gpr) ||
+       (execution_mask_gpr &&
+        !BundleExecutionMaskGPRBindingSchemaLegal(operation)) then
         return FALSE;
     end;
 
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid ||
        binding.destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
        !binding.source0_valid ||
-       binding.source1_valid ||
+       (binding.source1_valid != execution_mask_tile) ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal != 1) ||
        !binding.last then
         return FALSE;
     end;

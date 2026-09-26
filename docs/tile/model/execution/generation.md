@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/generation.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-GENERATION","surface":"tile","classification":["model","execution","generation"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-GENERATION","surface":"tile","classification":["model","execution","generation"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
 // PTO-REQ-TEPL-GENERATE-001: generated sequences, masks, and padding.
 
 pure func TileTCIDataTypeSupported(data_type: TileDataType) => boolean
@@ -104,27 +104,36 @@ begin
            (column_step == -1 || column_step == 0 || column_step == 1);
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
-            let row_offset = if row_step == -1 then
-                Zeros{PTO_XLEN} - NaturalToWord(
-                    row as integer {0..65535})
-            else if row_step == 1 then
-                NaturalToWord(row as integer {0..65535})
-            else
-                Zeros{PTO_XLEN};
-            let column_offset = if column_step == -1 then
-                Zeros{PTO_XLEN} - NaturalToWord(
-                    column as integer {0..65535})
-            else if column_step == 1 then
-                NaturalToWord(column as integer {0..65535})
-            else
-                Zeros{PTO_XLEN};
             let element = TileLogicalLinearIndex(result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, element,
-                TileRawElementValue(
-                    start + row_offset + column_offset,
-                    result.data_type));
+            if BundleExecutionMaskActiveAt(
+                   result.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let row_offset = if row_step == -1 then
+                    Zeros{PTO_XLEN} - NaturalToWord(
+                        row as integer {0..65535})
+                else if row_step == 1 then
+                    NaturalToWord(row as integer {0..65535})
+                else
+                    Zeros{PTO_XLEN};
+                let column_offset = if column_step == -1 then
+                    Zeros{PTO_XLEN} - NaturalToWord(
+                        column as integer {0..65535})
+                else if column_step == 1 then
+                    NaturalToWord(column as integer {0..65535})
+                else
+                    Zeros{PTO_XLEN};
+                result = TileInfoWithLogicalElement(result, element,
+                    TileRawElementValue(
+                        start + row_offset + column_offset,
+                        result.data_type));
+            else
+                result = TileInfoWithLogicalElement(result, element,
+                    BundleExecutionMaskDestinationValue(
+                        result.layout, row as integer {0..65535},
+                        column as integer {0..65535}, Zeros{PTO_XLEN}));
+            end;
         end;
     end;
     result = TileWithValidRegionDefined(result);

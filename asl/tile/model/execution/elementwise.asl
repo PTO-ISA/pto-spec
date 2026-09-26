@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
 
 func TileSquareRoot(value: Word) => Word
@@ -363,11 +363,20 @@ begin
         for column = 0 to left_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(left_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]] = TileInfoWithLogicalElement(
-                _Tiles[[destination]], element,
-                TileProfileBinary(op, operation_type,
+            var value = Zeros{PTO_XLEN};
+            if BundleExecutionMaskActiveAt(
+                   left_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                value = TileProfileBinary(op, operation_type,
                     TileReadLogicalElement(left_tile, element),
-                    TileReadLogicalElement(right_tile, element)));
+                    TileReadLogicalElement(right_tile, element));
+            else
+                value = BundleExecutionMaskDestinationValue(
+                    left_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            end;
+            _Tiles[[destination]] = TileInfoWithLogicalElement(
+                _Tiles[[destination]], element, value);
         end;
     end;
     MarkTileValidRegionDefined(destination);
@@ -389,8 +398,14 @@ begin
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
+            let value = if BundleExecutionMaskActiveAt(
+                result.layout, row as integer {0..65535},
+                column as integer {0..65535}) then normalized_scalar
+                else BundleExecutionMaskDestinationValue(
+                    result.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
             result = TileInfoWithLogicalElement(result, element,
-                normalized_scalar);
+                value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -415,11 +430,23 @@ begin
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let (value, element_flags) = TileProfileBinaryWithFlags(
-                op,
-                operation_type,
-                TileReadLogicalElement(source_tile, element),
-                normalized_scalar);
+            var value = Zeros{PTO_XLEN};
+            var element_flags = Zeros{5};
+            if BundleExecutionMaskActiveAt(
+                   source_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let (active_value, active_flags) =
+                    TileProfileBinaryWithFlags(
+                        op, operation_type,
+                        TileReadLogicalElement(source_tile, element),
+                        normalized_scalar);
+                value = active_value;
+                element_flags = active_flags;
+            else
+                value = BundleExecutionMaskDestinationValue(
+                    source_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            end;
             result = TileInfoWithLogicalElement(result, element, value);
             flags = flags OR element_flags;
         end;

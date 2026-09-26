@@ -199,18 +199,14 @@ const ARCHITECTURE_TOPICS: ArchitectureTopicDefinition[] = [
     boundaryOwner: 'PTO-ARCH-DATA-TYPES-FAULT',
     related: [
       {id: 'PTO-ARCH-DATA-TYPES-FAULT', label: {en: 'Fault identities', 'zh-CN': 'Fault 标识'}},
-      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Trap context state', 'zh-CN': 'Trap context 状态'}},
-      {id: 'PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY', label: {en: 'Trap recovery profile path', 'zh-CN': 'Trap recovery profile 路径'}},
+      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Trap context and recovery state', 'zh-CN': 'Trap context 与恢复状态'}},
     ],
   },
   {
     id: 'versioning',
     label: {en: 'Version and compatibility', 'zh-CN': '版本与兼容性'},
     primary: 'PTO-ARCH-OVERVIEW-ARCHITECTURE',
-    boundaryOwner: 'PTO-ARCH-PROFILE-APPLICABILITY',
     related: [
-      {id: 'PTO-ARCH-PROFILE-APPLICABILITY', label: {en: 'Profile applicability', 'zh-CN': 'Profile 适用性'}},
-      {id: 'PTO-ARCH-PROFILE-REFERENCE-PROFILE', label: {en: 'PTO v0 reference profile', 'zh-CN': 'PTO v0 reference profile'}},
       {id: 'PTO-ARCH-FEATURES-EXTENSION-FIRST-USE', label: {en: 'Extension first-use policy', 'zh-CN': '扩展首次使用策略'}},
       {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Compatibility aliases', 'zh-CN': '兼容 alias'}},
     ],
@@ -3379,7 +3375,10 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
             ? data.metadata.contract as Record<string, PtoJsonValue>
             : {};
           const assemblyCount = Array.isArray(data.metadata.assembly)
-            ? data.metadata.assembly.length : 0;
+            ? data.metadata.assembly.length
+            : typeof data.metadata.assembly === 'string' && data.metadata.assembly.trim().length > 0
+              ? 1
+              : 0;
           const bundleLines = Array.isArray(data.metadata.block)
             ? data.metadata.block.filter((line) => typeof line === 'string' && !line.startsWith('#')).length
             : 0;

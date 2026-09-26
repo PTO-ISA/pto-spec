@@ -49,8 +49,10 @@ begin
     end;
     if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid || !binding.source0_valid ||
-       binding.source1_valid || !binding.last ||
+       (binding.source1_valid != execution_mask_tile) || !binding.last ||
        !IndexedTLSUNumericContentsDefined(binding.source0) ||
        !IndexedTLSUMemoryIndexDataTypeLegal(
            _Tiles[[binding.source0]].data_type) then

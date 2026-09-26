@@ -77,11 +77,15 @@ begin
     end;
 
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid ||
        binding.destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
-       binding.source0_valid ||
+       (binding.source0_valid != execution_mask_tile) ||
        binding.source1_valid ||
+       (execution_mask_tile &&
+        _BundleExecutionMask.predicate_source_ordinal != 0) ||
        !binding.last then
         return FALSE;
     end;

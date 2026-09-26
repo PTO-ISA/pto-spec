@@ -12,6 +12,12 @@
 // Low/High choice MUST derive from that type. The three carriers MUST remain
 // mutually exclusive and scalar-input/GPR-result roles distinct. Complete
 // legality preflight MUST precede snapshots and atomic carrier publication.
+// An eligible Local CUBE_M16/CUBE_M32 TCMPS MAY consume an explicit
+// ExecutionMask; its GPR or PredicateCell carrier MUST be snapshotted before
+// an overlapping predicate destination is allocated or published. Active
+// coordinates compare normally; inactive MERGE preserves old predicate
+// bits/cells and inactive ZERO writes zero. Inactive compares contribute no
+// numeric status.
 // NDF-END: PTO-TCMPS-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TCMPS() => TileOperation

@@ -15,7 +15,51 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/memory-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","surface":"tile","classification":["model","legality","memory-schema"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","surface":"tile","classification":["model","legality","memory-schema"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+readonly func IndexedTLSUExecutionMaskContentsDefined(index: TileIndex)
+    => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !IndexedTLSUNumericDescriptorLegal(index) then return FALSE; end;
+    if !_BundleExecutionMask.valid then return tile.contents_defined; end;
+    if tile.layout != _BundleExecutionMask.layout ||
+       tile.valid_rows != _BundleExecutionMask.valid_rows then
+        return FALSE;
+    end;
+    if TileDataTypeIsFourBit(tile.data_type) then
+        if tile.valid_columns !=
+           2 * _BundleExecutionMask.valid_columns then return FALSE; end;
+    elsif tile.valid_columns != _BundleExecutionMask.valid_columns then
+        return FALSE;
+    end;
+    for row = 0 to _BundleExecutionMask.valid_rows - 1 looplimit 65536 do
+        for column = 0 to _BundleExecutionMask.valid_columns - 1
+            looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let first_column = if TileDataTypeIsFourBit(tile.data_type)
+                    then 2 * column else column;
+                let first = TileLogicalLinearIndex(tile,
+                    row as integer {0..65535},
+                    first_column as integer {0..65535});
+                if !TileLogicalElementDefined(tile, first) then
+                    return FALSE;
+                end;
+                if TileDataTypeIsFourBit(tile.data_type) then
+                    let second = TileLogicalLinearIndex(tile,
+                        row as integer {0..65535},
+                        (first_column + 1) as integer {0..65535});
+                    if !TileLogicalElementDefined(tile, second) then
+                        return FALSE;
+                    end;
+                end;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func TileOperandsLegal_TMOV(destination: TileIndex,
                                      source: TileIndex) => boolean
 begin
@@ -54,7 +98,7 @@ readonly func TileOperandsLegal_MGATHER(
     pad_value: TilePadValue) => boolean
 begin
     return IndexedTLSUNumericDescriptorLegal(destination) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
            IndexedTLSUDataShapeMatchesIndex(
                _Tiles[[destination]].valid_rows,
                _Tiles[[destination]].valid_columns,
@@ -79,8 +123,8 @@ end;
 readonly func TileOperandsLegal_MSCATTER(
     base_address: Word, source: TileIndex, indices: TileIndex) => boolean
 begin
-    return IndexedTLSUNumericContentsDefined(source) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
+    return IndexedTLSUExecutionMaskContentsDefined(source) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
                _Tiles[[indices]].data_type) &&
            IndexedTLSUOrdinaryTransferDataTypeLegal(
@@ -98,7 +142,7 @@ readonly func TileOperandsLegal_MGATHER_MASK(
     mask: TileIndex, pad_value: TilePadValue) => boolean
 begin
     return IndexedTLSUNumericDescriptorLegal(destination) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
            IndexedTLSUPredicateValuesLegal(mask) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
                _Tiles[[indices]].data_type) &&
@@ -120,8 +164,8 @@ readonly func TileOperandsLegal_MSCATTER_MASK(
     base_address: Word, source: TileIndex, indices: TileIndex,
     mask: TileIndex) => boolean
 begin
-    return IndexedTLSUNumericContentsDefined(source) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
+    return IndexedTLSUExecutionMaskContentsDefined(source) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
            IndexedTLSUPredicateValuesLegal(mask) &&
            IndexedTLSUMemoryIndexDataTypeLegal(
                _Tiles[[indices]].data_type) &&
@@ -144,9 +188,9 @@ readonly func TileOperandsLegal_MGATHER_CAS(
     pad_value: TilePadValue) => boolean
 begin
     return IndexedTLSUNumericDescriptorLegal(destination) &&
-           IndexedTLSUNumericContentsDefined(indices) &&
-           IndexedTLSUNumericContentsDefined(expected) &&
-           IndexedTLSUNumericContentsDefined(replacement) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(expected) &&
+           IndexedTLSUExecutionMaskContentsDefined(replacement) &&
            IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type) &&

@@ -350,7 +350,7 @@ Local scale layouts, Local transpose illegality, primary Shared A/B mappings,
 encoding, opcode allocation, and Matrix-MX operand order remain unchanged.
 
 中文：本修订基于 `01445483d778b1bcfccba1641f71c20f00e39385`，用于解决 Issue
-#342，仅修订 Matrix-MX Shared scale 与 transpose 的耦合。`TransA` 与 `TransB`
+\#342，仅修订 Matrix-MX Shared scale 与 transpose 的耦合。`TransA` 与 `TransB`
 只作用于对应的 Shared primary data。Shared ScaleA 的语义形状为 `[M,G_A]`、
 物理形状固定为 `[M,G_A]`；Shared ScaleB 的语义形状为 `[G_B,N]`、物理形状
 固定为 `[N,G_B]`。二者始终按 K-group-major 存储，既有 carrier、group-size、
