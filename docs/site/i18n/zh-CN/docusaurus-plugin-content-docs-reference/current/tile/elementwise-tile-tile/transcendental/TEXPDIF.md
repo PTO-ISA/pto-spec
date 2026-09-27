@@ -16,7 +16,49 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-texpdif-purpose role=purpose -->
+## TEXPDIF 的作用
 
+`TEXPDIF` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它在每个有效坐标计算 `source0 - source1` 的自然指数，其中 `source0` 是被减数，`source1` 是减数；该操作不广播。
+
+<!-- PTO-READER-BLOCK: tile-texpdif-mechanism role=mechanism -->
+## 元素与 Tile 机制
+
+所有指令束、描述符和操作数检查成功后，同类型组合先执行带类型减法，再执行带类型自然指数。混合的 `FP16` 到 `FP32` 及 `BF16` 到 `FP32` 组合会先精确拓宽两个输入，再执行 FP32 减法和自然指数；该拓宽不是 TCVT，也不会增加转换不精确状态。
+
+结果计算前会完整快照两个源 Tile。当合法的同宽别名同时命名源和重命名目标时，执行因此表现为读旧值、写新值。
+
+<!-- PTO-READER-BLOCK: tile-texpdif-inputs role=inputs-outputs -->
+## 操作数角色与描述符
+
+- `destination0` 的精确契约角色是“新分配的 Local DstDataType 数值目标”。
+- `source0` 的精确契约角色是“持久 Local SrcOperationType 被减数”。
+- `source1` 的精确契约角色是“持久 Local SrcOperationType 减数”。
+
+源和目标共享所选布局以及逻辑 `ValidRow * ValidCol` 区域，而每个描述符的物理几何形状按各自后备类型或目标类型检查。仅当满足当前契约的同宽、非 packed、载体兼容规则时，源后备类型才可不同于 `SrcOperationType`。
+
+<!-- PTO-READER-BLOCK: tile-texpdif-effects role=effects -->
+## 发布、状态与填充
+
+对于每个有效元素，处理函数累积减法与指数状态，再对整个有效区域的状态求 OR。两个源 Tile 保持不变。
+
+所选 `PadValue` 应用于有效结果矩形之外。完整预检后，目标载荷、描述符、已定义性、填充和累积数值状态原子发布。
+
+该操作不产生 GM 内存效果。`PE_MASK=0000` 是严格无操作，在读取源描述符、分配目标、更新数值状态或产生载荷效果之前即结束。
+
+<!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
+## 类型、布局与故障边界
+
+精确合法的 `(SrcOperationType,DstDataType)` 组合是 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 和 `(BF16,FP32)`。合法布局是 `RowMajor`、`CUBE_M16` 和 `CUBE_M32`；混合布局以及其他任何类型组合或布局都会被拒绝。
+
+一个终止型 Local `B.IOT` 提供两个有序持久源和一个新目标。绑定格式错误、维度或源内容无效、描述符不兼容以及不受支持的控制会在产生效果前引发生成的合法性故障；目标形状、容量、名称或 Tile 耗尽则会在发布前引发分配故障。
+
+<!-- PTO-READER-BLOCK: tile-texpdif-example role=example -->
+## 非规范演算示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+对于两个源元素均为正零的合法同类型坐标，减法产生零，自然指数随后在目标坐标产生同类型正一。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

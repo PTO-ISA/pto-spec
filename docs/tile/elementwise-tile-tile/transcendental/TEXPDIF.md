@@ -16,7 +16,49 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-texpdif-purpose role=purpose -->
+## What TEXPDIF does
 
+`TEXPDIF` is a selector-encoded Tile operation executed by `SFU`. For every valid coordinate it computes the natural exponential of `source0 - source1`, with `source0` as the minuend and `source1` as the subtrahend; it does not broadcast.
+
+<!-- PTO-READER-BLOCK: tile-texpdif-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all bundle, descriptor, and operand checks succeed, same-type pairs perform typed subtraction followed by typed natural exponential. Mixed `FP16`-to-`FP32` and `BF16`-to-`FP32` pairs exactly widen both inputs before FP32 subtraction and natural exponential; that widening is not TCVT and adds no conversion-inexact status.
+
+Both complete source Tiles are snapshotted before result computation. When legal same-width aliasing names a source and the renamed destination together, execution therefore observes read-old/write-new behavior.
+
+<!-- PTO-READER-BLOCK: tile-texpdif-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **new Local DstDataType numeric destination**.
+- `source0` has the exact contract role **persistent Local SrcOperationType minuend**.
+- `source1` has the exact contract role **persistent Local SrcOperationType subtrahend**.
+
+The sources and destination share the selected layout and logical `ValidRow * ValidCol` region, while each descriptor's physical geometry is checked with its own backing or destination type. A source backing type may differ from `SrcOperationType` only under the equal-width, non-packed, carrier-compatible rule in the current contract.
+
+<!-- PTO-READER-BLOCK: tile-texpdif-effects role=effects -->
+## Publication, status, and padding
+
+For each valid element, the handler accumulates the subtraction and exponential status, then ORs status across the full valid region. The two source Tiles remain unchanged.
+
+The selected `PadValue` applies outside the valid result rectangle. Destination payload, descriptor, definedness, padding, and accumulated numeric status publish atomically after complete preflight.
+
+The operation has no GM memory effect. `PE_MASK=0000` is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The exact legal `(SrcOperationType,DstDataType)` pairs are `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)`. The legal layouts are `RowMajor`, `CUBE_M16`, and `CUBE_M32`; mixed layouts and every other type pair or layout reject.
+
+One terminating Local `B.IOT` supplies the two ordered persistent sources and one new destination. Malformed bindings, invalid dimensions or source contents, incompatible descriptors, and unsupported controls raise the generated legality fault before effects; destination shape, capacity, name, or Tile exhaustion raises allocation fault before publication.
+
+<!-- PTO-READER-BLOCK: tile-texpdif-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a valid same-type coordinate where both source elements are positive zero, subtraction produces zero and the natural exponential produces same-type positive one at the destination coordinate.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

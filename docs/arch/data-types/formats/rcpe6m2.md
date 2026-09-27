@@ -12,7 +12,45 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-purpose role=purpose-scope -->
+## Purpose and scope
 
+RCPE6M2 is a source-only derived PTO numeric type that reinterprets the E6M2 raw code space through exact reciprocals. This page helps a reader connect the shared carrier, reciprocal value rule, and classification; the ASL owner remains the exact definition.
+
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-concepts role=concepts-state -->
+## Carrier and fields
+
+The descriptor uses an `8`-bit carrier, an `8`-bit logical lane, and `1` lane per carrier. It retains E6M2's six-bit exponent, two-bit fraction, bias `48`, and unsigned field layout so that both types interpret the same raw code.
+
+The descriptor records no zero, signed zero, subnormal, infinity, or signaling NaN encoding, and code `0xff` remains the quiet-NaN code.
+
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-rules role=rules-interactions -->
+## Reciprocal value and classification
+
+For codes `0x00` through `0xfe`, `RCPE6M2FiniteValue` returns the exact mathematical reciprocal of `E6M2FiniteValue` for the same raw code. Every such code is classified as a positive normal value, while `0xff` is classified as quiet NaN.
+
+A general reciprocal has an exact rational value rather than the integer-significand binary form used by ordinary finite decomposition. `RCPE6M2FiniteDecomposition` therefore reports decomposition unavailable, and reference conversion consumes the exact reciprocal value directly.
+
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-boundaries role=boundaries -->
+## Boundaries and conversion boundary
+
+`0xff` is both the sole quiet-NaN code and the canonical NaN returned by the owner. All other raw codes are finite reciprocal inputs.
+
+When TCVT consumes RCPE6M2, it performs one final destination rounding and does not first materialize an intermediate rounded floating value.
+
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates how to read the owner functions; it does not add a conversion rule.
+
+For example, E6M2 code `0x00` denotes `2^-48`, so RCPE6M2 code `0x00` denotes its exact reciprocal `2^48`; the raw code is unchanged and only its numeric interpretation differs.
+
+<!-- PTO-READER-BLOCK: arch-format-rcpe6m2-related role=related-owners-navigation -->
+## Related owners
+
+- [E6M2](./e6m2.md) defines the raw code values whose reciprocals RCPE6M2 denotes.
+- [Numeric format descriptor](../format-descriptor.md) defines the common metadata record.
+- [Numeric formats](../numeric-formats.md) dispatches Tile data types to their format-specific helpers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
