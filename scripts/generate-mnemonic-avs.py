@@ -2069,6 +2069,8 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
     test_id = f"PTO-AVS-{identity}-STATIC-001"
     if len(test_id) > 64:
         identity = identity.replace("CELL-REARRANGEMENT", "CELL-REARR")
+        identity = identity.replace("TILE-INSTRUCTION-OPERANDS", "TILE-INST-OPERANDS")
+        identity = identity.replace("EXECUTION-MASK-SOURCE-SCHEMA", "EXEC-MASK-SRC-SCHEMA")
         test_id = f"PTO-AVS-{identity}-STATIC-001"
     clauses = parse_ndf_regions(
         (root / unit.source_path).read_text(encoding="utf-8"), unit.source_path

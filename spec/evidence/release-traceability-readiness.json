@@ -18477,7 +18477,7 @@
         "PTO-AVS-TILE-EXECUTION-MASK-SELECTOR-LEGALITY-DECODED-003",
         "PTO-AVS-TILE-EXECUTION-MASK-SNAPSHOT-001",
         "PTO-AVS-TILE-GPR-MASK-EIGHT-BIT-001",
-        "PTO-AVS-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA-STATIC-001"
+        "PTO-AVS-TILE-MODEL-LEGALITY-EXEC-MASK-SRC-SCHEMA-STATIC-001"
       ]
     },
     {
@@ -22350,7 +22350,7 @@
     "tests/asl/block/model/dispatch/tcvt-schema/block-static-tcvt-schema-contract-001.asl": "341a023035dc9c634bcc1a5b51e91d8202aa1f71d777d885442a77b34ad5c35c",
     "tests/asl/block/model/dispatch/tgpr2t-schema/block-static-tgpr2t-schema-contract-001.asl": "8458f9f26a2b057be4e3802a961c705e566d9d6ae12f0b5657dd0edf3561899e",
     "tests/asl/block/model/dispatch/tile-execution/block-static-tile-execution-contract-001.asl": "57cbeac3431997ff17b93ec6254bd9dc0e18912963d32e7387a45315fb99a5d2",
-    "tests/asl/block/model/dispatch/tile-instruction-operands/block-static-tile-instruction-operands-contract-001.asl": "5a042d617cf9d293bc4a62db8f0f48ca2b7555537f6e0e91cc71ed6d1620547b",
+    "tests/asl/block/model/dispatch/tile-instruction-operands/block-static-tile-instruction-operands-contract-001.asl": "a2c651d433518e7b60e315e8bc360e7b9b47d1589ad9737248f3567eb17f241b",
     "tests/asl/block/model/dispatch/tile-scalar-schema/block-exec-inactive-zero-divisor-decoded-002.asl": "801aa0884937652e8b6056777e43e58e027d87ad33d8f928694ab1651d567158",
     "tests/asl/block/model/dispatch/tile-scalar-schema/block-exec-tsels-mask-aware-selector-decoded-003.asl": "8af6b71e97a1bfa53e60c60e43ee88120743672f4d3d9b473fc3c7990da5b3d7",
     "tests/asl/block/model/dispatch/tile-scalar-schema/block-static-tile-scalar-schema-contract-001.asl": "3a446b555c7b1027d5aa31aa4fb5d4cb3bd24deb2b8d6f23006cee283d3d70fb",
@@ -25528,7 +25528,7 @@
     "tests/asl/tile/model/legality/descriptor-shape/tile-static-descriptor-shape-contract-001.asl": "4deaaa493ccc5c11488ad4f5c57a386b0f96f93285c9d0b33d1b2fedb71999db",
     "tests/asl/tile/model/legality/dtype-layout/tile-bound-carrier-reinterpret-002.asl": "57958acfe479dfa5a2672b010476b9fca5fdd8e4c2a8bb5dc3beec2c395313d1",
     "tests/asl/tile/model/legality/dtype-layout/tile-static-dtype-layout-contract-001.asl": "12aa77307004a575c9cb75ae3a549a7b9fd74577628d577f5095923441c5f959",
-    "tests/asl/tile/model/legality/execution-mask-source-schema/tile-static-execution-mask-source-schema-contract-001.asl": "358c984fbb01d6ebc2b2d15368be4f138440e5721d013d9749ed22cacc53a180",
+    "tests/asl/tile/model/legality/execution-mask-source-schema/tile-static-execution-mask-source-schema-contract-001.asl": "4d55f2824ccfe29b4a9a4cf560e4977e810b878b861e5b503a1fcb43ef70e5c7",
     "tests/asl/tile/model/legality/expdif-operands/tile-static-expdif-operands-contract-001.asl": "d6c98b08fb9ec6a81aa26d015ab707016be01bc45227f023d2c138b5e259df00",
     "tests/asl/tile/model/legality/indexed-layout/tile-static-indexed-layout-contract-001.asl": "3ac5c729e2c134db1f93ed087315a77c7212098a0a57be45e239d80703688934",
     "tests/asl/tile/model/legality/indexed-rearrangement/tile-bound-indexed-types-001.asl": "ae1f8d201af2cf5959a374143c4969a619d7ab0bfdd46e3e077c3d613eca78e6",
@@ -38537,11 +38537,11 @@
       "source": "asl/block/model/dispatch/tile-execution.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS-STATIC-001",
+      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-INST-OPERANDS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/dispatch/tile-instruction-operands/block-static-tile-instruction-operands-contract-001.asl",
       "requirements": [],
-      "sha256": "5a042d617cf9d293bc4a62db8f0f48ca2b7555537f6e0e91cc71ed6d1620547b",
+      "sha256": "a2c651d433518e7b60e315e8bc360e7b9b47d1589ad9737248f3567eb17f241b",
       "source": "asl/block/model/dispatch/tile-instruction-operands.asl"
     },
     {
@@ -61026,13 +61026,13 @@
       "source": "asl/tile/model/legality/dtype-layout.asl"
     },
     {
-      "id": "PTO-AVS-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA-STATIC-001",
+      "id": "PTO-AVS-TILE-MODEL-LEGALITY-EXEC-MASK-SRC-SCHEMA-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/legality/execution-mask-source-schema/tile-static-execution-mask-source-schema-contract-001.asl",
       "requirements": [
         "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001"
       ],
-      "sha256": "358c984fbb01d6ebc2b2d15368be4f138440e5721d013d9749ed22cacc53a180",
+      "sha256": "4d55f2824ccfe29b4a9a4cf560e4977e810b878b861e5b503a1fcb43ef70e5c7",
       "source": "asl/tile/model/legality/execution-mask-source-schema.asl"
     },
     {
@@ -72132,7 +72132,7 @@
       "source": "asl/block/model/dispatch/tile-instruction-operands.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-INST-OPERANDS-STATIC-001"
       ]
     },
     {
@@ -93937,7 +93937,7 @@
       "source": "asl/tile/model/legality/execution-mask-source-schema.asl",
       "surface": "tile",
       "tests": [
-        "PTO-AVS-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA-STATIC-001"
+        "PTO-AVS-TILE-MODEL-LEGALITY-EXEC-MASK-SRC-SCHEMA-STATIC-001"
       ]
     },
     {
