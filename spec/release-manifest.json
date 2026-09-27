@@ -494,7 +494,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TMOV.asl",
-      "sha256": "486ef1c9e7965bca7ce6bd6207fb09c6f06fae1ccb1450f8dc71032596163954"
+      "sha256": "348b0cf4f39e68ca30aa0450a1232f08b501d3b3f7049f50a6a4faa1cf110235"
     },
     {
       "path": "asl/block/execution/BSTART.TPREFETCH.asl",
@@ -502,7 +502,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TSTORE.asl",
-      "sha256": "b04b96bb3c1d420123850039786066fcf06f7e1dd35e2a887695e7ef3204ab2e"
+      "sha256": "f0302147b483fab8c0c1d29bf1f5ad2ca268fa139bd228cdcf69bb9f263616c1"
     },
     {
       "path": "asl/block/execution/BSTART.VEC.asl",
@@ -3130,7 +3130,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
-      "sha256": "6bfb98d240ff8ee19493a41f67fb0d22b6a1996927902d83d11291c139cc30f9"
+      "sha256": "829a3de0be75d872aae66ac7d4e922ade5dce2d34c4216e625d9f36d90a4407e"
     },
     {
       "path": "asl/tile/model/capacity/local.asl",
@@ -3630,23 +3630,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "0cf3df966b6ffc9cb83bd48618601784813c18731184399da24576b3a96ccd61"
+      "sha256": "3a7cc7f01341126a2e2e0825c0f92d90b744665b447f1233f44a41a87bc81ad1"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "01d7713820f783845c0f99fceee13f726b25eed9dbd3abaf9343bd5b779ce55e"
+      "sha256": "fa51120d624e061b505c3a5ac3cc97dcfd9d04957910814259bb5a7bddccd13e"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "b48182219f10f9a2d439f5107c64e30da5ee9232bf77757ac0adbce01a254fe7"
+      "sha256": "4071abaee5bf038665ce94368a7e86f39a1b90f8ccddc378de53e9b3645075a9"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0df4fe214ad520baef647b5f76df3e3d84349db6a75a90cddb416ee3eddd7882"
+      "sha256": "9a94eb98a6e2fd509fafeca9f9655304f51578a6f61370a2d98d61de0c8474e4"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b3d90149cda377eed882ab5c404eb2e33faa9d41a67e185645e49d59248e7ba8"
+      "sha256": "bef07be74386a9dd4e306a8bcce57ba2d1f9feb227a825f8706cf2d1c0a852f8"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3708,7 +3708,7 @@
     },
     "tile_operations_total": 118
   },
-  "content_sha256": "0941bf50c4a0359f158b3c33141a5405e5c94c327998529f8c61cfe68c2ea086",
+  "content_sha256": "ae932c726b18d062ae0fa4539ac5f0028465d0347994dc9f73355f794e3fd85c",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4350,7 +4350,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMOV.md",
-      "sha256": "27a00e2fc5f9fb4c14c96898fbba9d5c24b073b55dd1f9a3df8117ebfb826f4d"
+      "sha256": "0759f0061ff5cda512d6a83e1c19f44d6924cef1e0108c14272b4acdf8fc5356"
     },
     {
       "kind": "generated-documentation",
@@ -4360,7 +4360,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
-      "sha256": "658ba10286ed541eec719ce01473684c227da1b9fcc7e4a2e0e4938eea549479"
+      "sha256": "4229c67e0c93fc2858f0f3fc102d801266575900d0ceece5f8adf7196ecb7b09"
     },
     {
       "kind": "generated-documentation",
@@ -7645,7 +7645,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
-      "sha256": "ecabffb076873fe8691d72ef0e8d0ca1cf73472721cfe59be917b9a736aff865"
+      "sha256": "33a5eb9cabe647319530ff144b2a9a94dfb6bb2dcb8296a96331a2dafc692805"
     },
     {
       "kind": "generated-documentation",
@@ -9364,7 +9364,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMOV",
-        "sha256": "ecf556c5dffb6bd7ec69b9b139fcd2736dcee79fd84a1be7b221a20862546eba"
+        "sha256": "5d08d99c49589a7967bdf003656f95efb7d915a315e3c0a250f5deb2a97a3888"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TPREFETCH",
@@ -9372,7 +9372,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TSTORE",
-        "sha256": "f35858fcc5a8287bf87fc69bf608c9f21a628fd3f513eb09509ce649b00b2b5f"
+        "sha256": "4bbe3613d8536661ee85070ccf1aec73f510966a86095aefc080f67b3bc0f4de"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-VEC",
@@ -11768,7 +11768,7 @@
       },
       {
         "id": "PTO-INST-TILE-TSTORE",
-        "sha256": "27eb6aee917ca74362cc1962b1c46027c09fc4d829cfc1574cf6e796e2e82d5f"
+        "sha256": "603d18664fe8c680d421c2d582fe00a083c4e61275c6f499df856e336e4a782f"
       },
       {
         "id": "PTO-INST-TILE-TSUB",

@@ -31115,11 +31115,11 @@
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "01d7713820f783845c0f99fceee13f726b25eed9dbd3abaf9343bd5b779ce55e"
+      "sha256": "fa51120d624e061b505c3a5ac3cc97dcfd9d04957910814259bb5a7bddccd13e"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b3d90149cda377eed882ab5c404eb2e33faa9d41a67e185645e49d59248e7ba8",
+      "sha256": "bef07be74386a9dd4e306a8bcce57ba2d1f9feb227a825f8706cf2d1c0a852f8",
       "test_count": 4004,
       "unit_count": 898
     }
