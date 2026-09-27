@@ -73,7 +73,8 @@ Cross-component source programs, linker scripts, independent golden results,
 and LLVM-to-ASL execution cases live in `PTO-ISA/asl-model`, not in this
 repository. A normative instruction change updates its owning PTO-SPEC ASL and
 direct AVS here, then adds or updates the corresponding ASL-MODEL obligation and
-case before the exact-head release closure can pass.
+case for downstream integration. PTO-SPEC's exact-head release checks its own
+ASL/AVS and evidence; the downstream corpus is checked in its owning repository.
 
 ## Develop and review
 

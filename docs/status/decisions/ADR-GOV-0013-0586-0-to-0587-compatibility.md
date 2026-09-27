@@ -1632,21 +1632,21 @@ This is a **breaking** architecture boundary relative to `v0.58.6.0`. Consumers 
 
 ## Alternatives considered
 
-A publication revision under architecture `0.58.6` was rejected because accepted post-baseline changes alter software-visible behavior and inventory. Reusing the old ABI was rejected because it would blur binary identity. A release gate waiver was rejected because the cross-repository closure and exact-head evidence remain mandatory.
+A publication revision under architecture `0.58.6` was rejected because accepted post-baseline changes alter software-visible behavior and inventory. Reusing the old ABI was rejected because it would blur binary identity. The PTO-SPEC release still requires complete exact-head ASL/AVS evidence; LLVM-to-ASL acceptance and site publication are separately validated by their owning workflows.
 
 ## Risks and mitigations
 
-The broad delta can hide a missing downstream case or stale generated projection. The release-selection checker requires exact changed NDF and ASL-unit coverage; preflight binds the PTO, LLVM, and ASL-MODEL identities; the protected release run validates the whole tuple and artifacts. Any later ASL edit changes the drift set and requires updating this inventory and reviewing the resulting head.
+The broad delta can hide a missing downstream case or stale generated projection. The release-selection checker requires exact changed NDF and ASL-unit coverage; PTO-SPEC preflight binds the exact PTO commit and its NDF/ASLRef pins, and the protected release run validates its ASL evidence and artifacts. Downstream integration checks remain with LLVM and ASL-MODEL. Any later ASL edit changes the drift set and requires updating this inventory and reviewing the resulting head.
 
 ## Implementation obligations
 
 - Regenerate the 0.58.7 specification identity, catalogs, numeric evidence, release selection, changelog, and release manifest from their owners.
-- Align LLVM and ASL-MODEL to the final encoding projection and candidate lock, with changed-instruction cases.
-- Resolve site and evidence failures before freezing the exact candidate tuple.
+- Downstream LLVM and ASL-MODEL consumers align to the final encoding projection and candidate lock, with changed-instruction cases, in their own integration checks.
+- Resolve PTO-SPEC ASL and release-evidence failures before freezing its exact candidate commit. Site publication is a separate workflow.
 
 ## Verification obligations
 
-Each repository lands a signed, independently reviewed commit. The protected GitHub Release workflow must validate the final exact tuple, every required AVS point, site artifact, model closure payload, and artifact certification. No local or partial result authorizes publication.
+Each repository lands a signed, independently reviewed commit for its own changes. The protected PTO-SPEC Release workflow must validate the final exact PTO commit, every required AVS point, and same-run PTO artifact certification. LLVM/model and site checks do not determine PTO-SPEC release eligibility. No local or partial PTO result authorizes publication.
 
 ## Release consequences
 
@@ -1671,12 +1671,12 @@ The first eligible tag is `v0.58.7.0` after a successful exact-head release run 
 #### English
 
 - Release identity and compatibility classification advance for the complete post-baseline owner delta.
-- LLVM identity, ASL-MODEL lock and cases, generated evidence, and exact-head release validation must follow.
+- PTO-SPEC generated evidence and exact-head ASL release validation must follow; LLVM identity and ASL-MODEL cases are checked by their owners.
 
 #### 中文
 
 - 为基线之后的全部 owner 差异升级发布身份与兼容性分类。
-- LLVM 身份、ASL-MODEL 锁与用例、生成证据及精确提交的发布验证必须同步。
+- PTO-SPEC 的生成证据与精确提交 ASL 发布验证必须同步；LLVM 身份和 ASL-MODEL 用例由各自仓库验证。
 
 ### Scope and boundaries / 范围与边界
 

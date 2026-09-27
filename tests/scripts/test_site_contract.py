@@ -409,7 +409,7 @@ class SiteContractTests(unittest.TestCase):
     def test_design_contract_is_active(self) -> None:
         self.assertIn("- Status: Active", DESIGN_TEXT)
         self.assertIn("asl/**/*.asl", DESIGN_TEXT)
-        self.assertIn("site validity is release-blocking", DESIGN_TEXT.lower())
+        self.assertIn("site validity a site-publication prerequisite", DESIGN_TEXT.lower())
 
     def test_site_workflow_is_read_only_and_commit_pinned(self) -> None:
         workflow = (ROOT / ".github/workflows/site.yml").read_text(encoding="utf-8")
@@ -428,21 +428,19 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("pnpm@10.30.0", workflow)
         self.assertNotIn("contents: write", workflow)
 
-    def test_release_workflow_blocks_on_site_validity(self) -> None:
-        workflow = (ROOT / ".github/workflows/release.yml").read_text(
+    def test_site_validation_is_independent_of_pto_release(self) -> None:
+        release = (ROOT / ".github/workflows/release.yml").read_text(
             encoding="utf-8"
         )
-        self.assertIn("release-site:", workflow)
-        self.assertIn("name: pto-site-preview-${{ inputs.commit }}", workflow)
-        self.assertIn("include-hidden-files: true", workflow)
-        self.assertIn("artifact-digest: ${{ steps.site-preview.outputs.artifact-digest }}", workflow)
-        self.assertIn("SITE_ARTIFACT_DIGEST", workflow)
-        self.assertIn("RELEASE_SITE_RESULT", workflow)
-        self.assertIn("PTO_SITE_CROSS_BROWSER=1", workflow)
-        self.assertIn("PTO_SITE_REQUIRE_CLEAN=1", workflow)
-        self.assertIn("PTO_SITE_RELEASE_COMMIT: ${{ inputs.commit }}", workflow)
-        self.assertIn("python3 scripts/check-site-lighthouse", workflow)
-        self.assertIn('test "$RELEASE_SITE_RESULT" = success', workflow)
+        site = (ROOT / ".github/workflows/site.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("release-site:", release)
+        self.assertNotIn("pto-site-preview-", release)
+        self.assertNotIn("SITE_ARTIFACT_DIGEST", release)
+        self.assertNotIn("RELEASE_SITE_RESULT", release)
+        self.assertIn("make site-check", site)
+        self.assertIn("make site-e2e", site)
 
     def test_site_security_policy_mitigates_unpatched_image_parsers(self) -> None:
         security = (ROOT / "scripts/check-site-security").read_text(encoding="utf-8")

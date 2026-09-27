@@ -97,7 +97,8 @@ asl/**/*.asl
   state transition, preflight, commit, rollback, or traceability.
 - Support English and Simplified Chinese in the framework from the first
   release.
-- Make site validity a release-blocking property.
+- Make site validity a site-publication prerequisite, independently of PTO-SPEC
+  ISA release verification.
 
 ## Non-goals
 
@@ -740,10 +741,11 @@ build/site-data/             # Disposable per-route site data
   - mobile performance at least 80;
   - cumulative layout shift below 0.1.
 
-## Release validity
+## Site publication validity
 
-Site validity is release-blocking. A release is not publishable until all of the
-following are true for the same immutable release candidate commit:
+Site validity blocks site publication, not PTO-SPEC ISA release verification.
+The independent site publisher must establish all of the following for the same
+immutable PTO-SPEC source commit before deploying:
 
 - The complete ASL/NDF, documentation projection, catalogs, AVS, and release
   evidence gates pass.
@@ -760,18 +762,20 @@ following are true for the same immutable release candidate commit:
 - Desktop, tablet, phone, light, dark, reduced-motion, no-WebGL, and no-JavaScript
   paths pass their required checks.
 - Accessibility and performance budgets pass.
-- A content-addressed preview artifact is produced and reviewed before release
-  publication.
-- The preview artifact hash and source commit are recorded with the release.
-- Production deployment is triggered only from the accepted release event and
-  replaces the previous root site atomically.
+- A content-addressed preview artifact is produced and reviewed by the site
+  publication pipeline, not by PTO-SPEC's Release workflow.
+- The preview artifact hash and source commit are recorded with the site
+  deployment.
+- Production deployment requires a separate accepted site handoff and replaces
+  the previous root site atomically; a PTO-SPEC release event alone is not a
+  site-deployment authorization.
 
 ## Migration and redirects
 
 - The Docusaurus portal replaces the current MkDocs site at
   `https://pto-isa.github.io/`.
-- The first production cutover occurs only at a formal release whose immutable
-  commit already contains the Docusaurus source and site gates. The existing
+- The first production cutover occurs only after the independent site publisher
+  validates the Docusaurus source at an immutable PTO-SPEC release commit. The existing
   `v0.58.4` tag is not rewritten to bootstrap the portal.
 - The old publisher is disabled before the new publisher receives production
   authority.
@@ -805,11 +809,11 @@ following are true for the same immutable release candidate commit:
 - One homepage NDF relationship overview generated from the same complete
   graph and deterministic layout as the interactive explorer.
 - Static and non-WebGL fallbacks.
-- Immutable release preview and release-blocking site validation.
+- Immutable site preview and site-publication validation.
 - Root-domain cutover plan and redirect manifest.
 
 The initial TLOAD vertical slice established the data contract, source boundary,
-design system, release workflow, and interaction model. The current scope applies
+design system, site workflow, and interaction model. The current scope applies
 that contract to every released ASL unit while keeping TLOAD's animation an
 instruction-specific demonstration rather than a semantic source.
 
@@ -829,7 +833,7 @@ Implementation must request review before changing:
 - normative ownership or the allowed role of hand-written Markdown;
 - the latest-release-only production policy;
 - production domain or repository authority;
-- release-blocking gate categories;
+- site-publication gate categories;
 - supported languages or translation policy;
 - primary persona or default search-to-workbench flow;
 - accessibility targets or fallback obligations.

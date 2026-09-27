@@ -79,17 +79,17 @@ class ReleaseClosureTest(unittest.TestCase):
         gate = json.loads(RELEASE_GATE.read_text(encoding="utf-8"))
         self.assertIn("scripts/check-release-workflow", gate["sources"])
         self.assertIn("scripts/check-release-event-schema", gate["sources"])
-        self.assertIn("scripts/check-model-closure", gate["sources"])
-        self.assertIn("scripts/check-model-closure-schema", gate["sources"])
-        self.assertIn("scripts/model_closure.py", gate["sources"])
-        self.assertIn("scripts/generate-model-closure-impact", gate["sources"])
-        self.assertIn("scripts/run-model-closure", gate["sources"])
+        self.assertNotIn("scripts/check-model-closure", gate["sources"])
+        self.assertNotIn("scripts/model_closure.py", gate["sources"])
         self.assertIn("scripts/release_event.py", gate["sources"])
         self.assertIn("scripts/check-release-artifacts", gate["sources"])
         self.assertIn("scripts/release_artifacts.py", gate["sources"])
-        self.assertIn("scripts/check-site-lighthouse", gate["sources"])
+        self.assertNotIn("scripts/check-site-lighthouse", gate["sources"])
         self.assertIn(
             "spec/schemas/pto-spec-release-event-v1.schema.json", gate["sources"]
+        )
+        self.assertIn(
+            "spec/schemas/pto-spec-release-event-v2.schema.json", gate["sources"]
         )
         self.assertIn("scripts/release_workflow.py", gate["sources"])
         self.assertIn("scripts/tile_taxonomy.py", gate["sources"])
@@ -115,26 +115,8 @@ class ReleaseClosureTest(unittest.TestCase):
             },
             gate["gates"],
         )
-        self.assertIn(
-            {
-                "id": "RG-11",
-                "name": "LLVM-to-ASL model closure",
-                "command": "scripts/check-model-closure <same-run artifacts>",
-                "evidence": [
-                    ".github/workflows/release.yml",
-                    "scripts/check-model-closure",
-                    "scripts/check-model-closure-schema",
-                    "scripts/model_closure.py",
-                    "scripts/generate-model-closure-impact",
-                    "scripts/run-model-closure",
-                    "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
-                    "spec/schemas/pto-closure-run-envelope-v1.schema.json",
-                    "spec/model-closure-selection.json",
-                    "spec/schemas/pto-model-closure-selection-v1.schema.json",
-                ],
-            },
-            gate["gates"],
-        )
+        self.assertNotIn("RG-11", {row["id"] for row in gate["gates"]})
+        self.assertNotIn("RG-14", {row["id"] for row in gate["gates"]})
 
     def test_release_targets_require_fresh_canonical_evidence(self) -> None:
         makefile = MAKEFILE.read_text(encoding="utf-8")
@@ -198,10 +180,7 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/evidence/release-traceability-readiness.json",
                 "spec/evidence/mnemonic-descriptions/coverage-summary.json",
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
-                "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
-                "spec/schemas/pto-closure-run-envelope-v1.schema.json",
-                "spec/model-closure-selection.json",
-                "spec/schemas/pto-model-closure-selection-v1.schema.json",
+                "spec/schemas/pto-spec-release-event-v2.schema.json",
             },
         )
         for row in registry["evidence"]:
