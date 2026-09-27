@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
 readonly func BundleFixedPointAttributesCanBePlaced() => boolean
 begin
     if !_BundleActive ||
@@ -100,23 +100,7 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            SetBundleDataAttributeState(
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_DataType)[4:0],
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_Layout)[4:0],
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_PadValueOrByteId)[1:0],
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_CMode)[2:0],
-                DecodeCommandOperandRaw(instruction, form,
-                    CommandField_RMode)[2:0],
-                CommandDecodedBool(instruction, form, CommandField_Sat),
-                CommandDecodedBool(
-                    instruction, form, CommandField_Canonicalize));
-            if _LastFault == Fault_None then
-                _BundleDataAttributesPresent = TRUE;
-            end;
+            SetBundleDataAttributesFromCommand(instruction, form);
         when CommandHandler_SetBundleFixedPointAttributes =>
             if !BundleFixedPointAttributesCanBePlaced() then
                 SetFault(Fault_BundleControl, ReadTPC());
@@ -191,6 +175,9 @@ begin
             let selected_tgpr2t = BundleTGPR2TSelected();
             let selected_multi_ior = BundleMultiIORSelected();
             let binding_index = BundleMultiIORBindingIndex();
+            let execution_mask_present =
+                DecodeCommandOperandRaw(instruction, form,
+                    CommandField_ExecMaskPresent)[0] == '1';
             if !_BundleActive || _BundleBodyActive ||
                _BundleScalarBindings[[binding_index]].valid ||
                (!selected_multi_ior && _BundleScalarBindings[[0]].valid) ||
@@ -199,12 +186,14 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            SetBundleScalarBinding(binding_index,
+            SetBundleScalarBindingWithExecutionMask(binding_index,
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc0),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2),
-                if selected_tgpr2t && binding_index == 1 then 1 else 3);
+                if selected_tgpr2t && binding_index == 1 &&
+                   !execution_mask_present then 1 else 3,
+                execution_mask_present);
         when CommandHandler_BindBundleTileIO =>
             let pe_mode = DecodeCommandOperandRaw(
                 instruction, form, CommandField_PEMode)[2:0];

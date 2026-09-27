@@ -307,9 +307,24 @@ begin
        decoded_operation == TileOperation_TSELS then
         // Comparison/select carriers own their complete mutually-exclusive
         // binding schemas; the generic tile operand arity is not applicable.
+        if _BundleExecutionMask.valid &&
+           _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile then
+            return BundleLocalTileSourceCount() ==
+                _BundleExecutionMask.predicate_source_ordinal + 1;
+        end;
         return TRUE;
     end;
     if decoded_operation == TileOperation_TGPR2T then
+        if _BundleExecutionMask.valid &&
+           _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile then
+            return BundleTileBindingCount() == 1 &&
+                   _BundleTileBindings[[0]].valid &&
+                   _BundleTileBindings[[0]].destination_valid &&
+                   _BundleTileBindings[[0]].source0_valid &&
+                   !_BundleTileBindings[[0]].source1_valid &&
+                   _BundleTileBindings[[0]].last &&
+                   BundleLocalTileSourceCount() == 1;
+        end;
         if BundleTileBindingCount() != 1 ||
            !_BundleTileBindings[[0]].valid ||
            !_BundleTileBindings[[0]].destination_valid ||
@@ -349,7 +364,7 @@ begin
          then 1 else 0) +
         (if matrix && _BundleFixedPointAttributes.group_max_en
          then 1 else 0);
-    let expected_sources =
+    var expected_sources =
         (if TileOperandPresent(operation, TileOperand_source0)
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_source1)
@@ -371,6 +386,10 @@ begin
         (if matrix && BundleFPATRReluModeUsesVectorParameter(
                _BundleFixedPointAttributes.relu_mode)
          then 1 else 0);
+    if _BundleExecutionMask.valid &&
+       _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile then
+        expected_sources = (expected_sources + 1) as integer {0..9};
+    end;
     // Matrix post-processing is a complete-bundle schema contribution.  The
     // static catalog carries mathematical operands; B.FPATR contributes
     // optional RowMax/parameter streams and compact auxiliary destinations.

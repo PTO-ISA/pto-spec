@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/load-store.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-LOAD-STORE","surface":"tile","classification":["model","memory","load-store"],"depends_on":["PTO-TILE-MODEL-MEMORY-STRIDE","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-LOAD-STORE","surface":"tile","classification":["model","memory","load-store"],"depends_on":["PTO-TILE-MODEL-MEMORY-STRIDE","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA"]}
 pure func DecodeTileMemoryElementRaw(raw: Word,
                                      data_type: TileDataType,
                                      high_nibble: boolean) => Word
@@ -86,6 +86,7 @@ begin
     // cache.  The fast case is limited to ordinary reset-backed zero-stride
     // packed loads and retains the normal translated probe/fault path.
     var packed_zero_fast = PackedTileDataTypeIsFourBit(tile.data_type) &&
+        !_BundleExecutionMask.valid &&
         !TileLayoutIsCube(tile.layout) &&
         !_MemoryEventCaptureEnabled &&
         tile.defined_valid_elements == 0 &&
@@ -120,6 +121,15 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
+            if !BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let inactive_value = BundleExecutionMaskDestinationValue(
+                    tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, element, inactive_value, TRUE);
+            else
             let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
@@ -142,6 +152,7 @@ begin
                 DecodeTileMemoryElementRaw(raw, tile.data_type, high_nibble));
             result.defined_valid_elements =
                 (result.defined_valid_elements + 1) as integer {0..524288};
+            end;
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -155,13 +166,21 @@ end;
 func TSTORE(base_address: Word, row_stride_bytes: Word, source: TileIndex)
 begin
     let tile = _Tiles[[source]];
-    assert tile.allocated && tile.contents_defined;
+    var source_contents_defined = tile.contents_defined;
+    if _BundleExecutionMask.valid then
+        source_contents_defined =
+            TileElementwiseSourceContentsDefined(source);
+    end;
+    assert tile.allocated && source_contents_defined;
     if TileLayoutIsCube(tile.layout) then
         assert TileCubeDescriptorLegal(tile);
     end;
     BeginMemoryReplay(ReadBPC());
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
             let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryStridedByteAddress(base_address,
@@ -182,6 +201,7 @@ begin
                 TileMemoryElementBytes(tile.data_type), stored_value,
                 CurrentBundleMemoryOrder());
             CommitMemoryReplayEffect();
+            end;
         end;
     end;
     CompleteMemoryReplay();

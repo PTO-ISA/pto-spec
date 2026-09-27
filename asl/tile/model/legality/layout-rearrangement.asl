@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","surface":"tile","classification":["model","legality","layout-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","surface":"tile","classification":["model","legality","layout-rearrangement"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 
 pure func TileCellRearrangementLayoutLegal(layout: TileLayout) => boolean
 begin
@@ -113,6 +113,36 @@ begin
     return TRUE;
 end;
 
+readonly func TileCellRearrangementByteHasActiveCoordinate(
+    tile: TileInfo, row: integer {0..65535},
+    byte_index: integer {0..262143}) => boolean
+begin
+    let element_bits = TileElementBits(tile.data_type);
+    if element_bits == 4 then
+        let first_column = (byte_index * 2) as integer {0..65535};
+        if first_column < tile.valid_columns &&
+           BundleExecutionMaskActiveAt(tile.layout, row, first_column) then
+            return TRUE;
+        end;
+        return first_column + 1 < tile.valid_columns &&
+               BundleExecutionMaskActiveAt(
+                   tile.layout, row,
+                   (first_column + 1) as integer {0..65535});
+    end;
+    let element_column = (byte_index DIVRM
+        TileElementBytes(tile.data_type)) as integer {0..65535};
+    return element_column < tile.valid_columns &&
+           BundleExecutionMaskActiveAt(tile.layout, row, element_column);
+end;
+
+pure func TileCellRearrangementElementWordIndex(
+    data_type: TileDataType, column: integer {0..65535})
+    => integer {0..65535}
+begin
+    return ((column * TileElementBits(data_type)) DIVRM 32)
+        as integer {0..65535};
+end;
+
 readonly func TileOperandsLegal_TPERMUTE(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, indices: TileIndex) => boolean
@@ -158,25 +188,29 @@ begin
     end;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for byte_index = 0 to valid_bytes - 1 looplimit 262144 do
-            if !TileCellRearrangementByteDefined(index_tile,
-                row as integer {0..65535}, byte_index) then
-                return FALSE;
-            end;
-            let index_element = TileLogicalLinearIndex(index_tile,
-                row as integer {0..65535}, byte_index as integer {0..65535});
-            let index_value = UInt(TileReadLogicalElement(
-                index_tile, index_element));
-            if index_value >= row_bytes * 2 then return FALSE; end;
-            let cell_base = (byte_index DIVRM row_bytes) * row_bytes;
-            let selected_byte = if index_value < row_bytes then
-                index_value else index_value - row_bytes;
-            let source_byte = cell_base + selected_byte;
-            let selected_source = if index_value < row_bytes then
-                left else right;
-            if !TileCellRearrangementByteDefined(selected_source,
-                row as integer {0..65535},
-                source_byte as integer {0..262143}) then
-                return FALSE;
+            if TileCellRearrangementByteHasActiveCoordinate(
+                   destination_tile, row as integer {0..65535}, byte_index) then
+                if !TileCellRearrangementByteDefined(index_tile,
+                    row as integer {0..65535}, byte_index) then
+                    return FALSE;
+                end;
+                let index_element = TileLogicalLinearIndex(index_tile,
+                    row as integer {0..65535},
+                    byte_index as integer {0..65535});
+                let index_value = UInt(TileReadLogicalElement(
+                    index_tile, index_element));
+                if index_value >= row_bytes * 2 then return FALSE; end;
+                let cell_base = (byte_index DIVRM row_bytes) * row_bytes;
+                let selected_byte = if index_value < row_bytes then
+                    index_value else index_value - row_bytes;
+                let source_byte = cell_base + selected_byte;
+                let selected_source = if index_value < row_bytes then
+                    left else right;
+                if !TileCellRearrangementByteDefined(selected_source,
+                    row as integer {0..65535},
+                    source_byte as integer {0..262143}) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -217,10 +251,74 @@ begin
        (destination_tile.layout == TileLayout_CUBE_M16 &&
         segment_code == 4) || !TileRearrangementControlWordLegal(control) ||
        !TileCubeDataTypeSupported(destination_tile.data_type) ||
-       TileElementBits(destination_tile.data_type) == 64 ||
-       !TileCellRearrangementValidRegionDefined(source_tile) ||
-       !TileCellRearrangementValidRegionDefined(control_tile) then
+       TileElementBits(destination_tile.data_type) == 64 then
         return FALSE;
+    end;
+    let segment_width = if segment_code == 0 then 2
+        else if segment_code == 1 then 4
+        else if segment_code == 2 then 8
+        else if segment_code == 3 then 16
+        else 32;
+    let cell_rows = if destination_tile.layout == TileLayout_CUBE_M32 then 32
+        else 16;
+    for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+        let lane = (row MOD cell_rows) as integer {0..31};
+        let segment_base = ((lane DIVRM segment_width) * segment_width)
+            as integer {0..31};
+        let local_lane = (lane - segment_base) as integer {0..31};
+        for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   source_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let word_index = TileCellRearrangementElementWordIndex(
+                    source_tile.data_type,
+                    column as integer {0..65535});
+                let control_element = TileLogicalLinearIndex(
+                    control_tile, row as integer {0..65535}, word_index);
+                if !TileLogicalElementDefined(
+                       control_tile, control_element) then return FALSE; end;
+                let control_word = TileReadLogicalElement(
+                    control_tile, control_element);
+                let b = UInt(control_word[4:0]);
+                var candidate_valid = TRUE;
+                var candidate_lane: integer {0..31} = lane;
+                if mode == 0 then
+                    if b > lane - segment_base then candidate_valid = FALSE;
+                    else candidate_lane = (lane - b) as integer {0..31}; end;
+                elsif mode == 1 then
+                    if (lane - segment_base) + b >= segment_width then
+                        candidate_valid = FALSE;
+                    else candidate_lane = (lane + b) as integer {0..31}; end;
+                elsif mode == 2 then
+                    candidate_lane = (segment_base +
+                        UInt(((Zeros{5} + local_lane) as bits(5)) XOR
+                             ((Zeros{5} + b) as bits(5))))
+                        as integer {0..31};
+                    if candidate_lane >= segment_base + segment_width then
+                        candidate_valid = FALSE;
+                    end;
+                else
+                    candidate_lane = (segment_base +
+                        (b MOD segment_width)) as integer {0..31};
+                end;
+                let candidate_row = (row - lane) + candidate_lane;
+                var source_row: integer {0..65535} =
+                    row as integer {0..65535};
+                var source_required = boundary == 0;
+                if candidate_valid &&
+                   candidate_row < source_tile.valid_rows then
+                    source_row = candidate_row as integer {0..65535};
+                    source_required = TRUE;
+                end;
+                if source_required then
+                    let source_element = TileLogicalLinearIndex(
+                        source_tile, source_row,
+                        column as integer {0..65535});
+                    if !TileLogicalElementDefined(
+                           source_tile, source_element) then return FALSE; end;
+                end;
+            end;
+        end;
     end;
     return TRUE;
 end;
@@ -295,13 +393,18 @@ begin
     for row = 0 to left.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};
-            if !TileCellRearrangementSelectedBytesDefined(
-                left, row as integer {0..65535}, word_start,
-                left_bytes as integer {0..4}) ||
-               !TileCellRearrangementSelectedBytesDefined(
-                right, row as integer {0..65535}, word_start,
-                right_bytes as integer {0..4}) then
-                return FALSE;
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   left.layout, row as integer {0..65535},
+                   word_index as integer {0..65535}) then
+                if !TileCellRearrangementSelectedBytesDefined(
+                    left, row as integer {0..65535}, word_start,
+                    left_bytes as integer {0..4}) ||
+                   !TileCellRearrangementSelectedBytesDefined(
+                    right, row as integer {0..65535}, word_start,
+                    right_bytes as integer {0..4}) then
+                    return FALSE;
+                end;
             end;
         end;
     end;
@@ -349,7 +452,13 @@ begin
                 (if valid_bytes - word_start > 4 then 4
                  else valid_bytes - word_start)
             else 0;
-            if offset + count > word_valid ||
+            if offset + count > word_valid then
+                return FALSE;
+            end;
+            if (!_BundleExecutionMask.valid ||
+                BundleExecutionMaskActiveAt(
+                    source_tile.layout, row as integer {0..65535},
+                    word_index as integer {0..65535})) &&
                !TileCellRearrangementSelectedBytesDefined(
                    source_tile, row as integer {0..65535},
                    (word_start + offset) as integer {0..262143},

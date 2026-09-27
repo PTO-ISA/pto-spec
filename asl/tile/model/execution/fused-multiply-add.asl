@@ -118,11 +118,24 @@ begin
                 destination_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            let (result, element_flags) = TileFixedFusedMultiplyAddValue(
-                destination_tile.data_type,
-                TileReadLogicalElement(left_tile, element),
-                TileReadLogicalElement(right_tile, element),
-                TileReadLogicalElement(addend_tile, element));
+            var result = Zeros{PTO_XLEN};
+            var element_flags = Zeros{5};
+            if BundleExecutionMaskActiveAt(
+                   destination_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let (active_result, active_flags) =
+                    TileFixedFusedMultiplyAddValue(
+                        destination_tile.data_type,
+                        TileReadLogicalElement(left_tile, element),
+                        TileReadLogicalElement(right_tile, element),
+                        TileReadLogicalElement(addend_tile, element));
+                result = active_result;
+                element_flags = active_flags;
+            else
+                result = BundleExecutionMaskDestinationValue(
+                    destination_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+            end;
             result_tile = TileInfoWithLogicalElement(result_tile, element,
                 result);
             flags = flags OR element_flags;

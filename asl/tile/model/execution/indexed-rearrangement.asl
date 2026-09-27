@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","execution","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","execution","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
 
 func TGATHER(
     destination: TileIndex,
@@ -16,23 +16,32 @@ begin
     result.packed_defined_elements = zero_packed_tile_elements;
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
-            let index_element = TileLogicalLinearIndex(
-                index_tile,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            let source_row = TileIndexedRowValue(
-                TileReadLogicalElement(index_tile, index_element),
-                index_tile.data_type);
-            let source_element = TileLogicalLinearIndex(
-                source_tile,
-                source_row as integer {0..65535},
-                column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, destination_element,
-                TileReadLogicalElement(source_tile, source_element));
+            if BundleExecutionMaskActiveAt(
+                   result.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let index_element = TileLogicalLinearIndex(
+                    index_tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                let source_row = TileIndexedRowValue(
+                    TileReadLogicalElement(index_tile, index_element),
+                    index_tile.data_type);
+                let source_element = TileLogicalLinearIndex(
+                    source_tile, source_row as integer {0..65535},
+                    column as integer {0..65535});
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, destination_element,
+                    TileReadLogicalElement(source_tile, source_element), TRUE);
+            else
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, destination_element,
+                    BundleExecutionMaskDestinationValue(
+                        result.layout, row as integer {0..65535},
+                        column as integer {0..65535}, Zeros{PTO_XLEN}), TRUE);
+            end;
         end;
     end;
     result.defined_valid_elements =

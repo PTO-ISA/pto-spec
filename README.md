@@ -29,7 +29,7 @@ it does not establish publication or release readiness.
 | Scalar instruction forms | 466 |
 | Active bundle and command forms | 96 |
 | Direct Tile operations | 118 |
-| Architecture and instruction ASL units | 898 |
+| Architecture and instruction ASL units | 905 |
 
 <!-- PTO-INVENTORY-END -->
 

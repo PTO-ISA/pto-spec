@@ -82865,7 +82865,7 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
+        "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes when at least one logical coordinate is ExecutionMask-active, is a legal no-op when every coordinate is inactive, and remains legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
         {
@@ -82886,7 +82886,7 @@
       "engine": "SFU",
       "exceptions": [
         "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-        "An integer scalar zero raises Illegal Block Exception before effects; floating positive or negative zero remains a legal profile-defined divisor.",
+        "An integer scalar zero raises Illegal Block Exception before effects when at least one logical coordinate is ExecutionMask-active; an all-inactive operation is a legal no-op, while floating positive or negative zero remains a legal profile-defined divisor.",
         "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -216367,7 +216367,7 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
+        "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes when at least one logical coordinate is ExecutionMask-active, is a legal no-op when every coordinate is inactive, and remains a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
       ],
       "destinations": [
         {
@@ -216388,7 +216388,7 @@
       "engine": "SFU",
       "exceptions": [
         "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-        "Signed integer quotient selection uses floor division so a nonzero result has the divisor sign; integer scalar zero is illegal before effects.",
+        "Signed integer quotient selection uses floor division so a nonzero result has the divisor sign; integer scalar zero is illegal before effects when at least one logical coordinate is ExecutionMask-active, while an all-inactive operation is a legal no-op.",
         "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -247153,7 +247153,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+        "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
         "TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -253132,7 +253132,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+        "Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
         "TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",

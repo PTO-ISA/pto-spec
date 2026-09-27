@@ -315,6 +315,7 @@ class NdfTest(unittest.TestCase):
                 "_BundleControlAttributes",
                 "_BundleDataAttributes",
                 "_BundleDataAttributesPresent",
+                "_BundleExecutionMask",
                 "_BundleHint",
                 "_BundleFixedPointAttributes",
                 "_MemoryCopyTemplate",

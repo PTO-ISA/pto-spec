@@ -981,7 +981,7 @@
         },
         "sharedRegions": [
           {
-            "sourcePath": "asl/block/model/dispatch/tile-schema.asl",
+            "sourcePath": "asl/block/model/dispatch/tile-instruction-operands.asl",
             "label": {
               "en": "B.IOR operand resolution",
               "zh-CN": "B.IOR 操作数解析"

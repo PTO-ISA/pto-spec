@@ -6822,6 +6822,24 @@
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-BLOCK-MODEL-STATE-TYPES"
       ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-IOR-BINDING-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-IOR",
+            "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+          "date": "2026-09-25",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/277"
+        }
+      ],
       "approvers": [
         "PTO ISA maintainers"
       ],
@@ -6844,7 +6862,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.59.0"
       ],
       "title": "Complete-Bundle B.IOR Schema and Defaults",
       "title_zh": "\u5b8c\u6574 Bundle \u7684 B.IOR \u6a21\u5f0f\u4e0e\u9ed8\u8ba4\u503c"
@@ -7392,7 +7410,8 @@
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
         "PTO-TILE-TLOAD",
-        "PTO-TILE-TSTORE"
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-STATE-TYPES"
       ],
       "amendments": [
         {
@@ -7517,6 +7536,22 @@
           "baseline": "ef2d23cdee03e74057099dc69943e8b909809ce0",
           "date": "2026-09-14",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/284"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-DATR-FIELDS-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-MODEL-STATE-TYPES",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+          "date": "2026-09-25",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/277"
         }
       ],
       "approvers": [
@@ -7565,7 +7600,8 @@
         "0.58.1",
         "0.58.2",
         "0.58.5",
-        "0.58.6.0"
+        "0.58.6.0",
+        "0.59.0"
       ],
       "title": "Block attributes and lifecycle",
       "title_zh": "Block \u5c5e\u6027\u4e0e\u751f\u547d\u5468\u671f"
@@ -7580,7 +7616,29 @@
       "affected_units": [
         "PTO-BLOCK-B-IOR",
         "PTO-BLOCK-B-IOS",
-        "PTO-BLOCK-B-IOT"
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-B-IOR-BINDING-001",
+            "PTO-B-IOT-STREAM-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-IOR",
+            "PTO-BLOCK-B-IOT",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+          "date": "2026-09-25",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/277"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -7620,7 +7678,8 @@
       ],
       "target_releases": [
         "0.58.1",
-        "0.58.2"
+        "0.58.2",
+        "0.59.0"
       ],
       "title": "Block scalar and tile bindings",
       "title_zh": "Block \u6807\u91cf\u4e0e Tile \u7ed1\u5b9a"
@@ -10028,7 +10087,12 @@
         "PTO-TROWEXPANDMUL-CONTRACT-001",
         "PTO-TROWEXPANDSUB-CONTRACT-001",
         "PTO-INST-TILE-TEXPDIF",
-        "PTO-TEXPDIF-CONTRACT-001"
+        "PTO-TEXPDIF-CONTRACT-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001",
+        "PTO-INST-BLOCK-B-IOT"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -10140,6 +10204,7 @@
         "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS",
         "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
         "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
         "PTO-TILE-TCOLEXPAND",
         "PTO-TILE-TCOLEXPANDADD",
         "PTO-TILE-TCOLEXPANDDIV",
@@ -10164,7 +10229,35 @@
         "PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA",
         "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
         "PTO-TILE-MODEL-DISPATCH-ELEMENTWISE-TILE-TILE",
-        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-TILE-MODEL-EXECUTION-GENERATION",
+        "PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT",
+        "PTO-TILE-MODEL-EXECUTION-MASK",
+        "PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-MASK-STATE",
+        "PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY",
+        "PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED",
+        "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE"
       ],
       "amendments": [
         {
@@ -10536,6 +10629,105 @@
           "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
           "date": "2026-09-24",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/333"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-B-IOR-BINDING-001",
+            "PTO-B-IOT-STREAM-001",
+            "PTO-INST-BLOCK-B-DATR",
+            "PTO-INST-BLOCK-B-IOR",
+            "PTO-INST-BLOCK-B-IOT",
+            "PTO-INST-TILE-TCMP",
+            "PTO-INST-TILE-TCMPS",
+            "PTO-INST-TILE-TDIVS",
+            "PTO-INST-TILE-TREMS",
+            "PTO-INST-TILE-TSEL",
+            "PTO-INST-TILE-TSELS",
+            "PTO-TCMP-CONTRACT-001",
+            "PTO-TCMPS-CONTRACT-001",
+            "PTO-TDIVS-CONTRACT-001",
+            "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+            "PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001",
+            "PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001",
+            "PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001",
+            "PTO-TREMS-CONTRACT-001",
+            "PTO-TSEL-CONTRACT-001",
+            "PTO-TSELS-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-B-IOR",
+            "PTO-BLOCK-B-IOT",
+            "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+            "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+            "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+            "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+            "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+            "PTO-BLOCK-MODEL-STATE-TYPES",
+            "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+            "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+            "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+            "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+            "PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD",
+            "PTO-TILE-MODEL-EXECUTION-GENERATION",
+            "PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT",
+            "PTO-TILE-MODEL-EXECUTION-MASK",
+            "PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON",
+            "PTO-TILE-MODEL-EXECUTION-MASK-STATE",
+            "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+            "PTO-TILE-MODEL-EXECUTION-UNARY",
+            "PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY",
+            "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT",
+            "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+            "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-MEMORY-ATOMICS",
+            "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+            "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED",
+            "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION",
+            "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+            "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-TCMP",
+            "PTO-TILE-TCMPS",
+            "PTO-TILE-TDIVS",
+            "PTO-TILE-TREMS",
+            "PTO-TILE-TSEL",
+            "PTO-TILE-TSELS"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "79e7fc8527c13993fad51b0435226dd735b5d74b",
+          "date": "2026-09-26",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/277#issuecomment-5835533485"
         }
       ],
       "approvers": [
@@ -10598,7 +10790,8 @@
       "target_releases": [
         "0.58.1",
         "0.58.2",
-        "0.58.5"
+        "0.58.5",
+        "0.59.0"
       ],
       "title": "Tile elementwise and irregular operations",
       "title_zh": "Tile \u9010\u5143\u7d20\u4e0e\u975e\u89c4\u5219\u64cd\u4f5c"

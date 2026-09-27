@@ -1,4 +1,4 @@
-// PTO-UNIT: {"classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"],"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile"}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
 readonly func TileElementwiseDescriptorLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
@@ -21,54 +21,6 @@ begin
            _Tiles[[left]].valid_rows == _Tiles[[right]].valid_rows && _Tiles[[left]].valid_columns == _Tiles[[right]].valid_columns &&
            _Tiles[[left]].layout == _Tiles[[right]].layout && _Tiles[[left]].storage_kind == _Tiles[[right]].storage_kind &&
            _Tiles[[left]].data_type == _Tiles[[right]].data_type;
-end;
-readonly func TileElementwiseSourceContentsDefined(index: TileIndex)
-    => boolean
-begin
-    return TileElementwiseDescriptorLegal(index) &&
-           _Tiles[[index]].contents_defined;
-end;
-readonly func TileElementwiseSourceEncodingsValidAs(
-    index: TileIndex, operation_type: TileDataType) => boolean
-begin
-    if !TileElementwiseSourceContentsDefined(index) ||
-       !TileCarrierWidthCompatible(
-           _Tiles[[index]].data_type, operation_type) then
-        return FALSE;
-    end;
-    let tile = _Tiles[[index]];
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   operation_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
-            end;
-        end;
-    end;
-    return TRUE;
-end;
-readonly func TileElementwiseSourceEncodingsValid(index: TileIndex)
-    => boolean
-begin
-    if !TileElementwiseSourceContentsDefined(index) then return FALSE; end;
-    let tile = _Tiles[[index]];
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            if !TileNumericEncodingValid(
-                   tile.data_type,
-                   TileReadLogicalElement(tile, element)) then
-                return FALSE;
-            end;
-        end;
-    end;
-    return TRUE;
 end;
 readonly func TileRowMajorNumericCarrierLegal(
     index: TileIndex, operation_type: TileDataType) => boolean
@@ -190,7 +142,8 @@ begin
     if (op == TileBinary_DIV || op == TileBinary_REM) &&
        TileDataTypeIsInteger(operation_type) then
         return !IsZero(TileIntegerOperandValue(
-            normalized_scalar, operation_type));
+                   normalized_scalar, operation_type)) ||
+               !BundleExecutionMaskHasActiveCoordinate();
     end;
     return TRUE;
 end;
@@ -276,7 +229,7 @@ begin
                    _Tiles[[source_true]].data_type, operation_type) &&
                TileCarrierWidthCompatible(
                    _Tiles[[source_false]].data_type, operation_type) &&
-               TilePredicateCellValuesLegal(mask) &&
+               TilePredicateCellOperationValuesLegal(mask) &&
                TilePredicateCellShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
@@ -318,7 +271,7 @@ begin
                TileCubeNumericContentsDefined(source_true) &&
                TileCarrierWidthCompatible(
                    _Tiles[[source_true]].data_type, operation_type) &&
-               TilePredicateCellValuesLegal(mask) &&
+               TilePredicateCellOperationValuesLegal(mask) &&
                TilePredicateCellShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
@@ -374,6 +327,9 @@ end;
 readonly func TileTCVTSourceContentsDefined(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
+    if _BundleExecutionMask.valid then
+        return TileElementwiseSourceContentsDefined(index);
+    end;
     if TileLayoutIsCube(tile.layout) then
         return TileCubeDescriptorLegal(tile) && tile.contents_defined;
     end;
@@ -383,6 +339,9 @@ readonly func TileTCVTSourceEncodingsValidAs(
     index: TileIndex, operation_type: TileDataType) => boolean
 begin
     let tile = _Tiles[[index]];
+    if _BundleExecutionMask.valid then
+        return TileElementwiseSourceEncodingsValidAs(index, operation_type);
+    end;
     if !TileTCVTSourceContentsDefined(index) ||
        !TileCarrierWidthCompatible(tile.data_type, operation_type) then
         return FALSE;

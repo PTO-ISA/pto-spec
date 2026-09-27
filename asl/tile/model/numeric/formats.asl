@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-FORMATS","surface":"tile","classification":["model","numeric","formats"],"depends_on":["PTO-TILE-MODEL-EXECUTION-GENERATION","PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-STATE-NUMERIC-STATUS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-FORMATS","surface":"tile","classification":["model","numeric","formats"],"depends_on":["PTO-TILE-MODEL-EXECUTION-GENERATION","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-STATE-NUMERIC-STATUS"]}
 // PTO-REQ-TEPL-CONVERT-001: conversion, quantization, and dequantization.
 
 pure func NormalizeTileInteger(value: Word, data_type: TileDataType) => Word
@@ -178,33 +178,43 @@ begin
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLogicalLinearIndex(source_tile,
-                row as integer {0..65535}, column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            let source_value = TileReadLogicalElement(source_tile,
-                source_element);
-            var converted: Word = source_value;
-            var flags: bits(5) = Zeros{5};
-            if (source_operation_type == TileDataType_E8M0 ||
-                source_operation_type == TileDataType_E2M1X2 ||
-                source_operation_type == TileDataType_E1M2X2 ||
-                result.data_type == TileDataType_E2M1X2 ||
-                result.data_type == TileDataType_E1M2X2 ||
-                source_operation_type == TileDataType_E6M2 ||
-                result.data_type == TileDataType_E6M2 ||
-                source_operation_type == TileDataType_RCPE6M2) &&
-               HardwareTCVTTypePairSupported(source_operation_type,
-                   result.data_type) then
-                (converted, flags) = ReferenceTCVTConvert(source_value,
-                    source_operation_type, result.data_type, control);
+            if BundleExecutionMaskActiveAt(
+                   source_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let source_element = TileLogicalLinearIndex(source_tile,
+                    row as integer {0..65535}, column as integer {0..65535});
+                let source_value = TileReadLogicalElement(
+                    source_tile, source_element);
+                var converted: Word = source_value;
+                var flags: bits(5) = Zeros{5};
+                if (source_operation_type == TileDataType_E8M0 ||
+                    source_operation_type == TileDataType_E2M1X2 ||
+                    source_operation_type == TileDataType_E1M2X2 ||
+                    result.data_type == TileDataType_E2M1X2 ||
+                    result.data_type == TileDataType_E1M2X2 ||
+                    source_operation_type == TileDataType_E6M2 ||
+                    result.data_type == TileDataType_E6M2 ||
+                    source_operation_type == TileDataType_RCPE6M2) &&
+                   HardwareTCVTTypePairSupported(source_operation_type,
+                       result.data_type) then
+                    (converted, flags) = ReferenceTCVTConvert(source_value,
+                        source_operation_type, result.data_type, control);
+                else
+                    (converted, flags) = TileConvertValue(source_value,
+                        source_operation_type, result.data_type, control);
+                end;
+                result = TileInfoWithLogicalElement(
+                    result, destination_element, converted);
+                conversion_flags = conversion_flags OR flags;
             else
-                (converted, flags) = TileConvertValue(source_value,
-                    source_operation_type, result.data_type, control);
+                result = TileInfoWithLogicalElement(
+                    result, destination_element,
+                    BundleExecutionMaskDestinationValue(
+                        source_tile.layout, row as integer {0..65535},
+                        column as integer {0..65535}, Zeros{PTO_XLEN}));
             end;
-            result = TileInfoWithLogicalElement(result, destination_element,
-                converted);
-            conversion_flags = conversion_flags OR flags;
         end;
     end;
     result = TileWithValidRegionDefined(result);

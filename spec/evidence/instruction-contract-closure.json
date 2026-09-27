@@ -615,7 +615,7 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}",
+          "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}",
           "constraints": [
             {
               "field": "CMode",
@@ -696,7 +696,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0x000c707f",
+              "mask": "0x000c107f",
               "match": "0x00001023",
               "width_bits": 32
             }
@@ -786,6 +786,30 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
+            },
+            {
+              "name": "PredInv",
+              "pieces": [
+                {
+                  "instruction_lsb": 14,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Zero",
+              "pieces": [
+                {
+                  "instruction_lsb": 13,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
             }
           ],
           "form_id": "b_datr_32_c161a042ff38",
@@ -794,7 +818,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Data Attribute",
           "semantic_handler": "SetBundleDataAttributes",
-          "semantic_summary": "Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.",
+          "semantic_summary": "Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero.",
           "status": "accepted"
         }
       ],
@@ -806,12 +830,13 @@
           "Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the first body instruction; at most one B.DATR is permitted."
         ],
         "canonical_assembly": [
-          "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}"
+          "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}"
         ],
         "defaults": [
-          "B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.",
+          "B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, Canonicalize, PredInv, and Zero retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.",
           "An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.",
-          "For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint."
+          "For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint.",
+          "For an eligible Local CUBE_M16/CUBE_M32 operation with an explicit ExecutionMask, PredInv=0 selects normal mask polarity and Zero=0 selects MERGE for inactive destinations. Nonzero PredInv or Zero without an explicit eligible ExecutionMask is illegal."
         ],
         "encoded_fields": [
           {
@@ -995,16 +1020,51 @@
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "NORM"
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "PredInv",
+            "form_id": "b_datr_32_c161a042ff38",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "ExecutionMask polarity control: zero preserves, one inverts the logical predicate",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Normal ExecutionMask polarity; zero means do not invert."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "Zero",
+            "form_id": "b_datr_32_c161a042ff38",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "inactive ExecutionMask destination policy: zero MERGE, one ZERO",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "MERGE inactive-destination policy; zero preserves the prior destination coordinate."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "B.DATR {NORM, FP32, Zero, None, RNE, 0, 0}",
-          "B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0}"
+          "B.DATR {NORM, FP32, Zero, None, RNE, 0, 0, 0, 0}",
+          "B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0, 0, 0}"
         ],
         "exceptions": [
           "A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.",
-          "Reserved DataType or CMode, unassigned Layout, unsupported Layout, or operation-inapplicable nonzero fields raise an architectural fault before effects."
+          "Reserved DataType or CMode, unassigned Layout, unsupported Layout, or operation-inapplicable nonzero fields raise an architectural fault before effects.",
+          "PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects."
         ],
         "field_domains": [
           {
@@ -1208,7 +1268,8 @@
           "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
           "Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.",
-          "Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero."
+          "Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.",
+          "PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one."
         ],
         "memory_effects": [
           "none"
@@ -1241,6 +1302,14 @@
           {
             "field": "Canonicalize",
             "role": "TCVT private-format canonicalization enable"
+          },
+          {
+            "field": "PredInv",
+            "role": "ExecutionMask polarity control: zero preserves, one inverts the logical predicate"
+          },
+          {
+            "field": "Zero",
+            "role": "inactive ExecutionMask destination policy: zero MERGE, one ZERO"
           }
         ],
         "ordering": [
@@ -1256,7 +1325,7 @@
       "mnemonic": "B.DATR",
       "ndf_clause": "PTO-INST-BLOCK-B-DATR",
       "source": "asl/block/attributes/B.DATR.asl",
-      "summary": "Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.",
+      "summary": "Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero.",
       "surface": "block"
     },
     {
@@ -2842,10 +2911,11 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]",
+          "asm": "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>][, ExecMaskPresent]",
           "complete_bundle_schema": {
             "encoded_surplus_rule": "RegSrc2, RegDst, and all unconsumed source fields must be zero",
             "evidence": "spec/evidence/bundle-command-totality.json",
+            "execution_mask_order": "ExecutionMask GPR word(s) follow all operation-owned GPR inputs and ExecMaskPresent is set only on the final binding record.",
             "gpr_logical_order": [
               "scalar QuantParam",
               "scalar LReLUParam"
@@ -2973,12 +3043,20 @@
                 22,
                 23
               ]
+            },
+            {
+              "field": "ExecMaskPresent",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
             }
           ],
           "encoding": [
             {
               "index": 0,
-              "mask": "0x0600707f",
+              "mask": "0x0200707f",
               "match": "0x00000013",
               "width_bits": 32
             }
@@ -3032,6 +3110,18 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
+            },
+            {
+              "name": "ExecMaskPresent",
+              "pieces": [
+                {
+                  "instruction_lsb": 26,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
             }
           ],
           "form_id": "b_ior_32_c3ea71404eb3",
@@ -3040,7 +3130,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Input & Output",
           "semantic_handler": "BindBundleScalarIO",
-          "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.",
+          "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; ExecMaskPresent marks final-record GPR ExecutionMask words.",
           "status": "accepted"
         }
       ],
@@ -3049,10 +3139,10 @@
       ],
       "contract": {
         "block_composition": [
-          "One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. TGPR2T instead requires exactly two immediately contiguous source-only records before its destination B.IOT."
+          "One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. Eligible Local CUBE ExecutionMask forms may use one or two immediately contiguous records; TGPR2T and TIMG2COL retain their separately owned two-record forms."
         ],
         "canonical_assembly": [
-          "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]"
+          "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>][, ExecMaskPresent]"
         ],
         "defaults": [
           "The complete BSTART operation schema determines whether B.IOR is consumed and the number and roles of its GPR inputs and output.",
@@ -3149,16 +3239,33 @@
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero names the architectural zero GPR."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "ExecMaskPresent",
+            "form_id": "b_ior_32_c3ea71404eb3",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "marks that the final B.IOR record supplies the GPR ExecutionMask word(s) declared by the selected complete schema",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "No GPR ExecutionMask carrier is bound by this record."
           }
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "B.IOR a0, a1, zero, ->zero"
+          "B.IOR a0, a1, zero, ->zero",
+          "B.IOR zero, ExecMaskPresent"
         ],
         "exceptions": [
-          "An out-of-range selector raises Fault_IllegalInstruction before binding state changes.",
-          "Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. A duplicate non-TGPR2T record, a TGPR2T third record, or any command between TGPR2T's first and second B.IOR raises Fault_BundleControl and preserves accepted prior state.",
-          "A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects."
+          "A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects.",
+          "An out-of-range selector raises Fault_IllegalInstruction before binding state changes. Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. Duplicate, noncontiguous, third, misplaced, or schema-inapplicable records and a non-final or inapplicable ExecMaskPresent flag raise Fault_BundleControl or Fault_TileLegality before effects."
         ],
         "field_domains": [
           {
@@ -3632,10 +3739,11 @@
         ],
         "legality": [
           "B.IOR is legal only after BSTART and before the block body when the complete selected schema declares GPR operands; an explicitly encoded zero selector names GPR0 and is not omission.",
-          "Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.",
           "RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.",
           "Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.",
-          "Indexed TLSU consumes RegSrc0 as BaseGPR. RegSrc1, RegSrc2, and RegDst must be zero before memory or destination effects."
+          "Indexed TLSU consumes RegSrc0 as BaseGPR. RegSrc1, RegSrc2, and RegDst must be zero before memory or destination effects.",
+          "Every ordinary block accepts at most one B.IOR. TGPR2T and TIMG2COL retain their exact two-record exceptions. An eligible Local CUBE ExecutionMask GPR form appends one or two words after all operation-owned GPR inputs and may use one or two contiguous records, in dense source order, for up to six GPR inputs. Any GPR destination is allowed only in the first record; the second record is source-only.",
+          "ExecMaskPresent is one only on the final contiguous B.IOR record when a GPR ExecutionMask is bound. Earlier records, unpredicated forms, and Predicate-Tile forms require it to be zero. Selector GPR0 is legal and is distinguished from an unused zero selector by the final-record flag and exact schema arity."
         ],
         "memory_effects": [
           "none"
@@ -3656,6 +3764,10 @@
           {
             "field": "RegSrc2",
             "role": "third absolute GPR source"
+          },
+          {
+            "field": "ExecMaskPresent",
+            "role": "marks that the final B.IOR record supplies the GPR ExecutionMask word(s) declared by the selected complete schema"
           }
         ],
         "ordering": [
@@ -3663,7 +3775,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Record the schema-permitted B.IOR selector state: one record for ordinary consumers or two contiguous source-only records for TGPR2T. Effective arity and roles derive from the complete operation schema.",
+          "Record the schema-permitted B.IOR selector state: one record for ordinary consumers or up to two immediately contiguous records for TGPR2T, TIMG2COL, or eligible Local CUBE ExecutionMask forms. Effective arity, roles, and ExecMaskPresent applicability derive from the complete operation schema.",
           "Inputs are read according to the selected operation before destination publication; executing B.IOR itself modifies no GPR."
         ]
       },
@@ -3672,7 +3784,7 @@
       "mnemonic": "B.IOR",
       "ndf_clause": "PTO-INST-BLOCK-B-IOR",
       "source": "asl/block/operands/B.IOR.asl",
-      "summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one for an operation-defined row stride, while indexed TLSU uses BaseGPR only.",
+      "summary": "Bind up to three absolute GPR inputs and one absolute GPR output per record; ExecMaskPresent marks final-record GPR ExecutionMask words.",
       "surface": "block"
     },
     {
@@ -130554,7 +130666,7 @@
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
           "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-          "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
+          "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes when at least one logical coordinate is ExecutionMask-active, is a legal no-op when every coordinate is inactive, and remains legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
@@ -130563,7 +130675,7 @@
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-          "An integer scalar zero raises Illegal Block Exception before effects; floating positive or negative zero remains a legal profile-defined divisor.",
+          "An integer scalar zero raises Illegal Block Exception before effects when at least one logical coordinate is ExecutionMask-active; an all-inactive operation is a legal no-op, while floating positive or negative zero remains a legal profile-defined divisor.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
         "field_domains": [
@@ -137216,7 +137328,7 @@
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
           "Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-          "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
+          "Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes when at least one logical coordinate is ExecutionMask-active, is a legal no-op when every coordinate is inactive, and remains a legal profile-defined positive-zero divisor for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
@@ -137225,7 +137337,7 @@
         ],
         "exceptions": [
           "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-          "Signed integer quotient selection uses floor division so a nonzero result has the divisor sign; integer scalar zero is illegal before effects.",
+          "Signed integer quotient selection uses floor division so a nonzero result has the divisor sign; integer scalar zero is illegal before effects when at least one logical coordinate is ExecutionMask-active, while an all-inactive operation is a legal no-op.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
         "field_domains": [
@@ -140321,14 +140433,14 @@
           "BSTART.VEC TSEL, U8; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
           "TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN."
         ],
         "field_domains": [],
         "legality": [
           "TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
           "Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.",
-          "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis equals the operation DataType, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.",
+          "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.",
           "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field."
         ],
@@ -140468,7 +140580,7 @@
           "BSTART.VEC TSELS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarFalseGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
           "TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload."
         ],
         "field_domains": [
@@ -140621,7 +140733,7 @@
         "legality": [
           "TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
           "Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
-          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a PredicateCell whose basis equals the operation DataType, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
+          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field."
         ],

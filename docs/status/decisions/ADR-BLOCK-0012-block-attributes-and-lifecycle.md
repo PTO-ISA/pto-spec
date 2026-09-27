@@ -21,7 +21,8 @@
     "0.58.1",
     "0.58.2",
     "0.58.5",
-    "0.58.6.0"
+    "0.58.6.0",
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-CATR-CONTROL-001",
@@ -93,7 +94,8 @@
     "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
     "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-BLOCK-MODEL-STATE-TYPES"
   ],
   "resolves": [],
   "supersedes": [
@@ -243,6 +245,22 @@
       "affected_units": [
         "PTO-TILE-TLOAD",
         "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/277",
+      "affected_ndf": [
+        "PTO-B-DATR-FIELDS-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
         "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
       ]
     }
@@ -535,3 +553,14 @@ The numbered decisions define `B.CATR`, `B.DATR`, `B.DIM`, and `B.HINT` applicab
 This record owns the listed header and lifecycle decisions. It does not restate selected-path installation owned by ADR-BLOCK-0009 or operation arithmetic owned by the affected instruction units.
 
 本记录管理所列头部与生命周期决策；不重述 ADR-BLOCK-0009 管理的 selected-path 安装，也不定义受影响指令单元负责的算术语义。
+
+## 2026-09-25 accepted amendment: Local CUBE ExecutionMask controls
+
+For the scoped PTO 0.59 Local CUBE ExecutionMask decision in ADR-TILE-0008,
+`B.DATR[14]` owns `PredInv` and `B.DATR[13]` owns `Zero`; bit 12 remains the
+existing fixed discriminator. The released mask/match are `0x000c107f` and
+`0x00001023`. Omitted B.DATR supplies both zero meanings. Existing B.DATR
+words have both bits clear and retain their previous interpretation. A
+nonzero control without a complete operation schema that binds one explicit
+ExecutionMask rejects before effects. The field meaning and applicability
+remain defined by `PTO-B-DATR-FIELDS-001` and the owning ASL.

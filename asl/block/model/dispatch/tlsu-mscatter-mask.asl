@@ -10,6 +10,8 @@ end;
 
 readonly func BundleMSCATTERMASKBindingsLegal() => boolean
 begin
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if BundleTileBindingCount() != 2 then return FALSE; end;
     let first = _BundleTileBindings[[0]];
     let second = _BundleTileBindings[[1]];
@@ -18,7 +20,7 @@ begin
            first.source1_valid && !first.last &&
            second.valid && !second.destination_valid &&
            second.destination_size == 0 && second.source0_valid &&
-           !second.source1_valid && second.last;
+           (second.source1_valid == execution_mask_tile) && second.last;
 end;
 
 func ExecuteBundleMSCATTERMASKOperation() => boolean
@@ -50,8 +52,8 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    if !IndexedTLSUNumericContentsDefined(source) ||
-       !IndexedTLSUNumericContentsDefined(indices) ||
+    if !IndexedTLSUExecutionMaskContentsDefined(source) ||
+       !IndexedTLSUExecutionMaskContentsDefined(indices) ||
        !IndexedTLSUPredicateValuesLegal(mask) ||
        _Tiles[[source]].data_type != data_type ||
        !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||

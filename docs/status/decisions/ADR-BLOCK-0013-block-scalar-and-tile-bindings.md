@@ -17,7 +17,8 @@
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "0.58.1",
-    "0.58.2"
+    "0.58.2",
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",
@@ -27,7 +28,9 @@
   "affected_units": [
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
-    "PTO-BLOCK-B-IOT"
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
   ],
   "resolves": [],
   "supersedes": [
@@ -52,7 +55,26 @@
     "PRD-030",
     "ADR-0076"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-09-25",
+      "baseline": "47d13583a29adf4dac5049f2460fcbf158678555",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/277",
+      "affected_ndf": [
+        "PTO-B-IOR-BINDING-001",
+        "PTO-B-IOT-STREAM-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
+      ]
+    }
+  ]
 }
 ---
 # ADR-BLOCK-0013: Block scalar and tile bindings
@@ -260,3 +282,31 @@ Complete Bundle operations consume scalar, Local Tile, and Shared Tile operands 
 This ADR defines operand transport and binding lifecycle. Individual operations still own their required arity, types, shapes, and result semantics through the affected ASL/NDF units.
 
 本 ADR 定义操作数传递与绑定生命周期。各操作仍通过受影响的 ASL/NDF 单元管理其所需元数、类型、形状和结果语义。
+
+## 2026-09-25 accepted amendment: Local CUBE ExecutionMask binding roles
+
+For the scoped PTO 0.59 Local CUBE ExecutionMask decision in ADR-TILE-0008,
+an eligible complete operation schema may bind an explicit PredicateCell
+ExecutionMask as the final Local B.IOT source after every existing Tile
+source role. The schema then places any destination on the final B.IOT record.
+The existing ordered source and destination fields are reused; this does not
+add a physical B.IOT form or change the four-record stream bound. The frozen
+92-name semantic census has 89 mnemonics with applicable Local CUBE forms and
+needs no more than two records; `TGATHER`, `TSCATTER`, and `TTRI` have no
+applicable forms under their existing layout rules.
+
+For `TPACK` and `TUNPACK`, the final PredicateCell source has the source
+`ValidRow` and source CELL-words-per-row shape, even when the destination's
+logical `ValidCol` differs for U8/U16/U32 grouping. The detailed operation
+coordinate and effect rules remain owned by ADR-TILE-0008 and its ASL/NDF.
+
+For the GPR carrier, predicate word(s) are named by the complete B.IOR schema
+after that operation's existing GPR inputs. One or two immediately contiguous
+B.IOR records may encode the resulting ordered stream, up to six GPR inputs;
+the additional B.IOR is not a second mask role. `B.IOR[26]=ExecMaskPresent`
+marks the final record carrying those mask words, while `[25]` stays fixed
+zero; the marker is zero on earlier records, unpredicated forms, and
+Predicate-Tile forms. This makes GPR0 a legal mask selector distinct from an
+unused zero selector. `B.IOR` does not own `PredInv` or `Zero`. Each schema
+rejects missing, misplaced, duplicate, and surplus roles before effects.
+Current binding semantics remain in the owning B.IOT/B.IOR ASL/NDF clauses.

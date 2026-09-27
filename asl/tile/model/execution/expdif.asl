@@ -1,4 +1,8 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPDIF","surface":"tile","classification":["model","execution","expdif"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
+// NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Predicated TEXPDIF evaluates source encodings, source reads, arithmetic, and numeric-status contribution only for active logical result coordinates. Inactive destination coordinates use the common MERGE/ZERO rule and contribute no numeric flags; the existing source-operation and destination type-pair contract remains unchanged.
+// NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPDIF","surface":"tile","classification":["model","execution","expdif"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
 // PTO-REQ-TILE-EXPDIF-001: one typed natural-expansion-difference sequence is
 // shared by the binary and broadcast Tile operations.
 
@@ -132,26 +136,36 @@ begin
     // The destination may name either old source in the rename model.
     for row = 0 to result_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to result_tile.valid_columns - 1 looplimit 65536 do
-            let left_element = TileLogicalLinearIndex(
-                left_tile,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            let right_element = TileLogicalLinearIndex(
-                right_tile,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            let (value, element_flags) = TileExpdifValueWithTypesAndFlags(
-                operation_type,
-                result_tile.data_type,
-                TileReadLogicalElement(left_tile, left_element),
-                TileReadLogicalElement(right_tile, right_element));
             let destination_element = TileLogicalLinearIndex(
                 result_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result_tile = TileInfoWithLogicalElement(
-                result_tile, destination_element, value);
-            accumulated_flags = accumulated_flags OR element_flags;
+            if BundleExecutionMaskActiveAt(
+                   result_tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                let left_element = TileLogicalLinearIndex(
+                    left_tile,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+                let right_element = TileLogicalLinearIndex(
+                    right_tile,
+                    row as integer {0..65535},
+                    column as integer {0..65535});
+                let (value, element_flags) = TileExpdifValueWithTypesAndFlags(
+                    operation_type,
+                    result_tile.data_type,
+                    TileReadLogicalElement(left_tile, left_element),
+                    TileReadLogicalElement(right_tile, right_element));
+                result_tile = TileInfoWithLogicalElement(
+                    result_tile, destination_element, value);
+                accumulated_flags = accumulated_flags OR element_flags;
+            else
+                let value = BundleExecutionMaskDestinationValue(
+                    result_tile.layout, row as integer {0..65535},
+                    column as integer {0..65535}, Zeros{PTO_XLEN});
+                result_tile = TileInfoWithLogicalElement(
+                    result_tile, destination_element, value);
+            end;
         end;
     end;
 

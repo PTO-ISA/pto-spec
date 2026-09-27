@@ -44,16 +44,21 @@ begin
     end;
     if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
+    let execution_mask_tile = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     let atom = function <= 18;
     let cas = function == 8;
     let popc = function == 27;
     var expected_binding_count: integer {1..2} = 1;
     if cas then expected_binding_count = 2; end;
+    if execution_mask_tile && !popc && !cas then
+        expected_binding_count = 2;
+    end;
     if atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    if !atom && BundleTileBindingCount() != 1 then
+    if !atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
@@ -62,18 +67,33 @@ begin
     // carries replacement and the destination.  Other atom forms carry all
     // operands in one destination-bearing B.IOT.
     if !binding.valid || !binding.source0_valid ||
-       ((!cas && binding.last == FALSE) || (cas && binding.last)) ||
+       ((!cas && !popc &&
+         (binding.last == execution_mask_tile)) || (cas && binding.last)) ||
        (cas && (binding.destination_valid || !binding.source1_valid)) ||
-       (!cas && binding.destination_valid != atom) ||
+       (cas && execution_mask_tile &&
+        (_BundleTileBindings[[1]].source1_valid == FALSE)) ||
+       (!cas && !execution_mask_tile &&
+        binding.destination_valid != atom) ||
+       (execution_mask_tile && atom && !cas &&
+        binding.destination_valid) ||
        (!popc && !cas && !binding.source1_valid) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    if execution_mask_tile && !cas && !popc then
+        let final_binding = _BundleTileBindings[[1]];
+        if !final_binding.valid || !final_binding.source0_valid ||
+           final_binding.source1_valid || !final_binding.last ||
+           (final_binding.destination_valid != atom) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+    end;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !BundleGMAtomRedDataTypeLegal(function, data_type) ||
-       !IndexedTLSUNumericContentsDefined(binding.source0) ||
-       (!popc && (!IndexedTLSUNumericContentsDefined(binding.source1) ||
+       !IndexedTLSUExecutionMaskContentsDefined(binding.source0) ||
+       (!popc && (!IndexedTLSUExecutionMaskContentsDefined(binding.source1) ||
            _Tiles[[binding.source1]].data_type != data_type)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -98,12 +118,13 @@ begin
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
     if atom then
-        var destination: TileIndex = binding.destination;
+        var destination: TileIndex = if execution_mask_tile && !cas then
+            _BundleTileBindings[[1]].destination else binding.destination;
         if cas then
             let second = _BundleTileBindings[[1]];
             if !second.destination_valid || !second.source0_valid ||
-               second.source1_valid || !second.last ||
-               !IndexedTLSUNumericContentsDefined(second.source0) ||
+               (second.source1_valid != execution_mask_tile) || !second.last ||
+               !IndexedTLSUExecutionMaskContentsDefined(second.source0) ||
                _Tiles[[second.source0]].layout !=
                    CurrentBundleTileLayout() then
                 SetFault(Fault_TileLegality, ReadTPC());
@@ -118,11 +139,9 @@ begin
         if !ValidateBundleLocalGenerationWriters() then
             RollBackBundleTileDestinations(); return FALSE;
         end;
-        if cas then
-            destination = _BundleTileBindings[[1]].destination;
-        else
-            destination = _BundleTileBindings[[0]].destination;
-        end;
+        destination = if cas || execution_mask_tile then
+            _BundleTileBindings[[1]].destination
+            else _BundleTileBindings[[0]].destination;
         if cas then
             let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,

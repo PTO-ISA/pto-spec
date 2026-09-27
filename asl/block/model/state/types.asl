@@ -61,7 +61,34 @@ type BundleScalarBinding of record {
     source0: Reg5Selector,
     source1: Reg5Selector,
     source2: Reg5Selector,
-    source_count: integer {0..3}
+    source_count: integer {0..3},
+    execution_mask_present: boolean
+};
+
+type BundleExecutionMaskCarrier of enumeration {
+    BundleExecutionMask_None,
+    BundleExecutionMask_GPR,
+    BundleExecutionMask_PredicateTile
+};
+
+// This is the explicit carrier bound by one selected TileOp. It is pending
+// bundle-operand state and never survives commit as an implicit current mask.
+type BundleExecutionMaskBinding of record {
+    valid: boolean,
+    carrier: BundleExecutionMaskCarrier,
+    predicate_tile: TileIndex,
+    predicate_source_ordinal: integer {0..31},
+    low_word: Word,
+    high_word: Word,
+    word_count: integer {0..2},
+    layout: TileLayout,
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    invert: boolean,
+    zero_inactive: boolean,
+    merge_base_valid: boolean,
+    merge_base: TileIndex,
+    predicate_tile_snapshot: bits(524288)
 };
 
 // A B.SUBVIEW carrier retains the pure descriptor derived from its parent.
@@ -327,7 +354,9 @@ type BundleDataAttributes of record {
     comparison_mode: bits(3),
     rounding_mode: bits(3),
     saturating: boolean,
-    canonicalize: boolean
+    canonicalize: boolean,
+    execution_mask_invert: boolean,
+    execution_mask_zero: boolean
 };
 
 type BundleHintAttributes of record {
