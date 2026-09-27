@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-EXECUTION-MASK-PARTIAL-DEFINED-SELECT-DECODED-001","source":"asl/block/model/dispatch/comparison-schema.asl","requirements":["PTO-TSEL-CONTRACT-001","PTO-TSELS-CONTRACT-001","PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001","PTO-B-IOR-BINDING-001","PTO-B-IOT-STREAM-001"],"kind":"execution","summary":"Decoded TSEL and TSELS suppress undefined inactive CUBE source coordinates","pass_condition":"PredicateCell and GPR ExecutionMask carriers accept a defined active column with an undefined inactive column, while activating the undefined column rejects before destination allocation","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/block/model/dispatch/tile-scalar-schema.asl","asl/block/model/dispatch/execution-mask-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-EXECUTION-MASK-PARTIAL-DEFINED-SELECT-DECODED-001","source":"asl/block/model/dispatch/comparison-schema.asl","requirements":["PTO-TSEL-CONTRACT-001","PTO-TSELS-CONTRACT-001","PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001","PTO-B-IOR-BINDING-001","PTO-B-IOT-STREAM-001"],"kind":"execution","summary":"Decoded TSEL and TSELS inspect operation selectors and numeric sources only at ExecutionMask-active CUBE coordinates","pass_condition":"TSEL accepts an inactive noncanonical 0x02 selector and TSELS accepts an inactive undefined selector, activating either coordinate rejects before allocation, and wrong-shape PredicateCell ExecutionMasks reject for both operations","related_sources":["asl/block/model/dispatch/comparison-schema.asl","asl/block/model/dispatch/tile-scalar-schema.asl","asl/block/model/dispatch/execution-mask-schema.asl","asl/tile/model/legality/predicate-carriers.asl"]}
 pure func PartialSelectStart(selector: bits(10), data_type: bits(5))
     => bits(64)
 begin
@@ -33,6 +33,18 @@ pure func PartialSelectResult(source0: bits(6), source1: bits(6),
 begin
     var instruction = Zeros{64} + 0x00004013;
     instruction[31:26] = source1;
+    instruction[25:20] = source0;
+    instruction[19] = '1';
+    instruction[18:15] = size_code;
+    instruction[11:9] = '001';
+    instruction[8:7] = destination;
+    return instruction;
+end;
+
+pure func PartialSelectSingleResult(source0: bits(6),
+    destination: bits(2), size_code: bits(4)) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00005013;
     instruction[25:20] = source0;
     instruction[19] = '1';
     instruction[18:15] = size_code;
@@ -81,16 +93,21 @@ begin
     InstallRelativeTileFixture(10, 10);
     InstallRelativeTileFixture(11, 11);
     InstallRelativeTileFixture(12, 12);
-    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
+    // 0x02 is noncanonical but may remain unread when ExecutionMask excludes
+    // column zero.  Activating that coordinate must restore rejection.
+    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 200);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 201);
+    WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 100);
     WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 101);
     WriteTileElement(12, 0, 0,
         if mask_column0 then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN});
     WriteTileElement(12, 0, 1,
         if mask_column0 then Zeros{PTO_XLEN} else Zeros{PTO_XLEN} + 1);
-    _Tiles[[8]].contents_defined = TRUE;
     _Tiles[[12]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(10);
+    MarkTileValidRegionDefined(11);
 
     BeginPartialSelect(Zeros{10} + 0x01a);
     let inputs = ExecuteCommandInstruction(
@@ -123,10 +140,12 @@ begin
     assert predicate_ready && source_ready;
     InstallRelativeTileFixture(8, 8);
     InstallRelativeTileFixture(10, 10);
-    WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
+    // Column zero intentionally remains undefined.  Column one is a complete
+    // canonical selector and is the only active coordinate in the pass case.
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 11);
-    _Tiles[[8]].contents_defined = TRUE;
+    MarkTileValidRegionDefined(10);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 77);
     var exec_mask = Zeros{PTO_XLEN};
     if mask_column0 then exec_mask[0] = '1'; else exec_mask[16] = '1'; end;
@@ -154,11 +173,79 @@ begin
     end;
 end;
 
+func RunWrongShapeTSEL()
+begin
+    ResetProfileState();
+    let predicate_ready = ConfigurePredicateCell(
+        8, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16);
+    let true_ready = ConfigureCubeTile(
+        10, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16);
+    let false_ready = ConfigureCubeTile(
+        11, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16);
+    let exec_mask_ready = ConfigurePredicateCell(
+        12, 128, 1, 1, TileDataType_U32, TileLayout_CUBE_M16);
+    assert predicate_ready && true_ready && false_ready && exec_mask_ready;
+    InstallRelativeTileFixture(8, 8);
+    InstallRelativeTileFixture(10, 10);
+    InstallRelativeTileFixture(11, 11);
+    InstallRelativeTileFixture(12, 12);
+    MarkTileValidRegionDefined(8);
+    MarkTileValidRegionDefined(10);
+    MarkTileValidRegionDefined(11);
+    MarkTileValidRegionDefined(12);
+    BeginPartialSelect(Zeros{10} + 0x01a);
+    let inputs = ExecuteCommandInstruction(
+        PartialSelectInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
+    let result = ExecuteCommandInstruction(
+        PartialSelectResult(Zeros{6} + 11, Zeros{6} + 12,
+            Zeros{2}, Zeros{4} + 2), 32);
+    assert inputs == CommandExecution_Executed &&
+           result == CommandExecution_Executed;
+    let completed = ExecuteBundleTileOperation();
+    assert !completed && _LastFault == Fault_TileLegality;
+    assert !_BundleTileBindings[[1]].destination_allocated_by_bundle;
+end;
+
+func RunWrongShapeTSELS()
+begin
+    ResetProfileState();
+    let predicate_ready = ConfigurePredicateCell(
+        8, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16);
+    let source_ready = ConfigureCubeTile(
+        10, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16);
+    let exec_mask_ready = ConfigurePredicateCell(
+        12, 128, 1, 1, TileDataType_U32, TileLayout_CUBE_M16);
+    assert predicate_ready && source_ready && exec_mask_ready;
+    InstallRelativeTileFixture(8, 8);
+    InstallRelativeTileFixture(10, 10);
+    InstallRelativeTileFixture(12, 12);
+    MarkTileValidRegionDefined(8);
+    MarkTileValidRegionDefined(10);
+    MarkTileValidRegionDefined(12);
+    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 7);
+    BeginPartialSelect(Zeros{10} + 0x03a);
+    let inputs = ExecuteCommandInstruction(
+        PartialSelectInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
+    let result = ExecuteCommandInstruction(
+        PartialSelectSingleResult(Zeros{6} + 12,
+            Zeros{2}, Zeros{4} + 2), 32);
+    let scalar = ExecuteCommandInstruction(
+        PartialSelectIOR(Zeros{5}, Zeros{5} + 2, Zeros{5}, FALSE), 32);
+    assert inputs == CommandExecution_Executed &&
+           result == CommandExecution_Executed &&
+           scalar == CommandExecution_Executed;
+    let completed = ExecuteBundleTileOperation();
+    assert !completed && _LastFault == Fault_TileLegality;
+    assert !_BundleTileBindings[[1]].destination_allocated_by_bundle;
+end;
+
 func main() => integer
 begin
     RunPartialTSEL(FALSE, TRUE);
     RunPartialTSEL(TRUE, FALSE);
     RunPartialTSELS(FALSE, TRUE);
     RunPartialTSELS(TRUE, FALSE);
+    RunWrongShapeTSEL();
+    RunWrongShapeTSELS();
     return 0;
 end;

@@ -292,6 +292,42 @@ begin
     return TRUE;
 end;
 
+readonly func TilePredicateCellOperationValuesLegal(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TilePredicateCellDescriptorLegal(index) then return FALSE; end;
+    if !_BundleExecutionMask.valid && !tile.contents_defined then
+        return FALSE;
+    end;
+    if _BundleExecutionMask.valid &&
+       (tile.layout != _BundleExecutionMask.layout ||
+        tile.valid_rows != _BundleExecutionMask.valid_rows ||
+        tile.valid_columns != _BundleExecutionMask.valid_columns) then
+        return FALSE;
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            if !_BundleExecutionMask.valid ||
+               BundleExecutionMaskActiveAt(
+                   tile.layout, row as integer {0..65535},
+                   column as integer {0..65535}) then
+                if !TileElementDefined(index, row as integer {0..65535},
+                       column as integer {0..65535}) then
+                    return FALSE;
+                end;
+                let element = TileLogicalLinearIndex(
+                    tile, row as integer {0..65535},
+                    column as integer {0..65535});
+                let value = TileReadLogicalElement(tile, element)[7:0];
+                if value != '00000000' && value != '00000001' then
+                    return FALSE;
+                end;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func IndexedTLSUPredicateDescriptorLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];

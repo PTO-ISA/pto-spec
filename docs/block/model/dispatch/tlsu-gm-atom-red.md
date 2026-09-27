@@ -75,7 +75,7 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    if !atom && BundleTileBindingCount() != 1 then
+    if !atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
@@ -156,11 +156,9 @@ begin
         if !ValidateBundleLocalGenerationWriters() then
             RollBackBundleTileDestinations(); return FALSE;
         end;
-        if cas then
-            destination = _BundleTileBindings[[1]].destination;
-        else
-            destination = _BundleTileBindings[[0]].destination;
-        end;
+        destination = if cas || execution_mask_tile then
+            _BundleTileBindings[[1]].destination
+            else _BundleTileBindings[[0]].destination;
         if cas then
             let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,

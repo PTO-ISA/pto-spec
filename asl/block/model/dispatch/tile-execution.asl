@@ -60,7 +60,6 @@ begin
     let (operation_type_valid, operation_type) =
         ResolveBundleEffectiveDataType();
     if !operation_type_valid then return FALSE; end;
-    let binding = _BundleTileBindings[[0]];
     let selected_high = _BundleDataAttributes.saturating;
     case TileOperationOfIndex(operation) of
         when TileOperation_TCMP =>
@@ -100,7 +99,8 @@ begin
             end;
             WriteGPR(gpr_destination, value);
         when TileOperation_TSEL =>
-            let source_true = BundleTileSourceIndex(0, FALSE);
+            let source_true = BundleComparisonSelectTrueSource(operation);
+            let (-, destination_binding) = BundleFirstDestinationBinding();
             let mask_words = SelectedBundleComparisonGPRMaskWordCount(
                 operation_type);
             let low = ReadScalarRegisterOperand(
@@ -109,11 +109,13 @@ begin
                 ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
                 else Zeros{PTO_XLEN};
             ExecuteTileSelectCUBEGPRAs(
-                binding.destination, low, high,
+                _BundleTileBindings[[destination_binding]].destination,
+                low, high,
                 source_true,
                 BundleTileSourceIndex(0, TRUE), operation_type);
         when TileOperation_TSELS =>
-            let source_true = BundleTileSourceIndex(0, FALSE);
+            let source_true = BundleComparisonSelectTrueSource(operation);
+            let (-, destination_binding) = BundleFirstDestinationBinding();
             let mask_words = SelectedBundleComparisonGPRMaskWordCount(
                 operation_type);
             let low = ReadScalarRegisterOperand(
@@ -126,7 +128,8 @@ begin
                 else _BundleScalarBindings[[0]].source1;
             let scalar_false = ReadScalarRegisterOperand(scalar_selector);
             ExecuteTileSelectScalarCUBEGPRAs(
-                binding.destination, low, mask_high,
+                _BundleTileBindings[[destination_binding]].destination,
+                low, mask_high,
                 source_true, scalar_false, operation_type);
         otherwise => return FALSE;
     end;

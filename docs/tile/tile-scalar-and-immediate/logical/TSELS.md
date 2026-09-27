@@ -246,7 +246,7 @@ end;
 
 - TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
 - Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
-- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a PredicateCell whose basis equals the operation DataType, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
 - CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
@@ -269,7 +269,7 @@ end;
 
 ## Exceptions
 
-- Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
+- Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
 - TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload.
 
 ## Examples

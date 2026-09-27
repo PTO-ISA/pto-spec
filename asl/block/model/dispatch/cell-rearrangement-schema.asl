@@ -185,8 +185,10 @@ begin
                second.source0 != first.source1 &&
                BundleTileDestinationSizeLegal(1);
     end;
+    let operation_uses_source1 = decoded == TileOperation_TSHUF ||
+        decoded == TileOperation_TPACK;
     let split_final_binding = execution_mask_tile &&
-        decoded == TileOperation_TSHUF;
+        operation_uses_source1;
     let expected_binding_count = if split_final_binding then 2 else 1;
     if BundleTileBindingCount() != expected_binding_count ||
        BundleSharedBindingCount() != 0 ||
@@ -214,11 +216,11 @@ begin
         else
             !binding.source0_valid ||
             (binding.source1_valid !=
-                (decoded == TileOperation_TSHUF || execution_mask_tile)) ||
+                (operation_uses_source1 || execution_mask_tile)) ||
             !binding.last) ||
        (execution_mask_tile &&
         _BundleExecutionMask.predicate_source_ordinal !=
-            (if decoded == TileOperation_TSHUF then 2 else 1)) then
+            (if operation_uses_source1 then 2 else 1)) then
         return FALSE;
     end;
     return TRUE;

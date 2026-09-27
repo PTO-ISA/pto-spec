@@ -12,8 +12,10 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
 EXPECTED_FORM_COUNT = 562
+# Version-neutral fingerprint for the reviewed current draft; --release checks
+# the separately published manifest identity.
 EXPECTED_FINGERPRINT = (
-    "08692ec01cfb6515328e63ca69192e88b7b6f4c3692297de91fb66d422a1c3f5"
+    "d9c527668bbca3a9bcee33f908ae1a897bec3c2e6eb587b0e0c96982edea8355"
 )
 EXPECTED_RELEASE = "0.58.7"
 EXPECTED_ENCODING_ABI = "pto-isa-0.58.7-mode-function-v1"

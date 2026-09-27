@@ -40,6 +40,23 @@ begin
            _BundleExecutionMask.invert;
 end;
 
+readonly func BundleExecutionMaskHasActiveCoordinate() => boolean
+begin
+    if !_BundleExecutionMask.valid then return TRUE; end;
+    for row = 0 to _BundleExecutionMask.valid_rows - 1 looplimit 65536 do
+        for column = 0 to _BundleExecutionMask.valid_columns - 1
+            looplimit 65536 do
+            if BundleExecutionMaskActiveAt(
+                   _BundleExecutionMask.layout,
+                   row as integer {0..65535},
+                   column as integer {0..65535}) then
+                return TRUE;
+            end;
+        end;
+    end;
+    return FALSE;
+end;
+
 readonly func BundleExecutionMaskDestinationValue(
     layout: TileLayout, row: integer {0..65535},
     column: integer {0..65535}, computed: Word) => Word

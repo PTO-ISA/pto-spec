@@ -113,6 +113,8 @@ begin
         binding else final_binding;
     let broadcast = if copy then
         binding.source0 else operation_sources.source1;
+    let axis = if TileOperationUsesClosedRowExpansionSchema(operation) then
+        TileAxis_Row else TileAxis_Column;
     var data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
@@ -132,15 +134,12 @@ begin
            CurrentBundleTileLayout()) ||
        _Tiles[[broadcast]].layout != CurrentBundleTileLayout() ||
        !(if copy then
-             TileReductionAndExpansionSourceContentsDefined(broadcast) &&
+             TileExpansionBroadcastElementsLegalAs(
+                 broadcast, axis, source_data_type, FALSE) &&
              TileCarrierWidthCompatible(
                  _Tiles[[broadcast]].data_type, source_data_type)
          else TileExpansionBroadcastLegalAs(
-             broadcast,
-             if TileOperationUsesClosedRowExpansionSchema(operation) then
-                 TileAxis_Row
-             else TileAxis_Column,
-             source_data_type)) ||
+             broadcast, axis, source_data_type)) ||
        !SelectedBundleExpansionBroadcastShapeMatches(
            operation, broadcast) then
         return FALSE;
@@ -156,11 +155,8 @@ begin
            ((TileOperationOfIndex(operation) != TileOperation_TROWEXPANDDIV &&
              TileOperationOfIndex(operation) != TileOperation_TCOLEXPANDDIV) ||
             !TileDataTypeIsInteger(data_type) ||
-            TileBroadcastPayloadNonzero(
-                if TileOperationUsesClosedRowExpansionSchema(operation) then
-                    TileAxis_Row
-                else
-                    TileAxis_Column,
+            TileExpansionBroadcastNonzero(
+                axis,
                 operation_sources.source0,
                 operation_sources.source1));
 end;

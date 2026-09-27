@@ -254,10 +254,9 @@ readonly func BundleExecutionMaskGPRBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     let decoded = TileOperationOfIndex(operation);
-    let source_layout_owns_domain = decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS;
-    if !TileOperationExecutionMaskEligible(operation) ||
-       (!source_layout_owns_domain && CurrentBundleTileLayout() != TileLayout_CUBE_M16 &&
-        CurrentBundleTileLayout() != TileLayout_CUBE_M32) then return FALSE; end;
+    let source_layout_owns_domain = BundleCubeTransportSelected() || decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS || decoded == TileOperation_TCVT || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS;
+    let execution_mask_layout = if source_layout_owns_domain then BundleExecutionMaskCoordinateLayout(operation) else CurrentBundleTileLayout();
+    if !TileOperationExecutionMaskEligible(operation) || (execution_mask_layout != TileLayout_CUBE_M16 && execution_mask_layout != TileLayout_CUBE_M32) then return FALSE; end;
     let operation_sources = BundleExecutionMaskOperationGPRSourceCount(operation);
     let mask_words = BundleExecutionMaskGPRWordCount(operation);
     let total_sources = operation_sources + mask_words;

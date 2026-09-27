@@ -34,7 +34,10 @@ begin
         return FALSE;
     end;
     let binding = _BundleTileBindings[[destination_binding]];
-    let source = BundleTileSourceIndex(destination_binding, FALSE);
+    // Comparison input binding 0 owns the numeric shape and basis.  A later
+    // binding may carry both the fresh destination and a PredicateCell
+    // ExecutionMask, so the destination binding is not a source-type owner.
+    let source = BundleTileSourceIndex(0, FALSE);
     let source_tile = _Tiles[[source]];
     let capacity_bytes = BundleLocalDestinationAllocationBytes(
         destination_binding);
@@ -118,14 +121,14 @@ readonly func BundleComparisonSelectTrueSource(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => TileIndex
 begin
     let decoded = TileOperationOfIndex(operation);
-    if decoded == TileOperation_TSEL && BundleTileBindingCount() == 2 then
+    let first = BundleTileSourceIndex(0, FALSE);
+    let cell_select = _BundleTileBindings[[0]].source0_valid &&
+        _Tiles[[first]].storage_kind == TileStorage_PredicateCell;
+    if (decoded == TileOperation_TSEL || decoded == TileOperation_TSELS) &&
+       cell_select then
         return BundleTileSourceIndex(0, TRUE);
     end;
-    if decoded == TileOperation_TSELS &&
-       _BundleTileBindings[[0]].source1_valid then
-        return BundleTileSourceIndex(0, TRUE);
-    end;
-    return BundleTileSourceIndex(0, FALSE);
+    return first;
 end;
 
 func ResolveBundleCUBESelectDestination(

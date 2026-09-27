@@ -324,6 +324,10 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
         "before": [],
         "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
     },
+    "BundleExecutionMaskHasActiveCoordinate": {
+        "before": [],
+        "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
+    },
     "BundleExecutionMaskCoordinateBit": {
         "before": [],
         "after": [("asl/tile/model/execution/execution-mask-state.asl", set())],
@@ -439,6 +443,10 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
     "TileExecutionMaskPredicateCellShapeLegal": {
         "before": [],
         "after": [("asl/tile/model/legality/predicate-carriers.asl", LOCAL_CUBE_LAYOUTS)],
+    },
+    "TilePredicateCellOperationValuesLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", set())],
     },
     "TileExpansionBroadcastElementsLegalAs": {
         "before": [],

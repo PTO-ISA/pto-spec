@@ -164,12 +164,15 @@ begin
                !_BundleTileBindings[[0]].destination_valid;
     end;
     if decoded == TileOperation_TSEL then
-        return BundleTileBindingCount() == 1 &&
+        return _BundleTileBindings[[0]].source0_valid &&
+               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind !=
+                   TileStorage_PredicateCell &&
                _BundleScalarBindings[[0]].valid;
     end;
     if decoded == TileOperation_TSELS then
-        return BundleTileBindingCount() == 1 &&
-               !_BundleTileBindings[[0]].source1_valid &&
+        return _BundleTileBindings[[0]].source0_valid &&
+               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind !=
+                   TileStorage_PredicateCell &&
                _BundleScalarBindings[[0]].valid;
     end;
     return FALSE;
@@ -354,7 +357,7 @@ begin
                (!SelectedBundleComparisonCUBE(source_true) ||
                 TileCubePredicateDataTypeSupported(data_type)) &&
                (if SelectedBundleComparisonCUBE(source_true) then
-                   TilePredicateCellValuesLegal(mask) &&
+                   TilePredicateCellOperationValuesLegal(mask) &&
                    TilePredicateCellShapeMatchesNumericAs(
                        mask, source_true, data_type)
                 else
@@ -399,5 +402,5 @@ begin
             else
                 BundleComparisonBindingUsesOneSource(
                     _BundleScalarBindings[[0]])) &&
-           !_BundleScalarBindings[[1]].valid;
+           (execution_mask_gpr || !_BundleScalarBindings[[1]].valid);
 end;

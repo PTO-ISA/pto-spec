@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tile-scalar-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","tile-scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","tile-scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
 // Closed complete-bundle schemas for TEPL Mode 1 Tile-scalar operations.
 
 pure func TileOperationUsesClosedTileScalarBinarySchema(
@@ -172,7 +172,8 @@ begin
         return FALSE;
     end;
     if (binary == TileBinary_DIV || binary == TileBinary_REM) &&
-       TileDataTypeIsInteger(data_type) then
+       TileDataTypeIsInteger(data_type) &&
+       BundleExecutionMaskHasActiveCoordinate() then
         return !IsZero(TileIntegerOperandValue(scalar, data_type));
     end;
     return TRUE;
@@ -324,7 +325,7 @@ begin
                   (_BundleScalarBindings[[0]].destination == 0 &&
                    BundleComparisonBindingUsesOneSource(
                        _BundleScalarBindings[[0]]))))) &&
-               TilePredicateCellValuesLegal(first) &&
+               TilePredicateCellOperationValuesLegal(first) &&
                TilePredicateCellShapeMatchesNumericAs(
                    first, source_true, data_type) &&
                _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
@@ -373,7 +374,7 @@ begin
                capacity_bytes, _Tiles[[source_true]].valid_rows,
                _Tiles[[source_true]].valid_columns, data_type,
                _Tiles[[source_true]].layout) &&
-           !_BundleScalarBindings[[1]].valid;
+           (execution_mask_gpr || !_BundleScalarBindings[[1]].valid);
 end;
 
 readonly func SelectedBundleClosedTEXPANDSSchemaLegal(

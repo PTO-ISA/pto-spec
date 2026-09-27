@@ -148,6 +148,7 @@ end;
 readonly func SelectedBundleClosedBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    if !TileOperationUsesClosedBinarySchema(operation) then return TRUE; end;
     let execution_mask_tile = _BundleExecutionMask.valid &&
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if BundleTileBindingCount() != (if execution_mask_tile then 2 else 1) ||
@@ -262,9 +263,13 @@ begin
     if !TileOperationUsesClosedTFMASchema(operation) then return TRUE; end;
     let execution_mask_tile = _BundleExecutionMask.valid &&
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
+    let execution_mask_gpr = _BundleExecutionMask.valid &&
+        _BundleExecutionMask.carrier == BundleExecutionMask_GPR &&
+        BundleExecutionMaskGPRBindingSchemaLegal(operation);
     if BundleTileBindingCount() != 2 ||
        BundleSharedBindingCount() != 0 ||
-       _BundleScalarBindings[[0]].valid then
+       (_BundleScalarBindings[[0]].valid && !execution_mask_gpr) ||
+       _BundleScalarBindings[[1]].valid then
         return FALSE;
     end;
     let multiplicands = _BundleTileBindings[[0]];

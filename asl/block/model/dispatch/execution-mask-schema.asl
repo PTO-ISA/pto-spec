@@ -90,6 +90,12 @@ readonly func BundleExecutionMaskCoordinateValidRows(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
     => integer {0..65535}
 begin
+    if BundleCubeTransportSelected() then
+        return UInt(_BundleDimensions[[1]]) as integer {0..65535};
+    end;
+    if TileOperationUsesClosedExpansionSchema(operation) then
+        return UInt(_BundleDimensions[[1]]) as integer {0..65535};
+    end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     if ordinary != 0 then
         return _Tiles[[BundleExecutionMaskTileSourceAt(
@@ -104,10 +110,16 @@ readonly func BundleExecutionMaskCoordinateValidColumns(
     => integer {0..65535}
 begin
     let decoded = TileOperationOfIndex(operation);
+    if BundleCubeTransportSelected() then
+        return UInt(_BundleDimensions[[0]]) as integer {0..65535};
+    end;
     if decoded == TileOperation_TPACK || decoded == TileOperation_TUNPACK then
         let source = BundleExecutionMaskTileSourceAt(0);
         return TileCellRearrangementWordsPerRow(_Tiles[[source]])
             as integer {0..65535};
+    end;
+    if TileOperationUsesClosedExpansionSchema(operation) then
+        return UInt(_BundleDimensions[[0]]) as integer {0..65535};
     end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     if ordinary != 0 then
@@ -120,6 +132,9 @@ end;
 readonly func BundleExecutionMaskCoordinateLayout(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => TileLayout
 begin
+    if BundleCubeTransportSelected() then
+        return TileDataLayoutCubeLayout(_BundleDataAttributes.data_layout);
+    end;
     if BundleExecutionMaskOrdinaryTileSourceCount(operation) != 0 then
         return _Tiles[[BundleExecutionMaskTileSourceAt(
             BundleExecutionMaskCoordinateSourceOrdinal(operation))]].layout;
@@ -145,7 +160,7 @@ begin
     if !BundleExecutionMaskTileCarrierPresent(operation) then return TRUE; end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     let predicate = BundleExecutionMaskTileSourceAt(ordinary);
-    var consumer_layout = CurrentBundleTileLayout();
+    var consumer_layout = BundleExecutionMaskCoordinateLayout(operation);
     let valid_rows_raw = BundleExecutionMaskCoordinateValidRows(operation);
     let valid_columns_raw = BundleExecutionMaskCoordinateValidColumns(operation);
     if valid_rows_raw < 1 || valid_rows_raw > 65535 ||
@@ -186,6 +201,7 @@ begin
             as integer {0..4194303};
         return final_bit <= words * 64;
     end;
+    if !TileCubePredicateGPRDataTypeSupported(data_type) then return FALSE; end;
     return valid_rows <= TileCubePredicateRowBits(coordinate_layout) &&
            valid_columns <= TileCubePredicateFieldCount(
                data_type, coordinate_layout) * words;
@@ -291,29 +307,69 @@ begin
     if !destination_found then return TRUE; end;
     let hand = UInt(_BundleTileBindings[[destination_binding]].destination_hand)
         as integer {0..3};
-    let destination = _BundleTileBindings[[destination_binding]].destination;
-    let destination_tile = _Tiles[[destination]];
     if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
     let base = _TileRelativeOrder[[hand]][[0]];
     let tile = _Tiles[[base]];
-    if !destination_tile.allocated || !TileCubeDescriptorLegal(destination_tile) ||
-       !tile.allocated || !tile.contents_defined ||
+    if !tile.allocated || !tile.contents_defined ||
        !TileCubeDescriptorLegal(tile) then return FALSE; end;
-    if tile.layout != destination_tile.layout ||
-       tile.valid_rows != destination_tile.valid_rows ||
-       tile.valid_columns != destination_tile.valid_columns then
+
+    let decoded = TileOperationOfIndex(operation);
+    let coordinate_destination =
+        decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS ||
+        decoded == TileOperation_TSEL || decoded == TileOperation_TSELS;
+    let source_backed_destination =
+        decoded == TileOperation_TMOV ||
+        decoded == TileOperation_TPERMUTE || decoded == TileOperation_TSHUF;
+    let source_layout_destination = source_backed_destination ||
+        decoded == TileOperation_TCVT;
+    let pack_unpack =
+        decoded == TileOperation_TPACK || decoded == TileOperation_TUNPACK;
+    let source = BundleExecutionMaskTileSourceAt(0);
+    let source_tile = _Tiles[[source]];
+    let (result_type_valid, result_type) = ResolveBundleEffectiveDataType();
+    let result_elements_per_word =
+        if result_type == TileDataType_U8 then 4
+        else if result_type == TileDataType_U16 then 2
+        else if result_type == TileDataType_U32 then 1
+        else 0;
+    let packed_columns_unbounded = if pack_unpack then
+        (TileCellRearrangementWordsPerRow(source_tile) *
+            result_elements_per_word) as integer {0..262144}
+        else 0;
+    if !result_type_valid ||
+       (pack_unpack &&
+        (result_elements_per_word == 0 ||
+         packed_columns_unbounded > 65535)) then
         return FALSE;
     end;
-    if TileOperationOfIndex(operation) == TileOperation_TCMP ||
-       TileOperationOfIndex(operation) == TileOperation_TCMPS then
+    let expected_rows = if coordinate_destination then
+        _BundleExecutionMask.valid_rows
+        else if source_backed_destination || pack_unpack then
+            source_tile.valid_rows
+        else BundleDestinationValidRows(FALSE, 0);
+    let expected_columns = if coordinate_destination then
+        _BundleExecutionMask.valid_columns
+        else if source_backed_destination then source_tile.valid_columns
+        else if pack_unpack then
+            packed_columns_unbounded as integer {0..65535}
+        else BundleDestinationValidColumns(FALSE, 0);
+    let expected_layout = if coordinate_destination then
+        _BundleExecutionMask.layout
+        else if source_layout_destination || pack_unpack then source_tile.layout
+        else BundleExecutionMaskCoordinateLayout(operation);
+    if tile.layout != expected_layout ||
+       tile.valid_rows != expected_rows ||
+       tile.valid_columns != expected_columns then
+        return FALSE;
+    end;
+    if decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
         if !TilePredicateCellDescriptorLegal(base) ||
-           destination_tile.storage_kind != TileStorage_PredicateCell then
-            return FALSE;
-        end;
+           tile.predicate_basis_type != result_type then return FALSE; end;
     else
         if tile.storage_kind != TileStorage_Numeric ||
-           destination_tile.storage_kind != TileStorage_Numeric ||
-           tile.data_type != destination_tile.data_type then return FALSE; end;
+           tile.data_type != result_type then
+            return FALSE;
+        end;
     end;
     _BundleExecutionMask.merge_base = base;
     _BundleExecutionMask.merge_base_valid = TRUE;

@@ -11,8 +11,17 @@ begin
         _BundleDataAttributes.execution_mask_zero) && !mask_present then
         return FALSE;
     end;
-    var local_cube_layout = CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
-        CurrentBundleTileLayout() == TileLayout_CUBE_M32;
+    var local_cube_layout = FALSE;
+    if BundleCubeTransportSelected() then
+        let transport_layout = TileDataLayoutCubeLayout(
+            _BundleDataAttributes.data_layout);
+        local_cube_layout = transport_layout == TileLayout_CUBE_M16 ||
+            transport_layout == TileLayout_CUBE_M32;
+    else
+        let current_layout = CurrentBundleTileLayout();
+        local_cube_layout = current_layout == TileLayout_CUBE_M16 ||
+            current_layout == TileLayout_CUBE_M32;
+    end;
     // TCMP and TCMPS own a closed B.DATR schema that leaves Layout zero.
     // Their Local CUBE domain comes from the comparison source tiles,
     // while DATR Layout remains independently validated as zero by the
@@ -30,6 +39,17 @@ begin
             local_cube_layout = FALSE;
         end;
     elsif decoded_operation == TileOperation_TCMPS then
+        let binding = _BundleTileBindings[[0]];
+        if binding.valid && binding.source0_valid then
+            let source = BundleTileSourceIndex(0, FALSE);
+            local_cube_layout = _Tiles[[source]].layout == TileLayout_CUBE_M16 ||
+                _Tiles[[source]].layout == TileLayout_CUBE_M32;
+        else
+            local_cube_layout = FALSE;
+        end;
+    // CUBE TCVT also keeps B.DATR Layout=NORM because the retained source
+    // descriptor owns both the conversion layout and ExecutionMask domain.
+    elsif decoded_operation == TileOperation_TCVT then
         let binding = _BundleTileBindings[[0]];
         if binding.valid && binding.source0_valid then
             let source = BundleTileSourceIndex(0, FALSE);

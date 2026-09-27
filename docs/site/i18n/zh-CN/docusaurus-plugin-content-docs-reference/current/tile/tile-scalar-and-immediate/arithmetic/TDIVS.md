@@ -230,7 +230,7 @@ end;
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.
 - Omitted B.DATR selects PadValue=Null and Layout=NORM (RowMajor). Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
-- Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes and legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero.
+- Omitted B.IOR supplies scalar zero; this is illegal for integer DataTypes when at least one logical coordinate is ExecutionMask-active, is a legal no-op when every coordinate is inactive, and remains legal profile-defined division by positive zero for floating DataTypes. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero.
 
 ## Legality
 
@@ -260,7 +260,7 @@ end;
 ## Exceptions
 
 - A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
-- An integer scalar zero raises Illegal Block Exception before effects; floating positive or negative zero remains a legal profile-defined divisor.
+- An integer scalar zero raises Illegal Block Exception before effects when at least one logical coordinate is ExecutionMask-active; an all-inactive operation is a legal no-op, while floating positive or negative zero remains a legal profile-defined divisor.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
 
 ## Examples

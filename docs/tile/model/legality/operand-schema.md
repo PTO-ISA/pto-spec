@@ -159,7 +159,8 @@ begin
     if (op == TileBinary_DIV || op == TileBinary_REM) &&
        TileDataTypeIsInteger(operation_type) then
         return !IsZero(TileIntegerOperandValue(
-            normalized_scalar, operation_type));
+                   normalized_scalar, operation_type)) ||
+               !BundleExecutionMaskHasActiveCoordinate();
     end;
     return TRUE;
 end;
@@ -245,7 +246,7 @@ begin
                    _Tiles[[source_true]].data_type, operation_type) &&
                TileCarrierWidthCompatible(
                    _Tiles[[source_false]].data_type, operation_type) &&
-               TilePredicateCellValuesLegal(mask) &&
+               TilePredicateCellOperationValuesLegal(mask) &&
                TilePredicateCellShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
@@ -287,7 +288,7 @@ begin
                TileCubeNumericContentsDefined(source_true) &&
                TileCarrierWidthCompatible(
                    _Tiles[[source_true]].data_type, operation_type) &&
-               TilePredicateCellValuesLegal(mask) &&
+               TilePredicateCellOperationValuesLegal(mask) &&
                TilePredicateCellShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
