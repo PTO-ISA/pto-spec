@@ -41,8 +41,10 @@ a repair. Diagnostic artifacts cannot substitute for passing evidence. The
 owns the read-only `scripts/prepare-release-publication` handoff after hosted
 verification succeeds.
 
-The independent site workflow retains its own Lighthouse quality budget and
-browser-path checks. Its result does not certify PTO-SPEC ASL semantics.
+The independent Site workflow checks source, build, and browser paths. A
+separate site publication pipeline must enforce Lighthouse quality budgets
+before deployment; the current Site workflow does not produce a deployable
+preview. Neither result certifies PTO-SPEC ASL semantics.
 
 The older integrated 0.58.6 release run `33946824280` took 73.7 minutes,
 including LLVM/model and site work. Its timing is historical and is not a
