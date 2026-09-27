@@ -41,6 +41,8 @@
   },
   "pnpm": {
     "overrides": {
+      "image-size": "2.0.3",
+      "js-yaml": "4.3.2",
       "serialize-javascript": "7.1.0"
     }
   }
