@@ -58,10 +58,11 @@ begin
     InstallRelativeTileFixture(10, 10);
     InstallRelativeTileFixture(12, 12);
     for column = 0 to 3 looplimit 4 do
-        WriteTileElement(8, 0, column,
-            if column == 1 || column == 2
-            then Zeros{PTO_XLEN} + 0x7fff
-            else Zeros{PTO_XLEN} + column * 4);
+        if column != 1 then
+            WriteTileElement(8, 0, column,
+                if column == 2 then Zeros{PTO_XLEN} + 0x7fff
+                else Zeros{PTO_XLEN} + column * 4);
+        end;
         WriteTileElement(10, 0, column,
             if column == 0 || column == 1 || column == 3
             then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN});
@@ -71,7 +72,7 @@ begin
             else if column == 0 || column == 2 || column == 3
             then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN});
     end;
-    MarkTileValidRegionDefined(8);
+    assert !_Tiles[[8]].contents_defined;
     _Tiles[[10]].contents_defined = TRUE;
     _Tiles[[12]].contents_defined = TRUE;
     Store(Zeros{PTO_XLEN} + 0x100, 4, Zeros{PTO_XLEN} + 11);

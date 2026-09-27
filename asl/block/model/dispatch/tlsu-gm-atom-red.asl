@@ -92,8 +92,8 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !BundleGMAtomRedDataTypeLegal(function, data_type) ||
-       !IndexedTLSUNumericContentsDefined(binding.source0) ||
-       (!popc && (!IndexedTLSUNumericContentsDefined(binding.source1) ||
+       !IndexedTLSUExecutionMaskContentsDefined(binding.source0) ||
+       (!popc && (!IndexedTLSUExecutionMaskContentsDefined(binding.source1) ||
            _Tiles[[binding.source1]].data_type != data_type)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -124,7 +124,7 @@ begin
             let second = _BundleTileBindings[[1]];
             if !second.destination_valid || !second.source0_valid ||
                (second.source1_valid != execution_mask_tile) || !second.last ||
-               !IndexedTLSUNumericContentsDefined(second.source0) ||
+               !IndexedTLSUExecutionMaskContentsDefined(second.source0) ||
                _Tiles[[second.source0]].layout !=
                    CurrentBundleTileLayout() then
                 SetFault(Fault_TileLegality, ReadTPC());

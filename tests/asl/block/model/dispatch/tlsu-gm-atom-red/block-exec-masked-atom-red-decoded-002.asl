@@ -54,13 +54,11 @@ begin
     assert indices_ready && values_ready && mask_ready;
     InstallRelativeTileFixture(12, 12);
     WriteTileElement(10, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(10, 0, 1, Zeros{PTO_XLEN} + 4);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(11, 0, 1, Zeros{PTO_XLEN} + 7);
     WriteTileElement(12, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(12, 0, 1, Zeros{PTO_XLEN});
-    MarkTileValidRegionDefined(10);
-    MarkTileValidRegionDefined(11);
+    assert !_Tiles[[10]].contents_defined;
+    assert !_Tiles[[11]].contents_defined;
     _Tiles[[12]].contents_defined = TRUE;
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x400);
 end;

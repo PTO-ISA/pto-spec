@@ -68,9 +68,9 @@ begin
     let replacement = second.source0;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if !IndexedTLSUNumericContentsDefined(indices) ||
-       !IndexedTLSUNumericContentsDefined(expected) ||
-       !IndexedTLSUNumericContentsDefined(replacement) ||
+    if !IndexedTLSUExecutionMaskContentsDefined(indices) ||
+       !IndexedTLSUExecutionMaskContentsDefined(expected) ||
+       !IndexedTLSUExecutionMaskContentsDefined(replacement) ||
        !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !(data_type == TileDataType_U16 ||
          data_type == TileDataType_U32 ||

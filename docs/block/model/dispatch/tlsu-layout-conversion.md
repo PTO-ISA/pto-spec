@@ -221,7 +221,8 @@ begin
     else
         let source = _BundleTileBindings[[0]].source0;
         let tile = _Tiles[[source]];
-        if !TileCubeDescriptorLegal(tile) || !tile.contents_defined ||
+        if !TileCubeDescriptorLegal(tile) ||
+           !TileElementwiseSourceContentsDefined(source) ||
            tile.data_type != data_type || tile.layout != layout ||
            tile.valid_rows != valid_rows ||
            tile.valid_columns != valid_columns ||

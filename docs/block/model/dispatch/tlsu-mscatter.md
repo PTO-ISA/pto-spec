@@ -77,8 +77,8 @@ begin
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
     let columns = UInt(_BundleDimensions[[2]]) as integer {1..65535};
-    if !IndexedTLSUNumericContentsDefined(source) ||
-       !IndexedTLSUNumericContentsDefined(indices) ||
+    if !IndexedTLSUExecutionMaskContentsDefined(source) ||
+       !IndexedTLSUExecutionMaskContentsDefined(indices) ||
        _Tiles[[source]].data_type != data_type ||
        !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) ||

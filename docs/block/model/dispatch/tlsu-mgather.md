@@ -70,7 +70,7 @@ begin
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
     if !binding.destination_valid || !binding.source0_valid ||
        (binding.source1_valid != execution_mask_tile) || !binding.last ||
-       !IndexedTLSUNumericContentsDefined(binding.source0) ||
+       !IndexedTLSUExecutionMaskContentsDefined(binding.source0) ||
        !IndexedTLSUMemoryIndexDataTypeLegal(
            _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());

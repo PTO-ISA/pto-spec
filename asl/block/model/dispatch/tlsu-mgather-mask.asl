@@ -56,7 +56,7 @@ begin
     let mask = binding.source1;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if !IndexedTLSUNumericContentsDefined(indices) ||
+    if !IndexedTLSUExecutionMaskContentsDefined(indices) ||
        !IndexedTLSUPredicateValuesLegal(mask) ||
        !IndexedTLSUMemoryIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) ||

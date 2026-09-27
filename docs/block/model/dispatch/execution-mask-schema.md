@@ -105,13 +105,13 @@ end;
 
 readonly func BundleExecutionMaskCoordinateValidRows(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
-    => integer {0..65535}
+    => integer
 begin
     if BundleCubeTransportSelected() then
-        return UInt(_BundleDimensions[[1]]) as integer {0..65535};
+        return UInt(_BundleDimensions[[1]]);
     end;
     if TileOperationUsesClosedExpansionSchema(operation) then
-        return UInt(_BundleDimensions[[1]]) as integer {0..65535};
+        return UInt(_BundleDimensions[[1]]);
     end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     if ordinary != 0 then
@@ -119,16 +119,16 @@ begin
             BundleExecutionMaskCoordinateSourceOrdinal(operation))]].valid_rows;
     end;
     let rows = UInt(_BundleDimensions[[1]]);
-    return if rows == 0 then 1 else rows as integer {0..65535};
+    return if rows == 0 then 1 else rows;
 end;
 
 readonly func BundleExecutionMaskCoordinateValidColumns(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
-    => integer {0..65535}
+    => integer
 begin
     let decoded = TileOperationOfIndex(operation);
     if BundleCubeTransportSelected() then
-        return UInt(_BundleDimensions[[0]]) as integer {0..65535};
+        return UInt(_BundleDimensions[[0]]);
     end;
     if decoded == TileOperation_TPACK || decoded == TileOperation_TUNPACK then
         let source = BundleExecutionMaskTileSourceAt(0);
@@ -136,14 +136,14 @@ begin
             as integer {0..65535};
     end;
     if TileOperationUsesClosedExpansionSchema(operation) then
-        return UInt(_BundleDimensions[[0]]) as integer {0..65535};
+        return UInt(_BundleDimensions[[0]]);
     end;
     let ordinary = BundleExecutionMaskOrdinaryTileSourceCount(operation);
     if ordinary != 0 then
         return _Tiles[[BundleExecutionMaskTileSourceAt(
             BundleExecutionMaskCoordinateSourceOrdinal(operation))]].valid_columns;
     end;
-    return UInt(_BundleDimensions[[0]]) as integer {0..65535};
+    return UInt(_BundleDimensions[[0]]);
 end;
 
 readonly func BundleExecutionMaskCoordinateLayout(

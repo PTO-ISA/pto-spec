@@ -16,6 +16,18 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/gather-scatter.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","surface":"tile","classification":["model","memory","gather-scatter"],"depends_on":["PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+readonly func IndexedGatherInactiveDestinationValue(
+    row: integer {0..65535}, column: integer {0..65535}) => Word
+begin
+    if _BundleExecutionMask.zero_inactive then
+        return Zeros{PTO_XLEN};
+    end;
+    assert _BundleExecutionMask.merge_base_valid;
+    let base = _Tiles[[_BundleExecutionMask.merge_base]];
+    let element = TileLogicalLinearIndex(base, row, column);
+    return TileReadLogicalElement(base, element);
+end;
+
 func MGATHER(destination: TileIndex, base_address: Word,
              indices: TileIndex, pad_value: TilePadValue)
 begin
@@ -57,15 +69,17 @@ begin
             var inactive = FALSE;
             if row < destination_tile.valid_rows &&
                column < destination_tile.valid_columns then
+                let transfer_column = if TileDataTypeIsFourBit(
+                    destination_tile.data_type) then column DIVRM 2 else column;
                 inactive = !BundleExecutionMaskActiveAt(
                     destination_tile.layout,
                     row as integer {0..65535},
-                    column as integer {0..65535});
+                    transfer_column as integer {0..65535});
             end;
             let value = if inactive then
-                BundleExecutionMaskDestinationValue(
-                    destination_tile.layout, row as integer {0..65535},
-                    column as integer {0..65535}, Zeros{PTO_XLEN})
+                IndexedGatherInactiveDestinationValue(
+                    row as integer {0..65535},
+                    column as integer {0..65535})
             else TilePadValueForDataType(
                 pad_value, destination_tile.data_type);
             result = TileInfoWithLogicalElementAndDefined(
@@ -354,15 +368,17 @@ begin
             var inactive = FALSE;
             if row < destination_tile.valid_rows &&
                column < destination_tile.valid_columns then
+                let transfer_column = if TileDataTypeIsFourBit(
+                    destination_tile.data_type) then column DIVRM 2 else column;
                 inactive = !BundleExecutionMaskActiveAt(
                     destination_tile.layout,
                     row as integer {0..65535},
-                    column as integer {0..65535});
+                    transfer_column as integer {0..65535});
             end;
             let value = if inactive then
-                BundleExecutionMaskDestinationValue(
-                    destination_tile.layout, row as integer {0..65535},
-                    column as integer {0..65535}, Zeros{PTO_XLEN})
+                IndexedGatherInactiveDestinationValue(
+                    row as integer {0..65535},
+                    column as integer {0..65535})
             else TilePadValueForDataType(
                 pad_value, destination_tile.data_type);
             result = TileInfoWithLogicalElementAndDefined(
