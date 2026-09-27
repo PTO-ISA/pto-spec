@@ -866,10 +866,10 @@ class HostedFullValidationContractTest(unittest.TestCase):
     def test_release_requires_exact_llvm_and_asl_model_candidates(self) -> None:
         self.assert_release_rejected(
             "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.6\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.7\n"
             "        required: true\n",
             "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.6\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.7\n"
             "        required: false\n",
         )
         self.assert_release_rejected(

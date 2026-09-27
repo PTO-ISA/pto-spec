@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "5a1c4f4cb733ab2468e240433340e55bff40698434139431d77e2612c96d8bec",
+  "ownerSourceSha256": "ce704d8891f7b77bebcba6c099c9ac33a48094d7900a2f4983253b0f6dbc9aec",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -232,8 +232,8 @@
             "repeatable": false,
             "requirement": "required",
             "role": {
-              "en": "Close the block and commit only after complete schema and GM-footprint preflight.",
-              "zh-CN": "关闭 block，并只在完整 schema 与 GM footprint 预检查成功后提交。"
+              "en": "Close the block after schema and capacity checks; GM reads stop at the first fault, and only complete success marks the destination ready.",
+              "zh-CN": "在 schema 与容量检查后关闭 block；GM 读取在首个 fault 处停止，只有完整成功才把目标标记为就绪。"
             },
             "parameters": []
           }
@@ -458,8 +458,8 @@
             "repeatable": false,
             "requirement": "required",
             "role": {
-              "en": "Close the block; publish descriptor, payload, definedness, and tail padding only after complete preflight.",
-              "zh-CN": "关闭 block；仅在完整预检查后发布描述符、payload、definedness 与尾部 padding。"
+              "en": "Close the block; a first fault may retain prior valid reads without complete readiness, while tail padding is applied only after every valid read succeeds.",
+              "zh-CN": "关闭 block；首个 fault 前的有效读取可以保留，但不会形成完整就绪状态；只有全部有效读取成功后才应用尾部 padding。"
             },
             "parameters": []
           },
@@ -691,8 +691,8 @@
             "repeatable": false,
             "requirement": "required",
             "role": {
-              "en": "Close the block and atomically publish the complete Shared logical parent after complete preflight.",
-              "zh-CN": "关闭 block，并在完整预检查后原子发布完整 Shared 逻辑 parent。"
+              "en": "Close the block; complete success publishes the complete Shared logical parent, while a first fault may leave an incomplete, unpublished generation with prior reads retained.",
+              "zh-CN": "关闭 block；完整成功时发布完整 Shared 逻辑 parent；遇到首个 fault 时，可留下保留先前读取但尚未发布的不完整 generation。"
             },
             "parameters": []
           },
@@ -1202,8 +1202,8 @@
               "zh-CN": "CUBE 合法性与分配"
             },
             "purpose": {
-              "en": "Require explicit LB0/LB1, absent LB2, load-direction layout, supported dtype, Local destination, and rollback on failure.",
-              "zh-CN": "要求显式 LB0/LB1、缺少 LB2、load 方向 layout、受支持 dtype、Local 目标，并在失败时回滚。"
+              "en": "Require explicit LB0/LB1, absent LB2, load-direction layout, supported dtype, a Local destination, and valid generation writers before the load.",
+              "zh-CN": "要求显式 LB0/LB1、缺少 LB2、load 方向 layout、受支持 dtype、Local 目标，并在载入前验证 generation writer。"
             },
             "symbols": [
               "BundleCubeTransportDimensionsLegal",
@@ -1258,25 +1258,25 @@
         ]
       },
       {
-        "id": "preflight",
+        "id": "first-fault",
         "label": {
-          "en": "5. Complete-footprint preflight",
-          "zh-CN": "5. 完整 footprint 预检查"
+          "en": "5. Access and first-fault boundary",
+          "zh-CN": "5. 访问与首 fault 边界"
         },
         "summary": {
-          "en": "Probe every selected GM element before any destination payload or Shared record becomes visible.",
-          "zh-CN": "在任何目标 payload 或 Shared 记录可见之前，探测所有选中的 GM 元素。"
+          "en": "For ordinary Local, CUBE, and Shared forms, probe and read each selected GM element in order until the first fault; completed reads may remain partial but never advertise complete readiness.",
+          "zh-CN": "普通 Local、CUBE 与 Shared 形态按顺序逐个探测并读取选中的 GM 元素，直到首个 fault；已完成读取可作为部分结果保留，但不会宣告完整就绪。"
         },
         "sharedRegions": [
           {
             "sourcePath": "asl/tile/model/memory/load-store.asl",
             "label": {
-              "en": "Local preflight and load",
-              "zh-CN": "Local 预检查与载入"
+              "en": "Local first-fault load",
+              "zh-CN": "Local 首 fault 载入"
             },
             "purpose": {
-              "en": "Probe the full Local footprint, then load and publish the complete destination and CUBE tail PadValue.",
-              "zh-CN": "探测完整 Local footprint，然后载入并发布完整目标及 CUBE 尾部 PadValue。"
+              "en": "Probe and load one Local element at a time, retaining completed elements on a first fault and applying CUBE tail PadValue only after full success.",
+              "zh-CN": "逐元素探测并载入 Local；首个 fault 时保留已完成元素，仅在完整成功后应用 CUBE 尾部 PadValue。"
             },
             "symbols": [
               "TLOAD"
@@ -1285,12 +1285,12 @@
           {
             "sourcePath": "asl/tile/model/memory/shared-movement.asl",
             "label": {
-              "en": "Shared preflight and atomic update",
-              "zh-CN": "Shared 预检查与原子更新"
+              "en": "Shared first-fault load",
+              "zh-CN": "Shared 首 fault 载入"
             },
             "purpose": {
-              "en": "Probe the complete Shared parent footprint for a singleton issuer before atomic publication; multi-issuer assembly uses explicit writer ranges.",
-              "zh-CN": "单一 issuer 在原子发布前探测完整 Shared parent footprint；多 issuer assembly 使用显式 writer range。"
+              "en": "Probe and load selected Shared elements until the first fault; retain the incomplete generation without marking it ready or published.",
+              "zh-CN": "逐个探测并载入选中的 Shared 元素直到首个 fault；保留不完整 generation，但不把它标记为 ready 或 published。"
             },
             "symbols": [
               "TLOADShared"
@@ -1304,13 +1304,13 @@
           {
             "kind": "reads",
             "label": {
-              "en": "Read footprint",
-              "zh-CN": "读取 footprint"
+              "en": "Read sequence",
+              "zh-CN": "读取序列"
             },
             "items": [
               {
-                "en": "Every selected ValidRow × ValidCol GM element is translated and permission-checked before payload writes.",
-                "zh-CN": "每个选中的 ValidRow × ValidCol GM 元素都在 payload 写入前完成地址转换与权限检查。"
+                "en": "Each selected ValidRow × ValidCol GM element is translated, permission-checked, loaded, and recorded before advancing to the next element.",
+                "zh-CN": "每个选中的 ValidRow × ValidCol GM 元素依次完成地址转换、权限检查、载入和记录，然后再处理下一个元素。"
               }
             ]
           },
@@ -1322,8 +1322,8 @@
             },
             "items": [
               {
-                "en": "Any access fault leaves the prior Local/Shared destination and bundle-visible state unpublished.",
-                "zh-CN": "任何访问 fault 都不会发布 Local/Shared 目标或 bundle 可见状态。"
+                "en": "The first access fault stops the request. Reads and load events completed before it may remain in a partially defined Local destination or Shared generation, without complete readiness.",
+                "zh-CN": "首个访问 fault 会停止请求；fault 前完成的读取与 load event 可保留在部分定义的 Local 目标或 Shared generation 中，但不会形成完整就绪状态。"
               }
             ]
           }
@@ -1357,8 +1357,8 @@
             },
             "items": [
               {
-                "en": "Read GM values for the complete valid rectangle using the resolved dtype, layout, base, and byte stride.",
-                "zh-CN": "使用解析后的 dtype、layout、base 与字节跨度读取完整有效矩形的 GM 值。"
+                "en": "Read GM values in the valid rectangle using the resolved dtype, layout, base, and byte stride until completion or the first fault.",
+                "zh-CN": "使用解析后的 dtype、layout、base 与字节跨度读取有效矩形的 GM 值，直到完成或遇到首个 fault。"
               }
             ]
           },
@@ -1370,8 +1370,8 @@
             },
             "items": [
               {
-                "en": "Populate a new Local Tile or the complete logical parent of one absolute Shared Tile; source GPRs and GM are unchanged.",
-                "zh-CN": "填充一个新 Local Tile 或一个绝对 Shared Tile 的完整逻辑 parent；源 GPR 与 GM 不变。"
+                "en": "Populate a Local Tile or Shared generation incrementally; source GPRs and GM are unchanged, and only full success marks the result complete.",
+                "zh-CN": "增量填充 Local Tile 或 Shared generation；源 GPR 与 GM 不变，只有完整成功才把结果标记为 complete。"
               }
             ]
           }
@@ -1384,8 +1384,8 @@
           "zh-CN": "7. 发布、提交或无效果"
         },
         "summary": {
-          "en": "Zero mask has no effect; success publishes only the destination after preflight; fault preserves the prior destination and aborts bundle-local generations.",
-          "zh-CN": "零 mask 无效果；成功时只在预检查后发布目标；fault 保留先前目标并中止 bundle-local generation。"
+          "en": "Zero mask has no effect; complete success publishes readiness, while a first memory fault may retain prior completed reads in an incomplete destination or generation.",
+          "zh-CN": "零 mask 无效果；完整成功时发布就绪状态；首个 memory fault 可在不完整目标或 generation 中保留先前完成的读取。"
         },
         "sharedRegions": [
           {
@@ -1395,8 +1395,8 @@
               "zh-CN": "Bundle 提交或中止"
             },
             "purpose": {
-              "en": "Commit Local generations and retire dependencies only on success; otherwise abort generations.",
-              "zh-CN": "仅在成功时提交 Local generation 并退役依赖；否则中止 generation。"
+              "en": "Retire complete destinations on success while leaving first-fault memory results incomplete and not whole-tile-ready.",
+              "zh-CN": "成功时退役完整目标；首 fault memory 结果保持不完整，且不处于 whole-tile-ready 状态。"
             },
             "symbols": [
               "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules"
@@ -1421,8 +1421,8 @@
                 "zh-CN": "PE mask 0000 是严格无效果路径。"
               },
               {
-                "en": "On success the complete Local destination or complete Shared logical parent publishes atomically after preflight.",
-                "zh-CN": "成功时，完整 Local 目标或完整 Shared 逻辑 parent 在预检查后原子发布。"
+                "en": "On success the complete Local destination or Shared logical parent becomes ready; on a first fault, prior completed reads may remain but the result stays incomplete and unpublished as a whole tile.",
+                "zh-CN": "成功时，完整 Local 目标或 Shared 逻辑 parent 进入就绪状态；遇到首个 fault 时可保留先前完成的读取，但结果保持不完整，且不作为 whole tile 发布。"
               },
               {
                 "en": "CUBE tail PadValue is applied only after all valid GM reads succeed.",

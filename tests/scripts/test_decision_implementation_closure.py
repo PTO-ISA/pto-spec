@@ -7,7 +7,7 @@ from pathlib import Path
 from scripts.adr_records import load_adrs
 from scripts.asl_units import load_units
 from scripts.ndf import instruction_clause_id, parse_ndf_regions
-from scripts.release_selection import _baseline_inputs
+from scripts.release_selection import published_baseline_lineage
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,12 +36,17 @@ class DecisionImplementationClosureTest(unittest.TestCase):
 
     def baseline_impacts(self) -> tuple[set[str], set[str]]:
         selection = json.loads((ROOT / "spec/release-selection.json").read_text())
-        manifest, unit_rows = _baseline_inputs(ROOT, selection["baseline_commit"])
-        expanded = manifest["release_selection"]["expanded_ndf"]
-        return (
-            {row["id"] for row in unit_rows},
-            {row["id"] for row in expanded},
-        )
+        units: set[str] = set()
+        ndf: set[str] = set()
+        for _, manifest, unit_rows in published_baseline_lineage(
+            ROOT, selection["baseline_commit"]
+        ):
+            units.update(row["id"] for row in unit_rows)
+            ndf.update(
+                row["id"]
+                for row in manifest["release_selection"]["expanded_ndf"]
+            )
+        return units, ndf
 
     def test_accepted_decision_impacts_join_exact_current_owners(self) -> None:
         unit_ids, ndf_owners, _ = self.current_impacts()

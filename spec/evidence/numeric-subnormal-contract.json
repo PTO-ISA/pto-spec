@@ -5,7 +5,7 @@
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.6-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.7-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -2364,7 +2364,7 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "b01cf719897fc4bc94937121520324c090fe5a2481485ed58b88d7b077b1eed0"
+      "sha256": "fc4060954c19cab7e70751d5e8735a349fcaafe331508195650fd276423d72c2"
     },
     {
       "path": "spec/evidence/numeric-contract-decision-inputs.json",

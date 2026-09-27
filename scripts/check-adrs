@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
 from scripts.adr_records import AdrRecord, load_adrs, validate_adr_graph
 from scripts.asl_units import load_units
 from scripts.ndf import instruction_clause_id, parse_ndf_regions
+from scripts.release_selection import published_baseline_lineage
 
 
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
@@ -151,9 +152,23 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
     baseline_units: set[str] = set()
     baseline_ndf_owners: dict[str, str] = {}
     if any(record.release_boundary for record in records):
-        baseline_units, baseline_ndf_owners = _baseline_impact_inventory(
-            root, _selected_baseline(root)
+        selected = _selected_baseline(root)
+        has_manifest = subprocess.run(
+            [
+                "git", "-C", str(root), "cat-file", "-e",
+                f"{selected}:spec/release-manifest.json",
+            ],
+            capture_output=True,
+            check=False,
+        ).returncode == 0
+        revisions = (
+            [revision for revision, _, _ in published_baseline_lineage(root, selected)]
+            if has_manifest else [selected]
         )
+        for revision in reversed(revisions):
+            units, owners = _baseline_impact_inventory(root, revision)
+            baseline_units.update(units)
+            baseline_ndf_owners.update(owners)
 
     errors: list[str] = []
     for record in records:
@@ -163,7 +178,7 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
                 owner = baseline_ndf_owners.get(ndf_id)
             if owner is None:
                 scope = (
-                    "current or selected-baseline"
+                    "current or published-baseline"
                     if record.release_boundary
                     else "current"
                 )
@@ -181,7 +196,7 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
             )
             if not known:
                 scope = (
-                    "current or selected-baseline"
+                    "current or published-baseline"
                     if record.release_boundary
                     else "current"
                 )

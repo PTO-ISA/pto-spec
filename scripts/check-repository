@@ -90,9 +90,9 @@ required_files=(
     spec/catalog/tile-macro-assembly.json
     spec/hardware-conformance-profile.json
     spec/release-manifest.json
-    spec/evidence/pto-isa-0586-abi-vectors.json
-    spec/evidence/pto-isa-0586-encoding-totality.json
-    spec/evidence/pto-isa-0586-hardware-numeric-vectors.json
+    spec/evidence/pto-isa-0587-abi-vectors.json
+    spec/evidence/pto-isa-0587-encoding-totality.json
+    spec/evidence/pto-isa-0587-hardware-numeric-vectors.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
     spec/evidence/mnemonic-descriptions/schema.json

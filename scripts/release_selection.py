@@ -481,6 +481,40 @@ def _baseline_inputs(
     return manifest, tuple(unit_rows)
 
 
+def published_baseline_lineage(
+    root: Path, baseline: str
+) -> tuple[tuple[str, dict[str, object], tuple[dict[str, object], ...]], ...]:
+    """Return exact tagged baselines through the pre-publication-version boundary.
+
+    Release-boundary ADRs may name owners retired after an older publication.
+    Each lineage entry is checked against its immutable tag by _baseline_inputs.
+    The older release format has no publication_version and ends this chain.
+    """
+    lineage = []
+    seen = set()
+    while baseline not in seen:
+        seen.add(baseline)
+        manifest, units = _baseline_inputs(root, baseline)
+        lineage.append((baseline, manifest, units))
+        if "publication_version" not in manifest:
+            break
+        selection = manifest.get("release_selection")
+        if not isinstance(selection, dict):
+            raise ValueError("published baseline release selection is missing")
+        previous = selection.get("baseline_commit")
+        if not isinstance(previous, str) or COMMIT.fullmatch(previous) is None:
+            raise ValueError("published baseline predecessor is invalid")
+        ancestor = _git(
+            root, "merge-base", "--is-ancestor", previous, baseline, check=False
+        )
+        if ancestor.returncode != 0:
+            raise ValueError("published baseline predecessor is not an ancestor")
+        baseline = previous
+    else:
+        raise ValueError("published baseline lineage contains a cycle")
+    return tuple(lineage)
+
+
 def evaluate_release_selection(
     root: Path,
 ) -> ReleaseSelectionResult:
