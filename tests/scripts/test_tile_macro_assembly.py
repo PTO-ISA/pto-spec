@@ -654,7 +654,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 ("operations", tadd_index, "forms", 0, "macro_format"),
                 self.by_name["TADD"]["macro_format"] + "\nBSTOP",
             ),
-            "stale form ID": mutation(tadd + ("form_id",), "pto0586-tadd-stale"),
+            "stale form ID": mutation(tadd + ("form_id",), "pto0587-tadd-stale"),
             "configuration field": mutation(
                 tadd + ("configuration_bindings", 0, "field"), "LB9"
             ),
@@ -939,7 +939,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(len(predicate_sources), 2)
         self.assertEqual(predicate_sources[1]["condition"], "DataType=U8")
 
-    def test_transport_and_cube_variants_follow_current_0586_contract(self) -> None:
+    def test_transport_and_cube_variants_follow_current_0587_contract(self) -> None:
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TLOAD"]["forms"]],
             ["TLOAD", "TLOAD", "TLOAD", "TLOAD"],
@@ -1294,7 +1294,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.catalog["shape_resolution"]["descriptor_inherited"],
         )
 
-    def test_reference_is_0586_and_uses_one_line_examples(self) -> None:
+    def test_reference_is_0587_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         self.assertIn("all 118 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)

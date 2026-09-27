@@ -1,6 +1,6 @@
 # PTO TileOp macro assembly
 
-This reference defines the canonical PTO 0.58.6 macro-assembly format for all 118 current direct Tile operations.
+This reference defines the canonical PTO 0.58.7 macro-assembly format for all 118 current direct Tile operations.
 It is generated from the `PTO-TILEOP-MACRO` owners in `asl/arch/overview/instruction-classification.asl`; each physical mapping is cross-checked against the operation's owning `PTO-INSTRUCTION` metadata and `spec/catalog/tile-operations.json`.
 
 ## Syntax model
@@ -48,7 +48,7 @@ A partial Tile retains the differing valid shape and nondefault symbolic values:
 TADD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero, PE0_1>, T#1, T#2, ->T<2KB>
 ```
 
-Destination metavariables likewise become physical binding operands. A Local destination names only its encoded `B.IOT.DstTile` hand: for example, `->T<2KB>` publishes a new `T#1`, while `->U<512B>` may publish a legacy packed predicate Tile or a CUBE PredicateCell as the new `U#1` according to the selected TCMP/TCMPS form. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`. PTO 0.58.6 defines no architectural predicate-register destination for these TileOps.
+Destination metavariables likewise become physical binding operands. A Local destination names only its encoded `B.IOT.DstTile` hand: for example, `->T<2KB>` publishes a new `T#1`, while `->U<512B>` may publish a legacy packed predicate Tile or a CUBE PredicateCell as the new `U#1` according to the selected TCMP/TCMPS form. `->a0` is a scalar or predicate-mask result carried by `B.IOR.RegDst`. PTO 0.58.7 defines no architectural predicate-register destination for these TileOps.
 
 ## Complete format inventory
 
@@ -272,5 +272,5 @@ A TileOp assembler expands through that generated schema. A bundle-aware disasse
 
 ## Tool integration boundary
 
-This catalog specifies the PTO 0.58.6 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.
+This catalog specifies the PTO 0.58.7 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.
 Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, or unmatched encoded value remains physical assembly. Runtime descriptor state is not required for canonical folding.

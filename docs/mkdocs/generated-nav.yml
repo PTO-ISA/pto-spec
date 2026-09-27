@@ -1001,6 +1001,7 @@ nav:
               - "ADR-GOV-0010: PTO ISA 0.58.5.0 to 0.58.6 compatibility and release identity": status/decisions/ADR-GOV-0010-0585-0-to-0586-compatibility.md
               - "ADR-GOV-0011: Opt-in Linx runtime compatibility profile": status/decisions/ADR-GOV-0011-runtime-compatibility-profile.md
               - "ADR-GOV-0012: Remove the reference and target profile concept": status/decisions/ADR-GOV-0012-remove-reference-and-target-profile-concept.md
+              - "ADR-GOV-0013: PTO ISA 0.58.6.0 to 0.58.7 compatibility and release identity": status/decisions/ADR-GOV-0013-0586-0-to-0587-compatibility.md
           - STATE:
               - "ADR-STATE-0001: Use PTO-owned system-register names": status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md
               - "ADR-STATE-0002: Define the PTO architectural state contract": status/decisions/ADR-STATE-0002-architectural-state-contract.md

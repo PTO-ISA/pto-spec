@@ -3,6 +3,11 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.58.7.0
+
+### Cross-cutting
+- [ADR-GOV-0013](docs/status/decisions/ADR-GOV-0013-0586-0-to-0587-compatibility.md): PTO ISA 0.58.6.0 to 0.58.7 compatibility and release identity
+
 ## Release 0.58.6
 
 ### Cross-cutting

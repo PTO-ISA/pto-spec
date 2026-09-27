@@ -889,7 +889,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
                             "type": "string",
                         },
                         "llvm_commit": {
-                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.6",
+                            "description": "Exact reviewed LinxISA LLVM commit for PTO 0.58.7",
                             "required": "true",
                             "type": "string",
                         },

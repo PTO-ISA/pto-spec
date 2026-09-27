@@ -291,6 +291,7 @@ class AdrRecordTest(unittest.TestCase):
                     "ADR-GOV-0004",
                     "ADR-GOV-0005",
                     "ADR-GOV-0010",
+                    "ADR-GOV-0013",
                     "ADR-TILE-0006",
                     "ADR-TILE-0008",
                     "ADR-TILE-0013",
@@ -500,11 +501,11 @@ class AdrRecordTest(unittest.TestCase):
             result = self.run_checker(root)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(
-                "unknown current or selected-baseline NDF PTO-MISSING-NDF",
+                "unknown current or published-baseline NDF PTO-MISSING-NDF",
                 result.stderr,
             )
             self.assertIn(
-                "unknown current or selected-baseline ASL unit PTO-MISSING-UNIT",
+                "unknown current or published-baseline ASL unit PTO-MISSING-UNIT",
                 result.stderr,
             )
 
