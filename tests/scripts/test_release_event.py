@@ -9,7 +9,10 @@ from scripts.release_event import canonical_release_event, validate_release_even
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_PATH = ROOT / "spec/schemas/pto-spec-release-event-v1.schema.json"
+SCHEMA_PATHS = {
+    "1": ROOT / "spec/schemas/pto-spec-release-event-v1.schema.json",
+    "2": ROOT / "spec/schemas/pto-spec-release-event-v2.schema.json",
+}
 VALIDATE_SCHEMA = runpy.run_path(str(ROOT / "scripts/check-release-event-schema"))[
     "validate_schema"
 ]
@@ -24,6 +27,11 @@ VALID_PAYLOAD = {
     "model_closure_semantic_payload_sha256": "b" * 64,
     "published_at": "2026-08-10T00:00:00Z",
 }
+VALID_V2_PAYLOAD = {
+    **{key: value for key, value in VALID_PAYLOAD.items() if key != "model_closure_semantic_payload_sha256"},
+    "schema_version": "2",
+    "release_artifact_certification_sha256": "c" * 64,
+}
 
 
 class ReleaseEventTest(unittest.TestCase):
@@ -33,6 +41,7 @@ class ReleaseEventTest(unittest.TestCase):
 
     def test_valid_payload_is_accepted(self) -> None:
         self.assertEqual(validate_release_event(VALID_PAYLOAD), [])
+        self.assertEqual(validate_release_event(VALID_V2_PAYLOAD), [])
 
     def test_existing_major_minor_tag_remains_accepted(self) -> None:
         payload = {
@@ -52,11 +61,13 @@ class ReleaseEventTest(unittest.TestCase):
         self.assertEqual(validate_release_event(payload), [])
 
     def test_repository_schema_is_accepted_by_the_semantic_checker(self) -> None:
-        schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(VALIDATE_SCHEMA(schema), [])
+        for version, path in SCHEMA_PATHS.items():
+            with self.subTest(version=version):
+                schema = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(VALIDATE_SCHEMA(schema), [])
 
     def test_schema_checker_rejects_additional_semantic_keywords(self) -> None:
-        schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+        schema = json.loads(SCHEMA_PATHS["1"].read_text(encoding="utf-8"))
         schema["not"] = {}
         self.assertTrue(VALIDATE_SCHEMA(schema))
 
@@ -66,8 +77,27 @@ class ReleaseEventTest(unittest.TestCase):
             json.dumps(VALID_PAYLOAD, sort_keys=True, separators=(",", ":")),
         )
 
-    def test_wrong_schema_version_is_rejected(self) -> None:
-        self.assert_invalid(schema_version="2")
+    def test_unknown_schema_version_is_rejected(self) -> None:
+        self.assert_invalid(schema_version="3")
+        self.assert_invalid(schema_version=[])
+
+    def test_cross_version_digest_fields_are_rejected(self) -> None:
+        self.assertTrue(
+            validate_release_event(
+                {
+                    **VALID_PAYLOAD,
+                    "release_artifact_certification_sha256": "c" * 64,
+                }
+            )
+        )
+        self.assertTrue(
+            validate_release_event(
+                {
+                    **VALID_V2_PAYLOAD,
+                    "model_closure_semantic_payload_sha256": "b" * 64,
+                }
+            )
+        )
 
     def test_wrong_repository_is_rejected(self) -> None:
         self.assert_invalid(repository="heng" + "liao1972/DavinciOO")
@@ -101,6 +131,11 @@ class ReleaseEventTest(unittest.TestCase):
             with self.subTest(digest=digest):
                 self.assert_invalid(release_manifest_sha256=digest)
                 self.assert_invalid(model_closure_semantic_payload_sha256=digest)
+                payload = {
+                    **VALID_V2_PAYLOAD,
+                    "release_artifact_certification_sha256": digest,
+                }
+                self.assertTrue(validate_release_event(payload))
 
     def test_missing_or_invalid_utc_timestamp_is_rejected(self) -> None:
         missing = dict(VALID_PAYLOAD)
@@ -124,7 +159,7 @@ class ReleaseEventTest(unittest.TestCase):
 
     def test_canonicalization_rejects_invalid_payload(self) -> None:
         with self.assertRaises(ValueError):
-            canonical_release_event({**VALID_PAYLOAD, "schema_version": "2"})
+            canonical_release_event({**VALID_PAYLOAD, "schema_version": "3"})
 
 
 if __name__ == "__main__":

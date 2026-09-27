@@ -15,8 +15,11 @@ if str(ROOT) not in sys.path:
 from scripts.release_event import canonical_release_event, validate_release_event  # noqa: E402
 
 
-SCHEMA_PATH = ROOT / "spec/schemas/pto-spec-release-event-v1.schema.json"
-REQUIRED_FIELDS = [
+SCHEMA_PATHS = {
+    "1": ROOT / "spec/schemas/pto-spec-release-event-v1.schema.json",
+    "2": ROOT / "spec/schemas/pto-spec-release-event-v2.schema.json",
+}
+COMMON_FIELDS = [
     "schema_version",
     "repository",
     "tag",
@@ -24,17 +27,33 @@ REQUIRED_FIELDS = [
     "release_id",
     "release_url",
     "release_manifest_sha256",
-    "model_closure_semantic_payload_sha256",
     "published_at",
 ]
+DIGEST_FIELDS = {
+    "1": "model_closure_semantic_payload_sha256",
+    "2": "release_artifact_certification_sha256",
+}
 
 
-def validate_schema(schema: object) -> list[str]:
+def validate_schema(schema: object, version: str | None = None) -> list[str]:
     """Return drift from the exact fail-closed release event schema contract."""
 
     if not isinstance(schema, dict):
         return ["release event schema must be an object"]
     errors: list[str] = []
+    if version is None:
+        identifier = schema.get("$id")
+        version = next(
+            (item for item in DIGEST_FIELDS if isinstance(identifier, str) and identifier.endswith(f"release-event-v{item}.schema.json")),
+            None,
+        )
+    if version not in DIGEST_FIELDS:
+        return ["release event schema version is unknown"]
+    required_fields = [
+        *COMMON_FIELDS[:-1],
+        DIGEST_FIELDS[version],
+        COMMON_FIELDS[-1],
+    ]
     expected_top_level = {
         "$id",
         "$schema",
@@ -48,25 +67,25 @@ def validate_schema(schema: object) -> list[str]:
         errors.append("release event schema top-level fields drift")
     if schema.get("$id") != (
         "https://github.com/PTO-ISA/pto-spec/blob/main/"
-        "spec/schemas/pto-spec-release-event-v1.schema.json"
+        f"spec/schemas/pto-spec-release-event-v{version}.schema.json"
     ):
         errors.append("release event schema ID drift")
     if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
         errors.append("release event schema must use JSON Schema draft 2020-12")
-    if schema.get("title") != "PTO-SPEC stable release event v1":
+    if schema.get("title") != f"PTO-SPEC stable release event v{version}":
         errors.append("release event schema title drift")
     if schema.get("type") != "object":
         errors.append("release event schema must describe an object")
     if schema.get("additionalProperties") is not False:
         errors.append("release event schema must reject additional properties")
-    if schema.get("required") != REQUIRED_FIELDS:
+    if schema.get("required") != required_fields:
         errors.append("release event schema required fields drift")
     properties = schema.get("properties")
-    if not isinstance(properties, dict) or set(properties) != set(REQUIRED_FIELDS):
+    if not isinstance(properties, dict) or set(properties) != set(required_fields):
         errors.append("release event schema properties drift")
         return errors
     expected = {
-        "schema_version": {"const": "1"},
+        "schema_version": {"const": version},
         "repository": {"const": "PTO-ISA/pto-spec"},
         "tag": {
             "type": "string",
@@ -89,7 +108,7 @@ def validate_schema(schema: object) -> list[str]:
             "type": "string",
             "pattern": r"^[0-9a-f]{64}$",
         },
-        "model_closure_semantic_payload_sha256": {
+        DIGEST_FIELDS[version]: {
             "type": "string",
             "pattern": r"^[0-9a-f]{64}$",
         },
@@ -108,28 +127,30 @@ def validate_schema(schema: object) -> list[str]:
 
 
 def main() -> int:
-    try:
-        schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
-        print(f"release event schema is invalid: {error}", file=sys.stderr)
-        return 1
-    errors = validate_schema(schema)
-    sample = {
-        "schema_version": "1",
-        "repository": "PTO-ISA/pto-spec",
-        "tag": "v0.58.4.1",
-        "commit": "0123456789abcdef0123456789abcdef01234567",
-        "release_id": 123,
-        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4.1",
-        "release_manifest_sha256": "a" * 64,
-        "model_closure_semantic_payload_sha256": "b" * 64,
-        "published_at": "2026-08-10T00:00:00Z",
-    }
-    errors.extend(validate_release_event(sample))
-    try:
-        canonical_release_event(sample)
-    except ValueError as error:
-        errors.append(str(error))
+    errors: list[str] = []
+    for version, schema_path in SCHEMA_PATHS.items():
+        try:
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"release event schema v{version} is invalid: {error}")
+            continue
+        errors.extend(validate_schema(schema, version))
+        sample = {
+            "schema_version": version,
+            "repository": "PTO-ISA/pto-spec",
+            "tag": "v0.58.4.1",
+            "commit": "0123456789abcdef0123456789abcdef01234567",
+            "release_id": 123,
+            "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4.1",
+            "release_manifest_sha256": "a" * 64,
+            DIGEST_FIELDS[version]: "b" * 64,
+            "published_at": "2026-08-10T00:00:00Z",
+        }
+        errors.extend(validate_release_event(sample))
+        try:
+            canonical_release_event(sample)
+        except ValueError as error:
+            errors.append(str(error))
     if errors:
         print("release event schema contract failed:", file=sys.stderr)
         for error in errors:

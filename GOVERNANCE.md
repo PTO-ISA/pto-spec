@@ -34,14 +34,16 @@ Compiler-to-model acceptance is owned by
 [`PTO-ISA/asl-model`](https://github.com/PTO-ISA/asl-model). PTO-SPEC keeps its
 direct ASL semantic AVS, while the ASL-MODEL corpus owns the exact LLVM
 compile/link to PTO ELF, ELF identity validation, ASLRef execution, independent
-golden comparison, and closure payload. The manual PTO release workflow invokes
-that corpus in the same protected run and rejects a missing, stale, partial, or
-different-version result.
+golden comparison, and closure payload. ASL-MODEL and LLVM validate those
+dependent contracts in their own repositories. The manual PTO-SPEC release
+workflow validates this repository's exact ASL/AVS model and release evidence;
+site publication is validated by its separate site workflow.
 
-The first integrated release uses the immutable adoption baseline and mandatory
-case set in `spec/model-closure-selection.json`. That baseline is not a waiver:
-it marks where the new cross-repository gate becomes authoritative. Every later
-instruction-identity change must close its ASL-MODEL mapping before publication.
+The downstream model-closure selection retains its immutable adoption baseline
+and mandatory cases in `spec/model-closure-selection.json`. Those are
+ASL-MODEL integration obligations, not PTO-SPEC release gates. A PTO-SPEC
+publication does not claim that downstream compiler/model acceptance or site
+publication has succeeded.
 
 ## Change control
 

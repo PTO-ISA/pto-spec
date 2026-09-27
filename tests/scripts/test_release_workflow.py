@@ -805,9 +805,13 @@ class HostedFullValidationContractTest(unittest.TestCase):
         )
         self.assert_full_rejected("  health:\n", "  bypass:\n    steps:\n      - run: true\n  health:\n")
 
-    def test_release_is_manual_and_retains_exact_commit_input(self) -> None:
+    def test_release_is_manual_and_pto_only(self) -> None:
         self.assert_release_rejected("  workflow_dispatch:\n", "  schedule:\n")
         self.assert_release_rejected("        required: true\n", "        required: false\n")
+        self.assertNotIn("llvm_commit", self.release)
+        self.assertNotIn("asl_model_commit", self.release)
+        self.assertNotIn("release-site", self.release)
+        self.assertNotIn("model-closure", self.release)
 
     def test_release_calls_shared_validation_with_release_authority(self) -> None:
         self.assert_release_rejected("      authority: release\n", "      authority: nightly\n")
@@ -816,145 +820,70 @@ class HostedFullValidationContractTest(unittest.TestCase):
             "    uses: attacker/repo/.github/workflows/full-validation.yml@main\n",
         )
 
-    def test_release_alone_aggregates_and_prepares_canonical_evidence(self) -> None:
+    def test_release_alone_aggregates_canonical_pto_evidence(self) -> None:
         self.assert_release_rejected("          make release-prepare\n", "")
         self.assert_release_rejected("          git diff --exit-code\n", "          true\n")
         self.assert_release_rejected("            spec/evidence/asl-test-matrix.sha256\n", "")
 
-    def test_release_final_gate_is_fail_closed(self) -> None:
-        self.assert_release_rejected(
-            '          test "$FULL_VALIDATION_RESULT" = success\n',
-            '          test -n "$FULL_VALIDATION_RESULT"\n',
-        )
-
-    def test_release_final_gate_requires_uploaded_artifact_certification(self) -> None:
-        self.assert_release_rejected(
-            '          test "$ARTIFACT_CERTIFICATION_RESULT" = success\n',
-            '          test -n "$ARTIFACT_CERTIFICATION_RESULT"\n',
-        )
-        self.assert_release_rejected(
-            '          [[ "$ARTIFACT_CERTIFICATION_REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]\n',
-            "",
-        )
-        self.assert_release_rejected(
-            "  certify-artifacts:\n",
-            "  optional-certify-artifacts:\n",
-        )
-
-    def test_artifact_certification_downloads_every_exact_same_run_artifact(self) -> None:
-        for name in (
-            "pto-release-evidence-${{ inputs.commit }}",
-            "pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
-            "pto-site-preview-${{ inputs.commit }}",
-            "pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}",
-        ):
-            self.assertIn(f"          name: {name}\n", self.release)
-        self.assertIn("          ./scripts/check-release-artifacts \\\n", self.release)
-        self.assertNotIn("gh api", self.release)
-        self.assertReleaseCertificationActionPins()
-
-    def assertReleaseCertificationActionPins(self) -> None:
-        certification = self.release.split("  certify-artifacts:\n", 1)[1].split("\n  validate:\n", 1)[0]
-        self.assertEqual(
-            certification.count(
-                "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
-            ),
-            4,
-        )
-        self.assertNotIn("actions/download-artifact@v", certification)
-
-    def test_release_requires_exact_llvm_and_asl_model_candidates(self) -> None:
-        self.assert_release_rejected(
-            "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.7\n"
-            "        required: true\n",
-            "      llvm_commit:\n"
-            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.7\n"
-            "        required: false\n",
-        )
-        self.assert_release_rejected(
-            "          ref: ${{ inputs.asl_model_commit }}\n",
-            "          ref: main\n",
-        )
-
-    def test_release_model_closure_is_mandatory_and_same_run(self) -> None:
-        self.assert_release_rejected(
-            "  model-closure:\n",
-            "  optional-model-closure:\n",
-        )
-        self.assert_release_rejected(
-            '          test "$MODEL_CLOSURE_RESULT" = success\n',
-            '          test -n "$MODEL_CLOSURE_RESULT"\n',
-        )
+    def test_release_preflight_is_exact_head_and_pto_local(self) -> None:
         self.assert_release_rejected(
             '          test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"\n',
             '          test -n "$WORKFLOW_COMMIT"\n',
         )
+        self.assertIn("          ./scripts/check-release-preflight \\\n", self.release)
+        self.assertIn("          name: pto-release-preflight-${{ inputs.commit }}\n", self.release)
+        self.assertNotIn("repository: LinxISA/llvm-project", self.release)
+        self.assertNotIn("repository: PTO-ISA/asl-model", self.release)
 
-    def test_release_checks_llvm_identity_freshness_before_build(self) -> None:
+    def test_release_candidate_must_equal_fresh_origin_main(self) -> None:
         self.assert_release_rejected(
-            "          ./scripts/check-release-preflight \\\n",
-            "          true \\\n",
+            "          git fetch --no-tags origin main:refs/remotes/origin/main\n",
+            "",
+        )
+        self.assert_release_rejected(
+            '          test "$(git rev-parse origin/main)" = "$PTO_COMMIT"\n',
+            '          test -n "$(git rev-parse origin/main)"\n',
         )
 
-    def test_release_preflight_gates_all_heavy_jobs_without_serializing_them(self) -> None:
-        for job in ("full-validation", "release-site", "model-closure"):
+    def test_release_artifact_certification_is_pto_only_and_same_run(self) -> None:
+        for name in (
+            "pto-release-evidence-${{ inputs.commit }}",
+            "pto-release-preflight-${{ inputs.commit }}",
+        ):
+            self.assertIn(f"          name: {name}\n", self.release)
+        self.assertIn("          ./scripts/check-release-artifacts \\\n", self.release)
+        self.assertIn("            --pto-root . \\\n", self.release)
+        self.assertIn("            --release-evidence-root build/release-artifacts/release-evidence \\\n", self.release)
+        self.assertIn("            --preflight-root build/release-artifacts/preflight \\\n", self.release)
+        certification = self.release.split("  certify-artifacts:\n", 1)[1].split("\n  validate:\n", 1)[0]
+        self.assertEqual(
+            certification.count("actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"),
+            2,
+        )
+        self.assertNotIn("actions/download-artifact@v", certification)
+
+    def test_release_final_gate_is_fail_closed(self) -> None:
+        for exact, weak in (
+            ('          test "$RELEASE_PREFLIGHT_RESULT" = success\n', '          test -n "$RELEASE_PREFLIGHT_RESULT"\n'),
+            ('          test "$FULL_VALIDATION_RESULT" = success\n', '          test -n "$FULL_VALIDATION_RESULT"\n'),
+            ('          test "$RELEASE_EVIDENCE_RESULT" = success\n', '          test -n "$RELEASE_EVIDENCE_RESULT"\n'),
+            ('          test "$ARTIFACT_CERTIFICATION_RESULT" = success\n', '          test -n "$ARTIFACT_CERTIFICATION_RESULT"\n'),
+        ):
+            with self.subTest(exact=exact):
+                self.assert_release_rejected(exact, weak)
+        self.assert_release_rejected(
+            '          [[ "$ARTIFACT_CERTIFICATION_REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]\n',
+            "",
+        )
+
+    def test_release_has_only_pto_release_jobs(self) -> None:
+        for job in (
+            "release-preflight", "full-validation", "release-evidence",
+            "certify-artifacts", "validate",
+        ):
             self.assertIn(f"  {job}:\n", self.release)
-        self.assertEqual(self.release.count("    needs: release-preflight\n"), 3)
-        self.assertNotIn("    needs: full-validation\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    outputs:", self.release)
-
-    def test_release_preflight_and_final_gate_are_fail_closed(self) -> None:
-        self.assert_release_rejected(
-            '          test "$RELEASE_PREFLIGHT_RESULT" = success\n',
-            '          test -n "$RELEASE_PREFLIGHT_RESULT"\n',
-        )
-        self.assert_release_rejected(
-            "            build/release-preflight/candidate.json\n",
-            "",
-        )
-
-    def test_every_release_worker_uploads_anchored_diagnostics(self) -> None:
-        for job in ("preflight", "evidence", "site", "model"):
-            self.assertIn(f"build/release-diagnostics/{job}.json", self.release)
-        self.assertIn("name: pto-site-diagnostics-", self.release)
-        self.assertIn("name: pto-model-diagnostics-", self.release)
-        self.assertIn("name: pto-evidence-diagnostics-", self.release)
-        self.assertEqual(self.release.count("        if: always()\n"), 10)
-        self.assertNotIn("continue-on-error: true", self.release)
-
-    def test_release_diagnostic_anchor_cannot_be_removed_or_optional(self) -> None:
-        self.assert_release_rejected(
-            "            build/release-diagnostics/preflight.json\n",
-            "",
-        )
-        self.assert_release_rejected(
-            "      - name: Synthesize model diagnostic status\n",
-            "      - name: Skip model diagnostic status\n",
-        )
-
-    def test_release_build_caches_follow_their_true_inputs(self) -> None:
-        self.assertIn(
-            "key: pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}",
-            self.release,
-        )
-        self.assertIn("cmake-release-clang-lld-linxisa-v1", self.release)
-        self.assertIn('["cc", "--version"]', self.release)
-        self.assertNotIn("pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.commit }}", self.release)
-        self.assertIn("key: pto-aslref-", self.release)
-        self.assertIn("hashFiles('.aslref-origin', '.aslref-version', 'scripts/prepare-aslref')", self.release)
-        self.assertIn("key: pto-ndf-", self.release)
-        self.assertIn("key: asl-model-ndf-", self.release)
-        self.assertNotIn("key: pto-closure-", self.release)
-
-    def test_llvm_cache_rejects_missing_environment_fingerprint_or_pto_coupling(self) -> None:
-        self.assert_release_rejected(
-            '          value += "\\n" + os.environ.get("ImageOS", "") + "\\n" + os.environ.get("ImageVersion", "")\n',
-            '          value += "\\nunknown-runner"\n',
-        )
-        self.assert_release_rejected(
-            "${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}\n",
-            "${{ inputs.llvm_commit }}-${{ inputs.commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}\n",
-        )
+        for job in ("release-site", "model-closure"):
+            self.assertNotIn(f"  {job}:\n", self.release)
 
     def test_nightly_requires_schedule_and_manual_dispatch(self) -> None:
         self.assert_nightly_rejected('    - cron: "17 2 * * *"\n', "")

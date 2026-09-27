@@ -9,7 +9,7 @@ authority remains in the Make targets, scripts, and pinned workflows.
 | --- | --- | --- |
 | Pull request | Push or pull request head | `PR / validate` requires both lightweight correctness workers; it checks source structure, projections, formal review field completeness, live README inventory, script tests, workflow policy, and diff hygiene without claiming full-model or release readiness |
 | Nightly | Schedule or dispatch, after proving the workflow commit equals latest `origin/main` | Reuses full validation as non-authoritative health; `Nightly / health` requires exact latest-`main` identity and the complete model |
-| Release | Dispatch with full lowercase PTO-SPEC, LLVM, and ASL-MODEL commit SHAs | Reuses full validation with release authority, aggregates the exact ASL AVS result set, builds NDF release impact, compiles the ASL-MODEL corpus with the exact LLVM candidate, runs every selected ELF twice through the exact ASLRef model, and requires `Release / validate` for the complete version tuple |
+| Release | Dispatch with one full lowercase PTO-SPEC commit SHA | Reuses full validation with release authority, aggregates the exact ASL AVS result set, certifies same-run PTO-SPEC artifacts, and requires `Release / validate` for that exact commit |
 
 Nightly results are diagnostic. Pull-request results establish merge readiness
 only. Release results can support release eligibility but do not create a tag,
@@ -17,48 +17,38 @@ release, or publication.
 
 ## Release execution order
 
-The release workflow starts with candidate preflight: exact clean checkouts,
-manifest freshness, LLVM identity, pinned dependencies and downstream AVS
-obligations must agree before LLVM or ASLRef builds start. The imported
-ASL-MODEL PTO graph remains an explicit baseline, distinct from the runtime
-candidate.
+The release workflow starts with candidate preflight: the exact clean PTO-SPEC
+checkout, workflow commit, manifest identity, and pinned PTO NDF and ASLRef
+dependencies must agree before ASLRef validation starts.
 
-After preflight succeeds, full ASL validation, LLVM-to-ASL closure and site
-validation run in parallel. Release authority uses 16 balanced ASL pages to
-reduce wall time; nightly health retains 8 pages to avoid doubling routine
-runner overhead. Release evidence aggregation waits for the complete ASL result
-set.
+After preflight succeeds, full ASL validation uses 16 balanced pages; nightly
+health retains 8 pages. Release evidence aggregation waits for the complete
+ASL result set. LLVM-to-ASL acceptance runs in ASL-MODEL's own checks, and the
+site has its own workflow. Neither is a PTO-SPEC release prerequisite.
 
-The workflow then downloads the uploaded preflight, ASL, site and model
-artifacts and certifies their exact tuple, complete result sets, tree hashes and
-cross-artifact identity. `Release / validate` requires that certification and
-its digest. A green workflow is therefore expected to be directly consumable by
-`scripts/prepare-release-publication`, rather than discovering packaging drift
-after the expensive run has completed.
-LLVM build caches follow the LLVM commit and host tool/configuration fingerprint;
-the other build caches follow their own dependency pins. Validation results are
-produced afresh for each candidate.
+The workflow downloads its preflight and ASL evidence, certifies their exact
+commit and complete result set, and requires the certification digest in
+`Release / validate`. A green workflow is directly consumable by
+`scripts/prepare-release-publication`. Validation results are produced afresh
+for each candidate.
 
-Each release worker writes a diagnostic status summary even after an earlier
-step fails, while the runner is still available. Read those summaries and the
-complete terminal failure set before preparing a repair. Diagnostic artifacts
-cannot substitute for passing evidence. The [release guide](../releases/index.md)
+Preflight and artifact certification write diagnostics when their runners reach
+those steps; full validation records per-page results and health when available.
+An evidence job can be skipped after a failed prerequisite, so diagnostics may
+be partial or absent. Read the complete terminal failure set before preparing
+a repair. Diagnostic artifacts cannot substitute for passing evidence. The
+[release guide](../releases/index.md)
 owns the read-only `scripts/prepare-release-publication` handoff after hosted
 verification succeeds.
 
-Lighthouse keeps the same release budgets. A route that fails its first sample
-collects exactly two additional samples and applies the same budgets to the
-three-sample median, retaining every raw report. This filters transient shared
-runner load while persistent performance, accessibility, best-practice, SEO or
-layout-shift failures remain release-blocking.
+The independent Site workflow checks source, build, and browser paths. A
+separate site publication pipeline must enforce Lighthouse quality budgets
+before deployment; the current Site workflow does not produce a deployable
+preview. Neither result certifies PTO-SPEC ASL semantics.
 
-The 0.58.6 performance baseline is release run `33946824280`: 73.7 minutes
-overall, including 8.7 minutes of preflight, a 64.8-minute model job with 55.0
-minutes of LLVM/tool preparation, and a 51.3-minute longest ASL page. The
-0.58.6 evaluation records the same step timings plus artifact-certification
-success. Sparse LLVM preflight checkout and 16 release pages must improve the
-relevant stages without changing test inventory; LLVM cold-build time remains
-an explicit measurement rather than an assumed cache hit.
+The older integrated 0.58.6 release run `33946824280` took 73.7 minutes,
+including LLVM/model and site work. Its timing is historical and is not a
+performance target for the PTO-only release lane.
 
 ## Local commands
 
@@ -127,21 +117,18 @@ make release-prepare
 ```
 
 `make setup` verifies the `.aslref-origin` repository and prepares the exact
-`.aslref-version` commit. The
-release commands validate the strict assembled model, execute the complete test
-matrix, and reproduce registered evidence. Hosted release verification also
-needs the exact LLVM and ASL-MODEL candidates. It rejects mismatched ELF
-`.note.pto.isa` identities, incomplete impact coverage, differing semantic
-payload digests, and failed, skipped, timed-out, stale, or unknown cases.
+`.aslref-version` commit. The release commands validate the strict assembled
+model, execute the complete test matrix, and reproduce registered evidence.
+Hosted PTO-SPEC release verification requires only the exact PTO-SPEC candidate.
+It rejects missing, failed, skipped, timed-out, stale, or unknown ASL cases and
+incomplete same-run evidence. Downstream ELF identity and model closure are
+validated by their owning repositories.
 
 [`spec/model-closure-selection.json`](../../spec/model-closure-selection.json)
-fixes the 0.58.6 compiler/model adoption baseline and mandatory family
-canaries. Pre-adoption changes remain historical backlog rather than being
-misrepresented as per-instruction runtime coverage. Every instruction identity
-added, changed, or moved after that immutable baseline is selected by NDF impact
-and requires an explicit ASL-MODEL execution case before release. Removed and
-superseded encodings remain compiler-owned negative MC/LLD obligations and may
-not be represented as successful model execution.
+records the downstream compiler/model adoption baseline and mandatory family
+canaries. ASL-MODEL owns execution cases for changed instruction identities;
+LLVM owns negative MC/LLD obligations. These records do not substitute for
+PTO-SPEC release evidence and do not block its hosted release lane.
 
 ## Fail-closed rules
 

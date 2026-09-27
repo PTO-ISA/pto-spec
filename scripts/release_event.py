@@ -8,9 +8,8 @@ import json
 import re
 
 
-SCHEMA_VERSION = "1"
 REPOSITORY = "PTO-ISA/pto-spec"
-REQUIRED_FIELDS = (
+COMMON_FIELDS = (
     "schema_version",
     "repository",
     "tag",
@@ -18,9 +17,12 @@ REQUIRED_FIELDS = (
     "release_id",
     "release_url",
     "release_manifest_sha256",
-    "model_closure_semantic_payload_sha256",
     "published_at",
 )
+VERSION_DIGEST_FIELDS = {
+    "1": "model_closure_semantic_payload_sha256",
+    "2": "release_artifact_certification_sha256",
+}
 TAG = re.compile(
     r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
     r"(?:\.(?:0|[1-9][0-9]*)){0,2}"
@@ -33,21 +35,29 @@ UTC_TIMESTAMP = re.compile(
 
 
 def validate_release_event(payload: object) -> list[str]:
-    """Return deterministic violations of the stable release event v1 contract."""
+    """Return deterministic violations of the versioned stable release event."""
 
     if not isinstance(payload, dict):
         return ["release event must be an object"]
 
     errors: list[str] = []
+    schema_version = payload.get("schema_version")
+    digest_field = (
+        VERSION_DIGEST_FIELDS.get(schema_version)
+        if isinstance(schema_version, str)
+        else None
+    )
+    if digest_field is None:
+        errors.append("schema_version must be '1' or '2'")
+        required_fields = set(COMMON_FIELDS)
+    else:
+        required_fields = {*COMMON_FIELDS, digest_field}
     actual_fields = set(payload)
-    required_fields = set(REQUIRED_FIELDS)
     for field in sorted(required_fields - actual_fields):
         errors.append(f"release event is missing required field {field}")
     for field in sorted(actual_fields - required_fields):
         errors.append(f"release event has additional field {field}")
 
-    if payload.get("schema_version") != SCHEMA_VERSION:
-        errors.append(f"schema_version must be {SCHEMA_VERSION!r}")
     if payload.get("repository") != REPOSITORY:
         errors.append(f"repository must be {REPOSITORY!r}")
 
@@ -86,11 +96,12 @@ def validate_release_event(payload: object) -> list[str]:
             "release_manifest_sha256 must be 64 lowercase hexadecimal characters"
         )
 
-    closure_hash = payload.get("model_closure_semantic_payload_sha256")
-    if not isinstance(closure_hash, str) or SHA256.fullmatch(closure_hash) is None:
-        errors.append(
-            "model_closure_semantic_payload_sha256 must be 64 lowercase hexadecimal characters"
-        )
+    if digest_field is not None:
+        evidence_hash = payload.get(digest_field)
+        if not isinstance(evidence_hash, str) or SHA256.fullmatch(evidence_hash) is None:
+            errors.append(
+                f"{digest_field} must be 64 lowercase hexadecimal characters"
+            )
 
     published_at = payload.get("published_at")
     if not isinstance(published_at, str) or UTC_TIMESTAMP.fullmatch(published_at) is None:

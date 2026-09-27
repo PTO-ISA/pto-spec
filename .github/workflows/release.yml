@@ -4,15 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       commit:
-        description: Exact reviewed commit to verify (40 lowercase hexadecimal characters)
-        required: true
-        type: string
-      llvm_commit:
-        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.7
-        required: true
-        type: string
-      asl_model_commit:
-        description: Exact reviewed PTO ASL-MODEL commit and AVS corpus
+        description: Exact reviewed PTO-SPEC commit to verify (40 lowercase hexadecimal characters)
         required: true
         type: string
 
@@ -27,21 +19,17 @@ jobs:
   release-preflight:
     name: Release / candidate preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     outputs:
       artifact-digest: ${{ steps.preflight-artifact.outputs.artifact-digest }}
     steps:
-      - name: Validate exact component inputs
+      - name: Validate exact PTO input
         shell: bash
         env:
           PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
           WORKFLOW_COMMIT: ${{ github.workflow_sha }}
         run: |
           [[ "$PTO_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$LLVM_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$ASL_MODEL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"
 
       - name: Check out exact PTO-SPEC candidate
@@ -52,189 +40,37 @@ jobs:
           persist-credentials: false
           submodules: recursive
 
-      - name: Check out exact LLVM candidate
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: LinxISA/llvm-project
-          ref: ${{ inputs.llvm_commit }}
-          path: build/closure/llvm-project
-          fetch-depth: 1
-          persist-credentials: false
-          sparse-checkout: |
-            llvm/include/llvm/BinaryFormat/PTOISA.h
-            llvm/utils/pto/generate_pto_isa_identity.py
-          sparse-checkout-cone-mode: false
-
-      - name: Check out exact ASL-MODEL candidate
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/asl-model
-          ref: ${{ inputs.asl_model_commit }}
-          path: build/closure/asl-model
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Record exact input tuple for diagnostics
+      - name: Validate PTO release identity and local pins
         shell: bash
         env:
           PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
           WORKFLOW_COMMIT: ${{ github.workflow_sha }}
-        run: |
-          mkdir -p build/release-preflight
-          python3 - <<'PY'
-          import json, os, pathlib
-          value = {
-              "pto": os.environ["PTO_COMMIT"],
-              "llvm": os.environ["LLVM_COMMIT"],
-              "asl_model": os.environ["ASL_MODEL_COMMIT"],
-              "workflow": os.environ["WORKFLOW_COMMIT"],
-          }
-          pathlib.Path("build/release-preflight/input-tuple.json").write_text(
-              json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
-
-      - name: Resolve ASL-MODEL dependency pins
-        id: model-pins
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import os, pathlib, re, subprocess
-          text = pathlib.Path("build/closure/asl-model/ndf.lock").read_text()
-          rows = dict(re.findall(
-              r"^  ([a-z-]+):\n(?:    [^\n]+\n)*?    revision: ([0-9a-f]{40})$",
-              text, re.MULTILINE,
-          ))
-          if set(rows) != {"ndf", "pto-spec"}:
-              raise SystemExit("ASL-MODEL ndf.lock dependency set mismatch")
-          with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
-              output.write(f"ndf={rows['ndf']}\npto={rows['pto-spec']}\n")
-              pto_ndf = subprocess.check_output(
-                  ["git", "-C", "tools/ndf", "rev-parse", "HEAD"], text=True
-              ).strip()
-              output.write(f"pto_ndf={pto_ndf}\n")
-          PY
-
-      - name: Check out ASL-MODEL pinned NDF
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/normative_language
-          ref: ${{ steps.model-pins.outputs.ndf }}
-          path: build/closure/asl-model/tools/ndf
-          fetch-depth: 1
-          persist-credentials: false
-
-      - name: Check out ASL-MODEL imported PTO graph baseline
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/pto-spec
-          ref: ${{ steps.model-pins.outputs.pto }}
-          path: build/closure/asl-model/vendor/pto-spec
-          fetch-depth: 1
-          persist-credentials: false
-          submodules: false
-
-      - name: Restore NDF preflight builds
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            tools/ndf/target
-            build/closure/asl-model/tools/ndf/target
-          key: pto-release-preflight-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.pto_ndf }}-${{ steps.model-pins.outputs.ndf }}-${{ hashFiles('tools/ndf/Cargo.lock', 'build/closure/asl-model/tools/ndf/Cargo.lock') }}
-
-      - name: Build exact NDF impact
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
         run: |
           test "$(git rev-parse HEAD)" = "$PTO_COMMIT"
           git fetch --no-tags origin main:refs/remotes/origin/main
           test "$(git rev-parse origin/main)" = "$PTO_COMMIT"
-          BASELINE="$(python3 -c 'import json; print(json.load(open("spec/model-closure-selection.json"))["adoption_baseline_commit"])')"
-          [[ "$BASELINE" =~ ^[0-9a-f]{40}$ ]]
-          git worktree add --detach "$RUNNER_TEMP/pto-before" "$BASELINE"
-          git -C "$RUNNER_TEMP/pto-before" submodule update --init tools/ndf
-          tools/ndf/scripts/ndf build --root "$RUNNER_TEMP/pto-before" --output build/closure/pto-before.sqlite
-          tools/ndf/scripts/ndf build --root . --output build/closure/pto-after.sqlite
-          build/closure/asl-model/tools/ndf/scripts/ndf build \
-            --root build/closure/asl-model --output build/closure/asl-model.sqlite
-          ./scripts/generate-model-closure-impact \
-            --before build/closure/pto-before.sqlite \
-            --after build/closure/pto-after.sqlite \
-            --consumer-index build/closure/asl-model.sqlite \
-            --output build/release-preflight/ndf-impact.json
-
-      - name: Validate identity, LLVM header, and affected AVS mapping
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
-        run: |
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
           ./scripts/check-release-preflight \
-            --llvm-root build/closure/llvm-project \
-            --asl-model-root build/closure/asl-model \
             --pto-commit "$PTO_COMMIT" \
-            --llvm-commit "$LLVM_COMMIT" \
-            --asl-model-commit "$ASL_MODEL_COMMIT" \
             --workflow-commit "$WORKFLOW_COMMIT" \
-            --impact build/release-preflight/ndf-impact.json \
             --output build/release-preflight/candidate.json \
             --diagnostics build/release-preflight/diagnostics.json
 
-      - name: Upload immutable preflight tuple and impact
+      - name: Upload immutable preflight candidate
         id: preflight-artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: |
-            build/release-preflight/candidate.json
-            build/release-preflight/ndf-impact.json
+          name: pto-release-preflight-${{ inputs.commit }}
+          path: build/release-preflight/candidate.json
           if-no-files-found: error
           retention-days: 90
-
-      - name: Synthesize preflight diagnostic status
-        if: always()
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_STATUS: ${{ job.status }}
-          STEPS_JSON: ${{ toJSON(steps) }}
-        run: |
-          mkdir -p build/release-diagnostics
-          python3 - <<'PY'
-          import json, os, pathlib
-          report = {
-              "schema": "pto.release-job-diagnostic.v1",
-              "job": "release-preflight",
-              "status": os.environ["JOB_STATUS"],
-              "tuple": {name: os.environ[name] for name in (
-                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
-              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
-              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
-          }
-          pathlib.Path("build/release-diagnostics/preflight.json").write_text(
-              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
 
       - name: Upload preflight diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: pto-release-preflight-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: |
-            build/release-diagnostics/preflight.json
-            build/release-preflight/input-tuple.json
-            build/release-preflight/diagnostics.json
-            build/release-preflight/ndf-impact.json
+          name: pto-release-preflight-diagnostics-${{ inputs.commit }}
+          path: build/release-preflight/diagnostics.json
           if-no-files-found: error
           retention-days: 30
 
@@ -301,430 +137,9 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Synthesize evidence diagnostic status
-        if: always()
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_STATUS: ${{ job.status }}
-          STEPS_JSON: ${{ toJSON(steps) }}
-        run: |
-          mkdir -p build/release-diagnostics
-          python3 - <<'PY'
-          import json, os, pathlib
-          report = {
-              "schema": "pto.release-job-diagnostic.v1", "job": "release-evidence",
-              "status": os.environ["JOB_STATUS"],
-              "tuple": {name: os.environ[name] for name in (
-                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
-              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
-              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
-          }
-          pathlib.Path("build/release-diagnostics/evidence.json").write_text(
-              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
-
-      - name: Upload evidence diagnostics
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pto-evidence-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: build/release-diagnostics/evidence.json
-          if-no-files-found: error
-          retention-days: 30
-
-  release-site:
-    name: Release / static site validity
-    needs: release-preflight
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    outputs:
-      artifact-digest: ${{ steps.site-preview.outputs.artifact-digest }}
-    steps:
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Set up Node.js
-        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-        with:
-          node-version: "22"
-
-      - name: Enable the locked package manager
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.30.0 --activate
-
-      - name: Install exact site dependencies
-        run: pnpm --dir docs/site install --frozen-lockfile
-
-      - name: Validate the exact static site artifact
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-          PTO_SITE_RELEASE_COMMIT: ${{ inputs.commit }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$COMMIT"
-          pnpm --dir docs/site typecheck
-          pnpm --dir docs/site test:unit
-          python3 scripts/check-site-security
-          PTO_SITE_REQUIRE_CLEAN=1 pnpm --dir docs/site build
-          python3 scripts/generate-site-publication-manifest
-          python3 scripts/check-site-artifact
-
-      - name: Install the browser test runtime
-        run: pnpm --dir docs/site exec playwright install --with-deps chromium firefox webkit
-
-      - name: Exercise release site browser paths
-        run: CI=1 PTO_SITE_CROSS_BROWSER=1 pnpm --dir docs/site test:e2e
-
-      - name: Enforce Lighthouse quality budgets
-        run: python3 scripts/check-site-lighthouse
-
-      - name: Upload immutable site preview
-        id: site-preview
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pto-site-preview-${{ inputs.commit }}
-          path: docs/site/build
-          include-hidden-files: true
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Synthesize site diagnostic status
-        if: always()
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_STATUS: ${{ job.status }}
-          STEPS_JSON: ${{ toJSON(steps) }}
-        run: |
-          mkdir -p build/release-diagnostics
-          python3 - <<'PY'
-          import json, os, pathlib
-          report = {
-              "schema": "pto.release-job-diagnostic.v1", "job": "release-site",
-              "status": os.environ["JOB_STATUS"],
-              "tuple": {name: os.environ[name] for name in (
-                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
-              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
-              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
-          }
-          pathlib.Path("build/release-diagnostics/site.json").write_text(
-              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
-
-      - name: Upload site diagnostics
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pto-site-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: |
-            build/release-diagnostics/site.json
-            docs/site/playwright-report
-            docs/site/test-results
-            docs/site/.lighthouseci
-          if-no-files-found: error
-          retention-days: 30
-
-  model-closure:
-    name: Release / LLVM-to-ASL model closure
-    needs: release-preflight
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    outputs:
-      semantic-payload-sha256: ${{ steps.closure.outputs.semantic-payload-sha256 }}
-      artifact-digest: ${{ steps.closure-artifact.outputs.artifact-digest }}
-    steps:
-      - name: Validate exact component inputs
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
-        run: |
-          [[ "$PTO_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$LLVM_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$ASL_MODEL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          test "$WORKFLOW_COMMIT" = "$PTO_COMMIT"
-
-      - name: Check out exact PTO-SPEC candidate
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Check out exact LLVM candidate
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: LinxISA/llvm-project
-          ref: ${{ inputs.llvm_commit }}
-          path: build/closure/llvm-project
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Check out exact ASL-MODEL candidate
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/asl-model
-          ref: ${{ inputs.asl_model_commit }}
-          path: build/closure/asl-model
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Download exact release preflight
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          name: pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: build/release-preflight
-
-      - name: Resolve ASL-MODEL dependency pins
-        id: model-pins
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import os
-          import pathlib
-          import re
-          import subprocess
-
-          text = pathlib.Path("build/closure/asl-model/ndf.lock").read_text()
-          rows = dict(re.findall(
-              r"^  ([a-z-]+):\n(?:    [^\n]+\n)*?    revision: ([0-9a-f]{40})$",
-              text,
-              re.MULTILINE,
-          ))
-          if set(rows) != {"ndf", "pto-spec"}:
-              raise SystemExit("ASL-MODEL ndf.lock dependency set mismatch")
-          with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
-              output.write(f"ndf={rows['ndf']}\n")
-              output.write(f"pto={rows['pto-spec']}\n")
-              pto_ndf = subprocess.check_output(
-                  ["git", "-C", "tools/ndf", "rev-parse", "HEAD"], text=True
-              ).strip()
-              output.write(f"pto_ndf={pto_ndf}\n")
-          PY
-
-      - name: Check out ASL-MODEL pinned NDF
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/normative_language
-          ref: ${{ steps.model-pins.outputs.ndf }}
-          path: build/closure/asl-model/tools/ndf
-          fetch-depth: 1
-          persist-credentials: false
-
-      - name: Check out ASL-MODEL pinned PTO graph
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          repository: PTO-ISA/pto-spec
-          ref: ${{ steps.model-pins.outputs.pto }}
-          path: build/closure/asl-model/vendor/pto-spec
-          fetch-depth: 1
-          persist-credentials: false
-          submodules: false
-
-      - name: Revalidate downloaded tuple before expensive builds
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
-        run: |
-          ./scripts/check-release-preflight \
-            --llvm-root build/closure/llvm-project \
-            --asl-model-root build/closure/asl-model \
-            --pto-commit "$PTO_COMMIT" \
-            --llvm-commit "$LLVM_COMMIT" \
-            --asl-model-commit "$ASL_MODEL_COMMIT" \
-            --workflow-commit "$WORKFLOW_COMMIT" \
-            --impact build/release-preflight/ndf-impact.json \
-            --output build/release-preflight/revalidated-candidate.json \
-            --diagnostics build/release-preflight/revalidation-diagnostics.json
-          cmp build/release-preflight/candidate.json \
-            build/release-preflight/revalidated-candidate.json
-
-      - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
-        with:
-          ocaml-compiler: "5.2.1"
-          dune-cache: true
-
-      - name: Fingerprint LLVM build environment
-        id: llvm-build-cache
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import hashlib, os, pathlib, subprocess
-          commands = (["cc", "--version"], ["c++", "--version"],
-                      ["cmake", "--version"], ["ninja", "--version"])
-          value = "\n".join(subprocess.check_output(command, text=True) for command in commands)
-          value += "\n" + os.environ.get("ImageOS", "") + "\n" + os.environ.get("ImageVersion", "")
-          value += "\ncmake-release-clang-lld-linxisa-v1"
-          digest = hashlib.sha256(value.encode()).hexdigest()
-          with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
-              output.write(f"sha256={digest}\n")
-          PY
-
-      - name: Restore exact ASLRef build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/herdtools7
-          key: pto-aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-origin', '.aslref-version', 'scripts/prepare-aslref') }}
-
-      - name: Restore exact LLVM build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: build/closure/llvm-build
-          key: pto-llvm-release-${{ runner.os }}-${{ runner.arch }}-${{ inputs.llvm_commit }}-${{ steps.llvm-build-cache.outputs.sha256 }}
-
-      - name: Restore PTO NDF build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: tools/ndf/target
-          key: pto-ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.pto_ndf }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
-
-      - name: Restore ASL-MODEL NDF build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: build/closure/asl-model/tools/ndf/target
-          key: asl-model-ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.model-pins.outputs.ndf }}-${{ hashFiles('build/closure/asl-model/tools/ndf/Cargo.lock') }}
-
-      - name: Prepare exact ASL and LLVM tools
-        shell: bash
-        run: |
-          make setup build
-          cmake -S build/closure/llvm-project/llvm \
-            -B build/closure/llvm-build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_PROJECTS='clang;lld' \
-            -DLLVM_TARGETS_TO_BUILD='' \
-            -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=LinxISA
-          ninja -C build/closure/llvm-build clang lld llvm-mc llvm-readelf
-
-      - name: Run twice and validate exact closure
-        id: closure
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$PTO_COMMIT"
-          test "$(git -C build/closure/llvm-project rev-parse HEAD)" = "$LLVM_COMMIT"
-          test "$(git -C build/closure/asl-model rev-parse HEAD)" = "$ASL_MODEL_COMMIT"
-          TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          for RUN_NUMBER in 1 2; do
-            ./scripts/run-model-closure \
-              --asl-model-root build/closure/asl-model \
-              --llvm-root build/closure/llvm-project \
-              --ndf-root build/closure/asl-model/tools/ndf \
-              --aslref-root .cache/herdtools7 \
-              --asl-spec build/pto-spec.asl \
-              --clang build/closure/llvm-build/bin/clang \
-              --llvm-mc build/closure/llvm-build/bin/llvm-mc \
-              --ld-lld build/closure/llvm-build/bin/ld.lld \
-              --aslref .cache/herdtools7/_build/default/asllib/aslref.exe \
-              --impact build/release-preflight/ndf-impact.json \
-              --output "build/model-closure-run-${RUN_NUMBER}" \
-              --mandatory-case-id block_64_stop_pc \
-              --mandatory-case-id host_exit_group \
-              --mandatory-case-id scalar-c-return \
-              --mandatory-case-id scalar-ir-return \
-              --mandatory-case-id scalar_stop_pc \
-              --mandatory-case-id tile_tadd_stop_pc \
-              --workflow-commit "$WORKFLOW_COMMIT" \
-              --run-id "${RUN_ID}-${RUN_NUMBER}" \
-              --run-attempt "$RUN_ATTEMPT" \
-              --timestamp "$TIMESTAMP" \
-              --runner-image "${RUNNER_OS}-${RUNNER_ARCH}" \
-              --builder-identity github-hosted
-          done
-          FIRST="$(python3 -c 'import hashlib,json; print(hashlib.sha256(json.dumps(json.load(open("build/model-closure-run-1/evidence/closure-semantic-payload.json")),sort_keys=True,separators=(",",":")).encode()).hexdigest())')"
-          SECOND="$(python3 -c 'import hashlib,json; print(hashlib.sha256(json.dumps(json.load(open("build/model-closure-run-2/evidence/closure-semantic-payload.json")),sort_keys=True,separators=(",",":")).encode()).hexdigest())')"
-          test "$FIRST" = "$SECOND"
-          git fetch origin main
-          test "$(git rev-parse origin/main)" = "$PTO_COMMIT"
-          echo "semantic-payload-sha256=$FIRST" >> "$GITHUB_OUTPUT"
-
-      - name: Upload immutable model closure evidence
-        id: closure-artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: |
-            build/release-preflight/candidate.json
-            build/release-preflight/ndf-impact.json
-            build/model-closure-run-1/evidence
-            build/model-closure-run-2/evidence
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Synthesize model diagnostic status
-        if: always()
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_STATUS: ${{ job.status }}
-          STEPS_JSON: ${{ toJSON(steps) }}
-        run: |
-          mkdir -p build/release-diagnostics
-          python3 - <<'PY'
-          import json, os, pathlib
-          report = {
-              "schema": "pto.release-job-diagnostic.v1", "job": "model-closure",
-              "status": os.environ["JOB_STATUS"],
-              "tuple": {name: os.environ[name] for name in (
-                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
-              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
-              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
-          }
-          pathlib.Path("build/release-diagnostics/model.json").write_text(
-              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
-
-      - name: Upload model diagnostics
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pto-model-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: |
-            build/release-diagnostics/model.json
-            build/release-preflight
-            build/model-closure-run-1/evidence
-            build/model-closure-run-2/evidence
-          if-no-files-found: error
-          retention-days: 30
-
   certify-artifacts:
     name: Release / uploaded artifact certification
-    needs: [release-preflight, release-evidence, release-site, model-closure]
+    needs: [release-preflight, release-evidence]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -748,28 +163,14 @@ jobs:
       - name: Download exact preflight artifact
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: pto-release-preflight-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
+          name: pto-release-preflight-${{ inputs.commit }}
           path: build/release-artifacts/preflight
 
-      - name: Download exact site artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          name: pto-site-preview-${{ inputs.commit }}
-          path: build/release-artifacts/site
-
-      - name: Download exact model artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          name: pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
-          path: build/release-artifacts/model
-
-      - name: Certify downloaded artifacts offline
+      - name: Certify downloaded PTO artifacts offline
         id: certify
         shell: bash
         env:
           PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
@@ -777,18 +178,12 @@ jobs:
             --pto-root . \
             --release-evidence-root build/release-artifacts/release-evidence \
             --preflight-root build/release-artifacts/preflight \
-            --site-root build/release-artifacts/site \
-            --model-root build/release-artifacts/model \
             --pto-commit "$PTO_COMMIT" \
-            --llvm-commit "$LLVM_COMMIT" \
-            --asl-model-commit "$ASL_MODEL_COMMIT" \
             --run-id "$RUN_ID" \
             --run-attempt "$RUN_ATTEMPT" \
             --output build/release-artifact-certification/report.json \
-            --diagnostics build/release-artifact-certification/validator-diagnostics.json
-          REPORT_SHA256="$(sha256sum build/release-artifact-certification/report.json | cut -d' ' -f1)"
-          [[ "$REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]
-          echo "report-sha256=$REPORT_SHA256" >> "$GITHUB_OUTPUT"
+            --diagnostics build/release-artifact-certification/diagnostics.json
+          echo "report-sha256=$(sha256sum build/release-artifact-certification/report.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Upload release artifact certification
         id: certification-artifact
@@ -799,77 +194,37 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Synthesize artifact certification diagnostic status
-        if: always()
-        shell: bash
-        env:
-          PTO_COMMIT: ${{ inputs.commit }}
-          LLVM_COMMIT: ${{ inputs.llvm_commit }}
-          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          JOB_STATUS: ${{ job.status }}
-          STEPS_JSON: ${{ toJSON(steps) }}
-        run: |
-          mkdir -p build/release-diagnostics
-          python3 - <<'PY'
-          import json, os, pathlib
-          report = {
-              "schema": "pto.release-job-diagnostic.v1", "job": "certify-artifacts",
-              "status": os.environ["JOB_STATUS"],
-              "tuple": {name: os.environ[name] for name in (
-                  "PTO_COMMIT", "LLVM_COMMIT", "ASL_MODEL_COMMIT")},
-              "run": {"id": os.environ["RUN_ID"], "attempt": os.environ["RUN_ATTEMPT"]},
-              "steps": json.loads(os.environ.get("STEPS_JSON", "{}")),
-          }
-          pathlib.Path("build/release-diagnostics/artifact-certification.json").write_text(
-              json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n"
-          )
-          PY
-
       - name: Upload artifact certification diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: pto-release-artifact-certification-diagnostics-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            build/release-diagnostics/artifact-certification.json
-            build/release-artifact-certification/validator-diagnostics.json
+          name: pto-release-artifact-certification-diagnostics-${{ inputs.commit }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/release-artifact-certification/diagnostics.json
           if-no-files-found: error
           retention-days: 30
 
   validate:
     name: Release / validate
     if: always()
-    needs: [release-preflight, full-validation, release-evidence, release-site, model-closure, certify-artifacts]
+    needs: [release-preflight, full-validation, release-evidence, certify-artifacts]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Require every exact-head release gate
+      - name: Require every exact-head PTO release gate
         shell: bash
         env:
-          FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
           RELEASE_PREFLIGHT_RESULT: ${{ needs.release-preflight.result }}
           RELEASE_PREFLIGHT_ARTIFACT_DIGEST: ${{ needs.release-preflight.outputs.artifact-digest }}
+          FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
-          RELEASE_SITE_RESULT: ${{ needs.release-site.result }}
-          MODEL_CLOSURE_RESULT: ${{ needs.model-closure.result }}
-          SITE_ARTIFACT_DIGEST: ${{ needs.release-site.outputs.artifact-digest }}
-          MODEL_CLOSURE_ARTIFACT_DIGEST: ${{ needs.model-closure.outputs.artifact-digest }}
-          MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256: ${{ needs.model-closure.outputs.semantic-payload-sha256 }}
           ARTIFACT_CERTIFICATION_RESULT: ${{ needs.certify-artifacts.result }}
           ARTIFACT_CERTIFICATION_REPORT_SHA256: ${{ needs.certify-artifacts.outputs.report-sha256 }}
           ARTIFACT_CERTIFICATION_ARTIFACT_DIGEST: ${{ needs.certify-artifacts.outputs.artifact-digest }}
         run: |
           test "$RELEASE_PREFLIGHT_RESULT" = success
+          [[ "$RELEASE_PREFLIGHT_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
           test "$FULL_VALIDATION_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success
-          test "$RELEASE_SITE_RESULT" = success
-          test "$MODEL_CLOSURE_RESULT" = success
-          [[ "$RELEASE_PREFLIGHT_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
-          [[ "$SITE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
-          [[ "$MODEL_CLOSURE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
-          [[ "$MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256" =~ ^[0-9a-f]{64}$ ]]
           test "$ARTIFACT_CERTIFICATION_RESULT" = success
           [[ "$ARTIFACT_CERTIFICATION_REPORT_SHA256" =~ ^[0-9a-f]{64}$ ]]
           [[ "$ARTIFACT_CERTIFICATION_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]

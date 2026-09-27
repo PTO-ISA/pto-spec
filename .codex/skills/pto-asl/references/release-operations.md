@@ -6,21 +6,21 @@ pull-request merge work.
 
 ## Freeze one exact candidate
 
-- Merge every known fix first. Freeze the exact PTO-SPEC, LLVM, ASL-MODEL, NDF,
-  and ASLRef commits and verify that checked-in pins agree with that tuple.
+- Merge every known PTO-SPEC fix first. Freeze the exact PTO-SPEC commit and
+  verify its checked-in NDF and ASLRef pins.
 - Do not dispatch against a commit that is about to be replaced, a dirty
   candidate, an open fix branch, or a partially updated dependency graph.
-- Record the tuple once and use it consistently in the workflow dispatch,
+- Record the candidate once and use it consistently in the workflow dispatch,
   monitoring, failure report, evidence download, tag, and release.
-- Treat the ASL-MODEL imported PTO graph pin as its dependency baseline. It need
-  not equal the runtime PTO candidate; both identities must remain explicit.
+- LLVM/ASL-MODEL integration and site publication have independent checks in
+  their owning workflows. They are not PTO-SPEC release inputs or evidence.
 
 ## Dispatch manually and singly
 
 - The operator may be an agent. An already authorized release task does not
   require a second human confirmation; it still requires a verified candidate.
 - Release verification runs in the protected GitHub Actions release workflow.
-  Dispatch it manually for the frozen tuple.
+  Dispatch it manually for the frozen PTO-SPEC commit.
 - Never dispatch a second release while any release for the active candidate is
   queued or in progress. A queued run is already an active attempt.
 - Never put release dispatch, rerun, tagging, or publication authority into a
@@ -45,7 +45,7 @@ pull-request merge work.
 
 - Close the whole known failure set through ordinary pull requests. Keep those
   merges lightweight and do not use release workflows as PR checks.
-- Re-freeze the complete tuple after the final merge and perform one fresh
+- Re-freeze the PTO-SPEC commit after the final merge and perform one fresh
   manual GitHub Actions release attempt.
 - If that attempt fails, repeat the complete-result audit. Do not dispatch
   again until every known real failure from the completed run is addressed.
@@ -53,14 +53,15 @@ pull-request merge work.
 ## Publish only exact success
 
 - Publication requires the final `Release / validate` job to succeed for the
-  exact frozen tuple, with every required artifact present and verified.
+  exact frozen PTO-SPEC commit, with every required artifact present and verified.
 - Run `scripts/prepare-release-publication --run-id RUN_ID --output build/publication-RUN_ID`
   to retrieve and verify the completed hosted run. Follow the JSON next action;
   retain its handoff and checksums with the permanent release evidence. This is
   read-only preparation and does not grant publication authority.
 - Revalidate the hosted run immediately before the authorized publication step.
-  Use actual published metadata to emit the stable event; never invent a release
-  ID/time for a candidate. Preserve existing release-event v1 consumers.
+  Use actual published metadata to emit the PTO-only release-event v2; never
+  invent a release ID/time for a candidate. Preserve historical release-event
+  v1 validation without filling its model digest with invented evidence.
 - Create the signed immutable tag and GitHub Release only after that success.
   Never reuse a partial, stale, cancelled, skipped, failed, or different-commit
   result.

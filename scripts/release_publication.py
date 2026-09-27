@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.model_closure import canonical_sha256, validate_run_envelope, validate_semantic_payload  # noqa: E402
+from scripts.model_closure import canonical_sha256  # noqa: E402
 from scripts.release_event import canonical_release_event  # noqa: E402
 
 
@@ -36,8 +36,6 @@ FINAL_JOB_SUFFIXES = (
     "Release / candidate preflight",
     "Full validation / health",
     "Release / fail-closed evidence aggregation",
-    "Release / static site validity",
-    "Release / LLVM-to-ASL model closure",
     "Release / uploaded artifact certification",
     "Release / validate",
 )
@@ -227,10 +225,8 @@ def select_artifacts(
     rows: list[dict[str, Any]], commit: str, run_id: str, attempt: int
 ) -> dict[str, dict[str, Any]]:
     prefixes = {
-        "preflight": f"pto-release-preflight-{commit}-",
+        "preflight": f"pto-release-preflight-{commit}",
         "release_evidence": f"pto-release-evidence-{commit}",
-        "site": f"pto-site-preview-{commit}",
-        "model": f"pto-model-closure-{commit}-",
         "certification": f"pto-release-artifact-certification-{commit}-{run_id}-{attempt}",
     }
     selected: dict[str, dict[str, Any]] = {}
@@ -239,7 +235,6 @@ def select_artifacts(
             row
             for row in rows
             if row.get("name") == prefix
-            or (role in {"model", "preflight"} and str(row.get("name", "")).startswith(prefix))
         ]
         if len(matches) != 1:
             raise Blocked(f"expected exactly one {role} artifact for commit {commit}")
@@ -259,9 +254,7 @@ def select_artifacts(
     known_ids = {row["id"] for row in selected.values()}
     final_name = re.compile(
         r"(?:pto-release-evidence-[0-9a-f]{40}|"
-        r"pto-site-preview-[0-9a-f]{40}|"
-        r"pto-model-closure-[0-9a-f]{40}-[0-9a-f]{40}-[0-9a-f]{40}|"
-        r"pto-release-preflight-[0-9a-f]{40}-[0-9a-f]{40}-[0-9a-f]{40}|"
+        r"pto-release-preflight-[0-9a-f]{40}|"
         r"pto-release-artifact-certification-[0-9a-f]{40}-[1-9][0-9]*-[1-9][0-9]*)"
     )
     unknown = sorted(
@@ -414,53 +407,26 @@ def validate_manifest(
     return manifest, {path.relative_to(root).as_posix(): sha256_file(path) for path in paths}
 
 
-def validate_site(root: Path, manifest: dict[str, Any], commit: str) -> tuple[dict[str, Any], dict[str, str]]:
-    site_path = unique_suffix(root, "pto-site-publication.json")
-    site = exact_dict(json_file(site_path, "site publication manifest"), "site publication manifest")
-    expected = {
-        "schema": "pto.site-publication.v1",
-        "architecture_version": manifest.get("release"),
-        "publication_version": manifest.get("publication_version"),
-        "tag": f"v{manifest.get('publication_version')}",
-        "source_commit": commit,
-        "release_eligible": True,
-        "publication_state": "release",
-    }
-    for key, value in expected.items():
-        if site.get(key) != value:
-            raise Blocked(f"site publication manifest {key} mismatch")
-    files = sorted(path for path in root.rglob("*") if path.is_file() and path != site_path)
-    tree = hashlib.sha256()
-    for path in files:
-        relative = path.relative_to(root).as_posix()
-        tree.update(relative.encode("utf-8"))
-        tree.update(b"\0")
-        tree.update(bytes.fromhex(sha256_file(path)))
-        tree.update(b"\n")
-    if site.get("file_count") != len(files) or site.get("content_bytes") != sum(path.stat().st_size for path in files) or site.get("site_tree_sha256") != tree.hexdigest():
-        raise Blocked("site artifact tree is incomplete or stale")
-    return site, {site_path.relative_to(root).as_posix(): sha256_file(site_path)}
-
-
 def validate_preflight(
     root: Path,
     manifest: dict[str, Any],
     commit: str,
     artifact_name: str,
-) -> tuple[dict[str, Any], bytes, dict[str, str]]:
-    suffix = artifact_name.removeprefix(f"pto-release-preflight-{commit}-")
-    parts = suffix.split("-")
-    if len(parts) != 2 or any(COMMIT.fullmatch(part) is None for part in parts):
-        raise Blocked("preflight artifact name does not encode exact LLVM and ASL-MODEL commits")
+) -> tuple[dict[str, Any], dict[str, str]]:
+    if artifact_name != f"pto-release-preflight-{commit}":
+        raise Blocked("preflight artifact name does not encode the exact PTO commit")
     candidate_path = unique_suffix(root, "candidate.json")
-    impact_path = unique_suffix(root, "ndf-impact.json")
     candidate = exact_dict(json_file(candidate_path, "release preflight candidate"), "release preflight candidate")
-    if set(candidate) != {"schema", "commits", "identity", "baselines", "dependencies", "selection", "impact"} or candidate.get("schema") != "pto.release-preflight.v1":
+    if (
+        set(candidate) != {"schema", "scope", "commits", "identity", "dependencies"}
+        or candidate.get("schema") != "pto.release-preflight.v2"
+        or candidate.get("scope") != "pto-spec"
+    ):
         raise Blocked("release preflight candidate schema or fields are invalid")
     if candidate_path.read_bytes() != canonical_json(candidate).encode("utf-8"):
         raise Blocked("release preflight candidate is not canonical JSON")
     commits = exact_dict(candidate.get("commits"), "preflight commits")
-    expected_commits = {"pto": commit, "llvm": parts[0], "asl_model": parts[1], "workflow": commit}
+    expected_commits = {"pto": commit, "workflow": commit}
     if commits != expected_commits:
         raise Blocked("release preflight commits do not match the hosted artifact identity")
     identity = exact_dict(candidate.get("identity"), "preflight identity")
@@ -473,136 +439,20 @@ def validate_preflight(
     if identity != expected_identity:
         raise Blocked("release preflight identity does not match the release manifest")
     dependencies = exact_dict(candidate.get("dependencies"), "preflight dependencies")
-    if set(dependencies) != {"pto_ndf", "asl_model_ndf", "aslref"} or any(
+    if set(dependencies) != {"pto_ndf", "aslref"} or any(
         not isinstance(value, str) or COMMIT.fullmatch(value) is None for value in dependencies.values()
     ):
         raise Blocked("release preflight dependencies are incomplete or invalid")
-    baselines = exact_dict(candidate.get("baselines"), "preflight baselines")
-    if set(baselines) != {"model_graph_import", "impact_adoption"} or any(
-        not isinstance(value, str) or COMMIT.fullmatch(value) is None
-        for value in baselines.values()
-    ):
-        raise Blocked("release preflight baselines are incomplete or invalid")
-    selection = exact_dict(candidate.get("selection"), "preflight selection")
-    mandatory = selection.get("mandatory_case_ids")
-    if not isinstance(mandatory, list) or not mandatory or mandatory != sorted(set(mandatory)) or any(not isinstance(value, str) or not value for value in mandatory):
-        raise Blocked("release preflight mandatory cases are incomplete or invalid")
-    impact = exact_dict(candidate.get("impact"), "preflight impact")
-    impact_bytes = impact_path.read_bytes()
-    if impact.get("sha256") != sha256_bytes(impact_bytes):
-        raise Blocked("release preflight NDF impact digest is stale")
-    json.loads(impact_bytes.decode("utf-8"))
-    affected = impact.get("affected_pto_ids")
-    mapping = impact.get("avs_cases_by_pto_id")
-    if not isinstance(affected, list) or affected != sorted(set(affected)) or not isinstance(mapping, dict) or sorted(mapping) != affected:
-        raise Blocked("release preflight affected PTO identities or AVS mapping are invalid")
-    if any(
-        not isinstance(cases, list)
-        or not cases
-        or any(not isinstance(case, str) or not case for case in cases)
-        or cases != sorted(set(cases))
-        for cases in mapping.values()
-    ):
-        raise Blocked("release preflight contains an empty or invalid AVS mapping")
-    paths = (candidate_path, impact_path)
-    return candidate, impact_bytes, {path.relative_to(root).as_posix(): sha256_file(path) for path in paths}
-
-
-def validate_model(
-    root: Path,
-    manifest: dict[str, Any],
-    preflight: dict[str, Any],
-    preflight_impact: bytes,
-    commit: str,
-    run_id: str,
-    attempt: int,
-    artifact_name: str,
-) -> tuple[dict[str, str], dict[str, str], str]:
-    suffix = artifact_name.removeprefix(f"pto-model-closure-{commit}-")
-    parts = suffix.split("-")
-    if len(parts) != 2 or any(COMMIT.fullmatch(part) is None for part in parts):
-        raise Blocked("model artifact name does not encode exact LLVM and ASL-MODEL commits")
-    llvm_commit, asl_model_commit = parts
-    model_candidate_path = unique_suffix(root, "candidate.json")
-    model_impact_path = unique_suffix(root, "ndf-impact.json")
-    if model_candidate_path.read_bytes() != canonical_json(preflight).encode("utf-8") or model_impact_path.read_bytes() != preflight_impact:
-        raise Blocked("model artifact preflight evidence differs from the standalone preflight artifact")
-    payload_paths = sorted(root.rglob("closure-semantic-payload.json"))
-    envelope_paths = sorted(root.rglob("closure-run-envelope.json"))
-    if len(payload_paths) != 2 or len(envelope_paths) != 2:
-        raise Blocked("model artifact must contain two semantic payloads and two run envelopes")
-    payloads = [json_file(path, "model semantic payload") for path in payload_paths]
-    if canonical_sha256(payloads[0]) != canonical_sha256(payloads[1]):
-        raise Blocked("the two model closure semantic payloads differ")
-    payload = exact_dict(payloads[0], "model semantic payload")
-    lock = exact_dict(payload.get("closure_lock"), "model closure lock")
-    repos = exact_dict(lock.get("repositories"), "model closure repositories")
-    pto = exact_dict(repos.get("pto_spec"), "PTO-SPEC closure repository")
-    ndf = exact_dict(repos.get("normative_language"), "NDF closure repository")
-    aslref = exact_dict(repos.get("aslref"), "ASLRef closure repository")
-    expected = {
-        "release": str(manifest.get("release")),
-        "publication_version": str(manifest.get("publication_version")),
-        "encoding_abi": str(manifest.get("encoding_abi")),
-        "encoding_projection_sha256": str(manifest.get("encoding_projection_sha256")),
-        "pto_commit": commit,
-        "pto_tree": str(pto.get("tree")),
-        "llvm_repository": "https://github.com/LinxISA/llvm-project.git",
-        "llvm_commit": llvm_commit,
-        "asl_model_commit": asl_model_commit,
-        "ndf_commit": str(ndf.get("commit")),
-        "ndf_tree": str(ndf.get("tree")),
-        "aslref_commit": str(aslref.get("commit")),
-        "workflow_commit": commit,
+    return candidate, {
+        candidate_path.relative_to(root).as_posix(): sha256_file(candidate_path)
     }
-    preflight_commits = exact_dict(preflight.get("commits"), "preflight commits")
-    if llvm_commit != preflight_commits.get("llvm") or asl_model_commit != preflight_commits.get("asl_model"):
-        raise Blocked("model closure commits differ from release preflight")
-    preflight_dependencies = exact_dict(preflight.get("dependencies"), "preflight dependencies")
-    if expected["ndf_commit"] != preflight_dependencies.get("asl_model_ndf") or expected["aslref_commit"] != preflight_dependencies.get("aslref"):
-        raise Blocked("model closure dependencies differ from release preflight")
-    preflight_impact_row = exact_dict(preflight.get("impact"), "preflight impact")
-    payload_impact = exact_dict(payload.get("ndf_impact"), "model NDF impact")
-    try:
-        impact_document = exact_dict(
-            json.loads(preflight_impact.decode("utf-8")), "preflight NDF impact"
-        )
-        semantic_impact = exact_dict(
-            impact_document.get("data"), "preflight NDF impact data"
-        )
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise Blocked("preflight NDF impact is not valid UTF-8 JSON") from error
-    if (
-        payload_impact.get("sha256") != canonical_sha256(semantic_impact)
-        or payload_impact.get("affected_pto_ids")
-        != preflight_impact_row.get("affected_pto_ids")
-    ):
-        raise Blocked("model closure NDF impact differs from release preflight")
-    errors = validate_semantic_payload(payload, expected)
-    for index, envelope_path in enumerate(envelope_paths, 1):
-        envelope = json_file(envelope_path, "model run envelope")
-        errors.extend(validate_run_envelope(envelope, payload, expected, expected_run_id=f"{run_id}-{index}", expected_run_attempt=str(attempt)))
-    if errors:
-        raise Blocked("model closure evidence failed validation: " + "; ".join(sorted(set(errors))))
-    tuple_ = {
-        "pto_spec": commit,
-        "llvm": llvm_commit,
-        "asl_model": asl_model_commit,
-        "pto_ndf": str(preflight_dependencies["pto_ndf"]),
-        "asl_model_ndf": expected["ndf_commit"],
-        "aslref": expected["aslref_commit"],
-    }
-    files = [model_candidate_path, model_impact_path] + payload_paths + envelope_paths
-    return tuple_, {path.relative_to(root).as_posix(): sha256_file(path) for path in files}, canonical_sha256(payload)
 
 
 def validate_certification(
     root: Path,
     *,
     manifest: dict[str, Any],
-    tuple_: dict[str, str],
-    site: dict[str, Any],
-    semantic_digest: str,
+    components: dict[str, str],
     evidence: dict[str, str],
     selected: dict[str, dict[str, Any]],
     run_id: str,
@@ -613,22 +463,21 @@ def validate_certification(
     if report_path.read_bytes() != canonical_json(report, pretty=True).encode("utf-8"):
         raise Blocked("artifact certification report is not canonical JSON")
     expected = {
-        "schema": "pto.release-artifact-certification.v1",
+        "schema": "pto.release-artifact-certification.v2",
+        "scope": "pto-spec",
         "run": {"id": run_id, "attempt": attempt},
         "candidate": {
             "architecture_version": manifest["release"],
             "publication_version": manifest["publication_version"],
             "encoding_abi": manifest["encoding_abi"],
             "encoding_projection_sha256": manifest["encoding_projection_sha256"],
-            "components": tuple_,
+            "components": components,
         },
         "artifacts": {
             role: selected[role]["name"]
-            for role in ("preflight", "release_evidence", "site", "model")
+            for role in ("preflight", "release_evidence")
         },
         "evidence_sha256": dict(sorted(evidence.items())),
-        "model_closure_semantic_payload_sha256": semantic_digest,
-        "site_tree_sha256": site["site_tree_sha256"],
     }
     if report != expected:
         raise Blocked("artifact certification report differs from independently revalidated artifacts")
@@ -707,7 +556,7 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
             roots["release_evidence"], commit,
             github.content("spec/release-manifest.json", commit),
         )
-        preflight, preflight_impact, preflight_files = validate_preflight(
+        preflight, preflight_files = validate_preflight(
             roots["preflight"], manifest, commit, str(selected["preflight"]["name"])
         )
         dependencies = exact_dict(preflight.get("dependencies"), "preflight dependencies")
@@ -716,28 +565,25 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
             raise Blocked("release preflight ASLRef dependency differs from the exact candidate pin")
         if github.submodule_commit("tools/ndf", commit) != dependencies.get("pto_ndf"):
             raise Blocked("release preflight PTO NDF dependency differs from the exact candidate submodule")
-        site, site_files = validate_site(roots["site"], manifest, commit)
-        tuple_, model_files, semantic_digest = validate_model(
-            roots["model"], manifest, preflight, preflight_impact, commit,
-            arguments.run_id, attempt, str(selected["model"]["name"])
-        )
+        components = {
+            "pto_spec": commit,
+            "pto_ndf": str(dependencies["pto_ndf"]),
+            "aslref": str(dependencies["aslref"]),
+        }
         evidence_files = {
             **{f"preflight/{key}": value for key, value in preflight_files.items()},
             **{f"release_evidence/{key}": value for key, value in release_files.items()},
-            **{f"site/{key}": value for key, value in site_files.items()},
-            **{f"model/{key}": value for key, value in model_files.items()},
         }
         certification, certification_files = validate_certification(
             roots["certification"],
             manifest=manifest,
-            tuple_=tuple_,
-            site=site,
-            semantic_digest=semantic_digest,
+            components=components,
             evidence=evidence_files,
             selected=selected,
             run_id=arguments.run_id,
             attempt=attempt,
         )
+        certification_digest = next(iter(certification_files.values()))
         tag = f"v{manifest['publication_version']}"
         published = release_metadata(arguments, github, tag, commit)
         second_run = github.run(arguments.run_id)
@@ -745,13 +591,14 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
         if second_commit != commit or second_attempt != attempt or second_run.get("updated_at") != first_run.get("updated_at"):
             raise Blocked("workflow run identity changed while evidence was being prepared")
         handoff: dict[str, object] = {
-            "schema": "pto.release-publication-handoff.v1",
+            "schema": "pto.release-publication-handoff.v2",
+            "scope": "pto-spec",
             "state": "ready",
             "authority": "hosted-verification-snapshot-recheck-required-before-publication",
             "next_action": "re-read this exact hosted run and artifact identities immediately before any separate publication action",
             "repository": arguments.repository,
             "workflow": {"path": WORKFLOW_PATH, "event": "workflow_dispatch", "run_id": arguments.run_id, "run_attempt": attempt, "commit": commit, "updated_at": first_run.get("updated_at")},
-            "candidate": {"architecture_version": manifest["release"], "publication_version": manifest["publication_version"], "tag": tag, "encoding_abi": manifest["encoding_abi"], "encoding_projection_sha256": manifest["encoding_projection_sha256"], "components": tuple_},
+            "candidate": {"architecture_version": manifest["release"], "publication_version": manifest["publication_version"], "tag": tag, "encoding_abi": manifest["encoding_abi"], "encoding_projection_sha256": manifest["encoding_projection_sha256"], "components": components},
             "required_jobs": jobs,
             "artifacts": artifact_rows,
             "evidence_sha256": {
@@ -759,18 +606,17 @@ def prepare(arguments: argparse.Namespace) -> dict[str, object]:
                 **{f"certification/{key}": value for key, value in certification_files.items()},
             },
             "artifact_certification": certification,
-            "model_closure_semantic_payload_sha256": semantic_digest,
-            "site_tree_sha256": site["site_tree_sha256"],
+            "release_artifact_certification_sha256": certification_digest,
             "release_event": None,
         }
         if published is not None:
             event = {
-                "schema_version": "1", "repository": arguments.repository, "tag": tag,
+                "schema_version": "2", "repository": arguments.repository, "tag": tag,
                 "commit": commit, "release_id": published.get("id"), "release_url": published.get("html_url"),
                 "release_manifest_sha256": sha256_file(unique_suffix(roots["release_evidence"], "spec/release-manifest.json")),
-                "model_closure_semantic_payload_sha256": semantic_digest, "published_at": published.get("published_at"),
+                "release_artifact_certification_sha256": certification_digest, "published_at": published.get("published_at"),
             }
-            event_path = temp / "pto-spec-release-event-v1.json"
+            event_path = temp / "pto-spec-release-event-v2.json"
             event_path.write_text(canonical_release_event(event) + "\n", encoding="utf-8")
             handoff["release_event"] = {"path": event_path.name, "sha256": sha256_file(event_path)}
         handoff_path = temp / "publication-handoff.json"
