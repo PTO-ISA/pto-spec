@@ -3630,7 +3630,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "3a7cc7f01341126a2e2e0825c0f92d90b744665b447f1233f44a41a87bc81ad1"
+      "sha256": "65aa1973cf2d3047d4f4451b7da3fe79d12980d1a184bcd793274e61100b3434"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3642,7 +3642,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "9a94eb98a6e2fd509fafeca9f9655304f51578a6f61370a2d98d61de0c8474e4"
+      "sha256": "070fc63301fedbc950d78d48d4fb10825065da40e6be83a7e55c136dd80d8282"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3653,28 +3653,12 @@
       "sha256": "fc4060954c19cab7e70751d5e8735a349fcaafe331508195650fd276423d72c2"
     },
     {
-      "path": "spec/model-closure-selection.json",
-      "sha256": "3fbefc0fa69726c51aa71d8bdbbfa484ad761f8b11f7663529b5585c61b84e79"
-    },
-    {
       "path": "spec/release-inputs.json",
-      "sha256": "6db5ad3d96d644f43b295930110d1a396bc8782ac4546c32b5104810fe70c65f"
+      "sha256": "45cc1837dcd0f3d16b623a0eec1e4eff8eec5b96bd07fb35ccd943ef0f8ef897"
     },
     {
       "path": "spec/release-selection.json",
       "sha256": "f067939cb1629fa860d0cafba2296801285fe985d15f5d0e99ea73849fd00962"
-    },
-    {
-      "path": "spec/schemas/pto-closure-run-envelope-v1.schema.json",
-      "sha256": "b70056448b0325d2252b462f355168ca02926f2884f6b007e4ea13747c878667"
-    },
-    {
-      "path": "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
-      "sha256": "71fff5c5ba2a4aedbaf5b7c5c3a5736c4b63af1e5a77f33b65233cd1c36ff00d"
-    },
-    {
-      "path": "spec/schemas/pto-model-closure-selection-v1.schema.json",
-      "sha256": "1467d29f4567bcf57a92f5b99da07bf9353048f7438b2c7e3ecbb929cd547000"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3683,6 +3667,10 @@
     {
       "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
       "sha256": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
+    },
+    {
+      "path": "spec/schemas/pto-spec-release-event-v2.schema.json",
+      "sha256": "292f7997630a0320bce42f6f9c3beae6651ba5d793f95150cdd2fd861603f207"
     },
     {
       "path": "specification.toml",
@@ -3708,7 +3696,7 @@
     },
     "tile_operations_total": 118
   },
-  "content_sha256": "ae932c726b18d062ae0fa4539ac5f0028465d0347994dc9f73355f794e3fd85c",
+  "content_sha256": "86ba5a0adf5e1388a653b1488e4f9513f2ca9e00436164ea6002598893dbe66c",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

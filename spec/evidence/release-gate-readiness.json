@@ -7,7 +7,8 @@
         ".github/workflows/asl.yml",
         "scripts/check-release-event-schema",
         "scripts/release_event.py",
-        "spec/schemas/pto-spec-release-event-v1.schema.json"
+        "spec/schemas/pto-spec-release-event-v1.schema.json",
+        "spec/schemas/pto-spec-release-event-v2.schema.json"
       ],
       "id": "RG-01",
       "name": "lightweight pull-request contract"
@@ -106,32 +107,15 @@
       "name": "formal mnemonic implementation closure"
     },
     {
-      "command": "scripts/check-model-closure <same-run artifacts>",
-      "evidence": [
-        ".github/workflows/release.yml",
-        "scripts/check-model-closure",
-        "scripts/check-model-closure-schema",
-        "scripts/model_closure.py",
-        "scripts/generate-model-closure-impact",
-        "scripts/run-model-closure",
-        "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
-        "spec/schemas/pto-closure-run-envelope-v1.schema.json",
-        "spec/model-closure-selection.json",
-        "spec/schemas/pto-model-closure-selection-v1.schema.json"
-      ],
-      "id": "RG-11",
-      "name": "LLVM-to-ASL model closure"
-    },
-    {
       "command": "scripts/check-release-preflight <exact candidate inputs>",
       "evidence": [
         ".github/workflows/release.yml",
         "scripts/check-release-preflight",
         "scripts/release_preflight.py",
-        "spec/model-closure-selection.json"
+        "spec/release-selection.json"
       ],
       "id": "RG-12",
-      "name": "exact candidate identity and downstream case preflight"
+      "name": "exact PTO candidate identity and pinned dependency preflight"
     },
     {
       "command": "scripts/check-release-artifacts <same-run downloaded artifacts>",
@@ -143,17 +127,6 @@
       ],
       "id": "RG-13",
       "name": "uploaded release artifact certification"
-    },
-    {
-      "command": "scripts/check-site-artifact && scripts/check-site-lighthouse",
-      "evidence": [
-        ".github/workflows/release.yml",
-        "scripts/check-site-artifact",
-        "scripts/check-site-lighthouse",
-        "scripts/generate-site-publication-manifest"
-      ],
-      "id": "RG-14",
-      "name": "release site integrity and stable quality budget"
     }
   ],
   "hosted_validation": {
@@ -177,9 +150,9 @@
     ".github/workflows/asl.yml": "3e47d85bae1cbe115b478c2990e8034055eb3eef7dd8d9c4aa31fe78212caaef",
     ".github/workflows/full-validation.yml": "338905287f646ab82f13161af80a313acae5b4639760e5db3a23b553d5d60494",
     ".github/workflows/nightly.yml": "22218968d1df12cfad8e8de4c2f8e13af4fc4463ab8443f8b87e93392420a694",
-    ".github/workflows/release.yml": "117373b253d270f3194874478a3e7f9b38cd4d229accb27b613d25350e6ad224",
-    "CONTRIBUTING.md": "3600288b30fa6ca6ea838cb471c506e33bf648f7eebcdf0457582fd202fda2cb",
-    "GOVERNANCE.md": "ccffb5c4d72cd1b6a297c0089818b0653e81f0d5e804b10a768f2b664f3c7e12",
+    ".github/workflows/release.yml": "11233792721ca420898f90372ec2e06c4832efd499cf438aa0acdb78b8e0bda7",
+    "CONTRIBUTING.md": "6ff6f96e12f97aa2d66f5ade1700b8bd7dc8d84436781c7072c7d2f674abd972",
+    "GOVERNANCE.md": "b723d0362110a8bef794c1cb2f29a937ab3851a95156e26e11122685f9d383a6",
     "Makefile": "1f37270e6e4480bc6fdeeb0cbc5cd3cf8a32a255939329b174c03d57e1498c58",
     "scripts/asl_release_suite.py": "4f2d5761d882c003b21a5eba899a4cd3120677252043fc9f4a225027e8b0f476",
     "scripts/asl_tests.py": "e7e4c970f39618ad487873f31128ed4072b734e5d277c406b83f6c142ae99f25",
@@ -188,65 +161,54 @@
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
     "scripts/check-binary-closure": "f446be0e5f6035917d43d1d79b3a8d2f2df0d12af3c9dc03a59511391d09a6ae",
-    "scripts/check-model-closure": "533556e31ca3fae808684d36ca8dfcd28a9f759dc6f2cfc44b7834669efd6d13",
-    "scripts/check-model-closure-schema": "a2dfd360ebdccd0419b5276db97836aeb35e90a77adb5829f2970b877270684a",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "356953dd2509ed512f57cf1924e64108e8855eaa5332b08a11d190077c85e973",
     "scripts/check-release-artifacts": "0b56313baaf97106f96b89f1f1aa7f42f2c9cb47a3b155bbad1d3b42c0ca7a2d",
     "scripts/check-release-closure": "a91a592cc4363f2809d2ac18d5ccd8dfd112d83e7ed696303b84686bfe562d17",
-    "scripts/check-release-event-schema": "a321bd5b7567370d38987977b96b7d909a49abf333c918f72f9a15a6f25ed247",
+    "scripts/check-release-event-schema": "0b3690039fcdda0503c7f2824900be8ed108460b5784521045616fb586173cbf",
     "scripts/check-release-manifest": "32e3d6b41139090514beab297cdb18328af1e88079093711441ebe71d74cfc3c",
-    "scripts/check-release-preflight": "a1f6dfa4ede297bdccf097787386ddf00a0181d0520e625443e622fa82860694",
+    "scripts/check-release-preflight": "37f02340f39a0c1928b02b31c2fb6c6b136ab208905ca151382a49fe95f0af9c",
     "scripts/check-release-workflow": "ac2b47f22ad9d20064be358db26a21659d719d6dfa1efea32a6fadd8e8c752e1",
     "scripts/check-repository": "2dcf59dc66376c88c1c475eb8d03aa3a4d7cfcd823ff64aed759683b2ca8fdbf",
     "scripts/check-script-entrypoints": "542b440084df8ca1599e4b78985b92476ac9d97b0a8d013b27587024df97db3e",
-    "scripts/check-site-artifact": "7b01c82a91882eab892002f6d9bc62147d5fbda108d934eb1b9009b21d6647da",
-    "scripts/check-site-lighthouse": "dd40c384a8497cbd6a58537305fb29b31a067dbbd695bd94e96a1806bfb4b7ba",
     "scripts/check-toolchain": "791f506e635f2cfaa805ed44450507983eb421e2de0472ebf03575c295d396c9",
     "scripts/encoding_witness.py": "f7767271a695c7d0e634683d3d5768f476f17a50f587f0e4020bd380d5769202",
     "scripts/full_validation_workflow.py": "8b0aac09d8f9cc351040da2a63f2d956724e4f1490fd107aa9948a11a6dda43c",
     "scripts/generate-instruction-contract-closure": "3683bb65d57345b5235a83050f9e2c656dde723174577321a949d7ab1c17c9e7",
-    "scripts/generate-model-closure-impact": "92145a0a1b0675e7db60d782eb4f1d7254071d90ea20144ec8e2d6f3ffb5c71f",
     "scripts/generate-readme-inventory": "91bda513e7eea44d3c830ce8f6925bc94ce3ce0cb7fcf12740e75135cbcbc7d0",
-    "scripts/generate-site-publication-manifest": "b352e5816c364226fce39fdf78dc926de9a10fe4230df37400cecb5399944a30",
     "scripts/instruction_contracts.py": "577ec4f3110dfce23da0277b3aabd8a766bfa5d6346e7b63ca8a3b319a85ed33",
     "scripts/instruction_docs.py": "32800a550ee9828b96e755cff0715796ee1fc81f385706430524031c7e2f99d5",
     "scripts/manual_semantic_audit.py": "113c5ff6cfe56baaccc9730ad2d29b8a56ac4536df8a012ae13e01c05c7a45fe",
-    "scripts/model_closure.py": "08bcab00d2f467efe3b366f35d36cb23133e3717e11f4e60f061512ac67ac05d",
     "scripts/prepare-aslref": "2f9599491b6df13b2b0f489a57125ffb6cae1b3e765f7056c014eddeb8741ad2",
     "scripts/prepare-pr": "e6147466566970b153564c61b30dd7d9956c28994d3a75bb40be8b697663f0b4",
     "scripts/prepare-release-publication": "581bb52b4b6bc0dab6fda4f88ed9e8a69c5829fb3e20c11c3e2f14a584d66151",
     "scripts/print-asl-test-matrix": "1e4b29cb97ba7524e252bb506cf0dd1b8f3d4e3d1108e345d6adf85540937a3d",
     "scripts/project_asl_catalogs.py": "629709beb3275533e697a81de65fd79d69040b8643bbbecc64b64caf33f0e767",
-    "scripts/release_artifacts.py": "2398b0655843c58fed8118975fa6012f68c365271003d880894a78426a5a77af",
-    "scripts/release_event.py": "6e3a42ec9fccd172985206384b0d671817fa90bfce21e0671a8a51471eb6a990",
-    "scripts/release_preflight.py": "d0c7bcbf0677c66c30623210cadc180261581bf4403c256445a0af206d48d8fb",
-    "scripts/release_publication.py": "bc641bd33c4d50aa3b1787b2905b1ff33caa1ef6708f07e46b08b54230f7bf65",
+    "scripts/release_artifacts.py": "a3426456a850627aea274e369a4a9cc427a1ae65d23918fca5c043454baa4624",
+    "scripts/release_event.py": "3a1ba0bb33d6e6f30b4995965d39d1eba476dfe46c949f4f0b9691f263a0a1c6",
+    "scripts/release_preflight.py": "aa89c53330f1af6df54eb71234bd067ed849afe800ae9b6f7a482097b399bdf9",
+    "scripts/release_publication.py": "92f79fd644371be963dedbd5d809f9131fd9d72e561e6e20af2ea673a92eaf13",
     "scripts/release_selection.py": "86b80ce0b0b14d5cf0a6e041d7a01771d13931e3154669d7814cdabc6e04203c",
-    "scripts/release_workflow.py": "53a9bbb4148e3338386fc7aaa2236053b3a47fac7c7f92935370c87f5c58b9d9",
+    "scripts/release_workflow.py": "cc0a610aec391cecfd56d76174fae917604aa4ed4cef5f219b2c337bd4dcd46d",
     "scripts/report-asl-page-results": "2dde0acdd94de060dc56c409e5d232f2252a2fa605512fe4461c360ffdda3cae",
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
-    "scripts/run-model-closure": "15e4ae2f7679e562f009a947ba46f5eefa7b39d7c0df6a8eefd5bb2372088482",
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
-    "spec/evidence/architecture-readiness.json": "3a7cc7f01341126a2e2e0825c0f92d90b744665b447f1233f44a41a87bc81ad1",
+    "spec/evidence/architecture-readiness.json": "65aa1973cf2d3047d4f4451b7da3fe79d12980d1a184bcd793274e61100b3434",
     "spec/evidence/release-traceability-readiness.json": "bef07be74386a9dd4e306a8bcce57ba2d1f9feb227a825f8706cf2d1c0a852f8",
-    "spec/model-closure-selection.json": "3fbefc0fa69726c51aa71d8bdbbfa484ad761f8b11f7663529b5585c61b84e79",
-    "spec/release-inputs.json": "6db5ad3d96d644f43b295930110d1a396bc8782ac4546c32b5104810fe70c65f",
+    "spec/release-inputs.json": "45cc1837dcd0f3d16b623a0eec1e4eff8eec5b96bd07fb35ccd943ef0f8ef897",
     "spec/release-selection.json": "f067939cb1629fa860d0cafba2296801285fe985d15f5d0e99ea73849fd00962",
-    "spec/schemas/pto-closure-run-envelope-v1.schema.json": "b70056448b0325d2252b462f355168ca02926f2884f6b007e4ea13747c878667",
-    "spec/schemas/pto-closure-semantic-payload-v1.schema.json": "71fff5c5ba2a4aedbaf5b7c5c3a5736c4b63af1e5a77f33b65233cd1c36ff00d",
-    "spec/schemas/pto-model-closure-selection-v1.schema.json": "1467d29f4567bcf57a92f5b99da07bf9353048f7438b2c7e3ecbb929cd547000",
     "spec/schemas/pto-release-selection.schema.json": "5e7b2abaed81613e587cb0cc5aff172538ee9644ffd9d490d4c1bbe8f1d8ae89",
-    "spec/schemas/pto-spec-release-event-v1.schema.json": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
+    "spec/schemas/pto-spec-release-event-v1.schema.json": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062",
+    "spec/schemas/pto-spec-release-event-v2.schema.json": "292f7997630a0320bce42f6f9c3beae6651ba5d793f95150cdd2fd861603f207"
   },
   "summary": {
     "documentation_page_count": 898,
     "executable_requirement_count": 669,
-    "gate_count": 14,
+    "gate_count": 12,
     "mnemonic_count": 663,
     "status": "ready-for-exact-head-verification",
     "test_count": 4004,
