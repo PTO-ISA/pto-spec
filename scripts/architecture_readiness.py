@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from scripts.adr_records import AdrRecord, load_adrs
-from scripts.release_selection import _baseline_inputs
+from scripts.release_selection import published_baseline_lineage
 
 
 ACTIVE_STATUSES = frozenset({"draft", "accepted"})
@@ -214,23 +214,23 @@ def derive_readiness(root: Path, commit: str) -> tuple[ReadinessRow, ...]:
     baseline = selection.get("baseline_commit")
     if not isinstance(baseline, str):
         raise ValueError("release selection baseline_commit is invalid")
-    baseline_manifest, baseline_unit_rows = _baseline_inputs(root, baseline)
-    baseline_selection = baseline_manifest.get("release_selection")
-    if not isinstance(baseline_selection, dict):
-        raise ValueError("baseline manifest release selection is missing")
-    baseline_expanded_ndf = baseline_selection.get("expanded_ndf")
-    if not isinstance(baseline_expanded_ndf, list):
-        raise ValueError("baseline manifest expanded NDF rows are invalid")
-    baseline_ndf = {
-        row.get("id")
-        for row in baseline_expanded_ndf
-        if isinstance(row, dict) and isinstance(row.get("id"), str)
-    }
-    baseline_units = {
-        row.get("id")
-        for row in baseline_unit_rows
-        if isinstance(row.get("id"), str)
-    }
+    baseline_ndf: set[str] = set()
+    baseline_units: set[str] = set()
+    for _, manifest, unit_rows in published_baseline_lineage(root, baseline):
+        baseline_selection = manifest.get("release_selection")
+        if not isinstance(baseline_selection, dict):
+            raise ValueError("baseline manifest release selection is missing")
+        expanded_ndf = baseline_selection.get("expanded_ndf")
+        if not isinstance(expanded_ndf, list):
+            raise ValueError("baseline manifest expanded NDF rows are invalid")
+        baseline_ndf.update(
+            row["id"]
+            for row in expanded_ndf
+            if isinstance(row, dict) and isinstance(row.get("id"), str)
+        )
+        baseline_units.update(
+            row["id"] for row in unit_rows if isinstance(row.get("id"), str)
+        )
     rows: list[ReadinessRow] = []
     for record in records:
         if record.status not in ACTIVE_STATUSES:
