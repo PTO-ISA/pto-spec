@@ -156,7 +156,7 @@ end;
 ## Defaults and encoded zero
 
 - Concrete DataType codes explicitly select the transfer carrier interpretation. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
-- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
+- Omitted LB0, LB1, and LB2 each have effective value one; omission does not inherit the source descriptor shape. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
 - PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
 ## Legality
