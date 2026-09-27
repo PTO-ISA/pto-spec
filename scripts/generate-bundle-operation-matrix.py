@@ -282,6 +282,8 @@ def cube_source_recipe(row: dict) -> dict[int, tuple[int, str]]:
             dtype = primary_dtype
         if role in {"row-scale", "column-scale"}:
             layout = "TileLayout_CUBE_M32"
+        elif role == "bias":
+            layout = "TileLayout_CUBE_N8"
         else:
             layout = (
                 "TileLayout_CUBE_N8"

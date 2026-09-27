@@ -22,7 +22,7 @@ begin
     MarkTileValidRegionDefined(2);
     let configured_3 = ConfigureCubeTileForMask(
         3, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M16, '1111');
+        TileLayout_CUBE_N8, '1111');
     assert configured_3;
     InstallRelativeTileFixture(3, 3);
     MarkTileValidRegionDefined(3);

@@ -100,7 +100,7 @@ begin
         TileLayout_CUBE_N8);
     assert mx_cube_b;
     let mx_cube_bias = ConfigureCubeTile(7, 256, 1, 2, TileDataType_FP32,
-        TileLayout_CUBE_M32);
+        TileLayout_CUBE_N8);
     assert mx_cube_bias;
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 0x4000);
@@ -128,7 +128,7 @@ begin
         TileLayout_CUBE_N8);
     assert mx_cube_b16;
     let mx_cube_bias16 = ConfigureCubeTile(14, 128, 1, 1, TileDataType_FP32,
-        TileLayout_CUBE_M16);
+        TileLayout_CUBE_N8);
     assert mx_cube_bias16;
     let mx_cube_d16 = ConfigureCubeTile(15, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M16);

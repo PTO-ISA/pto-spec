@@ -72,7 +72,7 @@ begin
     ConfigureTile(7, 256, 2, 2, 2, 2, TileDataType_FP32,
         TileLayout_RowMajor);
     // TGEMV is CUBE-only: A is a 1xK CUBE_M32 vector, B is a KxN CUBE_N8
-    // matrix, and D plus the 1xN FP32 bias reuse A's CUBE_M32 layout.
+    // matrix, D reuses A's CUBE_M32 layout, and the 1xN FP32 bias uses N8.
     let gemv_b_ready = ConfigureCubeTile(27, 512, 2, 1, TileDataType_FP16,
         TileLayout_CUBE_N8);
     let gemv_d_ready = ConfigureCubeTile(28, 1024, 1, 1, TileDataType_FP32,
@@ -94,7 +94,7 @@ begin
     WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 0x4000);
 
     let gemv_bias_ready = ConfigureCubeTile(61, 1024, 1, 1,
-        TileDataType_FP32, TileLayout_CUBE_M32);
+        TileDataType_FP32, TileLayout_CUBE_N8);
     assert gemv_bias_ready;
     WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     SelectTestCUBEDataType('00100');
