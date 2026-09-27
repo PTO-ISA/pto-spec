@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 import unittest
@@ -204,9 +205,25 @@ class SiteContractTests(unittest.TestCase):
             self.assertIn(term, json.dumps(projection))
         self.assertEqual(projection["schema"], "pto.site-instruction-projection.v1")
         self.assertEqual(projection["ownerSource"], "asl/tile/memory-and-data-movement/regular/TLOAD.asl")
+        self.assertEqual(
+            projection["ownerSourceSha256"],
+            hashlib.sha256(owner.encode("ascii")).hexdigest(),
+        )
         projection_text = json.dumps(projection)
         self.assertIn("complete Shared logical parent", projection_text)
         self.assertIn("B.ASSEMBLE", projection_text)
+        self.assertIn("first access fault stops the request", projection_text)
+        self.assertIn(
+            "partially defined Local destination or Shared generation",
+            projection_text,
+        )
+        self.assertIn(
+            "CUBE tail PadValue is applied only after all valid GM reads succeed",
+            projection_text,
+        )
+        self.assertNotIn("Complete-footprint preflight", projection_text)
+        self.assertNotIn("Probe the full Local footprint", projection_text)
+        self.assertNotIn("fault preserves the prior destination", projection_text)
         self.assertIn(
             "Capacity code 1..10: 128 B through 64 KiB per participating PE.",
             projection_text,
@@ -447,11 +464,19 @@ class SiteContractTests(unittest.TestCase):
 
     def test_redirect_manifest_is_nonempty_and_unique(self) -> None:
         redirects = json.loads((SITE / "redirects.json").read_text(encoding="utf-8"))
+        traceability = json.loads(
+            (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        unit_routes = {f"/units/{unit['id']}/" for unit in traceability["units"]}
         sources = [source for redirect in redirects for source in redirect["from"]]
         self.assertGreaterEqual(len(sources), 8)
         self.assertEqual(len(sources), len(set(sources)))
         for redirect in redirects:
             self.assertTrue(redirect["to"].startswith("/"))
+            if redirect["to"].startswith("/units/"):
+                self.assertIn(redirect["to"], unit_routes)
 
     def test_publication_handoff_is_content_addressed(self) -> None:
         generator = (ROOT / "scripts/generate-site-publication-manifest").read_text(
