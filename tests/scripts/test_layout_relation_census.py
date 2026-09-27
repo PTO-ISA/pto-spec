@@ -27,7 +27,7 @@ from scripts.layout_relation_census import (
 
 class LayoutRelationCensusTest(unittest.TestCase):
     def test_execution_mask_helper_allowlist_is_finite_and_fail_closed(self) -> None:
-        self.assertEqual(len(EXECUTION_MASK_HELPER_DEFINITION_DELTAS), 36)
+        self.assertEqual(len(EXECUTION_MASK_HELPER_DEFINITION_DELTAS), 40)
         self.assertEqual(len(EXECUTION_MASK_HELPER_BODY_CHANGES), 6)
         self.assertIn("ADR-TILE-0008", EXECUTION_MASK_HELPER_CLASSIFICATION)
         self.assertIn("PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",

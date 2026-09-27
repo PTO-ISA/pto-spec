@@ -416,6 +416,22 @@ EXECUTION_MASK_HELPER_DEFINITION_DELTAS = {
         "before": [("asl/tile/model/legality/allocation-capacity.asl", set())],
         "after": [],
     },
+    "TileCellRearrangementByteHasActiveCoordinate": {
+        "before": [],
+        "after": [("asl/tile/model/legality/layout-rearrangement.asl", set())],
+    },
+    "TileCellRearrangementElementWordIndex": {
+        "before": [],
+        "after": [("asl/tile/model/legality/layout-rearrangement.asl", set())],
+    },
+    "TileCellRearrangementValidRegionDefined": {
+        "before": [("asl/tile/model/legality/layout-rearrangement.asl", set())],
+        "after": [],
+    },
+    "TileReadCellWord": {
+        "before": [("asl/tile/model/execution/rearrangement.asl", set())],
+        "after": [],
+    },
     "TileCubePredicateGPRBit": {
         "before": [("asl/tile/model/execution/predicate-carriers.asl", set())],
         "after": [("asl/tile/model/execution/execution-mask-state.asl", {"CUBE_M32"})],
