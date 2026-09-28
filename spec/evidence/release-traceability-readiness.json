@@ -1152,6 +1152,11 @@
         "PTO-AVS-BLOCK-EXECUTION-MASK-MERGE-HAND-OUTPUT-002",
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-MGATHER-GATHER-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TPACK-GPR-MASK-MERGE-DECODED-002",
         "PTO-AVS-TILE-TEXPANDS-CUBE-LAYOUT-002"
@@ -1283,6 +1288,7 @@
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-MGATHER-MASK-EXECUTION-MASK-BUNDLE-001",
         "PTO-AVS-BLOCK-MSCATTER-MASK-EXECUTION-MASK-BUNDLE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-SELECT-MIXED-CARRIERS-DECODED-002",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TFMA-GPR-EXECUTION-MASK-003",
@@ -1718,6 +1724,7 @@
         "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-314",
         "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-315",
         "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-316",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-SUBVIEW-CUBE-DESCRIPTOR-001"
       ]
     },
@@ -1734,6 +1741,7 @@
         "ADR-GOV-0007"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
         "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-RIGHT-001"
       ]
@@ -17766,6 +17774,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
         "PTO-AVS-TILE-EXPANSION-CUBE-001",
         "PTO-AVS-TILE-EXPANSION-OPERATION-VIEW-R4-001",
         "PTO-AVS-TILE-TCOLEXPAND-COPY-001"
@@ -18395,6 +18404,7 @@
         "ADR-TILE-0009"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
         "PTO-AVS-TILE-CARRIER-REINTERPRET-BOUND-002",
         "PTO-AVS-TILE-MODEL-LEGALITY-DTYPE-LAYOUT-STATIC-001",
         "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
@@ -18462,6 +18472,7 @@
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-MGATHER-MASK-EXECUTION-MASK-BUNDLE-001",
         "PTO-AVS-BLOCK-MSCATTER-MASK-EXECUTION-MASK-BUNDLE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-SELECT-MIXED-CARRIERS-DECODED-002",
         "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
@@ -18499,7 +18510,8 @@
         "asl/tile/model/execution/expansion.asl"
       ],
       "readiness_subjects": [
-        "ADR-TILE-0008"
+        "ADR-TILE-0008",
+        "ADR-TILE-0012"
       ],
       "tests": [
         "PTO-AVS-TILE-EXECUTION-MASK-EXPAND-001",
@@ -19260,6 +19272,11 @@
         "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-BLOCK-EXECUTION-MASK-OVERSIZED-DIMENSIONS-007",
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-TILE-EXPANSION-CUBE-001",
         "PTO-AVS-TILE-EXPANSION-OPERATION-VIEW-R4-001",
@@ -19284,6 +19301,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
         "PTO-AVS-TILE-TCI-SPARSEFA-ADDRESS-PIPELINE-002",
         "PTO-AVS-TILE-TROWEXPANDADD-TYPED-001"
       ]
@@ -19306,6 +19324,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-TROWEXPANDDIV-ZERO-001",
         "PTO-AVS-TILE-TROWEXPANDDIV-SIGNED-001"
       ]
@@ -19328,6 +19347,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-EXPDIF-OPERATION-VIEW-R4-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
         "PTO-AVS-TILE-EXPDIF-STAGE3-DECODED-001",
         "PTO-AVS-TILE-TROWEXPANDEXPDIF-COMPOSE-001"
       ]
@@ -19349,6 +19369,7 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
         "PTO-AVS-TILE-TROWEXPANDMAX-UNSIGNED-001"
       ]
     },
@@ -19959,7 +19980,7 @@
     "asl/arch/memory-model/ordering.asl": "772a4d85f78e7a22f52a7669d5d63b44397f148504e7a3e9f93e97be72d1a50d",
     "asl/arch/overview/architecture.asl": "e1cfad2c51711b1c9f434e57a3da8e68c184ccb6876de5ec02309ef20e52d3ee",
     "asl/arch/overview/encoding-ownership.asl": "c966dc5c893b35cf6ce25ec303839f60c68f52d90bf2f5bdd74b5de115ea9083",
-    "asl/arch/overview/instruction-classification.asl": "6e240c8d6f574bdf134d357a70ad78834344d296777dc8a0a42c748a29670873",
+    "asl/arch/overview/instruction-classification.asl": "c5101df271085e5fdbafdbe7ace1793f1958b4596c296900a2b58c2e9ad499bb",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
     "asl/arch/programming-model/execution-context.asl": "0910c43db8c372ba9bb7bf67ebe0d80e6daffa87dd0b2c3e42f7ec48b809044e",
     "asl/arch/programming-model/general-queue-management.asl": "cfabc9f02f3aa0e42e290059bf383640e3f0f5dc007423d2dec4e100138a1b20",
@@ -19979,7 +20000,7 @@
     "asl/arch/system-registers/maintenance.asl": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af",
     "asl/arch/system-registers/timer.asl": "7f2078b0d6ae745c8ec7369695d5a5ec1225356e2f8e5548c2a179330bf9970d",
     "asl/block/attributes/B.CATR.asl": "f89ef4263f43b573e73c193809457d609da297714abf0a005611eb71f1fc4e6f",
-    "asl/block/attributes/B.DATR.asl": "189338d1509ba8276cc4c3f5376fab9f277d16597a4d55b9be4ee976cb955241",
+    "asl/block/attributes/B.DATR.asl": "cd9ff31f8d5b04407286bda6ab13d204f1c710560f13f19b93d9920de23e13ed",
     "asl/block/attributes/B.DIM.asl": "71167dba1d74b0108aaddccefd618a294f5f0f526ffd421987440bcd73573219",
     "asl/block/attributes/B.FPATR.asl": "ef5e3163cf0edf14c5b1af013507fab4c12815374ca930a21cbe28bb7797348e",
     "asl/block/attributes/C.B.DIMI.asl": "e1c951c4e7f90f6fb1f7f23959decaac35a40ad39ad397342914672ebb16cd2f",
@@ -20068,7 +20089,7 @@
     "asl/block/model/dispatch/destination-operation.asl": "0528afa1a33c9c04cd1c690ac40fb82226aa99fee7db803a543d6e42b1e3f87e",
     "asl/block/model/dispatch/destination-shape.asl": "067f667a2c1c2e96ee77902a5edd153ea87335d2d903b913b0df0c5202bf303c",
     "asl/block/model/dispatch/execution-mask-schema.asl": "9c1e1eccc940bed1911b471d6ffac7e621938121e539a884f35d9af99d9eabf1",
-    "asl/block/model/dispatch/expansion-schema.asl": "9073fc864d9342ae52cfc3ffc0021f657f689c413623e3ed4350db8f8bfcf7e6",
+    "asl/block/model/dispatch/expansion-schema.asl": "e341b52a6d77c9977a8787980cfb6df5aa11b6eb0ebfd65ba9f3932bd7a7f8ed",
     "asl/block/model/dispatch/expdif-schema.asl": "de5b727b34a77015b22baaeb73bb71b085d8e8bf20dded77675c183ae57305ae",
     "asl/block/model/dispatch/generation-schema.asl": "76cfceccdce296468d71b0e4605eb4b0b2702c5ea6bdabec16826b9517f86653",
     "asl/block/model/dispatch/matrix-scale.asl": "b6ec56e602786648e5e764aafef07837029b84b9595707d389bd1b998cab4505",
@@ -20713,7 +20734,7 @@
     "asl/tile/model/execution/execution-mask-comparison.asl": "d0e9f8c50c0872de8431a3660bf54811daadcdf31522ef571349693c7756051c",
     "asl/tile/model/execution/execution-mask-state.asl": "8ee7f9b3bc758f8dec6592a6476d1ffb900ba4bd01b775913ae7b132944fb01c",
     "asl/tile/model/execution/execution-mask.asl": "b0f6523046c06ff981015687ae00becd5d1703f967ae0b3573d8e254cc4918ab",
-    "asl/tile/model/execution/expansion.asl": "8205f817e206e0beb3ec9ff42c8293e0f2bd7a3c42559a32d166040efbf1a7af",
+    "asl/tile/model/execution/expansion.asl": "f08bf816766cae7b0f133fd7e857956a3c0710f9c5dcb65874620ee74dd82b66",
     "asl/tile/model/execution/expdif.asl": "4af06fac5a6f83e55d634dd2e519e04e33d9a39d0bb4906e591476146705e817",
     "asl/tile/model/execution/fused-multiply-add.asl": "45432db0f253b89b7cbd1d01173dacc5edd0e79ec89c2e2b27c7473e6a31a375",
     "asl/tile/model/execution/generation.asl": "0d7b7d67e1a2d3ee650f7612cfb7b09ff0d0faf94f4919b99d6534cf703d3be3",
@@ -20746,7 +20767,7 @@
     "asl/tile/model/legality/operand-schema.asl": "a48bd3f8e80ee0a3562f94323eb10d55331898cdf4645ccfa2a70013fb50d86f",
     "asl/tile/model/legality/pe-mask.asl": "0725c4ce0deb99b2d0f870a94fb609288adf149dd33300a33e096046a90d54bb",
     "asl/tile/model/legality/predicate-carriers.asl": "6a571790f3dc0c34d371b75da82fb446fbf117aecb2380dd1b058c9d3b45d34e",
-    "asl/tile/model/legality/reduction-and-expansion.asl": "43f21fd274fb2d55ec3da1d80aaccd9ceeb5524d387a43470d23fb48709c477e",
+    "asl/tile/model/legality/reduction-and-expansion.asl": "ae1c82c6dc343b44ea53c516565f4bcadd54c3d7168baa9393c39f570da926aa",
     "asl/tile/model/memory/addressing.asl": "398579f8b271c7213b1cdf9557aaae52f1951de29433588bbf0f5b498ccf7753",
     "asl/tile/model/memory/atomics.asl": "34a183a32f3d4b9b423249d17bf9583dd5f6642997f6f9706813778d4144d190",
     "asl/tile/model/memory/gather-scatter.asl": "fa010aa4b823ff1cb4a5bd0cc7d902420736652f49a0b0ef0719a2a401de6ea2",
@@ -20787,14 +20808,14 @@
     "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl": "06529f879e0400187379881325248f7e0eae0aa0b2fbefe781256151c3bfc2fa",
     "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl": "b2c1d8b19b4e7b7610032cc9940f7bbe40aa2be92672e422f648690a81a37b61",
     "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl": "cf09ea7770d26e2558337a1a27d95797abed1cab95f5ef055d76b7ddd6a123c0",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl": "52ec73293b746e5f293bfc07c49f4478816a3075c1e1b4f03bc56c67a79983e1",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl": "0d6138171e406e5d39562ca2cd5bf168f2cf5ce1e49e464a2c0061e9c738d8d7",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl": "34300e92da0dbf9633af774a8cc6762e39314c10f8ed4cd9e298d3a2013e7fb4",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl": "35a3efafa035e178126b254dc9fcfa99651d7c7e043634022fb7e04cc3d70d38",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl": "1dcaee577df1cce4bb217ef11f845a11d0e7271bbabff884d2926dc4c7674e06",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl": "b5603223bd11f5c0335588b94d2dfcc384f43648081bb090b737feaa223b2006",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl": "2b1404ce5bc43303c87f6108db6bc7144fc1b9ecb828aa762499fe31948e7b97",
-    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl": "05596c11e6836b480ce137585859688ea85a3a103d081ffacb33795e3fb351f2",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl": "1ee414dba09a63d9036f426b8a61f8c18b1c02a6ef2d08c8cd2a4ea9b894da9a",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl": "1c5b8c737773a4b6373dfddceebdaecdba154cc2b449ac9f99742c2d72afc24b",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl": "15daac7cc6d8d31b9d228b4e2b2e136af61ece185c04cd37e0d2260563174747",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl": "b6e9f6a769d4e87c7d1826642c361ae428a166da989a7c427b2716ad92e1644f",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl": "84fae869c37a72a635377e6edecfb916d8db8c9a7e75b26224e518a55c1ea0a7",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl": "73a8748f7bc7124b1983a7c1856d2b36a74cde6d24965869431ff8aaab38ede8",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl": "6ad3f1df3d42967482d5d17b4fe7539b7ef7d2193554354c9d4f137b68aefe4d",
+    "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl": "16ba79f9a3072fd7a3c7605958fc79b61508597e3ea022c55f2280b63197fdcc",
     "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl": "bd66ddabaf8d8dfbaf59a2952ba8c8d0645d48e809d9133a9fea688bc15a2431",
     "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl": "50f6dd78626d8605c40af4c321f6e3fea638e09cc20f4ac918ec752b81551ca8",
     "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl": "4419bd373ffba038c42e779fecd1c88333c944494ea052a67693b8ac8837acf5",
@@ -20864,7 +20885,7 @@
     "docs/arch/memory-model/ordering.md": "51475078a9a8251a63d9d032d017e87e62e51d18bed007305c9af39123d376bf",
     "docs/arch/overview/architecture.md": "fa7cd29e816e90003ab50d28b397e60d0577a868172a1769aba0519a0122300b",
     "docs/arch/overview/encoding-ownership.md": "3165aff5966c7232d47ec71045fa6d488616f56a20c132e001f6cc7cd07d8084",
-    "docs/arch/overview/instruction-classification.md": "aba68d51ee649c2dc64aa7282002d6ac81049a0b744596f782c85451417e98ef",
+    "docs/arch/overview/instruction-classification.md": "f44c82b64458c891f0a7e41c8557faae3da3e9d751d7388eca26872db36f83e7",
     "docs/arch/programming-model/core-pe-topology.md": "c48aedb26c403990acdeec4972d9a779bbda6bcc33d1e91b3fec453de4808fe1",
     "docs/arch/programming-model/execution-context.md": "662a0bb57bc9744864104147b17db4601bae47e0c93d07016058956f57f462a1",
     "docs/arch/programming-model/general-queue-management.md": "1d4385e157dad37e364133e906ffcad8533d784ceb5b6521a9757f3e45147b63",
@@ -20884,7 +20905,7 @@
     "docs/arch/system-registers/maintenance.md": "23533b9a2cfc876db3c185d0bcbcec2c4da1ad051c159a87bf8f539259da39c8",
     "docs/arch/system-registers/timer.md": "eb48e37e29f44151e08c834c373772233db61c33cfb01a560d447f8501578e56",
     "docs/block/attributes/B.CATR.md": "cf5d15ab34d0d8ca6baa10c7077d0d05843ea891652ce32a9faf6b37bab6b93a",
-    "docs/block/attributes/B.DATR.md": "31029edb6d346fdcbbfe1e6ba65d5ba650eb86d58cf7f1970d88b0ca8aa9da0b",
+    "docs/block/attributes/B.DATR.md": "4d918d876cee07e23307f094bc0a176c46a6c0891d7fd13176ea8e69f272db0d",
     "docs/block/attributes/B.DIM.md": "68d63621e6f637ab6a7f9e043391f717c33cf28862bc52588ba7b4f47a3b28f6",
     "docs/block/attributes/B.FPATR.md": "22f582c538bf36302d532464d59e78801de0252d7feabceb4b6cee4620c5a1e6",
     "docs/block/attributes/C.B.DIMI.md": "547b0a9a25f325f9e9cd313a57dbfe87b5a79b341895d403e11c248c0db88ea3",
@@ -20973,7 +20994,7 @@
     "docs/block/model/dispatch/destination-operation.md": "8ce34d9662997b4ed0466159db1e5e77e6e7a7ccb2f7b0f92848442087a66d25",
     "docs/block/model/dispatch/destination-shape.md": "bc9e15e41b227a05feca6c1e0ebd3bfbe351fe267940b8099bd14f8fab7815a1",
     "docs/block/model/dispatch/execution-mask-schema.md": "f88a449e7b914fe34ee86b77c991156f76823dc6ff5a2e8e47091e9acb3da16c",
-    "docs/block/model/dispatch/expansion-schema.md": "8925e8ac9d9296ad8e9182867b6d713b2f3f13b1eec3d79ee73d4672d1888f29",
+    "docs/block/model/dispatch/expansion-schema.md": "00f91605b05bbeaf3bbacca33e6bb2c31399ec20a68aaa44d3dd2212babc3c63",
     "docs/block/model/dispatch/expdif-schema.md": "e9d008d8300addacfec0dab4c220f3bc29ccef20c40d4ac3f8db2f00ed9e57fa",
     "docs/block/model/dispatch/generation-schema.md": "27c7388e7141f88771d4efb85e795c779318826cf567169c9c89be7053f962dc",
     "docs/block/model/dispatch/matrix-scale.md": "4478ae7b790c580883c284e9b9527e0360a5b5e0aca4eb66510788403bba4a6d",
@@ -21618,7 +21639,7 @@
     "docs/tile/model/execution/execution-mask-comparison.md": "40911409c60c2a33fbb86fe128c8dae9c9942b4bedb4bc5d6507eeff451ef470",
     "docs/tile/model/execution/execution-mask-state.md": "7bf7f719e1166ae65da13c7db904e0fc3f3b88a662a155f5bb01065650b38a9a",
     "docs/tile/model/execution/execution-mask.md": "ab084bf68828305fb8a2954a1e1bfa5a5a077994687ae902631ace5c6147b14d",
-    "docs/tile/model/execution/expansion.md": "7e83a6fd107f39c392fd3fa01f5506f0fc29098a9dded60bd6007b4e82be3f1e",
+    "docs/tile/model/execution/expansion.md": "635b7cd859d161b7c4772c977f83d43538cd8e17070b193dd26b4180dd4adf3f",
     "docs/tile/model/execution/expdif.md": "3064092af1ed4751ac1b1e0ee16399f928e92e5f3b496c900213c45aa2e6ff74",
     "docs/tile/model/execution/fused-multiply-add.md": "965fd3b1fc85f4fe2d6b3c963b41bab59ccc0d55af40ff460925cdf2d6461b81",
     "docs/tile/model/execution/generation.md": "8f8bc2663dc12885818392dba4669dad96f26ae116d13720d82482c30d12e380",
@@ -21651,7 +21672,7 @@
     "docs/tile/model/legality/operand-schema.md": "eaf13ef00c6d7356d9daec0b4492a9a3001fc590d4bc292d2ec7637e505b6b0f",
     "docs/tile/model/legality/pe-mask.md": "4367e7084d46af15df1ebd1749d038f63e349ea0995f74400d5ebf7d21ff3779",
     "docs/tile/model/legality/predicate-carriers.md": "604539c8bdc454804c45d5c55c9d8da87c96cbb09ea795784012b854576d797d",
-    "docs/tile/model/legality/reduction-and-expansion.md": "9d6d3e3050688b28489a7bea7d6ea5a2ad92bca412383b8287c8bcb9bc084c5e",
+    "docs/tile/model/legality/reduction-and-expansion.md": "cb11179edad87a5037bd8d5bd44d66c84d5ddbae380d3c90b68fbadc9823e4b5",
     "docs/tile/model/memory/addressing.md": "1e99d3dd7b4e0dfaf4237ef3891e359a8ceca4f62a41f844e908536ac1ead3bd",
     "docs/tile/model/memory/atomics.md": "e2fe188c0cf53c49e9df869384eb1599a56cead85d2c3c4b97e1efd867b85235",
     "docs/tile/model/memory/gather-scatter.md": "ad78e754e4c295a0911f88da49f9bc51849a1d05910db58b283be282bde56722",
@@ -21692,14 +21713,14 @@
     "docs/tile/reduce-and-expand/column-reduction/TCOLMIN.md": "66d0cf06e42a9ae88be6378284c6dbd414a2e3315b349410552cb831b3bb8532",
     "docs/tile/reduce-and-expand/column-reduction/TCOLPROD.md": "4542ba2b439e454ed30993f4b9bb98d09fc567f50ec583279c66da2d9f2150ac",
     "docs/tile/reduce-and-expand/column-reduction/TCOLSUM.md": "90c6bfccf9be05301b8644dfab5294f7d78876b1fd87cc6592551ba25ce3bee1",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "1b20c8e07df933039ec660ab038011e33ec16c349541a465a52356fb12daf33e",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md": "eb068fa480a06978bc9340e054b0cd1cc3c01a3106467eaeaca286cfdcc9d523",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md": "6f44117fb6d65b5791f488260016f70ab3080f5bfcaf391569caea286b422a79",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md": "a08b04ae62190a58d5cc43a809ff32d62cb75daa52c3f001946e50e344cb34be",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.md": "5e43cb00ca1db5e6c596dbadbac34f214f954b50dc78b90de9b8ef8b5cb6a221",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md": "fcbab778e3185e11a8d01329bbf862af3ed600bd92925603c85f18ef952e4733",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md": "13294be2acef889770c4aa015489e9db6d282631b5d3a0615babe4a08f256205",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md": "f0ddd3e12870f6d38e6fa7632b0d328d6c1520f41c54ecbf35eddbd4ec92ff4a",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "a771fca5f95057a04131f5cce4bc1199ce4052559d8c3237ee7d649081ec958e",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md": "b7b4d2d989cfd090a7969be2377df1c92460796ce53c1017ecc88078cbf1e8d8",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md": "60603f664f66b32024bb2fed5b7d434b02f526c356c8a529ecc22c7d60fd4929",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md": "4cf22b5c35066fb658f22472a9558944a5ad9606048d3bec06efc9c741558f5c",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.md": "0325a14ed3399b99701c6f5ee068a3523ba706e0fb2823d8e6c6ffc2d719b401",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.md": "8a98471167fd2f0fbf28999fef4ea5a03222ab7a372b37ecca8ff42db48906c7",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.md": "707f8f7d1f53118a56d1c6000553b9a31942ae8a798e0db0b352c8ca408fd474",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.md": "609968f1dfa7f52da194db2209cf3c2a642113b405893213050d57337edd7655",
     "docs/tile/reduce-and-expand/row-reduction/TROWARGMAX.md": "ebfa6ea32027dc07e727a3786692d8a5268368343fda32b2cb8c8e0c94224d10",
     "docs/tile/reduce-and-expand/row-reduction/TROWARGMIN.md": "9664ab87adf78a8a38cf2959da7d87a4ab9d13ae2382fbbfff4e1e575d07e16e",
     "docs/tile/reduce-and-expand/row-reduction/TROWMAX.md": "4e0c6e75b8ab5e4f490a1cfd127d21d09ca746684406e45a40639b3e4d6b5bf6",
@@ -21721,8 +21742,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "8afda6a3660a2d7be31b454ef3c33cc353f8cf1abc650d3a4840325dc5360fd7",
-    "spec/evidence/instruction-contract-closure.json": "541e2e6553ea8e2918d0e687dc225d3c42607bc34937f862cbafd43f9d4e421a",
+    "spec/evidence/adr-index.json": "3d0a8ec7ab582103dd7f43b9c45d0ad223c923f57127e63d6ada0632ca866546",
+    "spec/evidence/instruction-contract-closure.json": "18b8e3386c5770f57ff4bc5f403be7a6cedb71d87478fe4fa4ffb64f63b7c209",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6fdc7c8ff961dbd270331b7b620c3c2d1c451b9e786d09d619f71164b027535b",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -22320,6 +22341,12 @@
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpand-schema-001.asl": "cf98314749fbf9fb66fa19e53601032df80042287f9a9b59ff6a6de5bc223a25",
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpanddiv-zero-001.asl": "0ffc7b830d316d17552fb39de3d05454b3b259796deed79c7833eeec22c7309e",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl": "236925d6fd98d3eeb419ce9a00868605eed9124b0d30a4820a4f1f2dc05136f8",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-001.asl": "984f50c90ef4bab732071caf536db8d37cb180a10e2d8e6a619ae77509d70dce",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-encoding-001.asl": "d9a761a3ada5de4f6d63678e9e057edac9240c3b0a5d30533efc4312f1e88f9b",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-mask-001.asl": "d1c432d703592b37b41802a1116dbfeb00c7e42e225872c7f41f31e6da9dc267",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-negative-001.asl": "b0c316440ac19d13bf404d07326844688f9da0e330b63ee533544bbbdb9891b3",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-positive-001.asl": "6e396f8b1c0102a0b7be4b370953bf11b6423e65b4bde0a75dfd86510b8f1f64",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-subview-001.asl": "3f498eb02b118a40396c1c94b4a347c5dc0847b46d9cd9d6b27740b5adf8c480",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-expdif-operation-view-r4-001.asl": "0fd6a4cf38bcfea1bfbf774dc94f61a509d2ec8d79d84db88fb917883a343a08",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-mask-aware-expansion-decoded-003.asl": "23a45a472f7a13470cf1b23a98d037468e30935050e73ad68bcfe7bb76c367d0",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-tunpack-expand-bf16-chain-r4-001.asl": "2b3a8aff10847a49bd6907ee560ff4d52127480131151daa9ce7a2f07e9ec5fe",
@@ -25791,7 +25818,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1099,
     "status": "closed",
-    "test_count": 4059,
+    "test_count": 4065,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -43073,6 +43100,80 @@
       ],
       "sha256": "97391c16c8e7f937b1a1bb2e06dab80f8c66a2a4aed84f8ccda354b917cb7abf",
       "source": "asl/block/model/operands/range-modifiers.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-001.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPAND-CONTRACT-001"
+      ],
+      "sha256": "984f50c90ef4bab732071caf536db8d37cb180a10e2d8e6a619ae77509d70dce",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-encoding-001.asl",
+      "requirements": [
+        "PTO-TROWEXPANDMAX-CONTRACT-001"
+      ],
+      "sha256": "d9a761a3ada5de4f6d63678e9e057edac9240c3b0a5d30533efc4312f1e88f9b",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-mask-001.asl",
+      "requirements": [
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDDIV-CONTRACT-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-B-IOR-BINDING-001"
+      ],
+      "sha256": "d1c432d703592b37b41802a1116dbfeb00c7e42e225872c7f41f31e6da9dc267",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-negative-001.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TCOLEXPAND-CONTRACT-001"
+      ],
+      "sha256": "b0c316440ac19d13bf404d07326844688f9da0e330b63ee533544bbbdb9891b3",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-positive-001.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-TROWEXPANDADD-CONTRACT-001",
+        "PTO-TROWEXPANDEXPDIF-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "6e396f8b1c0102a0b7be4b370953bf11b6423e65b4bde0a75dfd86510b8f1f64",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-subview-001.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TROWEXPAND-CONTRACT-001",
+        "PTO-B-SUBVIEW-DESCRIPTOR-001",
+        "PTO-B-SUBVIEW-RANGE-001"
+      ],
+      "sha256": "3f498eb02b118a40396c1c94b4a347c5dc0847b46d9cd9d6b27740b5adf8c480",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-SELECT-MIXED-CARRIERS-DECODED-002",
@@ -71781,6 +71882,12 @@
         "PTO-AVS-BLOCK-CUBE-EXPANSION-BUNDLE-002",
         "PTO-AVS-BLOCK-EXPDIF-OPERATION-VIEW-R4-001",
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-BLOCK-TROWEXPANDDIV-ZERO-001",
         "PTO-AVS-BLOCK-TUNPACK-EXPAND-BF16-CHAIN-R4-001"
@@ -71792,6 +71899,12 @@
         "PTO-AVS-BLOCK-EXPDIF-OPERATION-VIEW-R4-001",
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA-STATIC-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TROWEXPAND-SCHEMA-001",
         "PTO-AVS-BLOCK-TROWEXPANDDIV-ZERO-001",
         "PTO-AVS-BLOCK-TUNPACK-EXPAND-BF16-CHAIN-R4-001"

@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 ```asl
 // NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Predicated expansion reads and validates source coordinates only when the mapped output coordinate is active. A broadcast element is read only if at least one active output consumes it; inactive outputs use the common MERGE/ZERO rule and contribute no numeric flags. Integer division-by-zero checks apply only to active outputs.
+// Predicated expansion reads and validates source coordinates only when the mapped output coordinate is active. A selected row-broadcast element is read only if at least one active output consumes it; inactive outputs use the common MERGE/ZERO rule and contribute no numeric flags. Integer division-by-zero checks apply only to active outputs.
 // NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
 // PTO-REQ-TEPL-EXPAND-001: exact typed row and column broadcast operations.
@@ -127,6 +127,8 @@ begin
         source_tile.data_type else selected_type;
     let destination_operation_type = if expdif then
         result_tile.data_type else selected_type;
+    let broadcast_slot = TileExpansionBroadcastSlot(
+        axis, broadcast_tile.layout, source_operation_type);
     var accumulated_flags = Zeros{5};
 
     for row = 0 to result_tile.valid_rows - 1 looplimit 65536 do
@@ -139,7 +141,8 @@ begin
                    result_tile.layout, row as integer {0..65535},
                    column as integer {0..65535}) then
                 let broadcast_row = if axis == TileAxis_Row then row else 0;
-                let broadcast_column = if axis == TileAxis_Row then 0 else column;
+                let broadcast_column = if axis == TileAxis_Row then
+                    broadcast_slot else column;
                 let broadcast_element = TileLogicalLinearIndex(broadcast_tile,
                     broadcast_row as integer {0..65535},
                     broadcast_column as integer {0..65535});

@@ -221606,10 +221606,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -221619,8 +221633,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, copy BroadcastTile[r,0] bit-for-bit.",
-        "The copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update."
+        "For every valid destination element, copy BroadcastTile[r,BroadcastSlot] bit-for-bit.",
+        "The copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -221642,7 +221657,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, unsupported or mixed layout, undefined source element, or mismatched source geometry raises Fault_TileLegality before effects. COPY forms do not validate numeric encodings.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -221808,7 +221824,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "198f850eb0ec59b78addcaef9740a680abdf7db66f7f69f141bfb58e0453eb12",
+                "fold_signature_sha256": "0e0c51d0c51f685b2927f88bc8a3acbdb39d41e995796cffec6cdd59919e6ae0",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -221868,7 +221884,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local row broadcast source; only column zero supplies values",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -221877,7 +221893,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -221889,7 +221905,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local row broadcast source; only column zero supplies values",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -222057,7 +222073,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "5941e71c5a40cefa7bc882b22841e0592ea05f6b35601eebcef71011008c40db",
+                "fold_signature_sha256": "d3fd41f6a891fe08a3ab800e3b3168b48be785051f095af9bc0c98a874a0f061",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -222117,7 +222133,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local row broadcast source; only column zero supplies values",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -222126,7 +222142,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -222138,7 +222154,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local row broadcast source; only column zero supplies values",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -222354,7 +222370,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "0bfa7d5270823faca7cb258f411eda3e8635adbe23d33865f3f5fb31fe44e612",
+                "fold_signature_sha256": "263941c11ee312af967a80cd735ab725c495dd99d9b25c251004df1a62910413",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -222414,7 +222430,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local row broadcast source; only column zero supplies values",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -222423,7 +222439,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -222435,7 +222451,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local row broadcast source; only column zero supplies values",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -222651,7 +222667,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "0638893058f8be9578036714d8d15c027c43b2a5f913978a57dd042d7cf5c317",
+                "fold_signature_sha256": "e8f820ab51843456ab063cbcc66fa4f988a1147387af34c7c03463f464972301",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -222711,7 +222727,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 0,
-                    "role": "persistent Local row broadcast source; only column zero supplies values",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -222720,7 +222736,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -222732,7 +222748,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 0,
-                  "role": "persistent Local row broadcast source; only column zero supplies values",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -222845,10 +222861,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -223013,6 +223043,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -223030,8 +223071,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6559d3ccd38419edec13edd76f06d9b56ca8db46a549b12caae5663ae46d6898",
-            "form_id": "pto0587-trowexpand-183dd3cf1e629a32",
+            "fold_signature_sha256": "49cf0907ea11314f20acd353c98e955864734f5a2e16386bc5f7757de5183f93",
+            "form_id": "pto0587-trowexpand-13946d1b1cd84f69",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -223132,7 +223173,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>",
+          "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -223143,7 +223184,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 0,
-              "role": "persistent Local row broadcast source; only column zero supplies values",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -223152,11 +223193,11 @@
           "spelling": "TROWEXPAND"
         }
       ],
-      "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>",
+      "macro_format": "TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->DstTile<Size>",
       "mnemonic": "TROWEXPAND",
       "physical_bundle": [
         "BSTART.SFU TROWEXPAND, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -223185,8 +223226,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -223205,7 +223259,7 @@
           },
           {
             "field": "source0",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -223219,7 +223273,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local row broadcast source; only column zero supplies values"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
@@ -223233,7 +223287,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 0,
-          "role": "persistent Local row broadcast source; only column zero supplies values",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -223355,10 +223409,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -223368,8 +223436,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute source0[r,c] + BroadcastTile[r,0] at the selected element width.",
-        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TADD typed operation."
+        "For every valid destination element, compute source0[r,c] + BroadcastTile[r,BroadcastSlot] at the selected element width.",
+        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TADD typed operation.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -223391,7 +223460,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -223557,7 +223627,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -223631,7 +223701,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -223640,7 +223710,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -223666,7 +223736,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -223834,7 +223904,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -223908,7 +223978,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -223917,7 +223987,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -223943,7 +224013,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -224159,7 +224229,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -224233,7 +224303,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -224242,7 +224312,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -224268,7 +224338,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -224484,7 +224554,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -224558,7 +224628,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -224567,7 +224637,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -224593,7 +224663,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -224706,10 +224776,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -224874,6 +224958,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -224891,8 +224986,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a8ea1d5e54abed116d1d96e55a9da0eb648d9ccf291d1065dda8e73b456cf492",
-            "form_id": "pto0587-trowexpandadd-ba69f4ee41f8dc6f",
+            "fold_signature_sha256": "ceca50ce47f8daadd4c4af01fd3893ea5afc87b1cb637e9abed56a9ba3ab16f6",
+            "form_id": "pto0587-trowexpandadd-d5ac7f1c1d7e164b",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -225033,7 +225128,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -225058,7 +225153,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -225067,11 +225162,11 @@
           "spelling": "TROWEXPANDADD"
         }
       ],
-      "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDADD",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDADD, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -225100,8 +225195,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -225125,7 +225233,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -225143,7 +225251,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
@@ -225171,7 +225279,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -225293,10 +225401,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -225306,9 +225428,10 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute source0[r,c] / BroadcastTile[r,0] at the selected element width.",
+        "For every valid destination element, compute source0[r,c] / BroadcastTile[r,BroadcastSlot] at the selected element width.",
         "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TDIV typed operation.",
-        "A selected zero integer broadcast element is illegal before effects; floating positive and negative zero use the floating profile."
+        "A selected zero integer broadcast element is illegal before effects; floating positive and negative zero use the floating profile.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -225330,7 +225453,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -225496,7 +225620,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -225570,7 +225694,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -225579,7 +225703,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -225605,7 +225729,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -225773,7 +225897,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -225847,7 +225971,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -225856,7 +225980,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -225882,7 +226006,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -226098,7 +226222,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -226172,7 +226296,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -226181,7 +226305,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -226207,7 +226331,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -226423,7 +226547,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -226497,7 +226621,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -226506,7 +226630,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -226532,7 +226656,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -226645,10 +226769,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -226813,6 +226951,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -226830,8 +226979,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e57404f81f00501f573f9ddc211d3c15c0dd39b0f8f334b46cb5b868514d4384",
-            "form_id": "pto0587-trowexpanddiv-f28741b86ea4d13d",
+            "fold_signature_sha256": "e2b501739105b7db0cc6062dbea87c5f806d60896a9af46901d82aa046d6108e",
+            "form_id": "pto0587-trowexpanddiv-3e05d0121ca2ceab",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -226972,7 +227121,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -226997,7 +227146,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -227006,11 +227155,11 @@
           "spelling": "TROWEXPANDDIV"
         }
       ],
-      "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDDIV",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDDIV, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -227039,8 +227188,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -227064,7 +227226,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -227082,7 +227244,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
@@ -227110,7 +227272,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -227232,10 +227394,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -227244,7 +227420,8 @@
       ],
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-        "Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null."
+        "Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -227266,7 +227443,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -227432,7 +227610,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "7e63491837e09351e8bb30d231f1805c9b4a4150266dc27adac0334c486beec0",
+                "fold_signature_sha256": "fb5cdb4e67c6a64ab6c040e4e1f1109d77042ec8441626f77a8ea0b05b70988a",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -227506,7 +227684,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -227515,7 +227693,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -227541,7 +227719,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -227709,7 +227887,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "173d2c6df0f3ee7d6cfbf9aef2c51c2c115912af19f46f6ad3f042ae624aa057",
+                "fold_signature_sha256": "6b3ea43736aa2af41f5fcd6a90a3f9724d42bb9ccc66a601a8f98af18183ad67",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -227783,7 +227961,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -227792,7 +227970,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -227818,7 +227996,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228034,7 +228212,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "225e771129527a296259d87cf0e332c5ed67e07159c904948f1c166941d1f55b",
+                "fold_signature_sha256": "bfa78c7712366d0875a7da9ca7892eed6bdb47c4a60866d2514707cf09f30041",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -228108,7 +228286,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -228117,7 +228295,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -228143,7 +228321,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228359,7 +228537,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "78e61ef9ba51840e375d98eba19c390c9e33fb7f7e10bb6f7eff45f07df82eb4",
+                "fold_signature_sha256": "11278f87d4d7051c3320b5a5e0cca324474131ac480c2ab8566e89a2abf5081a",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -228433,7 +228611,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                    "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -228442,7 +228620,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -228468,7 +228646,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+                  "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -228581,10 +228759,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -228749,6 +228941,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -228766,8 +228969,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "331610c9446e8170f9f779d60978da1350cc605cd70a0858f96f32d580eccaf1",
-            "form_id": "pto0587-trowexpandexpdif-7da24333a853350b",
+            "fold_signature_sha256": "4c57fcebea1972dd5d7300b480a80fade0811ba54e58a88a431a4071728b3026",
+            "form_id": "pto0587-trowexpandexpdif-d836f85f82a963d6",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -228908,7 +229111,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -228933,7 +229136,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+              "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -228942,11 +229145,11 @@
           "spelling": "TROWEXPANDEXPDIF"
         }
       ],
-      "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDEXPDIF",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDEXPDIF, DataType",
-        "B.DATR Layout, DataType, PadValue (optional)",
+        "B.DATR Layout, DataType, RMode=BroadcastByteOffset, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -228976,8 +229179,21 @@
           "allowed_nonzero_fields": [
             "Layout",
             "DataType",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -229001,7 +229217,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -229019,7 +229235,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values"
+          "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
@@ -229047,7 +229263,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values",
+          "role": "persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -229169,10 +229385,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -229182,8 +229412,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute typed max(source0[r,c], BroadcastTile[r,0]) at the selected element width.",
-        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMAX typed operation."
+        "For every valid destination element, compute typed max(source0[r,c], BroadcastTile[r,BroadcastSlot]) at the selected element width.",
+        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMAX typed operation.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -229205,7 +229436,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -229371,7 +229603,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -229445,7 +229677,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -229454,7 +229686,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -229480,7 +229712,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -229648,7 +229880,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -229722,7 +229954,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -229731,7 +229963,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -229757,7 +229989,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -229973,7 +230205,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -230047,7 +230279,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -230056,7 +230288,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -230082,7 +230314,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -230298,7 +230530,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -230372,7 +230604,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -230381,7 +230613,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -230407,7 +230639,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -230520,10 +230752,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -230688,6 +230934,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -230705,8 +230962,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c00214d7b4fd028d8a8d04277241d972fd28b3f122ca963c115e4ce95d34d19b",
-            "form_id": "pto0587-trowexpandmax-e19f5cdce3813b13",
+            "fold_signature_sha256": "d529c4d8eb265e24dfb9fe25ba57e772e2022c901f4a963acda10a0f6abc8b30",
+            "form_id": "pto0587-trowexpandmax-afbac7bf60bd38b0",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -230847,7 +231104,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -230872,7 +231129,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -230881,11 +231138,11 @@
           "spelling": "TROWEXPANDMAX"
         }
       ],
-      "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDMAX",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDMAX, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -230914,8 +231171,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -230939,7 +231209,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -230957,7 +231227,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
@@ -230985,7 +231255,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -231107,10 +231377,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -231120,8 +231404,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute typed min(source0[r,c], BroadcastTile[r,0]) at the selected element width.",
-        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMIN typed operation."
+        "For every valid destination element, compute typed min(source0[r,c], BroadcastTile[r,BroadcastSlot]) at the selected element width.",
+        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMIN typed operation.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -231143,7 +231428,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -231309,7 +231595,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231383,7 +231669,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -231392,7 +231678,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -231418,7 +231704,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -231586,7 +231872,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231660,7 +231946,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -231669,7 +231955,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -231695,7 +231981,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -231911,7 +232197,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -231985,7 +232271,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -231994,7 +232280,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -232020,7 +232306,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -232236,7 +232522,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -232310,7 +232596,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -232319,7 +232605,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -232345,7 +232631,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -232458,10 +232744,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -232626,6 +232926,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -232643,8 +232954,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "3b942984e64928bb5d4d7c53fa46f99fff3ab5367330aab6cd93b293d5926cc3",
-            "form_id": "pto0587-trowexpandmin-0916151d11a7c212",
+            "fold_signature_sha256": "9df24b5d50f54ee66ccdce46122ec6e0990b2eaf237aee16947ee8749e3ca132",
+            "form_id": "pto0587-trowexpandmin-2a24a047e3b5803e",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -232785,7 +233096,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -232810,7 +233121,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -232819,11 +233130,11 @@
           "spelling": "TROWEXPANDMIN"
         }
       ],
-      "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDMIN",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDMIN, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -232852,8 +233163,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -232877,7 +233201,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -232895,7 +233219,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
@@ -232923,7 +233247,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -233045,10 +233369,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -233058,8 +233396,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute source0[r,c] * BroadcastTile[r,0] at the selected element width.",
-        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMUL typed operation."
+        "For every valid destination element, compute source0[r,c] * BroadcastTile[r,BroadcastSlot] at the selected element width.",
+        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TMUL typed operation.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -233081,7 +233420,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -233247,7 +233587,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233321,7 +233661,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233330,7 +233670,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -233356,7 +233696,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -233524,7 +233864,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233598,7 +233938,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233607,7 +233947,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -233633,7 +233973,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -233849,7 +234189,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -233923,7 +234263,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -233932,7 +234272,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -233958,7 +234298,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -234174,7 +234514,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -234248,7 +234588,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -234257,7 +234597,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -234283,7 +234623,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -234396,10 +234736,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -234564,6 +234918,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -234581,8 +234946,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "00e44278160da6e83f76655b88f7fa98a90914d98b7ed42c32c0c814b3345de3",
-            "form_id": "pto0587-trowexpandmul-48e0b9ce3f9b86f8",
+            "fold_signature_sha256": "ba56328492c0c898e25c54dae6774cf7bd39236f90891d8ee3c059524dffe94e",
+            "form_id": "pto0587-trowexpandmul-a2fb0bbdc7c6dfe3",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -234723,7 +235088,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -234748,7 +235113,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -234757,11 +235122,11 @@
           "spelling": "TROWEXPANDMUL"
         }
       ],
-      "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDMUL",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDMUL, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -234790,8 +235155,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -234815,7 +235193,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -234833,7 +235211,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
@@ -234861,7 +235239,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -234983,10 +235361,24 @@
           "condition": null,
           "configuration_kind": "attribute",
           "constraint": null,
+          "default": "0",
+          "field": "BroadcastByteOffset",
+          "optional": true,
+          "ordinal": 7,
+          "role": "bundle configuration field",
+          "size": null,
+          "syntax": "BroadcastByteOffset=0",
+          "value_style": "bare-value"
+        },
+        {
+          "binding_kind": "bundle-configuration",
+          "condition": null,
+          "configuration_kind": "attribute",
+          "constraint": null,
           "default": "AllPE",
           "field": "PEMask",
           "optional": true,
-          "ordinal": 7,
+          "ordinal": 8,
           "role": "bundle configuration field",
           "size": null,
           "syntax": "PEMask=AllPE",
@@ -234996,8 +235388,9 @@
       "defaults": [
         "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
         "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-        "For every valid destination element, compute source0[r,c] - BroadcastTile[r,0] at the selected element width.",
-        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TSUB typed operation."
+        "For every valid destination element, compute source0[r,c] - BroadcastTile[r,BroadcastSlot] at the selected element width.",
+        "Integer width, floating rounding, exceptional values, signed-zero behavior, and numeric status are exactly the corresponding TSUB typed operation.",
+        "For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection."
       ],
       "destinations": [
         {
@@ -235019,7 +235412,8 @@
       "exceptions": [
         "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.",
         "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
-        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
+        "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.",
+        "After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -235185,7 +235579,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "13a2db19770802ee1cf960dcb5f0c339cdf696d1d92758c175b651507207da11",
+                "fold_signature_sha256": "fb0bdcc7640b205d7eff2a12732643ed3701ef7954538231c24dc25476ef3950",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -235259,7 +235653,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -235268,7 +235662,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT,a0+0:2KB]",
               "sources": [
                 {
@@ -235294,7 +235688,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -235462,7 +235856,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b408190c4e0db2ba9b8635aeee6608256b149c2c6aad4e3866269c5752b27ded",
+                "fold_signature_sha256": "c6d9d5c3355c2da66a092027ab4dec5528be3c55ae70e691d80b06518ac78d94",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -235536,7 +235930,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -235545,7 +235939,7 @@
                 "structural_fault": null,
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T<8KB>[assemble=INIT_LAST,a0+0:2KB]",
               "sources": [
                 {
@@ -235571,7 +235965,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -235787,7 +236181,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "77e01bd97d41d5ba50eec1ac031d7bf514fa91850d8438eb18de64c5ac680efc",
+                "fold_signature_sha256": "c477efb169ca0206a150ddecbb6f08a0649492c1a2ddaf055ebb0ab028aa7a68",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -235861,7 +236255,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -235870,7 +236264,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=MIDDLE,a0+2048:2KB]",
               "sources": [
                 {
@@ -235896,7 +236290,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -236112,7 +236506,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "53b804f6a806ae5acff481d5d2cdaddeb11b6515cc8faf8660498f97bc7956a4",
+                "fold_signature_sha256": "51baf189f5bfbdd449d4ab97697efcfb9622332a609953a9c0db1693df904148",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -236186,7 +236580,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                    "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -236195,7 +236589,7 @@
                 "structural_fault": "Fault_BundleControl",
                 "writer_range": "RegSrc+uimm11:WriterSize"
               },
-              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
+              "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]",
               "representative_spelling": "->T#3[assemble=LAST,a0+4096:2KB]",
               "sources": [
                 {
@@ -236221,7 +236615,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+                  "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -236334,10 +236728,24 @@
               "condition": null,
               "configuration_kind": "attribute",
               "constraint": null,
+              "default": "0",
+              "field": "BroadcastByteOffset",
+              "optional": true,
+              "ordinal": 7,
+              "role": "bundle configuration field",
+              "size": null,
+              "syntax": "BroadcastByteOffset=0",
+              "value_style": "bare-value"
+            },
+            {
+              "binding_kind": "bundle-configuration",
+              "condition": null,
+              "configuration_kind": "attribute",
+              "constraint": null,
               "default": "AllPE",
               "field": "PEMask",
               "optional": true,
-              "ordinal": 7,
+              "ordinal": 8,
               "role": "bundle configuration field",
               "size": null,
               "syntax": "PEMask=AllPE",
@@ -236502,6 +236910,17 @@
                 ]
               },
               {
+                "field": "BroadcastByteOffset",
+                "syntax": "BroadcastByteOffset=0",
+                "targets": [
+                  {
+                    "command": "B.DATR",
+                    "group": null,
+                    "slot": "RMode"
+                  }
+                ]
+              },
+              {
                 "field": "PEMask",
                 "syntax": "PEMask=AllPE",
                 "targets": [
@@ -236519,8 +236938,8 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6beaa37f2bf92c2f8ca00db27a4e88deed5bbc593a1d12ca95cf615bc5ae6256",
-            "form_id": "pto0587-trowexpandsub-01ef08da0d82e6d0",
+            "fold_signature_sha256": "34e8ff46841faf6e21f846db89cfc4c44d0c570c5dffb532d6acba63e96c8d6b",
+            "form_id": "pto0587-trowexpandsub-5ff918de3bda08cc",
             "header": {
               "command": "BSTART.SFU",
               "family": "TEPL",
@@ -236661,7 +237080,7 @@
               }
             ]
           },
-          "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+          "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
           "sources": [
             {
               "binding_kind": "tile-source-binding",
@@ -236686,7 +237105,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+              "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -236695,11 +237114,11 @@
           "spelling": "TROWEXPANDSUB"
         }
       ],
-      "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
+      "macro_format": "TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>",
       "mnemonic": "TROWEXPANDSUB",
       "physical_bundle": [
         "BSTART.SFU TROWEXPANDSUB, DataType",
-        "B.DATR Layout, PadValue (optional)",
+        "B.DATR Layout, RMode=BroadcastByteOffset for CUBE_M16/M32, PadValue (optional)",
         "B.DIM LB0=ValidCol",
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
@@ -236728,8 +237147,21 @@
         "datr_contract": {
           "allowed_nonzero_fields": [
             "Layout",
-            "PadValueOrByteId"
+            "PadValueOrByteId",
+            "RMode"
           ],
+          "conditional_nonzero_fields": {
+            "RMode": {
+              "applies_when": [
+                "CUBE_M16",
+                "CUBE_M32"
+              ],
+              "default": 0,
+              "encoded_bits": "B.DATR[17:15]",
+              "otherwise": "RowMajor requires zero",
+              "semantic_name": "BroadcastByteOffset"
+            }
+          },
           "pad_union": "pad-value"
         },
         "engine": "SFU",
@@ -236753,7 +237185,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local row-broadcast source"
+            "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -236771,7 +237203,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view"
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view"
         }
       ],
       "source": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
@@ -236799,7 +237231,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent Local row broadcast source; only column zero supplies values through the BSTART operation view",
+          "role": "persistent Local row broadcast source; only the selected BroadcastSlot supplies values through the BSTART operation view",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null

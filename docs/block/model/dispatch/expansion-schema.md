@@ -175,7 +175,8 @@ begin
             TileExpansionBroadcastNonzero(
                 axis,
                 operation_sources.source0,
-                operation_sources.source1));
+                operation_sources.source1,
+                source_data_type));
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

@@ -505,6 +505,28 @@ EXECUTION_MASK_HELPER_CLASSIFICATION = (
     "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, "
     "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
 )
+# Issue #207 adds the selected-CUBE row-expansion byte-offset selector. Keep
+# these helpers under their own classification so the census does not attribute
+# their provenance to the separate ExecutionMask decision above.
+ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS = {
+    "TileExpansionBroadcastByteOffset": {
+        "before": [],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl", set())],
+    },
+    "TileExpansionBroadcastSelectorLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl",
+                   {"CUBE_M16", "CUBE_M32", "RowMajor"})],
+    },
+    "TileExpansionBroadcastSlot": {
+        "before": [],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl",
+                   {"RowMajor"})],
+    },
+}
+ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION = (
+    "Issue #207 selected-CUBE row-expansion byte-offset selector support"
+)
 # Issue #323 makes the generic Local M16/M32 one-physical-M-block invariant
 # authoritative and removes the reduction-local duplicate row-limit helper.
 # Keep these names explicit so the census records the owner change while
@@ -1947,6 +1969,39 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                  "before": old_defs, "after": new_defs,
                                  "owner_decision": EXECUTION_MASK_HELPER_CLASSIFICATION})
                 continue
+            if name in ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS:
+                spec = ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                valid = (old_shape == expected_old_shape and
+                         new_shape == expected_new_shape)
+                if not valid:
+                    errors.append(
+                        f"unauthorized Issue #207 row-expansion broadcast helper definition delta: {name}"
+                    )
+                    rows.append({"name": name, "classification": "UNCLASSIFIED",
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION})
+                else:
+                    rows.append({"name": name,
+                                 "classification": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
+                                 "before": old_defs, "after": new_defs,
+                                 "owner_decision": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION})
+                continue
             if allow_texpdif_changes and name in TEXPDIF_COMMON_HELPERS:
                 valid_change = False
                 if name == "TileExpandExpdifTypePairLegal":
@@ -2738,7 +2793,7 @@ def _real_relation_mutation_canaries() -> None:
 
 
 def _execution_mask_support_mutation_canaries() -> None:
-    """Keep the ExecutionMask helper exception finite and layout-closed."""
+    """Keep shared-helper exceptions finite and layout-closed."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
     baseline = _ref_texts(BASELINE_OBJECT, paths)
     candidate = _ref_texts("working-tree", paths)
@@ -2752,11 +2807,41 @@ def _execution_mask_support_mutation_canaries() -> None:
     }
     expected_classified = (set(EXECUTION_MASK_HELPER_DEFINITION_DELTAS) |
                            set(EXECUTION_MASK_HELPER_BODY_CHANGES))
-    if not result["pass"] or classified != expected_classified:
+    row_expansion_classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
+    }
+    expected_row_expansion_classified = set(
+        ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS
+    )
+    if (not result["pass"] or classified != expected_classified or
+            row_expansion_classified != expected_row_expansion_classified):
         raise AssertionError(
-            "ExecutionMask helper owner/layout classification is incomplete: "
+            "common-helper owner/layout classification is incomplete: "
             + "; ".join(result["errors"][:12])
         )
+
+    selector_path = "asl/tile/model/legality/reduction-and-expansion.asl"
+    selector_domain_line = "       tile.layout != TileLayout_CUBE_M32 then"
+    selector_domain_widened = (
+        "       tile.layout != TileLayout_CUBE_M32 &&\n"
+        "       tile.layout != TileLayout_CUBE_N8 then"
+    )
+    mutated = dict(candidate)
+    if selector_domain_line not in candidate.get(selector_path, ""):
+        raise AssertionError("row-expansion selector layout canary source is missing")
+    mutated[selector_path] = candidate[selector_path].replace(
+        selector_domain_line, selector_domain_widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-row-expansion-selector-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "unauthorized Issue #207 row-expansion broadcast helper definition delta: "
+        "TileExpansionBroadcastSelectorLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("row-expansion selector layout widening did not fail closed")
 
     state_path = "asl/tile/model/execution/execution-mask-state.asl"
     active_line = (
@@ -2935,7 +3020,7 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner and ExecutionMask helper/layout mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, and Issue #207 selector mutations rejected")
 
 
 def main() -> int:

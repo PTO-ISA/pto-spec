@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl`
 
-Exponentiate the SrcDataType difference using the selected row broadcast element.
+Exponentiate the source-type difference using a selected row-broadcast element.
 
 ## Normative identity {#PTO-INST-TILE-TROWEXPANDEXPDIF}
 
@@ -163,7 +163,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | --- | --- |
 | destination0 | new Local DstDataType destination |
 | source0 | persistent Local full-shape numeric source |
-| source1 | persistent Local row broadcast source interpreted through SrcDataType; only column zero supplies values |
+| source1 | persistent Local row broadcast source interpreted through SrcDataType; only the selected BroadcastSlot supplies values |
 
 ## Decode
 
@@ -180,7 +180,7 @@ end;
 
 ```asm
 BSTART.SFU TROWEXPANDEXPDIF, DataType
-B.DATR Layout, DataType, PadValue (optional)
+B.DATR Layout, DataType, RMode=BroadcastByteOffset, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -241,6 +241,7 @@ end;
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.
 - Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
+- For CUBE_M32 and CUBE_M16, B.DATR.RMode[2:0] is the unsigned BroadcastByteOffset 0..7, not a numeric rounding selector. Omitted B.DATR selects offset zero. The offset is interpreted using the source operation DataType and selects a logical slot within the first CELL of the bound broadcast Tile; B.SUBVIEW selects a CELL/range before this in-CELL selection.
 
 ## Legality
 
@@ -248,18 +249,20 @@ end;
 - BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.
 - Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
 - The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.
-- The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1; only BroadcastTile[r,0] supplies the row value, while later valid columns remain defined but are ignored.
+- The broadcast source has ValidRows equal to destination.ValidRows and ValidColumns >= 1. Without ExecutionMask its entire valid region remains required to be defined; with ExecutionMask, only the selected BroadcastTile[r,BroadcastSlot] for a row with an active destination coordinate must be defined. Other columns supply no broadcast value.
 - The full-shape source and destination have identical logical valid geometry and the selected layout; physical geometry is derived per layout.
-- All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.
-- Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
+- Without ExecutionMask, each source valid region remains fully defined. With ExecutionMask, only full-shape source coordinates consumed by active destinations and the selected broadcast element for each row with an active destination coordinate must be defined. Numeric encoding validation uses the source operation DataType for consumed full-shape elements and the selected broadcast element; unselected broadcast columns are not encoding-validated. Inactive rows contribute no source read, encoding validation, or numeric-status flags.
+- Layout, PadValueOrByteId, DataType, and operation-specific RMode are applicable as encoded by the selected layout; RMode means BroadcastByteOffset only for CUBE_M16/M32 and must be zero for RowMajor. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- For CUBE_M32/CUBE_M16, the source-operation-typed BroadcastSlot is BroadcastByteOffset DIV ElementBytes. The offset must be less than the 4-byte M32 or 8-byte M16 per-row CELL slice, aligned to ElementBytes, and select a slot below both TileCubeCellColumns(Layout, SourceOperationDataType) and BroadcastTile.ValidColumns. The selector addresses only the first CELL of the bound broadcast Tile; B.SUBVIEW selects a later CELL/range when needed. RowMajor requires RMode zero.
 
 ## State effects
 
-- For each destination [r,c], interpret source0[r,c] and BroadcastTile[r,0] as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then subtract and exponentiate at FP32; same-type pairs retain the existing sequence.
+- For each destination [r,c], interpret source0[r,c] and BroadcastTile[r,BroadcastSlot] as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then subtract and exponentiate at FP32; same-type pairs retain the existing sequence.
 - The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.
 - Publish the complete renamed destination atomically after every element succeeds.
+- For CUBE_M32/M16 row expansion, splat the source-operation-typed BroadcastTile[r,BroadcastSlot] selected by B.DATR.RMode; RowMajor continues to use BroadcastTile[r,BroadcastSlot].
 
 ## Memory effects and ordering
 
@@ -278,6 +281,7 @@ end;
 - A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType or EXPDIF pair, unsupported or mixed layout, undefined source element, mismatched source geometry, or invalid consumed arithmetic/EXPDIF operation-view encoding raises Fault_TileLegality before effects. Ignored extra broadcast elements remain defined but are not encoding-validated.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
+- After existing bundle and B.SUBVIEW preparation succeeds, an illegal CUBE byte offset, alignment, CELL slot, or valid-column selection raises Fault_TileLegality before source snapshot, destination allocation or publication, numeric status, or payload effects. PE_MASK=0000 keeps the strict no-effect path and skips this operation-specific selector check.
 
 ## Examples
 

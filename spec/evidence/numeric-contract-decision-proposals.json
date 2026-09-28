@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "ebe6e4de97b9d6f8ddea928c4a0f84e14390122b663e85e8497293e368e92c68",
+    "sha256": "102c0f791904279493324c3b6507e1a5e717e937f324c7071cc38d45b0339a51",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -41,7 +41,7 @@
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "1745ae73bf3931d6fcefc3e4aaffa7f0108521f3a297314044ec7ab9ec42ffc4",
+    "sha256": "4a8b8065e3ff5f5d0a58edbc0fc8a9b172c6314b5a5c0cc32142fbac8bf52fdf",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "bc78656e3a849f2a8b5b0bb6a075152d7e6bd84869f81dcfdf7cbad76e5931e4",
+    "sha256": "7bdab0bfbd420dcbfbb5b4d694e1f02a26dccbfcf6ddbc1367a4f717f3c9c81c",
     "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -172,7 +172,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "9e53b557adb9a2d4865278d97ddb79cf395de91f94dd75d0886b624bee377896",
+    "sha256": "b8f52d5e2993bc9efe8779055d40928b21095f0b8a4814b3ea59524f52127978",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
     "variation_point_count": 69,

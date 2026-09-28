@@ -2502,9 +2502,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2521,7 +2534,7 @@
         },
         {
           "field": "source0",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2558,9 +2571,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2581,7 +2607,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2619,9 +2645,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2642,7 +2681,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2680,9 +2719,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2703,7 +2755,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2741,9 +2793,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2764,7 +2829,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2802,9 +2867,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2825,7 +2903,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2863,9 +2941,22 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2886,7 +2977,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -2925,9 +3016,22 @@
         "allowed_nonzero_fields": [
           "Layout",
           "DataType",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "RMode"
         ],
-        "pad_union": "pad-value"
+        "pad_union": "pad-value",
+        "conditional_nonzero_fields": {
+          "RMode": {
+            "semantic_name": "BroadcastByteOffset",
+            "encoded_bits": "B.DATR[17:15]",
+            "applies_when": [
+              "CUBE_M16",
+              "CUBE_M32"
+            ],
+            "otherwise": "RowMajor requires zero",
+            "default": 0
+          }
+        }
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "ExecuteTileExpand",
@@ -2948,7 +3052,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent Local row-broadcast source"
+          "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
