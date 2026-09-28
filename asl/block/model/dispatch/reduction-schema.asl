@@ -47,6 +47,7 @@ begin
     if !TileOperationUsesClosedReductionSchema(operation) then
         return TRUE;
     end;
+    if _BundleExecutionMask.valid then return FALSE; end;
     if BundleTileBindingCount() != 1 ||
        BundleSharedBindingCount() != 0 ||
        _BundleScalarBindings[[0]].valid ||

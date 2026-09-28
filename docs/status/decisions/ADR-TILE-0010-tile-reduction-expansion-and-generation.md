@@ -225,6 +225,45 @@
         "PTO-TILE-TROWPROD",
         "PTO-TILE-TROWSUM"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "baseline": "8eb6e8af291ab5aaa21e394b1d404f691eb4863e",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/357",
+      "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWSUM-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWSUM"
+      ]
     }
   ],
   "resolves": [],
@@ -1286,3 +1325,20 @@ For this normative #356 amendment, release impact is required: the changed
 semantics must be included in a future release and that release must pass the
 exact-commit release gate. This APPLY selects no release identity and performs
 no exact-commit release validation, preparation, or publication.
+
+## Amendment — 2026-09-28 (Issue #357)
+
+This follow-on amendment resolves Local CUBE ExecutionMask behavior for the
+twelve row and column reductions. Reductions do not accept a Local CUBE
+ExecutionMask carrier or a model-only `_BundleExecutionMask.valid` state; both
+encoded mask streams and helper-injected mask state reject before effects.
+Without a mask, every valid source coordinate is defined and encoding-valid
+under the operation DataType and participates in the full fold. The shared
+carrier and expansion mask paths remain unchanged. `PE_MASK` is separate and
+retains its existing zero-participation no-op and nonzero participation rules.
+
+The operative pre-application candidate for this amendment is
+8eb6e8af291ab5aaa21e394b1d404f691eb4863e. The combined PR base remains
+7b8b9a7987c42e7d96a8ba36002505258e0b6d4c. Release impact remains required for
+the normative #356/#357 semantics: a future release must pass its exact-commit
+gate. This APPLY selects no release identity and performs no release work.

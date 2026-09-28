@@ -110,7 +110,11 @@ end;
 readonly func TileReductionSourceLegalAs(
     index: TileIndex, operation_type: TileDataType) => boolean
 begin
-    return _Tiles[[index]].data_type != TileDataType_RCPE6M2 &&
+    // Reductions scan every valid coordinate and do not support the shared
+    // Local CUBE ExecutionMask validation state. Keep this rejection in the
+    // reduction-only entry point so expansion retains its mask behavior.
+    return !_BundleExecutionMask.valid &&
+           _Tiles[[index]].data_type != TileDataType_RCPE6M2 &&
            TileReductionAndExpansionSourceLegalAs(index, operation_type);
 end;
 
