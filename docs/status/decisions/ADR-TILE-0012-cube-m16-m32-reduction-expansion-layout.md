@@ -430,3 +430,48 @@ This decision is limited to the affected PTO ASL/NDF owners and their required g
 Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) amends the expansion subset of this Local CUBE layout closure and supersedes the prior exact `[R,1]` / `[1,C]` broadcast geometry and exact backing-type requirement. A row broadcast may have multiple valid columns but uses only logical column zero; a column broadcast may have multiple valid rows but uses only logical row zero. Each expansion source may use an equal-width, non-packed backing carrier distinct from its selected source operation type, without changing generic CUBE geometry. The existing operation-specific row limits, same-layout rule, full-shape geometry, and EXPDIF pairs remain unchanged. Current semantics reside in the sixteen expansion ASL/NDF owners.
 
 中文：Issue [#338](https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897) 修订本 Local CUBE 布局闭合中的扩展子集。行广播可有多列有效数据，但仅使用逻辑第 0 列；列广播可有多行有效数据，但仅使用逻辑第 0 行。扩展源可使用与所选源操作类型不同但等宽、非 packed 的 backing 载体，不改变通用 CUBE 几何。既有操作特定行数限制、同布局规则、完整源几何和 EXPDIF 类型对保持不变。当前语义由十六个扩展 ASL/NDF 所有者定义。
+
+### 2026-09-28 accepted amendment (Issue #207): intra-CELL row-broadcast selection
+
+Issue [#207](https://github.com/PTO-ISA/pto-spec/issues/207#issuecomment-5863095386)
+amends the eight `TROWEXPAND*` operations against baseline
+`7b8b9a7987c42e7d96a8ba36002505258e0b6d4c`. The accepted decision uses
+the existing three-bit `B.DATR.RMode` carrier as an operation-specific
+`BroadcastByteOffset` for direct Local `CUBE_M16` and `CUBE_M32`. This lets one
+operation select a source element inside the first CELL of its bound row-broadcast
+operand. The earlier column-zero rule remains the default when the field is zero.
+
+The choice preserves the already accepted multi-CELL broadcast-source descriptor
+and CELL-range `B.SUBVIEW` rules: a later CELL is selected through `B.SUBVIEW`,
+then the byte offset selects a slot in that bound view's first CELL. An
+operation-specific attribute was chosen over a new operand, GPR selector, or
+generalized subview because the existing carrier has the required width and
+does not provide numeric rounding for this family. The selector is explicit in
+the architectural bundle and is interpreted using the source operation type.
+
+This is additive: existing legal binaries, RowMajor and column expansion,
+supported DataTypes and EXPDIF pairs, CUBE geometry, operation views, masks,
+numeric profiles, and atomic publication retain their meaning. The strict
+`PE_MASK=0000` no-effect path does not gain an offset fault. Existing
+`B.SUBVIEW` preparation and its fault priority precede row-expand offset
+legality. No packed-4/nibble selection, arbitrary swizzle, or cross-CELL byte
+selector is accepted. Focused evidence must cover width/layout boundaries,
+valid tails, subview composition and dual faults, masked source consumption,
+integer DIV, mixed EXPDIF, and offset-zero compatibility. This amendment has
+`release_impact=required`; current semantics belong to `PTO-B-DATR-FIELDS-001`,
+the eight `PTO-TROWEXPAND*-CONTRACT-001` clauses, and their shared ASL model
+owners.
+
+中文：Issue [#207](https://github.com/PTO-ISA/pto-spec/issues/207#issuecomment-5863095386)
+以提交 `7b8b9a7987c42e7d96a8ba36002505258e0b6d4c` 为基线，修订八条
+`TROWEXPAND*` 指令。在直接 Local `CUBE_M16`、`CUBE_M32` 布局中，既有三位
+`B.DATR.RMode` 字段按操作解释为 `BroadcastByteOffset`，选择绑定的行广播源
+首个 CELL 内的源操作类型元素。字段为零时保持原有第 0 列行为。多 CELL 源描述符
+仍合法；先由原有 `B.SUBVIEW` 选择后续 CELL，再由字节偏移选择该视图首个 CELL
+内的元素。采用既有属性字段，避免增加操作数、GPR 选择器或改变 Subview 的
+CELL 范围含义；该指令族原本不使用此字段进行数值舍入。原有合法二进制、
+RowMajor、列扩展、数据类型、EXPDIF 类型对、掩码和原子发布语义均保持不变。
+`PE_MASK=0000` 仍为严格无效果路径；Subview 准备故障仍先于偏移合法性检查。
+本决策不引入 packed-4 半字节选择、任意 swizzle 或跨 CELL 字节选择。
+所需可执行证据和当前规范所有者以对应 ASL/NDF 为准；本修订的发布影响为
+`required`。
