@@ -228,7 +228,7 @@
     },
     {
       "date": "2026-09-28",
-      "baseline": "8eb6e8af291ab5aaa21e394b1d404f691eb4863e",
+      "baseline": "7b8b9a7987c42e7d96a8ba36002505258e0b6d4c",
       "approvers": [
         "ckwllawliet"
       ],
@@ -1337,8 +1337,8 @@ under the operation DataType and participates in the full fold. The shared
 carrier and expansion mask paths remain unchanged. `PE_MASK` is separate and
 retains its existing zero-participation no-op and nonzero participation rules.
 
-The operative pre-application candidate for this amendment is
-8eb6e8af291ab5aaa21e394b1d404f691eb4863e. The combined PR base remains
-7b8b9a7987c42e7d96a8ba36002505258e0b6d4c. Release impact remains required for
-the normative #356/#357 semantics: a future release must pass its exact-commit
-gate. This APPLY selects no release identity and performs no release work.
+This amendment uses the frozen repository baseline
+7b8b9a7987c42e7d96a8ba36002505258e0b6d4c, as named by the #356/#357 issue
+handoffs. Release impact remains required for the normative #356/#357
+semantics: a future release must pass its exact-commit gate. This APPLY selects
+no release identity and performs no release work.

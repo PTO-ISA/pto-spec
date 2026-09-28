@@ -21754,7 +21754,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "d663e2162cc209ec14c791acce2b87eaa39ef72b508ad050f6268fd2729a2ab4",
+    "spec/evidence/adr-index.json": "1332434e4f0f7fd9113dedb3730f30d4068be159f849e43df1373c00b153cbb6",
     "spec/evidence/instruction-contract-closure.json": "8b77f0aacd949f945a941d709c38be5fa90755111d5371b1c7e61cc61649babc",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6fdc7c8ff961dbd270331b7b620c3c2d1c451b9e786d09d619f71164b027535b",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
