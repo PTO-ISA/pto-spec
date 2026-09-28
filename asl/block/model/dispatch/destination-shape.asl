@@ -178,7 +178,11 @@ begin
         BundleFPATREffectiveDataType(
             _BundleFixedPointAttributes.pre_quant_mode, accumulator_type)
     else selected_type;
-    let primary_output_type = if explicit_primary_type then
+    let primary_output_type = if reduction_operation then
+        if TileReductionOperationReturnsIndex(
+               decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1})
+        then TileDataType_U32 else selected_type
+    else if explicit_primary_type then
         primary_type
     else
         matrix_output_type;

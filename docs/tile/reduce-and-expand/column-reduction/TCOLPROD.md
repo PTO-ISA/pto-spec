@@ -107,7 +107,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local same-type numeric destination |
+| destination0 | new Local operation-type numeric destination |
 | source0 | persistent Local numeric source |
 
 ## Decode
@@ -185,16 +185,17 @@ end;
 
 - TCOLPROD is selected by the TEPL raw encoding carrier Mode 2 Function 19; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
-- The destination DataType equals the source DataType.
-- The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.
+- The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- The destination DataType equals the selected operation DataType.
+- The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Required source coordinates MUST be defined and encoding-valid under the operation DataType using the existing definedness and ExecutionMask policy. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.
 - The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback.
 
 ## State effects
 
 - For each valid column, compute a typed increasing-row left fold from one using TMUL.
-- Write the typed reduction value without widening integer arithmetic or reassociating the fold.
+- Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically.
 
 ## Memory effects and ordering

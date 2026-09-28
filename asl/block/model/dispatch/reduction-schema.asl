@@ -77,8 +77,7 @@ begin
            TileReductionAndExpansionLayoutSupported(
                CurrentBundleTileLayout()) &&
            source_tile.layout == CurrentBundleTileLayout() &&
-           TileReductionAndExpansionSourceLegal(source) &&
-           source_tile.data_type == data_type &&
+           TileReductionSourceLegalAs(source, data_type) &&
            source_tile.valid_rows > 0 &&
            source_tile.valid_columns > 0 &&
            SelectedBundleComparisonShapeMatches(source);

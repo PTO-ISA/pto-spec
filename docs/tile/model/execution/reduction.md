@@ -119,13 +119,16 @@ func ExecuteTileReduction(
     destination: TileIndex,
     source: TileIndex)
 begin
+    let source_tile = _Tiles[[source]];
+    let (operation_type_valid, operation_type) =
+        ResolveTileSelectedOperationType(source_tile.data_type);
+    assert operation_type_valid;
     assert TileOperandsLegal_ExecuteTileReduction(
         operation,
         axis,
         destination,
         source);
 
-    let source_tile = _Tiles[[source]];
     var result_tile = _Tiles[[destination]];
     var accumulated_flags = Zeros{5};
     let outer_count =
@@ -150,7 +153,7 @@ begin
             first_column as integer {0..65535});
         var accumulator = TileProfileReductionInitial(
             operation,
-            source_tile.data_type,
+            operation_type,
             TileReadLogicalElement(source_tile, first_element));
         var selected_index: integer {0..65535} = 0;
         let identity_reduction =
@@ -173,7 +176,7 @@ begin
                 let (next, selected, element_flags) =
                     TileReductionStepWithFlags(
                         operation,
-                        source_tile.data_type,
+                        operation_type,
                         accumulator,
                         TileReadLogicalElement(source_tile, element));
                 accumulator = next;

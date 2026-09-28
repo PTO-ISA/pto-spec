@@ -124,6 +124,13 @@ begin
     return TRUE;
 end;
 
+readonly func TileReductionSourceLegalAs(
+    index: TileIndex, operation_type: TileDataType) => boolean
+begin
+    return _Tiles[[index]].data_type != TileDataType_RCPE6M2 &&
+           TileReductionAndExpansionSourceLegalAs(index, operation_type);
+end;
+
 readonly func TileExpansionBroadcastElementsLegalAs(
     index: TileIndex, axis: TileAxis,
     operation_type: TileDataType, validate_encoding: boolean) => boolean
@@ -335,20 +342,26 @@ readonly func TileOperandsLegal_ExecuteTileReduction(
 begin
     if destination == source ||
        !TileReductionAndExpansionDescriptorLegal(destination) ||
-       !TileReductionAndExpansionSourceLegal(source) then
+       !TileReductionAndExpansionDescriptorLegal(source) then
         return FALSE;
     end;
 
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    let (operation_type_valid, operation_type) =
+        ResolveTileSelectedOperationType(source_tile.data_type);
+    if !operation_type_valid ||
+       !TileReductionSourceLegalAs(source, operation_type) then
+        return FALSE;
+    end;
     let index_reduction =
         operation == TileReduction_ARGMIN ||
         operation == TileReduction_ARGMAX;
     let source_type_legal =
         if index_reduction then
-            TileArgReductionSourceDataTypeSupported(source_tile.data_type)
+            TileArgReductionSourceDataTypeSupported(operation_type)
         else
-            TileVecArithmeticDataTypeSupported(source_tile.data_type);
+            TileVecArithmeticDataTypeSupported(operation_type);
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.layout != source_tile.layout ||
@@ -362,7 +375,7 @@ begin
         if destination_tile.data_type != TileDataType_U32 then
             return FALSE;
         end;
-    elsif destination_tile.data_type != source_tile.data_type then
+    elsif destination_tile.data_type != operation_type then
         return FALSE;
     end;
 
