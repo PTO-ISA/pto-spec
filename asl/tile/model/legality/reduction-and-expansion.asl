@@ -125,6 +125,12 @@ begin
         return FALSE;
     end;
     if axis == TileAxis_Row then
+        if !TileExpansionBroadcastSelectorLegal(
+               index, axis, operation_type) then
+            return FALSE;
+        end;
+        let broadcast_column = TileExpansionBroadcastSlot(
+            axis, tile.layout, operation_type);
         if _BundleExecutionMask.valid &&
            tile.valid_rows != _BundleExecutionMask.valid_rows then
             return FALSE;
@@ -142,11 +148,12 @@ begin
                 end;
             end;
             if consumed then
-                if !TileElementDefined(index, row as integer {0..65535}, 0) then
+                if !TileElementDefined(index,
+                       row as integer {0..65535}, broadcast_column) then
                     return FALSE;
                 end;
                 let element = TileLogicalLinearIndex(
-                    tile, row as integer {0..65535}, 0);
+                    tile, row as integer {0..65535}, broadcast_column);
                 if validate_encoding &&
                    !TileNumericEncodingValid(
                        operation_type,
@@ -199,8 +206,58 @@ begin
         index, axis, operation_type, TRUE);
 end;
 
+readonly func TileExpansionBroadcastByteOffset(axis: TileAxis)
+    => integer {0..7}
+begin
+    if axis == TileAxis_Row && BundleTileOperationSelected() then
+        return UInt(_BundleDataAttributes.rounding_mode)
+            as integer {0..7};
+    end;
+    return 0;
+end;
+
+readonly func TileExpansionBroadcastSlot(
+    axis: TileAxis, layout: TileLayout,
+    operation_type: TileDataType) => integer {0..7}
+begin
+    if axis != TileAxis_Row || layout == TileLayout_RowMajor then
+        return 0;
+    end;
+    let byte_offset = TileExpansionBroadcastByteOffset(axis);
+    let element_bytes = TileElementBytes(operation_type);
+    assert element_bytes == 1 || element_bytes == 2 ||
+           element_bytes == 4;
+    return (byte_offset DIV element_bytes) as integer {0..7};
+end;
+
+readonly func TileExpansionBroadcastSelectorLegal(
+    index: TileIndex, axis: TileAxis,
+    operation_type: TileDataType) => boolean
+begin
+    if axis != TileAxis_Row then return TRUE; end;
+    let tile = _Tiles[[index]];
+    let byte_offset = TileExpansionBroadcastByteOffset(axis);
+    if tile.layout == TileLayout_RowMajor then
+        return byte_offset == 0;
+    end;
+    if tile.layout != TileLayout_CUBE_M16 &&
+       tile.layout != TileLayout_CUBE_M32 then
+        return FALSE;
+    end;
+    let element_bytes = TileElementBytes(operation_type);
+    if (element_bytes != 1 && element_bytes != 2 && element_bytes != 4) ||
+       byte_offset >= (if tile.layout == TileLayout_CUBE_M32 then 4 else 8) ||
+       byte_offset MOD element_bytes != 0 then
+        return FALSE;
+    end;
+    let slot = (byte_offset DIV element_bytes) as integer {0..7};
+    return slot < TileCubeCellColumns(tile.layout, operation_type) &&
+           slot < tile.valid_columns;
+end;
+
 readonly func TileExpansionBroadcastNonzero(
-    axis: TileAxis, source: TileIndex, broadcast: TileIndex) => boolean
+    axis: TileAxis, source: TileIndex, broadcast: TileIndex,
+    operation_type: TileDataType) => boolean
 begin
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast]];
@@ -211,7 +268,10 @@ begin
                    source_tile.layout, row as integer {0..65535},
                    column as integer {0..65535}) then
                 let broadcast_row = if axis == TileAxis_Row then row else 0;
-                let broadcast_column = if axis == TileAxis_Row then 0 else column;
+                let broadcast_column = if axis == TileAxis_Row then
+                    TileExpansionBroadcastSlot(
+                        axis, broadcast_tile.layout, operation_type)
+                    else column;
                 let element = TileLogicalLinearIndex(broadcast_tile,
                     broadcast_row as integer {0..65535},
                     broadcast_column as integer {0..65535});
@@ -389,7 +449,7 @@ begin
     if operation == TileExpand_DIV &&
        TileDataTypeIsInteger(destination_operation_type) then
         return TileExpansionBroadcastNonzero(
-            axis, source, broadcast_source);
+            axis, source, broadcast_source, source_operation_type);
     end;
     return TRUE;
 end;

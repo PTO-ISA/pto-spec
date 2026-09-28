@@ -163,6 +163,7 @@ def source(path: str) -> dict[str, str]:
 def generate() -> dict[str, Any]:
     scalar = load(SCALAR_CATALOG)
     command = load(COMMAND_CATALOG)
+    tile = load(ROOT / "spec/catalog/tile-operations.json")
     inputs = load(DECISION_INPUTS)
     identities = load(IDENTITY_CATALOG)
 
@@ -209,6 +210,54 @@ def generate() -> dict[str, Any]:
         }
         for code, encoded_name, portable_name, rule in BUNDLE_RMODE
     ]
+
+    row_expand_names = {
+        "TROWEXPAND",
+        "TROWEXPANDADD",
+        "TROWEXPANDSUB",
+        "TROWEXPANDMUL",
+        "TROWEXPANDDIV",
+        "TROWEXPANDMAX",
+        "TROWEXPANDMIN",
+        "TROWEXPANDEXPDIF",
+    }
+    row_expand_overrides = []
+    for operation in tile["operations"]:
+        name = operation["name"]
+        if name not in row_expand_names:
+            continue
+        datr = operation["datr_contract"]
+        selector = datr.get("conditional_nonzero_fields", {}).get("RMode")
+        require("RMode" in datr["allowed_nonzero_fields"],
+                f"{name} does not project RMode as applicable")
+        require(selector is not None, f"{name} lacks an RMode semantic disposition")
+        require(
+            selector == {
+                "semantic_name": "BroadcastByteOffset",
+                "encoded_bits": "B.DATR[17:15]",
+                "applies_when": ["CUBE_M16", "CUBE_M32"],
+                "otherwise": "RowMajor requires zero",
+                "default": 0,
+            },
+            f"{name} RMode semantic disposition drift",
+        )
+        row_expand_overrides.append(
+            {
+                "operation": name,
+                "selector": operation["selector"],
+                "encoded_field": selector["encoded_bits"],
+                "semantic_name": selector["semantic_name"],
+                "applies_when": selector["applies_when"],
+                "otherwise": selector["otherwise"],
+                "default": selector["default"],
+                "numeric_rounding_effect": "none",
+                "status": "operation-specific-non-rounding-selector",
+            }
+        )
+    require(
+        {row["operation"] for row in row_expand_overrides} == row_expand_names,
+        "row-expansion RMode override coverage drift",
+    )
 
     active_rows = [
         {
@@ -270,6 +319,7 @@ def generate() -> dict[str, Any]:
         "scalar_active_rounding": active_rows,
         "scalar_fixed_conversion_overrides": fixed_rows,
         "bundle_rmode": command_rows,
+        "operation_specific_bundle_rmode_overrides": row_expand_overrides,
         "public_conversion_round_modes": [
             {
                 "public_ordinal": ordinal,
@@ -339,6 +389,9 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/block/model/state/*.asl"),
             *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
             *source_rows(ROOT, "asl/tile/model/numeric/*.asl"),
+            *source_rows(
+                ROOT, "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND*.asl"
+            ),
             *source_rows(ROOT, "asl/tile/model/execution/cube.asl"),
             source("spec/catalog/tile-operations.json"),
             source("spec/hardware-conformance-profile.json"),

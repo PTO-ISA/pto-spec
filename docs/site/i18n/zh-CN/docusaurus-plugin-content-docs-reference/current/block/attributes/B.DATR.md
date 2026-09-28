@@ -182,7 +182,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
 | b_datr_32_c161a042ff38 | DataType | 5 | 0–21, 24–28, 31 | none | 22–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
-| b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB | operation-defined default rounding |
+| b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32 | Operation-defined default; row-expansion CUBE_M16/M32 uses zero BroadcastByteOffset, and other operations keep their existing zero meaning. |
 | b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–11, 17–18, 20–31 | none | 2, 5, 7, 12–16, 19 | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
 | b_datr_32_c161a042ff38 | PredInv | 1 | 0–1 | none | none | ExecutionMask polarity control: zero preserves, one inverts the logical predicate | Normal ExecutionMask polarity; zero means do not invert. |
 | b_datr_32_c161a042ff38 | Zero | 1 | 0–1 | none | none | inactive ExecutionMask destination policy: zero MERGE, one ZERO | MERGE inactive-destination policy; zero preserves the prior destination coordinate. |
@@ -199,7 +199,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | DataType | concrete Tile element type or DTYPE_NONE inheritance sentinel |
 | PadValueOrByteId | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control |
 | CMode | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE |
-| RMode | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB |
+| RMode | operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32 |
 | Sat | saturation enable |
 | Canonicalize | TCVT private-format canonicalization enable |
 | PredInv | ExecutionMask polarity control: zero preserves, one inverts the logical predicate |
@@ -267,6 +267,7 @@ end;
 - An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.
 - For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint.
 - For an eligible Local CUBE_M16/CUBE_M32 operation with an explicit ExecutionMask, PredInv=0 selects normal mask polarity and Zero=0 selects MERGE for inactive destinations. Nonzero PredInv or Zero without an explicit eligible ExecutionMask is illegal.
+- For TROWEXPAND* with direct Local CUBE_M16 or CUBE_M32, RMode[2:0] defaults to zero and names BroadcastByteOffset; it is not numeric rounding in that operation context. Other operations retain their current RMode meaning.
 
 ## Legality
 
@@ -278,6 +279,7 @@ end;
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
 - Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.
 - PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one.
+- TROWEXPAND, TROWEXPANDADD, TROWEXPANDSUB, TROWEXPANDMUL, TROWEXPANDDIV, TROWEXPANDMAX, TROWEXPANDMIN, and TROWEXPANDEXPDIF interpret RMode[2:0] as BroadcastByteOffset only for CUBE_M16/CUBE_M32; RowMajor requires zero. Other operation-specific RMode rules are unchanged.
 
 ## State effects
 
