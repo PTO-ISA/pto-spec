@@ -3910,7 +3910,7 @@
       "mnemonic": "TROWEXPAND",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source0",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -3926,7 +3926,7 @@
       "mnemonic": "TROWEXPAND",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
       "role": "source0",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -3950,7 +3950,7 @@
       "mnemonic": "TROWEXPANDADD",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -3974,7 +3974,7 @@
       "mnemonic": "TROWEXPANDADD",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -3998,7 +3998,7 @@
       "mnemonic": "TROWEXPANDDIV",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4022,7 +4022,7 @@
       "mnemonic": "TROWEXPANDDIV",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -4046,7 +4046,7 @@
       "mnemonic": "TROWEXPANDEXPDIF",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4070,7 +4070,7 @@
       "mnemonic": "TROWEXPANDEXPDIF",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -4094,7 +4094,7 @@
       "mnemonic": "TROWEXPANDMAX",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4118,7 +4118,7 @@
       "mnemonic": "TROWEXPANDMAX",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -4142,7 +4142,7 @@
       "mnemonic": "TROWEXPANDMIN",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4166,7 +4166,7 @@
       "mnemonic": "TROWEXPANDMIN",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -4190,7 +4190,7 @@
       "mnemonic": "TROWEXPANDMUL",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4214,7 +4214,7 @@
       "mnemonic": "TROWEXPANDMUL",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -4238,7 +4238,7 @@
       "mnemonic": "TROWEXPANDSUB",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "direct",
@@ -4262,7 +4262,7 @@
       "mnemonic": "TROWEXPANDSUB",
       "owner": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
       "role": "source1",
-      "role_description": "persistent Local row-broadcast source"
+      "role_description": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
     },
     {
       "form": "bundle",
@@ -5065,7 +5065,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "55b40074d55125214c83316780498e7f39528ca5",
+  "candidate_head": "df4fc108054d08aec656db34e7141edfc3857ae1",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17328,7 +17328,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "753c8b69a2d376875b2d6b199bf104eb3d6de829b7a57904905f21136626cf40",
+      "after_sha256": "6f80e376e74bba8bca1a3afdf3e89b7e0e0918078cfbf2578aa62b4121cc2f36",
       "before_layouts": [],
       "before_sha256": "e35c9619ad9f94df420161c00ed39f0d2912cd07a98e4ac67510cc7a5d7d518d",
       "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
@@ -18827,11 +18827,30 @@
       "after": [
         {
           "calls": [
+            "BundleTileOperationSelected",
+            "UInt"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "65eb2785551f4eed4e31a717c02139bef760b6356261895337571d7324d31a27"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #207 selected-CUBE row-expansion byte-offset selector support",
+      "name": "TileExpansionBroadcastByteOffset",
+      "owner_decision": "Issue #207 selected-CUBE row-expansion byte-offset selector support"
+    },
+    {
+      "after": [
+        {
+          "calls": [
             "BundleExecutionMaskActiveAt",
             "BundleExecutionMaskActiveAt",
             "TileCarrierWidthCompatible",
             "TileElementDefined",
             "TileElementDefined",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileLogicalLinearIndex",
             "TileLogicalLinearIndex",
             "TileNumericEncodingValid",
@@ -18842,7 +18861,7 @@
           ],
           "layouts": [],
           "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-          "sha256": "4c337a26027e5bfd713c886e77eceec62208b53d2428ac9c9c7c1a01aafaa110"
+          "sha256": "5e245731406eff021340b4766b2497ba7daf180d72df7291eb3709c696c34238"
         }
       ],
       "before": [],
@@ -18874,18 +18893,60 @@
             "BundleExecutionMaskActiveAt",
             "IsZero",
             "TileElementDefined",
+            "TileExpansionBroadcastSlot",
             "TileLogicalLinearIndex",
             "TileReadLogicalElement"
           ],
           "layouts": [],
           "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-          "sha256": "06887620ece95b5a2bdd79043b164ec310229e4be89143bc97be436ad5c2e789"
+          "sha256": "0f3972c79f0444b9154a1cc12b06df11d561202cbfe0d13c869cf1cb03bdfee8"
         }
       ],
       "before": [],
       "classification": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)",
       "name": "TileExpansionBroadcastNonzero",
       "owner_decision": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileCubeCellColumns",
+            "TileElementBytes",
+            "TileExpansionBroadcastByteOffset"
+          ],
+          "layouts": [
+            "CUBE_M16",
+            "CUBE_M32",
+            "RowMajor"
+          ],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "5111532f9cd3b811626b9dd5d6f91e83e04497ba2b6cc333848772db1f82e49d"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #207 selected-CUBE row-expansion byte-offset selector support",
+      "name": "TileExpansionBroadcastSelectorLegal",
+      "owner_decision": "Issue #207 selected-CUBE row-expansion byte-offset selector support"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileElementBytes",
+            "TileExpansionBroadcastByteOffset"
+          ],
+          "layouts": [
+            "RowMajor"
+          ],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "a05846c860a5d4e2b4b1efb8e599eb94ad1cd9353b1f0471562bcbdd9fe677fa"
+        }
+      ],
+      "before": [],
+      "classification": "Issue #207 selected-CUBE row-expansion byte-offset selector support",
+      "name": "TileExpansionBroadcastSlot",
+      "owner_decision": "Issue #207 selected-CUBE row-expansion byte-offset selector support"
     },
     {
       "after": [
@@ -50190,6 +50251,7 @@
               "RecordNumericStatusFlags",
               "ResolveTileSelectedOperationType",
               "TileExpandValueWithTypesAndFlags",
+              "TileExpansionBroadcastSlot",
               "TileInfoWithLogicalElement",
               "TileInfoWithLogicalElement",
               "TileLogicalLinearIndex",
@@ -50206,7 +50268,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/expansion.asl",
-            "sha256": "753c8b69a2d376875b2d6b199bf104eb3d6de829b7a57904905f21136626cf40"
+            "sha256": "6f80e376e74bba8bca1a3afdf3e89b7e0e0918078cfbf2578aa62b4121cc2f36"
           }
         ],
         "ExecuteTileExpdif": [
@@ -52241,6 +52303,17 @@
             "sha256": "8ec2d39e6386d4300e2150382c86d54ccb60070018769486b4429878e35acec4"
           }
         ],
+        "TileExpansionBroadcastByteOffset": [
+          {
+            "calls": [
+              "BundleTileOperationSelected",
+              "UInt"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "65eb2785551f4eed4e31a717c02139bef760b6356261895337571d7324d31a27"
+          }
+        ],
         "TileExpansionBroadcastElementsLegalAs": [
           {
             "calls": [
@@ -52249,6 +52322,8 @@
               "TileCarrierWidthCompatible",
               "TileElementDefined",
               "TileElementDefined",
+              "TileExpansionBroadcastSelectorLegal",
+              "TileExpansionBroadcastSlot",
               "TileLogicalLinearIndex",
               "TileLogicalLinearIndex",
               "TileNumericEncodingValid",
@@ -52259,7 +52334,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "4c337a26027e5bfd713c886e77eceec62208b53d2428ac9c9c7c1a01aafaa110"
+            "sha256": "5e245731406eff021340b4766b2497ba7daf180d72df7291eb3709c696c34238"
           }
         ],
         "TileExpansionBroadcastLegalAs": [
@@ -52278,12 +52353,42 @@
               "BundleExecutionMaskActiveAt",
               "IsZero",
               "TileElementDefined",
+              "TileExpansionBroadcastSlot",
               "TileLogicalLinearIndex",
               "TileReadLogicalElement"
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "06887620ece95b5a2bdd79043b164ec310229e4be89143bc97be436ad5c2e789"
+            "sha256": "0f3972c79f0444b9154a1cc12b06df11d561202cbfe0d13c869cf1cb03bdfee8"
+          }
+        ],
+        "TileExpansionBroadcastSelectorLegal": [
+          {
+            "calls": [
+              "TileCubeCellColumns",
+              "TileElementBytes",
+              "TileExpansionBroadcastByteOffset"
+            ],
+            "layouts": [
+              "CUBE_M16",
+              "CUBE_M32",
+              "RowMajor"
+            ],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "5111532f9cd3b811626b9dd5d6f91e83e04497ba2b6cc333848772db1f82e49d"
+          }
+        ],
+        "TileExpansionBroadcastSlot": [
+          {
+            "calls": [
+              "TileElementBytes",
+              "TileExpansionBroadcastByteOffset"
+            ],
+            "layouts": [
+              "RowMajor"
+            ],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "a05846c860a5d4e2b4b1efb8e599eb94ad1cd9353b1f0471562bcbdd9fe677fa"
           }
         ],
         "TileExpansionOperationIsExponentialDifference": [
@@ -53725,7 +53830,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "8d8f02b94abc208466fdd3dd0d0711dafb4c0523fe1a74dbb42dc78f9f9b31ab"
+            "sha256": "8f869e87424e9472578133369490f585001c506484256264a29444896fd394e6"
           }
         ],
         "TileOperandsLegal_ExecuteTileExpdif": [
@@ -78176,9 +78281,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -78443,9 +78551,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -78913,9 +79024,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -79184,9 +79298,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -79658,9 +79775,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -79929,9 +80049,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -80403,9 +80526,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -80674,9 +80800,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -81148,9 +81277,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -81419,9 +81551,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -81893,9 +82028,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -82164,9 +82302,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -82638,9 +82779,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -82909,9 +83053,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -83383,9 +83530,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -83654,9 +83804,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -115784,9 +115937,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -115977,7 +116133,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -116051,9 +116207,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -116141,7 +116300,7 @@
             },
             {
               "field": "source0",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -116521,9 +116680,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -116718,7 +116880,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -116792,9 +116954,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -116886,7 +117051,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -117266,9 +117431,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -117463,7 +117631,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -117537,9 +117705,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -117631,7 +117802,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -118011,9 +118182,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -118208,7 +118382,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -118282,9 +118456,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -118376,7 +118553,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -118756,9 +118933,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -118953,7 +119133,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -119027,9 +119207,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -119121,7 +119304,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -119501,9 +119684,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -119698,7 +119884,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -119772,9 +119958,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -119866,7 +120055,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -120246,9 +120435,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -120443,7 +120635,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -120517,9 +120709,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -120611,7 +120806,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -120991,9 +121186,12 @@
             "TileExecutionMaskPredicateGPRResult",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpansionOperationIsExponentialDifference",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
@@ -121188,7 +121386,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
@@ -121262,9 +121460,12 @@
             "TileElementDefined",
             "TileExpandBinaryOperation",
             "TileExpandValueWithTypesAndFlags",
+            "TileExpansionBroadcastByteOffset",
             "TileExpansionBroadcastElementsLegalAs",
             "TileExpansionBroadcastLegalAs",
             "TileExpansionBroadcastNonzero",
+            "TileExpansionBroadcastSelectorLegal",
+            "TileExpansionBroadcastSlot",
             "TileExpdifTypePairLegal",
             "TileExpdifValueWithTypesAndFlags",
             "TileFixedUnaryValue",
@@ -121356,7 +121557,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local row-broadcast source"
+              "role": "persistent Local row-broadcast source; CUBE_M16/M32 select an operation-typed slot within the first bound CELL"
             }
           ],
           "roots": [
