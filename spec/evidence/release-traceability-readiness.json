@@ -19368,6 +19368,7 @@
         "ADR-TILE-0012"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
         "PTO-AVS-TILE-TROWEXPANDMAX-UNSIGNED-001"
       ]
     },
@@ -21711,7 +21712,7 @@
     "docs/tile/reduce-and-expand/column-reduction/TCOLMIN.md": "66d0cf06e42a9ae88be6378284c6dbd414a2e3315b349410552cb831b3bb8532",
     "docs/tile/reduce-and-expand/column-reduction/TCOLPROD.md": "4542ba2b439e454ed30993f4b9bb98d09fc567f50ec583279c66da2d9f2150ac",
     "docs/tile/reduce-and-expand/column-reduction/TCOLSUM.md": "90c6bfccf9be05301b8644dfab5294f7d78876b1fd87cc6592551ba25ce3bee1",
-    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "0803e2c7fb15f3905e3a7a67b473d8e55081840495d57df92681dfa212e2ac77",
+    "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md": "a771fca5f95057a04131f5cce4bc1199ce4052559d8c3237ee7d649081ec958e",
     "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.md": "b7b4d2d989cfd090a7969be2377df1c92460796ce53c1017ecc88078cbf1e8d8",
     "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.md": "60603f664f66b32024bb2fed5b7d434b02f526c356c8a529ecc22c7d60fd4929",
     "docs/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.md": "4cf22b5c35066fb658f22472a9558944a5ad9606048d3bec06efc9c741558f5c",
@@ -22340,6 +22341,7 @@
     "tests/asl/block/model/dispatch/expansion-schema/block-bound-trowexpanddiv-zero-001.asl": "0ffc7b830d316d17552fb39de3d05454b3b259796deed79c7833eeec22c7309e",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-cube-expansion-bundle-002.asl": "236925d6fd98d3eeb419ce9a00868605eed9124b0d30a4820a4f1f2dc05136f8",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-001.asl": "984f50c90ef4bab732071caf536db8d37cb180a10e2d8e6a619ae77509d70dce",
+    "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-encoding-001.asl": "d9a761a3ada5de4f6d63678e9e057edac9240c3b0a5d30533efc4312f1e88f9b",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-mask-001.asl": "d1c432d703592b37b41802a1116dbfeb00c7e42e225872c7f41f31e6da9dc267",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-negative-001.asl": "b0c316440ac19d13bf404d07326844688f9da0e330b63ee533544bbbdb9891b3",
     "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-positive-001.asl": "6e396f8b1c0102a0b7be4b370953bf11b6423e65b4bde0a75dfd86510b8f1f64",
@@ -25815,7 +25817,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1099,
     "status": "closed",
-    "test_count": 4064,
+    "test_count": 4065,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -43107,6 +43109,16 @@
         "PTO-TROWEXPAND-CONTRACT-001"
       ],
       "sha256": "984f50c90ef4bab732071caf536db8d37cb180a10e2d8e6a619ae77509d70dce",
+      "source": "asl/block/model/dispatch/expansion-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/expansion-schema/block-exec-expansion-schema-row-byte-offset-encoding-001.asl",
+      "requirements": [
+        "PTO-TROWEXPANDMAX-CONTRACT-001"
+      ],
+      "sha256": "d9a761a3ada5de4f6d63678e9e057edac9240c3b0a5d30533efc4312f1e88f9b",
       "source": "asl/block/model/dispatch/expansion-schema.asl"
     },
     {
@@ -71870,6 +71882,7 @@
         "PTO-AVS-BLOCK-EXPDIF-OPERATION-VIEW-R4-001",
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
@@ -71886,6 +71899,7 @@
         "PTO-AVS-BLOCK-MASK-AWARE-EXPANSION-DECODED-003",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA-STATIC-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-001",
+        "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-ENCODING-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-NEGATIVE-001",
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",

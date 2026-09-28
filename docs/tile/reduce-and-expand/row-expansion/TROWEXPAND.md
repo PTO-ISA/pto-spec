@@ -19,14 +19,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-purpose role=purpose -->
 ## What TROWEXPAND does
 
-`TROWEXPAND` broadcasts one-column values bit-for-bit across each valid row.
+`TROWEXPAND` broadcasts a selected in-cell row value bit-for-bit across each valid row.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-mechanism role=mechanism -->
 ## Operation mechanism
 
-The broadcast source has one valid column; its physical column extent is derived from the selected layout, and its row value is reused across every valid destination column.
+For a Local CUBE source, the selected slot is within the first bound CELL; `B.SUBVIEW` can select a later CELL first. Other columns do not supply the broadcast value.
 
-TROWEXPAND has no full-shape source Tile. Its only input Tile is the one-column broadcast source, which is snapshotted before bit-copy construction.
+TROWEXPAND has no full-shape source Tile. Its only input Tile persists and is snapshotted before bit-copy construction.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type

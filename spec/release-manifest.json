@@ -3666,15 +3666,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "01c3c8686b720e8c4dc5a5fff7e6c2440a933cedb7bd399a1afd07f1165f943d"
+      "sha256": "170d0f585b61974d10d43ac5504652f43c6db55c0a45085936c0581c9d2bd17d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "1739e1794a445d601a9d96eb0215f16858204e4d1f2e64e52bbc9dfce950e5de"
+      "sha256": "c19073a7f94abdaf9007ecd20b68632f09c2aa003d94e73e1e8a59e03838be16"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "cad6b20e6734dcdbbe52f4faaa77975bc4a390f26feb7391de5bce0bb1d285fc"
+      "sha256": "baec159a84c0debaeba3315e24aac03c360595c0f89c671021e620af93243559"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3724,7 +3724,7 @@
     },
     "tile_operations_total": 118
   },
-  "content_sha256": "a4bc9e4c338c6049f8587a9d9b7219a04708fa6437e124fcf3cf728178f4bc9b",
+  "content_sha256": "f4f0e25f6c23da8875e96bb422aed1a6db460a342b3de1eb259e01b80ffe1784",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -8141,7 +8141,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/reduce-and-expand/row-expansion/TROWEXPAND.md",
-      "sha256": "0803e2c7fb15f3905e3a7a67b473d8e55081840495d57df92681dfa212e2ac77"
+      "sha256": "a771fca5f95057a04131f5cce4bc1199ce4052559d8c3237ee7d649081ec958e"
     },
     {
       "kind": "generated-documentation",

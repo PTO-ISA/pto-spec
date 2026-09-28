@@ -19,14 +19,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-purpose role=purpose -->
 ## TROWEXPAND 的作用
 
-`TROWEXPAND` 在每个有效行上把单列值按位广播。
+`TROWEXPAND` 在每个有效行上把所选单元内的值按位广播。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-mechanism role=mechanism -->
 ## 操作机制
 
-广播源的有效列为一；物理列数由所选布局派生，其行值会复用于每个有效目标列。
+对于 Local CUBE 源，所选位置位于绑定 Tile 的首个 CELL 内；`B.SUBVIEW` 可先选取后续 CELL。其他列不提供广播值。
 
-TROWEXPAND 没有完整形状源 Tile。唯一输入 Tile 是单列广播源；它会在构造按位复制结果前完成快照。
+TROWEXPAND 没有完整形状源 Tile。唯一输入 Tile 会保持持久，并在构造按位复制结果前完成快照。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
