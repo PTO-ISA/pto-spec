@@ -18510,7 +18510,8 @@
         "asl/tile/model/execution/expansion.asl"
       ],
       "readiness_subjects": [
-        "ADR-TILE-0008"
+        "ADR-TILE-0008",
+        "ADR-TILE-0012"
       ],
       "tests": [
         "PTO-AVS-TILE-EXECUTION-MASK-EXPAND-001",
@@ -19979,7 +19980,7 @@
     "asl/arch/memory-model/ordering.asl": "772a4d85f78e7a22f52a7669d5d63b44397f148504e7a3e9f93e97be72d1a50d",
     "asl/arch/overview/architecture.asl": "e1cfad2c51711b1c9f434e57a3da8e68c184ccb6876de5ec02309ef20e52d3ee",
     "asl/arch/overview/encoding-ownership.asl": "c966dc5c893b35cf6ce25ec303839f60c68f52d90bf2f5bdd74b5de115ea9083",
-    "asl/arch/overview/instruction-classification.asl": "6e240c8d6f574bdf134d357a70ad78834344d296777dc8a0a42c748a29670873",
+    "asl/arch/overview/instruction-classification.asl": "c5101df271085e5fdbafdbe7ace1793f1958b4596c296900a2b58c2e9ad499bb",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
     "asl/arch/programming-model/execution-context.asl": "0910c43db8c372ba9bb7bf67ebe0d80e6daffa87dd0b2c3e42f7ec48b809044e",
     "asl/arch/programming-model/general-queue-management.asl": "cfabc9f02f3aa0e42e290059bf383640e3f0f5dc007423d2dec4e100138a1b20",
@@ -20884,7 +20885,7 @@
     "docs/arch/memory-model/ordering.md": "51475078a9a8251a63d9d032d017e87e62e51d18bed007305c9af39123d376bf",
     "docs/arch/overview/architecture.md": "fa7cd29e816e90003ab50d28b397e60d0577a868172a1769aba0519a0122300b",
     "docs/arch/overview/encoding-ownership.md": "3165aff5966c7232d47ec71045fa6d488616f56a20c132e001f6cc7cd07d8084",
-    "docs/arch/overview/instruction-classification.md": "aba68d51ee649c2dc64aa7282002d6ac81049a0b744596f782c85451417e98ef",
+    "docs/arch/overview/instruction-classification.md": "f44c82b64458c891f0a7e41c8557faae3da3e9d751d7388eca26872db36f83e7",
     "docs/arch/programming-model/core-pe-topology.md": "c48aedb26c403990acdeec4972d9a779bbda6bcc33d1e91b3fec453de4808fe1",
     "docs/arch/programming-model/execution-context.md": "662a0bb57bc9744864104147b17db4601bae47e0c93d07016058956f57f462a1",
     "docs/arch/programming-model/general-queue-management.md": "1d4385e157dad37e364133e906ffcad8533d784ceb5b6521a9757f3e45147b63",
@@ -21741,7 +21742,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "8afda6a3660a2d7be31b454ef3c33cc353f8cf1abc650d3a4840325dc5360fd7",
+    "spec/evidence/adr-index.json": "3d0a8ec7ab582103dd7f43b9c45d0ad223c923f57127e63d6ada0632ca866546",
     "spec/evidence/instruction-contract-closure.json": "18b8e3386c5770f57ff4bc5f403be7a6cedb71d87478fe4fa4ffb64f63b7c209",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6fdc7c8ff961dbd270331b7b620c3c2d1c451b9e786d09d619f71164b027535b",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",

@@ -618,6 +618,7 @@ DIMENSION_PHYSICAL_SLOTS = {
 
 DATR_PHYSICAL_SLOTS = {
     "BType": "DataType",
+    "BroadcastByteOffset": "RMode",
     "CMode": "CMode",
     "Canonicalize": "Canonicalize",
     "CubeLayout": "Layout",

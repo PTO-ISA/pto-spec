@@ -215,14 +215,14 @@ Destination metavariables likewise become physical binding operands. A Local des
 
 | TileOp | Engine | Canonical macro format |
 | --- | --- | --- |
-| `TROWEXPAND` | `SFU` | `TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
-| `TROWEXPANDADD` | `SFU` | `TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDDIV` | `SFU` | `TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDEXPDIF` | `SFU` | `TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDMAX` | `SFU` | `TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDMIN` | `SFU` | `TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDMUL` | `SFU` | `TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
-| `TROWEXPANDSUB` | `SFU` | `TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPAND` | `SFU` | `TROWEXPAND <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, ->DstTile<Size>` |
+| `TROWEXPANDADD` | `SFU` | `TROWEXPANDADD <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDDIV` | `SFU` | `TROWEXPANDDIV <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDEXPDIF` | `SFU` | `TROWEXPANDEXPDIF <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDMAX` | `SFU` | `TROWEXPANDMAX <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDMIN` | `SFU` | `TROWEXPANDMIN <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDMUL` | `SFU` | `TROWEXPANDMUL <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
+| `TROWEXPANDSUB` | `SFU` | `TROWEXPANDSUB <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, Layout?, PadValue?, BroadcastByteOffset=0, PEMask=AllPE>, SrcTile0, SrcTile1, ->DstTile<Size>` |
 
 ### reduce-and-expand/row-reduction
 

@@ -161,6 +161,42 @@ class TileMacroAssemblyTest(unittest.TestCase):
             },
         )
 
+    def test_row_expansion_broadcast_byte_offset_is_macro_reachable(self) -> None:
+        row_operations = (
+            "TROWEXPAND", "TROWEXPANDADD", "TROWEXPANDSUB",
+            "TROWEXPANDMUL", "TROWEXPANDDIV", "TROWEXPANDMAX",
+            "TROWEXPANDMIN", "TROWEXPANDEXPDIF",
+        )
+        for mnemonic in row_operations:
+            with self.subTest(mnemonic=mnemonic):
+                operation = self.by_name[mnemonic]
+                form = operation["forms"][0]
+                fields = {item["field"]: item for item in form["configuration"]}
+                binding = next(
+                    item for item in form["expansion"]["configuration_bindings"]
+                    if item["field"] == "BroadcastByteOffset"
+                )
+                self.assertIn("BroadcastByteOffset=0", form["macro_format"])
+                self.assertEqual(fields["BroadcastByteOffset"]["default"], "0")
+                self.assertEqual(
+                    binding["targets"],
+                    [{"command": "B.DATR", "group": None, "slot": "RMode"}],
+                )
+                self.assertTrue(
+                    form["expansion"]["fold"]["canonical_without_runtime_state"]
+                )
+                self.assertEqual(
+                    operation["physical_schema"]["datr_contract"]
+                    ["conditional_nonzero_fields"]["RMode"]["semantic_name"],
+                    "BroadcastByteOffset",
+                )
+
+        for mnemonic in ("TCOLEXPAND", "TCOLEXPANDADD", "TCOLEXPANDDIV"):
+            self.assertNotIn(
+                "BroadcastByteOffset",
+                self.by_name[mnemonic]["forms"][0]["macro_format"],
+            )
+
     def test_macro_formats_do_not_leak_physical_bundle_commands(self) -> None:
         forbidden = ("BSTART", "BSTOP", "B.I", ".reuse", "completion boundary")
         for operation in self.operations:
