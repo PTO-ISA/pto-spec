@@ -9,6 +9,8 @@ from scripts.layout_relation_census import (
     EXECUTION_MASK_HELPER_CLASSIFICATION,
     EXECUTION_MASK_HELPER_DEFINITION_DELTAS,
     INDEXED_TLSU,
+    ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
+    ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS,
     _complete_fixture_keys,
     _catalog_operand_rows,
     _census_texts,
@@ -72,6 +74,21 @@ class LayoutRelationCensusTest(unittest.TestCase):
                 {"before": [], "after": [(path, layouts)]},
             )
         _execution_mask_support_mutation_canaries()
+
+    def test_row_expansion_helper_allowlist_has_exact_issue_207_owner_and_layouts(self) -> None:
+        path = "asl/tile/model/legality/reduction-and-expansion.asl"
+        self.assertEqual(
+            ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS,
+            {
+                "TileExpansionBroadcastByteOffset": {
+                    "before": [], "after": [(path, set())]},
+                "TileExpansionBroadcastSelectorLegal": {
+                    "before": [], "after": [(path, {"CUBE_M16", "CUBE_M32", "RowMajor"})]},
+                "TileExpansionBroadcastSlot": {
+                    "before": [], "after": [(path, {"RowMajor"})]},
+            },
+        )
+        self.assertIn("Issue #207", ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION)
 
     def test_common_helper_layout_mutation_is_rejected_end_to_end(self) -> None:
         baseline = _fixture()
