@@ -18425,6 +18425,7 @@
         "PTO-AVS-TILE-TROWSUM-CUBE-M16-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001",
+        "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-DECODED-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-FAULTS-001",
         "PTO-AVS-TILE-TSEL-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TSEL-CROSS-CARRIER-ALIAS-001",
@@ -19507,6 +19508,7 @@
         "PTO-AVS-TILE-TROWSUM-CUBE-M16-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001",
+        "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-DECODED-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-FAULTS-001"
       ]
     },
@@ -21741,7 +21743,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "3dd4141dc426eecbd0a8b4f18ead370d04e149d12bff3553ec9082f09de53208",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "a862846beb9f8b47cc5e6937c8672ba90da8f0863dd07692a3e41e09e39a1948",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "933408f1c7edb34863590e419b5949cddb8fdab4df6ab0f2de099b17c2c8e88f",
-    "spec/evidence/adr-index.json": "7fe4108b5897353cad92e66c0bb8ec2a7009ea0f93146f8829ade9180b19563f",
+    "spec/evidence/adr-index.json": "026923d1f886b492e03189877bf9dcf64d3ab24f26a9b619890d3700ed56e87a",
     "spec/evidence/instruction-contract-closure.json": "2572e8d56daefb20e9f063ae48a93369b079b979c99fb404bbcc19955a93d8f1",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6fdc7c8ff961dbd270331b7b620c3c2d1c451b9e786d09d619f71164b027535b",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -25687,7 +25689,7 @@
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-exec-tcolargmax-cube-m32-operation-view-001.asl": "3a1c1f586ce82a7e5b2c8ccf056f523a30b7e865b9aa0e54cfd690f046ee1bc8",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-exec-tcolargmax-tie-001.asl": "252efc050d2025aabff689a7374380331c4c1935c7492dc59c3aa7372613047e",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX/tile-static-tcolargmax-contract-001.asl": "84fb5280c57fdebe63ba111f1dabfff8133d10139776f839e022cb9fd19a1828",
-    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-exec-tcolargmin-operation-view-001.asl": "7d55f0ae1839ee3cb2829f2dc7662d45522b03ae13dd25b284a35ae4a1702d79",
+    "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-exec-tcolargmin-operation-view-001.asl": "134adb655ecdc511d6067e3fe3009e01df5c53fdb5fef8bf818de773d413ce05",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-exec-tcolargmin-tie-001.asl": "326d757e1813a5679452f69474ca0acccb5e22d50a3816a52bb1fefe687e1dcd",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN/tile-static-tcolargmin-contract-001.asl": "f67b15fd420ecb2cb018c9ba355d4b81eae33f5448a1fb77663460c890fbc25b",
     "tests/asl/tile/reduce-and-expand/column-reduction/TCOLMAX/tile-bound-tcolmax-type-domain-002.asl": "f82d667994d8741937f8fbec45a22a4e5eced7d55b138bd52ae5ca7440ecf436",
@@ -25738,7 +25740,8 @@
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-exec-trowsum-operation-view-001.asl": "c6558bf687b50122d307962067434abf386c0f4aae92f6d733ef3f0d1da36565",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-exec-trowsum-u8-wrap-001.asl": "1de8ca6f5d902c828179037ea5e3d0a3691890e90b2578663e8cfb65118334bf",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-fault-trowsum-operation-view-001.asl": "05006fb9d60c2f343807ecb78ee2c9963c937cba7ce8ab3d24e1ecc51d52615b",
-    "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-fault-trowsum-operation-view-capacity-mask-001.asl": "406bac1e0fcc53301bb81f824f4b6a84292292aa6ad5c6a1d046a9670d1e664c",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-fault-trowsum-operation-view-capacity-mask-001.asl": "d9e9765220880dd255236b091efad8abf64f31ef84b3a9f216c5f86d5dff6793",
+    "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-fault-trowsum-operation-view-decoded-001.asl": "38638bc6c1bae105384dc548b3e943f7b866e3243069118b9cb3805630e5a3bc",
     "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-static-trowsum-contract-001.asl": "7a22f79731da796792148ec265fcd23e0691c13c45f9cd66c56e5859dc0a5d3b",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-type-domain-002.asl": "df64f5ca871157a8ab8d74f47a93cef8add7e72fd12842f6da915a6c89b88ba8",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-types-001.asl": "374ca0a01db1979c6a520f1f11acd6c493ad5c1e33a72a6ad3a96291c3dbbd6a",
@@ -25819,7 +25822,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1099,
     "status": "closed",
-    "test_count": 4067,
+    "test_count": 4068,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -62750,7 +62753,7 @@
         "PTO-TCOLARGMIN-CONTRACT-001",
         "PTO-TILE-CARRIER-REINTERPRETATION-001"
       ],
-      "sha256": "7d55f0ae1839ee3cb2829f2dc7662d45522b03ae13dd25b284a35ae4a1702d79",
+      "sha256": "134adb655ecdc511d6067e3fe3009e01df5c53fdb5fef8bf818de773d413ce05",
       "source": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl"
     },
     {
@@ -66108,7 +66111,18 @@
         "PTO-TROWSUM-CONTRACT-001",
         "PTO-TILE-CARRIER-REINTERPRETATION-001"
       ],
-      "sha256": "406bac1e0fcc53301bb81f824f4b6a84292292aa6ad5c6a1d046a9670d1e664c",
+      "sha256": "d9e9765220880dd255236b091efad8abf64f31ef84b3a9f216c5f86d5dff6793",
+      "source": "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-DECODED-FAULTS-001",
+      "kind": "fault",
+      "path": "tests/asl/tile/reduce-and-expand/row-reduction/TROWSUM/tile-fault-trowsum-operation-view-decoded-001.asl",
+      "requirements": [
+        "PTO-TROWSUM-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "38638bc6c1bae105384dc548b3e943f7b866e3243069118b9cb3805630e5a3bc",
       "source": "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
     },
     {
@@ -96113,6 +96127,7 @@
         "PTO-AVS-TILE-TROWSUM-CUBE-M16-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001",
+        "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-DECODED-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-U8-WRAP-001"
       ],
@@ -96122,6 +96137,7 @@
         "PTO-AVS-TILE-TROWSUM-CUBE-M16-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001",
+        "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-DECODED-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-FAULTS-001",
         "PTO-AVS-TILE-TROWSUM-STATIC-001",
         "PTO-AVS-TILE-TROWSUM-U8-WRAP-001"

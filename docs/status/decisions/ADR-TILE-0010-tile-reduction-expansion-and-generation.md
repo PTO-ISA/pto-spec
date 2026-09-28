@@ -233,7 +233,7 @@
   ],
   "superseded_by": [],
   "implementation_issue": null,
-  "release_impact": "not-required",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-097",
     "PRD-098",
@@ -1266,8 +1266,9 @@ silent one-column default an unacceptable ambiguity for a typed sequence
 generator. Before this amendment, a RowMajor `TCI` with omitted `LB0`
 executed with the effective default `ValidCol=1`.
 
-`release_impact: not-required` remains in force; this amendment does not
-select a release identity.
+For the #338 amendment, `release_impact: not-required` remains in force; it does
+not select a release identity. The later normative #356 amendment below sets
+the current ADR release impact to required.
 
 ## Amendment — 2026-09-28 (Issue #356)
 
@@ -1280,3 +1281,8 @@ amendment leaves each mnemonic's supported operation-type set, numerical
 behavior, mask policy, geometry, capacity, and publication rules in force.
 
 The operative baseline is 7b8b9a7987c42e7d96a8ba36002505258e0b6d4c.
+
+For this normative #356 amendment, release impact is required: the changed
+semantics must be included in a future release and that release must pass the
+exact-commit release gate. This APPLY selects no release identity and performs
+no exact-commit release validation, preparation, or publication.

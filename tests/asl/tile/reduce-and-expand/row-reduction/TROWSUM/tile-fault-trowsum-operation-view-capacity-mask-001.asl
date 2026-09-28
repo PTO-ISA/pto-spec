@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl","requirements":["PTO-TROWSUM-CONTRACT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"fault","summary":"A cross-type reduction rejects an undersized result and preserves the strict zero-PE-mask no-op.","pass_condition":"A BF16 output requiring ten rows faults allocation atomically when given a 128-byte TSize; PE_MASK zero ignores absent dimensions, invalid source identity, capacity, status, and allocation state.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/block/model/dispatch/tile-execution.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TROWSUM-OPERATION-VIEW-CAPACITY-MASK-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl","requirements":["PTO-TROWSUM-CONTRACT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"fault","summary":"A cross-type reduction rejects an undersized result and preserves the strict zero-PE-mask no-op.","pass_condition":"A BF16 output requiring ten rows faults allocation atomically when given a 128-byte TSize; decoded PE_MASK zero ignores absent dimensions and invalid source identity without reading or changing configured source state, capacity, status, or destination allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/block/model/dispatch/tile-execution.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
 pure func TrowsumCapacityOperationViewStart(data_type: TileDataType) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0xc2019181;
@@ -48,6 +48,14 @@ begin
     assert _Tiles[[1]].columns == source_before.columns;
 
     ResetProfileState();
+    ConfigureTile(1, 128, 16, 4, 1, 2,
+        TileDataType_U16, TileLayout_RowMajor);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x4000);
+    let no_op_source_before = _Tiles[[1]];
+    let no_op_raw00 = ReadTileElement(1, 0, 0);
+    let no_op_raw01 = ReadTileElement(1, 0, 1);
+    let no_op_capacity = CoreTileCapacityInUse();
     let no_op_start = ExecuteCommandInstruction(
         TrowsumCapacityOperationViewStart(TileDataType_BF16), 32);
     assert no_op_start == CommandExecution_Executed;
@@ -62,7 +70,20 @@ begin
     assert no_op_completed;
     assert _LastFault == Fault_None;
     assert NumericStatusFlags() == no_op_status;
+    assert CoreTileCapacityInUse() == no_op_capacity;
     assert !_Tiles[[0]].allocated;
+    assert _Tiles[[1]].allocated == no_op_source_before.allocated;
+    assert _Tiles[[1]].data_type == no_op_source_before.data_type;
+    assert _Tiles[[1]].capacity_bytes == no_op_source_before.capacity_bytes;
+    assert _Tiles[[1]].rows == no_op_source_before.rows;
+    assert _Tiles[[1]].columns == no_op_source_before.columns;
+    assert _Tiles[[1]].valid_rows == no_op_source_before.valid_rows;
+    assert _Tiles[[1]].valid_columns == no_op_source_before.valid_columns;
+    assert _Tiles[[1]].layout == no_op_source_before.layout;
+    assert _Tiles[[1]].contents_defined ==
+        no_op_source_before.contents_defined;
+    assert ReadTileElement(1, 0, 0) == no_op_raw00;
+    assert ReadTileElement(1, 0, 1) == no_op_raw01;
     assert SelectedBundleTileMaskIsZero();
     return 0;
 end;

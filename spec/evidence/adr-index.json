@@ -11184,7 +11184,7 @@
       ],
       "path": "docs/status/decisions/ADR-TILE-0010-tile-reduction-expansion-and-generation.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,
