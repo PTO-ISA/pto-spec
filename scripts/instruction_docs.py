@@ -125,7 +125,11 @@ class DocRecord:
 
     @property
     def requires_bilingual_reader_guide(self) -> bool:
-        return self.surface == "arch" or self.mnemonic is not None
+        return (
+            self.surface == "arch"
+            or self.mnemonic is not None
+            or self.classification[:1] == ("model",)
+        )
 
     @property
     def zh_cn_markdown_path(self) -> Path:

@@ -109,10 +109,8 @@ asl/**/*.asl
 - Plotly/WebGL is not loaded on every documentation route and is not used for
   encoding bitfields or small diagrams when accessible HTML, CSS, or SVG is
   better.
-- Every active mnemonic and Architecture unit requires reviewed English and
-  Chinese reader guides. Internal non-mnemonic Scalar/Block/Tile model units may
-  retain the explicit English fallback until separately promoted into the target
-  set.
+- Every active mnemonic, Architecture unit, and Scalar/Block/Tile model unit
+  requires reviewed English and Chinese reader guides.
 - The retired MkDocs site is not retained as an active alternate manual. Git
   history and redirects preserve navigation without publishing a stale second
   contract.

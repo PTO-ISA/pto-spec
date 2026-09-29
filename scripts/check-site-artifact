@@ -170,7 +170,11 @@ def expected_reader_projection(
     unit_id = str(unit["id"])
     surface = str(unit["surface"])
     documentation = str(unit["documentation"])
-    target = surface == "arch" or unit["mnemonic"] is not None
+    target = (
+        surface == "arch"
+        or unit["mnemonic"] is not None
+        or list(unit.get("classification", []))[:1] == ["model"]
+    )
     english_status = "pending"
     english_guide_sha256: str | None = None
     if target:

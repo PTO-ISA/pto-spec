@@ -680,8 +680,11 @@ def target_units(traceability: pathlib.Path) -> list[dict]:
     payload = json.loads(traceability.read_text(encoding="utf-8"))
     units = [
         unit for unit in payload["units"]
-        if unit.get("surface") == "arch"
-        or (unit.get("mnemonic") is not None and unit.get("surface") in SURFACES)
+        if unit.get("surface") in SURFACES and (
+            unit.get("surface") == "arch"
+            or unit.get("mnemonic") is not None
+            or list(unit.get("classification", []))[:1] == ["model"]
+        )
     ]
     return sorted(units, key=lambda item: item["id"])
 
@@ -694,7 +697,9 @@ def pending_unit_shard(unit: dict) -> dict:
         "mnemonic": unit["mnemonic"],
         "surface": unit["surface"],
         "page_contract": (
-            "architecture-reader-v1" if unit["surface"] == "arch" else "mnemonic-reader-v1"
+            "architecture-reader-v1"
+            if unit["surface"] == "arch" or unit["mnemonic"] is None
+            else "mnemonic-reader-v1"
         ),
         "status": "pending",
         "owner": {

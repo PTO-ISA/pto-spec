@@ -70,8 +70,7 @@ def current_units() -> dict[str, dict]:
     traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
     return {
         unit["id"]: unit for unit in traceability["units"]
-        if unit.get("surface") == "arch"
-        or (unit.get("mnemonic") is not None and unit.get("surface") in CHECK.SURFACES)
+        if CHECK.is_reader_guide_target(unit)
     }
 
 
@@ -89,6 +88,9 @@ def id_suffix(shard: dict) -> str:
         match = re.fullmatch(r"PTO-READER-NODE-(.+)-(\d{3})", node["node_id"])
         if match:
             return match.group(1)
+    if shard["status"] == "pending":
+        # A first guide has no earlier IDs; derive them from the unit identity.
+        return shard["unit_id"].removeprefix("PTO-")
     raise RebindError(f"{shard['unit_id']}: cannot derive the existing node ID suffix")
 
 
@@ -128,6 +130,13 @@ def rebuild_unit_shard(unit: dict, shard: dict) -> tuple[dict, str]:
     previous_references = [claim["owner_reference"] for claim in shard["atomic_claims"]]
     fallback_reference = default_owner_reference(shard)
     rebuilt = copy.deepcopy(shard)
+    if rebuilt["status"] == "pending":
+        rebuilt["status"] = "complete"
+        rebuilt["migration"].update({
+            "mapping_status": "current-owner-rewrite",
+            "mapping_basis": "current-owner-only",
+            "copyright_disposition": "current-owner-rewrite",
+        })
     rebuilt["presentation_blocks"] = blocks
     rebuilt["reader_roles"] = [block["role"] for block in blocks]
     rebuilt["node_dispositions"] = []
