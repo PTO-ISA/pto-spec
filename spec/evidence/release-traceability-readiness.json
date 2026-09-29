@@ -21020,7 +21020,7 @@
     "docs/block/model/dispatch/comparison-schema.md": "10d92a2735c74e6b7b484e0309e4ec709c0b155a0befb213947965c067aa4515",
     "docs/block/model/dispatch/cube-accumulator-routing.md": "5d9b47919bc5dff5faf58162741a30e5d45b1a98b208fd3ccbabc656f8efeadc",
     "docs/block/model/dispatch/cube-destination.md": "7b9370a83fb6cc2cc775e1603e7d6c9d67e231431ef4f0d72a808359ef323955",
-    "docs/block/model/dispatch/cube-tmatmul.md": "955a3b9c1f2c6cbfc1a416eb3342ca89c7db52d45b56c4f23efede661a158495",
+    "docs/block/model/dispatch/cube-tmatmul.md": "0a247e025df2d5eccb46592b2aa444094ebf7b47f6b5bfbf6adf087b1f4c999f",
     "docs/block/model/dispatch/decode.md": "adb7dff139eb190dbe64d003b48758d624a8c733b3c7b6fbb444fa32fa1b1ab3",
     "docs/block/model/dispatch/descriptor-legality.md": "d761f72b7ea13b1a89a27b4bd638755f00c4cb74c8e7dabf68d28a92c53e46a3",
     "docs/block/model/dispatch/destination-auxiliary.md": "51b689b09eeb182810afe39671af6578672f8d64fc0266997eb59c3757aef438",

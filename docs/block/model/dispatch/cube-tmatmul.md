@@ -59,10 +59,10 @@ This unit does not compute the matrix product; `TMATMULShared` and `TMATMULMXSha
 This example illustrates the current ASL owner and does not replace the normative operation.
 
 ```text
-TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#1, T#2, T#3, ->T<1KB>
+TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#3, T#2, T#1, ->T<1KB>
 ```
 
-All sources are Local, so the bundle is not cooperative. Source ordinal 0 is the accumulator `T#1`, ordinal 1 is the left matrix `T#2`, and ordinal 2 is the right matrix `T#3`. The left type is `FP16`, and with no `B.DATR` the right type is also `FP16`, so the result type is `FP32`.
+All sources are Local, so the bundle is not cooperative. Source ordinal 0 is the accumulator `T#3`, ordinal 1 is the left matrix `T#2`, and ordinal 2 is the right matrix `T#1`. The accumulator is not `T#1`, because its selector would equal the `->T` destination hand, which the accumulator alias check rejects. The left type is `FP16`, and with no `B.DATR` the right type is also `FP16`, so the result type is `FP32`.
 
 Now suppose a cooperative `TMATMUL` with a Shared right group and group M of 40. Each PE takes 16 rows. PE0 owns 16 rows, PE1 owns 16, PE2 owns 8, and PE3 owns 0. PE3 passes stages 1 to 4 and then stops at stage 5.
 
