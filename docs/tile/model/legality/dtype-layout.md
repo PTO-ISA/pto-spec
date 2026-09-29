@@ -50,10 +50,20 @@ end;
 // backing carrier as the selected source operation DataType when widths match.
 // Arithmetic/EXPDIF validate under that operation type; COPY uses raw bits.
 // Expansion sources are not retagged and no numeric conversion occurs.
-// An active bundle with no resolvable operation type MUST reject rather than
-// substituting the source backing type. Direct semantic wrappers use
+// The twelve TROW and TCOL reduction instructions also interpret each
+// persistent numeric source backing through the selected BSTART operation
+// DataType when the unchanged TileCarrierWidthCompatible relation admits it.
+// Every valid source coordinate is defined and encoding-valid under the
+// operation type, and every coordinate participates in the full reduction.
+// Local CUBE ExecutionMask is unsupported for reductions; an encoded carrier
+// or model-injected mask state rejects before effects. Reduction identities,
+// numeric steps, comparisons, and status use the operation type. RCPE6M2 is
+// forbidden as a reduction backing, and sources are not retagged or converted.
+// An active bundle with no resolvable BSTART operation type MUST reject rather
+// than substituting the source backing type. Direct semantic wrappers use
 // deterministic operation-specific fallbacks: TCMP left backing, TCMPS source
-// backing, and TSEL/TSELS destination backing.
+// backing, TSEL/TSELS destination backing, and reductions' source backing only
+// when no Local CUBE ExecutionMask state is valid.
 // NDF-END: PTO-TILE-CARRIER-REINTERPRETATION-001
 pure func TileCarrierWidthCompatible(
     stored_type: TileDataType, operation_type: TileDataType) => boolean

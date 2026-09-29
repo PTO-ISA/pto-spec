@@ -47,6 +47,7 @@ begin
     if !TileOperationUsesClosedReductionSchema(operation) then
         return TRUE;
     end;
+    if _BundleExecutionMask.valid then return FALSE; end;
     if BundleTileBindingCount() != 1 ||
        BundleSharedBindingCount() != 0 ||
        _BundleScalarBindings[[0]].valid ||
@@ -77,8 +78,7 @@ begin
            TileReductionAndExpansionLayoutSupported(
                CurrentBundleTileLayout()) &&
            source_tile.layout == CurrentBundleTileLayout() &&
-           TileReductionAndExpansionSourceLegal(source) &&
-           source_tile.data_type == data_type &&
+           TileReductionSourceLegalAs(source, data_type) &&
            source_tile.valid_rows > 0 &&
            source_tile.valid_columns > 0 &&
            SelectedBundleComparisonShapeMatches(source);

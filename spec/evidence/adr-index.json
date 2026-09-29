@@ -10935,6 +10935,7 @@
         "PTO-B-IOT-STREAM-001",
         "PTO-CUBE-CELL-TRANSPORT-001",
         "PTO-TCI-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
         "PTO-TCOLARGMAX-CONTRACT-001",
         "PTO-TCOLARGMIN-CONTRACT-001",
         "PTO-TCOLEXPAND-CONTRACT-001",
@@ -10975,8 +10976,10 @@
         "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
         "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
         "PTO-TILE-MODEL-EXECUTION-GENERATION",
         "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
@@ -11089,6 +11092,87 @@
           "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
           "date": "2026-09-24",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/338#issuecomment-5806376897"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TCOLARGMAX-CONTRACT-001",
+            "PTO-TCOLARGMIN-CONTRACT-001",
+            "PTO-TCOLMAX-CONTRACT-001",
+            "PTO-TCOLMIN-CONTRACT-001",
+            "PTO-TCOLPROD-CONTRACT-001",
+            "PTO-TCOLSUM-CONTRACT-001",
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-TROWARGMAX-CONTRACT-001",
+            "PTO-TROWARGMIN-CONTRACT-001",
+            "PTO-TROWMAX-CONTRACT-001",
+            "PTO-TROWMIN-CONTRACT-001",
+            "PTO-TROWPROD-CONTRACT-001",
+            "PTO-TROWSUM-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+            "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-TCOLARGMAX",
+            "PTO-TILE-TCOLARGMIN",
+            "PTO-TILE-TCOLMAX",
+            "PTO-TILE-TCOLMIN",
+            "PTO-TILE-TCOLPROD",
+            "PTO-TILE-TCOLSUM",
+            "PTO-TILE-TROWARGMAX",
+            "PTO-TILE-TROWARGMIN",
+            "PTO-TILE-TROWMAX",
+            "PTO-TILE-TROWMIN",
+            "PTO-TILE-TROWPROD",
+            "PTO-TILE-TROWSUM"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "7b8b9a7987c42e7d96a8ba36002505258e0b6d4c",
+          "date": "2026-09-28",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/356"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-TCOLARGMAX-CONTRACT-001",
+            "PTO-TCOLARGMIN-CONTRACT-001",
+            "PTO-TCOLMAX-CONTRACT-001",
+            "PTO-TCOLMIN-CONTRACT-001",
+            "PTO-TCOLPROD-CONTRACT-001",
+            "PTO-TCOLSUM-CONTRACT-001",
+            "PTO-TROWARGMAX-CONTRACT-001",
+            "PTO-TROWARGMIN-CONTRACT-001",
+            "PTO-TROWMAX-CONTRACT-001",
+            "PTO-TROWMIN-CONTRACT-001",
+            "PTO-TROWPROD-CONTRACT-001",
+            "PTO-TROWSUM-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-TCOLARGMAX",
+            "PTO-TILE-TCOLARGMIN",
+            "PTO-TILE-TCOLMAX",
+            "PTO-TILE-TCOLMIN",
+            "PTO-TILE-TCOLPROD",
+            "PTO-TILE-TCOLSUM",
+            "PTO-TILE-TROWARGMAX",
+            "PTO-TILE-TROWARGMIN",
+            "PTO-TILE-TROWMAX",
+            "PTO-TILE-TROWMIN",
+            "PTO-TILE-TROWPROD",
+            "PTO-TILE-TROWSUM"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "7b8b9a7987c42e7d96a8ba36002505258e0b6d4c",
+          "date": "2026-09-28",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/357"
         }
       ],
       "approvers": [
@@ -11139,7 +11223,7 @@
       ],
       "path": "docs/status/decisions/ADR-TILE-0010-tile-reduction-expansion-and-generation.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,

@@ -26,6 +26,7 @@
     "PTO-B-IOT-STREAM-001",
     "PTO-CUBE-CELL-TRANSPORT-001",
     "PTO-TCI-CONTRACT-001",
+    "PTO-TILE-CARRIER-REINTERPRETATION-001",
     "PTO-TCOLARGMAX-CONTRACT-001",
     "PTO-TCOLARGMIN-CONTRACT-001",
     "PTO-TCOLEXPAND-CONTRACT-001",
@@ -66,8 +67,10 @@
     "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
     "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+    "PTO-TILE-MODEL-EXECUTION-REDUCTION",
     "PTO-TILE-MODEL-EXECUTION-GENERATION",
     "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
@@ -180,6 +183,87 @@
         "PTO-TILE-MODEL-EXECUTION-EXPANSION",
         "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA"
       ]
+    },
+    {
+      "date": "2026-09-28",
+      "baseline": "7b8b9a7987c42e7d96a8ba36002505258e0b6d4c",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/356",
+      "affected_ndf": [
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWSUM-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWSUM"
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "baseline": "7b8b9a7987c42e7d96a8ba36002505258e0b6d4c",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/357",
+      "affected_ndf": [
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-TCOLARGMAX-CONTRACT-001",
+        "PTO-TCOLARGMIN-CONTRACT-001",
+        "PTO-TCOLMAX-CONTRACT-001",
+        "PTO-TCOLMIN-CONTRACT-001",
+        "PTO-TCOLPROD-CONTRACT-001",
+        "PTO-TCOLSUM-CONTRACT-001",
+        "PTO-TROWARGMAX-CONTRACT-001",
+        "PTO-TROWARGMIN-CONTRACT-001",
+        "PTO-TROWMAX-CONTRACT-001",
+        "PTO-TROWMIN-CONTRACT-001",
+        "PTO-TROWPROD-CONTRACT-001",
+        "PTO-TROWSUM-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-TCOLARGMAX",
+        "PTO-TILE-TCOLARGMIN",
+        "PTO-TILE-TCOLMAX",
+        "PTO-TILE-TCOLMIN",
+        "PTO-TILE-TCOLPROD",
+        "PTO-TILE-TCOLSUM",
+        "PTO-TILE-TROWARGMAX",
+        "PTO-TILE-TROWARGMIN",
+        "PTO-TILE-TROWMAX",
+        "PTO-TILE-TROWMIN",
+        "PTO-TILE-TROWPROD",
+        "PTO-TILE-TROWSUM"
+      ]
     }
   ],
   "resolves": [],
@@ -188,7 +272,7 @@
   ],
   "superseded_by": [],
   "implementation_issue": null,
-  "release_impact": "not-required",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-097",
     "PRD-098",
@@ -1221,5 +1305,40 @@ silent one-column default an unacceptable ambiguity for a typed sequence
 generator. Before this amendment, a RowMajor `TCI` with omitted `LB0`
 executed with the effective default `ValidCol=1`.
 
-`release_impact: not-required` remains in force; this amendment does not
-select a release identity.
+For the #338 amendment, `release_impact: not-required` remains in force; it does
+not select a release identity. The later normative #356 amendment below sets
+the current ADR release impact to required.
+
+## Amendment — 2026-09-28 (Issue #356)
+
+This scoped amendment updates the source interpretation and ordinary result
+DataType for the twelve row and column reductions named in the accepted NDF
+owners above. Their current contracts own the operation-typed validation and
+execution rules. The existing carrier-width relation is unchanged; RCPE6M2
+is excluded as a reduction source backing. ARG results remain U32. The
+amendment leaves each mnemonic's supported operation-type set, numerical
+behavior, mask policy, geometry, capacity, and publication rules in force.
+
+The operative baseline is 7b8b9a7987c42e7d96a8ba36002505258e0b6d4c.
+
+For this normative #356 amendment, release impact is required: the changed
+semantics must be included in a future release and that release must pass the
+exact-commit release gate. This APPLY selects no release identity and performs
+no exact-commit release validation, preparation, or publication.
+
+## Amendment — 2026-09-28 (Issue #357)
+
+This follow-on amendment resolves Local CUBE ExecutionMask behavior for the
+twelve row and column reductions. Reductions do not accept a Local CUBE
+ExecutionMask carrier or a model-only `_BundleExecutionMask.valid` state; both
+encoded mask streams and helper-injected mask state reject before effects.
+Without a mask, every valid source coordinate is defined and encoding-valid
+under the operation DataType and participates in the full fold. The shared
+carrier and expansion mask paths remain unchanged. `PE_MASK` is separate and
+retains its existing zero-participation no-op and nonzero participation rules.
+
+This amendment uses the frozen repository baseline
+7b8b9a7987c42e7d96a8ba36002505258e0b6d4c, as named by the #356/#357 issue
+handoffs. Release impact remains required for the normative #356/#357
+semantics: a future release must pass its exact-commit gate. This APPLY selects
+no release identity and performs no release work.

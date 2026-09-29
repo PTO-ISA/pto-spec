@@ -1686,7 +1686,7 @@
       "mnemonic": "TCOLMAX",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -1702,7 +1702,7 @@
       "mnemonic": "TCOLMAX",
       "owner": "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -1718,7 +1718,7 @@
       "mnemonic": "TCOLMIN",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -1734,7 +1734,7 @@
       "mnemonic": "TCOLMIN",
       "owner": "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -1750,7 +1750,7 @@
       "mnemonic": "TCOLPROD",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -1766,7 +1766,7 @@
       "mnemonic": "TCOLPROD",
       "owner": "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -1782,7 +1782,7 @@
       "mnemonic": "TCOLSUM",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -1798,7 +1798,7 @@
       "mnemonic": "TCOLSUM",
       "owner": "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -4270,7 +4270,7 @@
       "mnemonic": "TROWMAX",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -4286,7 +4286,7 @@
       "mnemonic": "TROWMAX",
       "owner": "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -4302,7 +4302,7 @@
       "mnemonic": "TROWMIN",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -4318,7 +4318,7 @@
       "mnemonic": "TROWMIN",
       "owner": "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -4334,7 +4334,7 @@
       "mnemonic": "TROWPROD",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -4350,7 +4350,7 @@
       "mnemonic": "TROWPROD",
       "owner": "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -4366,7 +4366,7 @@
       "mnemonic": "TROWSUM",
       "owner": "asl/block/execution/BSTART.SFU.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "bundle",
@@ -4382,7 +4382,7 @@
       "mnemonic": "TROWSUM",
       "owner": "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl",
       "role": "destination0",
-      "role_description": "new Local same-type numeric destination"
+      "role_description": "new Local operation-type numeric destination"
     },
     {
       "form": "direct",
@@ -5065,7 +5065,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "4be3c0b61cf72dc02b99a4446d81af1fd4022fe6",
+  "candidate_head": "d103b24c6eab28ed5e7b6f8e5699c570ee92931f",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17378,6 +17378,116 @@
       "path": "asl/tile/model/execution/elementwise.asl"
     },
     {
+      "after_callers": [
+        [
+          "InstructionContractExecute_TCOLARGMAX",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLARGMIN",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLMAX",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLMIN",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLPROD",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLSUM",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWARGMAX",
+          "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWARGMIN",
+          "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWMAX",
+          "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWMIN",
+          "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWPROD",
+          "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWSUM",
+          "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
+        ]
+      ],
+      "after_layouts": [],
+      "after_sha256": "cbe5a0cddad3725a6b6105506da2a2d27c1d7757dc8ace8f6c7c681d03bad04f",
+      "before_callers": [
+        [
+          "InstructionContractExecute_TCOLARGMAX",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLARGMIN",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLMAX",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLMIN",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLPROD",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl"
+        ],
+        [
+          "InstructionContractExecute_TCOLSUM",
+          "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWARGMAX",
+          "asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWARGMIN",
+          "asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWMAX",
+          "asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWMIN",
+          "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWPROD",
+          "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl"
+        ],
+        [
+          "InstructionContractExecute_TROWSUM",
+          "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl"
+        ]
+      ],
+      "before_layouts": [],
+      "before_sha256": "9bf35c4370003639c4573b269598ca4dfff41f4b059b13ae94bfe9ef98e93a43",
+      "classification": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)",
+      "name": "ExecuteTileReduction",
+      "owner_decision": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)",
+      "path": "asl/tile/model/execution/reduction.asl"
+    },
+    {
       "after_layouts": [],
       "after_sha256": "1a5f3b62fc96d7afddc1ba51aaa74e96fea879d33f23dca5dc5a1dbeca93dfa9",
       "before_layouts": [],
@@ -17834,7 +17944,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "a088754f2e1f546207e123a17cf83155188000211b5f6394261720a38aeb7abf",
+      "after_sha256": "c5a68adeb78baba66ece3d4fbae5c4b2c6a6b71fdf1247da6ff6d675119f3347",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32"
@@ -17903,6 +18013,7 @@
       "owner_decision": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
     },
     {
+      "additional_callers": [],
       "after": [
         {
           "calls": [
@@ -17938,6 +18049,7 @@
       "owner_decision": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
     },
     {
+      "additional_callers": [],
       "after": [
         {
           "calls": [
@@ -18758,6 +18870,7 @@
       "owner_decision": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
     },
     {
+      "additional_callers": [],
       "after": [
         {
           "calls": [
@@ -19904,19 +20017,53 @@
       "path": "asl/tile/model/legality/reduction-and-expansion.asl"
     },
     {
-      "after_layouts": [
-        "RowMajor"
+      "after": [],
+      "after_callers": [],
+      "before": [
+        {
+          "calls": [
+            "TileLogicalLinearIndex",
+            "TileNumericEncodingValid",
+            "TileReadLogicalElement",
+            "TileReductionAndExpansionSourceContentsDefined",
+            "TileSourceEncodingsValid"
+          ],
+          "layouts": [
+            "RowMajor"
+          ],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "4251dc9ed1056a1e413e95b081a48f66b43270a336af0610ccb88f96aff1d1a0"
+        }
       ],
-      "after_sha256": "18ee8e43fa53efeac91dad5c23b400e9381e72192595e4e62a54f5572a3b66da",
-      "before_layouts": [
-        "RowMajor"
+      "before_callers": [
+        [
+          "SelectedBundleClosedExpansionSchemaLegal",
+          "asl/block/model/dispatch/expansion-schema.asl"
+        ],
+        [
+          "SelectedBundleClosedReductionSchemaLegal",
+          "asl/block/model/dispatch/reduction-schema.asl"
+        ],
+        [
+          "TileOperandsLegal_ExecuteTileExpand",
+          "asl/tile/model/legality/reduction-and-expansion.asl"
+        ],
+        [
+          "TileOperandsLegal_ExecuteTileReduction",
+          "asl/tile/model/legality/reduction-and-expansion.asl"
+        ]
       ],
-      "before_sha256": "4251dc9ed1056a1e413e95b081a48f66b43270a336af0610ccb88f96aff1d1a0",
-      "classification": "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)",
+      "classification": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)",
       "name": "TileReductionAndExpansionSourceLegal",
-      "path": "asl/tile/model/legality/reduction-and-expansion.asl"
+      "owner_decision": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)"
     },
     {
+      "additional_callers": [
+        [
+          "TileReductionSourceLegalAs",
+          "asl/tile/model/legality/reduction-and-expansion.asl"
+        ]
+      ],
       "after": [
         {
           "calls": [
@@ -19935,7 +20082,7 @@
       "before": [],
       "classification": "Issue #338 frozen r4 contract-scoped pack/unpack and expansion layout closure",
       "name": "TileReductionAndExpansionSourceLegalAs",
-      "owner_decision": "Issue #338 r4; ADR-TILE-0008/ADR-TILE-0010/ADR-TILE-0012; the 16 PTO-TROWEXPAND-/PTO-TCOLEXPAND-CONTRACT-001 NDF clauses"
+      "owner_decision": "Issue #338 r4 expansion source validation; Issue #356/#357 adds only the reduction-specific TileReductionSourceLegalAs caller (ADR-TILE-0010 amendment)"
     },
     {
       "after": [],
@@ -19949,6 +20096,33 @@
       ],
       "classification": "CUBE reduction physical-geometry decoupling (ADR-CUBE-0004/ADR-TILE-0012 2026-09-15 amendments, Issue #311)",
       "name": "TileReductionSourceCapacityLegal"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "TileReductionAndExpansionSourceLegalAs"
+          ],
+          "layouts": [],
+          "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+          "sha256": "bda89bf9ba1f55341e88d9dad84de69d71d8c00e37c8c0f7cf37428829d7f7f6"
+        }
+      ],
+      "after_callers": [
+        [
+          "SelectedBundleClosedReductionSchemaLegal",
+          "asl/block/model/dispatch/reduction-schema.asl"
+        ],
+        [
+          "TileOperandsLegal_ExecuteTileReduction",
+          "asl/tile/model/legality/reduction-and-expansion.asl"
+        ]
+      ],
+      "before": [],
+      "before_callers": [],
+      "classification": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)",
+      "name": "TileReductionSourceLegalAs",
+      "owner_decision": "Issue #356/#357 reduction operation-typed source validation and Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)"
     },
     {
       "after_layouts": [],
@@ -50149,6 +50323,7 @@
               "CurrentBundlePadValue",
               "NaturalToWord",
               "RecordNumericStatusFlags",
+              "ResolveTileSelectedOperationType",
               "TileInfoWithLogicalElement",
               "TileInfoWithLogicalElement",
               "TileLogicalLinearIndex",
@@ -50161,11 +50336,12 @@
               "TileReductionStepWithFlags",
               "TileWithPadding",
               "TileWithValidRegionDefined",
+              "let",
               "let"
             ],
             "layouts": [],
             "path": "asl/tile/model/execution/reduction.asl",
-            "sha256": "9bf35c4370003639c4573b269598ca4dfff41f4b059b13ae94bfe9ef98e93a43"
+            "sha256": "cbe5a0cddad3725a6b6105506da2a2d27c1d7757dc8ace8f6c7c681d03bad04f"
           }
         ],
         "ExecuteTileScalar": [
@@ -50909,6 +51085,7 @@
               "TileOperationOfIndex",
               "TileOperationUsesClosedReductionSchema",
               "TileOperationUsesClosedRowReductionSchema",
+              "TileReductionOperationReturnsIndex",
               "UInt",
               "let"
             ],
@@ -50917,7 +51094,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/destination-shape.asl",
-            "sha256": "a088754f2e1f546207e123a17cf83155188000211b5f6394261720a38aeb7abf"
+            "sha256": "c5a68adeb78baba66ece3d4fbae5c4b2c6a6b71fdf1247da6ff6d675119f3347"
           }
         ],
         "TileA9DataTypeSupported": [
@@ -53690,18 +53867,21 @@
             "calls": [
               "DerivedTileRows",
               "DerivedTileRows",
+              "ResolveTileSelectedOperationType",
               "TileArgReductionSourceDataTypeSupported",
               "TileCubeStorageColumns",
               "TileCubeStorageRows",
               "TileReductionAndExpansionDescriptorLegal",
-              "TileReductionAndExpansionSourceLegal",
-              "TileVecArithmeticDataTypeSupported"
+              "TileReductionAndExpansionDescriptorLegal",
+              "TileReductionSourceLegalAs",
+              "TileVecArithmeticDataTypeSupported",
+              "let"
             ],
             "layouts": [
               "RowMajor"
             ],
             "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "2d04f540f8a39dab2c361cdfb10530c549b79b5b92d77f393d709d48cd9f515b"
+            "sha256": "39d4a1dcae601c101a33018d4c60d5a1e6987aa4df1f6b0ba2f8ad1e590820ff"
           }
         ],
         "TileOperandsLegal_ExecuteTileScalar": [
@@ -55243,23 +55423,6 @@
             "sha256": "ca3756f4717e2b8e9b13f379fc07e274b32f734e8a676ebb47f1545f1145e1f7"
           }
         ],
-        "TileReductionAndExpansionSourceLegal": [
-          {
-            "calls": [
-              "BundleExecutionMaskActiveAt",
-              "TileLogicalLinearIndex",
-              "TileNumericEncodingValid",
-              "TileReadLogicalElement",
-              "TileReductionAndExpansionSourceContentsDefined",
-              "TileSourceEncodingsValid"
-            ],
-            "layouts": [
-              "RowMajor"
-            ],
-            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
-            "sha256": "18ee8e43fa53efeac91dad5c23b400e9381e72192595e4e62a54f5572a3b66da"
-          }
-        ],
         "TileReductionAndExpansionSourceLegalAs": [
           {
             "calls": [
@@ -55301,6 +55464,16 @@
             "layouts": [],
             "path": "asl/block/model/dispatch/reduction-schema.asl",
             "sha256": "12a0d1c520cdc2c3fe5bed37e2c48a7756a54e1a4f1e4587cecba726eba9e7de"
+          }
+        ],
+        "TileReductionSourceLegalAs": [
+          {
+            "calls": [
+              "TileReductionAndExpansionSourceLegalAs"
+            ],
+            "layouts": [],
+            "path": "asl/tile/model/legality/reduction-and-expansion.asl",
+            "sha256": "bda89bf9ba1f55341e88d9dad84de69d71d8c00e37c8c0f7cf37428829d7f7f6"
           }
         ],
         "TileReductionStepWithFlags": [
@@ -76855,10 +77028,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -76867,7 +77041,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -76940,6 +77113,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -77004,14 +77178,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -77546,10 +77719,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -77558,7 +77732,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -77631,6 +77804,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -77695,14 +77869,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -84237,10 +84410,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -84249,7 +84423,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -84276,7 +84449,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -84322,6 +84495,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -84386,14 +84560,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -84415,7 +84588,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -84928,10 +85101,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -84940,7 +85114,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -84967,7 +85140,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -85013,6 +85186,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -85077,14 +85251,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -85106,7 +85279,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -85619,10 +85792,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -85631,7 +85805,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -85658,7 +85831,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -85704,6 +85877,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -85768,14 +85942,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -85797,7 +85970,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -86310,10 +86483,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -86322,7 +86496,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -86349,7 +86522,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -86395,6 +86568,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -86459,14 +86633,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -86488,7 +86661,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -114511,10 +114684,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -114523,7 +114697,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -114596,6 +114769,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -114660,14 +114834,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -115202,10 +115375,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -115214,7 +115388,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -115287,6 +115460,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -115351,14 +115525,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -121893,10 +122066,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -121905,7 +122079,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -121932,7 +122105,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -121978,6 +122151,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -122042,14 +122216,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -122071,7 +122244,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -122584,10 +122757,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -122596,7 +122770,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -122623,7 +122796,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -122669,6 +122842,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -122733,14 +122907,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -122762,7 +122935,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -123275,10 +123448,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -123287,7 +123461,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -123314,7 +123487,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -123360,6 +123533,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -123424,14 +123598,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -123453,7 +123626,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -123966,10 +124139,11 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
             "TileReductionOperationReturnsIndex",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileRegularTLSUDataTypeSupported",
             "TileSelectDataTypeSupported",
@@ -123978,7 +124152,6 @@
             "TileSizeCodeBytes",
             "TileSizeCodeIsLegal",
             "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageBytes",
             "TileStorageFitsCapacity",
             "TileStorageIndex",
@@ -124005,7 +124178,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -124051,6 +124224,7 @@
             "TileCapacityLimitBytes",
             "TileCarrierBinaryValue",
             "TileCarrierOnlyDataTypeSupported",
+            "TileCarrierWidthCompatible",
             "TileCubeAlignedExtent",
             "TileCubeCellColumns",
             "TileCubeCellElementIndex",
@@ -124115,14 +124289,13 @@
             "TileReductionAndExpansionDescriptorLegal",
             "TileReductionAndExpansionLayoutSupported",
             "TileReductionAndExpansionSourceContentsDefined",
-            "TileReductionAndExpansionSourceLegal",
+            "TileReductionAndExpansionSourceLegalAs",
             "TileReductionInitialValue",
             "TileReductionOneEncoding",
+            "TileReductionSourceLegalAs",
             "TileReductionStepWithFlags",
             "TileShapeMatchesCapacity",
             "TileSignedModulo",
-            "TileSourceContentsDefined",
-            "TileSourceEncodingsValid",
             "TileStorageIndex",
             "TileUnsignedElementValue",
             "TileUsesPackedCarrierRepresentation",
@@ -124144,7 +124317,7 @@
           "roles": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",

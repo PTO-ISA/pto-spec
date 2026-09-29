@@ -72414,7 +72414,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -72444,7 +72444,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -72681,7 +72681,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -73599,7 +73599,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -73920,7 +73920,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -73934,7 +73934,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -74099,7 +74099,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -74129,7 +74129,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -74366,7 +74366,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -75284,7 +75284,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -75605,7 +75605,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -75619,7 +75619,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -75784,7 +75784,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -75814,7 +75814,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -76051,7 +76051,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -76969,7 +76969,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -77290,7 +77290,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -77304,7 +77304,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -77469,7 +77469,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -77499,7 +77499,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -77736,7 +77736,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -78654,7 +78654,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -78975,7 +78975,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -78989,7 +78989,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -237378,7 +237378,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -237408,7 +237408,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -237645,7 +237645,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -238563,7 +238563,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -238884,7 +238884,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -238898,7 +238898,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -239063,7 +239063,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -239093,7 +239093,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -239330,7 +239330,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -240248,7 +240248,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -240569,7 +240569,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -240583,7 +240583,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -240748,7 +240748,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -240778,7 +240778,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -241015,7 +241015,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -241933,7 +241933,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -242254,7 +242254,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -242268,7 +242268,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",
@@ -242433,7 +242433,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local same-type numeric destination",
+          "role": "new Local operation-type numeric destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -242463,7 +242463,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -242700,7 +242700,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local same-type numeric destination",
+                  "role": "new Local operation-type numeric destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -243618,7 +243618,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local same-type numeric destination",
+              "role": "new Local operation-type numeric destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -243939,7 +243939,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -243953,7 +243953,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local same-type numeric destination"
+          "role": "new Local operation-type numeric destination"
         },
         {
           "field": "source0",

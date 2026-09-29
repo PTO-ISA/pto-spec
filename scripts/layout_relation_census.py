@@ -125,11 +125,72 @@ R4_NEW_HELPERS = {
             ("SelectedBundleClosedExpansionSchemaLegal", "asl/block/model/dispatch/expansion-schema.asl"),
             ("TileOperandsLegal_ExecuteTileExpandAs", "asl/tile/model/legality/reduction-and-expansion.asl"),
         },
+        "additional_callers": {
+            ("TileReductionSourceLegalAs", "asl/tile/model/legality/reduction-and-expansion.asl"),
+        },
+        "owner_decision": (
+            "Issue #338 r4 expansion source validation; Issue #356/#357 adds only "
+            "the reduction-specific TileReductionSourceLegalAs caller "
+            "(ADR-TILE-0010 amendment)"
+        ),
     },
 }
 R4_EXECUTION_HELPER = {
     "name": "ExecuteTileExpand",
     "path": "asl/tile/model/execution/expansion.asl",
+}
+ISSUE356_REDUCTION_CLASSIFICATION = (
+    "Issue #356/#357 reduction operation-typed source validation and "
+    "Local CUBE ExecutionMask exclusion (ADR-TILE-0010 amendment)"
+)
+REDUCTION_OPERATION_PATHS = {
+    "TCOLARGMAX": "column-reduction/TCOLARGMAX.asl",
+    "TCOLARGMIN": "column-reduction/TCOLARGMIN.asl",
+    "TCOLMAX": "column-reduction/TCOLMAX.asl",
+    "TCOLMIN": "column-reduction/TCOLMIN.asl",
+    "TCOLPROD": "column-reduction/TCOLPROD.asl",
+    "TCOLSUM": "column-reduction/TCOLSUM.asl",
+    "TROWARGMAX": "row-reduction/TROWARGMAX.asl",
+    "TROWARGMIN": "row-reduction/TROWARGMIN.asl",
+    "TROWMAX": "row-reduction/TROWMAX.asl",
+    "TROWMIN": "row-reduction/TROWMIN.asl",
+    "TROWPROD": "row-reduction/TROWPROD.asl",
+    "TROWSUM": "row-reduction/TROWSUM.asl",
+}
+ISSUE356_REDUCTION_OPERATION_CALLERS = {
+    (f"InstructionContractExecute_{mnemonic}",
+     f"asl/tile/reduce-and-expand/{relative_path}")
+    for mnemonic, relative_path in REDUCTION_OPERATION_PATHS.items()
+}
+ISSUE356_REDUCTION_MODEL_PATH = "asl/tile/model/legality/reduction-and-expansion.asl"
+ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS = {
+    "TileReductionAndExpansionSourceLegal": {
+        "before": [(ISSUE356_REDUCTION_MODEL_PATH, {"RowMajor"})],
+        "after": [],
+        "before_callers": {
+            ("SelectedBundleClosedExpansionSchemaLegal", "asl/block/model/dispatch/expansion-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileExpand", ISSUE356_REDUCTION_MODEL_PATH),
+            ("SelectedBundleClosedReductionSchemaLegal", "asl/block/model/dispatch/reduction-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileReduction", ISSUE356_REDUCTION_MODEL_PATH),
+        },
+        "after_callers": set(),
+    },
+    "TileReductionSourceLegalAs": {
+        "before": [],
+        "after": [(ISSUE356_REDUCTION_MODEL_PATH, set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("SelectedBundleClosedReductionSchemaLegal", "asl/block/model/dispatch/reduction-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileReduction", ISSUE356_REDUCTION_MODEL_PATH),
+        },
+    },
+}
+ISSUE356_REDUCTION_HELPER_BODY_CHANGES = {
+    "ExecuteTileReduction": {
+        "path": "asl/tile/model/execution/reduction.asl",
+        "layouts": set(),
+        "callers": ISSUE356_REDUCTION_OPERATION_CALLERS,
+    },
 }
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
 INDEXED_TLSU = {
@@ -1903,6 +1964,10 @@ def _direct_callers(
     }
 
 
+def _helper_expected_callers(spec: dict[str, Any]) -> set[tuple[str, str]]:
+    return set(spec.get("callers", set())) | set(spec.get("additional_callers", set()))
+
+
 def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -1924,17 +1989,61 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     not old_defs and len(new_defs) == 1 and
                     new_defs[0]["path"] == spec["path"] and
                     set(new_defs[0]["layouts"]) == expected_layouts and
-                    actual_callers == set(spec["callers"])
+                    actual_callers == _helper_expected_callers(spec)
+                )
+                owner_decision = spec.get(
+                    "owner_decision", R4_OWNER_DECISIONS[spec["decision"]]
                 )
                 if not valid:
                     errors.append(f"unauthorized Issue #338 helper definition delta: {name}")
                     rows.append({"name": name, "classification": "UNCLASSIFIED",
                                  "before": old_defs, "after": new_defs,
-                                 "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
+                                 "owner_decision": owner_decision})
                 else:
                     rows.append({"name": name, "classification": R4_LAYOUT_CLASSIFICATION,
                                  "before": old_defs, "after": new_defs,
-                                 "owner_decision": R4_OWNER_DECISIONS[spec["decision"]]})
+                                 "owner_decision": owner_decision,
+                                 "additional_callers": sorted(spec.get("additional_callers", set()))})
+                continue
+            if name in ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS:
+                spec = ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #356/#357 reduction helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": ISSUE356_REDUCTION_CLASSIFICATION if valid else "UNCLASSIFIED",
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": ISSUE356_REDUCTION_CLASSIFICATION,
+                })
                 continue
             if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
                 spec = EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name]
@@ -2085,6 +2194,24 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     classification = None
                 else:
                     classification = EXECUTION_MASK_HELPER_CLASSIFICATION
+            if name in ISSUE356_REDUCTION_HELPER_BODY_CHANGES:
+                spec = ISSUE356_REDUCTION_HELPER_BODY_CHANGES[name]
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old["path"] == spec["path"] and new["path"] == spec["path"] and
+                    set(old["layouts"]) == set(spec["layouts"]) and
+                    set(new["layouts"]) == set(spec["layouts"]) and
+                    before_callers == set(spec["callers"]) and
+                    after_callers == set(spec["callers"])
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #356/#357 reduction helper owner/layout/caller closure mismatch: {name}"
+                    )
+                    classification = None
+                else:
+                    classification = ISSUE356_REDUCTION_CLASSIFICATION
             if name in FPATR_EFFECTIVE_TYPE_HELPERS:
                 if old["layouts"] or new["layouts"]:
                     errors.append(
@@ -2137,11 +2264,16 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 classification = TCI_PAYLOAD_INDEX_CLASSIFICATION
             if classification is None:
                 errors.append(f"unclassified common-helper change: {name} ({old['path']})")
-            rows.append({"name": name, "path": old["path"], "classification": classification or "UNCLASSIFIED",
-                         "before_sha256": old["sha256"], "after_sha256": new["sha256"],
-                         "before_layouts": old["layouts"], "after_layouts": new["layouts"],
-                         **({"owner_decision": R4_OWNER_DECISIONS["expansion"]}
-                            if name == R4_EXECUTION_HELPER["name"] and classification is not None else {})})
+            row = {"name": name, "path": old["path"], "classification": classification or "UNCLASSIFIED",
+                   "before_sha256": old["sha256"], "after_sha256": new["sha256"],
+                   "before_layouts": old["layouts"], "after_layouts": new["layouts"]}
+            if name == R4_EXECUTION_HELPER["name"] and classification is not None:
+                row["owner_decision"] = R4_OWNER_DECISIONS["expansion"]
+            if name in ISSUE356_REDUCTION_HELPER_BODY_CHANGES:
+                row["before_callers"] = sorted(_direct_callers(before_defs, name))
+                row["after_callers"] = sorted(_direct_callers(after_defs, name))
+                row["owner_decision"] = ISSUE356_REDUCTION_CLASSIFICATION
+            rows.append(row)
     return rows, errors
 
 
@@ -2235,7 +2367,7 @@ def _r4_layout_relation_closure(
             new_rows[0].get("path") == spec["path"] and
             not LAYOUT_RE.findall(new_rows[0].get("body", "")) and
             len(helper_rows) == 1 and not helper_rows[0].get("layouts") and
-            _direct_callers(after_defs, name) == set(spec["callers"])
+            _direct_callers(after_defs, name) == _helper_expected_callers(spec)
         )
         if not valid:
             errors.append(f"Issue #338 r4 helper owner/layout/caller closure mismatch: {name}")
@@ -2805,8 +2937,14 @@ def _execution_mask_support_mutation_canaries() -> None:
         row["name"] for row in result["common_helper_deltas"]
         if row.get("classification") == EXECUTION_MASK_HELPER_CLASSIFICATION
     }
-    expected_classified = (set(EXECUTION_MASK_HELPER_DEFINITION_DELTAS) |
-                           set(EXECUTION_MASK_HELPER_BODY_CHANGES))
+    # Issue #356 retires the shared untyped source predicate; its frozen
+    # ExecutionMask body change is therefore accounted for by the exact
+    # reduction-helper retirement closure below.
+    expected_classified = (
+        set(EXECUTION_MASK_HELPER_DEFINITION_DELTAS) |
+        (set(EXECUTION_MASK_HELPER_BODY_CHANGES) -
+         set(ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS))
+    )
     row_expansion_classified = {
         row["name"] for row in result["common_helper_deltas"]
         if row.get("classification") == ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
@@ -2944,6 +3082,67 @@ def _execution_mask_support_mutation_canaries() -> None:
         raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
 
 
+def _issue356_reduction_source_mutation_canaries() -> None:
+    """Keep #356 reduction source helper and #338 expansion callers bounded."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue356-reduction-source-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE356_REDUCTION_CLASSIFICATION
+    }
+    expected = (set(ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS) |
+                set(ISSUE356_REDUCTION_HELPER_BODY_CHANGES))
+    if not result["pass"] or classified != expected:
+        raise AssertionError(
+            "Issue #356 reduction helper closure is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    reduction_path = ISSUE356_REDUCTION_MODEL_PATH
+    mutated = dict(candidate)
+    mutated[reduction_path] += (
+        "\npure func UnauthorizedReductionSourceCaller("
+        "index: TileIndex, operation_type: TileDataType) => boolean\n"
+        "begin\n"
+        "    return TileReductionSourceLegalAs(index, operation_type);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue356-reduction-source-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #356/#357 reduction helper owner/layout/caller closure mismatch: "
+        "TileReductionSourceLegalAs" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted #356 reduction helper caller did not fail closed")
+
+    expansion_path = R4_EXECUTION_HELPER["path"]
+    mutated = dict(candidate)
+    mutated[expansion_path] += (
+        "\npure func UnauthorizedIssue338ExpansionCaller() => boolean\n"
+        "begin\n"
+        "    ExecuteTileExpand(0, 0, 0, 0, 0);\n"
+        "    return TRUE;\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue338-expansion-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #338 r4 ExecuteTileExpand must remain scoped to the sixteen expansion operations" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted #338 expansion caller did not fail closed")
+
+
 def self_test() -> None:
     base = _fixture()
     good = _census_texts(base, base, "fixture-baseline", "fixture-candidate", enforce_closure=False)
@@ -3020,7 +3219,8 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, and Issue #207 selector mutations rejected")
+    _issue356_reduction_source_mutation_canaries()
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:

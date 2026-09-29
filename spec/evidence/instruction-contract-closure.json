@@ -127656,11 +127656,12 @@
         "legality": [
           "TCOLARGMAX is selected by the TEPL raw encoding carrier Mode 2 Function 28; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source column. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -127818,11 +127819,12 @@
         "legality": [
           "TCOLARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 29; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source column. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -129440,7 +129442,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -129451,7 +129453,7 @@
           "selector": "0x051",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -129522,11 +129524,12 @@
         "legality": [
           "TCOLMAX is selected by the TEPL raw encoding carrier Mode 2 Function 17; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -129534,7 +129537,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -129549,7 +129552,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute a typed increasing-row TMAX fold initialized from row zero.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -129602,7 +129605,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -129613,7 +129616,7 @@
           "selector": "0x052",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -129684,11 +129687,12 @@
         "legality": [
           "TCOLMIN is selected by the TEPL raw encoding carrier Mode 2 Function 18; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -129696,7 +129700,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -129711,7 +129715,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute a typed increasing-row TMIN fold initialized from row zero.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -129764,7 +129768,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -129775,7 +129779,7 @@
           "selector": "0x053",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -129846,11 +129850,12 @@
         "legality": [
           "TCOLPROD is selected by the TEPL raw encoding carrier Mode 2 Function 19; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -129858,7 +129863,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -129873,7 +129878,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute a typed increasing-row left fold from one using TMUL.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -129926,7 +129931,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -129937,7 +129942,7 @@
           "selector": "0x050",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -130008,11 +130013,12 @@
         "legality": [
           "TCOLSUM is selected by the TEPL raw encoding carrier Mode 2 Function 16; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -130020,7 +130026,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -130035,7 +130041,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute a typed increasing-row left fold from zero using TADD.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -137655,11 +137661,12 @@
         "legality": [
           "TROWARGMAX is selected by the TEPL raw encoding carrier Mode 2 Function 12; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source row. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -137817,11 +137824,12 @@
         "legality": [
           "TROWARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 13; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source row. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -139575,7 +139583,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -139586,7 +139594,7 @@
           "selector": "0x041",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -139657,11 +139665,12 @@
         "legality": [
           "TROWMAX is selected by the TEPL raw encoding carrier Mode 2 Function 1; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -139669,7 +139678,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -139684,7 +139693,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute a typed increasing-column TMAX fold initialized from column zero.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -139737,7 +139746,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -139748,7 +139757,7 @@
           "selector": "0x042",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -139819,11 +139828,12 @@
         "legality": [
           "TROWMIN is selected by the TEPL raw encoding carrier Mode 2 Function 2; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -139831,7 +139841,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -139846,7 +139856,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute a typed increasing-column TMIN fold initialized from column zero.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -139899,7 +139909,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -139910,7 +139920,7 @@
           "selector": "0x043",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -139981,11 +139991,12 @@
         "legality": [
           "TROWPROD is selected by the TEPL raw encoding carrier Mode 2 Function 3; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -139993,7 +140004,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -140008,7 +140019,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute a typed increasing-column left fold from one using TMUL.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -140061,7 +140072,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local operation-type numeric destination"
             },
             {
               "field": "source0",
@@ -140072,7 +140083,7 @@
           "selector": "0x040",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
+            "operand:destination0:new-local-operation-type-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -140143,11 +140154,12 @@
         "legality": [
           "TROWSUM is selected by the TEPL raw encoding carrier Mode 2 Function 0; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "The destination DataType equals the source DataType.",
-          "The source is a fully defined numeric Tile in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
+          "The operation DataType selected by BSTART is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The destination DataType equals the selected operation DataType.",
+          "The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.",
           "The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).",
-          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
+          "Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.",
+          "An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback."
         ],
         "memory_effects": [
           "none"
@@ -140155,7 +140167,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local operation-type numeric destination"
           },
           {
             "field": "source0",
@@ -140170,7 +140182,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute a typed increasing-column left fold from zero using TADD.",
-          "Write the typed reduction value without widening integer arithmetic or reassociating the fold.",
+          "Write the operation-typed reduction value without widening integer arithmetic or reassociating the fold.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
