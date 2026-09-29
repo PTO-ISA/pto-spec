@@ -12,7 +12,75 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义标量原子内存操作：加载保留与条件存储（LR/SC）、原子读-改-写（RMW）、比较并交换（CAS），以及 64 字节 `DMA` 复制。RMW、CAS 和 `DMA` 在读写内存之前先预检其地址。LR 和 SC 遵循下文的保留规则。
+
+[AMO 分派](../dispatch/amo.md)读取已译码操作数并调用这些辅助函数。它只在未引发故障时把返回值写入目标。
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-concepts role=concepts-state -->
+## 概念与可见状态
+
+保留状态由 `_ReservationValid`、`_ReservationAddress` 和 `_ReservationSize` 组成。成功的 LR 设置这三项。保留粒度是包含 `_ReservationAddress` 的 64 字节行。
+
+`AtomicAddress` 把地址和 `far` 提示映射为平坦地址。在本模型中它原样返回地址，因此 `far` 没有效果。
+
+`AtomicValueSized` 按访问宽度计算新的内存值：
+
+- `SWAP` 写入操作数。
+- `ADD`、`AND`、`OR` 和 `XOR` 作用于零扩展的宽度值，并截断结果。
+- `SMIN` 和 `SMAX` 比较符号扩展的宽度值；`UMIN` 和 `UMAX` 比较零扩展的宽度值。
+
+`NormalizeAtomicReturn` 为目标整理旧值。它对 1 字节和 2 字节值做零扩展，对 4 字节值做符号扩展，8 字节值原样返回。
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-rules role=rules-interactions -->
+## 规则与交互
+
+`LoadReserved` 执行一次有序加载。如果加载发生故障，它不改动保留状态，因此较早的保留得以保留。
+
+`StoreConditional` 首先比较粒度。如果保留有效且 SC 地址落在同一 64 字节行内，它清除保留、预检存储，成功时存储该值、记录一个存储事件并返回 0。未命中时它清除保留并返回 1，不做预检。
+
+设计要点：保留未命中不做预检。无法成功的 SC 从不报告对齐故障或页故障，即使地址非法；它只是返回 1。命中的 SC 在预检之前清除保留，因此发生故障的 SC 也会失去保留。恢复后重新发出时，除非软件执行新的 LR，否则返回 1。
+
+`AtomicReadModifyWrite` 和 `CompareAndSwap` 先按读预检地址，再按写预检。两次预检都必须通过，且两个转换后地址必须相等；否则操作引发 `Fault_DataPage`。只有此后它们才读取旧值并写入新值。两者都返回原始旧值。
+
+`CompareAndSwap` 把旧值与按宽度规范化的期望值比较。匹配时存储期望写入值。两种结果都会记录原子事件，并带有成功标志。
+
+设计要点：两次预检和转换后地址检查都在读取之前完成。除非读和写都能完成，否则不会读取旧值，也不会写入任何字节，因此发生故障的 RMW 或 CAS 让内存保持不变。
+
+`ExecuteScalarDMACopy64` 以 1 字节对齐按读预检 64 字节源、按写预检 64 字节目标。它对全部 64 个源字节做快照，记录八个 8 字节加载事件，写入全部 64 个字节，并记录八个存储事件。
+
+设计要点：快照发生在第一次目标写入之前，因此源与目标范围重叠时行为类似 `memmove`。任一预检故障都会让内存保持不变。
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-boundaries role=boundaries -->
+## 架构边界
+
+`PTO_RESERVATION_GRANULE_BYTES` 为 64。在保留有效时，SC 是否成功只取决于所在行；SC 的宽度和确切字节地址不必与 LR 相同。
+
+[标量内存](../agu/memory.md)中的普通存储在所存范围与保留的 64 字节粒度重叠时，也会清除保留。`FENCE.D` 和 `FENCE.I` 无条件清除保留。
+
+`CompareAndSwap` 通过 `StoreTranslated` 存储期望写入值操作数，只写入 `size_bytes` 个字节。原子事件记录按宽度规范化后的期望写入值。
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-example role=example-usage -->
+## 非规范阅读示例
+
+程序先在 0x104 执行 `LR.W`，然后在 0x138 执行 `SC.D`。
+
+- `LoadReserved` 成功，并记录保留地址 0x104、大小 4。
+- 保留粒度为 0x100，因为 0x104 向下取整到 64 的倍数。
+- SC 的粒度也是 0x100，因此 SC 命中。
+- 保留被清除，0x138 处的 8 字节预检通过，值被存储，SC 返回 0。
+
+之后在 0x138 再执行一次 `SC.D` 会未命中，返回 1，且不做预检。
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-related role=related-owners-navigation -->
+## 相关所有者
+
+- [AMO 分派](../dispatch/amo.md)把 AMO 形式、宽度和排序位映射到这些辅助函数。
+- [标量内存](../agu/memory.md)拥有预检、原始访问以及存储造成的保留失效。
+- [原子性](../../../arch/memory-model/atomicity.md)拥有内存事件记录。
+- [SYS 语义](../sys/semantics.md)拥有清除保留的栅栏。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

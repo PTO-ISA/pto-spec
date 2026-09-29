@@ -12,7 +12,77 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元是参考数值配置档的有限值部分。它把 FP32 和 FP64 编码转换为精确的实数值，并把实数值连同标志向量舍入回 FP32、FP64 或 FP16 编码。它还对标量载体做分类，构造特殊编码（NaN、无穷大、带符号零），并定义 `ReferenceScalarFPBinarySpecial`，即 ADD、SUB、MUL 和 DIV 的 NaN、无穷大和零情形。
+
+[标量 FP](scalar-fp.md)中的标量配置档钩子和特殊值单元调用它。一些 Tile 单元复用其 FP32 和 FP64 辅助函数，例如矩阵量化和参考转换。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-concepts role=concepts-state -->
+## 概念与可见状态
+
+有限值是既不是 NaN 也不是无穷大的数。`ReferenceFP32FiniteValue` 和 `ReferenceFP64FiniteValue` 精确地译码正规和次正规编码，并断言指数字段不是全一。
+
+有限值编码器接收精确的实数结果和舍入模式，返回编码和 5 位标志向量。标志位从位 0 向上依次为 NV、DZ、OF、UF 和 NX。FP32 和 FP64 有限值编码器产生三种非零组合：
+
+| 标志 | 位 | 含义 |
+| --- | --- | --- |
+| 0x10 | NX | 正规结果经过了舍入 |
+| 0x14 | OF 和 NX | 结果上溢为无穷大 |
+| 0x18 | UF 和 NX | 低于正规范围的值经过了舍入（结果可能为零或最小正规数） |
+
+此处使用的类型码为：0 表示 FP64，1 表示 FP32，4 表示 FP16，5 表示 BF16。`ReferenceScalarFPDataType` 把它们映射为 Tile 数据类型。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-rules role=rules-interactions -->
+## 规则与交互
+
+`ReferenceFP32FiniteEncoding` 分四种情况处理：
+
+1. 精确的零返回 +0.0，不带标志。
+2. 把值规范化为 [1, 2) 内的有效数和一个指数。指数大于 127 时返回带符号无穷大，标志为 0x14。
+3. 指数小于 -126 时，按 2^149 缩放并舍入为整数次正规有效数。结果保留其符号。经过舍入的结果报告 0x18（包括舍入为零的结果）；精确的次正规结果不报告标志。
+4. 其他情况把有效数按 2^23 缩放并舍入。进位到 2^24 时指数加一，随后可能以 0x14 上溢为无穷大。经过舍入的结果报告 0x10。
+
+`ReferenceFP64FiniteEncoding` 以 FP64 的界限执行相同步骤。FP16 结果交给 Tile 矩阵量化所拥有的 `ReferenceBinary16Encoding`。
+
+设计要点：FP32 和 FP64 编码器接收一个实数值，并通过 `FloatingToInteger` 只舍入一次。对于融合运算，该值是 `FloatingFused` 给出的精确实数 `product + addend`，因此乘积不单独舍入。
+
+设计要点：上溢在每种舍入模式下都返回无穷大，因为第 2 步和进位检查都不查看模式。定向模式在上溢时不会产生最大有限值。
+
+`ReferenceScalarFPSpecialEncoding` 为类型码 0、1、4 和 5 构造规范安静 NaN、带符号无穷大或带符号零。NaN 来自 `TileNumericCanonicalNaN`，例如 FP32 为 0x7FC00000。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-boundaries role=boundaries -->
+## 架构边界
+
+`ReferenceScalarFPFiniteValue` 只接受类型码 0、1 和 4；`ReferenceScalarFPFiniteEncoding` 断言同一集合。BF16 有限值由配置档钩子直接使用 `ReferenceBinary16FiniteValue`。
+
+调用者必须在调用有限值函数之前去除 NaN 和无穷大输入。对于标量算术，这由本单元中的 `ReferenceScalarFPBinarySpecial` 以及特殊值单元中的一元和融合特殊函数完成。
+
+`ReferenceScalarFPDataType` 上方的 ASL 注释说明，标量 FP 运算遵循 IEEE 754-2008，并且非有限值和带符号零处理放在有限值内核之外，因此上溢得到的无穷大仍是下一条指令的合法输入。
+
+`ReferenceFP16FiniteEncoding` 在 ASL 树中没有调用者；标量 FP16 路径改用 `ReferenceBinary16Encoding`。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-example role=example-usage -->
+## 非规范阅读示例
+
+用 RNE 把精确值 1/3 编码为 FP32。
+
+- 规范化得到有效数 4/3 和指数 -2。
+- 缩放后的有效数为 4/3 x 2^23 = 11184810.67。
+- RNE 把它舍入为 11184811，即 0xAAAAAB。
+- 编码指数为 -2 + 127 = 125，小数部分为 0xAAAAAB - 0x800000。
+- 结果为 0x3EAAAAAB，标志为 0x10，因为舍入不精确。
+
+若使用 RTZ，有效数为 11184810，得到 0x3EAAAAAA，标志为 0x10。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-related role=related-owners-navigation -->
+## 相关所有者
+
+- [标量 FP](scalar-fp.md)通过配置档钩子调用本单元。
+- [参考特殊值](reference-scalar-fp-specials.md)在有限值路径之前处理 NaN、无穷大和零。
+- [FSU 算术](arithmetic.md)拥有 `FloatingToInteger` 和各舍入模式。
+- [矩阵量化](../../../tile/model/execution/matrix-quantization.md)拥有 `ReferenceBinary16Encoding`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

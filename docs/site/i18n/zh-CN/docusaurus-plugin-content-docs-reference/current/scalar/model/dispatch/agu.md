@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元执行每个已译码的标量加载、存储、成对访问和预取形式。`ExecuteDecodedAGUForm` 读取该形式的目录属性，由已译码字段构造基址和偏移，并调用一个动作辅助函数。
+
+每个 AGU 形式带有以下目录属性（另有下文说明的 `prefetch_returns_address`），通过生成的函数读取：
+
+- 动作：`ScalarAGU_Load`、`ScalarAGU_LoadPair`、`ScalarAGU_Store`、`ScalarAGU_StorePair` 或 `ScalarAGU_Prefetch`；
+- 地址类别：`ScalarAGU_Register`、`ScalarAGU_Immediate`、`ScalarAGU_PCRelative` 或 `ScalarAGU_Compressed`；
+- 更新模式：无、前索引或后索引；
+- 以字节计的访问大小，以及加载是否有符号；
+- 偏移缩放，以左移量表示。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-concepts role=concepts-state -->
+## 概念与可见状态
+
+基址来自 `ScalarDecodedAGUBase`：
+
+- PC 相对形式使用清除位 1:0 后的 TPC。
+- 压缩形式使用 `SrcL`。
+- 立即数偏移的单个存储和成对存储使用 `SrcR`；其数据在 HL 形式中位于 `SrcD`（和 `SrcD1`），在 32 位形式中位于 `SrcL`。
+- 其他所有形式使用 `SrcL`。
+
+偏移来自 `ScalarDecodedAGUOffset`。寄存器偏移读取 `SrcR`，应用 `SrcRType` 地址修饰符，若形式有 `shamt` 则左移 `shamt` 位，否则左移目录缩放量。立即数偏移取 `simm5`、`simm12`、`simm17`、`simm22` 或 `simm` 中第一个存在的字段，做符号扩展，并左移目录缩放量。
+
+更新后的基址为 `base + offset`。后索引形式访问原始基址；其他所有形式访问更新后的基址。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-rules role=rules-interactions -->
+## 规则与交互
+
+单个加载调用 `LoadUnsigned`，再按形式的宽度和有符号性规范化该值。如果 `_LastFault` 已设置，它不写任何内容。否则：
+
+- 压缩加载把值压入 T；
+- 无更新加载写入 `RegDst`；
+- 带更新的加载先把值写入 `RegDst0`，再把更新后的基址写入 `RegDst1`。
+
+单个存储的数据在 `SrcD` 存在时取自 `SrcD`，压缩形式取自 T#1，否则取自 `SrcL`。它调用 `Store`，成功时带更新的存储把更新后的基址写入 `RegDst`。
+
+设计要点：每个源（包括基址、偏移寄存器和存储数据）都在内存访问之前读取，每个目标都受 `_LastFault` 保护。发生故障的访问让每个目标和基址保持不变。恢复时重新发出整条指令并重新计算地址。
+
+成对形式从不更新基址。它们先预检第一个地址，再预检第二个地址（第一个地址加大小），然后才读写任一元素。成对加载先写 `RegDst0` 再写 `RegDst1`。成对存储读取 `SrcD` 和 `SrcD1`，然后先存储并记录第一个元素，再存储并记录第二个元素。
+
+设计要点：先预检两个地址意味着成对访问要么完成两个元素，要么不改变任何内存和目标。报告的是第一个失败的地址。
+
+预取形成地址并调用 `ScalarPrefetch`，后者不触及内存。目录中设置了 `prefetch_returns_address` 的形式还会把 `base + offset` 写入 `RegDst`。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-boundaries role=boundaries -->
+## 架构边界
+
+保留编码不会到达本单元。目录把寄存器偏移形式的 `SrcRType` 限定为 0、1 或 2，把 `HL.PRF`、`HL.PRF.A`、`HL.PRFI.U` 和 `HL.PRFI.UA` 的 `model` 字段限定为 0、1 或 2。顶层分派在读取任何源之前拒绝其他值。
+
+本单元不推进 TPC。对齐、边界和访问环检查属于[标量内存](../agu/memory.md)。
+
+此处的 `NormalizeScalarLoadResult` 与标量内存中的 `NormalizeLoadedValue` 对来自 `LoadUnsigned` 的值给出相同结果；本单元的副本还会对无符号值做零扩展，而 `NormalizeLoadedValue` 原样返回无符号值。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-example role=example-usage -->
+## 非规范阅读示例
+
+取位于 TPC 0x202 的 32 位字 0xFFFF22B9。其低 15 位匹配 `LW.PCR`（掩码 0x707F，匹配值 0x2039）。
+
+| 字段 | 位 | 原始值 | 值 |
+| --- | --- | --- | --- |
+| `RegDst` | 11:7 | 5 | GPR 5 |
+| `simm17` | 31:15 | 0x1FFFE | -2 |
+
+- 基址为清除位 1:0 后的 0x202，即 0x200。
+- 目录缩放为 2，因此偏移为 -2 x 4 = -8。
+- 地址为 0x1F8，按 4 字节对齐。
+- 成功时 GPR 5 接收符号扩展的字，TPC 变为 0x206。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-related role=related-owners-navigation -->
+## 相关所有者
+
+- [标量寻址](../agu/addressing.md)包含直接辅助函数和 `ScalarPrefetch`。
+- [标量内存](../agu/memory.md)拥有预检、字节访问和故障。
+- [标量译码辅助函数](decode.md)拥有字段提取和地址修饰符。
+- [标量操作数](../types/operands.md)拥有 Reg5 读取、队列压入和丢弃。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

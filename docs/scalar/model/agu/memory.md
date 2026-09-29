@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit is the byte-level memory layer used by scalar loads, stores, and atomics, and also by some Tile and Block memory helpers. It decides whether an access may happen, turns bytes into little-endian values, and invalidates the load-reserved reservation when a store overlaps it.
+
+It defines four main groups of helpers, plus `RangesOverlap` and `ReservationGranuleAddress` for the reservation check:
+
+- Probing: `TranslateDataAddress`, `DataAccessPermitted`, `ProbeDataAccess`, and `RaiseDataAccessFault`.
+- Raw byte access: `LoadTranslatedUnsigned`, `StoreTranslated`, and the 64-byte and bounded variants.
+- Value normalization: `NormalizeLoadedValue` and `NormalizeMemoryAccessValue`.
+- Complete accesses: `LoadWithOrder`, `LoadUnsigned`, `LoadSigned`, `StoreWithOrder`, and `Store`.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-concepts role=concepts-state -->
+## Concepts and visible state
+
+A probe is the check that runs before any byte moves. `ProbeDataAccess` returns a `DataAccessProbe` with a fault code and a translated address.
+
+Translation is the identity in this model: `TranslateDataAddress` returns its input.
+
+Values are little-endian. Byte `i` of a value lives at the translated address plus `i`.
+
+The reservation is the state left by a load-reserved instruction: `_ReservationValid`, `_ReservationAddress`, and `_ReservationSize`. Its granule is the aligned block of `PTO_RESERVATION_GRANULE_BYTES` (64) bytes that contains the reserved address.
+
+A memory event is a record of a completed access for the memory-ordering model. Loads and stores record events only after their bytes move.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-rules role=rules-interactions -->
+## Rules and interactions
+
+`ProbeDataAccess` checks in a fixed order:
+
+1. Alignment. If the address is not a multiple of `alignment_bytes`, the result is `Fault_DataAlignment`.
+2. Translation, which cannot fail here.
+3. Permission. `DataAccessPermitted` rejects an access whose end passes `PTO_MODEL_MEMORY_BYTES`. When the current access ring is 2 or higher, it also rejects an access that ends past byte 3072. Either rejection is `Fault_DataPage`.
+
+Design point: alignment is checked first, so a misaligned access reports `Fault_DataAlignment` even if it would also fail permission. Permission and bounds share one visible cause, `Fault_DataPage`.
+
+`RaiseDataAccessFault` calls `SetFault` with the original address that the caller passes, not the translated one, and returns TRUE for a failed probe.
+
+`LoadWithOrder` probes with alignment equal to the access size, returns zero if the probe faults, and otherwise reads the bytes and records one load event. `StoreWithOrder` probes, returns on a fault, and otherwise writes the bytes and records one store event. `LoadSigned` sign-extends the result of `LoadUnsigned`.
+
+Design point: every complete access probes before it reads or writes, and records its event only after the bytes move. A faulting access therefore changes no memory and records no event. This matches the precise-fault contract owned by fault precision.
+
+Every store helper in this unit clears `_ReservationValid` when its original-address range overlaps the reservation granule. A plain store to the reserved 64-byte line therefore breaks the reservation.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-boundaries role=boundaries -->
+## Architectural boundaries
+
+`PTO_MODEL_MEMORY_BYTES` is a model configuration value (4096 by default, 256 through 65536 allowed). The comment in `ProbeDataAccess` states that the active profile owns the physical address limit, and that a hosted profile may authorize addresses outside the reference array.
+
+The 3072-byte limit for access rings 2 through 15 is a PTO v0 rule stated in `DataAccessPermitted`.
+
+The raw byte helpers such as `StoreTranslated` do not probe. Their callers must probe first. For example, the pair and atomic helpers probe every address and then call the raw helpers.
+
+This unit does not decide ordering semantics. It passes a `MemoryOrder` to `RecordLoadEvent` and `RecordStoreEvent`, which belong to the atomicity and memory-event owners.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-example role=example-usage -->
+## Non-normative reading example
+
+Assume the default 4096-byte memory.
+
+| Access | Ring | Probe result |
+| --- | --- | --- |
+| 4 bytes at 0xFFE | 0 | `Fault_DataAlignment`, since 0xFFE is not a multiple of 4 |
+| 4 bytes at 0xFFC | 0 | permitted, since the access ends at 4096 |
+| 4 bytes at 0xFFC | 2 | `Fault_DataPage`, since 4096 is past 3072 |
+| 1 byte at 0x1000 | 0 | `Fault_DataPage`, since the access ends at 4097 |
+
+For a successful 2-byte `LoadSigned` of bytes 0x34 then 0x92, the raw value is 0x9234 and the result is 0xFFFFFFFFFFFF9234.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-memory-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar addressing](addressing.md) builds loads, stores, and pairs on these helpers.
+- [AMO semantics](../amo/semantics.md) uses probing, raw access, and the reservation.
+- [Address space](../../../arch/memory-model/address-space.md) owns `ReadMemoryByte` and `WriteMemoryByte`.
+- [Atomicity](../../../arch/memory-model/atomicity.md) owns `RecordLoadEvent` and `RecordStoreEvent`.
+- [Fault precision](../../../arch/memory-model/fault-precision.md) owns `SetFault`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

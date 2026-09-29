@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有不属于按地址寄存器转移的标量系统行为。它涵盖：
+
+- 每次指令尝试的开始以及架构时间；
+- 基本系统寄存器的读写；
+- 数据栅栏和指令栅栏；
+- 缓存与 TLB 维护；
+- 断言、软件断点和控制请求；
+- 访问环关闭与进入请求；
+- 决定标量运算可在何处运行的适用性规则；
+- 指令束提交目标设置函数。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-concepts role=concepts-state -->
+## 概念与可见状态
+
+架构时间是 `_SystemRegisters.cycle`。`BeginArchitecturalInstructionAttempt` 清除 `_LastFault` 和 `_FaultAddress`，并把周期计数加一。`TIME` 和 `CYCLE` 都读取该计数。
+
+基本寄存器位于 `_SystemRegisters` 中。只有四个可写：`THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE`。写入 `CORE_STATE` 还会根据位 3:0 设置当前访问环。
+
+维护和栅栏推进纪元计数器，而不是对缓存建模：`_DataCacheEpoch`、`_InstructionCacheEpoch`、`_BundleCacheEpoch` 和 `_TLBEpoch`。
+
+适用性是决定某运算能否在当前指令束状态下执行的规则。`ScalarOperationApplicable` 计算它。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-rules role=rules-interactions -->
+## 规则与交互
+
+当 System 块终止请求处于挂起状态时，`ScalarOperationApplicable` 对每个运算都返回 FALSE。否则：
+
+- `SETC.*` 设置指令需要活动的条件指令束体，且其条件尚未设置。
+- `ACRC` 以及 System 块运算（例如 `SSRGET`、`FENCE.D` 和 `DC.CVA`）需要活动的 System 指令束体。
+- `SETC.TGT` 需要活动的 Standard 或 Floating 指令束；`C.SETC.TGT` 还需要目标尚未设置。
+- `LSRGET` 需要任意活动的指令束体。
+- 其他所有运算总是适用。
+
+设计要点：顶层分派在进入待进入的指令束体之后、在操作数合法性检查和处理函数之前检查适用性。位于其所需指令束之外的运算在其处理函数执行之前引发 `Fault_BundleControl`，因此不产生自身的任何效果；指令束体进入转换和本次尝试的周期递增仍然保留。
+
+`FenceData` 清除保留，记录两个 4 位掩码，记录一个栅栏事件，并在任一掩码的位 3 置位时推进指令缓存纪元。`FenceInstruction` 清除保留并推进指令缓存纪元。
+
+`ExecuteMaintenance` 先检查特权：TLB 运算需要 ACR0。随后检查操作数。`TLB.IV` 和 `TLB.IAV` 需要规范的 48 位地址，否则引发 `Fault_DataPage`。`TLB.IA` 需要位 63:16 为零，否则引发 `Fault_IllegalInstruction`。成功时推进纪元，并记录运算和操作数。
+
+设计要点：特权先于操作数有效性检查，且只有在未引发故障时才记录最后的运算和操作数。因此被拒绝的维护运算不改变原有记录。
+
+`ArchitectureEnterRequest` 把请求类型 0 和 1 视为别名。它先验证保存的陷阱上下文并完成指令束，然后才恢复上下文。若某项检查失败，它保留已保存的上下文。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-boundaries role=boundaries -->
+## 架构边界
+
+`ExecuteControlRequest` 记录请求和操作数，并推进 `_ArchitectureRequestEpoch`。ASL 注释说明，PTO v0 把 `BSE`、`BWE`、`BWI` 和 `BWT` 视为非阻塞的交接；挂起在此不增加可见状态。
+
+按 `SystemRegister` 枚举交换的 `SwapSystemRegister` 在 ASL 树中没有调用者。已译码的 `SSRSWAP` 使用[系统寄存器](registers.md)中的 `SwapSystemRegisterAddress`。
+
+缓存维护的操作数被记录但不被解释。本模型不描述缓存拓扑。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-example role=example-usage -->
+## 非规范阅读示例
+
+假设当前访问环为 ACR1，且位于 System 指令束体内。
+
+| 指令 | 操作数 | 结果 |
+| --- | --- | --- |
+| `DC.CVA` | 0x1234 | 数据缓存纪元推进；记录运算和操作数 |
+| `TLB.IV` | 0x1234 | `Fault_IllegalInstruction`，因为 ACR1 不是 ACR0 |
+| `FENCE.D` | 掩码 0x8 和 0x1 | 清除保留；指令缓存纪元推进 |
+| `ASSERT` | 0 | 在当前 TPC 引发 `Fault_Assert` |
+
+每次尝试也会把周期计数加一，包括发生故障的两次。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-related role=related-owners-navigation -->
+## 相关所有者
+
+- [系统寄存器](registers.md)拥有 SSR 寻址和权限。
+- [SYS 分派](../dispatch/sys.md)为这些辅助函数译码操作数。
+- [BARG 状态](../../../block/model/state/barg.md)拥有适用性所读取的指令束状态。
+- [陷阱上下文](../../../arch/state/trap-context.md)拥有陷阱保存与恢复。
+- [执行上下文](../../../arch/programming-model/execution-context.md)声明纪元计数器和最后一次维护记录。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

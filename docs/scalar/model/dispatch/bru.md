@@ -12,7 +12,76 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit executes every decoded scalar branch-unit form: comparisons (`CMP.*`, `C.CMP.*`), commit-condition setters (`SETC.*`, `C.SETC.*`), jumps (`J`, `JR`), and PC-relative helpers (`ADDTPC`, `SETRET`, and their `HL` forms).
+
+`ExecuteDecodedBRUForm` switches on the operation, picks the immediate field, and calls a helper from [BRU semantics](../bru/semantics.md). `ScalarConditionForOperation` maps each relational compare or setter mnemonic to one `ScalarCondition`: EQ, NE, LT, GE, LTU, or GEU.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-concepts role=concepts-state -->
+## Concepts and visible state
+
+For comparison and setter forms, the immediate field follows the mnemonic:
+
+| Forms | Field |
+| --- | --- |
+| signed 32-bit forms, such as `CMP.LTI`, `SETC.EQI`, `CMP.ANDI` | `simm12` |
+| unsigned 32-bit forms, `CMP.LTUI`, `CMP.GEUI`, `SETC.LTUI`, `SETC.GEUI` | `uimm12` |
+| signed 48-bit `HL` forms | `simm24` |
+| unsigned 48-bit `HL` forms | `uimm24` |
+| `C.CMP.EQI`, `C.CMP.NEI` | `simm5` |
+
+Signed fields are sign-extended and unsigned fields are zero-extended to 64 bits.
+
+The right operand of a register comparison may carry a `SrcRType` modifier. Relational comparisons and setters use `ApplyRestrictedCompareModifier`, so raw `11` means no change. The logical `CMP.AND`, `CMP.OR`, `SETC.AND`, and `SETC.OR` forms use the full modifier with `logical_family` TRUE, so raw `11` applies bitwise NOT.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-rules role=rules-interactions -->
+## Rules and interactions
+
+Comparison forms write a 0 or 1 word through the Reg5 destination rules. Setter forms write `_CommitArgument` and, inside a bundle, `_BARG.taken`.
+
+Immediate `SETC.*` forms shift the extended immediate left by the decoded `shamt` before comparing. Immediate `CMP.*` forms do not shift.
+
+Design point: only the setters shift their immediate. The same 12-bit or 24-bit field therefore reaches a wider range of constants in a `SETC.*` form than in the matching `CMP.*` form. The shift is plain 64-bit arithmetic; bits shifted out are lost.
+
+`C.CMP.EQI` and `C.CMP.NEI` read T#1 as the left operand and push the result to T (selector 31). The old T#1 becomes T#2.
+
+`J` adds its halfword offset from `simm22` to TPC. `JR` reads `SrcL`, adds `simm12` shifted left by 1, and faults on an odd target.
+
+`ADDTPC` and `HL.ADDTPC` sign-extend `imm20` or `imm32` and add it, shifted left by 12, to TPC. `SETRET` and `HL.SETRET` zero-extend `imm20` or `imm32` and write TPC plus the value shifted left by 1 to GPR 10 and to `_ReturnAddress`.
+
+Design point: `SETRET` is written as a separate form with a fixed destination. The broader `ADDTPC` and `HL.ADDTPC` encodings exclude `RegDst == 10`, and two of the three reviewed overlaps listed by top-level dispatch give that slot to `SETRET` and `HL.SETRET`; the third gives the `C.MOVI` slot to `C.SETRET`, which ALU dispatch executes.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-boundaries role=boundaries -->
+## Architectural boundaries
+
+Whether a setter is allowed in the current bundle is checked earlier, by `ScalarOperationApplicable` in top-level dispatch. It requires an active conditional bundle body whose condition is not yet set; otherwise the instruction raises `Fault_BundleControl` before the setter runs; only the body-entry transition made by top-level dispatch remains.
+
+Only `J` and `JR` install TPC here; top-level dispatch advances TPC for every other BRU form after success.
+
+`ScalarImplicitSourceOperandsLegal` checks T#1 availability for `C.SDI`, `C.SLLI`, `C.SRLI`, and `C.SWI`. It does not list `C.CMP.EQI` or `C.CMP.NEI`.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-example role=example-usage -->
+## Non-normative reading example
+
+Take the 32-bit word 0xFFF1C275. It matches `SETC.LTI` (mask 0x707F, match 0x4075).
+
+| Field | Bits | Raw | Value |
+| --- | --- | --- | --- |
+| `shamt` | 11:7 | 4 | shift by 4 |
+| `SrcL` | 19:15 | 3 | GPR 3 |
+| `simm12` | 31:20 | 0xFFF | -1 |
+
+The right operand is -1 shifted left by 4, which is -16. If GPR 3 holds -20, the signed test `-20 < -16` is true. `_CommitArgument` becomes 1, `_BARG.taken` becomes TRUE, and `_BundleConditionSet` becomes TRUE.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-bru-related role=related-owners-navigation -->
+## Related owners
+
+- [BRU semantics](../bru/semantics.md) owns conditions, setters, jumps, and PC-relative helpers.
+- [Scalar decode helpers](decode.md) own the comparison modifier table.
+- [SYS semantics](../sys/semantics.md) owns `ScalarOperationApplicable`.
+- [Scalar top-level dispatch](top-level.md) owns TPC advance and the reviewed encoding overlaps.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

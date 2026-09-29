@@ -12,7 +12,75 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit is the single entry point for one 16-, 32-, or 48-bit scalar instruction. `ExecuteScalarInstruction` decodes the word, runs the legality checks in a fixed order, calls one family dispatcher, and then either advances TPC or reports a rejection.
+
+The architecture-level [dispatch top level](../../../arch/dispatch/top-level.md) calls it for every non-64-bit word that is not an accepted command form.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-concepts role=concepts-state -->
+## Concepts and visible state
+
+An instruction attempt is one call to the entry point. It starts with `BeginArchitecturalInstructionAttempt`, which clears `_LastFault` and `_FaultAddress` and advances architectural time by one. Every attempt ticks time once, whether it succeeds or not.
+
+The result is `ScalarExecution_Executed` or `ScalarExecution_Rejected`. A rejected attempt leaves `_LastFault` set.
+
+A family is one of AGU, ALU, AMO, BRU, FSU, or SYS. `ScalarFamilyOfForm` returns it for a decoded form.
+
+The unit's metadata lists three reviewed encoding overlaps. In each, the `SETRET`-style form occupies `RegDst == 10`, and the broader `ADDTPC` or `C.MOVI` form excludes that value through a not-equal constraint.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-rules role=rules-interactions -->
+## Rules and interactions
+
+`ExecuteScalarInstruction` performs these steps in order. Each check that fails raises a fault and returns `ScalarExecution_Rejected` at once.
+
+1. Begin the attempt.
+2. Decode the form with `DecodeScalarForm`. An unknown word raises `Fault_IllegalInstruction`.
+3. If a bundle is active but its body is not, enter the body with `EnterBundleBody`.
+4. Check `ScalarOperationApplicable`. Failure raises `Fault_BundleControl`.
+5. Check `ScalarFormOperandsLegal` (reserved field values), then `ScalarRegisterOperandsLegal` (T/U source availability), then `ScalarImplicitSourceOperandsLegal` (implicit T#1). Each failure raises `Fault_IllegalInstruction`.
+6. Call the family dispatcher.
+7. If `_LastFault` is set, return rejected.
+8. Unless the handler installs its own TPC, add the instruction length in bytes to TPC.
+
+Design point: the operation-applicability check and the catalog-generated legality checks run before the family dispatcher. An inapplicable operation, a catalog-constrained reserved field, or an unavailable queue source therefore cannot reach a handler's register, memory, or flag effect; the only changes are the time tick, the trap entry performed by `SetFault`, and a possible bundle-body entry.
+
+Design point: body entry happens before applicability. The NDF clause PTO-REQ-SCALAR-BODY-ENTRY-001 requires this, and states that a later scalar fault keeps the body-active transition. An unknown word is rejected in step 2, so it never enters the body.
+
+Design point: TPC advances only after the handler returns without a fault. A fault calls `SetFault`, which saves the trap context with the TPC current at that moment and then writes TPC to the trap vector entry, so adding the instruction length would move TPC off that entry. For a fault raised before the handler changes TPC, the saved TPC is the faulting instruction, which PTO-ARCH-MEMORY-MODEL-REPLAY-001 names as the restart point. The three handlers named by `ScalarHandlerWritesTPC` skip step 8 because they set TPC themselves.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not decode fields or compute results. The mask-and-match tables and legality functions are generated from the catalog; the family semantics live in the family dispatch units.
+
+Forms are matched in catalog decode order, which sorts by the number of mask bits, largest first. A narrower form therefore wins over a broader form that could match the same word.
+
+Faults raised inside a family handler, such as data faults, are also reported as rejection. Whether earlier effects of that handler survive is the family's own contract.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-example role=example-usage -->
+## Non-normative reading example
+
+Two 32-bit words differ only in bits 11:7.
+
+| Word | Bits 11:7 | Decoded form | Effect with TPC 0x400 |
+| --- | --- | --- | --- |
+| 0x00001507 | 10 | `SETRET` (mask 0xFFF) | GPR 10 gets 0x402 |
+| 0x00001587 | 11 | `ADDTPC` (mask 0x7F) | GPR 11 gets 0x1400 |
+
+`SETRET` has more mask bits, so it is tried first and takes the `RegDst == 10` encoding. Each word, executed at TPC 0x400, succeeds and leaves TPC at 0x404.
+
+If instead the word were the `ADD` 0x0F818F85 and T#1 were not valid, step 5 would raise `Fault_IllegalInstruction` and nothing would be pushed to T.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-top-level-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar decode helpers](decode.md) interpret fields after legality passes.
+- [SYS semantics](../sys/semantics.md) owns `BeginArchitecturalInstructionAttempt` and `ScalarOperationApplicable`.
+- [Bundle enter and stop](../../../block/model/lifecycle/enter-stop.md) owns `EnterBundleBody`.
+- [Fault precision](../../../arch/memory-model/fault-precision.md) owns `SetFault` and the trap envelope.
+- The family dispatchers: [AGU](agu.md), [ALU](alu.md), [AMO](amo.md), [BRU](bru.md), [FSU](fsu.md), and [SYS](sys.md).
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

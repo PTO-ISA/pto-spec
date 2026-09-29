@@ -12,7 +12,72 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义直接的标量加载、存储、成对访问和预取辅助函数。每个辅助函数接收已解析的寄存器索引和一个偏移，形成地址，并通过[标量内存](memory.md)中的辅助函数执行一次内存事务。
+
+本单元包含四类辅助函数：
+
+- `EffectiveAddress`，按更新模式选出被访问的地址。
+- `ExecuteScalarLoad` 和 `ExecuteScalarStore`，访问一个元素，并可回写更新后的基址。
+- `ExecuteScalarLoadPair` 和 `ExecuteScalarStorePair`，访问两个相邻元素。
+- `ScalarPrefetchAddress` 和 `ScalarPrefetch`，形成预取地址而不触及内存。
+
+没有任何 ASL 代码调用 `EffectiveAddress` 或四个加载、存储和成对辅助函数；`ScalarHandler_*` 处理函数名只用于标注目录形式。[AGU 分派](../dispatch/agu.md)中的译码路径用已译码字段重复相同规则，并调用本单元的 `ScalarPrefetch` 和 `ScalarPrefetchAddress`。
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-concepts role=concepts-state -->
+## 概念与可见状态
+
+地址更新模式是 `AddressUpdate_None`、`AddressUpdate_PreIndex` 或 `AddressUpdate_PostIndex` 之一。更新后的基址总是 `base + offset`。前索引和无更新访问以更新后的基址为地址。后索引访问使用原始基址。
+
+所有地址运算都使用 64 位 `Word` 值，因此按 2^64 取模回绕。
+
+加载辅助函数把加载值规范化为 64 位。有符号加载从访问宽度符号扩展；无符号加载零扩展。
+
+这些辅助函数通过 `ReadGPR` 读取 GPR，通过 `WriteGPR` 写入 GPR。它们会触及内存、内存事件、保留状态和 `_LastFault`。它们不推进 TPC；通过 `SetFault` 引发的故障还会记录故障地址和陷阱上下文，并把 TPC 重定向到陷阱向量。
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-rules role=rules-interactions -->
+## 规则与交互
+
+`ExecuteScalarLoad` 读取基址，执行 `LoadSigned` 或 `LoadUnsigned`，然后检查 `_LastFault`。只有在未引发故障时，它才写入目标寄存器，并在前索引或后索引时写入更新后的基址。目标寄存器先于基址写入。
+
+`ExecuteScalarStore` 读取基址和数据寄存器，调用 `Store`，并且仅当 `_LastFault` 仍为 `Fault_None` 时才回写更新后的基址。
+
+设计要点：在单元素辅助函数中，每次目标写入和基址写入都受 `_LastFault == Fault_None` 保护。因此发生故障的访问会让目标 GPR 和基址 GPR 保持不变。恢复时可以从原始源重新发出完整指令，因为没有发布任何部分的基址更新。
+
+成对辅助函数从不回写基址。它们把第二个地址计算为第一个地址加上访问大小。随后按此顺序用 `ProbeDataAccess` 预检第一个地址和第二个地址，然后才移动任何数据。第一个失败的预检在其自身的原始地址上引发故障，辅助函数随即返回。
+
+设计要点：两次预检都在第一次加载或存储之前完成。因此成对存储不会先写入第一个元素、再在第二个元素上发生故障。成功时，成对加载读取两个值，先低元素后高元素记录两个宽松加载事件，并先写低位目标、再写高位目标。成对存储在任一存储之前读取两个源寄存器，然后先存储并记录低元素，再存储并记录高元素。
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-boundaries role=boundaries -->
+## 架构边界
+
+`ScalarPrefetch` 形成 `base + offset` 并将其丢弃。它不执行地址转换、不做权限检查、不访问内存，也不记录事件，因此预取不会引发数据故障。该辅助函数不使用其 `model` 参数。编码的 `model` 值是否合法由分派之前该形式的目录约束决定。
+
+对齐、有界内存限制和访问环限制由[标量内存](memory.md)中的 `ProbeDataAccess` 负责，而不是本单元。
+
+直接辅助函数接收绝对 GPR 索引。它们不处理 T/U 队列选择子、压缩形式、PC 相对基址或偏移缩放；这些属于译码分派。
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-example role=example-usage -->
+## 非规范阅读示例
+
+考虑调用 `ExecuteScalarLoad`：目标 GPR 5，基址 GPR 6 持有 0x100，偏移 8，大小 4，无符号，模式 `AddressUpdate_PostIndex`。
+
+- `EffectiveAddress` 返回原始基址 0x100，因为模式是后索引。
+- `LoadUnsigned` 预检 0x100。它按 4 字节对齐，因此不引发对齐故障。
+- 如果访问被允许，GPR 5 接收零扩展的 32 位值，随后 GPR 6 接收 0x108。
+- 如果预检失败，则设置 `_LastFault`，GPR 5 和 GPR 6 都不改变。
+
+若使用 `AddressUpdate_PreIndex`，同一调用会访问 0x108，并同样把 0x108 写入 GPR 6。
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-related role=related-owners-navigation -->
+## 相关所有者
+
+- [标量内存](memory.md)拥有预检、字节访问、规范化和保留失效。
+- [AGU 分派](../dispatch/agu.md)拥有译码地址形成、缩放和队列操作数。
+- [故障精确性](../../../arch/memory-model/fault-precision.md)拥有精确故障与重启契约。
+- [内存事件](../../../arch/memory-model/memory-events.md)拥有所记录的加载和存储事件。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

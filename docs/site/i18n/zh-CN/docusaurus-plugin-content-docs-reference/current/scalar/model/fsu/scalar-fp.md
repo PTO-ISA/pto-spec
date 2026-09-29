@@ -12,7 +12,78 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元固定标量浮点执行中不依赖具体数值实现的部分：载体、类型码、舍入模式和标志访问、NaN 分类、比较以及 `FMIN`/`FMAX`。确实需要数值实现的算术经由此处定义的显式配置档钩子，例如 `ScalarFPBinaryProfile` 或 `ScalarFPConvertProfile`。
+
+[FSU 分派](../dispatch/fsu.md)调用这些函数。Tile 单元也调用其中两个钩子：逐元素执行调用 `ScalarFPBinaryProfile`，融合乘加调用 `ScalarFPFusedProfile`。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-concepts role=concepts-state -->
+## 概念与可见状态
+
+类型码是表示数据类型的 5 位数。本单元把 2 位指令字段转换到若干编码空间：
+
+| 函数 | `00` | `01` | `10` | `11` |
+| --- | --- | --- | --- | --- |
+| `ScalarFPSourceTypeCode` | FP64 (0) | FP32 (1) | 31，不支持 | 31，不支持 |
+| `ScalarConvertFloatingTypeCode` | FP64 (0) | FP32 (1) | FP16 (2) | E4M3 (3) |
+| `ScalarSignedIntegerSourceTypeCode` | S64 (8) | S32 (9) | S16 (10) | S8 (11) |
+| `ScalarUnsignedIntegerSourceTypeCode` | U64 (0) | U32 (1) | U16 (2) | U8 (3) |
+
+`ScalarFPTypeCodeSupported` 接受编码 0 和 1。转换检查接受浮点编码 0 到 3，以及整数编码 0 到 3 和 8 到 11。
+
+载体规范化函数按类型整理值。FP32 及更窄的类型从其宽度零扩展；有符号整数源做符号扩展；有符号类型的整数结果做符号扩展。
+
+活动舍入模式来自 `CORE_STATE` 的位 39:37：`001` 选择 RTM，`010` 选择 RTP，`011` 选择 RTZ，其他任何值选择 RNE。`FCVTA`、`FCVTM`、`FCVTN`、`FCVTP` 和 `FCVTZ` 不使用它；`ScalarFPFixedConversionRoundingMode` 为它们给出 RNA、RTM、RNE、RTP 和 RTZ。标志通过 `RecordNumericStatusFlags` 按位或入 `CORE_STATE` 的位 36:32。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-rules role=rules-interactions -->
+## 规则与交互
+
+比较使用排序键。正编码的键置位符号位；负编码的键为按位 NOT。对键做无符号比较即得到数值顺序。
+
+当任一输入为 NaN 时，`ScalarFPEncodingCompare` 对每种运算都返回 FALSE。任意符号的两个零比较为相等。其他情况下，相等即位相等，小于即键的顺序。
+
+设计要点：比较是有序比较，因此对 NaN 的 `FNE` 为 FALSE，而不是 `FEQ` 的取反。需要无序结果的代码必须单独检测 NaN。
+
+恰有一个输入为 NaN 时，`ScalarFPMinMax` 返回另一个操作数；两个都是 NaN 时返回规范安静 NaN。对于两个零，只要其中一个为负，`FMIN` 就返回负零；只有两个都为负时，`FMAX` 才返回负零。其他情况按键的顺序。
+
+设计要点：最小值和最大值为零的符号规定了顺序，因此 `FMIN(-0.0, +0.0)` 和 `FMIN(+0.0, -0.0)` 都返回 -0.0。结果不依赖操作数顺序。
+
+每个配置档钩子都对其支持的类型码做断言。`ScalarFPBinaryProfile` 和 `ScalarFPUnaryProfile` 接受 FP64、FP32、FP16（编码 4）和 BF16（编码 5）。`ScalarFPFusedProfile` 接受 FP64、FP32 和 FP16。三个转换钩子在禁用饱和的情况下委托给 `ReferenceCommonConvert`。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-boundaries role=boundaries -->
+## 架构边界
+
+已译码的标量 FSU 形式只以 FP64 或 FP32 到达二元、一元和融合钩子；已译码的转换还可以向转换钩子传递 FP16 和 E4M3。`ScalarFPBinaryProfile` 的 FP16 和 BF16 编码以及 `ScalarFPFusedProfile` 的 FP16 编码服务于 Tile 逐元素执行和融合乘加。`ScalarFPUnaryProfile` 没有 Tile 调用者，因此其 FP16 和 BF16 编码不会被到达。
+
+`ScalarFPBinaryProfile` 中的 `FloatingBinary_MIN` 和 `FloatingBinary_MAX` 分支由 ASL 注释标明不会被已译码的 `FMIN`/`FMAX` 到达；分派改用 `ScalarFPMinMax`。
+
+`NormalizeScalarFPResult` 为目标编码 0 到 14 定义载体宽度。标量算术只产生编码 0 和 1。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-example role=example-usage -->
+## 非规范阅读示例
+
+FP32 输入，键由位 31:0 计算：
+
+| 输入 | 编码 | 键 |
+| --- | --- | --- |
+| 1.0 | 0x3F800000 | 0xBF800000 |
+| -1.0 | 0xBF800000 | 0x407FFFFF |
+| NaN | 0x7FC00000 | 不使用 |
+
+- `FLT(-1.0, 1.0)` 为 1，因为 0x407FFFFF 小于 0xBF800000。
+- `FNE(NaN, 1.0)` 为 0，安静形式不记录 NV 标志。
+- `FMIN(NaN, 1.0)` 返回 1.0。
+- `FMAX(-0.0, +0.0)` 返回 +0.0，编码为 0x00000000。
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-related role=related-owners-navigation -->
+## 相关所有者
+
+- [FSU 分派](../dispatch/fsu.md)检查类型合法性并记录标志。
+- [FSU 算术](arithmetic.md)解析活动舍入模式。
+- [参考量化](reference-quantization.md)和[参考特殊值](reference-scalar-fp-specials.md)实现钩子背后的参考配置档。
+- [数值状态](../../../arch/state/numeric-status.md)拥有粘滞标志字段。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

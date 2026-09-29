@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元按 24 位地址实现标量系统寄存器（SSR）转移。它检查访问环权限和访问类别，把地址路由到基本寄存器或上下文寄存器，并运行 `SSRGET`、`SSRSET` 和 `SSRSWAP` 所用的读、写和交换辅助函数。
+
+这些辅助函数是 `ReadSystemRegisterAddress`、`WriteSystemRegisterAddress`、`SwapSystemRegisterAddress`，以及分派所调用的四个 `Execute...` 包装函数。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-concepts role=concepts-state -->
+## 概念与可见状态
+
+SSR 地址是 24 位的 `SystemRegisterAddress`。地址分为两类：
+
+- 基本寄存器是 14 个固定地址，例如 0x0000 `THREAD_PTR`、0x0020 `CORE_STATE`、0x0027 `TILE_CAPACITY` 和 0x0C00 `CYCLE`。`BaseSystemRegisterOfAddress` 把它们映射到 `SystemRegister` 枚举。
+- 扩展寄存器是其他地址。位 15:12 表示访问环存储体，位 11:0 表示其中的寄存器。大多数存放在按位 15:0 索引的 `_ExtendedSystemRegisters` 中。
+
+访问类别为只读、只写、读写或未知。生成的 `SystemRegisterAccessOf` 为每个地址返回其类别。
+
+本模型中的访问环（ACR）权限很简单：位 11:0 小于 0x0F00 的地址对每个访问环开放；其他地址需要 ACR0。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-rules role=rules-interactions -->
+## 规则与交互
+
+当访问环缺少权限，或类别为未知或只写时，`ReadSystemRegisterAddress` 拒绝读取。拒绝会引发 `Fault_IllegalInstruction` 并返回 0。否则它读取基本寄存器，或五个具有特殊读取行为的扩展寄存器之一（0x0F02 陷阱状态、0x0F03 陷阱参数、0x0F08 中断挂起、0x0F09 最高挂起中断、0x0F20 时间），或所存储的扩展值。
+
+当访问环缺少权限，或类别为未知或只读时，`WriteSystemRegisterAddress` 拒绝写入。对 0x0F02、0x0F03 和 0x0F0A（中断结束）的写入有特殊效果，对 0x0F21 的写入还会刷新该访问环的定时器挂起状态。
+
+`ExecuteSystemRegisterSet` 和 `ExecuteSystemRegisterSwap` 在读取其 Reg5 源之前检查权限。
+
+设计要点：失败的检查先于任何源读取或寄存器访问。因此被拒绝的转移不读取源、不写目标，也不改变寄存器。
+
+`SwapSystemRegisterAddress` 在读取之前要求读权限、写权限和读写类别。
+
+设计要点：交换预检之所以存在，是因为某些读取带有效果。ASL 注释指出了只读寄存器上的定时器挂起刷新。先检查两个方向，意味着被拒绝的交换不会先执行读侧效果、再在写入时失败。
+
+读取类辅助函数仅当 `_LastFault` 为 `Fault_None` 时才写入目标。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-boundaries role=boundaries -->
+## 架构边界
+
+`SystemRegisterFileIndexOf` 断言位 23:16 为零。只有类别查找接受了该地址时，非零高字节才会到达这一断言；生成的表只接受位 23:16 为零的地址。
+
+对基本寄存器的写入交给[SYS 语义](semantics.md)中的 `WriteSystemRegister`。在那里只有 `THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE` 可写，写入 `CORE_STATE` 还会根据位 3:0 更新当前访问环。
+
+陷阱、中断和定时器寄存器由各自的架构单元拥有；本单元只负责路由到它们。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-example role=example-usage -->
+## 非规范阅读示例
+
+考虑在 ACR2 对地址 0x0010（`TIME`）执行 `SSRSWAP`，再在 ACR0 对地址 0x1F03 执行。
+
+| 情形 | 权限 | 类别 | 结果 |
+| --- | --- | --- | --- |
+| ACR2 下的 0x0010 | 开放，因为 0x010 小于 0xF00 | 只读 | `Fault_IllegalInstruction`；不读也不写 |
+| ACR0 下的 0x1F03 | ACR0 | 读写 | 返回访问环 1 的旧陷阱参数，并存入新值 |
+
+第二种情形中，访问环存储体取自位 15:12，为 1，因此交换作用于访问环 1 的 `_ACRTrapArgument0`。
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-registers-related role=related-owners-navigation -->
+## 相关所有者
+
+- [SYS 语义](semantics.md)拥有基本寄存器的读写以及 `CORE_STATE` 的附带效果。
+- [SYS 分派](../dispatch/sys.md)译码 SSR 地址和目标。
+- [访问控制](../../../arch/system-registers/access-control.md)拥有 `CurrentACR`。
+- [中断](../../../arch/system-registers/interrupt.md)和[定时器](../../../arch/system-registers/timer.md)拥有特殊的扩展寄存器。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

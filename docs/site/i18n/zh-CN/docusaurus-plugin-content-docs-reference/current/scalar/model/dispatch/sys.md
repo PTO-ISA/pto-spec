@@ -12,7 +12,78 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元执行每个已译码的标量系统（SYS）形式。`ExecuteDecodedSYSForm` 译码每个运算的操作数，并调用[SYS 语义](../sys/semantics.md)或[系统寄存器](../sys/registers.md)中的辅助函数。
+
+这些形式分为六组：
+
+- 访问环请求：`ACRC` 和 `ACRE`；
+- 检查与断点：`ASSERT`、`EBREAK` 和 `C.EBREAK`；
+- 缓存与 TLB 维护：`BC.*`、`DC.*`、`IC.*` 和 `TLB.*`；
+- 执行控制请求：`BSE`、`BWE`、`BWI` 和 `BWT`；
+- 栅栏：`FENCE.D` 和 `FENCE.I`；
+- 寄存器转移与提交目标：`SSRGET`、`SSRSET`、`SSRSWAP`、`HL.SSRGET`、`HL.SSRSET`、`C.SSRGET`、`LSRGET`，以及提交目标设置指令 `SETC.TGT`。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-concepts role=concepts-state -->
+## 概念与可见状态
+
+每组从特定字段取得操作数：
+
+| 组 | 操作数 |
+| --- | --- |
+| `ACRC`、`ACRE` | 4 位 `RST_Type` 或 `RRA_Type` |
+| `ASSERT`、带操作数的维护、控制请求、`SETC.TGT` | `SrcL` 中的 Reg5 值 |
+| `IALL` 维护 | 常数 0 |
+| `C.EBREAK`、`EBREAK` | 5 位 `imm5`，或零扩展的 4 位 `imm4` |
+| `FENCE.D` | 4 位 `PRED_IMM` 和 `SUCC_IMM` |
+| SSR 转移 | `SSR_ID` 或 `SSRID`，作为 24 位地址 |
+| `LSRGET` | 12 位 `LSR_ID` |
+
+系统寄存器地址是 24 位值。`ScalarDecodedSystemRegisterAddress` 保留原始字段的低 24 位，因此 12 位 `SSR_ID` 表示地址 0 到 0xFFF。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-rules role=rules-interactions -->
+## 规则与交互
+
+`C.SSRGET` 把值压入 T。`SSRGET` 和 `HL.SSRGET` 通过 `RegDst` 写入该值。`SSRSET` 和 `HL.SSRSET` 读取 `SrcL` 并写寄存器。`SSRSWAP` 读取 `SrcL`，写寄存器，并把旧值返回到 `RegDst`。
+
+设计要点：每个转移辅助函数都在读取源或寄存器之前检查权限和访问类别。被拒绝的转移不写目标，也不改变寄存器。对于 `SSRSWAP`，读权限和写权限都先检查，因此被拒绝的交换不会触发读侧效果。
+
+`ASSERT` 在操作数为零时引发 `Fault_Assert`。`EBREAK` 和 `C.EBREAK` 以标签作为原因引发 `Fault_SoftwareBreakpoint`。
+
+设计要点：断点和失败的断言都是普通的同步故障。顶层分派看到 `_LastFault` 已设置，返回拒绝且不推进 TPC；陷阱上下文记录断点指令的 TPC。
+
+维护和控制请求更新纪元并记录其操作数。它们不访问内存。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-boundaries role=boundaries -->
+## 架构边界
+
+大多数 SYS 形式只能在活动 System 指令束的体中运行。`ScalarOperationApplicable` 在分派之前检查这一点，因此位置错误的形式在其处理函数执行之前引发 `Fault_BundleControl`；只保留顶层分派所做的指令束体进入转换。`LSRGET` 需要任意活动的指令束体，`SETC.TGT` 需要 Standard 或 Floating 指令束。
+
+字段合法性也在分派之前检查。例如，`ACRE` 只接受 `RRA_Type` 为 0 或 1，`C.SSRGET` 只接受 `SSRID` 为 0、1 或 16。
+
+在 SYS 形式中，只有 `ACRE` 通过 `ScalarHandler_ArchitectureEnterRequest` 被 `ScalarHandlerWritesTPC` 列出，因此顶层分派不会把其长度加到 TPC 上。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-example role=example-usage -->
+## 非规范阅读示例
+
+取 32 位字 0x020002BB。它匹配 `SSRGET`（掩码 0x000FF07F，匹配值 0x3B）。
+
+| 字段 | 位 | 原始值 | 含义 |
+| --- | --- | --- | --- |
+| `RegDst` | 11:7 | 5 | GPR 5 |
+| `SSR_ID` | 31:20 | 0x020 | `CORE_STATE` |
+
+在 System 指令束体内，处理函数调用 `ExecuteSystemRegisterGet`。地址 0x020 的低位小于 0xF00，因此每个访问环都可以读取它，其访问类别为读写。GPR 5 接收完整的 `CORE_STATE`，包括位 39:37 中的舍入模式和位 36:32 中的粘滞标志。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-related role=related-owners-navigation -->
+## 相关所有者
+
+- [SYS 语义](../sys/semantics.md)拥有栅栏、维护、请求和适用性。
+- [系统寄存器](../sys/registers.md)拥有 SSR 权限、访问类别和转移。
+- [标量译码辅助函数](decode.md)拥有 `ScalarDecodedSystemRegisterAddress`。
+- [执行上下文](../../../arch/programming-model/execution-context.md)声明维护纪元和记录。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

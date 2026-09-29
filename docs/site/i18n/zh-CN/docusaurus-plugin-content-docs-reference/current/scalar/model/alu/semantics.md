@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元包含标量整数、逻辑、移位、位域、乘法和除法运算的取值规则。大多数函数是纯函数：接收 `Word` 值并返回一个 `Word`。少数 `Execute...Pair` 函数还会写入两个 Reg5 目标。
+
+已译码的 ALU 指令通过[ALU 分派](../dispatch/alu.md)到达这些函数，由分派读取操作数。直接读取绝对 GPR 的 `ExecuteScalarBinary` 在 ASL 树中没有调用者。
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-concepts role=concepts-state -->
+## 概念与可见状态
+
+`Word` 为 `PTO_XLEN`（64）位。所有 64 位算术按 2^64 取模回绕。`MultiplyWord` 返回乘积的低 64 位；`MultiplyWideSigned` 和 `MultiplyWideUnsigned` 返回全部 128 位。
+
+字运算（后缀 W）作用于低 32 位，并把 32 位结果符号扩展到 64 位。`ScalarBinaryW` 的移位计数取自右操作数的低五位；`ScalarBinary` 取低六位。
+
+右操作数修饰符在使用前变换右操作数：
+
+- `ScalarRight_SignedWord` 对位 31:0 做符号扩展。
+- `ScalarRight_UnsignedWord` 对位 31:0 做零扩展。
+- `ScalarRight_NegateOrNot` 对逻辑族做按位取反（NOT），其他情况下做二进制补码取负。
+
+`PrepareScalarRight` 先应用修饰符，再左移。`ApplyRestrictedCompareModifier` 把 `ScalarRight_NegateOrNot` 视为不变。`ApplySelectModifier` 把它视为取负，并忽略其他修饰符。
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-rules role=rules-interactions -->
+## 规则与交互
+
+除法从不引发故障。除数为零时商为 0，余数返回被除数。有符号除法对绝对值做除法，并在符号不同时取负，因此商向零舍入，余数与被除数同号。
+
+设计要点：零除数的结果在 ASL 中被明确写出，而不是交给异常处理。程序可以除以任何值（包括零），然后检查结果；不涉及陷阱处理程序。有符号最小值溢出情形同样有定义且不产生故障：`0x8000000000000000` 除以 -1 返回 `0x8000000000000000`，余数为 0。
+
+W 除法辅助函数先对两个输入的低 32 位做符号扩展（有符号）或零扩展（无符号），应用 64 位规则，再对结果的位 31:0 做符号扩展。
+
+位域辅助函数把值视为 64 位的环。`ExtractBitfield` 按偏移循环右移并保留 `width` 位，可按需符号扩展。`ModifyBitfield` 从偏移开始置位或清除 `width` 位。`InsertBitfield` 由 `first` 和 `last` 按模 64 计算宽度，因此字段可以从位 63 回绕到位 0。当宽度不是 8 的倍数时，`ReverseBitfieldBytes` 返回零。
+
+成对函数在写任一目标之前，先由其输入计算出两个结果。`ExecuteScalarDividePair` 先写商后写余数；`ExecuteScalarRemainderPair` 先写余数后写商；乘法成对函数先写低位后写高位。
+
+设计要点：由于第二次写入最后发生，两个目标指向同一 GPR 时，最终保留第二个结果。两次压入同一 T 或 U 队列时，第二个结果是最新条目。
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-boundaries role=boundaries -->
+## 架构边界
+
+`ScalarBinaryW` 只支持 ADD、SUB、AND、OR、XOR、SLL、SRL 和 SRA；对 MIN 和 MAX 变体会断言失败。译码分派只传入受支持的运算。
+
+除未被调用的 `ExecuteScalarBinary` 外，本单元不读取操作数。它不译码字段，也不推进 TPC。操作数快照和 T/U 队列选择属于分派和[标量操作数](../types/operands.md)。
+
+`NaturalToWord` 把不超过 262144 的自然数转换为 `Word`。许多其他单元用它计算地址偏移。
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-example role=example-usage -->
+## 非规范阅读示例
+
+考虑以被除数 -7、除数 2、有符号方式调用 `ExecuteScalarDividePair`。
+
+- 绝对值为 7 和 2，因此无符号商为 3。
+- 符号不同，因此商为 -3。
+- 余数为 -7 - (-3 x 2) = -1，与被除数同号。
+- 先写商目标，再写余数目标。
+
+若除数为 0，同一调用写入商 0 和余数 -7。
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-related role=related-owners-navigation -->
+## 相关所有者
+
+- [ALU 分派](../dispatch/alu.md)把每个 ALU 形式映射到这些函数。
+- [运算类型](../types/operations.md)定义 `ScalarBinaryOperation` 和 `ScalarRightModifier`。
+- [标量操作数](../types/operands.md)拥有 Reg5 读取和目标写入。
+- [BRU 分派](../dispatch/bru.md)对比较操作数应用这些修饰符。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

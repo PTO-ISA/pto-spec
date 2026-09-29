@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit executes every decoded scalar load, store, pair, and prefetch form. `ExecuteDecodedAGUForm` reads the form's catalog attributes, builds the base and offset from decoded fields, and calls one action helper.
+
+Each AGU form carries these catalog attributes, plus `prefetch_returns_address` described below, read through generated functions:
+
+- action: `ScalarAGU_Load`, `ScalarAGU_LoadPair`, `ScalarAGU_Store`, `ScalarAGU_StorePair`, or `ScalarAGU_Prefetch`;
+- address kind: `ScalarAGU_Register`, `ScalarAGU_Immediate`, `ScalarAGU_PCRelative`, or `ScalarAGU_Compressed`;
+- update mode: none, pre-index, or post-index;
+- access size in bytes and whether a load is signed;
+- the offset scale, as a left-shift amount.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-concepts role=concepts-state -->
+## Concepts and visible state
+
+The base comes from `ScalarDecodedAGUBase`:
+
+- PC-relative forms use TPC with bits 1:0 cleared.
+- Compressed forms use `SrcL`.
+- Immediate-offset single and pair stores use `SrcR`; their data is in `SrcD` (and `SrcD1`) for HL forms and in `SrcL` for the 32-bit forms.
+- All other forms use `SrcL`.
+
+The offset comes from `ScalarDecodedAGUOffset`. A register offset reads `SrcR`, applies the `SrcRType` address modifier, and shifts left by `shamt` if the form has one, or by the catalog scale otherwise. An immediate offset takes the first present field of `simm5`, `simm12`, `simm17`, `simm22`, or `simm`, sign-extends it, and shifts it left by the catalog scale.
+
+The updated base is `base + offset`. Post-index forms access the original base; all other forms access the updated base.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-rules role=rules-interactions -->
+## Rules and interactions
+
+A single load calls `LoadUnsigned` and then normalizes the value to the form's width and signedness. It writes nothing if `_LastFault` is set. Otherwise:
+
+- a compressed load pushes the value to T;
+- a no-update load writes `RegDst`;
+- an update load writes the value to `RegDst0` and then the updated base to `RegDst1`.
+
+A single store reads its data from `SrcD` if present, from T#1 for compressed forms, and from `SrcL` otherwise. It calls `Store`, and on success an update store writes the updated base to `RegDst`.
+
+Design point: every source, including the base, the offset register, and the store data, is read before the memory access, and every destination is guarded by `_LastFault`. A faulting access leaves every destination and the base unchanged. Recovery reissues the whole instruction and recomputes the address.
+
+Pair forms never update a base. They probe the first address and then the second address, which is the first plus the size, before reading or writing either element. A pair load writes `RegDst0` then `RegDst1`. A pair store reads `SrcD` and `SrcD1`, then stores and records the first element before the second.
+
+Design point: probing both addresses first means a pair either completes both elements or changes no memory and no destination. The first failing address is the one reported.
+
+A prefetch forms the address and calls `ScalarPrefetch`, which touches no memory. Forms whose catalog sets `prefetch_returns_address` also write `base + offset` to `RegDst`.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-boundaries role=boundaries -->
+## Architectural boundaries
+
+Reserved encodings never reach this unit. The catalog limits `SrcRType` on register-offset forms to 0, 1, or 2, and the `model` field of `HL.PRF`, `HL.PRF.A`, `HL.PRFI.U`, and `HL.PRFI.UA` to 0, 1, or 2. Top-level dispatch rejects other values before any source is read.
+
+This unit does not advance TPC. Alignment, bounds, and ring checks belong to [scalar memory](../agu/memory.md).
+
+`NormalizeScalarLoadResult` here and `NormalizeLoadedValue` in scalar memory give the same result for values from `LoadUnsigned`; this unit's copy also zero-extends unsigned values, which `NormalizeLoadedValue` returns unchanged.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-example role=example-usage -->
+## Non-normative reading example
+
+Take the 32-bit word 0xFFFF22B9 at TPC 0x202. Its low 15 bits match `LW.PCR` (mask 0x707F, match 0x2039).
+
+| Field | Bits | Raw | Value |
+| --- | --- | --- | --- |
+| `RegDst` | 11:7 | 5 | GPR 5 |
+| `simm17` | 31:15 | 0x1FFFE | -2 |
+
+- The base is 0x202 with bits 1:0 cleared, which is 0x200.
+- The catalog scale is 2, so the offset is -2 x 4 = -8.
+- The address is 0x1F8, which is 4-byte aligned.
+- On success GPR 5 receives the sign-extended word, and TPC becomes 0x206.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-agu-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar addressing](../agu/addressing.md) holds the direct helpers and `ScalarPrefetch`.
+- [Scalar memory](../agu/memory.md) owns probing, byte access, and faults.
+- [Scalar decode helpers](decode.md) own field extraction and the address modifier.
+- [Scalar operands](../types/operands.md) owns Reg5 reads, queue pushes, and discards.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

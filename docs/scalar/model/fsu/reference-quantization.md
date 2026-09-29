@@ -12,7 +12,77 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit is the finite part of the reference numeric profile. It converts FP32 and FP64 encodings to exact real values, and rounds real values back into FP32, FP64, or FP16 encodings with a flag vector. It also classifies scalar carriers, builds the special encodings (NaN, infinity, signed zero), and defines `ReferenceScalarFPBinarySpecial`, the NaN, infinity, and zero cases for ADD, SUB, MUL, and DIV.
+
+The scalar profile hooks in [scalar FP](scalar-fp.md) and the special-value unit call it. Some tile units reuse its FP32 and FP64 helpers, for example matrix quantization and reference conversion.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-concepts role=concepts-state -->
+## Concepts and visible state
+
+A finite value is a number that is not a NaN or an infinity. `ReferenceFP32FiniteValue` and `ReferenceFP64FiniteValue` decode normal and subnormal encodings exactly and assert that the exponent field is not all ones.
+
+A finite encoder takes an exact real result and a rounding mode, and returns an encoding and a 5-bit flag vector. The flag bits, from bit 0 upward, are NV, DZ, OF, UF, and NX. The FP32 and FP64 finite encoders produce three nonzero combinations:
+
+| Flags | Bits | Meaning |
+| --- | --- | --- |
+| 0x10 | NX | the normal result was rounded |
+| 0x14 | OF and NX | the result overflowed to infinity |
+| 0x18 | UF and NX | a value below the normal range was rounded (the result may be zero or the smallest normal) |
+
+The type codes used here are 0 for FP64, 1 for FP32, 4 for FP16, and 5 for BF16. `ReferenceScalarFPDataType` maps them to tile data types.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-rules role=rules-interactions -->
+## Rules and interactions
+
+`ReferenceFP32FiniteEncoding` works in four cases:
+
+1. An exact zero returns +0.0 with no flags.
+2. The value is normalized to a significand in [1, 2) and an exponent. An exponent above 127 returns a signed infinity with 0x14.
+3. An exponent below -126 is scaled by 2^149 and rounded to an integer subnormal significand. The result keeps its sign. A rounded result reports 0x18, including one that rounds to zero; an exact subnormal reports nothing.
+4. Otherwise the significand is scaled by 2^23 and rounded. A carry to 2^24 bumps the exponent, which can then overflow to infinity with 0x14. A rounded result reports 0x10.
+
+`ReferenceFP64FiniteEncoding` follows the same steps with FP64 limits. FP16 results go to `ReferenceBinary16Encoding`, owned by tile matrix quantization.
+
+Design point: the FP32 and FP64 encoders receive one real value and round it once, through `FloatingToInteger`. For fused operations that value is the exact real `product + addend` from `FloatingFused`, so the product is not rounded separately.
+
+Design point: overflow returns infinity in every rounding mode, because step 2 and the carry check do not look at the mode. A directed mode does not produce the largest finite value on overflow.
+
+`ReferenceScalarFPSpecialEncoding` builds a canonical quiet NaN, a signed infinity, or a signed zero for type codes 0, 1, 4, and 5. The NaN comes from `TileNumericCanonicalNaN`, for example 0x7FC00000 for FP32.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ReferenceScalarFPFiniteValue` accepts only type codes 0, 1, and 4; `ReferenceScalarFPFiniteEncoding` asserts the same set. BF16 finite values use `ReferenceBinary16FiniteValue` directly from the profile hooks.
+
+Callers must remove NaN and infinity inputs before calling the finite functions. For scalar arithmetic, `ReferenceScalarFPBinarySpecial` in this unit and the unary and fused special functions in the special-value unit do this.
+
+The ASL comment above `ReferenceScalarFPDataType` states that scalar FP operations follow IEEE 754-2008 and that non-finite and signed-zero handling is kept outside the finite kernel, so an overflowed infinity stays a legal input to the next instruction.
+
+`ReferenceFP16FiniteEncoding` has no caller in the ASL tree; the scalar FP16 path uses `ReferenceBinary16Encoding` instead.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-example role=example-usage -->
+## Non-normative reading example
+
+Encode the exact value 1/3 as FP32 with RNE.
+
+- Normalizing gives significand 4/3 and exponent -2.
+- The scaled significand is 4/3 x 2^23 = 11184810.67.
+- RNE rounds it to 11184811, which is 0xAAAAAB.
+- The encoded exponent is -2 + 127 = 125, and the fraction is 0xAAAAAB - 0x800000.
+- The result is 0x3EAAAAAB with flags 0x10, because the rounding was inexact.
+
+With RTZ the significand would be 11184810, giving 0x3EAAAAAA with flags 0x10.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-quantization-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar FP](scalar-fp.md) calls this unit through the profile hooks.
+- [Reference special values](reference-scalar-fp-specials.md) handles NaN, infinity, and zero before the finite path.
+- [FSU arithmetic](arithmetic.md) owns `FloatingToInteger` and the rounding modes.
+- [Matrix quantization](../../../tile/model/execution/matrix-quantization.md) owns `ReferenceBinary16Encoding`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

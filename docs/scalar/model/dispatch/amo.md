@@ -12,7 +12,81 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit executes every decoded scalar atomic form. `ExecuteDecodedAMOForm` selects the access width and operation from the mnemonic, reads the operands, and calls the helpers in [AMO semantics](../amo/semantics.md).
+
+| Mnemonics | Helper | Width |
+| --- | --- | --- |
+| `LR.B`, `LR.H`, `LR.W`, `LR.D` | `ExecuteDecodedLoadReserved` | 1, 2, 4, 8 |
+| `SC.B`, `SC.H`, `SC.W`, `SC.D` | `ExecuteDecodedStoreConditional` | 1, 2, 4, 8 |
+| `SWAPB` through `SWAPD`, `LW.*`, `LD.*` | RMW with result | 1 to 8 |
+| `SW.*`, `SD.*` | RMW without result | 4, 8 |
+| `CASB` through `CASD` and `HL.CAS*` | `ExecuteDecodedCompareAndSwap` | 1 to 8 |
+| `DMA` | `ExecuteScalarDMACopy64` | 64 bytes |
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-concepts role=concepts-state -->
+## Concepts and visible state
+
+The memory order comes from the `aq` and `rl` bits through `ScalarDecodedMemoryOrder`: neither is relaxed, `aq` alone is acquire, `rl` alone is release, and both are acquire-release. Forms that do not encode a bit read it as 0.
+
+For LR, SC, RMW, and CAS, the address comes from `ScalarDecodedAtomicAddress`, which reads a Reg5 register and passes it with the decoded `far` bit to `AtomicAddress`; in this model the address is unchanged. `DMA` reads its two addresses directly.
+
+Operand roles differ by family:
+
+- LR: address in `SrcL`.
+- SC: data in `SrcL`, address in `SrcR`.
+- RMW: address in `SrcL`, operand in `SrcR`.
+- CAS: address in `SrcL`, expected value in `SrcR`, desired value in `SrcD`.
+- `DMA`: source address in `SrcL`, destination address in `SrcR`.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-rules role=rules-interactions -->
+## Rules and interactions
+
+Each handler reads its registers and passes the values to the semantic helper. It then writes the destination only if `_LastFault` is `Fault_None`.
+
+Design point: all operand reads happen before the memory transaction, and the destination write happens after it and only on success. A faulting atomic writes no register and no memory. An SC that matched the reservation and then faulted has still cleared it (see [AMO semantics](../amo/semantics.md)).
+
+LR, RMW with result, and CAS write `NormalizeAtomicReturn` of the old value. That zero-extends byte and halfword values, sign-extends word values, and keeps doubleword values.
+
+SC writes the status: 0 for success, 1 for a reservation miss.
+
+`SW.*` and `SD.*` pass `write_result` as FALSE. They update memory like `LW.*` and `LD.*` but have no destination field.
+
+`DMA` has no destination and no memory-order bits; its events are relaxed.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ScalarAtomicOperationForOperation` maps the `LW`, `LD`, `SW`, and `SD` suffixes (ADD, AND, OR, XOR, SMIN, SMAX, UMIN, UMAX) to an `AtomicOperation`. Any other operation is `unreachable`.
+
+LR forms carry a `SrcZero` field. The LR handler never reads it.
+
+This unit does not advance TPC and does not check operand legality; top-level dispatch does both.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-example role=example-usage -->
+## Non-normative reading example
+
+Take the 32-bit word 0x2403028B. It matches `LR.W` (mask 0xF000707F, match 0x2000000B).
+
+| Field | Bit(s) | Raw | Meaning |
+| --- | --- | --- | --- |
+| `RegDst` | 11:7 | 5 | GPR 5 |
+| `SrcL` | 19:15 | 6 | address from GPR 6 |
+| `rl` | 25 | 0 | no release |
+| `aq` | 26 | 1 | acquire |
+| `far` | 27 | 0 | near hint |
+
+With GPR 6 holding 0x100 and the word at 0x100 equal to 0x80000000, the handler performs an acquire load of 4 bytes. It records the reservation at 0x100 and writes 0xFFFFFFFF80000000 to GPR 5, because word results are sign-extended.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-amo-related role=related-owners-navigation -->
+## Related owners
+
+- [AMO semantics](../amo/semantics.md) owns the LR/SC, RMW, CAS, and DMA transactions.
+- [Scalar decode helpers](decode.md) own `ScalarDecodedMemoryOrder` and `ScalarDecodedAtomicAddress`.
+- [Scalar memory](../agu/memory.md) owns probing and faults.
+- [Memory ordering](../../../arch/memory-model/ordering.md) owns the meaning of each memory order.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

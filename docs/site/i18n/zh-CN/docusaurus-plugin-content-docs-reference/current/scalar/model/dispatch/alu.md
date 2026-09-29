@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元执行每个已译码的标量 ALU 形式。`ExecuteDecodedALUForm` 按运算分支。对大多数运算，它读取已译码操作数，并调用[ALU 语义](../alu/semantics.md)中的取值函数。
+
+五个共享辅助函数覆盖常见形态：
+
+- `ExecuteDecodedBinary` 用于带 `SrcRType` 和 `shamt` 的寄存器形式，例如 `ADD` 和 `XORW`；
+- `ExecuteDecodedImmediateBinary` 用于立即数形式，例如 `ADDI` 和 `HL.ORI`；
+- `ExecuteDecodedSimpleBinary` 用于寄存器移位和 `MIN`/`MAX`；
+- `ExecuteDecodedShiftImmediate` 用于立即数移位；
+- `ExecuteDecodedCompressedBinary` 用于 16 位的 `C.ADD`、`C.SUB`、`C.AND` 和 `C.OR`。
+
+其余运算（包括除法、乘法、位域、选择和立即数物化形式）在分支内直接处理。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-concepts role=concepts-state -->
+## 概念与可见状态
+
+Reg5 选择子是 5 位寄存器码。作为源时，0 到 23 表示 GPR，24 到 27 表示 T#1 到 T#4，28 到 31 表示 U#1 到 U#4。作为目标时，1 到 23 写 GPR，30 压入 U，31 压入 T，其余丢弃。
+
+大多数压缩 ALU 形式（例如 `C.ADD`、`C.ADDI` 和 `C.SEXT.B`）没有目标字段；`WriteCompressedTResult` 把其结果压入 T。`C.MOVI` 和 `C.MOVR` 带有 `RegDst` 字段。`C.SLLI` 和 `C.SRLI` 以 T#1 作为左操作数。
+
+立即数字段取决于运算。`ADDI`、`SUBI` 及其 W 和 `HL` 版本使用无符号立即数（`uimm12`、`uimm24`）；`ANDI`、`ORI`、`XORI` 及其各版本使用有符号立即数（`simm12`、`simm24`）。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-rules role=rules-interactions -->
+## 规则与交互
+
+`ExecuteDecodedBinary` 读取 `SrcL` 和 `SrcR`，译码二元右操作数修饰符并应用它，把结果左移 `shamt` 位，然后执行 64 位运算或字运算。AND、OR 和 XOR 传入 `logical_family` 为 TRUE，因此修饰符 `.not` 对右操作数取反；ADD 和 SUB 使用 `.neg`。
+
+设计要点：每个处理函数在调用 `WriteScalarDestination` 之前把每个源读入局部值。同时作为源的目标，或压入某个源所读队列的操作，都无法改变同一指令中使用的值。
+
+成对形式按固定顺序写两个目标：
+
+| 运算 | 第一次写入 | 第二次写入 |
+| --- | --- | --- |
+| `HL.MUL`、`HL.MULU`、`HL.MADD`、`HL.MADDW` | `RegDst0` 低位 | `RegDst1` 高位 |
+| `HL.DIV`、`HL.DIVU` 及 W 形式 | `RegDst0` 商 | `RegDst1` 余数 |
+| `HL.REM`、`HL.REMU` 及 W 形式 | `RegDst0` 余数 | `RegDst1` 商 |
+| `HL.CCAT`、`HL.CCATW` | `RegDst0` 低位 | `RegDst1` 高位 |
+
+设计要点：固定的写入顺序使目标别名具有确定结果。如果两个字段指向同一 GPR，第二次写入就是最终值。
+
+`CSEL` 读取 `SrcP`、`SrcL` 和 `SrcR`。若 `SrcP` 非零则返回 `SrcL`，否则返回 `SrcR`；当原始 `SrcRType` 为 `11` 时对其取负。
+
+`C.SETC.TGT` 和 `C.SETRET` 是带控制效果的 ALU 形式。它们调用 `SetCompressedCommitTarget` 和 `SetReturnAddress`。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-boundaries role=boundaries -->
+## 架构边界
+
+ALU 取值运算都不产生故障。除以零返回已定义的值。故障仍可能来自顶层合法性检查（例如不可用的 T/U 源），以及在没有活动的 Standard 或 Floating 指令束、或该指令束的压缩提交目标已被设置时来自 `C.SETC.TGT`。
+
+本单元不推进 TPC；处理函数返回后由顶层分派推进。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-example role=example-usage -->
+## 非规范阅读示例
+
+取 16 位字 0xC0C8。其低六位为 0x08，即掩码 0x3F 下 `C.ADD` 的匹配值。
+
+| 字段 | 位 | 原始值 | 含义 |
+| --- | --- | --- | --- |
+| `SrcL` | 10:6 | 3 | GPR 3 |
+| `SrcR` | 15:11 | 24 | T#1 |
+
+设 GPR 3 持有 10，T#1 持有 5。
+
+- 顶层分派确认 T#1 有效。
+- 处理函数读取 10 和 5，相加，并把 15 压入 T。
+- 原 T#1 变为 T#2，新的 T#1 为 15。
+- TPC 推进 2。
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-related role=related-owners-navigation -->
+## 相关所有者
+
+- [ALU 语义](../alu/semantics.md)拥有此处使用的所有取值规则。
+- [标量译码辅助函数](decode.md)拥有字段译码和 `SrcRType` 表。
+- [标量操作数](../types/operands.md)拥有 Reg5 读取、压入和丢弃。
+- [SYS 语义](../sys/semantics.md)拥有 `SetCompressedCommitTarget`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

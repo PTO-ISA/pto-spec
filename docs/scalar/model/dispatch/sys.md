@@ -12,7 +12,78 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit executes every decoded scalar system (SYS) form. `ExecuteDecodedSYSForm` decodes the operands of each operation and calls a helper from [SYS semantics](../sys/semantics.md) or [system registers](../sys/registers.md).
+
+The forms fall into six groups:
+
+- access-ring requests: `ACRC` and `ACRE`;
+- checks and breakpoints: `ASSERT`, `EBREAK`, and `C.EBREAK`;
+- cache and TLB maintenance: `BC.*`, `DC.*`, `IC.*`, and `TLB.*`;
+- execution-control requests: `BSE`, `BWE`, `BWI`, and `BWT`;
+- fences: `FENCE.D` and `FENCE.I`;
+- register transfers and the commit target: `SSRGET`, `SSRSET`, `SSRSWAP`, `HL.SSRGET`, `HL.SSRSET`, `C.SSRGET`, `LSRGET`, and the commit-target setter `SETC.TGT`.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-concepts role=concepts-state -->
+## Concepts and visible state
+
+Each group takes its operand from a specific field:
+
+| Group | Operand |
+| --- | --- |
+| `ACRC`, `ACRE` | 4-bit `RST_Type` or `RRA_Type` |
+| `ASSERT`, operand-bearing maintenance, control requests, `SETC.TGT` | the Reg5 value in `SrcL` |
+| `IALL` maintenance | the constant 0 |
+| `C.EBREAK`, `EBREAK` | 5-bit `imm5`, or 4-bit `imm4` zero-extended |
+| `FENCE.D` | 4-bit `PRED_IMM` and `SUCC_IMM` |
+| SSR transfers | `SSR_ID` or `SSRID`, as a 24-bit address |
+| `LSRGET` | 12-bit `LSR_ID` |
+
+A system-register address is a 24-bit value. `ScalarDecodedSystemRegisterAddress` keeps the low 24 bits of the raw field, so a 12-bit `SSR_ID` names addresses 0 through 0xFFF.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-rules role=rules-interactions -->
+## Rules and interactions
+
+`C.SSRGET` pushes the value to T. `SSRGET` and `HL.SSRGET` write it through `RegDst`. `SSRSET` and `HL.SSRSET` read `SrcL` and write the register. `SSRSWAP` reads `SrcL`, writes the register, and returns the old value to `RegDst`.
+
+Design point: each transfer helper checks permission and access class before reading a source or the register. A rejected transfer writes no destination and changes no register. For `SSRSWAP` both read and write permission are checked first, so a rejected swap cannot trigger a read-side effect.
+
+`ASSERT` raises `Fault_Assert` when its operand is zero. `EBREAK` and `C.EBREAK` raise `Fault_SoftwareBreakpoint` with the tag as the cause.
+
+Design point: breakpoints and failed assertions are ordinary synchronous faults. Top-level dispatch sees `_LastFault` set, returns rejected, and does not advance TPC; the trap context records the TPC of the breakpoint instruction.
+
+Maintenance and control requests update epochs and record their operand. They do not access memory.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-boundaries role=boundaries -->
+## Architectural boundaries
+
+Most SYS forms may only run in the body of an active System bundle. `ScalarOperationApplicable` checks this before dispatch, so a misplaced form raises `Fault_BundleControl` before its handler runs; only the body-entry transition made by top-level dispatch remains. `LSRGET` needs any active bundle body, and `SETC.TGT` needs a Standard or Floating bundle.
+
+Field legality is also checked before dispatch. For example, `ACRE` accepts only `RRA_Type` 0 or 1, and `C.SSRGET` accepts only `SSRID` 0, 1, or 16.
+
+Among SYS forms, only `ACRE` is named by `ScalarHandlerWritesTPC`, through `ScalarHandler_ArchitectureEnterRequest`, so top-level dispatch does not add its length to TPC.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-example role=example-usage -->
+## Non-normative reading example
+
+Take the 32-bit word 0x020002BB. It matches `SSRGET` (mask 0x000FF07F, match 0x3B).
+
+| Field | Bits | Raw | Meaning |
+| --- | --- | --- | --- |
+| `RegDst` | 11:7 | 5 | GPR 5 |
+| `SSR_ID` | 31:20 | 0x020 | `CORE_STATE` |
+
+Inside a System bundle body, the handler calls `ExecuteSystemRegisterGet`. Address 0x020 has low bits below 0xF00, so every ring may read it, and its access class is read-write. GPR 5 receives the full `CORE_STATE`, including the rounding mode in bits 39:37 and the sticky flags in bits 36:32.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-related role=related-owners-navigation -->
+## Related owners
+
+- [SYS semantics](../sys/semantics.md) owns fences, maintenance, requests, and applicability.
+- [System registers](../sys/registers.md) owns SSR permission, access class, and transfers.
+- [Scalar decode helpers](decode.md) own `ScalarDecodedSystemRegisterAddress`.
+- [Execution context](../../../arch/programming-model/execution-context.md) declares the maintenance epochs and records.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
