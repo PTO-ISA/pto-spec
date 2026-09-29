@@ -1,0 +1,555 @@
+#!/usr/bin/env python3
+"""Rebind rewritten mnemonic reader guides to their migration evidence.
+
+A reader-guide rewrite changes the English and zh-CN supplementary regions of a
+generated page. Every paragraph of those regions is bound by digest to a unit
+shard, a zh-CN translation shard, and an accepted review attestation. This tool
+recomputes those bindings from the current Markdown after an independent review
+has accepted the rewrite. It never relaxes a check: the result must still pass
+``scripts/check-mnemonic-explanations``.
+
+Typical use:
+
+    scripts/rebind-reader-guides --check PTO-TILE-TADD        # structure only
+    scripts/rebind-reader-guides --write PTO-TILE-TADD        # unit + zh-CN shards
+    scripts/rebind-reader-guides --attest BATCH --writer W --reviewer R \
+        --verifier V PTO-TILE-TADD ...                          # review batches
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import importlib.machinery
+import importlib.util
+import json
+import pathlib
+import re
+import subprocess
+import sys
+
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+EVIDENCE = ROOT / "spec/evidence/mnemonic-descriptions"
+TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
+HEADING_REASON = {
+    "arch": "section heading organizes the reader guide without adding architectural meaning",
+    "block": "section heading organizes the reader guide without adding instruction behavior",
+    "scalar": "section heading organizes the reader guide without adding instruction behavior",
+    "tile": "section heading organizes the reader guide without adding instruction behavior",
+}
+NAMED_PROFILE = re.compile(r"\b(?:A2/A3|A2A3|A5|named profile|target profile)\b")
+
+
+def _load_checker():
+    path = ROOT / "scripts/check-mnemonic-explanations"
+    loader = importlib.machinery.SourceFileLoader("pto_reader_checker", str(path))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    assert spec is not None
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+CHECK = _load_checker()
+
+
+class RebindError(RuntimeError):
+    pass
+
+
+def canonical(value: object) -> bytes:
+    return CHECK.canonical_json_bytes(value)
+
+
+def sha(data: bytes) -> str:
+    return CHECK.sha256_bytes(data)
+
+
+def current_units() -> dict[str, dict]:
+    traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
+    return {
+        unit["id"]: unit for unit in traceability["units"]
+        if unit.get("surface") == "arch"
+        or (unit.get("mnemonic") is not None and unit.get("surface") in CHECK.SURFACES)
+    }
+
+
+def shard_path(unit: dict) -> pathlib.Path:
+    return EVIDENCE / unit["surface"] / f"{unit['id']}.json"
+
+
+def translation_path(unit: dict) -> pathlib.Path:
+    return EVIDENCE / "translations/zh-CN" / unit["surface"] / f"{unit['id']}.json"
+
+
+def id_suffix(shard: dict) -> str:
+    """Return the stable per-unit suffix already used by node and claim IDs."""
+    for node in shard["node_dispositions"]:
+        match = re.fullmatch(r"PTO-READER-NODE-(.+)-(\d{3})", node["node_id"])
+        if match:
+            return match.group(1)
+    raise RebindError(f"{shard['unit_id']}: cannot derive the existing node ID suffix")
+
+
+def default_owner_reference(shard: dict) -> dict:
+    owner = shard["owner"]
+    if owner.get("ndf_clause") and owner.get("contract_artifact"):
+        return {"kind": "instruction-contract", "path": owner["contract_artifact"],
+                "clause": owner["ndf_clause"]}
+    return {"kind": "asl", "path": owner["asl_path"], "clause": None}
+
+
+def parse_page(path: pathlib.Path, logical: str) -> tuple[str, list[dict], list[dict]]:
+    body = CHECK.supplementary_body(path.read_text(encoding="utf-8"))
+    blocks, nodes = CHECK.parse_reader_blocks(body, ROOT, pathlib.PurePosixPath(logical))
+    return body, blocks, nodes
+
+
+def rebuild_unit_shard(unit: dict, shard: dict) -> tuple[dict, str]:
+    doc = shard["owner"]["documentation_path"]
+    body, blocks, nodes = parse_page(ROOT / doc, doc)
+    roles = CHECK.required_roles(shard["page_contract"])
+    if {block["role"] for block in blocks} != roles:
+        raise RebindError(f"{unit['id']}: reader blocks must cover exactly {sorted(roles)}")
+    suffix = id_suffix(shard)
+    previous = {
+        (claim["block_id"], claim["ast_path"]): claim for claim in shard["atomic_claims"]
+    }
+    # An unchanged fragment keeps its reviewed disposition, even if it moved
+    # within its block; only rewritten fragments become new semantic claims.
+    claims_by_hash = {
+        (claim["block_id"], claim["fragment_sha256"]): claim for claim in shard["atomic_claims"]
+    }
+    connective_by_hash = {
+        (node["block_id"], node["fragment_sha256"]): node["connective_reason"]
+        for node in shard["node_dispositions"] if node["node_disposition"] == "connective"
+    }
+    previous_references = [claim["owner_reference"] for claim in shard["atomic_claims"]]
+    fallback_reference = default_owner_reference(shard)
+    rebuilt = copy.deepcopy(shard)
+    rebuilt["presentation_blocks"] = blocks
+    rebuilt["reader_roles"] = [block["role"] for block in blocks]
+    rebuilt["node_dispositions"] = []
+    rebuilt["atomic_claims"] = []
+    # Fresh claims never reuse a number that an earlier review may have attested.
+    claim_number = max(
+        (int(claim["claim_id"].rsplit("-", 1)[1]) for claim in shard["atomic_claims"]),
+        default=0,
+    )
+    used_claim_ids: set[str] = set()
+    nodes_by_hash = {
+        (node["block_id"], node["fragment_sha256"]): node["node_id"]
+        for node in shard["node_dispositions"]
+    }
+    node_number = max(
+        (int(node["node_id"].rsplit("-", 1)[1]) for node in shard["node_dispositions"]),
+        default=0,
+    )
+    used_node_ids: set[str] = set()
+    for node in nodes:
+        node_id = nodes_by_hash.get((node["block_id"], node["fragment_sha256"]))
+        if node_id is None or node_id in used_node_ids:
+            node_number += 1
+            node_id = f"PTO-READER-NODE-{suffix}-{node_number:03d}"
+        used_node_ids.add(node_id)
+        base = {
+            "node_id": node_id, "block_id": node["block_id"], "ast_path": node["ast_path"],
+            "node_kind": node["kind"], "fragment_sha256": node["fragment_sha256"],
+        }
+        reason = connective_by_hash.get((node["block_id"], node["fragment_sha256"]))
+        if node["kind"] == "heading" or reason is not None:
+            base["node_disposition"] = "connective"
+            base["connective_reason"] = reason or HEADING_REASON[unit["surface"]]
+            rebuilt["node_dispositions"].append(base)
+            continue
+        unchanged = claims_by_hash.get((node["block_id"], node["fragment_sha256"]))
+        if unchanged is not None and unchanged["claim_id"] not in used_claim_ids:
+            claim_id = unchanged["claim_id"]
+        else:
+            claim_number += 1
+            claim_id = f"PTO-READER-CLAIM-{suffix}-{claim_number:03d}"
+        used_claim_ids.add(claim_id)
+        base["node_disposition"] = "semantic-claim"
+        base["claim_id"] = claim_id
+        rebuilt["node_dispositions"].append(base)
+        prior = unchanged or previous.get((node["block_id"], node["ast_path"]))
+        reference = (
+            prior["owner_reference"] if prior is not None
+            else previous_references[0] if previous_references
+            else fallback_reference
+        )
+        if prior is not None and prior["fragment_sha256"] == node["fragment_sha256"]:
+            portability = prior["portability_class"]
+        else:
+            portability = (
+                "named-profile" if NAMED_PROFILE.search(node["text"]) else "portable"
+            )
+        rebuilt["atomic_claims"].append({
+            "claim_id": claim_id, "block_id": node["block_id"], "ast_path": node["ast_path"],
+            "fragment_sha256": node["fragment_sha256"],
+            "disposition": "current-owner-rewrite",
+            "owner_reference": copy.deepcopy(reference),
+            "portability_class": portability,
+            "source_section_ids": [],
+        })
+    rebuilt["risk_tier"] = CHECK.derived_risk_tier(unit, rebuilt, body)
+    return rebuilt, body
+
+
+def rebuild_translation(unit: dict, english: dict, english_body: str,
+                        translation: dict) -> dict:
+    doc = english["owner"]["documentation_path"]
+    locale_path = CHECK.localized_documentation_path(doc)
+    locale_body, locale_blocks, locale_nodes = parse_page(ROOT / locale_path, doc)
+    english_blocks = [block["block_id"] for block in english["presentation_blocks"]]
+    if [block["block_id"] for block in locale_blocks] != english_blocks:
+        raise RebindError(f"{unit['id']}: zh-CN reader blocks must match English block IDs and order")
+    english_nodes = english["node_dispositions"]
+    if len(locale_nodes) != len(english_nodes):
+        raise RebindError(
+            f"{unit['id']}: zh-CN guide has {len(locale_nodes)} nodes; English has {len(english_nodes)}"
+        )
+    for english_node, locale_node in zip(english_nodes, locale_nodes):
+        if (english_node["block_id"], english_node["ast_path"], english_node["node_kind"]) != (
+                locale_node["block_id"], locale_node["ast_path"], locale_node["kind"]):
+            raise RebindError(
+                f"{unit['id']}: zh-CN node {locale_node['block_id']}:{locale_node['ast_path']} "
+                f"({locale_node['kind']}) does not mirror English "
+                f"{english_node['block_id']}:{english_node['ast_path']} ({english_node['node_kind']})"
+            )
+    literals = CHECK.derived_protected_literals(english, english_body)
+    missing = [literal for literal in literals if literal not in locale_body]
+    if missing:
+        raise RebindError(f"{unit['id']}: zh-CN guide lacks protected literals {missing}")
+    rebuilt = copy.deepcopy(translation)
+    rebuilt["status"] = "complete"
+    rebuilt["english_unit_shard_sha256"] = sha(canonical(english))
+    rebuilt["english_block_ids"] = english_blocks
+    rebuilt["english_node_ids"] = [node["node_id"] for node in english_nodes]
+    rebuilt["english_claim_ids"] = [claim["claim_id"] for claim in english["atomic_claims"]]
+    rebuilt["locale_documentation_path"] = locale_path.as_posix()
+    rebuilt["locale_guide_sha256"] = sha(locale_body.encode("utf-8"))
+    rebuilt["protected_literals"] = literals
+    rebuilt["protected_literals_sha256"] = sha(canonical(literals))
+    rebuilt["block_mappings"] = [
+        {
+            "english_block_id": block_id,
+            "locale_block_id": block_id,
+            "locale_fragment_sha256": sha(canonical([
+                node["fragment_sha256"] for node in locale_nodes if node["block_id"] == block_id
+            ])),
+        }
+        for block_id in english_blocks
+    ]
+    rebuilt["node_mappings"] = [
+        {
+            "english_node_id": english_node["node_id"],
+            "locale_node_id": f"{locale_node['block_id']}:{locale_node['ast_path']}",
+            "locale_fragment_sha256": locale_node["fragment_sha256"],
+        }
+        for english_node, locale_node in zip(english_nodes, locale_nodes)
+    ]
+    rebuilt["claim_mappings"] = [
+        {
+            "english_claim_id": english_node["claim_id"],
+            "locale_node_id": f"{locale_node['block_id']}:{locale_node['ast_path']}",
+        }
+        for english_node, locale_node in zip(english_nodes, locale_nodes)
+        if english_node["node_disposition"] == "semantic-claim"
+    ]
+    return rebuilt
+
+
+def rebind(unit_ids: list[str], write: bool) -> list[str]:
+    units = current_units()
+    errors: list[str] = []
+    for unit_id in unit_ids:
+        unit = units.get(unit_id)
+        if unit is None:
+            errors.append(f"{unit_id}: not an active reader-guide unit")
+            continue
+        try:
+            shard = json.loads(shard_path(unit).read_text(encoding="utf-8"))
+            translation = json.loads(translation_path(unit).read_text(encoding="utf-8"))
+            english, body = rebuild_unit_shard(unit, shard)
+            localized = rebuild_translation(unit, english, body, translation)
+        except (RebindError, CHECK.CheckError) as error:
+            errors.append(str(error))
+            continue
+        if write:
+            shard_path(unit).write_bytes(canonical(english))
+            translation_path(unit).write_bytes(canonical(localized))
+    return errors
+
+
+def _drop_units(item: dict, unit_ids: set[str], claim_key: str, node_key: str,
+                claims: set[str], nodes: set[str]) -> None:
+    item["unit_risks"] = {
+        key: value for key, value in item["unit_risks"].items() if key not in unit_ids
+    }
+    if "unit_ids" in item:
+        item["unit_ids"] = [unit for unit in item["unit_ids"] if unit not in unit_ids]
+    if "translation_artifact_digests" in item:
+        item["translation_artifact_digests"] = {
+            key: value for key, value in item["translation_artifact_digests"].items()
+            if key not in unit_ids
+        }
+    if "protected_literal_unit_ids" in item:
+        item["protected_literal_unit_ids"] = [
+            unit for unit in item["protected_literal_unit_ids"] if unit not in unit_ids
+        ]
+    for key in ("deep_reviewed_unit_ids", "verifier_sample_unit_ids"):
+        if key in item:
+            item[key] = [unit for unit in item[key] if unit not in unit_ids]
+    item[claim_key] = [claim for claim in item[claim_key] if claim not in claims]
+    item[node_key] = [node for node in item[node_key] if node not in nodes]
+    item["reviewed_claim_count"] = len(item[claim_key])
+    item["reviewed_node_count"] = len(item[node_key])
+    item["verifier_sample_count"] = len(item["verifier_sample_unit_ids"])
+
+
+def attest(unit_ids: list[str], batch_id: str, contexts: dict[str, str],
+           source_commit: str) -> None:
+    """Move reviewed units into one new accepted English and zh-CN batch."""
+    units = current_units()
+    selected = set(unit_ids)
+    english = {
+        unit_id: json.loads(shard_path(units[unit_id]).read_text(encoding="utf-8"))
+        for unit_id in unit_ids
+    }
+    translations = {
+        unit_id: json.loads(translation_path(units[unit_id]).read_text(encoding="utf-8"))
+        for unit_id in unit_ids
+    }
+    claims = {c["claim_id"] for s in english.values() for c in s["atomic_claims"]}
+    nodes = {n["node_id"] for s in english.values() for n in s["node_dispositions"]}
+    guide_hashes = {}
+    for unit_id, shard in english.items():
+        doc = shard["owner"]["documentation_path"]
+        guide_hashes[unit_id] = sha(CHECK.supplementary_body(
+            (ROOT / doc).read_text(encoding="utf-8")).encode("utf-8"))
+    risks = {unit_id: english[unit_id]["risk_tier"] for unit_id in sorted(unit_ids)}
+    shard_hashes = {
+        unit_id: sha(shard_path(units[unit_id]).read_bytes()) for unit_id in sorted(unit_ids)
+    }
+    translation_hashes = {
+        unit_id: sha(translation_path(units[unit_id]).read_bytes()) for unit_id in sorted(unit_ids)
+    }
+
+    # Remove the rewritten units from the attestations that reviewed their old text.
+    review_root = EVIDENCE / "reviews"
+    for path in sorted(review_root.glob("*.json")):
+        item = json.loads(path.read_text(encoding="utf-8"))
+        if not selected & set(item["unit_risks"]):
+            continue
+        old_claims = set(item["reviewed_claim_ids"])
+        old_nodes = set(item["reviewed_node_ids"])
+        stale_claims = {
+            claim for claim in old_claims
+            if any(claim.startswith(f"PTO-READER-CLAIM-{_suffix(english, u)}-") for u in selected
+                   if u in item["unit_risks"])
+        }
+        stale_nodes = {
+            node for node in old_nodes
+            if any(node.startswith(f"PTO-READER-NODE-{_suffix(english, u)}-") for u in selected
+                   if u in item["unit_risks"])
+        }
+        _drop_units(item, selected, "reviewed_claim_ids", "reviewed_node_ids",
+                    stale_claims, stale_nodes)
+        if not item["unit_risks"]:
+            path.unlink()
+            continue
+        _refresh_english_digests(item, units)
+        path.write_bytes(canonical(item))
+    translation_root = EVIDENCE / "translation-reviews/zh-CN"
+    for path in sorted(translation_root.glob("*.json")):
+        item = json.loads(path.read_text(encoding="utf-8"))
+        if not selected & set(item["unit_ids"]):
+            continue
+        stale_claims = {
+            claim for claim in item["reviewed_claim_ids"]
+            if any(claim.startswith(f"PTO-READER-CLAIM-{_suffix(english, u)}-") for u in selected
+                   if u in item["unit_ids"])
+        }
+        stale_nodes = {
+            node for node in item["reviewed_node_ids"]
+            if any(node.startswith(f"PTO-READER-NODE-{_suffix(english, u)}-") for u in selected
+                   if u in item["unit_ids"])
+        }
+        _drop_units(item, selected, "reviewed_claim_ids", "reviewed_node_ids",
+                    stale_claims, stale_nodes)
+        if not item["unit_ids"]:
+            path.unlink()
+            continue
+        _refresh_translation_digests(item, units)
+        path.write_bytes(canonical(item))
+
+    sorted_units = sorted(unit_ids)
+    batch = {
+        "schema_version": 1,
+        "batch_id": batch_id,
+        "rubric_version": "mnemonic-reader-v1",
+        "source_commit": source_commit,
+        "unit_risks": risks,
+        "reviewed_claim_ids": sorted(claims),
+        "reviewed_claim_count": len(claims),
+        "reviewed_node_ids": sorted(nodes),
+        "reviewed_node_count": len(nodes),
+        "deep_reviewed_unit_ids": sorted_units,
+        "verifier_sample_unit_ids": sorted_units,
+        "verifier_sample_count": len(sorted_units),
+        "unresolved_question_count": 0,
+        "verdict": "accepted",
+        "contexts": {
+            "writer": contexts["writer"],
+            "semantic_reviewer": contexts["reviewer"],
+            "verifier": contexts["verifier"],
+        },
+    }
+    batch["artifact_digests"] = {
+        "writer": sha(canonical(shard_hashes)),
+        "semantic_review": sha(canonical(guide_hashes)),
+        "verification": sha(canonical({
+            "source_commit": source_commit,
+            "unit_risks": risks,
+            "reviewed_claim_ids": sorted(claims),
+            "reviewed_node_ids": sorted(nodes),
+            "deep_reviewed_unit_ids": sorted_units,
+            "verifier_sample_unit_ids": sorted_units,
+        })),
+    }
+    name = batch_id.removeprefix("PTO-READER-").lower() + ".json"
+    (review_root / name).write_bytes(canonical(batch))
+
+    locale_hashes = {unit_id: translations[unit_id]["locale_guide_sha256"] for unit_id in sorted_units}
+    translation_batch = {
+        "schema_version": 1,
+        "locale": "zh-CN",
+        "batch_id": batch_id.replace("PTO-READER-", "PTO-READER-ZH-CN-", 1),
+        "rubric_version": "mnemonic-translation-v1",
+        "source_commit": source_commit,
+        "unit_ids": sorted_units,
+        "unit_risks": risks,
+        "translation_artifact_digests": translation_hashes,
+        "reviewed_claim_ids": sorted(claims),
+        "reviewed_claim_count": len(claims),
+        "reviewed_node_ids": sorted(nodes),
+        "reviewed_node_count": len(nodes),
+        "protected_literal_unit_ids": sorted_units,
+        "verifier_sample_unit_ids": sorted_units,
+        "verifier_sample_count": len(sorted_units),
+        "unresolved_question_count": 0,
+        "verdict": "accepted",
+        "contexts": {
+            "translator": contexts["writer"],
+            "language_reviewer": contexts["reviewer"],
+            "verifier": contexts["verifier"],
+        },
+    }
+    translation_batch["artifact_digests"] = {
+        "translation": sha(canonical(translation_hashes)),
+        "language_review": sha(canonical(locale_hashes)),
+        "verification": sha(canonical({
+            "source_commit": source_commit,
+            "unit_risks": risks,
+            "reviewed_claim_ids": sorted(claims),
+            "reviewed_node_ids": sorted(nodes),
+            "protected_literal_unit_ids": sorted_units,
+            "verifier_sample_unit_ids": sorted_units,
+        })),
+    }
+    (translation_root / name).write_bytes(canonical(translation_batch))
+
+
+def _suffix(english: dict[str, dict], unit_id: str) -> str:
+    return id_suffix(english[unit_id])
+
+
+def _refresh_english_digests(item: dict, units: dict[str, dict]) -> None:
+    unit_ids = sorted(item["unit_risks"])
+    shard_hashes = {u: sha(shard_path(units[u]).read_bytes()) for u in unit_ids}
+    guide_hashes = {}
+    for unit_id in unit_ids:
+        shard = json.loads(shard_path(units[unit_id]).read_text(encoding="utf-8"))
+        doc = shard["owner"]["documentation_path"]
+        guide_hashes[unit_id] = sha(CHECK.supplementary_body(
+            (ROOT / doc).read_text(encoding="utf-8")).encode("utf-8"))
+    item["artifact_digests"] = {
+        "writer": sha(canonical(shard_hashes)),
+        "semantic_review": sha(canonical(guide_hashes)),
+        "verification": sha(canonical({
+            "source_commit": item["source_commit"],
+            "unit_risks": item["unit_risks"],
+            "reviewed_claim_ids": sorted(item["reviewed_claim_ids"]),
+            "reviewed_node_ids": sorted(item["reviewed_node_ids"]),
+            "deep_reviewed_unit_ids": sorted(item["deep_reviewed_unit_ids"]),
+            "verifier_sample_unit_ids": sorted(item["verifier_sample_unit_ids"]),
+        })),
+    }
+
+
+def _refresh_translation_digests(item: dict, units: dict[str, dict]) -> None:
+    unit_ids = sorted(item["unit_ids"])
+    translation_hashes = {u: sha(translation_path(units[u]).read_bytes()) for u in unit_ids}
+    locale_hashes = {
+        u: json.loads(translation_path(units[u]).read_text(encoding="utf-8"))["locale_guide_sha256"]
+        for u in unit_ids
+    }
+    item["translation_artifact_digests"] = translation_hashes
+    item["artifact_digests"] = {
+        "translation": sha(canonical(translation_hashes)),
+        "language_review": sha(canonical(locale_hashes)),
+        "verification": sha(canonical({
+            "source_commit": item["source_commit"],
+            "unit_risks": item["unit_risks"],
+            "reviewed_claim_ids": sorted(item["reviewed_claim_ids"]),
+            "reviewed_node_ids": sorted(item["reviewed_node_ids"]),
+            "protected_literal_unit_ids": sorted(item["protected_literal_unit_ids"]),
+            "verifier_sample_unit_ids": sorted(item["verifier_sample_unit_ids"]),
+        })),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true",
+                      help="validate rewritten guide structure without writing evidence")
+    mode.add_argument("--write", action="store_true",
+                      help="rewrite unit and zh-CN translation shards from current Markdown")
+    mode.add_argument("--attest", metavar="BATCH_ID",
+                      help="record one accepted English and zh-CN review batch")
+    parser.add_argument("--writer")
+    parser.add_argument("--reviewer")
+    parser.add_argument("--verifier")
+    parser.add_argument("--source-commit")
+    parser.add_argument("--units-file", type=pathlib.Path)
+    parser.add_argument("units", nargs="*")
+    args = parser.parse_args()
+    unit_ids = list(args.units)
+    if args.units_file is not None:
+        unit_ids += [line.strip() for line in args.units_file.read_text().splitlines()
+                     if line.strip()]
+    if not unit_ids:
+        parser.error("no units selected")
+    if args.attest:
+        contexts = {"writer": args.writer, "reviewer": args.reviewer, "verifier": args.verifier}
+        if not all(contexts.values()) or len(set(contexts.values())) != 3:
+            parser.error("--attest requires three distinct --writer, --reviewer, --verifier contexts")
+        commit = args.source_commit or subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+        ).stdout.strip()
+        attest(unit_ids, args.attest, contexts, commit)
+        return 0
+    errors = rebind(unit_ids, write=args.write)
+    for error in errors:
+        print(f"error: {error}", file=sys.stderr)
+    if not errors:
+        print(f"{'rebound' if args.write else 'checked'} {len(unit_ids)} reader guides")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
