@@ -19,54 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-purpose role=purpose -->
 ## What TSQRT does
 
-`TSQRT` computes a same-type square root for every valid element and publishes a new Local destination.
+`TSQRT` computes the square root `sqrt(x)` of each element of one Local floating Tile and writes the results into a newly allocated Local destination Tile of the same type. Unlike `TADD`, it reads one source, accepts only floating types, and runs on the `SFU` engine.
+
+Design point: `TSQRT` keeps the TEPL carrier Mode 0 Function 21 (selector `0x015`) and has no standalone opcode. Its canonical header is `BSTART.SFU TSQRT, DataType`. `BSTART.SFU` is an alias of `BSTART.TEPL` that adds no encoding bits, so the engine name changes only the assembly spelling.
 
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+After complete preflight, `ExecuteTileUnary` computes one result for each coordinate in the valid rectangle `ValidRow x ValidCol`. Each element is first checked against a fixed table of special inputs. Only an ordinary finite input reaches the numeric profile's approximation, whose result is rounded to the `DataType` with the fixed default rounding.
 
-Floating results and element status follow the active named numeric profile; the portable contract owns selection, shape, publication, and fault order.
+The special-input table for `TSQRT` is:
+
+- Positive and negative zero are returned unchanged, so `sqrt(-0)` is `-0`.
+- `+inf` stays `+inf`.
+- Any negative nonzero value, including `-inf`, records NV and produces the canonical quiet NaN.
+- Any NaN produces the canonical quiet NaN; a signaling NaN also records NV.
+
+Design point: `-0` is not treated as a negative number. It passes through unchanged and raises no flag, so the sign of zero survives the operation, while a genuinely negative input is reported as invalid.
+
+Each element reports status in the five flags NV, DZ, OF, UF, and NX (invalid, divide-by-zero, overflow, underflow, and inexact). The flags of all active elements are ORed together and recorded when the destination is published. Recording a flag never raises a fault.
 
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the persistent Local floating source. It is not modified.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape and layout match the source.
 
-- `source0` supplies a persistent source Tile.
+Both Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.
 
-- The closed applicable DataType set is `FP16`, `FP32`, `BF16`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: the complete source is snapshotted before the destination is published, so the destination may alias the source and still receives results computed from the old values. A source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`; its bits are then validated as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination descriptor, the valid-region results, the padding, the definedness of every element, and the accumulated numeric status are published together. A rejected bundle leaves architectural state unchanged.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+`TSQRT` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status.
 
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The ASL legality predicate `TileFloatingElementwiseDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`. The generated legality list below names only `FP16`, `FP32`, and `BF16`, and the finite-value reference approximation is defined only for those three types, so code should use one of them. Integer and packed types are rejected.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and both operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TSQRT` rejects nondefault `RMode`, `Sat`, and `CMode`.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Malformed bindings, `B.IOR` or `B.IOS`, missing or zero dimensions, an unsupported `DataType`, an undefined source or invalid source encoding, a descriptor mismatch, or an invalid capacity raise the applicable Tile fault before any destination effect. Special floating inputs never fault; they produce the table results above.
 
 <!-- PTO-READER-BLOCK: tile-c-tsqrt-example role=example -->
-## Non-normative example
+## Non-normative worked example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSQRT <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For `FP32`, a source row `[4.0, -0.0, -1.0, +inf]` produces the destination row `[2.0, -0.0, NaN, +inf]`, and the recorded status includes NV.
+
+In macro form, an 8 x 64 `FP32` operation is `TSQRT <Row=8, Col=64, FP32>, T#1, ->T<2KB>`, where `T#1` is the source. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -19,46 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texpdif-purpose role=purpose -->
 ## What TEXPDIF does
 
-`TEXPDIF` is a selector-encoded Tile operation executed by `SFU`. For every valid coordinate it computes the natural exponential of `source0 - source1`, with `source0` as the minuend and `source1` as the subtrahend; it does not broadcast.
+`TEXPDIF` computes `exp(source0 - source1)` element by element over two Local floating Tiles and writes the results into a newly allocated Local destination Tile. Unlike `TADD`, the destination type may be wider than the source type, and the operation runs on the `SFU` engine.
+
+Design point: `TEXPDIF` is selected by TEPL Mode 0 Function 29 (selector `0x01D`) and has no standalone opcode. Its canonical header is `BSTART.SFU TEXPDIF, SrcOperationType`. The header type names the source operation type; the destination type comes from `B.DATR`.
 
 <!-- PTO-READER-BLOCK: tile-texpdif-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all bundle, descriptor, and operand checks succeed, same-type pairs perform typed subtraction followed by typed natural exponential. Mixed `FP16`-to-`FP32` and `BF16`-to-`FP32` pairs exactly widen both inputs before FP32 subtraction and natural exponential; that widening is not TCVT and adds no conversion-inexact status.
+After complete preflight, both sources are snapshotted, and each coordinate in the valid rectangle `ValidRow x ValidCol` is computed independently. `source0` is always the minuend and `source1` the subtrahend. Both sources cover the full valid rectangle; `TEXPDIF` does not broadcast a row or a column.
 
-Both complete source Tiles are snapshotted before result computation. When legal same-width aliasing names a source and the renamed destination together, execution therefore observes read-old/write-new behavior.
+For a same-type pair, the operation performs a typed subtraction in that type, then a typed natural exponential. Both steps use the fixed default rounding, and the exponential applies the same special-input table as `TEXP`.
+
+For a mixed pair, `FP16` or `BF16` sources with an `FP32` destination, both inputs are first widened exactly to `FP32`. The subtraction and the exponential are then performed in `FP32`.
+
+Design point: widening an `FP16` or `BF16` value to `FP32` loses nothing, so it is defined as an interpretation step rather than a `TCVT` conversion and adds no inexact status. The difference is then rounded to `FP32` precision rather than to 16-bit precision before the exponential is applied.
+
+For each element, the status of the subtraction and of the exponential are ORed together. The status of all active elements is ORed again and recorded when the destination is published.
 
 <!-- PTO-READER-BLOCK: tile-texpdif-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local DstDataType numeric destination**.
-- `source0` has the exact contract role **persistent Local SrcOperationType minuend**.
-- `source1` has the exact contract role **persistent Local SrcOperationType subtrahend**.
+- `source0` is the persistent minuend, interpreted as `SrcOperationType`.
+- `source1` is the persistent subtrahend, interpreted as `SrcOperationType`.
+- `destination0` is a newly allocated Local Tile whose backing type is the destination type `DstDataType`.
 
-The sources and destination share the selected layout and logical `ValidRow * ValidCol` region, while each descriptor's physical geometry is checked with its own backing or destination type. A source backing type may differ from `SrcOperationType` only under the equal-width, non-packed, carrier-compatible rule in the current contract.
+One terminating `B.IOT` binds all three Tiles, and they share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
+
+`DstDataType` is resolved from `B.DATR`. Omitting `B.DATR`, or encoding the `DataType` field as `DTYPE_NONE` (code 31), makes the destination inherit `SrcOperationType`. An encoded `DataType` of zero selects `FP64`, which is not a legal destination and therefore rejects.
+
+Design point: code 0 already names `FP64`, so inheritance needs a separate sentinel. Using `DTYPE_NONE` keeps "no destination type requested" distinct from a real type request.
+
+Each source backing type may differ independently from `SrcOperationType` when both types are non-packed, have the same element width, and are carrier-compatible. The source bits are validated and interpreted as `SrcOperationType`, and the source descriptors are not retagged.
 
 <!-- PTO-READER-BLOCK: tile-texpdif-effects role=effects -->
-## Publication, status, and padding
+## Publication, definedness, and padding
 
-For each valid element, the handler accumulates the subtraction and exponential status, then ORs status across the full valid region. The two source Tiles remain unchanged.
+The destination descriptor, the valid-region results, the padding, the definedness of every element, and the accumulated numeric status are published together. A rejected bundle publishes no destination payload, padding, descriptor, or status, and both sources remain unchanged.
 
-The selected `PadValue` applies outside the valid result rectangle. Destination payload, descriptor, definedness, padding, and accumulated numeric status publish atomically after complete preflight.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the destination type; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect. `PE_MASK=0000` is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
+Because both sources are snapshotted before any result is written, a legal alias between a source and the destination reads the old source values. `TEXPDIF` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status.
 
 <!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The exact legal `(SrcOperationType,DstDataType)` pairs are `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)`. The legal layouts are `RowMajor`, `CUBE_M16`, and `CUBE_M32`; mixed layouts and every other type pair or layout reject.
+The only legal `(SrcOperationType,DstDataType)` pairs are `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)`. Every other pair, including a narrowing pair or an integer type, rejects.
 
-One terminating Local `B.IOT` supplies the two ordered persistent sources and one new destination. Malformed bindings, invalid dimensions or source contents, incompatible descriptors, and unsupported controls raise the generated legality fault before effects; destination shape, capacity, name, or Tile exhaustion raises allocation fault before publication.
+The layout is `RowMajor`, `CUBE_M16`, or `CUBE_M32`, and all three operands must use the selected layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. The operands share `ValidRow` and `ValidCol`, but each descriptor's physical geometry is checked with its own type, so an `FP32` destination can have a different physical size from its `FP16` sources. `B.DATR` accepts only `Layout`, `DataType`, and `PadValue`; nondefault `CMode`, `RMode`, `Sat`, or `Canonicalize` is illegal.
+
+Malformed or extra bindings, `B.IOR` or `B.IOS`, an illegal type pair, a packed or width-changing source carrier, invalid or undefined source contents, a layout or shape mismatch, or bad dimensions raise `Fault_TileLegality`. An unrepresentable destination shape or insufficient capacity raises `Fault_TileAllocation`. Both faults occur before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-texpdif-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a valid same-type coordinate where both source elements are positive zero, subtraction produces zero and the natural exponential produces same-type positive one at the destination coordinate.
+For the mixed pair `(FP16,FP32)`, a minuend row `[1.0, 2.0]` and a subtrahend row `[1.0, 1.0]` are widened to `FP32`, giving the differences `[0.0, 1.0]`. The destination row is `[1.0, e]` in `FP32`, where `exp(0)` is exactly `1.0` and `e` is approximately 2.71828.
+
+For an 8 x 64 valid shape in `RowMajor`, each `FP16` source holds 8 x 64 x 2 = 1024 bytes, and the `FP32` destination needs 8 x 64 x 4 = 2048 bytes. The header is `BSTART.SFU TEXPDIF, FP16`, and `B.DATR` selects the destination `DataType` `FP32`. The same-type `FP32` form needs no `B.DATR` and is written in macro form as `TEXPDIF <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

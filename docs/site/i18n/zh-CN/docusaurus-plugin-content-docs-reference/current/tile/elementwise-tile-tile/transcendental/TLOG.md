@@ -17,44 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tlog-purpose role=purpose -->
-## 用途
+## TLOG 的作用
 
-`TLOG` 对 Local Tile 有效区中的每个元素计算同类型自然对数。
+`TLOG` 对一个 Local 浮点 Tile 的每个元素计算自然对数 `log(x)`，并把结果写入一个新分配的同类型 Local 目标 Tile。与 `TADD` 不同，它只读取一个源，只接受浮点类型，并在 `SFU` 引擎上执行。
+
+设计要点：`TLOG` 保留 TEPL 载体 Mode 0 Function 19（选择器 `0x013`），没有独立 opcode。其规范头部写作 `BSTART.SFU TLOG, DataType`。`BSTART.SFU` 是 `BSTART.TEPL` 的别名，不增加任何编码位，因此引擎名只改变汇编拼写。
 
 <!-- PTO-READER-BLOCK: tile-tlog-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileUnary`。
+完整预检之后，`ExecuteTileUnary` 为有效矩形 `ValidRow x ValidCol` 内的每个坐标计算一个结果。每个元素先与一张固定的特殊输入表比对。只有普通有限输入才会进入数值配置档的近似计算，其结果按固定默认舍入舍入到该 `DataType`。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+`TLOG` 的特殊输入表如下：
+
+- 恰为 `1.0` 时产生 `+0`。
+- 正零或负零记录 DZ 并产生 `-inf`。`E4M3` 没有无穷，因此在该类型上产生规范静默 NaN `0x7F`，只记录 DZ 而不记录 OF。
+- `+inf` 保持为 `+inf`。
+- 任何负的非零值（包括 `-inf`）记录 NV 并产生规范静默 NaN。
+- 任何 NaN 产生规范静默 NaN；信号 NaN 还会记录 NV。
+
+设计要点：零与负输入得到的是已定义结果而不是故障，并且它们引发不同的标志。DZ 标记零处的精确无穷极限，NV 标记没有实数对数的输入，因此程序可以从记录的状态区分这两种情形。
+
+每个元素用五个标志 NV、DZ、OF、UF 与 NX（无效、除以零、上溢、下溢与不精确）报告状态。所有活动元素的标志按位或累积，并在目标发布时记录。记录标志从不引发故障。
 
 <!-- PTO-READER-BLOCK: tile-tlog-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 浮点目的地；`source0` 是持久 Local 浮点源。
+- `source0` 是持久的 Local 浮点源，不会被修改。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与布局与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+两个 Tile 由同一条终止 `B.IOT` 绑定，并共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、数值状态或载荷效果之前。
+
+设计要点：完整的源在目标发布之前被快照，因此目标可以与源别名，并且仍然得到按旧值计算的结果。源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据；此时这些位按所选 `DataType` 校验。
 
 <!-- PTO-READER-BLOCK: tile-tlog-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标描述符、有效区域内的结果、填充、每个元素的已定义性以及累积的数值状态同时发布。被拒绝的指令束不改变架构状态。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入该 `DataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+`TLOG` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，且不贡献状态。
 
 <!-- PTO-READER-BLOCK: tile-tlog-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+ASL 合法性谓词 `TileFloatingElementwiseDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3` 与 `E5M2`。下方生成的合法性列表只列出 `FP16`、`FP32` 与 `BF16`，且有限值参考近似只为这三种类型定义，因此代码应使用其中之一。整数与打包类型会被拒绝。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，两个操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。`TLOG` 拒绝非默认的 `RMode`、`Sat` 与 `CMode`。
+
+绑定格式错误、出现 `B.IOR` 或 `B.IOS`、维度缺失或为零、`DataType` 不受支持、源未定义或源编码无效、描述符不匹配或容量无效时，会在任何目标效果之前引发相应的 Tile 故障。特殊浮点输入从不引发故障，而是产生上表中的结果。
 
 <!-- PTO-READER-BLOCK: tile-tlog-example role=example -->
-## 非规范契约草图
+## 非规范演算示例
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.SFU TLOG, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+对 `FP32`，源行 `[1.0, 0.0, -2.0, +inf]` 产生目标行 `[+0.0, -inf, NaN, +inf]`，记录的状态包含 DZ 与 NV。
+
+以宏形式表示，一个 8 x 64 的 `FP32` 运算写作 `TLOG <Row=8, Col=64, FP32>, T#1, ->T<2KB>`，其中 `T#1` 是源。目标载荷为 8 x 64 x 4 = 2048 字节，恰好等于 2KB 容量。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -59,7 +59,7 @@ Design point: omitting `B.DATR` selects `Null`, while an explicit code `00` sele
 <!-- PTO-READER-BLOCK: tile-tadd-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded.
+The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded. The floating element arithmetic that `TADD` reaches, `ScalarFPBinaryProfile`, is defined only for `FP64`, `FP32`, `FP16`, and `BF16`, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`.
 
 The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32` so that `TADD` can operate directly on Tiles already arranged for the CUBE engine, without a layout conversion. All operands must use the same layout; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 

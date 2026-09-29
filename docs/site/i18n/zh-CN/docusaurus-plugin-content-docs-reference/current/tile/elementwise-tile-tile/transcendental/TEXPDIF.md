@@ -19,46 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texpdif-purpose role=purpose -->
 ## TEXPDIF 的作用
 
-`TEXPDIF` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它在每个有效坐标计算 `source0 - source1` 的自然指数，其中 `source0` 是被减数，`source1` 是减数；该操作不广播。
+`TEXPDIF` 在两个 Local 浮点 Tile 上逐元素计算 `exp(source0 - source1)`，并把结果写入一个新分配的 Local 目标 Tile。与 `TADD` 不同，目标类型可以比源类型更宽，且该操作在 `SFU` 引擎上执行。
+
+设计要点：`TEXPDIF` 由 TEPL Mode 0 Function 29（选择器 `0x01D`）选中，没有独立 opcode。其规范头部写作 `BSTART.SFU TEXPDIF, SrcOperationType`。头部类型给出源操作类型；目标类型来自 `B.DATR`。
 
 <!-- PTO-READER-BLOCK: tile-texpdif-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有指令束、描述符和操作数检查成功后，同类型组合先执行带类型减法，再执行带类型自然指数。混合的 `FP16` 到 `FP32` 及 `BF16` 到 `FP32` 组合会先精确拓宽两个输入，再执行 FP32 减法和自然指数；该拓宽不是 TCVT，也不会增加转换不精确状态。
+完整预检之后，两个源都被快照，有效矩形 `ValidRow x ValidCol` 内的每个坐标独立计算。`source0` 始终是被减数，`source1` 是减数。两个源都覆盖完整的有效矩形；`TEXPDIF` 不会广播某一行或某一列。
 
-结果计算前会完整快照两个源 Tile。当合法的同宽别名同时命名源和重命名目标时，执行因此表现为读旧值、写新值。
+对同类型对，该操作先在该类型中做带类型的减法，再做带类型的自然指数。两步都使用固定默认舍入，指数一步应用与 `TEXP` 相同的特殊输入表。
+
+对混合类型对，即 `FP16` 或 `BF16` 源配 `FP32` 目标，两个输入先被精确加宽到 `FP32`。随后减法与指数都在 `FP32` 中进行。
+
+设计要点：把 `FP16` 或 `BF16` 值加宽到 `FP32` 不会丢失任何信息，因此它被定义为一个解释步骤，而不是一次 `TCVT` 转换，也不会增加不精确状态。随后差值按 `FP32` 精度而不是 16 位精度舍入，再进入指数运算。
+
+对每个元素，减法与指数的状态按位或合并。所有活动元素的状态再按位或累积，并在目标发布时记录。
 
 <!-- PTO-READER-BLOCK: tile-texpdif-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local DstDataType 数值目标”。
-- `source0` 的精确契约角色是“持久 Local SrcOperationType 被减数”。
-- `source1` 的精确契约角色是“持久 Local SrcOperationType 减数”。
+- `source0` 是持久的被减数，按 `SrcOperationType` 解释。
+- `source1` 是持久的减数，按 `SrcOperationType` 解释。
+- `destination0` 是新分配的 Local Tile，其后备类型为目标类型 `DstDataType`。
 
-源和目标共享所选布局以及逻辑 `ValidRow * ValidCol` 区域，而每个描述符的物理几何形状按各自后备类型或目标类型检查。仅当满足当前契约的同宽、非 packed、载体兼容规则时，源后备类型才可不同于 `SrcOperationType`。
+一条终止 `B.IOT` 绑定全部三个 Tile，它们共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在源描述符读取、目标分配、数值状态或载荷效果之前。
+
+`DstDataType` 由 `B.DATR` 解析。省略 `B.DATR`，或把 `DataType` 字段编码为 `DTYPE_NONE`（代码 31），会使目标继承 `SrcOperationType`。编码为零的 `DataType` 选择 `FP64`，它不是合法的目标，因此会被拒绝。
+
+设计要点：代码 0 已经表示 `FP64`，因此继承需要一个单独的哨兵值。使用 `DTYPE_NONE` 使“未请求目标类型”与真实的类型请求保持区分。
+
+每个源的后备类型都可以独立地不同于 `SrcOperationType`，前提是两种类型都非打包、元素位宽相同且载体兼容。源位按 `SrcOperationType` 校验和解释，源描述符不会被重新标记类型。
 
 <!-- PTO-READER-BLOCK: tile-texpdif-effects role=effects -->
-## 发布、状态与填充
+## 发布、已定义性与填充
 
-对于每个有效元素，处理函数累积减法与指数状态，再对整个有效区域的状态求 OR。两个源 Tile 保持不变。
+目标描述符、有效区域内的结果、填充、每个元素的已定义性以及累积的数值状态同时发布。被拒绝的指令束不发布任何目标载荷、填充、描述符或状态，两个源也保持不变。
 
-所选 `PadValue` 应用于有效结果矩形之外。完整预检后，目标载荷、描述符、已定义性、填充和累积数值状态原子发布。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入目标类型的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
 
-该操作不产生 GM 内存效果。`PE_MASK=0000` 是严格无操作，在读取源描述符、分配目标、更新数值状态或产生载荷效果之前即结束。
+由于两个源都在写入任何结果之前被快照，源与目标之间的合法别名会读取旧的源值。`TEXPDIF` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，且不贡献状态。
 
 <!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-精确合法的 `(SrcOperationType,DstDataType)` 组合是 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 和 `(BF16,FP32)`。合法布局是 `RowMajor`、`CUBE_M16` 和 `CUBE_M32`；混合布局以及其他任何类型组合或布局都会被拒绝。
+合法的 `(SrcOperationType,DstDataType)` 对只有 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 与 `(BF16,FP32)`。其他任何类型对，包括变窄的类型对或整数类型，都会被拒绝。
 
-一个终止型 Local `B.IOT` 提供两个有序持久源和一个新目标。绑定格式错误、维度或源内容无效、描述符不兼容以及不受支持的控制会在产生效果前引发生成的合法性故障；目标形状、容量、名称或 Tile 耗尽则会在发布前引发分配故障。
+布局为 `RowMajor`、`CUBE_M16` 或 `CUBE_M32`，三个操作数必须使用所选布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。各操作数共享 `ValidRow` 与 `ValidCol`，但每个描述符的物理几何按其自身类型检查，因此 `FP32` 目标的物理大小可以不同于其 `FP16` 源。`B.DATR` 只接受 `Layout`、`DataType` 与 `PadValue`；非默认的 `CMode`、`RMode`、`Sat` 或 `Canonicalize` 均非法。
+
+绑定格式错误或多余、出现 `B.IOR` 或 `B.IOS`、类型对非法、源载体为打包或位宽不同、源内容无效或未定义、布局或形状不匹配、维度错误时，会引发 `Fault_TileLegality`。目标形状无法表示或容量不足时，会引发 `Fault_TileAllocation`。两种故障都发生在任何目标效果之前。
 
 <!-- PTO-READER-BLOCK: tile-texpdif-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-对于两个源元素均为正零的合法同类型坐标，减法产生零，自然指数随后在目标坐标产生同类型正一。
+对混合类型对 `(FP16,FP32)`，被减数行 `[1.0, 2.0]` 与减数行 `[1.0, 1.0]` 被加宽到 `FP32`，得到差 `[0.0, 1.0]`。目标行为 `FP32` 的 `[1.0, e]`，其中 `exp(0)` 恰为 `1.0`，`e` 约为 2.71828。
+
+对 `RowMajor` 中 8 x 64 的有效形状，每个 `FP16` 源占 8 x 64 x 2 = 1024 字节，而 `FP32` 目标需要 8 x 64 x 4 = 2048 字节。头部写作 `BSTART.SFU TEXPDIF, FP16`，`B.DATR` 选择目标 `DataType` `FP32`。同类型的 `FP32` 形式不需要 `B.DATR`，其宏形式写作 `TEXPDIF <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

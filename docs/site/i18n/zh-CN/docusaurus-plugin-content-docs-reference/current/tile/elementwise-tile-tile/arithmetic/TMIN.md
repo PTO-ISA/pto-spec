@@ -17,44 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmin-purpose role=purpose -->
-## 用途
+## TMIN 的作用
 
-`TMIN` 按有符号、无符号或浮点排序选择两个 Local Tile 对应元素的最小值。
+`TMIN` 逐元素比较两个 Local Tile，并把每对元素中较小的一个写入新分配的 Local 目标 Tile。它与 `TADD` 共用指令束模式、预检、填充和发布规则；元素运算是按类型进行的选择，而不是算术。
+
+设计要点：`TMIN` 由 `BSTART.VEC` Mode 0 Function 12（TEPL 选择器 `0x00C`）选中，没有独立 opcode。其对应操作 `TMAX` 使用相同的选择规则，只有比较方向以及零值平局时所取的符号不同。
 
 <!-- PTO-READER-BLOCK: tile-tmin-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileBinary`。
+完整预检之后，`ExecuteTileBinary` 为有效矩形 `ValidRow x ValidCol` 内的每个坐标计算一个结果。结果总是两个源值之一或某个固定的特殊值，不发生舍入。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+整数排序遵循 `DataType`。有符号类型按有符号值比较，无符号类型按无符号值比较；因此对 `U8`，字节 `0xFF` 是 255，会输给 1，而对 `S8`，同一字节是 -1，会胜出。
+
+浮点排序先应用固定的特殊值规则：
+
+- 若恰好一个操作数是 NaN，结果为另一个操作数，保持不变。
+- 若两个操作数都是 NaN，结果为该 `DataType` 的规范 NaN。
+- 若两个操作数都是零但符号不同，结果为负零。符号相同的两个零保持该符号。
+- 否则选择数值较小的操作数。
+
+设计要点：这些规则使结果与操作数顺序无关。交换 `source0` 与 `source1` 永远不会改变任何目标元素，即使涉及 NaN 与有符号零。信号 NaN 同样不会改变所选结果。
 
 <!-- PTO-READER-BLOCK: tile-tmin-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 目的地；`source0` 是左比较源；`source1` 是右比较源。
+- `source0` 是左比较源，必须是已分配的现有 Local Tile。
+- `source1` 是右比较源，其物理行数、物理列数、有效行数、有效列数和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+三个 Tile 由同一条终止 `B.IOT` 绑定，并共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作。在第一次写目标之前，两个源都已被完整读取，因此任一源都可以与目标别名。
+
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储。此时这些位按所选 `DataType` 校验和排序。由于符号性决定顺序，把 `U8` 数据按 `S8` 读取可能改变胜出的元素。
 
 <!-- PTO-READER-BLOCK: tile-tmin-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标描述符、有效区域内的结果、填充以及每个元素的已定义性同时发布。被拒绝的指令束不会发布其中任何一项，两个源也保持不变。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入该 `DataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+`TMIN` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是所选值。
 
 <!-- PTO-READER-BLOCK: tile-tmin-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+ASL 合法性谓词 `TileVecArithmeticDataTypeSupported` 接受 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。下方生成的合法性列表更窄，只列出 `S32`、`U32`、`FP32`、`S16`、`U16`、`FP16`、`BF16`、`S8` 与 `U8`。需要同时满足两者的代码应使用较窄列表中的类型。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。
+
+每个有效源元素都必须已定义；对浮点类型，还必须是所选 `DataType` 的有效编码。绑定格式错误、维度缺失或为零、源不匹配、`DataType` 不受支持、编码无效或目标容量无效时，会在任何目标效果之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: tile-tmin-example role=example -->
-## 非规范契约草图
+## 非规范演算示例
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TMIN, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+对 `FP32`，左源行 `[1.5, NaN, -0.0, 2.0]` 与右源行 `[-3.0, 4.0, +0.0, NaN]` 产生目标行 `[-3.0, 4.0, -0.0, 2.0]`。每个 NaN 都被忽略而取数值操作数，符号不同的零对产生负零。
+
+以宏形式表示，一个 8 x 64 的 `FP32` 最小值运算写作 `TMIN <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`。目标载荷为 8 x 64 x 4 = 2048 字节，恰好等于 2KB 容量。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

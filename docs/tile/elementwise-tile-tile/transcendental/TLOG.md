@@ -17,44 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tlog-purpose role=purpose -->
-## Purpose
+## What TLOG does
 
-`TLOG` computes the same-type natural logarithm of every valid Local Tile element.
+`TLOG` computes the natural logarithm `log(x)` of each element of one Local floating Tile and writes the results into a newly allocated Local destination Tile of the same type. Unlike `TADD`, it reads one source, accepts only floating types, and runs on the `SFU` engine.
+
+Design point: `TLOG` keeps the TEPL carrier Mode 0 Function 19 (selector `0x013`) and has no standalone opcode. Its canonical header is `BSTART.SFU TLOG, DataType`. `BSTART.SFU` is an alias of `BSTART.TEPL` that adds no encoding bits, so the engine name changes only the assembly spelling.
 
 <!-- PTO-READER-BLOCK: tile-tlog-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileUnary` through the instruction's selector-encoded block carrier.
+After complete preflight, `ExecuteTileUnary` computes one result for each coordinate in the valid rectangle `ValidRow x ValidCol`. Each element is first checked against a fixed table of special inputs. Only an ordinary finite input reaches the numeric profile's approximation, whose result is rounded to the `DataType` with the fixed default rounding.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+The special-input table for `TLOG` is:
+
+- Exactly `1.0` produces `+0`.
+- Positive or negative zero records DZ and produces `-inf`. `E4M3` has no infinity, so there it produces the canonical quiet NaN `0x7F` and records DZ without OF.
+- `+inf` stays `+inf`.
+- Any negative nonzero value, including `-inf`, records NV and produces the canonical quiet NaN.
+- Any NaN produces the canonical quiet NaN; a signaling NaN also records NV.
+
+Design point: zero and negative inputs are defined results, not faults, and they raise different flags. DZ marks the exact infinite limit at zero, while NV marks an input that has no real logarithm, so a program can tell the two cases apart from the recorded status.
+
+Each element reports status in the five flags NV, DZ, OF, UF, and NX (invalid, divide-by-zero, overflow, underflow, and inexact). The flags of all active elements are ORed together and recorded when the destination is published. Recording a flag never raises a fault.
 
 <!-- PTO-READER-BLOCK: tile-tlog-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local floating destination; `source0` is the persistent Local floating source.
+- `source0` is the persistent Local floating source. It is not modified.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape and layout match the source.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+Both Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.
+
+Design point: the complete source is snapshotted before the destination is published, so the destination may alias the source and still receives results computed from the old values. A source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`; its bits are then validated as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-tlog-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+The destination descriptor, the valid-region results, the padding, the definedness of every element, and the accumulated numeric status are published together. A rejected bundle leaves architectural state unchanged.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
+
+`TLOG` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status.
 
 <!-- PTO-READER-BLOCK: tile-tlog-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The ASL legality predicate `TileFloatingElementwiseDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`. The generated legality list below names only `FP16`, `FP32`, and `BF16`, and the finite-value reference approximation is defined only for those three types, so code should use one of them. Integer and packed types are rejected.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and both operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TLOG` rejects nondefault `RMode`, `Sat`, and `CMode`.
+
+Malformed bindings, `B.IOR` or `B.IOS`, missing or zero dimensions, an unsupported `DataType`, an undefined source or invalid source encoding, a descriptor mismatch, or an invalid capacity raise the applicable Tile fault before any destination effect. Special floating inputs never fault; they produce the table results above.
 
 <!-- PTO-READER-BLOCK: tile-tlog-example role=example -->
-## Non-normative contract sketch
+## Non-normative worked example
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.SFU TLOG, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+For `FP32`, a source row `[1.0, 0.0, -2.0, +inf]` produces the destination row `[+0.0, -inf, NaN, +inf]`, and the recorded status includes DZ and NV.
+
+In macro form, an 8 x 64 `FP32` operation is `TLOG <Row=8, Col=64, FP32>, T#1, ->T<2KB>`, where `T#1` is the source. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

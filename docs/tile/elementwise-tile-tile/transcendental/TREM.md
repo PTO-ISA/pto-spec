@@ -19,56 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trem-purpose role=purpose -->
 ## What TREM does
 
-`TREM` computes divisor-signed modulo for corresponding elements and publishes a new Local destination.
+`TREM` computes an elementwise modulo of two Local Tiles and writes the results into a newly allocated Local destination Tile. It shares the bundle schema, padding, and publication rules of `TDIV`, including the integer division-by-zero check, and runs on the `SFU` engine.
+
+Design point: `TREM` keeps the TEPL carrier Mode 0 Function 4 (selector `0x004`) and has no standalone opcode. Its canonical header is `BSTART.SFU TREM, DataType`; the `SFU` spelling adds no encoding bits.
 
 <!-- PTO-READER-BLOCK: tile-c-trem-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+After complete preflight, `ExecuteTileBinary` computes one modulo result for each coordinate in the valid rectangle `ValidRow x ValidCol`. The rule depends on the kind of `DataType`:
 
-Floating results and element status follow the active named numeric profile; the portable contract owns selection, shape, publication, and fault order.
+- Signed integers use floor modulo. A nonzero result always has the sign of the divisor, and its magnitude is smaller than the divisor's magnitude.
+- Unsigned integers use the ordinary unsigned remainder.
+- Floating types use the floating modulo reference: `dividend - q * divisor`, where `q` is `dividend / divisor` truncated toward zero, rounded once with the fixed default rounding.
+
+Design point: floor modulo differs from the truncating remainder of many programming languages. For signed integers, `-7 mod 3` is `2` here, not `-1`, and `7 mod -3` is `-2`, not `1`. For signed integers, keeping the result sign tied to the divisor makes the result a valid index in the range from 0 to `divisor - 1` whenever the divisor is positive.
+
+An integer zero anywhere in the valid divisor rectangle raises `Fault_TileLegality` before any source snapshot or destination effect. Divisor padding is not read. An integer type has no encoding for `x mod 0`, so the bundle is rejected rather than given an invented value.
+
+For floating types, any NaN operand, a zero divisor, or an infinite dividend produces a quiet NaN. Otherwise, an infinite divisor or a zero dividend returns the dividend unchanged.
 
 <!-- PTO-READER-BLOCK: tile-c-trem-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the dividend. It is an existing, allocated Local Tile.
+- `source1` is the divisor. It must match `source0` in physical rows, physical columns, valid rows, valid columns, and layout.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-- `source0` carries its mnemonic-defined operand.
-
-- `source1` carries its mnemonic-defined operand.
-
-- The closed applicable DataType set is `FP32`, `FP16`, `BF16`, `S32`, `S16`, `U32`, `U16`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+All three Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op. A source may be stored with a different same-width, non-packed backing type; its bits are then validated and interpreted as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-c-trem-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+Both sources are snapshotted only after all legality and integer-zero checks pass, so a source that aliases the destination is read before it is overwritten. The destination descriptor, the valid-region results, the padding, and the definedness of every element are published together. A rejected bundle leaves descriptors, payloads, and allocation state unchanged.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+`TREM` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a result.
 
 <!-- PTO-READER-BLOCK: tile-c-trem-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the 16 types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, and `BF16`. The floating modulo reference is defined only for `FP32`, `FP16`, and `BF16`, so code should use a type from the narrower list.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TREM` rejects nondefault `RMode`, `Sat`, and `CMode`.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+An integer zero divisor, malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported `DataType`, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-c-trem-example role=example -->
-## Non-normative example
+## Non-normative worked example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TREM <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For `S32`, a dividend row `[7, -7, 7, -7]` and a divisor row `[3, 3, -3, -3]` produce the destination row `[1, 2, -2, -1]`. Every nonzero result has the sign of its divisor.
+
+For `U32`, a dividend row `[7, 9]` and a divisor row `[3, 4]` produce `[1, 1]`.
+
+In macro form, an 8 x 64 `S32` modulo is `TREM <Row=8, Col=64, S32>, T#1, T#2, ->T<2KB>`, where `T#1` is the dividend and `T#2` is the divisor.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

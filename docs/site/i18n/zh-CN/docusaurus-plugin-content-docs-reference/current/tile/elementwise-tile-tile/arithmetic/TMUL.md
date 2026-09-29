@@ -17,44 +17,60 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmul-purpose role=purpose -->
-## 用途
+## TMUL 的作用
 
-`TMUL` 逐元素相乘两个 Local Tile。
+`TMUL` 将两个 Local Tile 逐元素相乘，并把积写入一个新分配的 Local 目标 Tile。它与 `TADD` 共用指令束模式、预检、填充和发布规则；只有元素运算不同。
+
+设计要点：`TMUL` 由 `BSTART.VEC` Mode 0 Function 2（TEPL 选择器 `0x002`）选中，没有独立 opcode。由于操作身份放在选择器中，`TMUL` 复用与其他所有封闭二元逐元素操作相同的 `B.DIM`、`B.DATR` 和 `B.IOT` 命令。
 
 <!-- PTO-READER-BLOCK: tile-tmul-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileBinary`。
+预检阶段先检查完整指令束：所选 `DataType`、布局、两个源描述符、源已定义性与编码、目标容量以及操作数模式。只有全部检查通过后，`ExecuteTileBinary` 才对有效矩形 `ValidRow x ValidCol` 内的每个坐标计算 `left * right`。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+整数乘法只保留积的低位。两个操作数先按 `DataType` 做符号扩展或零扩展，积再截断回元素位宽。例如对 `U16`，`300 * 300 = 90000` 得到 `24464`。
+
+设计要点：目标与操作使用相同的 `DataType`，因此 `TMUL` 从不加宽。需要完整整数积的程序必须在相乘之前为操作数选择更宽的 `DataType`。
+
+浮点乘法使用所选 `DataType` 的数值配置档及其固定默认舍入。`TMUL` 拒绝任何非默认的 `RMode`、`Sat` 或 `CMode`。在写入第一个目标元素之前，两个源都已被完整读取，因此源与目标别名的行为有明确定义。
 
 <!-- PTO-READER-BLOCK: tile-tmul-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 目的地；`source0` 是左因子；`source1` 是右因子。
+- `source0` 是左因子，必须是已分配的现有 Local Tile。
+- `source1` 是右因子，其物理行数、物理列数、有效行数、有效列数和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+三个 Tile 由同一条终止 `B.IOT` 绑定，并共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作：不产生描述符、分配或载荷。
+
+源可以使用位宽相同、非打包的其他后备类型存储。此时这些位按所选 `DataType` 校验和解释。
 
 <!-- PTO-READER-BLOCK: tile-tmul-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标描述符、有效区域内的积、填充以及每个元素的已定义性同时发布。被拒绝的指令束不会发布其中任何一项，两个源也保持不变。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入该 `DataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+`TMUL` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是积。
 
 <!-- PTO-READER-BLOCK: tile-tmul-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+ASL 合法性谓词 `TileVecArithmeticDataTypeSupported` 接受与 `TADD` 相同的 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。打包四位格式不在其中。`TMUL` 所调用的浮点元素运算 `ScalarFPBinaryProfile` 只为 `FP64`、`FP32`、`FP16` 与 `BF16` 定义，因此 ASL 对 `TF32`、`HF32`、`E4M3` 或 `E5M2` 不给出元素结果。下方生成的合法性列表更窄，只列出 `S32`、`U32`、`FP32`、`S16`、`U16`、`FP16` 与 `BF16`。需要同时满足两者的代码应使用较窄列表中的类型。
 
-分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。
+
+绑定格式错误、维度缺失或为零、源未定义或不匹配、`DataType` 不受支持或目标容量无效时，会在任何目标效果之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: tile-tmul-example role=example -->
-## 非规范契约草图
+## 非规范演算示例
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TMUL, U64; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+对 `U16`，左源行 `[3, 300]` 与右源行 `[5, 300]` 产生目标行 `[15, 24464]`。第二个积 90000 只保留其低 16 位。
+
+以宏形式表示，一个 8 x 64 的 `FP32` 乘法写作 `TMUL <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`。目标载荷为 8 x 64 x 4 = 2048 字节，恰好等于 2KB 容量。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
