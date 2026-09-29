@@ -12,7 +12,66 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit runs the Tile operation of a bundle when the bundle commits. Commit validation calls `ExecuteBundleTileOperationWithAcceptedApplicabilityRules` for bundles whose operation class is Tile element, Tile memory, or Tile matrix. The unit returns true when the operation completed, and false when it faulted or must wait.
+
+It has two parts. A specialized dispatcher routes some operations to dedicated handlers. The generic path validates the bundle against closed schemas and calls the Tile instruction handler.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-concepts role=concepts-state -->
+## Concepts and visible state
+
+- A generation is a partly assembled destination built by several writers. Local generations live in Local Tiles and Shared generations in Shared Tiles.
+- A subview materialization is a temporary view of part of a Tile created for this attempt. It is discarded at the end.
+- Zero participation means every Tile binding has PE mask `0000`, or a zero-mask binder was seen and nothing was bound.
+
+The unit reads the whole bundle header state and Tile state. It changes state through the functions it calls: destination resolution, the handlers, `CommitBundleLocalGeneration`, `RetireBundleConsumerDependencies`, `FinalizeBundleTileAttempt`, and the rollback and abort helpers.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-rules role=rules-interactions -->
+## Rules and interactions
+
+The local path runs in this order:
+
+1. A bundle with zero participation and no bindings returns true with no effect.
+2. Unless `TIMG2COL` is selected, the operation must decode and `BundleProducerEffectEligible` must accept it. A decode failure raises `Fault_IllegalInstruction`.
+3. The assemble output structure must be legal (`Fault_BundleControl`), and the Shared destination assembly policy must be legal (`Fault_TileLegality`).
+4. For operations other than matrix, `TIMG2COL`, and weight `TLOAD`, stage 2 is prepared and a Local continuation destination is reused.
+5. When the Tile mask is not zero and `TIMG2COL` is not selected, the execution mask is marked, captured, and checked. For the memory-transport operations and weight `TLOAD`, its merge is prepared here.
+6. The specialized dispatcher tries, in order: `TIMG2COL`, weight `TLOAD`, matrix, CUBE transport, GMOV, MGATHER.CAS, GM atomics and reductions, MGATHER.MASK, MGATHER, MSCATTER, MSCATTER.MASK, TPREFETCH, and Shared TLSU. If Shared bindings remain unconsumed and no handler matched, it raises `Fault_TileLegality`.
+
+Design point: the ASL comment says effect eligibility is checked before descriptor preparation, specialized dispatch, body execution, allocation, or auxiliary effects. An ineligible operation leaves Tile state unchanged.
+
+Design point: the order of the specialized branch matters. MGATHER.CAS uses selector function 8, which also lies in the GM atomic range 8 to 12. Because `BundleMGATHERCASSelected` is tested before `BundleGMAtomRedSelected`, a function 8 bundle that no earlier selector claims (for example CUBE transport, which matches on the `B.DATR` layout alone) reaches the dedicated `MGATHER.CAS` handler, not the atomic-and-reduction handler.
+
+When the generic path is taken, the unit decodes the operation and returns true if the Tile mask is zero. It then checks, in order: fixed-point attributes only for matrix operations, binding completeness, B.IOR values, data attributes, the cell-rearrangement schema, and all closed schemas. Comparisons that produce a GPR run and commit at that point. Otherwise the PE masks must agree, the execution-mask merge must be prepared, and destinations are resolved and validated. Only then does the handler run.
+
+Design point: the ASL comment says raw B.IOR values are validated after the zero-mask exit and before destination allocation. Invalid values never reach the operand record or Tile state.
+
+On success the unit commits Local generations, retires consumer dependencies, discards subviews, and finalizes the attempt, which publishes bundle-allocated destinations. On failure it rolls back bundle-allocated destinations and aborts generations. The outer function also aborts Local and Shared generations whenever the attempt did not complete.
+
+Design point: when `far` is set, the far path calls the local path unchanged. The ASL comment states that routing and transport are not architecturally observable, so results are published only through the same commit path as a local bundle.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit orders checks and effects; it does not define them. Each closed schema, specialized handler, destination owner, and Tile handler lives in its own unit. The NDF clause `PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001` embedded here only restates that `TGPR2T` produces an ordinary U8 CUBE Tile checked by its own schema. Stopping the bundle and choosing the next PC belong to commit validation.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `TADD` bundle commits with one legal binding and mask `1111`. No specialized handler matches, so the generic path runs. All schemas pass, the destination is allocated, and the handler writes it. The unit commits generations and publishes the destination. If the handler had faulted, the destination would be released and no result would be visible. A bundle whose only `B.IOT` used mask `0000` would instead return true at step 1, before decoding, because a zero-mask `B.IOT` creates no binding.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-related role=related-owners-navigation -->
+## Related owners
+
+- [Commit validation](../commit/validation.md) calls this unit at commit.
+- [Tile schema](tile-schema.md) and [Tile-scalar schema](tile-scalar-schema.md) define closed schemas.
+- [Destination operation](destination-operation.md) resolves destinations on the generic path.
+- [Tile instruction operands](tile-instruction-operands.md) builds the operand record.
+- [Rollback](../faults/rollback.md) releases destinations after a failure.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

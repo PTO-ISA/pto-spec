@@ -12,7 +12,60 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the pure geometry of `BSTART.TIMG2COL`. IMG2COL turns a convolution input image into a matrix. Each matrix row is one output pixel, and each matrix column is one kernel position and input channel. The unit defines the channel grouping, the output image size, the crop legality rule, the per-PE row split, and the mapping from one matrix cell to one input element.
+
+It does not read registers, allocate Tiles, or touch memory. The [TIMG2COL execution](timg2col-execution.md) unit calls these helpers when a bundle selected by Function 28 commits.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-concepts role=concepts-state -->
+## Concepts and derived quantities
+
+- `C0` is the number of elements in one 32-byte channel group: `256 DIVRM TileElementBits(data_type)`. FP16 gives 16 and an 8-bit type gives 32.
+- `C1` is the number of channel groups needed for `Cin` channels: `Cin` divided by `C0`, rounded up.
+- `Hout` and `Wout` are the output image height and width. The effective kernel span is `(kernel - 1) * dilation + 1`. When the padded input is smaller than that span the result is 0; otherwise it is `(padded - span) DIVRM stride + 1`.
+- `KValid` is `KernelH * KernelW * C1 * C0`, the width of one full expanded row including channel padding.
+- `BundleTIMG2COLShape` gathers the three `B.DIM` values (ValidCol, ValidRow, TotalCol), the data type, and the decoded parameters.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-rules role=rules-interactions -->
+## Crop, row split, and cell rules
+
+`BundleTIMG2COLShapeLegal` accepts a crop only when ValidCol, ValidRow, and TotalCol are nonzero, ValidCol does not exceed TotalCol, ValidCol, TotalCol, and ColStart are multiples of `C0`, `RowStart + ValidRow <= Hout * Wout`, and `ColStart + ValidCol <= KValid`.
+
+Design point: column counts and the column start are `C0`-aligned, so a crop never splits a 32-byte channel group. The NDF clause `PTO-BSTART-TIMG2COL-CROP-001` states the same rule.
+
+`BundleTIMG2COLValidRowForOutput` splits ValidRow across four PEs. Shared ND output uses 16-row quarters when ValidRow is at most 64 and 32-row quarters otherwise. Local M16 output always uses 16, and Local M32 output always uses 32. Rows fill PE 0 first, and a PE past the end receives 0 rows. `BundleTIMG2COLRowStartForOutput` adds the rows of the earlier PEs to RowStart.
+
+`BundleTIMG2COLCell` maps one cell. The row selects an output pixel (row divided by `Wout`, and the remainder). The column selects a kernel offset, a channel group, and a lane in the order kernel, `C1`, `C0`. A cell whose input coordinate falls in the padding, or whose channel is not below `Cin`, is defined raw zero with no GM access. Otherwise the cell reads GM through the DN index (channel-major) for `DN2ND`, `CUBE_M16`, and `CUBE_M32`, and through the ND index (channel-minor) for the other layouts.
+
+Design point: padding and channel-padding lanes are defined zeros that never touch memory. A program therefore sees no fault and no load event for them, as the NDF clause `PTO-BSTART-TIMG2COL-DEFINEDNESS-001` requires.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not check register values, bindings, or `B.DATR` fields; [TIMG2COL execution](timg2col-execution.md) does. `BundleTIMG2COLDestinationShapeLegal` is called by that unit only for Shared ND output.
+
+Some helpers here have no caller in `asl/`. `BundleTIMG2COLWriterRange` and `BundleTIMG2COLOutputMatchesLayout` are used only by tests, and `BundleTIMG2COLKIndex` has no caller at all. `BundleTIMG2COLValidRowForPE` and `BundleTIMG2COLRowStartForPE` are reached only through `BundleTIMG2COLWriterRange`; execution uses the `ForOutput` variants.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Take FP16 data, an 8 by 8 input with `Cin` 20, a 3 by 3 kernel, padding 1 on every side, dilation 1, and stride 1. Then `C0` is 16, `C1` is 2, and `KValid` is 9 * 2 * 16 = 288. The padded input is 10 and the span is 3, so `Hout` and `Wout` are both 8, giving 64 rows.
+
+A crop with RowStart 0, ValidRow 64, ColStart 32, ValidCol 64, and TotalCol 64 is legal: 64 <= 64 and 96 <= 288. For Shared ND output each PE gets 16 rows. For a larger image, a ValidRow of 70 would split as 32, 32, 6, and 0.
+
+With ColStart 0, row 9 (output pixel 1, 1), column 0 reads input (0, 0), channel 0. With ColStart 0, column 20 of any row is kernel offset 0, group 1, lane 4, which is channel 20; that is not below `Cin`, so the cell is raw zero.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [TIMG2COL execution](timg2col-execution.md) validates the bundle and builds the destination with these helpers.
+- [TIMG2COL parameters](../operands/timg2col-parameters.md) unpacks the three parameter GPRs.
+- [TIMG2COL GM access](../memory/timg2col-gm.md) defines the DN and ND index formulas and the GM preflight.
+- [BSTART.TIMG2COL](../../execution/BSTART.TIMG2COL.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

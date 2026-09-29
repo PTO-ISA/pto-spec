@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元是 `MGATHER.MASK` 的指令束级处理程序。`MGATHER.MASK` 是按索引加载，只对谓词 Tile 位已置位的通道读取全局内存。
+
+`BundleMGATHERMASKSelected` 识别该指令束：有效的 `TileMemory` 操作描述符，其选择器功能号（位 `4:0`）为 `6`。`ExecuteBundleMGATHERMASKOperation` 校验完整指令束，解析目标，并调用 Tile 级 `MGATHER_MASK` 效果。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-concepts role=concepts-state -->
+## 概念与可见状态
+
+操作数为基地址、索引 Tile 和掩码 Tile。掩码 Tile 是该操作自身的谓词操作数，与可选的执行掩码不同。
+
+- 必须有一条 `B.IOR` 记录。其 `source0` 选择为当前内存代理保存基地址的 GPR。
+- 没有谓词 Tile 执行掩码时，一个 `B.IOT` 携带目标、位于 `source0` 的索引 Tile、位于 `source1` 的掩码 Tile 以及 `last`。
+- 有谓词 Tile 执行掩码时，第一个 `B.IOT` 携带索引和掩码 Tile，但不带目标也不带 `last`。第二个 `B.IOT` 携带目标、一个源、无 `source1`，并带 `last`。
+- `B.DIM` 给出目标的有效列数、有效行数和物理列数，由 `BundleMGATHERDimensionsLegal` 检查。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-rules role=rules-interactions -->
+## 规则与交互
+
+当 `SelectedBundleTileMaskIsZero` 成立时，处理程序首先无效果地返回成功。ASL 注释把这一步放在所有 schema、源、GPR、维度、分配、谓词、地址和故障检查之前。
+
+未知的 TLSU 操作码引发 `Fault_IllegalInstruction`。下列其他检查都在解析目标之前进行，失败时引发 `Fault_TileLegality`。
+
+- 无 `B.IOS` 绑定、存在 `B.IOR`、`B.IOR` 取值完整合法、PE 掩码一致、维度合法，以及 `BundleMGATHERMASKBindingsLegal` 规定的绑定布局。
+- 索引 Tile 内容已定义，类型为 S32、U32、S64 或 U64，并具有指令束布局。
+- 掩码 Tile 通过 `IndexedTLSUPredicateValuesLegal`，并具有指令束布局。
+- 数据形状与索引形状匹配，掩码具有目标的有效行数和索引的有效列数，且物理形状合法。
+
+这些检查之后，处理程序解析目标并校验 Local 生成写者。在谓词 Tile 执行掩码下，目标取自第二个绑定。之后的失败或 `MGATHER_MASK` 内部的内存故障会调用 `RollBackBundleTileDestinations`。成功时调用 `FinalizeBundleTileAttempt`。
+
+设计要点：掩码 Tile 在形成任何地址之前就用谓词值辅助函数检查。随后 `MGATHER_MASK` 只探测在执行掩码下活动且谓词位已置位的通道。谓词位清零的通道不发出内存访问，保留来自 `CurrentBundlePadValue` 的填充值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-boundaries role=boundaries -->
+## 架构边界
+
+只有当 `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` 未找到更靠前的专用选择器时，本单元才运行。`BundleMGATHERMASKSelected` 在 `MGATHER.CAS` 和原子或归约选择器之后、普通 `MGATHER` 之前测试。
+
+谓词位的含义、字节位移地址规则以及加载事件顺序属于 Tile gather 与 scatter 所有者。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+假设一个无执行掩码的指令束把 U16 值 gather 到 RowMajor 目标，`LB0` 为 16，`LB1` 为 2，`LB2` 为 16。唯一的 `B.IOT` 指定一个 U32 索引 Tile 和一个掩码 Tile，二者都是 2 乘 16。若掩码置位了 32 个通道中的 20 个，gather 探测并加载 20 个地址。其余 12 个目标元素保存填充值。
+
+如果掩码 Tile 有 3 个有效行，指令束会在分配目标之前引发 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-related role=related-owners-navigation -->
+## 相关所有者
+
+- [MGATHER 分派](tlsu-mgather.md) 定义共用的维度检查。
+- [Tile 执行分派](tile-execution.md) 排定各专用选择器的顺序。
+- [Gather 与 scatter 内存](../../../tile/model/memory/gather-scatter.md) 定义 `MGATHER_MASK`。
+- [BSTART.MGATHER.MASK](../../execution/BSTART.MGATHER.MASK.md) 是该起始形式的指令页。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

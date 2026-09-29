@@ -12,7 +12,67 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元包含 Tile 操作共用的指令束检查，以及三组操作的封闭 schema。封闭 schema 是指令束为某个操作必须携带的确切绑定、维度和类型集合。
+
+它定义：
+
+- `SelectedBundleTileDataAttributesLegal`，对照所选操作检查 `B.DATR` 数据属性，失败时自行引发 `Fault_TileLegality`。
+- `SelectedBundleTileMasksLegal` 与 `SelectedBundleTileMaskIsZero`，检查 Tile 绑定的 PE 掩码。
+- 二元操作 `TADD`、`TSUB`、`TMUL`、`TDIV`、`TREM`、`TMAX`、`TMIN` 与 `TEXPDIF`，一元操作 `TABS`、`TNOT`、`TNEG`、`TRELU` 以及 `TFMA` 的封闭 schema。
+- `BundleTileBindingCount` 与 `BundleTileBindingStreamTerminated` 等计数辅助函数。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+- PE 掩码是绑定写入的处理单元的 4 位集合。掩码 `0000` 表示零参与。
+- `B.DATR` 是可选的数据属性命令。其字段包括比较模式、填充值、饱和、规范化、数据类型、舍入模式和数据布局。
+- 显式字段值是来自存在的 `B.DATR` 的值。`B.DATR` 缺省时，用于适用性判断的显式值为零或假。
+
+这些函数读取绑定状态、维度、数据属性、执行掩码和定点属性。只有 `SelectedBundleTileDataAttributesLegal` 写入状态，且只写入故障记录。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-rules role=rules-interactions -->
+## 规则与交互
+
+`SelectedBundleTileDataAttributesLegal` 以 `Fault_TileLegality` 拒绝：
+
+- 执行掩码与任何 Shared 绑定同时出现；
+- 指令束不是权重 `TLOAD` 时出现显式的权重加载数据布局；
+- 操作不接受的任何字段（来自 `TileOperationDATRFieldsLegal`），或矩阵操作中 `BundleFPATRDATRFieldsLegal` 的任何失败；
+- 对 `CUBE` `TCI`，缺少 `B.DATR`、数据类型不是 `DTYPE_NONE`、填充、比较或舍入字段非零，或设置了饱和或规范化；对非 CUBE `TCI`，显式布局或数据类型；
+- 对 `TGPR2T`，位 2 置位的舍入字段；
+- 填充联合为必须为零的操作出现非零填充值；
+- `TLOAD` 或 `TSTORE` 的非零显式填充，除非布局是 CUBE 转换布局。
+
+设计要点：ASL 注释指出，继承值或默认值是操作输入，而不是显式编码的非零字段。因此只有 `B.DATR` 存在时，适用性检查才查看字段值。拒绝非零填充的操作不会因为一个它从未编码的默认值而被拒绝。
+
+`SelectedBundleTileMasksLegal` 要求每个有效 Tile 绑定携带相同的 PE 掩码。当每个有效绑定的掩码都是 `0000`，或者没有绑定但出现过零参与绑定器时，`SelectedBundleTileMaskIsZero` 为真。
+
+二元 schema 要求一个带目标、`source0` 和 `source1` 并标记为最后的绑定。若执行掩码是谓词 Tile，则改为要求两个绑定：第一个携带两个源且不是最后，第二个携带目标并以 `source0` 携带掩码，掩码为源序号 2。一元 schema 要求一个带目标和 `source0` 的绑定，掩码存在时以 `source1` 携带。`TFMA` 要求两个绑定：先是乘数，再是目标与加数。三者都要求维度位于 `1..65535`、数据类型受支持以及逐元素布局受支持。`TEXPDIF` 还需要显式的维度 0。
+
+设计要点：每个 schema 都要求目标绑定尚未处于 `destination_allocated_by_bundle` 状态。Tile 执行所有者在 `ResolveBundleTileDestinationsForOperation` 之前运行封闭 schema，因此形状在分配任何目标 Tile 之前就已得到证明，失败的 schema 不会留下需要回滚的分配。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-boundaries role=boundaries -->
+## 架构边界
+
+除数据属性检查外，这些函数返回布尔值，由调用者选择故障。比较、归约、TCVT、Tile-标量等其他封闭 schema 位于各自的单元中。逐元素的值检查与算术属于 Tile 模型。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+某 `TADD` 指令束的数据类型为 FP16，有一个带目标、左源和右源并标记为最后的 `B.IOT`，掩码为 `1111`。维度为 64、16 和 64。没有 `B.DATR`。数据属性检查看到所有显式字段为零而通过。二元 schema 看到一个绑定、合法维度以及 RowMajor 布局下的 FP16，因而通过。如果指令束增加了谓词 Tile 执行掩码却仍只有一个绑定，schema 会失败，因为此时需要两个绑定。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile execution](tile-execution.md) 按提交顺序调用这些检查。
+- [Tile-scalar schema](tile-scalar-schema.md) 包含 Tile-标量封闭 schema。
+- [Command data attributes](command-data-attributes.md) 定义 `B.DATR` 的记录方式。
+- [Execution-mask schema](execution-mask-schema.md) 定义掩码载体。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

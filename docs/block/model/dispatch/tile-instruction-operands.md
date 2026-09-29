@@ -12,7 +12,60 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit converts a validated bundle into the flat operand record that a Tile instruction handler expects. A bundle spreads its operands across several header commands: Tile bindings (`B.IOT`), scalar bindings (`B.IOR`), dimensions (`B.DIM`), and data attributes (`B.DATR`). `BundleTileInstructionOperands` collects them into one `TileInstructionOperands` value.
+
+It is called by the generic path of the tile-execution owner after destinations are resolved, by the TMATMUL handler in the CUBE matrix owner, and by the matrix post-process owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-concepts role=concepts-state -->
+## Concepts and visible state
+
+- Destinations fill `destination0` to `destination2` in binding order.
+- Sources fill `source0` to `source8` in binding order, and inside each binding `source0` comes before `source1`.
+- A B.IOR slot is one of the three source selectors of the first scalar binding, `RegSrc0` to `RegSrc2`.
+- The record starts from `DefaultTileInstructionOperands`, so any field this unit does not set keeps its default.
+
+The unit reads bindings, dimensions, data attributes, the execution mask, fixed-point attributes, and the GPRs named by `B.IOR`. It writes no architectural state, except that a fourth destination raises `Fault_TileLegality`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-rules role=rules-interactions -->
+## Rules and interactions
+
+The unit fills the record in these steps.
+
+1. Tile sources are numbered with a running ordinal across all bindings. The source whose ordinal equals the execution mask's `predicate_source_ordinal` is skipped when the mask is a predicate Tile. The mask is therefore not an arithmetic operand.
+2. For `TGPR2T`, `source0` to `source3` are overwritten with the four GPR selectors from the two scalar bindings.
+3. Scalar inputs are taken from B.IOR slots in a fixed order: `address`, then `scalar0`, then `diagonal`, then `flag0`. `BundleOperationGPRInputSlot` gives each field present in the operation the next free slot. `diagonal` is read as a signed value and `flag0` is true only when the register equals 1.
+4. For a matrix operation with fixed-point attributes, the post-quantization parameter and the leaky-ReLU parameter take the next slots from slot 0, when their modes use a scalar.
+5. Dimensions become `natural0`, `natural1`, `positive0` to `positive2`, `byte_count`, and `sort_width` when they fit each field's range.
+6. `selected_byte` comes from the pad field, `comparison` from the comparison mode, and `numeric_control` from the rounding mode and the saturating bit.
+
+Design point: the ASL comment says optional scalar fields pack densely into `RegSrc0` to `RegSrc2` in one architectural order. An operation with only `scalar0` reads it from slot 0, and an operation with `address` and `scalar0` reads them from slots 0 and 1. No slot is left empty for an absent field.
+
+Design point: when no scalar binding is present, `TLOAD` and `TSTORE` still get a row stride. It is the dense byte pitch from `TileDenseRowStrideBytes`, using the resolved physical columns and the operation data type. Omitting the binding therefore means "packed rows", not stride zero. For other operations that have an `address`, an omitted `scalar0` takes dimension 2.
+
+Design point: range checks for raw register values happen earlier, during bundle commit preflight. The ASL comments state that the signed `diagonal` and the boolean `flag0` are converted only after preflight has proved they are in range.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not validate bundle shape, allocate destinations, or run the operation. The closed schemas and GPR value checks come first. Which operand fields an operation has is defined by `TileOperandPresent` in the Tile model. The `CUBE` form of `TCI` reads its step value separately in the tile-execution owner, so `flag0` is not set for it here.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `TLOAD` bundle has one `B.IOT` with a destination and one `B.IOR` whose `RegSrc0` is GPR 5 and `RegSrc1` is GPR 6. `TLOAD` has `address` and `scalar0`, so `address` is read from GPR 5 through slot 0 and `scalar0` from GPR 6 through slot 1. If the same bundle had no `B.IOR`, `address` would keep its default of zero and `scalar0` would be the dense row pitch. For FP16 with 64 physical columns, that is 128 bytes.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution](tile-execution.md) calls this unit on the generic path.
+- [Scalar schema](scalar-schema.md) defines the slot order and GPR value legality.
+- [Execution-mask schema](execution-mask-schema.md) defines the predicate source ordinal.
+- [Tile model types](../../../tile/model/state/types.md) defines the default operand record.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

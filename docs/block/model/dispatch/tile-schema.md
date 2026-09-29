@@ -12,7 +12,67 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the shared bundle checks for Tile operations and the closed schemas for three operation groups. A closed schema is the exact set of bindings, dimensions, and types that a bundle must carry for one operation.
+
+It defines:
+
+- `SelectedBundleTileDataAttributesLegal`, which checks the `B.DATR` data attributes against the selected operation and raises `Fault_TileLegality` itself on failure.
+- `SelectedBundleTileMasksLegal` and `SelectedBundleTileMaskIsZero`, which check the PE masks of the Tile bindings.
+- The closed schemas for the binary operations `TADD`, `TSUB`, `TMUL`, `TDIV`, `TREM`, `TMAX`, `TMIN`, and `TEXPDIF`, for the unary operations `TABS`, `TNOT`, `TNEG`, and `TRELU`, and for `TFMA`.
+- Counting helpers such as `BundleTileBindingCount` and `BundleTileBindingStreamTerminated`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+- A PE mask is the 4-bit set of processing elements a binding writes to. Mask `0000` means zero participation.
+- `B.DATR` is the optional data-attribute command. Its fields include comparison mode, pad value, saturating, canonicalize, data type, rounding mode, and data layout.
+- An explicit field value is the value from a present `B.DATR`. When `B.DATR` is absent, the explicit values used for applicability are zero or false.
+
+These functions read binding state, dimensions, data attributes, the execution mask, and the fixed-point attributes. Only `SelectedBundleTileDataAttributesLegal` writes state, and only the fault record.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+`SelectedBundleTileDataAttributesLegal` rejects, with `Fault_TileLegality`:
+
+- an execution mask together with any Shared binding;
+- an explicit weight-load data layout when the bundle is not a weight `TLOAD`;
+- any field the operation does not accept, from `TileOperationDATRFieldsLegal`, or for a matrix operation any failure of `BundleFPATRDATRFieldsLegal`;
+- for `CUBE` `TCI`, a missing `B.DATR`, a data type other than `DTYPE_NONE`, any nonzero pad, comparison, or rounding field, or saturating or canonicalize set; for non-CUBE `TCI`, an explicit layout or data type;
+- for `TGPR2T`, a rounding field with bit 2 set;
+- a nonzero pad value for an operation whose pad union is must-zero;
+- a nonzero explicit pad for `TLOAD` or `TSTORE` unless the layout is a CUBE conversion layout.
+
+Design point: the ASL comment says inherited or default values are operation inputs, not explicitly encoded nonzero fields. Applicability therefore looks at field values only when `B.DATR` was present. An operation that rejects a nonzero pad is not rejected because of a default it never encoded.
+
+`SelectedBundleTileMasksLegal` requires every valid Tile binding to carry the same PE mask. `SelectedBundleTileMaskIsZero` is true when every valid binding has mask `0000`, or when there are no bindings and a zero-participation binder was seen.
+
+The binary schema requires one binding with a destination, `source0`, and `source1`, marked last. With a predicate-Tile execution mask it instead requires two bindings: the first carries both sources and is not last, the second carries the destination and the mask as `source0`, and the mask is source ordinal 2. The unary schema requires one binding with a destination and `source0`, plus the mask as `source1` when present. `TFMA` requires two bindings: the multiplicands first, then the destination and addend. All three require dimensions in `1..65535`, a supported data type, and a supported elementwise layout. `TEXPDIF` additionally needs an explicit dimension 0.
+
+Design point: each schema requires that the destination binding is not yet `destination_allocated_by_bundle`. The tile-execution owner runs the closed schemas before `ResolveBundleTileDestinationsForOperation`, so the shape is proved before any destination Tile is allocated, and a failed schema leaves no allocation to roll back.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+Except for the data-attribute check, these functions return booleans and the caller chooses the fault. Other closed schemas, such as comparison, reduction, TCVT, and Tile-scalar, live in their own units. The per-element value checks and the arithmetic belong to the Tile model.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `TADD` bundle has FP16 data type and one `B.IOT` with a destination, left source, and right source, marked last, with mask `1111`. The dimensions are 64, 16, and 64. There is no `B.DATR`. The data-attribute check sees all explicit fields as zero and passes. The binary schema sees one binding, legal dimensions, and FP16 with a RowMajor layout, and passes. If the bundle added a predicate-Tile execution mask but kept one binding, the schema would fail because it then needs two bindings.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution](tile-execution.md) calls these checks in commit order.
+- [Tile-scalar schema](tile-scalar-schema.md) holds the Tile-scalar closed schemas.
+- [Command data attributes](command-data-attributes.md) defines how `B.DATR` is recorded.
+- [Execution-mask schema](execution-mask-schema.md) defines the mask carriers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

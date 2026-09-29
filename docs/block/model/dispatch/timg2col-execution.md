@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit executes a `BSTART.TIMG2COL` bundle when it commits. It checks the complete bundle, reads the image from global memory (GM), and writes an IMG2COL matrix into either a Shared Tile or a Local CUBE Tile.
+
+`ExecuteBundleTIMG2COLOperation` is the entry point. [Tile execution](tile-execution.md) calls it first among the specialized handlers when `BundleDescriptorSelectsTIMG2COL` is true, that is, for form identity 94 with TLSU Function 28.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-concepts role=concepts-state -->
+## Output kinds and inputs
+
+The `B.DATR` layout selects one of three output kinds. `ND2M16` and `CUBE_M16` select Local M16, `ND2M32` and `CUBE_M32` select Local M32, and every other layout, including an absent `B.DATR`, selects Shared ND.
+
+- Shared ND writes one Shared Tile named by one `B.IOS` and uses no `B.IOT`.
+- Local M16 and Local M32 write one Local `CUBE_M16` or `CUBE_M32` Tile named by one `B.IOT` with PE mask `1111`, and use no `B.IOS`.
+
+Two source-only `B.IOR` records carry the operands. The first holds the GM base address; the second holds three packed parameter words. The `B.DIM` values give ValidCol, ValidRow (1 to 128), and TotalCol.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-rules role=rules-interactions -->
+## Validation, build, and publication
+
+`BundleTIMG2COLStateLegal` runs first and reads no memory. It checks the operation data type against a fixed code list, the `B.DATR` fields, the binding counts for the output kind, and that ValidRow is at most 64 for Local M16. It then checks both `B.IOR` records and requires every participating PE to hold equal GM base and parameter values. It rejects nonzero extension bits and zero sizes, and applies the crop rule from [TIMG2COL schema](timg2col-schema.md).
+
+For Shared ND the Shared mask must be a single PE or `1111`, and it must include the current PE. A single-PE mask must not use `B.ASSEMBLE`. A `1111` mask must use it: PE 0 carries INIT, PE 3 carries LAST, and PEs 1 and 2 carry neither. The unit derives each writer's offset from its row start, in 32-byte units, and validates the generation range. For Local output the unit checks the `CUBE` descriptor shape of this PE's row share.
+
+`BundleTIMG2COLBuildAndPublish` then works per PE. A Local PE with zero rows returns at once with no allocation or GM read. For a PE with at least one row, `BundleTIMG2COLPreflightGM` probes every GM address of all ValidRow rows before the first load.
+
+Design point: the complete footprint is probed before any allocation, load event, or Shared generation change. A translation or permission fault therefore leaves no partial payload behind.
+
+A Local PE then reuses a continuation destination or allocates a fresh `CUBE` Tile for its own PE bit. The unit fills each cell, reading GM only for cells that need it, and records a load event per read. Shared ND with one PE publishes through `AtomicUpdateSharedTile`. Shared ND with `1111` commits a candidate range into the open generation; the parent is published only when the gap-free LAST writer arrives.
+
+If validation or build fails, `BundleTIMG2COLAbortFailedAttempt` aborts the Shared generation or rolls back the Local destination. A failure without a recorded fault becomes `Fault_TileLegality`; a memory fault keeps its own kind.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-boundaries role=boundaries -->
+## Architectural boundaries
+
+Tile execution skips the generic effect-eligibility check, stage-2 preparation, Local continuation reuse, and ExecutionMask capture for this operation. It still applies the output-structure and Shared assembly-policy checks first. After success it commits Local generations, retires consumer dependencies, and finalizes the Tile attempt.
+
+The single-argument `BundleTIMG2COLScalarCommandCanBePlaced` in this unit has no caller; command placement uses the three-argument function of the same name in [scalar schema](scalar-schema.md).
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Local M16 output with ValidRow 40 splits rows as 16, 16, 8, and 0. PE 3 has no rows, so it allocates nothing and reads nothing, but the bundle still completes.
+
+Shared ND output with mask `1111`, FP16 data, ValidRow 64, and TotalCol 64 gives each PE 16 rows. `C0` is 16, so each writer covers 16 * 64 / 16 = 64 units. PE 1 starts at unit 64. A parent of 8192 bytes has 256 units, so the LAST writer, PE 3, starts at 192 and its coverage runs to 256.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-related role=related-owners-navigation -->
+## Related owners
+
+- [TIMG2COL schema](timg2col-schema.md) defines the crop, row split, and cell mapping.
+- [TIMG2COL parameters](../operands/timg2col-parameters.md) checks the two `B.IOR` records and unpacks the parameters.
+- [TIMG2COL GM access](../memory/timg2col-gm.md) defines the GM index formulas and the preflight loop.
+- [Shared generation](../operands/shared-generation.md) validates and commits cooperative ranges.
+- [Tile execution](tile-execution.md) dispatches this handler and commits the result.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

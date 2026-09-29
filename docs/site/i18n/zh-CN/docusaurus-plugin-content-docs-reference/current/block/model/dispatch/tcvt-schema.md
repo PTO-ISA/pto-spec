@@ -12,7 +12,59 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义 `TCVT`（Tile 类型转换操作）的封闭指令束 schema。封闭 schema 是指令束为某个操作必须携带的完整绑定、维度、类型和属性清单。`SelectedBundleClosedTCVTSchemaLegal` 对其他任何操作都返回真；对 `TCVT`，只有整个指令束符合该 schema 时才返回真。
+
+Tile 执行所有者中的通用 Tile 路径通过 `SelectedBundleClosedSchemasLegal` 调用它。在那里结果为假会在分配任何目标之前引发 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+`TCVT` 有两种数据类型。
+
+- 源操作类型来自操作描述符，经由 `CurrentBundleTileOperationDataTypeCode`。
+- 目标类型来自 `ResolveBundleEffectiveDataType`。存在具体的 `B.DATR` 数据类型时使用它，否则使用描述符的数据类型。
+
+该 schema 读取 Tile 绑定（`B.IOT`）、标量绑定（`B.IOR`）、三个指令束维度、执行掩码、`B.DATR` 的舍入模式、规范化标志与数据布局，以及源 Tile 的描述符。它不写入任何状态。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-rules role=rules-interactions -->
+## 规则与交互
+
+绑定形状是一个 Tile 绑定且没有 Shared 绑定。该绑定必须指定一个尺寸码合法的目标，指定 `source0`，并且是最后一个绑定。只有当执行掩码是谓词 Tile 时才出现 `source1`，此时该掩码必须是源序号 1。只有当执行掩码由 GPR 携带时才出现标量绑定，此时它必须满足 GPR 掩码 schema。
+
+三个维度都必须位于 `1..65535`。源必须保存源类型的有效编码。类型对必须通过 `HardwareTCVTTypePairSupported`，解析后的舍入模式必须通过 `HardwareTCVTRoundingModeSupported`。
+
+设计要点：编码为零的舍入字段表示“使用操作默认值”。该 schema 在此处把默认值解析为 `NumericRound_RNE`。ASL 注释给出了原因：`E6M2` 和 `RCPE6M2` 只接受 RNE 与 RNA，在 schema 预检期间解析舍入模式，可以在目标分配或任何效果之前拦下不受支持的模式。
+
+形状规则取决于源布局。
+
+- 对于 `CUBE_M16` 或 `CUBE_M32` 源，请求的有效列数与有效行数必须等于源的对应值，维度 2 必须为 1，规范化必须关闭，数据布局必须为 `NORM`，并且目标类型必须支持 CUBE。目标保持相同的 CUBE 布局。
+- 其他任何 CUBE 布局都被拒绝。
+- 对于非 CUBE 源，请求的有效列数、有效行数和物理列数都必须等于源的对应值，规范化必须关闭，并且源布局必须等于指令束的源布局。目标物理形状也必须合适：通常其推导出的行数等于源的行数；但当两种类型都允许奇数物理列且列数不是 2 的幂时，源行数必须能装入目标容量。
+
+设计要点：对于 CUBE 源，该 schema 不对照维度 2 检查目标几何。ASL 注释说明，目标物理几何稍后由目标类型和请求的尺寸码推导，这由 TCVT 目标单元完成。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-boundaries role=boundaries -->
+## 架构边界
+
+本单元只回答是或否。它自身不引发故障，不分配任何东西，也不转换数值。CUBE 源的目标分配属于 TCVT 目标单元。数值转换属于 Tile `TCVT` 执行。执行掩码捕获属于执行掩码 schema 所有者，GPR 掩码绑定规则 `BundleExecutionMaskGPRBindingSchemaLegal` 属于标量 schema 所有者。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+某指令束把一个 RowMajor FP32 源 Tile（16 个有效行、32 个有效列、32 个物理列）转换为 FP16。描述符类型为 FP32，`B.DATR` 选择 FP16。`B.DIM` 把维度 0 设为 32，维度 1 设为 16，维度 2 设为 32。有一个带目标与 `source0` 且标记为最后的 `B.IOT`，没有 `B.IOR`。没有掩码且舍入字段为零时，模式解析为 RNE。如果所选尺寸码下的 FP16 目标对 32 列推导出 16 行，该 schema 通过。把维度 2 设为 64 会失败，因为它不再等于源的 32 个物理列。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [TCVT destination](tcvt-destination.md) 为 CUBE 源分配目标。
+- [Tile execution](tile-execution.md) 在目标解析之前调用该 schema。
+- [Execution-mask schema](execution-mask-schema.md) 负责掩码载体规则。
+- [TCVT](../../../tile/elementwise-tile-tile/format-conversion/TCVT.md) 是指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

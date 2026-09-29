@@ -12,7 +12,68 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元在权重模式 `TLOAD` 指令束提交时执行它。它校验完整的指令束，从全局内存（GM）读取权重裁剪区域，并把它作为行主序的 N 乘 K 矩阵写入一个 Shared Tile。可以由一个 PE 写入整个 Tile，也可以由多个 PE 各写一段连续的行。
+
+入口是 `ExecuteBundleWeightTLOADOperation`。当 `BundleWeightTLOADSelected` 为真且指令束不是 TIMG2COL 指令束时，[Tile 执行](tile-execution.md)调用它。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-concepts role=concepts-state -->
+## 输入与状态
+
+- 一条 `B.IOS` 指定 Shared 目标。它要么携带尺寸代码（新目标），要么是尺寸代码为 0 的复用汇编目标。没有 `B.IOT`。
+- 一条含三个源且目标为零的 `B.IOR` 记录携带 GMBase、ShapeGPR 和 StartGPR。ShapeGPR 打包 `Cin`、`Cout`、`KernelH` 和 `KernelW`；StartGPR 打包 NStart 和 KStart。
+- `B.DIM` 给出 ValidCol、ValidRow 和 TotalCol。
+- 数据类型来自 `BSTART` 描述符。`B.DATR` 只提供布局；它自身的 DataType 字段必须为空。
+
+对单个写者，本单元写入 Shared Tile 记录；对协作写者，写入打开的 Shared 代际。它还为读取的每个 GM 元素记录一个加载事件。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-rules role=rules-interactions -->
+## 校验、构建与发布
+
+首先是严格的无操作路径。如果见到过零参与的绑定命令，且不存在 Tile 或 Shared 绑定，本单元不做其他检查直接返回成功。
+
+随后 `BundleWeightTLOADStateLegal` 检查描述符类型、`B.DATR` 字段、绑定形态和 `B.IOR` 记录。零 Shared 掩码是合法的，且不做任何事。否则掩码必须包含当前 PE，并且每个被选 PE 必须持有相等的 GMBase、ShapeGPR 和 StartGPR 值。尺寸必须在 1 到 65535 之间，ShapeGPR 的位 48 到 63 必须为零，四个尺寸必须非零。必须满足 [schema](weight-to-shared-schema.md) 的形状规则，并且 ValidRow 行、每行 TotalCol 列必须能放入父 Tile 的容量。
+
+单个被选 PE 不得使用 `B.ASSEMBLE`。有多个 PE 时必须使用 `B.ASSEMBLE`：第一个被选 PE 携带 INIT，最后一个携带 LAST，其余两者都不携带。编码的寄存器、立即数和偏移必须为零。本单元根据每个写者的行起点推导其偏移（以 32 字节为单位），并在行带非空时要求写者尺寸代码恰好等于其行带的字节数。随后它校验代际范围，包括 GMBase、两个参数字和一个元数据字。
+
+设计要点：写者偏移是推导出来的而不是编码的，其尺寸必须与其行跨度完全一致。因此每个参与者的目标范围由 ValidRow、TotalCol、所选掩码和 PE 顺序固定；NStart 只移动 GM 源行。NDF 条款 `PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001` 会拒绝不一致的尺寸代码。
+
+`BundleWeightTLOADBuildAndPublish` 在第一次加载前，对全部 ValidRow 行（而不只是本 PE 的行带）调用 `BundleWeightTLOADPreflightGM`。
+
+设计要点：每个参与者在任何参与者发出 GM 读取之前，都先证明全部被选 PE 的完整访问范围。因此任何一段行带中的故障都会在记录加载事件之前阻止所有写者。
+
+随后本单元填充自己的行。Cin 填充位置变为原始零，不访问 GM。单个写者通过 `AtomicUpdateSharedTile` 发布；该更新失败时，故障为 `Fault_TileAllocation`。协作写者把其范围提交到打开的代际中，只有无缺口的 LAST 写者到达后，代际才发布父 Tile。
+
+任何失败时，`BundleWeightTLOADAbortFailedAttempt` 都会中止打开的汇编代际。未记录故障的失败变为 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-boundaries role=boundaries -->
+## 架构边界
+
+Tile 执行在通用第 2 阶段准备和 Local 续接复用之前路由此操作。它仍然先应用输出结构检查和 Shared 汇编策略检查，并且在本单元失败时中止该指令束的所有 Local 和 Shared 代际。
+
+每个单元按 OHWI 或 OIHW 顺序的 GM 索引属于 [权重到 Shared 的 GM 访问](../memory/weight-to-shared-gm.md)。行划分和形状规则属于 [schema](weight-to-shared-schema.md) 单元。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+四个 PE 以 ValidRow 64、ValidCol 64、TotalCol 64 把 FP16 权重加载到尺寸代码为 7（即 8192 字节）的 Shared 父 Tile 中。每个 PE 写 16 行、每行 64 个元素，即 2048 字节，因此每个写者的尺寸代码必须为 5。
+
+`C0` 为 16，因此偏移为 0、64、128 和 192 个 32 字节单位。父 Tile 有 256 个单位。PE 0 携带 INIT，PE 3 携带 LAST，父 Tile 在 PE 3 覆盖单位 192 到 256 之后发布。
+
+如果只选中 PE 2，指令束必须省略 `B.ASSEMBLE`，由 PE 2 写入全部 64 行并直接发布。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-related role=related-owners-navigation -->
+## 相关所有者
+
+- [权重到 Shared schema](weight-to-shared-schema.md)定义选择条件、形状规则和行划分。
+- [权重到 Shared 参数](../operands/weight-to-shared-parameters.md)解包各字并检查参与者值相等。
+- [权重到 Shared 的 GM 访问](../memory/weight-to-shared-gm.md)定义单元映射和 GM 预检。
+- [Shared 代际](../operands/shared-generation.md)校验并提交协作范围。
+- [Tile 执行](tile-execution.md)派发此处理程序。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,65 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit defines the closed bundle schemas for the Tile-scalar operations of TEPL Mode 1. A Tile-scalar operation combines each element of one Tile with one scalar value read from a register. A closed schema is the exact set of bindings, dimensions, and types a bundle must carry for one operation.
+
+It covers four groups:
+
+- the binary group `TADDS`, `TSUBS`, `TMULS`, `TDIVS`, `TREMS`, `TANDS`, `TORS`, `TXORS`, `TSHLS`, `TSHRS`, `TMAXS`, and `TMINS`;
+- the compare `TCMPS`;
+- the select `TSELS`;
+- the fill `TEXPANDS`.
+
+Each `SelectedBundleClosed...SchemaLegal` function returns true for operations outside its group. The tile-execution owner calls them through `SelectedBundleClosedSchemasLegal`, and a false result raises `Fault_TileLegality` before destination allocation.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+- The scalar comes from the first scalar binding's `source0` register through `SelectedBundleTileScalarRawValue`. With no scalar binding it is zero.
+- A raw carrier operation treats elements as bit patterns. In the binary group these are `TANDS`, `TORS`, `TXORS`, `TSHLS`, and `TSHRS`.
+- An active coordinate is an element position the execution mask enables. With no mask every position is active.
+
+The schemas read Tile bindings, scalar bindings, dimensions, data attributes, the execution mask, the source Tile descriptors, and the scalar register. They write no state.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+The binary schema requires one Tile binding, no Shared binding, and dimensions in `1..65535`. The binding names a destination with a legal size code, a `source0`, and is last. `source1` appears only as a predicate-Tile execution mask at source ordinal 1. The data type must be supported for that binary operation, the layout must be elementwise, and the source must match the dimensions and be defined. For non-raw operations the source elements and the scalar must be valid encodings of the data type.
+
+Design point: for integer `TDIVS` and `TREMS`, the schema rejects a zero scalar when at least one coordinate is active. The division is then rejected before any destination is allocated. When the execution mask has no active coordinate, a zero divisor is accepted, because no element would be divided.
+
+`TCMPS` requires one binding, legal dimensions, and a comparison mode of at most 5. The rest depends on the source layout.
+
+- A RowMajor source writes a Tile destination. The scalar binding is optional; when present it has destination 0 and one source, or follows the GPR mask schema.
+- A CUBE source with a destination writes a U8 predicate Tile. Saturating and canonicalize must be off.
+- A CUBE source without a destination writes a GPR. The scalar binding is required and names the destination register. Canonicalize must be off, and saturating is allowed only for 8-bit types.
+
+`TSELS` depends on whether the first source is a PredicateCell, which is a predicate stored in a CUBE cell, and on whether the true source uses a CUBE layout. A PredicateCell select with a predicate-Tile mask uses two bindings. A select whose first source is not a CUBE Tile requires `source1`, no execution-mask Tile, and a legacy Predicate Tile as `source0`. A CUBE select without a PredicateCell reads its predicate from GPRs: two sources for one mask word, three for two words.
+
+`TEXPANDS` requires one binding with a destination and no sources, except the mask at ordinal 0. It needs a supported arithmetic type and a layout supported for reduction and expansion.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+These schemas return booleans and raise no fault themselves. Destination allocation belongs to the destination owners, and the arithmetic belongs to the Tile model. Comparison dimension and shape helpers come from the comparison-schema owner. `SelectedBundleTileScalarSourceLegal`, defined here, has no caller in the current ASL; the binary schema uses the elementwise variant.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `TDIVS` bundle uses `S32`. The source Tile has 8 valid rows and 16 valid columns, and the dimensions are 16, 8, and 16. One `B.IOT` names the destination and source and is last. One `B.IOR` names GPR 9 as `source0`, and GPR 9 holds 0. With no execution mask every element is active, so the schema fails and the bundle faults with `Fault_TileLegality` before allocation. If GPR 9 held 3, the schema would pass.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-scalar-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Comparison schema](comparison-schema.md) defines the shared comparison helpers.
+- [Tile schema](tile-schema.md) holds the Tile-Tile closed schemas.
+- [Tile execution](tile-execution.md) calls these schemas.
+- [TADDS](../../../tile/tile-scalar-and-immediate/arithmetic/TADDS.md) is one of the instruction pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

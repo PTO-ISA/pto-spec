@@ -12,7 +12,66 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元在指令束提交时运行其 Tile 操作。对于操作类别为 Tile 元素、Tile 内存或 Tile 矩阵的指令束，提交校验调用 `ExecuteBundleTileOperationWithAcceptedApplicabilityRules`。操作完成时本单元返回真；故障或必须等待时返回假。
+
+它分为两部分。专用分派器把部分操作路由到专用处理器。通用路径按封闭 schema 校验指令束并调用 Tile 指令处理器。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-concepts role=concepts-state -->
+## 概念与可见状态
+
+- 代际是由多个写者部分组装的目标。Local 代际位于 Local Tile 中，Shared 代际位于 Shared Tile 中。
+- 子视图物化是为本次尝试创建的 Tile 局部临时视图，在结束时被丢弃。
+- 零参与表示每个 Tile 绑定的 PE 掩码都是 `0000`，或出现过零掩码绑定器且没有任何绑定。
+
+本单元读取完整的指令束头部状态和 Tile 状态。它通过所调用的函数改变状态：目标解析、各处理器、`CommitBundleLocalGeneration`、`RetireBundleConsumerDependencies`、`FinalizeBundleTileAttempt`，以及回滚与中止辅助函数。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-rules role=rules-interactions -->
+## 规则与交互
+
+本地路径按以下顺序运行：
+
+1. 零参与且没有绑定的指令束直接返回真，没有任何效果。
+2. 除非选择了 `TIMG2COL`，操作必须能够译码，且 `BundleProducerEffectEligible` 必须接受它。译码失败引发 `Fault_IllegalInstruction`。
+3. 组装输出结构必须合法（`Fault_BundleControl`），Shared 目标组装策略必须合法（`Fault_TileLegality`）。
+4. 对于矩阵、`TIMG2COL` 和权重 `TLOAD` 以外的操作，准备阶段 2 并复用 Local 续接目标。
+5. 当 Tile 掩码不为零且未选择 `TIMG2COL` 时，标记、捕获并检查执行掩码。对于内存传输类操作和权重 `TLOAD`，在此准备其合并。
+6. 专用分派器依次尝试：`TIMG2COL`、权重 `TLOAD`、矩阵、CUBE 传输、GMOV、MGATHER.CAS、GM 原子与归约、MGATHER.MASK、MGATHER、MSCATTER、MSCATTER.MASK、TPREFETCH 以及 Shared TLSU。如果仍有未消费的 Shared 绑定且没有处理器匹配，引发 `Fault_TileLegality`。
+
+设计要点：ASL 注释指出，效果资格在描述符准备、专用分派、主体执行、分配或辅助效果之前检查。不具资格的操作不会改变 Tile 状态。
+
+设计要点：专用分支的顺序很重要。MGATHER.CAS 使用选择子功能号 8，它也落在 GM 原子范围 8 到 12 内。由于 `BundleMGATHERCASSelected` 在 `BundleGMAtomRedSelected` 之前测试，未被更早选择器（例如仅依据 `B.DATR` 布局匹配的 CUBE 传输）认领的功能号 8 指令束会到达专用的 `MGATHER.CAS` 处理器，而不是原子与归约处理器。
+
+走通用路径时，本单元译码操作；如果 Tile 掩码为零则返回真。随后依次检查：定点属性只用于矩阵操作、绑定完整性、B.IOR 值、数据属性、单元重排 schema 以及所有封闭 schema。产生 GPR 的比较在此处运行并提交。否则 PE 掩码必须一致，必须准备好执行掩码合并，然后解析并校验目标。只有这之后处理器才运行。
+
+设计要点：ASL 注释指出，原始 B.IOR 值在零掩码退出之后、目标分配之前校验。非法值永远不会进入操作数记录或 Tile 状态。
+
+成功时，本单元提交 Local 代际，退役消费者依赖，丢弃子视图，并完成本次尝试，从而发布由指令束分配的目标。失败时，它回滚由指令束分配的目标并中止代际。只要尝试未完成，外层函数还会中止 Local 与 Shared 代际。
+
+设计要点：设置 `far` 时，远程路径原样调用本地路径。ASL 注释说明路由与传输在架构上不可观察，因此结果只通过与本地指令束相同的提交路径发布。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-boundaries role=boundaries -->
+## 架构边界
+
+本单元安排检查与效果的顺序，但不定义它们。每个封闭 schema、专用处理器、目标所有者和 Tile 处理器都位于各自的单元中。嵌入此处的 NDF 条款 `PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001` 只是重申 `TGPR2T` 产生由其自身 schema 检查的普通 U8 CUBE Tile。停止指令束与选择下一个 PC 属于提交校验。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+某 `TADD` 指令束以一个合法绑定和掩码 `1111` 提交。没有专用处理器匹配，因此运行通用路径。所有 schema 通过，分配目标，处理器写入它。本单元提交代际并发布目标。如果处理器发生故障，目标会被释放，结果不可见。如果指令束唯一的 `B.IOT` 使用掩码 `0000`，则会在第 1 步、译码之前返回真，因为零掩码的 `B.IOT` 不创建绑定。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Commit validation](../commit/validation.md) 在提交时调用本单元。
+- [Tile schema](tile-schema.md) 与 [Tile-scalar schema](tile-scalar-schema.md) 定义封闭 schema。
+- [Destination operation](destination-operation.md) 在通用路径上解析目标。
+- [Tile instruction operands](tile-instruction-operands.md) 构建操作数记录。
+- [Rollback](../faults/rollback.md) 在失败后释放目标。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

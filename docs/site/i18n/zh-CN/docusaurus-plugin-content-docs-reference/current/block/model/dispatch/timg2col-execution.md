@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元在 `BSTART.TIMG2COL` 指令束提交时执行它。它检查完整的指令束，从全局内存（GM）读取图像，并把 IMG2COL 矩阵写入一个 Shared Tile 或一个 Local CUBE Tile。
+
+入口是 `ExecuteBundleTIMG2COLOperation`。当 `BundleDescriptorSelectsTIMG2COL` 为真（即形式标识 94 且 TLSU Function 28）时，[Tile 执行](tile-execution.md)在各专用处理程序中最先调用它。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-concepts role=concepts-state -->
+## 输出种类与输入
+
+`B.DATR` 布局选择三种输出之一。`ND2M16` 和 `CUBE_M16` 选择 Local M16，`ND2M32` 和 `CUBE_M32` 选择 Local M32，其他所有布局（包括没有 `B.DATR`）选择 Shared ND。
+
+- Shared ND 写入由一条 `B.IOS` 指定的一个 Shared Tile，不使用 `B.IOT`。
+- Local M16 和 Local M32 写入由一条 PE 掩码为 `1111` 的 `B.IOT` 指定的一个 Local `CUBE_M16` 或 `CUBE_M32` Tile，不使用 `B.IOS`。
+
+两条仅含源的 `B.IOR` 记录携带操作数。第一条保存 GM 基地址；第二条保存三个打包的参数字。`B.DIM` 值给出 ValidCol、ValidRow（1 到 128）和 TotalCol。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-rules role=rules-interactions -->
+## 校验、构建与发布
+
+`BundleTIMG2COLStateLegal` 最先运行，且不读取内存。它按固定代码列表检查操作数据类型，检查 `B.DATR` 字段、该输出种类的绑定数量，以及 Local M16 的 ValidRow 不超过 64。随后它检查两条 `B.IOR` 记录，并要求每个参与 PE 持有相等的 GM 基地址和参数值。它拒绝非零扩展位和零尺寸，并应用 [TIMG2COL schema](timg2col-schema.md) 中的裁剪规则。
+
+对于 Shared ND，Shared 掩码必须是单个 PE 或 `1111`，并且必须包含当前 PE。单 PE 掩码不得使用 `B.ASSEMBLE`。`1111` 掩码必须使用它：PE 0 携带 INIT，PE 3 携带 LAST，PE 1 和 PE 2 两者都不携带。本单元根据每个写者的行起点推导其偏移（以 32 字节为单位），并校验代际范围。对于 Local 输出，本单元检查本 PE 所分得行的 `CUBE` 描述符形状。
+
+之后 `BundleTIMG2COLBuildAndPublish` 按 PE 工作。行数为零的 Local PE 立即返回，不分配也不读 GM。对于至少有一行的 PE，`BundleTIMG2COLPreflightGM` 在第一次加载前探测全部 ValidRow 行的每个 GM 地址。
+
+设计要点：在任何分配、加载事件或 Shared 代际变化之前，先探测完整的访问范围。因此转换或权限故障不会留下部分载荷。
+
+随后 Local PE 复用续接目标，或为自己的 PE 位分配一个新的 `CUBE` Tile。本单元填充每个单元，只对需要的单元读取 GM，并为每次读取记录加载事件。单 PE 的 Shared ND 通过 `AtomicUpdateSharedTile` 发布。`1111` 的 Shared ND 把候选范围提交到打开的代际中；只有无缺口的 LAST 写者到达时，父 Tile 才被发布。
+
+如果校验或构建失败，`BundleTIMG2COLAbortFailedAttempt` 中止 Shared 代际或回滚 Local 目标。未记录故障的失败变为 `Fault_TileLegality`；内存故障保留其自身种类。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-boundaries role=boundaries -->
+## 架构边界
+
+对于此操作，Tile 执行跳过通用的效果资格检查、第 2 阶段准备、Local 续接复用和 ExecutionMask 捕获。它仍然先应用输出结构检查和 Shared 汇编策略检查。成功后，它提交 Local 代际，退役消费者依赖，并完成 Tile 尝试。
+
+本单元中单参数的 `BundleTIMG2COLScalarCommandCanBePlaced` 没有调用者；命令放置使用 [scalar schema](scalar-schema.md) 中同名的三参数函数。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+ValidRow 为 40 的 Local M16 输出把行划分为 16、16、8 和 0。PE 3 没有行，因此它不分配也不读取，但指令束仍然完成。
+
+掩码为 `1111`、FP16 数据、ValidRow 为 64、TotalCol 为 64 的 Shared ND 输出使每个 PE 得到 16 行。`C0` 为 16，因此每个写者覆盖 16 * 64 / 16 = 64 个单位。PE 1 从单位 64 开始。8192 字节的父 Tile 有 256 个单位，因此 LAST 写者 PE 3 从 192 开始，其覆盖范围延伸到 256。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-timg2col-execution-related role=related-owners-navigation -->
+## 相关所有者
+
+- [TIMG2COL schema](timg2col-schema.md)定义裁剪、行划分和单元映射。
+- [TIMG2COL 参数](../operands/timg2col-parameters.md)检查两条 `B.IOR` 记录并解包参数。
+- [TIMG2COL GM 访问](../memory/timg2col-gm.md)定义 GM 索引公式和预检循环。
+- [Shared 代际](../operands/shared-generation.md)校验并提交协作范围。
+- [Tile 执行](tile-execution.md)派发此处理程序并提交结果。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

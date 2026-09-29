@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元是在普通内存布局与 Local CUBE 布局之间转换的 `TLOAD` 和 `TSTORE` 指令束的指令束级处理程序。ASL 中称之为 CUBE 传输。
+
+`BundleCubeTransportSelected` 识别该指令束：有效的 `TileMemory` 描述符，存在 `B.DATR` 命令，且其 `Layout` 代码位于 `21..26`。`ExecuteBundleCubeTransportOperation` 校验指令束，然后要么加载到新的 CUBE Tile（功能号 `0`），要么存储已有的 CUBE Tile（功能号 `1`）。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-concepts role=concepts-state -->
+## 概念与可见状态
+
+`B.DATR` 布局代码同时选择方向和 CUBE 布局。
+
+| 代码 | 名称 | 方向 | Local 布局 |
+| --- | --- | --- | --- |
+| `21` | `ND2M32` | 加载 | `CUBE_M32` |
+| `22` | `ND2M16` | 加载 | `CUBE_M16` |
+| `23` | `ND2N8` | 加载 | `CUBE_N8` |
+| `24` | `M322ND` | 存储 | `CUBE_M32` |
+| `25` | `M162ND` | 存储 | `CUBE_M16` |
+| `26` | `N82ND` | 存储 | `CUBE_N8` |
+
+`B.DIM` 在 `LB0` 中给出有效列数，在 `LB1` 中给出有效行数，各自在 `1..65535` 内。`LB2` 必须为 `1`，因为 CUBE 布局自行推导物理几何。可选的 `B.IOR` 在 `source0` 中给出基地址，在 `source1` 中给出以字节计的行步长。没有它时，基址为零，步长为有效列的稠密行大小。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-rules role=rules-interactions -->
+## 规则与交互
+
+当 `SelectedBundleTileMaskIsZero` 成立时，处理程序首先无效果地返回成功。ASL 注释把这一步放在所有 schema、GPR、描述符、分配和内存检查之前。
+
+未知的 TLSU 操作码引发 `Fault_IllegalInstruction`。以下情况引发 `Fault_TileLegality`：维度非法；`B.DATR` 数据类型不是 `DTYPE_NONE`；比较或舍入模式非零；设置了饱和或规范化；功能号 `1` 配加载布局代码，或功能号 `0` 配存储代码；功能号不是 `0` 或 `1`；存在 `B.FPATR`；绑定 schema 错误。
+
+对于加载，唯一的 `B.IOT` 携带目标和 `last`，只有作为谓词 Tile 执行掩码时才携带源。对于存储，它携带 CUBE 源 Tile 和 `last`，没有目标。
+
+有效数据类型必须通过 `TileCubeDataTypeSupported`，且不能是 HiF4X2。按 ASL 注释，U64 只在加载到 `CUBE_N8` 时被接受。
+
+加载通过 `ResolveBundleCubeTransportDestination` 解析目标。描述符不匹配的复用生成目标引发 `Fault_TileLegality`。非法的 CUBE 形状、某个选中 PE 的容量溢出，或目标 hand 中没有空闲 Tile 槽位，引发 `Fault_TileAllocation`。随后处理程序校验 Local 生成写者并调用 `TLOAD`。存储检查源是具有所选类型、布局和有效形状的合法且已定义的 CUBE Tile，并在每个选中 PE 上已分配，然后调用 `TSTORE`。
+
+设计要点：加载路径在内存故障后调用 `RollBackBundleTileDestinations`。ASL 注释指出，该故障保留其之前已完成的 beat，但不得发布推测性的 Local 目标。
+
+设计要点：本处理程序检查除填充值以外的每个 `B.DATR` 字段。Tile schema 中的通用数据属性检查指出，对于 `TLOAD` 和 `TSTORE`，只有这些 Local CUBE 转换形式可以携带非零填充值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-boundaries role=boundaries -->
+## 架构边界
+
+`ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` 在 TIMG2COL、权重加载和矩阵选择器之后、`GMOV` 和按索引 TLSU 选择器之前测试本选择器。由于它只依赖布局代码，功能号不同但带转换布局的 `TileMemory` 指令束也会到达这里并被拒绝。
+
+CUBE 布局内部的元素放置属于 Tile 加载与存储所有者。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+假设一个 `TLOAD` 指令束的 `B.DATR` 布局为 `ND2M16`，操作类型为 FP16，`LB0` 为 64，`LB1` 为 16，没有 `B.IOR`。基址为零，行步长为 64 乘 2，即 128 字节。处理程序在目标 hand 的第一个空闲槽位分配一个 `CUBE_M16` 目标，并加载 16 行。
+
+如果同一指令束还把 `LB2` 设为 64，它会在分配之前引发 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile schema 分派](tile-schema.md) 持有其他 `TLOAD` 和 `TSTORE` 指令束的填充值规则。
+- [Tile 执行分派](tile-execution.md) 排定各专用选择器的顺序。
+- [加载与存储内存](../../../tile/model/memory/load-store.md) 定义 `TLOAD` 和 `TSTORE`。
+- [BSTART.TLOAD](../../execution/BSTART.TLOAD.md) 和 [BSTART.TSTORE](../../execution/BSTART.TSTORE.md) 是相应指令页。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

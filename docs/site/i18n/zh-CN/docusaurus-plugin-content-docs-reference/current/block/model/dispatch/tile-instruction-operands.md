@@ -12,7 +12,60 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把已校验的指令束转换为 Tile 指令处理器所需的扁平操作数记录。指令束把操作数分散在若干头部命令中：Tile 绑定（`B.IOT`）、标量绑定（`B.IOR`）、维度（`B.DIM`）和数据属性（`B.DATR`）。`BundleTileInstructionOperands` 把它们汇集为一个 `TileInstructionOperands` 值。
+
+目标解析之后，Tile 执行所有者的通用路径会调用它；CUBE 矩阵所有者中的 TMATMUL 处理器以及矩阵后处理所有者也会调用它。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-concepts role=concepts-state -->
+## 概念与可见状态
+
+- 目标按绑定顺序填入 `destination0` 到 `destination2`。
+- 源按绑定顺序填入 `source0` 到 `source8`，每个绑定内部 `source0` 先于 `source1`。
+- B.IOR 槽位是第一个标量绑定的三个源选择子之一，即 `RegSrc0` 到 `RegSrc2`。
+- 记录从 `DefaultTileInstructionOperands` 开始，因此本单元未设置的字段保持默认值。
+
+本单元读取绑定、维度、数据属性、执行掩码、定点属性以及 `B.IOR` 指定的 GPR。它不写入架构状态，只有出现第四个目标时会引发 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-rules role=rules-interactions -->
+## 规则与交互
+
+本单元按以下步骤填充记录。
+
+1. Tile 源按跨越所有绑定的连续序号编号。当执行掩码是谓词 Tile 时，序号等于掩码 `predicate_source_ordinal` 的源被跳过。因此该掩码不是算术操作数。
+2. 对于 `TGPR2T`，`source0` 到 `source3` 被两个标量绑定中的四个 GPR 选择子覆盖。
+3. 标量输入按固定顺序取自 B.IOR 槽位：`address`，然后 `scalar0`，然后 `diagonal`，然后 `flag0`。`BundleOperationGPRInputSlot` 为操作中存在的每个字段分配下一个空闲槽位。`diagonal` 按有符号值读取，只有寄存器等于 1 时 `flag0` 才为真。
+4. 对于带定点属性的矩阵操作，当其模式使用标量时，后量化参数和 leaky-ReLU 参数从槽位 0 起依次占用后续槽位。
+5. 维度在符合各字段范围时成为 `natural0`、`natural1`、`positive0` 到 `positive2`、`byte_count` 和 `sort_width`。
+6. `selected_byte` 来自填充字段，`comparison` 来自比较模式，`numeric_control` 来自舍入模式和饱和位。
+
+设计要点：ASL 注释指出，可选标量字段按一种架构顺序紧密打包到 `RegSrc0` 到 `RegSrc2`。只有 `scalar0` 的操作从槽位 0 读取它；同时有 `address` 和 `scalar0` 的操作从槽位 0 和 1 读取它们。不会为缺失的字段留出空槽位。
+
+设计要点：没有标量绑定时，`TLOAD` 和 `TSTORE` 仍会获得行步长。它是 `TileDenseRowStrideBytes` 给出的紧密字节间距，使用解析后的物理列数和操作数据类型。因此省略该绑定表示“紧密排列的行”，而不是步长为零。对于其他带 `address` 的操作，省略的 `scalar0` 取维度 2。
+
+设计要点：原始寄存器值的范围检查更早进行，即在指令束提交预检期间。ASL 注释说明，有符号的 `diagonal` 与布尔的 `flag0` 只有在预检证明其在范围内之后才会被转换。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-boundaries role=boundaries -->
+## 架构边界
+
+本单元不校验指令束形状，不分配目标，也不执行操作。封闭 schema 和 GPR 值检查先于它进行。操作具有哪些操作数字段由 Tile 模型中的 `TileOperandPresent` 定义。`TCI` 的 `CUBE` 形式在 Tile 执行所有者中单独读取其步长值，因此这里不为它设置 `flag0`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+某 `TLOAD` 指令束有一个带目标的 `B.IOT`，以及一个 `RegSrc0` 为 GPR 5、`RegSrc1` 为 GPR 6 的 `B.IOR`。`TLOAD` 具有 `address` 和 `scalar0`，因此 `address` 通过槽位 0 从 GPR 5 读取，`scalar0` 通过槽位 1 从 GPR 6 读取。如果同一指令束没有 `B.IOR`，`address` 保持默认值零，`scalar0` 为紧密行间距。对于 64 个物理列的 FP16，这是 128 字节。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tile-instruction-operands-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile execution](tile-execution.md) 在通用路径上调用本单元。
+- [Scalar schema](scalar-schema.md) 定义槽位顺序与 GPR 值合法性。
+- [Execution-mask schema](execution-mask-schema.md) 定义谓词源序号。
+- [Tile model types](../../../tile/model/state/types.md) 定义默认操作数记录。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
