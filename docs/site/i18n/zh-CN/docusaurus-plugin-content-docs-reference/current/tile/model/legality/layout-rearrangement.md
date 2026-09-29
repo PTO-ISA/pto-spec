@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元包含四条 CUBE 单元重排指令的操作数合法性谓词：`TileOperandsLegal_TPERMUTE`、`TileOperandsLegal_TSHUF`、`TileOperandsLegal_TPACK` 与 `TileOperandsLegal_TUNPACK`。每条指令的 `InstructionContractOperandsLegal_*` 返回对应谓词，其目录记录也把该谓词列为 `legality_handler`。
+
+合法性谓词是只读检查。它检查描述符、类型、控制字段与元素已定义性，并以返回 FALSE 代替修改状态。重排执行单元中的模型执行函数在构造结果之前断言同一谓词，因此未通过该谓词的操作数组合不会写入任何目标字节。
+
+本单元还拥有执行单元复用的字节级辅助函数，例如 `TileReadCellByte`、`TileCellRearrangementRowBytes` 与 `TileCellRearrangementWordsPerRow`。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-concepts role=concepts-state -->
+## 概念与可见状态
+
+CUBE 布局以单元（cell）存储 Tile。这些指令只接受 `CUBE_M16` 与 `CUBE_M32`（`TileCellRearrangementLayoutLegal`）。`TileCellRearrangementDescriptorLegal` 还要求 `TileCubeDescriptorLegal`，因此记录的单元几何必须与形状一致。
+
+- 单元行字节数：`TileCellRearrangementRowBytes` 对 `CUBE_M16` 为 8，对 `CUBE_M32` 为 4。
+- 一行的有效字节数：`valid_columns` 乘以元素位宽，向上取整到整字节。
+- 一行的原始字数：有效字节数向上取整到完整的 32 位字。
+- 字节已定义性：只有位于有效列内、且为其提供位的每个元素都已定义时，该字节才已定义。对四位类型，当字节的两个半字节都在有效列内时，两者都要检查。
+
+`TSHUF`、`TPACK` 与 `TUNPACK` 读取的标量控制字必须满足位 `[63:32]` 全为零（`TileRearrangementControlWordLegal`）。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-rules role=rules-interactions -->
+## 规则与交互
+
+`TPERMUTE` 检查四个 Tile：目标、`source0`、`source1` 以及一个 U8 索引 Tile。它们使用同一布局。数据 Tile 共享同一类型与同一有效形状，且该类型不是 64 位。索引 Tile 的有效行数相同，每个有效目标字节对应一列，单元数也相同。对每个活动目标字节，索引字节必须已定义且小于单元行字节数的两倍。小于单元行字节数的索引选择 `source0`，否则选择 `source1`，被选中的源字节必须已定义。
+
+设计要点：索引在同一行、同一单元行段内选择字节，因为源字节等于段基址加所选偏移。因此字节不能移动到另一行或另一段，且在 `CUBE_M16` 下 16 或更大的索引是非法的，而不是回绕。
+
+`TSHUF` 检查一个数据源、一个 U32 控制 Tile 与控制字。位 `[7:0]` 是模式（0 到 3），位 `[15:8]` 是段编码（0 到 4，对应宽度 2、4、8、16、32），位 `[23:16]` 是边界标志（0 或 1）。段编码 4 仅对 `CUBE_M32` 合法。对每个活动元素，起控制作用的 U32 字必须已定义，实际将被读取的源元素也必须已定义。
+
+`TPACK` 与 `TUNPACK` 需要位宽为 8、16 或 32 位的数值源，以及类型为 U8、U16 或 U32 的目标。目标有效列数必须等于原始字数乘以每字目标元素数。`TPACK` 从每个源的每个字中取 1 到 3 个低字节，总数最多 4。`TUNPACK` 取字节偏移 0 到 3、长度 1 到 4 且在第 4 字节前结束的字段。
+
+设计要点：已定义性只对操作将读取的字节检查。没有被任何索引或控制选中的未定义字节不会使操作非法。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-boundaries role=boundaries -->
+## 架构边界
+
+存在 ExecutionMask 时，逐字节与逐元素检查只在活动坐标上运行。`TPACK` 与 `TUNPACK` 在 `(row, word_index)` 处查询掩码。一个例外：`TUNPACK` 的跨度规则（偏移加长度必须落在每个字的有效字节内）对每个字都检查，无论是否活动。
+
+目标必须与每个数据源是不同的寄存器，`TSHUF` 还要求它与控制 Tile 不同。`TPERMUTE` 要求索引 Tile 与两个数据源都不同，但 `source0` 与 `source1` 可以是同一个 Tile。
+
+指令束分派会更早应用部分规则。`ResolveBundleCellRearrangementDestination` 检查源描述符以及 `TPACK`/`TUNPACK` 的源类型，并在分配目标之前引发 `Fault_TileLegality`。
+
+`TileCellRearrangementValidRegionDefined` 定义于此，但在 `asl/` 中搜索找不到调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-example role=example-usage -->
+## 非规范阅读示例
+
+考虑 `CUBE_M16` 中 U8 数据的 `TPERMUTE`，有效形状为 16 行 8 列。
+
+- 每行有 8 个有效字节，单元行字节数为 8，因此索引 Tile 需要 8 个有效列。
+- 合法索引值为 0 到 15。
+- 目标第 5 行第 2 字节的索引为 3 时，读取 `source0` 第 5 行的第 3 字节。
+- 同一位置的索引为 11 时，读取 `source1` 第 5 行的第 3 字节。
+- 任何活动索引为 16 都使谓词为 FALSE，且不写入任何目标字节。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-related role=related-owners-navigation -->
+## 相关所有者
+
+- [重排执行](../execution/rearrangement.md) 在这些检查之后运行四个操作。
+- [CUBE 单元几何](../shape/cube-cell.md) 拥有单元行数、单元列数与单元数。
+- [描述符形状](descriptor-shape.md) 拥有 `TileCubeDescriptorLegal`。
+- [单元重排 schema](../../../block/model/dispatch/cell-rearrangement-schema.md) 拥有指令束侧的目标检查。
+- [TPERMUTE](../../layout-and-rearrangement/layout/TPERMUTE.md)、[TSHUF](../../layout-and-rearrangement/layout/TSHUF.md)、[TPACK](../../layout-and-rearrangement/layout/TPACK.md) 与 [TUNPACK](../../layout-and-rearrangement/layout/TUNPACK.md) 是指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

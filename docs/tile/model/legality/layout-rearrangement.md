@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the operand legality predicates for the four CUBE cell rearrangement instructions: `TileOperandsLegal_TPERMUTE`, `TileOperandsLegal_TSHUF`, `TileOperandsLegal_TPACK`, and `TileOperandsLegal_TUNPACK`. Each instruction's `InstructionContractOperandsLegal_*` returns its predicate, and its catalog record names the predicate as `legality_handler`.
+
+A legality predicate is a read-only check. It inspects descriptors, types, control fields, and element definedness, and it returns FALSE instead of changing state. The model execution functions in the rearrangement execution unit assert the same predicate before they build a result, so no destination byte is written for an operand set that fails it.
+
+The unit also owns byte-level helpers that the execution unit reuses, such as `TileReadCellByte`, `TileCellRearrangementRowBytes`, and `TileCellRearrangementWordsPerRow`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-concepts role=concepts-state -->
+## Concepts and visible state
+
+A CUBE layout stores a Tile as cells. These instructions accept only `CUBE_M16` and `CUBE_M32` (`TileCellRearrangementLayoutLegal`). `TileCellRearrangementDescriptorLegal` also requires `TileCubeDescriptorLegal`, so the recorded cell geometry must match the shape.
+
+- Cell row bytes: `TileCellRearrangementRowBytes` is 8 for `CUBE_M16` and 4 for `CUBE_M32`.
+- Valid bytes of a row: `valid_columns` times the element width in bits, rounded up to whole bytes.
+- Raw words of a row: the valid bytes rounded up to whole 32-bit words.
+- Byte definedness: a byte is defined only if it lies inside the valid columns and every element that contributes bits to it is defined. For four-bit types, both nibbles of the byte are checked when both are inside the valid columns.
+
+The scalar control word read by `TSHUF`, `TPACK`, and `TUNPACK` must have bits `[63:32]` equal to zero (`TileRearrangementControlWordLegal`).
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-rules role=rules-interactions -->
+## Rules and interactions
+
+`TPERMUTE` checks four Tiles: destination, `source0`, `source1`, and a U8 index Tile. All use the same layout. The data Tiles share one type and one valid shape, and the type is not 64-bit. The index Tile has the same valid rows, one column per valid destination byte, and the same cell count. For each active destination byte, the index byte must be defined and below twice the cell row bytes. An index below the row bytes selects `source0`, otherwise `source1`, and the selected source byte must be defined.
+
+Design point: the index selects a byte inside the same cell row segment of the same row, because the source byte is the segment base plus the selected offset. A byte therefore cannot move to another row or another segment, and an index of 16 or more under `CUBE_M16` is illegal rather than wrapped.
+
+`TSHUF` checks a data source, a U32 control Tile, and the control word. Bits `[7:0]` are the mode (0 to 3), bits `[15:8]` the segment code (0 to 4, widths 2, 4, 8, 16, 32), and bits `[23:16]` the boundary flag (0 or 1). Segment code 4 is legal only for `CUBE_M32`. For each active element, the controlling U32 word must be defined, and the source element that will actually be read must be defined.
+
+`TPACK` and `TUNPACK` need numeric sources whose type is 8, 16, or 32 bits wide, and a destination of type U8, U16, or U32. The destination valid columns must equal the raw word count times the destination elements per word. `TPACK` takes 1 to 3 low bytes from each word of each source, at most 4 in total. `TUNPACK` takes a field at byte offset 0 to 3 with count 1 to 4 that ends by byte 4.
+
+Design point: definedness is checked only for bytes the operation will read. An undefined byte that no index or control selects does not make the operation illegal.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-boundaries role=boundaries -->
+## Architectural boundaries
+
+When an ExecutionMask is in force, the per-byte and per-element checks run only at active coordinates. `TPACK` and `TUNPACK` query the mask at `(row, word_index)`. One exception: the `TUNPACK` span rule, which requires offset plus count to fit in each word's valid bytes, is checked for every word, active or not.
+
+The destination must be a different register from each data source, and `TSHUF` also requires it to differ from the control Tile. `TPERMUTE` requires the index Tile to differ from both data sources, but `source0` and `source1` may be the same Tile.
+
+Bundle dispatch applies part of these rules earlier. `ResolveBundleCellRearrangementDestination` checks the source descriptors and the `TPACK`/`TUNPACK` source types and raises `Fault_TileLegality` before it allocates the destination.
+
+`TileCellRearrangementValidRegionDefined` is defined here, but a search of `asl/` finds no caller.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-example role=example-usage -->
+## Non-normative reading example
+
+Consider `TPERMUTE` with U8 data in `CUBE_M16`, valid shape 16 rows by 8 columns.
+
+- Each row has 8 valid bytes, and the cell row bytes are 8, so the index Tile needs 8 valid columns.
+- Legal index values are 0 to 15.
+- Destination row 5, byte 2 with index 3 reads byte 3 of row 5 in `source0`.
+- The same position with index 11 reads byte 3 of row 5 in `source1`.
+- Any active index of 16 makes the predicate FALSE, and no destination byte is written.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-related role=related-owners-navigation -->
+## Related owners
+
+- [Rearrangement execution](../execution/rearrangement.md) runs the four operations after these checks.
+- [CUBE cell geometry](../shape/cube-cell.md) owns cell rows, cell columns, and cell counts.
+- [Descriptor shape](descriptor-shape.md) owns `TileCubeDescriptorLegal`.
+- [Cell rearrangement schema](../../../block/model/dispatch/cell-rearrangement-schema.md) owns the bundle-side destination checks.
+- [TPERMUTE](../../layout-and-rearrangement/layout/TPERMUTE.md), [TSHUF](../../layout-and-rearrangement/layout/TSHUF.md), [TPACK](../../layout-and-rearrangement/layout/TPACK.md), and [TUNPACK](../../layout-and-rearrangement/layout/TUNPACK.md) are the instruction pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

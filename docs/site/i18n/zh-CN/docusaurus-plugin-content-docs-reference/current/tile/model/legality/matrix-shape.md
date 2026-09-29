@@ -12,7 +12,80 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元负责 CUBE Matrix 族的类型类别、维度检查以及逐指令的操作数合法性。它包含三类内容：
+
+- 普通 Matrix 输入类型与累加器类型规则。
+- 针对 `B.DIM` 值 LB0、LB1 与 LB2（M、N 与 K）的指令束维度检查。
+- 直接 Tile 合法性处理函数 `TileOperandsLegal_TMATMUL` 至 `TileOperandsLegal_TGEMV_MX_ACC`，十二条 Matrix 指令各一个。每条指令的元数据以 `legality_handler` 命名其处理函数，每个指令单元把它封装在同名的 `InstructionContractOperandsLegal_` 函数中，例如 `InstructionContractOperandsLegal_TMATMUL`。
+
+它还定义基于 `TileInfo` 的检查，指令束路径在预检之后对其进行断言。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-concepts role=concepts-state -->
+## 概念与可见状态
+
+普通（非 MX）Matrix 输入是 FP32、TF32、HF32、FP16、BF16、HiF8、E4M3、E5M2、E3M2、E2M3、E2M1X2、E1M2X2、S16、S8、S4X2、U16、U8 或 U4X2 之一。`TileOrdinaryMatrixInputTypesSameClass` 要求 A 的类型（AType）与 B 的类型（BType）同为浮点、同为有符号或同为无符号。
+
+随后 `TileOrdinaryMatrixAccumulatorType` 给出结果类型：有符号输入为 S32，无符号输入为 U32，其余为 FP32。它断言同类别规则，因此调用者需先测试该规则。
+
+AType 是编码的操作 `DataType`。存在 `B.DATR` 时 BType 是 `B.DATR` 的 `DataType`；否则等于 AType。
+
+`BundleCubeDimensionValue` 返回维度寄存器的值；当值超过 65535 时返回 0。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-rules role=rules-interactions -->
+## 规则与交互
+
+`BundleTMATMULDimensionsLegal` 是指令束维度检查：
+
+- 没有 Shared 源时，M、N 与 K 各自必须非零。
+- 有 Shared 源时，M（Core 总的 group M）必须在 1 到 128 之间，N 与 K 必须是非零的 2 的幂。
+
+直接处理函数由更小的谓词组合而成：
+
+- `TileMatrixShapeLegal` 要求已选中 Tile 操作、由 `TileMatrixCubeInfosMatchDimensions` 判定合法的 Local CUBE A 与 B 对，且 M x N 不大于 `PTO_MODEL_TILE_ELEMENTS`。
+- `TileMatrixDestinationLegal` 要求合法的 CUBE D，其有效形状为 [M, N]、使用 A 的布局，并使用 `PreQuantMode` 选定的类型：模式 0 为累加器类型，否则为该模式的输出类型。
+- bias 检查要求一个已定义的 [1, N] `CUBE_N8` Tile，类型为累加器类型，MX 形式则为 FP32。
+- `_ACC` 处理函数要求 C 与 D 是不同的 Tile，C 已定义且与 D 布局相同，并且除非 `PreQuantMode` 非零，两者容量相等。
+- `TGEMV` 处理函数额外要求 A 的有效行数等于 1。
+
+设计要点：这些处理函数是 `readonly` 谓词。它们读取描述符与指令束属性并返回布尔值，因此求值不会改变任何 Tile、分配或载荷状态。
+
+HiF4X2 不是普通 Matrix 类型。`TileOperandsLegal_TMATMUL_MX` 及其他 MX 处理函数调用 `TileMatrixDestinationLegal`，后者应用普通同类别测试，因此当 AType 或 BType 为 HiF4X2 时这些直接处理函数返回 FALSE。指令束路径则改用 `TileMXOperandPairLegal` 检查 MX 类型并接受 HiF4X2，这符合 NDF 条款 `PTO-CUBE-MATRIX-SCALE-001` 对 Matrix-MX 输入角色的要求。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-boundaries role=boundaries -->
+## 架构边界
+
+在指令束路径中，`ExecuteBundleTMATMULOperation` 在预检中调用 `BundleTMATMULDimensionsLegal`，并对普通函数调用 `TileOrdinaryMatrixInputTypesSameClass`、对 MX 函数调用 `TileMXOperandPairLegal`；分配之后，它断言 `TileMatrixCubeInfosMatchDimensions`、`TileMatrixMixedInfosMatchDimensions` 或 `TileMatrixInfosMatchDimensions`（分别对应全 Local、Local A 加 Shared B、全 Shared），并对 MX 形式断言 `TileMatrixInfoOptionalScalesLegal`、对 bias 形式断言 `TileMatrixInfoBiasLegal`。
+
+`TileOrdinaryMatrixInfosLegal`、`TileMatrixInfoDestinationLegal`、`TileMatrixInfoAccumulatorLegal` 与 `TileMatrixInfoScalesLegal` 在当前 ASL 中没有调用者。
+
+合法性接受 8 位与 4 位浮点类型，但数值辅助函数并不把它们全部当作浮点处理。`TileProfileMatrixAccumulate` 只在两个输入都是 FP32、TF32、HF32、FP16 或 BF16 且三个值都有限时使用参考浮点累加。对于 HiF8、E4M3、E5M2、E3M2、E2M3、E2M1X2、E1M2X2 或非有限值，它加上原始字乘积 `accumulator + MultiplyWord(left, right)`。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-example role=example-usage -->
+## 非规范阅读示例
+
+考虑 AType 为 S8、`B.DATR` BType 为 U8 的 `TMATMUL`。S8 有符号而 U8 无符号，因此同类别测试失败，指令束以 `Fault_TileLegality` 故障。
+
+若改为 BType S8，则类别一致，结果类型为 S32。对于 M = 16、N = 64、K = 32 且 `PreQuantMode` 为 0 的全 Local 指令束：
+
+- `B.DIM` 值 16、64 与 32 均非零，因此维度检查通过。
+- D 必须具有有效形状 [16, 64]、类型 S32 以及 A 的 M 布局。
+- M x N = 1024，在 `PTO_MODEL_TILE_ELEMENTS`（32768）以内。
+
+若有一个 Shared 右组且 M = 200，维度检查失败，因为 200 超过 128。
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-matrix-shape-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Matrix CUBE 主操作数](matrix-cube-primary.md) 负责 Local A、B 与 C 的描述符检查。
+- [Matrix info 描述符](matrix-info-descriptor.md) 负责 RowMajor 与混合描述符检查。
+- [Matrix 函数](matrix-functions.md) 负责 MX 类型与缩放规则。
+- [CUBE 执行](../execution/cube.md) 在这些检查之后计算乘积。
+- [TMATMUL](../../matrix-and-matrix-vector/matrix-matrix/TMATMUL.md) 与 [TMATMUL_MX](../../matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md) 是参考指令。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

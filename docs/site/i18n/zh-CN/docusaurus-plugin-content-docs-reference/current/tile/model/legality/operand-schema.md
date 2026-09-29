@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义逐元素、比较、选择、生成与转换处理器的操作数合法性谓词。每个谓词以 `TileOperandsLegal_` 前缀加处理器名命名，只有在所有操作数描述符、类型、布局以及所需的源值都可接受时才返回 TRUE。
+
+`PTO-INSTRUCTION` 元数据把这些谓词列为合法性处理器，例如：
+
+- `TileOperandsLegal_ExecuteTileBinary` 用于 TADD、TSUB、TMUL、TDIV、TREM、TMAX、TMIN、TAND、TOR、TXOR、TSHL 与 TSHR。
+- `TileOperandsLegal_ExecuteTileUnary` 用于 TABS、TNEG、TNOT、TRELU、TEXP、TLOG、TRECIP、TSQRT 与 TRSQRT。
+- `TileOperandsLegal_ExecuteTileScalar` 用于十二个 Tile-标量操作，例如 TADDS 与 TSHLS。
+- 用于 TCMP、TCMPS、TSEL 与 TSELS 的比较与选择谓词，以及 `TileOperandsLegal_TCI`、`TileOperandsLegal_TTRI` 与 `TileOperandsLegal_TCVT`。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+这些谓词都是 `readonly`。它们读取 `_Tiles`、所选的指令束操作以及指令束 ExecutionMask 状态，不写任何内容。
+
+当选中了带有有效 DataType 的 Tile 操作时，操作类型就是该指令束 DataType。否则二元、一元与标量谓词使用目标的后备类型。比较与选择包装函数则调用 `ResolveTileCarrierOperationType`，它会拒绝没有可解析类型的活动指令束。
+
+`TileElementwiseDescriptorLegal` 用 `TileCubeDescriptorLegal` 检查 CUBE Tile，用 `TileDescriptorLegal` 检查其他 Tile。随后 `TileElementwiseShapeMatch` 要求行数、列数、有效行数、有效列数、布局与存储种类都相等。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-rules role=rules-interactions -->
+## 规则与交互
+
+`TileOperandsLegal_ExecuteTileBinary` 拒绝 EXPDIF，要求两个源与目标形状匹配，要求目标类型等于操作类型，并要求每个源后备满足 `TileCarrierWidthCompatible`。对十二个封闭操作，它还检查源已定义性、该操作的类型集合、逐元素布局、移位操作的右源为整数，以及除 AND、OR、XOR、SHL 与 SHR 以外的编码有效性。
+
+设计要点：整数 TDIV 与 TREM 还要求除数满足 `TilePayloadNonzero`。除数在预检中被读取，因此活动的零除数会在写入任何目标元素之前拒绝该指令束。
+
+`TileOperandsLegal_ExecuteTileUnary` 要求 TNOT 的源与目标后备类型完全相同且为整数类型。其他一元操作接受同位宽后备，并检查已定义性、类型集合、布局与编码。
+
+`TileOperandsLegal_ExecuteTileScalar` 把标量规范化为操作位宽，并且除原始逻辑操作外要求编码有效。整数 TDIVS 与 TREMS 只有在 ExecutionMask 不留下任何活动坐标时才接受零标量。
+
+比较谓词按源布局分支。对 CUBE_M16 与 CUBE_M32 源，目标必须是基础类型等于操作类型的谓词单元。否则每个源都必须通过 `TileRowMajorNumericCarrierLegal`，目标必须是位打包的谓词 Tile。选择谓词对其掩码操作数使用相同的划分。
+
+`TileOperandsLegal_TCVT` 要求有效形状相等、转换类型对与舍入模式受支持，并要求源后备与源操作类型同位宽。CUBE_M16 或 CUBE_M32 源保持其布局，物理大小可以改变。其他转换保持行数与列数，并拒绝 CUBE 目标和规范化。
+
+设计要点：对于自行负责源已定义性的处理器，生成的分派器不会额外添加 `TileSourceContentsDefined` 检查。这些谓词使用 `TileElementwiseSourceContentsDefined` 等感知 ExecutionMask 的已定义性辅助函数，因此在 ExecutionMask 下只有活动源坐标必须已定义。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-boundaries role=boundaries -->
+## 架构边界
+
+合法性检查在执行之前运行。生成的分派器调用处理器对应的 `TileOperandsLegal_` 谓词，当其返回 FALSE 时产生 `Fault_TileLegality`，且不调用处理器。执行函数随后断言其中一部分相同条件。
+
+合法性接受某些数值辅助函数会断言失败的类型。二元谓词通过 `TileVecArithmeticDataTypeSupported` 接受 TF32、HF32、E4M3 与 E5M2，但浮点 ADD、SUB、MUL 与 DIV 使用只接受 FP64、FP32、FP16 与 BF16 的 `ScalarFPBinaryProfile`。浮点 TREM 与 SFU 一元操作使用只接受 FP32、FP16 与 BF16 的辅助函数。
+
+`TileOperandsLegal_TRESHAPE`、`TileOperandsLegal_TINTERLEAVE` 与 `TileOperandsLegal_TDEINTERLEAVE` 在此定义，但在 `asl/` 中没有调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-example role=example-usage -->
+## 非规范阅读示例
+
+考虑操作类型为 S32、没有 ExecutionMask 的 TDIV，三个 RowMajor 16 x 16 Tile 的有效区域均为 16 x 10。左源（被除数）为 S32，右源（除数）为 U32。
+
+- 形状匹配，目标类型为 S32。
+- `TileCarrierWidthCompatible(U32, S32)` 为 TRUE，因此右源按 S32 读取。
+- S32 属于算术集合，RowMajor 是逐元素布局，两个源都已定义。
+- 除数有 16 x 10 = 160 个有效元素。只要其中任一为零，`TilePayloadNonzero` 就返回 FALSE，指令束在写入任何目标元素之前产生故障。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [数据类型与布局表](dtype-layout.md) 定义类型集合与载体位宽关系。
+- [ExecutionMask 源 schema](execution-mask-source-schema.md) 定义活动坐标已定义性与编码检查。
+- [谓词载体](predicate-carriers.md) 定义比较与选择所用的 CUBE 与谓词单元辅助函数。
+- [分配容量](allocation-capacity.md) 定义 `TilePayloadNonzero`。
+- [逐元素执行](../execution/elementwise.md) 展示这些检查通过后运行的内容。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

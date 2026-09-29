@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the operand legality predicates for three instruction families:
+
+- `TileOperandsLegal_ExecuteTileReduction` for the row and column reductions, for example `TROWSUM`, `TCOLMAX`, and `TROWARGMIN`.
+- `TileOperandsLegal_ExecuteTileExpand` for the row and column expansions, for example `TROWEXPAND`, `TROWEXPANDADD`, and `TCOLEXPANDEXPDIF`.
+- `TileOperandsLegal_ExecuteTileFillScalar` for `TEXPANDS`.
+
+Each instruction's `InstructionContractOperandsLegal_*` returns one of these predicates. `ExecuteTileReduction`, `ExecuteTileExpand`, and `ExecuteTileFillScalar` assert the same predicate before they build a result. A predicate returns FALSE instead of changing state, so an illegal operand set writes no destination element.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-concepts role=concepts-state -->
+## Concepts and visible state
+
+Supported layouts are `RowMajor`, `CUBE_M16`, and `CUBE_M32` (`TileReductionAndExpansionLayoutSupported`). A RowMajor Tile must pass `TileDescriptorLegal`; a CUBE Tile must pass `TileCubeDescriptorLegal`.
+
+A source is legal for an operation type when it is a Numeric Tile, its stored type has the same carrier width as the operation type (`TileCarrierWidthCompatible`), its contents are defined, and each consumed element has a valid encoding for the operation type. With an ExecutionMask in force, the source must match the mask layout and valid shape, and only active elements are checked.
+
+A broadcast Tile supplies one value per destination row or column. The row axis uses column slot 0 for RowMajor. For CUBE layouts, the slot comes from the byte offset in `B.DATR.RMode` divided by the element size. The column axis always uses broadcast row 0.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-rules role=rules-interactions -->
+## Rules and interactions
+
+Reductions require a destination that differs from the source, the same layout on both, and a nonzero source valid shape. `ARGMIN` and `ARGMAX` require a source type from `TileArgReductionSourceDataTypeSupported` and a U32 destination. The other reductions require a type from `TileVecArithmeticDataTypeSupported`, and the destination type equals it. A row reduction produces valid shape rows by 1; a column reduction produces 1 by columns. The physical destination shape is also checked: for RowMajor it is derived from capacity with `DerivedTileRows`, and for CUBE it is the cell-aligned storage extent.
+
+Design point: `TileReductionSourceLegalAs` rejects any bundle with a valid ExecutionMask and any source of type RCPE6M2. The ASL comment states that reductions scan every valid coordinate and do not support the ExecutionMask validation state. The dispatch reduction schema applies the same mask rejection, so a reduction cannot run under an ExecutionMask.
+
+Expansions require the destination, source, and broadcast Tiles to share one layout and be Numeric. The destination type must be in `TileVecArithmeticDataTypeSupported` and equal the operation type. Non-EXPDIF operations use one type for source and destination; EXPDIF uses the pair rule `TileExpdifTypePairLegal`. The broadcast must match the destination valid rows for the row axis, or valid columns for the column axis. Non-copy operations also require the source valid shape to equal the destination's.
+
+Design point: for integer `DIV` expansions, `TileExpansionBroadcastNonzero` requires every broadcast value consumed by an active output to be defined and nonzero. Division by zero is rejected in preflight, and inactive outputs are not checked.
+
+Design point: the copy form (`TROWEXPAND`, `TCOLEXPAND`) passes the broadcast as its source and checks consumed broadcast elements for definedness only, not encoding. The copied bits are not interpreted by any numeric helper.
+
+`TEXPANDS` requires only a legal descriptor in a supported layout, a Numeric destination, and a type in `TileFillPadDataTypeSupported`; it places no rule on the scalar value.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-boundaries role=boundaries -->
+## Architectural boundaries
+
+`TileVecArithmeticDataTypeSupported` admits FP64, FP32, TF32, HF32, FP16, BF16, E4M3, and E5M2 among the floating types. Floating `SUM` and `PRODUCT` reductions and floating `ADD`, `SUB`, `MUL`, and `DIV` expansions reach `ScalarFPBinaryProfile`, which asserts that the type is FP64, FP32, FP16, or BF16. For TF32, HF32, E4M3, and E5M2 these operations pass legality but the numeric helper asserts against the type. `MIN`, `MAX`, `ARGMIN`, and `ARGMAX` use the floating order key, which accepts all eight types.
+
+The CUBE row-broadcast selector is checked by `TileExpansionBroadcastSelectorLegal`: RowMajor requires offset 0; CUBE requires an offset aligned to the element size, below 8 for `CUBE_M16` or 4 for `CUBE_M32`, and a slot inside both the cell columns and the broadcast valid columns.
+
+`TileReductionAndExpansionSourceLegal` is defined here, but a search of `asl/` finds no caller.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-example role=example-usage -->
+## Non-normative reading example
+
+Consider `TROWSUM` on an FP32 RowMajor source with valid shape 8 by 64 and no ExecutionMask. The destination has capacity 128 bytes.
+
+- The destination valid shape must be 8 by 1.
+- `DerivedTileRows(128, 1, FP32)` is 128 x 8 / 32 = 32, so the destination must have 32 rows and 1 column.
+- The source contents must be defined, and each of the 512 source elements must have a valid FP32 encoding.
+
+If the same bundle carried an ExecutionMask, the predicate would return FALSE and no destination element would be written.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-related role=related-owners-navigation -->
+## Related owners
+
+- [Reduction execution](../execution/reduction.md) and [expansion execution](../execution/expansion.md) run the operations after these checks.
+- [Data type and layout legality](dtype-layout.md) owns the type sets and `TileExpdifTypePairLegal`.
+- [Reduction schema](../../../block/model/dispatch/reduction-schema.md) and [expansion schema](../../../block/model/dispatch/expansion-schema.md) apply these rules during bundle dispatch.
+- [CUBE cell geometry](../shape/cube-cell.md) owns the CUBE storage extents.
+- [TROWSUM](../../reduce-and-expand/row-reduction/TROWSUM.md), [TROWEXPANDDIV](../../reduce-and-expand/row-expansion/TROWEXPANDDIV.md), and [TEXPANDS](../../tile-scalar-and-immediate/initialization/TEXPANDS.md) are representative instruction pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
