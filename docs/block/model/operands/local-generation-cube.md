@@ -12,7 +12,61 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the CUBE-specific rules of a Local `B.ASSEMBLE` generation, plus several helpers that every Local generation uses. A generation builds one parent Tile from several writer bundles. For the `CUBE_M16` and `CUBE_M32` layouts, the final parent shape is not known at INIT. It is derived at LAST from what the writers actually covered.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit declares no state. It reads and updates the `_LocalGenerations` slot of a generation and the parent Tile's descriptor.
+
+- A CELL is the 128-byte storage unit of a CUBE layout. For `CUBE_M16` and `CUBE_M32` it spans 16 or 32 rows and a type-dependent number of columns.
+- A writer fragment is the destination Tile of one writer bundle. Each writer keeps its own fragment descriptor.
+- The extent of one PE is the length of its gap-free covered CELL prefix, from `BundleLocalGenerationPrefixExtent`.
+- The terminal writer of a PE is the writer whose range ends exactly at that extent.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-rules role=rules-interactions -->
+## Rules and interactions
+
+`BundleLocalGenerationCubeWriterLegal` accepts a fragment only when it is an allocated numeric `CUBE_M16` or `CUBE_M32` Tile with 16 or 32 physical rows, a nonzero valid region inside its storage, a legal CUBE descriptor, and a CELL count and storage size that both equal the writer size code.
+
+`BundleLocalGenerationCubeFinalizationLegal` runs for a LAST writer before any effect. It requires:
+
+- every earlier writer to match the first writer's layout, data type, basis type, physical rows, and valid rows;
+- every participating PE to reach the same nonzero extent, with no writer extending past it;
+- exactly one terminal writer per PE, and every other writer's fragment to have full valid columns;
+- the same final valid-column count on every PE, computed as the terminal writer's offset times the CELL width plus its valid columns;
+- a legal final descriptor at the parent's capacity.
+
+`FinalizeBundleLocalGenerationCube` then installs the final rows, columns, valid region, repeats, CELL count, and storage bytes into both the parent Tile and the slot's parent descriptor, and sets `descriptor_finalized`.
+
+Design point: finalization writes only descriptor fields. The ASL comment states that payload and definedness belong to the writer effects and must survive the aggregate geometry publication.
+
+Design point: parent capacity is allocation metadata only. The contract `PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001` states that capacity slack never creates parent rows, columns, repeats, or CELLs. The final shape comes from covered CELLs alone.
+
+`ValidateBundleLocalGenerationWriters` applies these checks, and for non-CUBE generations `BundleLocalGenerationCoverageComplete` requires every parent CELL to be covered on every participating PE at LAST. It runs after destination shape, allocation, or reuse. The ASL comment gives the reason: writer legality then observes the exact Tile the producer would update, while still preceding producer effects, coverage updates, LAST closure, and finalization.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-boundaries role=boundaries -->
+## Architectural boundaries
+
+`SetBundleLocalGenerationInitFault` raises a fault for a failing INIT and points the trap-context restart address at `BPC`, the INIT bundle. `BundleLocalGenerationDescriptorMatches` checks, before a continuation reuses the parent, that the parent is still the same allocated object with the same participant mask and capacity. It also requires the writer mask to be a subset of the generation's mask and an unchanged descriptor; for CUBE that is the first writer's fragment descriptor. `BundleLocalGenerationRangeOverlaps` and `BundleLocalGenerationMaskSubset` are shared range and mask helpers.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+An FP16 `CUBE_M16` parent is allocated with size code 6, which is 4096 bytes or 32 CELLs. Each CELL is 16 rows by 4 columns. Writer A has size code 3 (4 CELLs) at offset 0, and writer B has size code 3 at offset 4 with LAST. Both fragments are 16 by 16 with full valid columns. The extent is 8 CELLs, so the final parent is 16 rows by 8 x 4 = 32 columns, 8 CELLs, and 1024 bytes of storage. The 24 unused CELLs of capacity create no columns. If B used offset 5 instead, CELL 4 would be a gap, and LAST would fault.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-related role=related-owners-navigation -->
+## Related owners
+
+- [Local generation](local-generation.md) opens, commits, and aborts generations.
+- [CUBE cell geometry](../../../tile/model/shape/cube-cell.md) owns CELL rows, columns, and counts.
+- [Portable carriers](portable-carriers.md) owns readiness and publication.
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

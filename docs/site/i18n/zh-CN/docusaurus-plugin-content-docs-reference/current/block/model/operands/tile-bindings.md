@@ -12,7 +12,58 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有指令束的 Local Tile 绑定。Tile 绑定是一条 `B.IOT` 头部命令留下的记录。它指名至多两个源 Tile、一个可选的带大小码的目标 hand、一个 PE 掩码和一个 `last` 标志。本单元追加绑定、解析相对源选择子、把 assemble 延续转换为目标，并在操作成功后发布新目标。
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-concepts role=concepts-state -->
+## 概念与可见状态
+
+`_BundleTileBindings` 有 `PTO_BUNDLE_TILE_BINDING_COUNT`（16）个条目。`BundleTileBinding` 的重要字段有：
+
+- `source0`、`source1`，以及 `source0_valid`、`source1_valid` 和 `source0_relative`、`source1_relative` 标志；
+- `destination_valid`、`destination`、`destination_hand` 和 `destination_size`；
+- `destination_allocated_by_bundle` 和 `destination_reused_by_generation`；
+- `parent_ref_valid`、`parent_ref_relative` 和 `parent_ref`，由 assemble 延续使用；
+- `pe_mask`、`last` 和三个范围修饰符。
+
+相对选择子按一个 hand（T、U、M 或 N）的相对队列中的位置指名 Tile。距离 0 是该 hand 中最新发布的目标；汇编把它写作 `#1`，因此 `T#1` 是距离 0，`T#2` 是距离 1。
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-rules role=rules-interactions -->
+## 规则与交互
+
+如果已存在带 `last` 的条目，`AddBundleTileBinding` 以 `Fault_BundleControl` 故障。它通过 `SetBundleTileBinding` 填充第一个空闲条目；16 个条目都已占用时引发 `Fault_TileLegality`。`SetBundleTileBinding` 以 `Fault_TileLegality` 拒绝 hand 索引大于 3 或大小码不在 1..10 内的目标，保存各字段，并清除相对、父引用和分配标志。随后 `B.IOT` 处理程序调用 `MarkBundleTileBindingSourcesRelative`，因此每个编码的源都是相对选择子。
+
+`ResolveBundleRelativeTileSources` 在第 2 阶段准备时运行。它的第一个循环检查每个相对源是否可用，否则引发 `Fault_TileLegality`。第二个循环把每个选择子替换为绝对寄存器索引，并对相对的 `parent_ref` 做同样处理。
+
+设计要点：在改写任何源选择子之前，先检查每个相对源的可用性，因此缺失的源引发故障时，每个绑定仍保持其编码形式。相对的 `parent_ref` 在第二个循环中才检查，因此缺失的父 Tile 可能在之前的源已被改写之后才引发故障。
+
+设计要点：`B.IOT` 保存编码的相对选择子而不解析它。`ResolveBundleRelativeTileSources` 在操作的第 2 阶段准备期间解析它，因此被解析的 Tile 是相对队列在那一刻所指名的那个。
+
+`BindBundleLocalGenerationDestination` 把一个已验证的延续转换为目标。它安装该代次的工作目标、hand 和父级大小码，并设置 `destination_reused_by_generation`。它从不分配。如果延续绑定没有源，它会被折叠到前一个有效绑定中，由该绑定接收父引用和 `last`，而载体条目被置为无效。
+
+`FinalizeBundleTileAttempt` 只在操作已执行之后运行。对于指令束分配且不带 assemble 修饰符的每个目标，它调用 `PublishRelativeTileDestination`，使该 Tile 成为其 hand 中最新的条目（距离 0）。
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-boundaries role=boundaries -->
+## 架构边界
+
+目标分配不在这里完成；由目标解析器在 schema 检查之后完成。当已看到 LAST、CUBE 描述符（如有）已最终确定、该 PE 参与、且该 PE 的每个所需 CELL 都已覆盖并就绪时，`BundleLocalGenerationPEPublicationEligible` 对该 PE 为 TRUE。
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+带 `B.IOT T#1, T#2, mask=PE_MASK, <last>, ->T<2KB>` 的 `TADD` 产生一个绑定，其中含 hand T 中的两个相对源和一个大小为 5 的目标。在第 2 阶段，这两个源解析为当前位于距离 0 和 1 的 Tile。加法成功后，新目标被发布为 `T#1`，原来的 `T#1` 变为 `T#2`。
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-related role=related-owners-navigation -->
+## 相关所有者
+
+- [命令](../dispatch/commands.md)包含 `B.IOT` 处理程序。
+- [Tile 描述符](../../../tile/model/state/descriptors.md)拥有相对队列。
+- [Local 代次](local-generation.md)打开代次并调用延续绑定函数。
+- [B.IOT](../../operands/B.IOT.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

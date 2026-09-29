@@ -12,7 +12,61 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有 Local 代次。Local 代次是由多个指令束通过 `B.ASSEMBLE` 构建的一个 Local Tile。第一个指令束（INIT）分配父 Tile。之后的指令束（MIDDLE 或 LAST）是延续，每个写入其中一个 CELL 范围。一个 CELL 为 128 字节。本单元验证结构、登记每个写者、在 LAST 时关闭代次，并在失败时中止代次。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-concepts role=concepts-state -->
+## 概念与可见状态
+
+`_LocalGenerations` 有 64 个槽位，每个绝对 Local Tile 寄存器一个。INIT 使用其目标寄存器的槽位。一个槽位保存的字段包括：
+
+- 生命周期标志 `open`、`closed`、`published` 和 `generation_identity_valid`；
+- `participant_mask`、`parent_size_code`、`parent_cell_count`，以及父描述符的副本；
+- `covered_cells` 和 `ready_cells` 两个 2048 位图，以及它们的每 PE 副本；
+- 至多 16 条写者记录，每条含偏移、CELL 数、PE 掩码，以及由指令实例（`BPC`）和执行域令牌组成的身份；
+- `working_destination`，以及 `committed_destination` 与 `committed_valid`；
+- `init_tpc`，即 INIT 指令束的地址。
+
+`BundleLocalGenerationSlotForDestination` 找到工作目标为给定 Tile 的槽位，否则返回 64。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-rules role=rules-interactions -->
+## 规则与交互
+
+`ValidateBundleLocalGenerationStructure` 在第 2 阶段准备中、目标解析之前运行。对每个带 assemble 修饰符的绑定，它要求写者大小码为 1..10。对 INIT，它还要求有目标且没有父引用、队列插入合法、父级大小码为 1..10，并且 `offset + writer_cells <= parent_cells`。对延续，它要求一个已解析的父引用指名一个打开且未关闭的代次、写者掩码是该代次掩码的子集、范围位于父 Tile 内，并且在共享的 PE 上与较早的写者没有 CELL 重叠。
+
+`BundleLocalGenerationQueueInsertionLegal` 查看 INIT 会从相对距离 15 挤出的那个 Tile。如果该 Tile 是一个未发布的代次，并且它是打开的、已关闭的或已登记使用者，INIT 以 `Fault_TileAllocation` 故障。
+
+操作成功之后，`CommitBundleLocalGeneration` 记录效果。INIT 复位槽位、复制目标的描述符、把 `BPC` 记为 `generation_instance` 和 `init_tpc`，并把目标发布到相对队列中。每个非重放写者被追加，其 CELL 被标记为已覆盖。LAST 最终确定 CUBE 描述符、设置 `closed`，并且只有在每个参与 PE 都满足条件时才发布该代次。
+
+设计要点：代次在 INIT 时进入普通相对队列。NDF `PTO-B-ASSEMBLE-LOCAL-GENERATION-001` 称其为普通 T/U/M/N 相对队列中的一个逻辑条目，`BundlePendingRelativeGeneration` 中的 ASL 注释说明不使用私有的 assemble 命名空间或回退，因此延续用普通的相对选择子（例如 `T#1`）指名父 Tile。
+
+设计要点：以相同的指令实例和执行域令牌重复较早写者范围的写者是重放。它通过重叠检查，并且不会被再次登记，因此在同一执行域中重新执行同一个写者既不会作为重叠而故障，也不会增加第二条写者记录。
+
+设计要点：覆盖与就绪是分开的。提交只设置覆盖位。就绪位来自可移植载体单元中的写者完成事件。因此 LAST 时的发布要等到每个所需 CELL 也都就绪。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-boundaries role=boundaries -->
+## 架构边界
+
+`AbortBundleLocalGeneration` 只作用于打开的、或已关闭但未发布的槽位。它释放工作目标（除非该寄存器是最后一次提交的目标）、清除槽位，并恢复已提交的映射。`SetBundleLocalGenerationFault` 中止代次、引发故障，并在两者都有效时把陷阱上下文的重启地址设为 `init_tpc`，因此重启从 INIT 指令束重新开始。
+
+`ReuseBundleLocalGenerationDestination` 解析延续的父 Tile 并调用 `BindBundleLocalGenerationDestination`；它从不分配。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+指令束 A 带有 INIT，父级大小码为 6（4096 字节，32 个 CELL），写者大小码为 5（2048 字节，16 个 CELL），偏移为 0。提交之后，CELL 0..15 已覆盖，父 Tile 是其 hand 中最新的条目（相对距离 0，汇编中写作 `#1`）。指令束 B 是带 LAST 的延续，PE 掩码相同，写者大小码为 5，偏移为 16。它覆盖 CELL 16..31 并关闭该代次。当两个写者都已完成且每个 CELL 都已就绪时，该 Tile 被发布。如果指令束 B 改用偏移 8，CELL 8..15 会在相同的 PE 上重叠，B 会以 `Fault_TileLegality` 故障并中止该代次。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Local 代次 CUBE](local-generation-cube.md) 拥有 CUBE 写者和最终确定。
+- [可移植载体](portable-carriers.md)拥有就绪性、发布事件和 squash。
+- [Tile 绑定](tile-bindings.md)把延续转换为目标。
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

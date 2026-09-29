@@ -12,7 +12,68 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有范围修饰符组。范围修饰符是一条 `B.SUBVIEW` 或 `B.ASSEMBLE` 头部命令，用于细化紧挨在它之前的绑定命令。`B.SUBVIEW` 选择源的一个范围。`B.ASSEMBLE` 把一个目标或一个父引用标记为多指令束构建中的一个写者。
+
+ASL 注释说明了范围：该组是语法层面的头部状态。它不分配目标，也不查询任何操作 schema。
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-concepts role=concepts-state -->
+## 概念与可见状态
+
+`_BundleRangeGroup` 是一个 `BundleRangeGroupState` 记录：
+
+- `open` 和 `zero_mode`；
+- `kind`，取值为 `BundleRangeGroup_None`、`BundleRangeGroup_Local` 或 `BundleRangeGroup_Shared`；
+- `tile_binding` 或 `shared_binding`，即打开该组的绑定命令的索引；
+- `source0_allowed`、`source1_allowed`、`destination_allowed`，取自绑定命令的编码操作数；
+- `source0_seen`、`source1_seen`、`destination_seen`。
+
+`OpenBundleRangeTileGroup` 在 `B.IOT` 之后调用，`OpenBundleRangeSharedGroup` 在 `B.IOS` 之后调用。Shared 组从不允许源 1。PE 掩码为 `0000` 的绑定命令打开一个 `zero_mode` 为 TRUE、种类为 `None` 的组。
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-rules role=rules-interactions -->
+## 规则与交互
+
+命令分派程序对每条不是范围修饰符的头部命令调用 `CloseBundleRangeGroup`。因此修饰符只附加到紧挨在它之前的绑定命令上。
+
+角色必须按源 0、源 1、目标的顺序出现，每个至多一次。`BundleRangeRoleLegal` 拒绝出现在源 1 或目标之后的源 0，以及出现在目标之后的源 1。
+
+`B.SUBVIEW` 首先以 `Fault_IllegalInstruction` 拒绝非法的寄存器选择子或 1..12 之外的大小码。随后 `BundleRangeSubviewLegal` 要求组已打开且角色合法。在 Local 组中大小码必须为 1..10，在 Shared 组中为 1..12。当非零模式的 Local 组遇到大小码 11 或 12 时，失败引发 `Fault_TileLegality`，其他情况引发 `Fault_BundleControl`。
+
+带 INIT 的 `B.ASSEMBLE` 需要一个允许且未使用的目标角色。不带 INIT 时它是一个延续：绑定命令必须没有目标，修饰符占用最后一个源槽位。`RecordBundleRangeAssemble` 把该 Local 源（如存在源 1 则为源 1，否则为源 0）移入 `parent_ref` 并清除该源。延续指名的是被扩展的代次，而不是一个新操作数。
+
+当组不是零模式时，处理程序读取 `GPR[RegSrc] + uimm11` 作为偏移，并把修饰符记录到绑定命令中。
+
+设计要点：在零模式组中，每个修饰符都通过放置检查，但不改变任何内容，也不读取 GPR。没有参与 PE 的绑定命令因此让其后的修饰符在语法上保持合法，同时不产生效果。
+
+设计要点：`BundleSharedDestinationAssemblyPolicyLegal` 要求参与 PE 多于一个的 Shared 目标带有 `B.ASSEMBLE`。Tile 执行在描述符准备之前检查它，并引发 `Fault_TileLegality`。因此，如契约 `PTO-B-ASSEMBLE-SHARED-STANDALONE-001` 所述，不带 `B.ASSEMBLE` 的多 PE Shared 目标会在描述符、载荷、内存或发布效果之前被拒绝。
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-boundaries role=boundaries -->
+## 架构边界
+
+本单元只记录修饰符。在指令束关闭之后，subview 描述符由 subview 描述符单元推导，代次由 Local 和 Shared 代次单元打开和检查。
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+```asm
+B.IOT T#1, T#2, mask=PE_MASK, <last>, ->T<4KB>
+B.SUBVIEW 1, x5, 0, 3
+B.SUBVIEW 0, x6, 0, 3
+```
+
+该绑定命令允许源 0、源 1 和一个目标。第一条 `B.SUBVIEW` 记录源 1。第二条以 `Fault_BundleControl` 故障，因为源 0 不能出现在源 1 之后。交换这两条命令则是合法的。在绑定命令和修饰符之间放一条 `B.DIM` 会关闭该组，修饰符随后会故障。
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-related role=related-owners-navigation -->
+## 相关所有者
+
+- [命令](../dispatch/commands.md)打开和关闭组，并包含修饰符处理程序。
+- [Subview 描述符](subview-descriptor.md)推导所选范围。
+- [Local 代次](local-generation.md)和 [Shared 代次](shared-generation.md)使用 assemble 记录。
+- [B.SUBVIEW](../../operands/B.SUBVIEW.md) 和 [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

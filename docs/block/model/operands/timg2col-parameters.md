@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the parameter carrier of `BSTART.TIMG2COL`. The convolution geometry travels in general-purpose registers (GPRs) named by two `B.IOR` records. This unit defines the record shape, the bit packing of the three parameter GPRs, the checks on that packing, and the metadata word used by a cooperative Shared build.
+
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit declares two records and no state variables.
+
+`BundleTIMG2COLParameters` is the decoded geometry. `BundleTIMG2COLParametersFromWords` fills it from three 64-bit words:
+
+| Word | Bits | Fields |
+| --- | --- | --- |
+| `ParamGPR0` | 0..63 | `input_h` 15:0, `input_w` 31:16, `cin` 47:32, `kernel_h` 55:48, `kernel_w` 63:56 |
+| `ParamGPR1` | 0..63 | `pad_top`, `pad_left`, `pad_bottom`, `pad_right` in bytes 0..3, `dilation_h` 36:32, `dilation_w` 41:37, `conv_stride_h` 47:42, `conv_stride_w` 53:48, `param_version` 58:55, `extension_class` 62:59 |
+| `ParamGPR2` | 0..63 | `row_start` 31:0, `col_start` 63:32 |
+
+`BundleTIMG2COLIORRecord` is the source-only view of one `B.IOR` record: three source selectors and one destination selector.
+
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-rules role=rules-interactions -->
+## Rules and interactions
+
+The carrier is exactly two records. The first names `GMBase`, zero, zero. The second names `ParamGPR0`, `ParamGPR1`, `ParamGPR2`. Both destination selectors must be zero, and every used source selector must name a real absolute GPR. `BundleTIMG2COLIORRecordsLegal` and `BundleTIMG2COLIORStreamPreflight` state these conditions.
+
+`BundleTIMG2COLBaseParameterExtensionLegal` requires `ParamGPR1` bit 54, bit 63, `param_version`, and `extension_class` to be zero. `BundleTIMG2COLParametersLegal` then requires nonzero `input_h`, `input_w`, `cin`, kernel sizes, dilations, and strides.
+
+`BundleTIMG2COLParticipantValuesEqual(mask)` reads `GMBase` and the three parameter words from every PE selected by the mask. It is TRUE only when at least one PE is selected and all selected PEs hold identical values.
+
+Design point: parameters are compared across PEs before use. Each PE reads its own GPR copy, and a cooperative build has each PE compute a different row slice from the same geometry. Requiring equal values means all slices belong to one well-defined matrix. A mismatch rejects before any GM access.
+
+Design point: the version and extension fields must be zero in the base version. A nonzero value rejects the operation before GM access, allocation, generation creation, payload, or publication, as the contract `PTO-BSTART-TIMG2COL-PARAMS-001` states. Those bits are not ignored, so they cannot be given a meaning silently.
+
+`BundleTIMG2COLGenerationMetadata` packs source layout, data type, `valid_col`, `valid_row`, `total_col`, size code, and Shared Tile ID into one word. The execution unit passes it with the parameter words to the Shared-generation checks, so every cooperative writer must agree on it.
+
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-boundaries role=boundaries -->
+## Architectural boundaries
+
+All checks here are called by `BundleTIMG2COLStateLegal` in the execution unit. That function reads the words, applies these checks, and then checks shape legality. The command handler also enforces placement: while the second record is expected, the next header command must be `B.IOR`, so the two records are contiguous.
+
+`BundleTIMG2COLParameterGPR0`, `GPR1`, and `GPR2` return the same fields as tuples. In the current ASL they are exercised by tests, not by the execution path.
+
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A 56 by 56 input with 64 channels and a 3 by 3 kernel packs `ParamGPR0` as `0x0303_0040_0038_0038`. Stride 1, dilation 1, and padding 1 on each side pack `ParamGPR1` as `0x0001_0421_0101_0101`: bits 32 and 37 hold the dilations, bits 42 and 48 hold the strides. Bits 54 through 63 are zero, so the extension check passes.
+
+<!-- PTO-READER-BLOCK: block-model-operands-timg2col-parameters-related role=related-owners-navigation -->
+## Related owners
+
+- [TIMG2COL execution](../dispatch/timg2col-execution.md) reads and checks the carrier.
+- [TIMG2COL schema](../dispatch/timg2col-schema.md) checks the resulting shape.
+- [Scalar schema](../dispatch/scalar-schema.md) enforces the two-record placement.
+- [B.IOR](../../operands/B.IOR.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

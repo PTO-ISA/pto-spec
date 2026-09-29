@@ -12,7 +12,64 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有 Shared 代次和 Shared subview。Shared 代次是由一个或多个写者通过 `B.ASSEMBLE` 构建的 Shared Tile。Shared subview 是已发布 Shared Tile 的一个 `B.SUBVIEW` 范围，每个 PE 可以把它放在不同位置。
+
+本单元验证写者范围，把每个写者的载荷合并到一个工作副本中，并在 LAST 时发布完整的对象。
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元更新一个 Shared Tile ID 的 `_SharedGenerations` 记录，并在 LAST 时更新已发布的 `_SharedTiles` 条目。
+
+覆盖以 32 字节为单位跟踪，一个位图有 8192 个单位。普通 `B.ASSEMBLE` 的偏移和大小码以 128 字节的 CELL 为单位，包装函数将其乘以 4。ASL 注释说明了原因：更细的单位让专用的整行生产者能够表达 TIMG2COL 的行范围，而无需部分 CELL 规则。权重 `TLOAD` 也通过同一个范围入口提交。
+
+`BundleSharedGenerationCapacity` 返回绑定的大小码；对重用目标，返回该代次的 `parent_size_code`。
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-rules role=rules-interactions -->
+## 规则与交互
+
+只有在以下条件都满足时，`ValidateBundleSharedGenerationRange` 才接受一个写者：
+
+- INIT 指名一个大小码为 1..12 的目标，且该 ID 尚无打开的代次；
+- 延续指名一个打开且未关闭代次的重用目标，参与者掩码相同，对专用生产者还要求输入和元数据相同；
+- 到达的 PE 是掩码的一个非空子集；
+- 范围位于父 Tile 内，对延续还要求不与任何已覆盖单位重叠；
+- 在 LAST 时，每个父单位都已覆盖，且每个参与者都已到达。
+
+`ValidateBundleSharedGeneration` 在第 2 阶段准备中对普通写者应用此检查，以整个绑定掩码作为到达集合。
+
+`CommitBundleSharedGenerationCandidateRange` 重复该验证。INIT 复位记录，并以父级容量、无已定义元素的方式从候选 Tile 开始一个工作 Tile。延续要求列数、数据类型和布局一致。候选 Tile 的已定义元素被复制到工作 Tile 中写者偏移处，有效区域扩展以覆盖它们。覆盖、就绪和到达被更新。在 LAST 时，工作 Tile 在同一提交步骤中成为已发布的 Shared Tile。
+
+设计要点：`CommitBundleSharedGenerationCandidateRange` 只在 LAST 时写入 `_SharedTiles`；更早的调用只改变代次记录。NDF `PTO-B-ASSEMBLE-SHARED-GENERATION-001` 要求发布原子地替换描述符和载荷，并要求每次拒绝都保留先前已发布的代次。
+
+设计要点：参与者到达与覆盖分开跟踪。专用的协作生产者每个写者只传入一个 PE 的到达位，行数为零的 PE 可以在不写入任何单元的情况下到达，因此集体操作仍然可以关闭。
+
+`BeginBundleSharedGenerationProbe` 在 Shared `TLOAD` 或 Local 到 Shared 的 `TMOV` 构建候选 Tile 时保存并隐藏已发布的记录。在 `TLOAD` 的无故障路径上，以及对 `TMOV` 总是，`RestoreBundleSharedGenerationProbe` 在提交之前把它放回。Shared TLSU 的注释说明，发生第一个故障后，候选记录保留在原处，既不就绪也不发布。
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-boundaries role=boundaries -->
+## 架构边界
+
+`BundleSharedSubviewLegal` 要求一个大小码为 0 的源绑定指向一个已发布的非 CUBE Shared Tile。对每个选中的 PE，它在该 PE 自己的寄存器中计算 `GPR[RegSrc] + uimm11`，然后要求该范围位于父 Tile 内，并且要么在一行之内，要么是从第 0 列开始的整行。`MaterializeBundleSharedSubviewForPE` 构建该 PE 的视图。任何一个不合法的视图都会拒绝整个操作。
+
+当 Tile 操作失败时，`AbortBundleSharedGenerationsForBundle` 中止该指令束涉及的每个代次。
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+Shared Tile 3 由两个掩码为 `1111` 的普通写者指令束构建，父级大小码为 7（8192 字节，64 个 CELL，256 个单位）。指令束 A 带 INIT，写者大小码为 6（32 个 CELL），偏移为 0。A 之后，单位 0..127 已覆盖，四个 PE 都已到达，因为普通写者以其整个掩码到达。指令束 B 带 LAST，写者大小码为 6，偏移为 32，覆盖单位 128..255。此时覆盖完整，工作 Tile 替换 Shared Tile 3。如果 B 改用偏移 16，其范围会与已覆盖单位重叠，B 会以 `Fault_TileLegality` 故障，打开的代次会被中止，任何先前已发布的 Shared Tile 3 会保持已发布状态。
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Shared 代次状态](../state/shared-generation-state.md)清除、复位和中止记录。
+- [Shared 绑定](shared-bindings.md)定义重用目标。
+- [Shared TLSU](../dispatch/shared-tlsu.md)、[TIMG2COL 执行](../dispatch/timg2col-execution.md)和[权重到 Shared 执行](../dispatch/weight-to-shared-execution.md)提交候选 Tile。
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

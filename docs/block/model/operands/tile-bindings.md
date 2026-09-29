@@ -12,7 +12,58 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the Local Tile bindings of a bundle. A Tile binding is the record left by one `B.IOT` header command. It names up to two source Tiles, an optional destination hand with a size code, a PE mask, and a `last` flag. The unit appends bindings, resolves relative source selectors, turns an assemble continuation into a destination, and publishes new destinations after a successful operation.
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-concepts role=concepts-state -->
+## Concepts and visible state
+
+`_BundleTileBindings` has `PTO_BUNDLE_TILE_BINDING_COUNT` (16) entries. Important fields of a `BundleTileBinding` are:
+
+- `source0`, `source1` with `source0_valid`, `source1_valid`, and the `source0_relative`, `source1_relative` flags;
+- `destination_valid`, `destination`, `destination_hand`, and `destination_size`;
+- `destination_allocated_by_bundle` and `destination_reused_by_generation`;
+- `parent_ref_valid`, `parent_ref_relative`, and `parent_ref`, used by an assemble continuation;
+- `pe_mask`, `last`, and the three range modifiers.
+
+A relative selector names a Tile by position in the relative queue of one hand (T, U, M, or N). Distance 0 is the newest destination published in that hand; assembly writes it `#1`, so `T#1` is distance 0 and `T#2` is distance 1.
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-rules role=rules-interactions -->
+## Rules and interactions
+
+`AddBundleTileBinding` faults with `Fault_BundleControl` if an entry with `last` already exists. It fills the first free entry through `SetBundleTileBinding`, and with 16 entries full it raises `Fault_TileLegality`. `SetBundleTileBinding` rejects a destination whose hand index is above 3 or whose size code is outside 1..10 with `Fault_TileLegality`, stores the fields, and clears the relative, parent, and allocation flags. The `B.IOT` handler then calls `MarkBundleTileBindingSourcesRelative`, so every encoded source is a relative selector.
+
+`ResolveBundleRelativeTileSources` runs at stage-2 preparation. Its first loop checks that every relative source is available and raises `Fault_TileLegality` otherwise. Its second loop replaces each selector with the absolute register index, and it does the same for a relative `parent_ref`.
+
+Design point: availability of every relative source is checked before any source selector is rewritten, so a missing source faults with every binding still in its encoded form. A relative `parent_ref` is checked later, in the second loop, so a missing parent can fault after earlier sources have been rewritten.
+
+Design point: `B.IOT` stores the encoded relative selector and does not resolve it. `ResolveBundleRelativeTileSources` resolves it during stage-2 preparation of the operation, so the resolved Tile is the one the relative queue names at that point.
+
+`BindBundleLocalGenerationDestination` converts a validated continuation into a destination. It installs the generation's working destination, hand, and parent size code, and sets `destination_reused_by_generation`. It never allocates. If the continuation binder has no sources, it is folded into the previous valid binding, which then receives the parent reference and `last`, and the carrier entry is invalidated.
+
+`FinalizeBundleTileAttempt` runs only after an executed operation. For each destination the bundle allocated without an assemble modifier, it calls `PublishRelativeTileDestination`, which makes the Tile the newest entry (distance 0) in its hand.
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-boundaries role=boundaries -->
+## Architectural boundaries
+
+Destination allocation is not done here; the destination resolvers do it after schema checks. `BundleLocalGenerationPEPublicationEligible` is TRUE for one PE when LAST has been seen, the CUBE descriptor (if any) is final, the PE participates, and every required CELL is covered and ready for that PE.
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+`TADD` with `B.IOT T#1, T#2, mask=PE_MASK, <last>, ->T<2KB>` gives one binding with two relative sources in hand T and a destination of size 5. At stage 2 the sources resolve to the Tiles now at distances 0 and 1. After a successful add, the new destination is published as `T#1`, and the old `T#1` becomes `T#2`.
+
+<!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-related role=related-owners-navigation -->
+## Related owners
+
+- [Commands](../dispatch/commands.md) holds the `B.IOT` handler.
+- [Tile descriptors](../../../tile/model/state/descriptors.md) owns the relative queue.
+- [Local generation](local-generation.md) opens generations and calls the continuation binder.
+- [B.IOT](../../operands/B.IOT.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,61 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有 Local `B.ASSEMBLE` 代次中 CUBE 特有的规则，以及每个 Local 代次都会使用的若干辅助函数。代次由多个写者指令束构建一个父 Tile。对 `CUBE_M16` 和 `CUBE_M32` 布局，最终的父形状在 INIT 时并不知道。它在 LAST 时根据写者实际覆盖的内容推导。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元不声明状态。它读取并更新代次的 `_LocalGenerations` 槽位以及父 Tile 的描述符。
+
+- CELL 是 CUBE 布局中 128 字节的存储单元。对 `CUBE_M16` 和 `CUBE_M32`，它跨越 16 或 32 行以及与类型相关的列数。
+- 写者片段是一个写者指令束的目标 Tile。每个写者保留自己的片段描述符。
+- 一个 PE 的范围长度是其无间隙的已覆盖 CELL 前缀的长度，由 `BundleLocalGenerationPrefixExtent` 给出。
+- 一个 PE 的终止写者是其范围恰好结束于该长度的写者。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-rules role=rules-interactions -->
+## 规则与交互
+
+只有当片段是已分配的数值型 `CUBE_M16` 或 `CUBE_M32` Tile、物理行数为 16 或 32、有效区域非零且位于其存储内、CUBE 描述符合法，且 CELL 数和存储大小都等于写者大小码时，`BundleLocalGenerationCubeWriterLegal` 才接受它。
+
+`BundleLocalGenerationCubeFinalizationLegal` 在任何效果之前为 LAST 写者运行。它要求：
+
+- 每个较早的写者在布局、数据类型、基础类型、物理行数和有效行数上与第一个写者一致；
+- 每个参与 PE 达到相同的非零范围长度，且没有写者超出该长度；
+- 每个 PE 恰好有一个终止写者，其他每个写者的片段都具有完整的有效列；
+- 每个 PE 上的最终有效列数相同，其计算方式为终止写者的偏移乘以 CELL 宽度再加上其有效列数；
+- 在父 Tile 的容量下，最终描述符合法。
+
+随后 `FinalizeBundleLocalGenerationCube` 把最终的行、列、有效区域、重复数、CELL 数和存储字节数同时安装到父 Tile 和槽位的父描述符中，并设置 `descriptor_finalized`。
+
+设计要点：最终确定只写描述符字段。ASL 注释说明，载荷和已定义性属于写者效果，必须在聚合几何发布之后保留。
+
+设计要点：父级容量只是分配元数据。契约 `PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001` 规定，容量余量永远不会产生父级的行、列、重复数或 CELL。最终形状只来自已覆盖的 CELL。
+
+`ValidateBundleLocalGenerationWriters` 应用这些检查；对于非 CUBE 代次，`BundleLocalGenerationCoverageComplete` 要求在 LAST 时每个参与 PE 上的每个父 CELL 都已覆盖。它在目标形状、分配或重用之后运行。ASL 注释给出了原因：这样写者合法性检查看到的正是生产者将要更新的那个 Tile，同时仍然先于生产者效果、覆盖更新、LAST 关闭和最终确定。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-boundaries role=boundaries -->
+## 架构边界
+
+`SetBundleLocalGenerationInitFault` 为失败的 INIT 引发故障，并把陷阱上下文的重启地址指向 `BPC`，即 INIT 指令束。`BundleLocalGenerationDescriptorMatches` 在延续重用父 Tile 之前检查父 Tile 仍是同一个已分配对象，且参与者掩码和容量相同。它还要求写者掩码是该代次掩码的子集，并要求描述符未变；对 CUBE 而言即第一个写者的片段描述符。`BundleLocalGenerationRangeOverlaps` 和 `BundleLocalGenerationMaskSubset` 是共用的范围和掩码辅助函数。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+一个 FP16 `CUBE_M16` 父 Tile 以大小码 6 分配，即 4096 字节或 32 个 CELL。每个 CELL 为 16 行乘 4 列。写者 A 的大小码为 3（4 个 CELL），偏移为 0；写者 B 的大小码为 3，偏移为 4，带 LAST。两个片段都是 16 乘 16，有效列完整。范围长度为 8 个 CELL，因此最终父 Tile 为 16 行乘 8 x 4 = 32 列、8 个 CELL、1024 字节存储。容量中未使用的 24 个 CELL 不产生任何列。如果 B 改用偏移 5，CELL 4 会成为间隙，LAST 会引发故障。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Local 代次](local-generation.md)打开、提交和中止代次。
+- [CUBE 单元几何](../../../tile/model/shape/cube-cell.md)拥有 CELL 的行、列和计数。
+- [可移植载体](portable-carriers.md)拥有就绪性和发布。
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,58 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有 Local `B.ASSEMBLE` 代次的可移植载体规则：使用者就绪性、写者完成、发布、推测 squash，以及哪些生产者操作可以参与。代次是由多个写者指令束构建的一个 Local Tile。使用者是之后把该 Tile 作为源读取的指令束。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元更新 `_LocalGenerations` 槽位中的以下字段：
+
+- 每个写者的 `ready` 标志和每个 PE 的 `per_pe_ready_cells` 位图；
+- `per_pe_published` 标志，以及槽位的 `published`、`published_destination`、`committed_destination` 和 `committed_valid`；
+- 至多 16 条使用者记录。每条保存源、参与者掩码、代次实例、执行域令牌、使用者指令实例、所需 CELL 集合、一个模式（`WholeParent` 或 `Range`）和一个状态（`Waiting`、`Eligible`、`Retired` 或 `Cancelled`）。
+
+执行域标识一个指令束的一次动态执行。`BeginBundleAt` 为每次动态指令束执行取一个新令牌，陷阱上下文恢复会还原保存的令牌。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-rules role=rules-interactions -->
+## 规则与交互
+
+使用者的源由 `BundlePrepareConsumerSource` 检查。如果源不是代次，它就是就绪的。否则使用者需要其 `B.SUBVIEW` 所选的 CELL 范围，或在没有 subview 时需要每个父 CELL。当每个参与 PE 的每个所需 CELL 都已就绪，并且在整体父级模式下该代次也已发布时，`BundleConsumerDependencyReady` 为 TRUE。第一次调用登记该使用者；来自同一使用者实例的重复调用会找到同一条记录。
+
+未就绪的使用者使第 2 阶段准备返回 FALSE，但不引发故障。NDF `PTO-B-ASSEMBLE-CONSUMER-READINESS-001` 称之为不产生故障、不产生效果的等待状态。
+
+`CompleteBundleLocalGenerationWriterEvent` 是把一个已登记写者标记为完成的事件。它设置该写者的就绪单元，根据所有已完成写者重新计算 `ready_cells`，并更新每 PE 的发布状态。如果该代次已关闭、未发布且满足条件，它就发布该代次：已提交映射移到工作目标，并且如果目标尚不在其 hand 的相对队列中，就把它发布进去。随后它重新评估等待中的使用者。
+
+设计要点：登记和完成是两个独立的事件。ASL 注释说明，因此即使写者乱序完成，覆盖和就绪也保持分离。该代次的使用者要等到其所需 CELL 已就绪，而不仅是已覆盖。
+
+`SquashBundleExecutionDomain` 使被 squash 的执行域中的每个写者和使用者失效，根据剩余写者重建覆盖和就绪，并中止没有剩余写者的打开代次。如 NDF `PTO-B-ASSEMBLE-SPECULATION-001` 所要求，中止路径保留较早的已提交映射。
+
+当指令束的某个 Local Tile 绑定带有 assemble 修饰符时，`BundleProducerEffectEligible` 以 `Fault_TileLegality` 拒绝处理程序类别为 `NonRollbackAuxiliary` 的操作。该类别包括 `TSTORE`、`TPREFETCH`、`TSCATTER`、`MSCATTER`、`MSCATTER_MASK`，以及 GM 原子和归约处理程序。
+
+设计要点：除 TIMG2COL 外，Tile 执行在描述符准备、主体执行、分配或辅助效果之前检查该条件。无法回滚的代次写者会在它做任何事情之前被拒绝。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-boundaries role=boundaries -->
+## 架构边界
+
+完成和 squash 入口点是架构事件，而不是编码指令。在当前 ASL 中，它们由测试驱动。`RetireBundleConsumerDependencies` 在操作成功后使每个满足条件的使用者退役。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+一个代次有 32 个 CELL，覆盖 CELL 0..15 和 16..31 的写者已登记，并由 LAST 关闭。一个使用者用 `B.SUBVIEW` 选择 CELL 0..3。在任何完成事件之前，它处于等待状态且不产生效果。第一个写者完成后，CELL 0..15 已就绪，因此该使用者变为满足条件并可以运行。另一个不带 subview 的使用者需要整个父 Tile。它保持等待，直到第二个写者完成且该代次被发布。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Local 代次](local-generation.md)登记写者并中止代次。
+- [Local 代次 CUBE](local-generation-cube.md) 拥有 CUBE 最终确定。
+- [Subview 描述符](subview-descriptor.md)在复制视图之前调用使用者检查。
+- [Tile 执行](../dispatch/tile-execution.md)调用条件检查和退役。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把一个已记录的 Local `B.SUBVIEW` 修饰符转换为可用的源。subview 从一个 CUBE 布局的父 Tile 中选择一段连续的 CELL。CELL 是 CUBE 布局中 128 字节的存储单元。本单元推导视图的描述符，把所选范围复制到一个临时 Tile 中，并在操作之后释放该 Tile。
+
+它还拥有 `PrepareSelectedBundleStage2`，即在操作 schema 运行之前解析源并检查代次的准备步骤。
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-concepts role=concepts-state -->
+## 概念与可见状态
+
+`BundleSubviewDescriptor` 保存 `valid`、`parent`、`offset_cells`、`origin_row`、`origin_column`、`rows`、`columns`、`valid_rows`、`valid_columns`、`cell_count` 和 `capacity_bytes`。`EmptyBundleSubviewDescriptor` 返回一个 `valid` 为 FALSE 的描述符。
+
+描述符保存在修饰符的 `derived` 字段中。临时副本由 `materialized` 和 `materialized_index` 记录。
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-rules role=rules-interactions -->
+## 规则与交互
+
+`PrepareSelectedBundleStage2` 按顺序执行以下步骤：解析相对源、解码操作、准备 subview 描述符、验证 Local 代次结构、验证 Shared 代次。
+
+`PrepareBundleSubviewDescriptors` 首先调用 `PrepareBundleConsumerDependencies`。ASL 注释给出了原因：必须等待未完成代次的使用者是一种不产生故障、不产生效果的结果，并且它绝不能把未就绪的单元复制到临时视图中。
+
+在以下情况下，`BundleCubeSubviewDescriptorOf(parent, offset, size)` 返回空描述符：
+
+- 父 Tile 未分配、不是 CUBE，或有效区域或单元数为零；
+- 偏移大于 65535，或不小于父 Tile 的 CELL 数；
+- 视图原点位于父 Tile 有效区域之外、推导出的形状为空，或推导出的 CUBE 几何不可用（CELL 行数或列数为零、`CUBE_N8` 的 K 重复数为 0 或大于 16384，或推导出的 CELL 数超过视图允许的数量）。
+
+否则视图覆盖 `min(requested, remaining)` 个 CELL。对 `CUBE_N8`，视图在当前 N 列单元的末尾停止。对其他 CUBE 布局，视图原点列为 `offset_cells` 乘以 CELL 宽度。有效区域被裁剪到父 Tile 的有效区域内。
+
+空描述符引发 `Fault_TileLegality`。随后 `MaterializeBundleSubview` 在父 Tile 的 hand 中找到一个空闲寄存器，以父 Tile 的布局、数据类型和 PE 掩码分配一个 CUBE Tile，并复制视图内每个已定义的父元素。如果 `TileElementwiseSourceContentsDefined` 对父 Tile 成立，视图的有效区域被标记为已定义。绑定的源被重定向到该副本。
+
+设计要点：副本保持父 Tile 的物理布局。ASL 注释说明，任何使用者引擎或操作数角色都不能请求隐式转换。因此 subview 是同一对象的一个范围，而不是重新布局。
+
+设计要点：未定义的父元素在副本中仍然未定义。视图不能使父 Tile 未定义的值变得可读。
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-boundaries role=boundaries -->
+## 架构边界
+
+`DiscardBundleSubviewMaterializations` 释放每个临时副本，并把绑定重新指向父 Tile。Tile 执行在成功和失败路径上都会调用它。`BundleTileArchitecturalSourceIndex` 报告父 Tile，而不是副本。父 Tile 的生命周期和载荷不变。
+
+`BundleSubviewOperationApplicabilityIsTotal` 接受每个解码的操作。所选操作保留对数据类型、布局、形状和已定义性合法性的所有权。Shared subview 由 Shared 代次单元拥有。
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+一个 `CUBE_M16` FP16 父 Tile 的有效形状为 16 乘 32。每个 CELL 为 16 行乘 4 列，因此父 Tile 有 8 个 CELL。偏移为 2、大小码为 2（256 字节）的 `B.SUBVIEW` 请求 2 个 CELL；剩余 6 个，因此视图有 2 个 CELL。其原点列为 2 x 4 = 8，有效形状为 16 乘 8，覆盖父 Tile 的第 8 到 15 列。偏移为 8 时等于 CELL 数，会引发故障。
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-related role=related-owners-navigation -->
+## 相关所有者
+
+- [范围修饰符](range-modifiers.md)记录 subview。
+- [CUBE 单元几何](../../../tile/model/shape/cube-cell.md)拥有 CELL 的行、列和计数。
+- [可移植载体](portable-carriers.md)拥有使用者就绪性。
+- [B.SUBVIEW](../../operands/B.SUBVIEW.md) 是命令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
