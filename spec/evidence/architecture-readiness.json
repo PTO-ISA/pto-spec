@@ -32301,7 +32301,7 @@
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "e30a9ba4efaa4058a63f3c7a4a46d73e17c7dd6f1478e3f05af7a5327481a53f"
+      "sha256": "6196c42bdfcdada79ef1aee2da8a60614a4b221dce2f9d0094aeff41175e397c"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",

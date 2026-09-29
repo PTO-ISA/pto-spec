@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+import re
 from collections import Counter
 
 from scripts.asl_units import load_units
@@ -13,6 +14,30 @@ from scripts.instruction_contracts import (
 
 
 class TileInstructionContractsTest(unittest.TestCase):
+    def test_ordinary_reduction_metadata_matches_accepted_type_domain(self) -> None:
+        helper = (ROOT / "asl/tile/model/legality/dtype-layout.asl").read_text()
+        start = helper.index("pure func TileVecArithmeticDataTypeSupported(")
+        end = helper.index("\nend;", start)
+        expected = set(re.findall(r"TileDataType_([A-Za-z0-9]+)", helper[start:end]))
+        by_name = {
+            unit.mnemonic: unit
+            for unit in load_units(ROOT / "asl")
+            if unit.mnemonic is not None
+        }
+        for name in (
+            "TROWSUM", "TROWPROD", "TROWMIN", "TROWMAX",
+            "TCOLSUM", "TCOLPROD", "TCOLMIN", "TCOLMAX",
+        ):
+            with self.subTest(mnemonic=name):
+                clauses = by_name[name].metadata["contract"]["legality"]
+                domain = next(
+                    clause.split("exactly ", 1)[1]
+                    for clause in clauses
+                    if clause.startswith("The operation DataType selected by BSTART is exactly ")
+                )
+                actual = set(re.findall(r"[A-Z][A-Z0-9]+", domain))
+                self.assertEqual(actual, expected)
+
     def test_every_tile_mnemonic_has_a_complete_contract(self) -> None:
         self.assertEqual(
             check_instruction_contracts(surface="tile", require_complete=True), []
