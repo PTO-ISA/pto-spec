@@ -12,7 +12,64 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元决定从 `BSTART` 形式解码得到的操作描述符能否被安装，以及后续分派如何读取它。操作描述符是记录 `operation_class`、`selector`、`data_type`、`mode` 和 `branch_type` 的记录，用来指定指令束的操作。
+
+它还拥有执行期间使用的三个指令束范围检查：有效数据类型、assemble 输出结构，以及操作数计数检查 `BundleOperationBindingsComplete`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元不写入任何状态。它读取已安装的描述符 `_BundleOperation`、`B.DATR` 状态 `_BundleDataAttributes`、Tile 与 Shared 绑定、`_BundleExecutionMask` 以及 `_BundleFixedPointAttributes`。
+
+- 具体数据类型编码为 0 到 21 或 24 到 28。编码 31 是 `DTYPE_NONE`，它是字段级哨兵值，没有元素宽度。`BundleDataTypeFieldValid` 接受具体编码或 `DTYPE_NONE`。
+- `BundleSelectorCode` 构成 12 位解码码。若 `mode` 有效，mode 填入位 6 到 5，选择子的位 4 到 0 填入位 4 到 0。否则 10 位选择子填入位 9 到 0。
+- `BundleTileDecodeFamily` 把 Tile 元素、Tile 内存和 Tile 矩阵类映射到 `TEPL`、`TLSU` 和 `CUBE` 解码族。
+- 合法的分支类型是 `001`、`101`、`110` 或 `111`，分别表示顺序执行、间接、间接调用和返回。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-rules role=rules-interactions -->
+## 规则与交互
+
+`BundleOperationDescriptorLegal` 按以下顺序应用规则。
+
+1. 具有 `BSTART.TIMG2COL` 形式身份（形式 94）的描述符，只有作为精确的 `TIMG2COL` 描述符时才合法：Tile 内存类、选择子 28、带数据类型、无 mode、无分支类型，且数据类型编码属于受支持的 `TIMG2COL` 集合。
+2. 若存在分支类型，它必须合法。
+3. Tile 类描述符需要选择子和有效的数据类型字段，且其解码码必须在其解码族中指定某个操作。随后数据类型必须是具体类型，除非描述符选择 `TMOV`（Tile 内存编码 2）。
+4. 定点类描述符总是非法。其他类合法。
+
+`ExecuteDecodedBundleStart` 在提交前驱指令束之前调用此检查，然后调用配置档的适用性规则。任一失败都会在该 `BSTART` 处引发 `Fault_IllegalInstruction`。
+
+设计要点：该检查在前驱提交之前运行。因此描述符非法的 `BSTART` 会直接故障，而不会先提交它之前的指令束。
+
+设计要点：只有 `TMOV` 接受 `DTYPE_NONE`。对该操作，`ResolveBundleEffectiveDataType` 可以从第一个描述符已配置的已绑定 Local 源推断类型，或从描述符合法且未被消费的 Shared 源绑定推断类型。其他操作在 `ResolveBundleEffectiveDataType` 中没有源推断，因此描述符检查要求它们在 `BSTART` 处给出具体类型。
+
+`ResolveBundleEffectiveDataType` 返回以下来源中的第一个：具体的 `B.DATR` 类型、具体的描述符类型、`TMOV` 推断。若都不适用，它返回假。ASL 注释说明此时附带的 FP64 值不可观察，也不是 `DTYPE_NONE` 的含义。
+
+`BundleOperationBindingsComplete` 比较已绑定的 Tile 操作数数量与操作期望的数量。对于矩阵操作，`B.FPATR` 会增加 RowMax、GroupMax、CScale 和参数操作数。谓词 Tile 执行掩码会增加一个源。`TCMP`、`TCMPS`、`TSEL` 和 `TSELS` 拥有各自的 schema，`TGPR2T` 具有固定形状。矩阵目标的 Tile ID 必须互不相同。对任何操作，Local 源加父引用都不得超过 8 个；矩阵操作还不得超过 9 个源或 3 个目标，因此对源起约束作用的是 8 这一上限。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-boundaries role=boundaries -->
+## 架构边界
+
+本单元不解码字段；描述符由解码单元构建。它本身也不引发故障。调用者选择故障：开始路径使用 `Fault_IllegalInstruction`，而当 `BundleAssembleOutputStructureLegal` 或 `BundleOperationBindingsComplete` 失败时，Tile 执行路径引发 `Fault_BundleControl`。若干专用处理程序，例如 `GMOV` 和 `MGATHER`，也会调用 `BundleOperationBindingsComplete`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+`DataType` 为 31 的 `BSTART.TMOV` 解码为选择子 2、数据类型为 `DTYPE_NONE` 的 Tile 内存描述符。规则 3 识别出 `TMOV`，因此该描述符合法。如果唯一的 `B.IOT` 源是类型为 `FP16` 的已配置 Tile，且没有 `B.DATR` 提供具体类型，则有效类型为 `FP16`。
+
+同样的编码 31 出现在选择 `TADD` 的 `BSTART.VEC` 形式上时根本不会到达此检查：`BSTART.VEC` 背后的 `BSTART.TEPL` 编码只接受具体的 `DataType` 编码，因此 `CommandFormOperandsLegal` 先拒绝它，该 `BSTART` 引发 `Fault_IllegalInstruction`。规则 3 是同一限制在描述符层面的防护。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-related role=related-owners-navigation -->
+## 相关所有者
+
+- [解码](decode.md) 构建本单元检查的描述符。
+- [指令束开始分派](start.md) 在提交前驱之前调用描述符检查。
+- [Tile 执行分派](tile-execution.md) 调用结构检查和操作数计数检查。
+- [TMOV](../../../tile/layout-and-rearrangement/layout/TMOV.md) 是可以携带 `DTYPE_NONE` 的操作。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

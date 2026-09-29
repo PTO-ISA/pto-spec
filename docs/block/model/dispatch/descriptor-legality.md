@@ -12,7 +12,64 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit decides whether the operation descriptor decoded from a `BSTART` form may be installed, and how later dispatch reads it. The operation descriptor is the record of `operation_class`, `selector`, `data_type`, `mode`, and `branch_type` that names the bundle's operation.
+
+It also owns three bundle-wide checks used during execution: the effective data type, the assemble output structure, and the operand count check `BundleOperationBindingsComplete`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit writes no state. It reads the installed descriptor `_BundleOperation`, the `B.DATR` state `_BundleDataAttributes`, the Tile and Shared bindings, `_BundleExecutionMask`, and `_BundleFixedPointAttributes`.
+
+- A concrete data type code is 0 to 21 or 24 to 28. Code 31 is `DTYPE_NONE`, a field-level sentinel with no element width. `BundleDataTypeFieldValid` accepts a concrete code or `DTYPE_NONE`.
+- `BundleSelectorCode` forms the 12-bit decode code. With a valid `mode`, the mode fills bits 6 to 5 and selector bits 4 to 0 fill bits 4 to 0. Otherwise the 10-bit selector fills bits 9 to 0.
+- `BundleTileDecodeFamily` maps the Tile element, Tile memory, and Tile matrix classes to the `TEPL`, `TLSU`, and `CUBE` decode families.
+- A legal branch type is `001`, `101`, `110`, or `111`, meaning fallthrough, indirect, indirect call, and return.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-rules role=rules-interactions -->
+## Rules and interactions
+
+`BundleOperationDescriptorLegal` applies these rules in order.
+
+1. A descriptor with the `BSTART.TIMG2COL` form identity (form 94) is legal only as the exact `TIMG2COL` descriptor: Tile memory class, selector 28, a data type, no mode, no branch type, and a data type code in the supported `TIMG2COL` set.
+2. A present branch type must be legal.
+3. A Tile class descriptor needs a selector and a valid data type field, and its decode code must name an operation in its family. The data type must then be concrete, unless the descriptor selects `TMOV` (Tile memory code 2).
+4. A fixed-point class descriptor is always illegal. Any other class is legal.
+
+`ExecuteDecodedBundleStart` calls this check, and then the profile's applicability rules, before it commits a predecessor bundle. Either failure raises `Fault_IllegalInstruction` at the `BSTART`.
+
+Design point: the check runs before the predecessor commits. A `BSTART` with an illegal descriptor therefore faults without first committing the bundle before it.
+
+Design point: `DTYPE_NONE` is accepted only for `TMOV`. For that operation `ResolveBundleEffectiveDataType` can infer a type from the first bound Local source with a configured descriptor, or from an unconsumed Shared source binding with a legal descriptor. Other operations have no source inference in `ResolveBundleEffectiveDataType`, so the descriptor check requires their concrete type at `BSTART`.
+
+`ResolveBundleEffectiveDataType` returns the first of: a concrete `B.DATR` type, a concrete descriptor type, and the `TMOV` inference. If none applies it returns false. The ASL comment states that its FP64 companion value is then unobservable and is not a meaning for `DTYPE_NONE`.
+
+`BundleOperationBindingsComplete` compares the bound Tile operand counts with the counts the operation expects. For a matrix operation, `B.FPATR` adds RowMax, GroupMax, CScale, and parameter operands. A predicate-Tile execution mask adds one source. `TCMP`, `TCMPS`, `TSEL`, and `TSELS` own their own schemas, and `TGPR2T` has a fixed shape. Matrix destinations must have distinct Tile IDs. Local sources plus parent references may not exceed 8 for any operation, and a matrix operation also may not exceed 9 sources or 3 destinations, so the limit of 8 is the one that binds sources.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not decode fields; the decode unit builds the descriptor. It does not raise faults itself. Callers choose the fault: the start path uses `Fault_IllegalInstruction`, and the Tile execution path raises `Fault_BundleControl` when `BundleAssembleOutputStructureLegal` or `BundleOperationBindingsComplete` fails. Several specialized handlers, for example `GMOV` and `MGATHER`, also call `BundleOperationBindingsComplete`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+`BSTART.TMOV` with `DataType` 31 decodes to a Tile memory descriptor with selector 2 and data type `DTYPE_NONE`. Rule 3 finds `TMOV`, so the descriptor is legal. If the only `B.IOT` source is a configured Tile of type `FP16`, and no `B.DATR` supplies a concrete type, the effective type is `FP16`.
+
+The same code 31 on a `BSTART.VEC` form that selects `TADD` never reaches this check: the `BSTART.TEPL` encoding behind `BSTART.VEC` accepts only concrete `DataType` codes, so `CommandFormOperandsLegal` rejects it first and the `BSTART` raises `Fault_IllegalInstruction`. Rule 3 is the descriptor-level guard for the same restriction.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-descriptor-legality-related role=related-owners-navigation -->
+## Related owners
+
+- [Decode](decode.md) builds the descriptor that this unit checks.
+- [Bundle start dispatch](start.md) calls the descriptor check before committing a predecessor.
+- [Tile execution dispatch](tile-execution.md) calls the structure and operand count checks.
+- [TMOV](../../../tile/layout-and-rearrangement/layout/TMOV.md) is the operation that may carry `DTYPE_NONE`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

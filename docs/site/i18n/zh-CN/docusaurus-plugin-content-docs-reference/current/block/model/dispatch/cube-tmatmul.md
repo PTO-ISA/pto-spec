@@ -12,7 +12,68 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元是 CUBE 矩阵族的指令束处理程序：`TMATMUL`、`TGEMV` 及其 `_ACC`、`_BIAS` 和 `MX` 形式。`ExecuteBundleTMATMULOperation` 验证完整的指令束，分配目标组，读取操作数，并运行矩阵操作。
+
+当 `BundleCubeMatrixSelected` 成立时，Tile 执行分派在指令束提交时调用它：已安装的描述符属于 Tile 矩阵类，且其有效选择子的低 5 位指定一个已指派的矩阵功能。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-concepts role=concepts-state -->
+## 概念与可见状态
+
+- `LB0`、`LB1` 和 `LB2` 携带 M、N 和 K。
+- 左类型来自 `BSTART` 的数据类型。存在 `B.DATR` 时右类型取自 `B.DATR`，否则等于左类型。
+- `CCTRL` 是 2 位的 `B.DATR` 填充字段，没有 `B.DATR` 时读作零。位 0 选择累加器类型的原始输出。位 1 是累加器预取提示。
+- 协作指令束是至少有一个 Shared 源的非 GEMV 矩阵指令束。此时 `LB0` 保存 Core 总的组 M，取值 1 到 128。组 M 不超过 64 时每个 PE 取 16 行，否则取 32 行；PE `i` 从第 `i` 乘以该行数的行开始，最多拥有该行数的行，并在组 M 处截止。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-rules role=rules-interactions -->
+## 规则与交互
+
+处理程序按以下顺序执行各阶段。
+
+1. 若 PE 掩码没有选择任何 PE，它返回成功且没有任何效果。
+2. 它要求存在 `B.FPATR`，否则引发 `Fault_BundleControl`；并要求可解码的 CUBE 操作，否则引发 `Fault_IllegalInstruction`。
+3. 它检查指令束结构。类型对、源与目标数量、`B.DATR` 字段、`CCTRL` 用法、维度和 PE 掩码都必须合法。所有掩码必须一致，协作指令束需要掩码 `1111`。GEMV 功能要求 M 等于 1。失败时引发 `Fault_TileLegality`。
+4. 它在不故障的情况下等待每个 Shared 源都已发布，然后检查 Shared schema。
+5. 行数为零的协作 PE 消费其 Shared 绑定并返回成功。
+6. 否则它解析相对源和 subview，并检查 Local 源、CScale、累加器与 CScale 的别名、结果布局以及后处理源。
+7. 它分配目标组，对操作数做快照，并运行操作。若此后故障，则回滚目标。
+
+MX 功能的结果类型为 `FP32`。否则，左类型为有符号、无符号或其他类型时，结果类型分别为 `S32`、`U32` 或 `FP32`。`CCTRL` 位 1 只对累加器功能合法。位 0 要求 `pre_quant_mode`、`relu_mode` 和 `group_n_code` 为零，且 `row_max_en`、`group_max_en` 和 `max_abs_en` 为 false。
+
+设计要点：行数为零的 PE 保留阶段 1 到 4 的组级检查，但跳过全部 Local 工作。NDF 条款要求这样做，ASL 注释也说明只有在组级和 Shared 预检推导出非零片段之后才开始 Local 准备。因此没有行的 PE 仍会因组级和 Shared 错误而故障，但不改变任何 Local Tile。
+
+设计要点：如 ASL 注释所述，分配发生在所有规则都已关闭之后、第一次操作数快照之前。因此合法性故障不会留下已分配的目标。
+
+设计要点：位 1 的预取提示以及伴随位 0 的替换提示调用在可移植模型中不做任何事的实现定义钩子；这些钩子不改变发布的结果，位 0 只通过选择累加器类型的原始输出来改变结果。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-boundaries role=boundaries -->
+## 架构边界
+
+本单元不计算矩阵乘积；这由 `TMATMULShared` 和 `TMATMULMXSharedWithOptionalScales` 完成。目标布局与分配属于 CUBE 目标单元，Shared 操作数 schema属于共享 CUBE 矩阵单元。成功之后，分派提交 Local generation 并退役消费者依赖，但行数为零的协作 PE 除外。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+```text
+TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#1, T#2, T#3, ->T<1KB>
+```
+
+所有源都是 Local，因此该指令束不是协作的。源序号 0 是累加器 `T#1`，序号 1 是左矩阵 `T#2`，序号 2 是右矩阵 `T#3`。左类型为 `FP16`，没有 `B.DATR` 时右类型也是 `FP16`，因此结果类型为 `FP32`。
+
+现在假设一个协作 `TMATMUL`，其右组来自 Shared，组 M 为 40。每个 PE 取 16 行。PE0 拥有 16 行，PE1 拥有 16 行，PE2 拥有 8 行，PE3 拥有 0 行。PE3 通过阶段 1 到 4，然后在阶段 5 停止。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile 执行分派](tile-execution.md) 选择该处理程序并在其后提交。
+- [CUBE 目标](cube-destination.md) 解析并分配目标组。
+- [共享 CUBE 矩阵](shared-cube-matrix.md) 拥有协作行分配与 Shared schema。
+- [CUBE 累加器路由](cube-accumulator-routing.md) 拥有 `CCTRL` 规则。
+- [TMATMUL_ACC](../../../tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md) 是累加指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

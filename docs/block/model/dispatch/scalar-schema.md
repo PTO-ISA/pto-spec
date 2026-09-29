@@ -12,7 +12,66 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the rules for `B.IOR`, the bundle command that binds general-purpose registers (GPRs) to a Tile operation. One `B.IOR` carries a destination selector `RegDst` and up to three source selectors `RegSrc0`, `RegSrc1`, and `RegSrc2`. Selector code 0 names the architectural zero register.
+
+The unit works at three points in a bundle's life:
+
+- While header commands decode, it decides where a `B.IOR` may be placed and whether a second one is expected.
+- When the bundle is checked for completeness, it checks the selector structure without reading any GPR.
+- Before destinations are allocated, it reads the GPR values and checks their ranges.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+`_BundleScalarBindings` has two entries. Index 0 holds the first `B.IOR`. Index 1 is used only when `BundleMultiIORSelected` is true, which happens for `TGPR2T`, `TIMG2COL`, and operations eligible for an ExecutionMask. Each entry records its selectors, a `source_count`, and an `execution_mask_present` flag.
+
+The operation inputs are packed densely into source slots in a fixed order: `address`, `scalar0`, `diagonal`, then `flag0`, followed for a matrix bundle by a quantization parameter and a ReLU parameter when `B.FPATR` selects scalar parameters. `BundleOperationGPRInputCount` counts the present inputs, and `BundleOperationGPRInputSlot` gives the slot of `address`, `scalar0`, `diagonal`, or `flag0`; the value check computes the matrix parameter slots itself.
+
+The unit only reads state. It writes nothing and raises no fault by itself; its callers raise the fault.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+Placement rules are evaluated by the command decoder. For `TGPR2T`, `RegDst` is 0 and both `B.IOR` commands precede any participating `B.IOT`. For `TIMG2COL`, `B.IOR` precedes all Tile and Shared bindings, `RegDst` is 0, and the first one has `RegSrc1` and `RegSrc2` zero. For an ExecutionMask stream, the second `B.IOR` has `RegDst` 0 and follows a first one without the mask flag. When `TGPR2T` or `TIMG2COL` has received only its first `B.IOR`, the next command must be the second one. `TGPR2T` also accepts a zero-participation `B.IOT`, and any command once zero participation has been seen. A violation raises `Fault_BundleControl`.
+
+`BundleOperationScalarBindingSchemaLegal` checks structure only:
+
+- In the ordinary case, every source slot beyond the input count must be selector 0, and `RegDst` must be 0.
+- `TEXPDIF` without an ExecutionMask accepts no `B.IOR`.
+- CUBE `TCI` needs exactly one `B.IOR` with two selectors below `PTO_ABSOLUTE_GPR_COUNT` (24), `RegSrc2` zero, and `RegDst` zero.
+- A GPR ExecutionMask defers to `BundleExecutionMaskGPRBindingSchemaLegal`. It requires a `CUBE_M16` or `CUBE_M32` mask layout and allows up to 6 slots, operation inputs first and then 1 or 2 mask words. A second `B.IOR` is used exactly when more than 3 slots are needed, and the mask flag marks the last `B.IOR` used.
+
+`BundleOperationGPRBindingValuesLegal` reads values. `flag0` must be 0 or 1. `diagonal` must be in -65535 to 65535. A matrix scalar parameter must be a legal parameter word. For CUBE `TCI`, each participating PE's Step2D row step and column step must each be -1, 0, or 1. `TGPR2T` without a mask needs two `B.IOR` commands: the first with 3 sources, the second with 1, every selector below 24, and `RegDst` 0. Without an ExecutionMask, an ordinary operation accepts no second `B.IOR` and at most 3 inputs.
+
+Design point: structure and value checks are separate. After the zero-participation exit, the local Tile path first checks completeness (failure raises `Fault_BundleControl`), then checks values (failure raises `Fault_TileLegality`) before destination allocation. The ASL comment states the consequence: invalid values never enter the constrained `TileInstructionOperands` fields or Tile state. On this path a bundle with `PE_MASK` 0000 reads no GPR.
+
+Design point: unused selectors must be 0 rather than ignored. A `B.IOR` source slot has no separate omission encoding; code 0 names the zero register. The ordinary check therefore accepts only code 0 in a slot beyond the input count, and on the local Tile path a surplus nonzero selector fails the completeness check with `Fault_BundleControl`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not read scalars for execution. [Tile instruction operands](tile-instruction-operands.md) uses the same slot functions to fill the operands, and the ExecutionMask owners interpret mask words. Comparison and select operations skip the ordinary value checks here; their `B.IOR` layouts are checked by the [comparison schema](comparison-schema.md).
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+`TADDS <Row=8, Col=64, FP32>, T#1, a2, ->T<2KB>` has one input, `scalar0`, so its `B.IOR` is `a2, zero, zero, ->zero`. A `B.IOR` with a nonzero `RegSrc1` fails the structure check.
+
+`TTRI` has `diagonal` in slot 0 and `flag0` in slot 1. If the orientation register holds 2, the value check fails and the bundle raises `Fault_TileLegality` before any destination is allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Commands](commands.md) applies the placement and stream rules while decoding `B.IOR`.
+- [Descriptor legality](descriptor-legality.md) calls the structure check as part of binding completeness.
+- [Tile execution dispatch](tile-execution.md) orders the value check before destination resolution.
+- [Execution mask schema](execution-mask-schema.md) interprets GPR mask words.
+- [Scalar bindings](../operands/scalar-bindings.md) stores the `B.IOR` records.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

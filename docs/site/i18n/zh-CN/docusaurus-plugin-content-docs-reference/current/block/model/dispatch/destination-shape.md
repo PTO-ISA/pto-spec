@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有为 Tile 指令束分配 Local 目标的共享解析函数：`ResolveBundleTileDestinationsWithShapeAndType`，以及它的两个包装 `ResolveBundleTileDestinationsWithShape` 和 `ResolveBundleTileDestinations`。它还拥有把指令束维度转换为目标形状的默认形状读取函数。
+
+Local 目标是写作 `->DstTile<Size>` 的 `B.IOT` 目标。它给出一个相对 hand（0 到 3）和一个大小编码，而不是绝对 Tile 寄存器。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-concepts role=concepts-state -->
+## 概念与可见状态
+
+默认形状读取函数使用指令束维度槽位。`BundleDestinationValidRows` 读取 `LB1`，`BundleDestinationValidColumns` 读取 `LB0`。`BundleDestinationPhysicalColumns` 在 `B.DIM` 设置过 `LB2` 时读取 `LB2`。未设置 `LB2` 时，它返回有效列数；对于 CUBE 布局的 `TCI`，它把该数向上取整到 CUBE 单元宽度。大于 65535 的值读作 0。
+
+解析函数对其分配的每个目标写入以下状态：
+
+- 通过 `ConfigureBundleTileDestination` 写入 `_Tiles` 中的绝对 Tile 寄存器描述符及其分配掩码；
+- 绑定的 `destination` 字段，它从 hand 变为绝对寄存器索引；
+- 绑定的 `destination_allocated_by_bundle` 标志。
+
+若目标所在绑定已设置 `destination_allocated_by_bundle` 或 `destination_reused_by_generation`，则不会再次分配。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-rules role=rules-interactions -->
+## 规则与交互
+
+解析函数分四步工作。
+
+1. 它解析有效数据类型。若不存在，则引发 `Fault_TileLegality`。
+2. 它为每个新目标选择寄存器。hand `h` 拥有寄存器 `16h` 到 `16h+15`，解析函数取其中未分配且在本指令束中尚未被选中的最小编号。若没有空闲寄存器，则引发 `Fault_TileAllocation`。随后它检查：对每个目标 PE 掩码中的每个 PE，已用 Tile 容量加上新目标的容量都不超过 `TileCapacityLimitBytes`。检查失败同样引发 `Fault_TileAllocation`。
+3. 它计算并检查每个目标描述符。形状放不进大小编码时，新目标引发 `Fault_TileAllocation`，重用目标引发 `Fault_TileLegality`。重用目标还必须在容量、有效形状、类型和布局上与其现有描述符一致，且其分配掩码必须覆盖绑定的 PE 掩码；不一致时引发 `Fault_TileLegality`。
+4. 只有此时，它才配置每个新目标。
+
+目标类型取决于其位置。第一个目标获得主类型：对归约而言，返回索引时为 `U32`，否则为有效数据类型；否则若调用者给出显式类型则取该类型；否则在矩阵指令束中为矩阵输出类型，在其他情况下为有效数据类型。后续目标在矩阵指令束中获得矩阵输出类型，否则为 `U32`。在矩阵指令束中，RowMax 输出有 1 列，GroupMax 输出的列数为列数除以组大小并向上取整。
+
+设计要点：步骤 1 到 3 不改变任何 Tile 状态。ASL 注释说明了用意：B.IOT 分配是全有或全无的，因此大小编码对形状过小时，会在分配任何目标之前故障。对于这种失败，该目标组中的任何目标都不会被分配。
+
+设计要点：重用目标是某个打开的 generation 的现有 Tile。步骤 2 和 4 会跳过它，因此本解析函数从不分配它。当其推导形状放不下或与该 Tile 不一致时，解析函数引发 `Fault_TileLegality`；步骤 3 只对它将要分配的目标引发 `Fault_TileAllocation`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-boundaries role=boundaries -->
+## 架构边界
+
+形状和类型由调用者决定。目标路由函数为大多数封闭 schema 操作传入显式形状，`GMOV`、`MGATHER` 和 Shared TLSU 等专用路径也会调用这些解析函数。Tile 矩阵指令束的主目标由 CUBE 矩阵处理程序解析，而不经过路由函数。
+
+本单元只在 assemble 的 `INIT` 阶段把目标发布为相对源。后续故障之后对已分配目标的回滚由故障回滚单元拥有。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+```text
+TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>
+```
+
+目标 hand 为 0，因此解析函数扫描寄存器 0 到 15。若寄存器 0 和 1 已分配，它选择寄存器 2。形状为 8 个有效行乘 64 个有效列，物理列数为 64。2 KB 容量共 16384 位，一行 64 个 `FP32` 元素占 2048 位，因此推导出的行数为 8。8 个有效行可以放下，寄存器 2 被配置。
+
+若写作 `->T<1KB>`，推导出的行数为 4。步骤 3 会引发 `Fault_TileAllocation`，且不会分配任何寄存器。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-related role=related-owners-navigation -->
+## 相关所有者
+
+- [目标操作](destination-operation.md) 选择形状和类型参数。
+- [目标辅助](destination-auxiliary.md) 拥有 `ConfigureBundleTileDestination` 和 GroupMax 列规则。
+- [Tile 分配](../../../tile/model/state/allocation.md) 定义配置寄存器的分配转换。
+- [故障回滚](../faults/rollback.md) 在后续故障之后撤销已分配的目标。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元是块命令的中心分派开关。顶层所有者解码命令形式并检查其操作数后，调用 `ExecuteDecodedBundleCommand`。该函数选择该形式的语义处理器，运行处理器特定的检查，更新指令束或架构状态，并在处理器按顺序执行时推进 `TPC`。
+
+它路由的命令包括头部命令 `B.CATR`、`B.DATR`、`B.FPATR`、`B.DIM`、`B.IOR`、`B.IOT`、`B.IOS`、`B.SUBVIEW` 和 `B.ASSEMBLE`，生命周期命令 `BSTART`、`BSTOP` 和 `B.HINT`，帧命令，`HL.Q*` 队列命令，以及 `MCOPY` 和 `MSET`。
+
+本单元还定义了 `BundleFixedPointAttributesCanBePlaced`，即 `B.FPATR` 的位置规则。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-concepts role=concepts-state -->
+## 概念与可见状态
+
+指令束有头部阶段和主体阶段。头部命令只在 `_BundleActive` 为真且 `_BundleBodyActive` 为假时合法。大多数头部处理器还会拒绝第二份副本：例如第二条 `B.CATR` 或 `B.DATR` 会引发 `Fault_BundleControl`。
+
+处理器写入的头部状态包括 `_BundleControlAttributes`、`_BundleDataAttributes`、`_BundleFixedPointAttributes`、`_BundleDimensions`、标量、Tile 和 Shared 绑定表、`B.SUBVIEW` 与 `B.ASSEMBLE` 使用的范围组，以及 `_BundleHint`。
+
+范围组是一个打开的窗口，使后续的 `B.SUBVIEW` 或 `B.ASSEMBLE` 能附加到前面的 `B.IOT` 或 `B.IOS` 上。除这两个范围修饰命令之外，每条命令都会先关闭它。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-rules role=rules-interactions -->
+## 规则与交互
+
+在任何处理器效果之前，该函数按固定顺序检查：
+
+1. `ESAVE`、`ERCOV` 和跨块转移的处理器不受支持，引发 `Fault_IllegalInstruction`。
+2. 打断已打开的 `TGPR2T` 或 `TIMG2COL` 命令流的命令引发 `Fault_BundleControl`。
+3. 对 `HL.QMT`、`HL.QPUSH` 和 `HL.QPOP`，保留的标志组合或非法 GPR 选择器引发 `Fault_IllegalInstruction`。
+4. 处理器运行它自己的位置与字段检查。
+
+只要记录了任何故障，该函数就返回 `CommandExecution_Rejected`，且不推进 `TPC`。
+
+`B.FPATR` 的位置规则更严格。它必须出现在头部、至多一次、位于任何 `B.IOR`、`B.IOT` 或 `B.IOS` 之前，并且只在所选操作是 Tile 矩阵操作或尚未安装操作描述符时出现。
+
+寄存器形式的 `B.DIM` 把一个 GPR 值与可选的 `uimm17` 相加，并保留低 16 位。立即数形式使用 `imm8`。对同一维度给出第二个值会引发 `Fault_BundleControl`。
+
+设计要点：`PEMode` 为 `000` 的 `B.IOT` 或 `B.IOS` 不指定任何 PE。在其尺寸编码检查之后，处理器（若处于头部）记录零参与，打开一个零模式范围组，推进 `TPC` 并返回。处理器的位置、绑定和分配检查被跳过。因此没有任何 PE 使用的绑定不会因这些规则而故障，但之前的步骤 1 和 2 仍然适用。
+
+设计要点：`B.SUBVIEW` 和 `B.ASSEMBLE` 在读取任何 GPR 之前检查 GPR 选择器和尺寸编码。对 `B.SUBVIEW`，ASL 注释说明，保留的选择器或编码不会改变载体和范围状态。在零模式范围组中，它们不记录任何内容，也不读取 GPR。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-boundaries role=boundaries -->
+## 架构边界
+
+`BSTART`、`BSTOP`、`FRET.RA` 和 `FRET.STK` 自己设置 `TPC`，因此本函数在它们之后不推进 `TPC`。在 `B.HINT` 跟踪形式之后它同样不推进 `TPC`；该处理器内部的提交或开始转换会设置它。
+
+`B.HINT` 跟踪形式先在提示地址提交任何活动的指令束。如果该提交选择了另一个地址，提示直接返回而不开始指令束。否则它清除头部状态，并开始一个新的标准顺序执行指令束。
+
+操作级验证与提交不在这里执行。`BSTOP` 委托给 `CompleteBundleAt`，`BSTART` 委托给 start 所有者。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+假设指令束头部在地址 `0x2010` 处有一条 4 字节 `B.IOT`，其 `PEMode` 为 `000`，尺寸编码合法。`PEMaskOfPEMode` 返回 `0000`。处理器设置 `_BundleZeroParticipationSeen`，打开一个零模式范围组，并把 `TPC` 写为 `0x2014`。不会添加 Tile 绑定。
+
+如果同一条 `B.IOT` 的 `PEMode` 为 `111`、掩码为 `1111`，并且出现在 `BSTOP` 关闭指令束之后，位置检查会引发 `Fault_BundleControl`，`TPC` 保持为 `0x2010`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-related role=related-owners-navigation -->
+## 相关所有者
+
+- [顶层分派](top-level.md) 解码形式、检查操作数并调用本单元。
+- [命令解码](decode.md) 定义操作数解码和受支持处理器规则。
+- [命令数据属性](command-data-attributes.md) 锁存 `B.DATR`。
+- [指令束开始分派](start.md) 处理 `BSTART` 形式。
+- [提交验证](../commit/validation.md) 拥有 `CompleteBundleAt`。
+- [B.IOT](../../operands/B.IOT.md) 是 Tile 绑定命令的指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

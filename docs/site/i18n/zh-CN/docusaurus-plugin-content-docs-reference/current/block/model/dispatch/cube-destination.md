@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为 `TMATMUL` 等矩阵乘指令束分配目标组。目标组是一个矩阵指令束中 `B.IOT` 目标的有序集合：先是主结果 D，然后是由 `B.FPATR` 启用的可选 RowMax 和 GroupMax 辅助输出。
+
+它定义了 `ResolveBundleTMATMULDestination` 的三个重载、CUBE 组分配器 `ResolveBundleTMATMULCubeDestinationGroup` 以及容量检查 `BundleTMATMULDestinationCapacityGroupFits`。它当前的调用者是 CUBE 矩阵所有者，该调用者传入的 `cube_primary` 为真。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-concepts role=concepts-state -->
+## 概念与可见状态
+
+输出类型是 `BundleFPATREffectiveDataType(pre_quant_mode, accumulator_type)`：`pre_quant_mode` 为零时是累加器类型，否则是量化输出类型。
+
+每个目标的形状取决于它的序号：
+
+| 序号 | 角色 | 有效形状 |
+| --- | --- | --- |
+| 0 | 主结果 D | `m` 行乘 `n` 列 |
+| 1 | 若 `row_max_en` 则为 RowMax，否则若 `group_max_en` 则为 GroupMax | `m` 乘 1，或 `m` 乘 `ceil(n / group_n)` |
+| 2 | 两者都启用时的 GroupMax | `m` 乘 `ceil(n / group_n)` |
+
+在 CUBE 路径中，每个目标都使用输出类型和主 CUBE 布局。成功的分配为每个新目标写入 CUBE Tile 描述符，把其绝对索引存入绑定，并设置 `destination_allocated_by_bundle`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-rules role=rules-interactions -->
+## 规则与交互
+
+CUBE 分配器分三遍工作。
+
+1. 预留。对每个新目标，它在编码的 hand 中取第一个既未分配、也未在本遍中被预留的寄存器。hand 已满时引发 `Fault_TileAllocation`。
+2. 检查。它累加所有新目标的容量，并对分配掩码中的每个 PE 检查当前用量加上该总和不超过上限。然后检查每个目标的形状。对主结果 D，它还要求 `m` 在 `CUBE_M16` 下至多为 16，在 `CUBE_M32` 下至多为 32。
+3. 配置。只有在所有检查都通过之后，它才为每个新目标调用 `ConfigureCubeTileForMask`。
+
+设计要点：在写入第一个描述符之前，整个组都已被检查。第 1 遍只在局部的预留数组中记录选择，第 3 遍只有在所有容量和形状检查都通过之后才运行。因此第二个目标放不下的组不会留下部分分配。
+
+设计要点：第 1 遍中预留的寄存器会在同一遍的后续搜索中被排除。因此两个具有相同 hand 的目标即使都尚未分配，也会得到不同的寄存器。
+
+被 assemble 生成复用的目标不会被分配。它现有的描述符必须是合法的 CUBE 描述符，与容量、有效形状、输出类型和布局一致，且其分配掩码必须包含分配掩码中的每个 PE；不一致时引发 `Fault_TileLegality`。对新目标，非法形状引发 `Fault_TileAllocation`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-boundaries role=boundaries -->
+## 架构边界
+
+CUBE 矩阵所有者在所有字段、命令流、描述符、形状和容量规则都已确定之后、在获取第一个载荷快照之前调用本单元。如果之后写者验证或矩阵操作失败，调用者运行 `RollBackBundleTileDestinations`，释放由本单元标记的目标。
+
+没有目标绑定时，解析器引发 `Fault_BundleControl`。当 `cube_primary` 为假时，解析器检查行主序 D 形状，然后委托给通用的 `ResolveBundleTileDestinationsWithShape`。本单元不计算任何矩阵值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+假设一个 `TMATMUL` 指令束的 `m` 为 16，`n` 为 64，累加器为 `FP32`，`pre_quant_mode` 为 0，布局为 `CUBE_M16`，`row_max_en` 为假，`group_max_en` 为真，`group_n` 为 16。共有两个目标。
+
+- 序号 0 是 D：`CUBE_M16` 中 16 乘 64 的 `FP32`。
+- 序号 1 是 GroupMax：16 乘 `ceil(64 / 16)`，即 16 乘 4，同样是 `CUBE_M16` 中的 `FP32`。
+
+如果两个容量之和超过某个所选 PE 的剩余容量，两者都不会被分配，并引发 `Fault_TileAllocation`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-related role=related-owners-navigation -->
+## 相关所有者
+
+- [CUBE TMATMUL 分派](cube-tmatmul.md) 验证矩阵指令束并调用本单元。
+- [目标辅助函数](destination-auxiliary.md) 定义 `BundleGroupMaxColumns`。
+- [目标形状](destination-shape.md) 拥有非 CUBE 路径使用的通用解析器。
+- [回滚](../faults/rollback.md) 释放由指令束分配的目标。
+- [Tile 分配](../../../tile/model/state/allocation.md) 定义 `ConfigureCubeTileForMask`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

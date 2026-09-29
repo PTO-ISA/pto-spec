@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-purpose role=purpose-scope -->
+## 作用与范围
 
+本单元拥有索引式 GM 转移以及预取执行体。
+
+- `MGATHER` 按每个索引加载一个元素到目标 Tile。
+- `MSCATTER` 按每个索引把一个源元素存储到 GM。
+- `MGATHER_MASK` 与 `MSCATTER_MASK` 增加一个谓词 Tile，用于关闭单个通道。
+- `TPREFETCHCore` 为全部四个 PE 探测并读取一段带步长区域，不产生 Tile。
+
+索引 Tile 为每个通道保存一个 GM 字节位移。通道是索引 Tile 的一个有效坐标。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-concepts role=concepts-state -->
+## 概念与可见状态
+
+通道地址为 `base + displacement`，由 `TileMemoryByteDisplacementAddress` 计算。索引 Tile 必须是 S32、U32、S64 或 U64；有符号索引做符号扩展。位移不按元素大小缩放。
+
+数据类型由 `IndexedTLSUOrdinaryTransferDataTypeLegal` 检查，它接受普通的非打包类型，也接受四位类型。对四位数据类型，一个索引寻址一个保存两个相邻数据列的字节，因此数据 Tile 的有效列数恰为索引 Tile 的两倍。
+
+当 ExecutionMask（若存在）把某通道标记为活动，并且对 MASK 形式而言谓词元素的位 0 为 1 时，该通道为活动通道。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-rules role=rules-interactions -->
+## 规则与交互
+
+四个索引执行体都先以断言检查操作数：内容已定义、有效形状匹配（四位数据为索引列数的两倍）、布局相等，以及索引与数据类型。两个聚集执行体还断言目标描述符合法性。
+
+设计要点：每个执行体都在第一次内存访问或事件之前探测全部活动通道。只要有一次探测失败，执行体就返回，GM、内存事件与目标 Tile 都保持不变。其结果是：与密集 `TSTORE` 不同，发生故障的索引请求没有部分内存效果。
+
+`MGATHER` 随后填充每个物理目标元素：非活动的有效坐标接收 ExecutionMask 的零值或合并值，其他每个坐标接收该数据类型的 `PadValue`。然后它用加载值覆盖每个活动通道，记录一个加载事件，并把整个物理区域标记为已定义。
+
+设计要点：目标在发布之前已被完整写入，因此即使 `PadValue` 为 Null，`MarkTilePhysicalRegionDefined` 也是正确的。`TilePadValueForDataType` 对 Null 给出零位，因此此处 Null 填充发布的是已定义的零位，而不是未定义元素。
+
+`MSCATTER` 在探测阶段捕获每个活动通道的地址与值，然后通过 `CommitIndexedScatterTransactions` 提交存储。对四位数据，两个相邻源半字节被合并为一个字节，并存储整个字节。
+
+设计要点：提交顺序由 `ARBITRARY` 选择决定，因此不保证行主序。两个通道指向同一地址时，最终保留哪个值由实现定义。需要确定结果的软件必须避免重复的散射地址，或使用原子形式。
+
+`TPREFETCHCore` 用元素行步长和 `TileMemoryIndexedAddress` 计算地址。它在记录任何加载事件之前探测全部四个 PE 的每个元素，并且不写入任何 Tile 状态。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-boundaries role=boundaries -->
+## 架构边界
+
+指令束分派拒绝格式错误的 schema，分配聚集目标，并在之后发生故障时释放它。`B.CATR` atomic 使整个块不可交错，但如 ASL 注释所述，它不选择通道顺序，也不选择重复地址的胜者。
+
+索引聚集与散射不是原子读-改-写操作。原子形式位于 atomics 与 GM atom/red 单元。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-example role=example-usage -->
+## 非规范阅读示例
+
+FP32 的 `MGATHER`，基地址 `0x4000`，1 x 4 的 S32 索引 Tile 保存 `0, 8, -4, 8`：
+
+- 通道地址为 `0x4000`、`0x4008`、`0x3FFC` 与 `0x4008`。四个地址都是 4 的倍数，因此 4 字节对齐探测通过。
+- 位于 `0x4008` 的两个通道各自读取同一个值；重复的聚集地址没有害处。
+
+使用同一索引 Tile、源值为 `1.0, 2.0, 3.0, 4.0` 的 FP32 `MSCATTER` 执行四次存储。位置 `0x4000` 与 `0x3FFC` 接收 `1.0` 与 `3.0`。位置 `0x4008` 最终为 `2.0` 或 `4.0`；ASL 不固定是哪一个。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-related role=related-owners-navigation -->
+## 相关归属
+
+- [Addressing](addressing.md) 拥有字节位移与索引地址运算。
+- [Indexed layout legality](../legality/indexed-layout.md) 拥有索引与数据类型规则。
+- [Atomics](atomics.md) 拥有原子比较并交换聚集。
+- [Execution mask state](../execution/execution-mask-state.md) 拥有活动通道与非活动值。
+- [Memory atomicity](../../../arch/memory-model/atomicity.md) 与 [ordering](../../../arch/memory-model/ordering.md) 拥有事件语义。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

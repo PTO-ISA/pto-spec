@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义 CUBE 矩阵指令束如何从 Shared Tile 读取操作数。Shared Tile 是一个对核内全部四个 PE 可见的 Tile 寄存器，通过 `B.IOS` 绑定。当矩阵指令束绑定了 Shared 源且不是 GEMV 形式时，它以协作方式运行：四个 PE 划分左矩阵的 M 行，每个 PE 计算自己的行片段。
+
+本单元有三组函数：
+
+- schema 检查：`BundleMatrixSharedSourcesReady`、`BundleMatrixSharedSchemasLegal`，以及它们调用的逐源检查。
+- 行划分：`BundleMatrixCooperativeMPerPE`、`BundleMatrixCooperativeValidM`、`BundleMatrixCooperativeCurrentPEMask` 和 `BundleMatrixCooperativeMLayout`。
+- 物化：为当前 PE 构建每个 Shared 操作数的私有 `RowMajor` 副本的函数。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-concepts role=concepts-state -->
+## 概念与可见状态
+
+Shared 操作数按固定顺序出现：左侧为 Shared 时先是左主操作数及其 MX 缩放，然后是右主操作数及其 MX 缩放。当 Shared 数量不等于右侧组大小（1，或当右侧 MX 类型需要缩放时为 2）时，左侧恰好是 Shared。
+
+每个操作数都有存储方向。左主操作数 A 存储为 `[M, K]`，当 `B.FPATR` 设置 TransA 时存储为 `[K, M]`。右主操作数 B 存储为 `[N, K]`，设置 TransB 时存储为 `[K, N]`。
+
+当 M 不超过 64 时，行划分为每个 PE 16 行；当 M 不超过 128 时为每个 PE 32 行；更大的 M 没有划分。PE p 拥有从 p 乘以该行数开始的行。首行位于 M 或更后位置的 PE 拥有 0 行。
+
+本单元读取 `_BundleSharedBindings`、Shared Tile 记录、`_BundleFixedPointAttributes`、`_Tiles` 中 Local 源的布局，以及用于子视图偏移的每个 PE 的 GPR。它不写入任何架构状态；物化函数返回 `TileInfo` 值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-rules role=rules-interactions -->
+## 规则与交互
+
+`BundleMatrixSharedSchemasLegal` 强制执行以下规则：
+
+- 没有 Shared 绑定时，TransA 和 TransB 都必须关闭。
+- TransA 要求左侧为 Shared。
+- 左侧为 Shared 时要求 M 不超过 128。
+- 每个 Shared 源都是某个 Shared Tile 的源绑定（大小码 0），该 Shared Tile 具有合法描述符、整体父级就绪、已发布且内容已定义。
+- 没有子视图时，Shared Tile 为 `RowMajor`，具有操作数的数据类型，其有效行数和有效列数等于存储形状，物理列数至少等于存储列数。
+- 消费的操作数数量等于 Shared 绑定数量。
+
+子视图选择父 Shared Tile 的一个字节范围。其偏移是一个 GPR 加一个 11 位立即数，以 128 字节单元计数，并对绑定掩码中的每个 PE 分别读取。该范围必须能放入父级容量，要么位于同一行内，要么从第 0 列开始并覆盖整行，并且在按父级有效区域裁剪后等于预期的有效形状。ASL 注释说明这一推导不读取载荷。
+
+设计要点：就绪性在 schema 之前检查。如果某个 Shared 源尚未发布，`BundleMatrixSharedSourcesReady` 返回假，调用方停止而不设置故障。调用方中的 ASL 注释把这描述为结构合法的 Shared 组等待其整体就绪并发布。schema 失败会引发 `Fault_TileLegality`。
+
+设计要点：拥有 0 行的 PE 的 `BundleMatrixCooperativeValidM` 为 0，其当前 PE 掩码为空。调用方检查该行数，在任何 Local 代次或目标工作之前消费 Shared 绑定并结束该 PE 的尝试，因此该 PE 不分配任何 Tile。
+
+存在本地左源时，`BundleMatrixCooperativeMLayout` 从该源取得布局。左侧为 Shared 时，对于累加函数它从累加器源取得布局，否则对每个 PE 至多 16 行选择 `CUBE_M16`，至多 32 行选择 `CUBE_M32`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-boundaries role=boundaries -->
+## 架构边界
+
+调用方 [CUBE TMATMUL 分派](cube-tmatmul.md)负责顺序：就绪性、schema、零行退出、Local 检查、布局、目标分配，最后才是物化。它还要求协作指令束的每个绑定都使用 `PE_MASK` 1111。物化函数只在目标组分配之后读取载荷。`MaterializeBundleSharedMatrixSource` 在此定义，但在当前 ASL 中没有调用方。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+考虑一个协作式 `TMATMUL <M=40, N=32, K=64, FP16>, S1, S2, ->T<2KB>`，其中 Shared A `S1` 存储为 `[40, 64]`，Shared B `S2` 存储为 `[32, 64]`。使用 Shared 源时，N 和 K 必须是 2 的幂，这里两者都是。M 不超过 64，因此每个 PE 拥有 16 行。PE0 得到第 0 到 15 行，PE1 得到第 16 到 31 行，PE2 得到第 32 到 39 行（8 行），PE3 拥有 0 行。
+
+PE3 消费 Shared 绑定且不分配任何内容。PE0 到 PE2 使用 `CUBE_M16`。PE0 和 PE1 各产生一个 16 x 32 的 `FP32` 片段，含 512 个元素。PE2 产生一个 8 x 32 的片段，含 256 个元素。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-related role=related-owners-navigation -->
+## 相关所有者
+
+- [CUBE TMATMUL 分派](cube-tmatmul.md)按顺序调用这些检查和物化函数。
+- [Shared 代际](../operands/shared-generation.md)负责 Shared 子视图和每个 PE 的偏移。
+- [Shared Tile 寄存器](../../../tile/model/state/shared-registers.md)定义就绪性和发布。
+- [矩阵函数](../../../tile/model/legality/matrix-functions.md)定义 MX 缩放组和右侧组大小。
+- [TMATMUL](../../../tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md) 是对应的指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

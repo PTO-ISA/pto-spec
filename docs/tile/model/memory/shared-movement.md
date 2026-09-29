@@ -12,7 +12,75 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns data movement that involves Shared Tile registers or more than one PE, plus the Local copy helpers `TMOV` and `GMOV`.
+
+- `TLOADShared` loads GM into a Shared Tile record, with per-PE base and stride.
+- `TSTOREShared` and `TSTORESharedPerPE` store a Shared Tile to GM from each selected PE.
+- `TMOVLocalToShared` copies a Local Tile into a Shared record.
+- `TMOVSharedToLocal` and `TMOVSharedToLocalPerPE` copy Shared data into a Local Tile.
+- `TMOV` copies one Local Tile to another; `GMOV` copies a peer snapshot into a Local Tile.
+
+It also defines `ScatterLaneOrder` and `CorePETileInfos`, types used by the indexed and per-PE bodies.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-concepts role=concepts-state -->
+## Concepts and visible state
+
+A Core has four PEs. `PE_MASK` is four bits, and PE `p` is bit `3 - p` (`PTOPEMaskBitOfPEIdentity`), so `1000` is PE0.
+
+A Shared Tile is split into four byte quarters. `SharedTileElementRegion` returns the quarter of an element: its byte offset times 4, divided by the capacity, rounded down. In a multi-PE load, quarter `q` is loaded by PE `q` using that PE's base and stride.
+
+A single-issuer load has exactly one mask bit set. That PE loads every valid element.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-rules role=rules-interactions -->
+## Rules and interactions
+
+`PE_MASK=0000` returns immediately in every Shared helper, before any check.
+
+`TLOADShared` builds a fresh descriptor and raises `Fault_TileLegality` if the shape does not fit the size code or is incompatible with the existing record. It then loads each selected valid element with byte-strided addressing and records a load event for the loading PE. It marks the contents complete only for a single issuer or mask `1111`, and installs the record with `AtomicUpdateSharedTile`.
+
+Design point: `AtomicUpdateSharedTileWithPublication` changes a Shared record with one complete record assignment, which the ASL names the architectural commit point. `TLOADShared` builds its candidate in a local copy and installs it with one such update, so no half-assigned record is visible.
+
+On a probe fault in its per-element load loop, `TLOADShared` installs the record it has built so far and returns; loads completed before the fault remain in that record.
+
+`TSTOREShared` visits selected PEs in order 0 to 3 and stores the full valid region from each PE's own base and stride. The first fault stops the whole request; stores already done stay visible.
+
+`TMOVLocalToShared` with `publish` set requires the prospective record to be fully initialized, and faults with `Fault_TileLegality` otherwise.
+
+`TMOVSharedToLocal` requires an exact descriptor match and copies every physical element. Each participating consumer sees the same complete parent; the mask selects consumers, not quarters.
+
+`TMOV` copies payload and definedness from source to destination. Under an ExecutionMask, inactive valid coordinates get the mask zero or merge value.
+
+`GMOV` asserts `peer_tid < 4` and copies payload and definedness from a snapshot; it makes no Shared or GM access.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-boundaries role=boundaries -->
+## Architectural boundaries
+
+The Shared-TLSU block dispatcher resolves per-PE GPRs, subviews, and Shared readiness before calling these helpers, and it handles `B.ASSEMBLE` generation candidates around `TLOADShared`. The shared-registers unit owns the record fields, compatibility, and publication rules.
+
+These helpers use stop-at-first-fault behavior. They do not probe the whole footprint first.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-example role=example-usage -->
+## Non-normative reading example
+
+A Shared FP32 Tile has capacity 4096 bytes. Element 700 has bit offset 700 x 32 = 22400, which is byte 2800.
+
+- Its quarter is 2800 x 4 / 4096 = 2 (rounded down), so PE2 owns it.
+- PE2 is mask bit 3 - 2 = 1, so the multi-PE mask `PE_MASK=0011` selects this element and `0101` does not.
+- With `PE_MASK=1111`, PE2 loads it from PE2's base address plus row times PE2's stride, plus column times 4.
+
+With `PE_MASK=0010` alone, the load is single-issuer, so PE2 loads all valid elements, including element 700.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared registers](../state/shared-registers.md) owns the Shared record and its publication.
+- [Stride](stride.md) owns the byte-strided addresses.
+- [Load and store](load-store.md) owns the Local forms and the probe.
+- [Shared TLSU dispatch](../../../block/model/dispatch/shared-tlsu.md) calls these helpers.
+- [Global memory access](../../../arch/memory-model/global-memory-access.md) owns GM access rules.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

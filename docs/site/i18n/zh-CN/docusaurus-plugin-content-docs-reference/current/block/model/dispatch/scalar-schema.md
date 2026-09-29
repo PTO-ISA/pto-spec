@@ -12,7 +12,66 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元负责 `B.IOR` 的规则。`B.IOR` 是把通用寄存器（GPR）绑定到 Tile 操作的指令束命令。一个 `B.IOR` 携带一个目标选择子 `RegDst` 和至多三个源选择子 `RegSrc0`、`RegSrc1` 和 `RegSrc2`。选择子编码 0 表示架构零寄存器。
+
+本单元在指令束生命周期的三个时刻起作用：
+
+- 头命令译码期间，它决定 `B.IOR` 可以放在哪里，以及是否需要第二个 `B.IOR`。
+- 检查指令束完整性时，它检查选择子结构，但不读取任何 GPR。
+- 分配目标之前，它读取 GPR 值并检查其范围。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+`_BundleScalarBindings` 有两个条目。索引 0 保存第一个 `B.IOR`。索引 1 仅在 `BundleMultiIORSelected` 为真时使用，这适用于 `TGPR2T`、`TIMG2COL` 以及可使用 ExecutionMask 的操作。每个条目记录其选择子、一个 `source_count` 以及一个 `execution_mask_present` 标志。
+
+操作输入按固定顺序紧密打包到源槽中：`address`、`scalar0`、`diagonal`，然后是 `flag0`；对于矩阵指令束，当 `B.FPATR` 选择标量参数时，后面再跟一个量化参数和一个 ReLU 参数。`BundleOperationGPRInputCount` 统计存在的输入，`BundleOperationGPRInputSlot` 给出 `address`、`scalar0`、`diagonal` 或 `flag0` 的槽位；值检查自行计算矩阵参数的槽位。
+
+本单元只读取状态。它不写入任何内容，自身也不引发故障；故障由其调用方引发。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-rules role=rules-interactions -->
+## 规则与交互
+
+放置规则由命令译码器求值。对于 `TGPR2T`，`RegDst` 为 0，且两个 `B.IOR` 命令都位于任何参与的 `B.IOT` 之前。对于 `TIMG2COL`，`B.IOR` 位于所有 Tile 和 Shared 绑定之前，`RegDst` 为 0，且第一个 `B.IOR` 的 `RegSrc1` 和 `RegSrc2` 为零。对于 ExecutionMask 流，第二个 `B.IOR` 的 `RegDst` 为 0，并跟在一个不带掩码标志的第一个 `B.IOR` 之后。当 `TGPR2T` 或 `TIMG2COL` 只收到第一个 `B.IOR` 时，下一条命令必须是第二个 `B.IOR`。`TGPR2T` 还接受零参与的 `B.IOT`，并且在见到零参与之后接受任何命令。违反这些规则会引发 `Fault_BundleControl`。
+
+`BundleOperationScalarBindingSchemaLegal` 只检查结构：
+
+- 在普通情形下，超出输入数量的每个源槽都必须是选择子 0，且 `RegDst` 必须为 0。
+- 没有 ExecutionMask 的 `TEXPDIF` 不接受任何 `B.IOR`。
+- CUBE `TCI` 需要恰好一个 `B.IOR`，其中两个选择子小于 `PTO_ABSOLUTE_GPR_COUNT`（24），`RegSrc2` 为零，`RegDst` 为零。
+- GPR ExecutionMask 交由 `BundleExecutionMaskGPRBindingSchemaLegal` 检查。它要求掩码布局为 `CUBE_M16` 或 `CUBE_M32`，最多允许 6 个槽位，先放操作输入，再放 1 或 2 个掩码字。恰好在需要超过 3 个槽位时使用第二个 `B.IOR`，掩码标志标记所使用的最后一个 `B.IOR`。
+
+`BundleOperationGPRBindingValuesLegal` 读取值。`flag0` 必须为 0 或 1。`diagonal` 必须在 -65535 到 65535 之间。矩阵标量参数必须是合法的参数字。对于 CUBE `TCI`，每个参与 PE 的 Step2D 行步长和列步长都必须是 -1、0 或 1。没有掩码的 `TGPR2T` 需要两个 `B.IOR` 命令：第一个有 3 个源，第二个有 1 个源，所有选择子都小于 24，且 `RegDst` 为 0。没有 ExecutionMask 时，普通操作不接受第二个 `B.IOR`，且最多有 3 个输入。
+
+设计要点：结构检查和值检查是分开的。在零参与退出之后，本地 Tile 路径先检查完整性（失败引发 `Fault_BundleControl`），再检查值（失败引发 `Fault_TileLegality`），然后才分配目标。ASL 注释说明了其结果：无效值永远不会进入受约束的 `TileInstructionOperands` 字段或 Tile 状态。在这条路径上，`PE_MASK` 为 0000 的指令束不读取任何 GPR。
+
+设计要点：未使用的选择子必须为 0，而不是被忽略。`B.IOR` 的源槽没有单独的省略编码；编码 0 表示零寄存器。因此普通检查只接受超出输入数量的槽位中的编码 0，在本地 Tile 路径上，多余的非零选择子会在完整性检查中失败并引发 `Fault_BundleControl`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-boundaries role=boundaries -->
+## 架构边界
+
+本单元不为执行读取标量。[Tile 指令操作数](tile-instruction-operands.md)使用相同的槽位函数填充操作数，ExecutionMask 所有者负责解释掩码字。比较和选择操作在这里跳过普通值检查；它们的 `B.IOR` 布局由[比较 schema](comparison-schema.md)检查。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+`TADDS <Row=8, Col=64, FP32>, T#1, a2, ->T<2KB>` 只有一个输入 `scalar0`，因此其 `B.IOR` 为 `a2, zero, zero, ->zero`。`RegSrc1` 非零的 `B.IOR` 无法通过结构检查。
+
+`TTRI` 的 `diagonal` 位于槽位 0，`flag0` 位于槽位 1。如果方向寄存器的值为 2，值检查失败，指令束会在分配任何目标之前引发 `Fault_TileLegality`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-scalar-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [命令](commands.md)在译码 `B.IOR` 时应用放置规则和流规则。
+- [描述符合法性](descriptor-legality.md)在绑定完整性检查中调用结构检查。
+- [Tile 执行分派](tile-execution.md)把值检查排在目标解析之前。
+- [执行掩码 schema](execution-mask-schema.md)解释 GPR 掩码字。
+- [标量绑定](../operands/scalar-bindings.md)保存 `B.IOR` 记录。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

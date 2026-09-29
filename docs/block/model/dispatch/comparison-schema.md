@@ -12,7 +12,74 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the closed bundle schemas of the comparison `TCMP` and the select `TSEL`, and the shared helpers that `TCMPS`, `TSELS`, reductions, and expansions reuse. A closed schema lists the only accepted combinations of `B.IOT`, `B.IOR`, and `B.DIM` records for an operation, and rejects any other combination.
+
+Its main entry points are:
+
+- `SelectedBundleClosedTCMPSchemaLegal` and `SelectedBundleClosedTSELSchemaLegal`, the two schema checks.
+- `SelectedBundleComparisonUsesGPRCarrier`, `SelectedBundleComparisonProducesGPR`, and `SelectedBundleComparisonConsumesGPR`, which decide whether a predicate travels through a GPR.
+- `BundleComparisonCodeAsTileComparison`, which maps `CMode` codes 0 to 5 to EQ, NE, LT, GT, LE, and GE.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+A comparison result, or a select predicate, uses one of three carriers:
+
+| Carrier | Layout | Representation |
+| --- | --- | --- |
+| Legacy predicate Tile | `RowMajor` | one bit per element in a Local Tile |
+| PredicateCell | `CUBE_M16` or `CUBE_M32` | one `U8` byte per element in a Local Tile |
+| Predicate GPR | `CUBE_M16` or `CUBE_M32` | mask bits in 1 or 2 GPR words |
+
+An 8-bit operation type uses 2 mask words, which cover the CUBE low and high predicate halves. 16-bit and 32-bit types use 1 word.
+
+The checks are read-only. They read `_BundleTileBindings`, `_BundleScalarBindings`, `_BundleDimensions`, `_BundleDataAttributes`, `_BundleExecutionMask`, and the source descriptors in `_Tiles`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+Both schemas first require no Shared binding and `B.DIM` values from 1 through 65535 for ValidCol, ValidRow, and Col. For `TCMP` and every `TSEL` form except the legacy predicate Tile form, the first numeric source must also match `B.DIM`: its valid shape equals ValidRow by ValidCol, and its physical columns equal Col, or for a CUBE source, the CUBE storage columns derived from Col.
+
+For `TCMP`, the source layout selects the result carrier:
+
+- A `RowMajor` source needs one new Local destination and no `B.IOR`, unless the ExecutionMask is in a GPR.
+- A CUBE source with a Local destination produces a PredicateCell. `Sat` and `Canonicalize` must be zero, and the capacity must hold a `U8` CUBE shape of the source valid rows and columns.
+- A CUBE source with no Tile destination writes a GPR. It needs exactly one `B.IOR` record whose source fields are zero, unless they carry GPR ExecutionMask words, plus `Canonicalize` zero, and `Sat` only for 8-bit types.
+
+For `TSEL`, the kind of the first source selects the form. A PredicateCell first source uses two bindings; a legacy predicate Tile uses one binding, or two with a Tile ExecutionMask; a CUBE true source with no predicate Tile consumes the mask from `B.IOR`.
+
+Design point: the ASL comment states that in the CUBE GPR form, encoded register zero is still architectural GPR0, so a zero `B.IOR` destination does not mean 'no destination'. The `B.IOR` record is still required, and the result written to GPR0 is discarded by `WriteGPR`.
+
+Design point: when the ExecutionMask is present, CUBE sources check definedness only at mask-active coordinates. The ASL comment states that without a mask this is equivalent to requiring the full source contents to be defined.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+These checks return a boolean. The Tile execution owner calls them from `SelectedBundleClosedSchemasLegal` after the PE-mask zero exit and maps a false result to `Fault_TileLegality` before destination resolution.
+
+The GPR-producing `TCMP` and `TCMPS` forms then execute through `ExecuteBundleComparisonGPRCarrier` and allocate no Tile. The GPR-consuming `TSEL` and `TSELS` forms resolve their Tile destination first. Predicate evaluation itself belongs to the Tile comparison and select execution owners.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+```text
+TCMP <Row=16, Col=4, FP16, LT>, T#1, T#2, ->a3
+```
+
+Suppose `T#1` and `T#2` are Local `FP16` `CUBE_M16` Tiles with 16 valid rows and 4 valid columns. The bundle has one `B.IOT` with both sources and no destination, plus one `B.IOR` whose destination selects `a3` and whose source fields are zero. The schema selects the GPR form. `CMode` code 2 maps to LT. `FP16` is 16 bits wide, so the result uses 1 mask word, which holds 4 fields of 16 row bits for the 16 by 4 predicate. `Sat` must be zero.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-comparison-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution dispatch](tile-execution.md) orders these checks and runs the GPR carrier path.
+- [Predicate destination](predicate-destination.md) allocates legacy and PredicateCell results.
+- [Destination operation routing](destination-operation.md) routes `TCMP` and CUBE `TSEL` destinations.
+- [TCMP](../../../tile/elementwise-tile-tile/logical/TCMP.md) and [TSEL](../../../tile/elementwise-tile-tile/logical/TSEL.md) are the instruction pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,59 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元判断 Tile 指令束是否携带执行掩码，检查载体的形状，并捕获其值。执行掩码是逐元素的活跃位：非活跃元素保留目标的旧值（merge）或变为零，由 `B.DATR` 选择。
+
+掩码有两种载体之一：
+
+- GPR 载体，即通过 `B.IOR` 绑定且设置了执行掩码标志的一个或两个通用寄存器；
+- 谓词 Tile 载体，即位于操作普通源之后的一个额外 `B.IOT` 源，其存储种类为 `TileStorage_PredicateCell`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元写入 `_BundleExecutionMask`：`valid`、`carrier`、坐标域（`layout`、`valid_rows`、`valid_columns`）、`word_count`、`predicate_tile`、`predicate_source_ordinal`、`invert`、`zero_inactive`，并在合并准备时写入 `merge_base` 和 `merge_base_valid`。`invert` 和 `zero_inactive` 复制自 `B.DATR` 的 `PredInv` 和 `Zero` 字段。
+
+坐标域是掩码覆盖的网格。对大多数操作，它是第一个普通源的有效形状和布局。当第一个源是谓词单元时，`TSEL` 和 `TSELS` 使用第二个源。`TGATHER`、`TSCATTER`、`MSCATTER` 和 `MSCATTER_MASK` 使用第二个源。CUBE 传输和封闭扩展操作使用 `LB0` 和 `LB1`。`TPACK` 和 `TUNPACK` 以每行的 32 位字数计列。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-rules role=rules-interactions -->
+## 规则与交互
+
+`MarkSelectedBundleExecutionMaskCarrier` 先清除掩码。若任一标量绑定设置了执行掩码标志，则选择 GPR 载体。其绑定 schema 必须合法，其坐标布局必须是 `CUBE_M16` 或 `CUBE_M32`。对大多数操作，坐标域必须放得下：有效行数最多为 16 或 32，有效列数不超过谓词字段数乘以字数。`TPACK` 和 `TUNPACK` 改用位计数规则。否则，当本地源数量恰好比普通源数量多一个且最后一个源是谓词单元时，选择谓词 Tile 载体。它的形状必须与坐标域一致，其值必须为 0 或 1。
+
+随后 `CaptureSelectedBundleExecutionMask` 记录掩码值。对于谓词 Tile，它把坐标域中每个元素的位 0 复制到 `predicate_tile_snapshot`。对于 GPR 载体，它读取寄存器值。
+
+`PrepareSelectedBundleExecutionMaskMerge` 只在掩码有效、采用 merge 语义且存在目标时运行。它取目标 hand 上最新的 Tile 作为合并基底。该 Tile 必须已分配、已定义且是合法的 CUBE 描述符，并且必须与期望的布局、有效形状和类型一致。
+
+当 PE 掩码不为零时，Tile 执行分派对可使用掩码的操作依次调用标记与捕获，且在任何专用处理程序或通用 schema 检查之前进行。它在专用内存处理程序运行之前调用合并准备，或在通用路径上于目标分配之前调用。三者中任一失败都会引发 `Fault_TileLegality`。
+
+设计要点：掩码在目标分配之前被捕获。谓词载体契约要求在与之重叠的谓词目标被分配或发布之前对载体做快照。此后活跃性从 `predicate_tile_snapshot` 或捕获的 GPR 字读取，而不是从载体 Tile 读取，因此在指令束执行期间分配、写入或发布目标都无法改变哪些元素是活跃的。
+
+设计要点：merge 从目标 hand 上最新的 Tile 读取旧值，而不是从新目标读取。Local 目标是一个新寄存器，因此该 hand 的先前值位于现有 Tile 中。合并准备在分配之前检查该 Tile，随后非活跃元素从它复制值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-boundaries role=boundaries -->
+## 架构边界
+
+本单元不决定哪些操作可以携带掩码；这由 `TileOperationExecutionMaskEligible` 决定。它也不检查 `B.DATR` 掩码字段与载体是否相容；这由紧随捕获之后的 `BundleExecutionMaskDataAttributesLegal` 完成。掩码的逐元素使用，包括 merge 与置零，属于 Tile 执行掩码所有者。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+一个 `TADD` 指令束在 `B.IOT` 中绑定三个本地源：左源、右源和一个谓词单元。`TADD` 有 2 个普通源，因此 3 个本地源会选择谓词 Tile 载体，`predicate_source_ordinal` 为 2。若左源是 16 个有效行、32 个有效列的 `CUBE_M16` Tile，则谓词单元也必须是 `CUBE_M16`，有效元素为 16 乘 32。捕获会复制这 512 位。
+
+当 `B.DATR` 的 `Zero` 清零时，合并准备要求目标 hand 上最新的 Tile 是已定义的 `CUBE_M16` 数值 Tile，类型为有效数据类型。其有效形状必须等于 `LB1` 乘 `LB0` 的形状；当 `B.DIM` 把 `LB1` 设为 16、把 `LB0` 设为 32 时，此处为 16 乘 32。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile 执行分派](tile-execution.md) 调用标记、捕获与合并准备。
+- [标量 schema](scalar-schema.md) 拥有 GPR 载体的绑定 schema 与字数。
+- [执行掩码](../../../tile/model/execution/execution-mask.md) 记录捕获的掩码状态。
+- [谓词载体](../../../tile/model/legality/predicate-carriers.md) 拥有谓词单元的形状与值检查。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

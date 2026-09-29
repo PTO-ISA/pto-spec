@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the `TCVT` element-conversion body and the value-conversion dispatch it uses.
+
+- `NormalizeTileInteger`, `TileIntegerMinimum`, and `TileIntegerMaximum` describe integer ranges.
+- `TileConvertIntegerSaturating` and `TileConvertIntegerValue` convert between integer types.
+- `TileProfileConvert` and `TileConvertValue` choose the conversion rule for a type pair.
+- `TCVT` converts a whole Tile, and `TileCommitConversionResult` publishes it.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-concepts role=concepts-state -->
+## Concepts and visible state
+
+`NumericExecutionControl` carries a rounding mode and a `saturating` flag. In TCVT they come from the bundle `RMode` and `Sat` fields.
+
+`NormalizeTileInteger` keeps the low bits of the type width and sign-extends signed types (S4X2, S8, S16, S32) or zero-extends unsigned types. `TileIntegerMinimum` is 0 for unsigned types; `TileIntegerMaximum` is, for example, `0x7f` for S8 and `0xff` for U8.
+
+The source operation type of TCVT is the BSTART DataType when the bundle supplies one, and otherwise the source Tile's own type. The destination type is the destination Tile's type.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileConvertValue` picks a rule:
+
+- Integer to integer: `TileConvertIntegerValue`. Without saturation it truncates to the destination width. With saturation it clamps: a negative signed source becomes 0 in an unsigned destination, and out-of-range values become the destination minimum or maximum. No flags are produced.
+- Any floating side: `TileProfileConvert`.
+
+`TileProfileConvert` sends E2M1X2, E1M2X2, and E6M2 on either side, and RCPE6M2 as a source, to `ReferenceTCVTConvert`. A pair inside the common set (FP64, FP32, FP16, E4M3, and S/U 64, 32, 16, 8) goes to `ReferenceCommonConvert`. An E8M0 destination goes to `ReferenceFloatToE8M0`.
+
+Any other pair falls back. An integer destination receives `NormalizeTileInteger` of the raw source bits, and a floating destination receives the raw source word, both with no flags. BF16 is not in the common set, so for example BF16 to FP32 takes this fallback in the current ASL.
+
+`TCVT` asserts equal valid shapes, and for layouts other than CUBE, equal physical shapes. It clears destination definedness and converts each active valid element. When the source operation type is E8M0, E2M1X2, E1M2X2, E6M2, or RCPE6M2, or the destination is E2M1X2, E1M2X2, or E6M2, and `HardwareTCVTTypePairSupported` accepts the pair, the element goes directly to `ReferenceTCVTConvert`; otherwise it goes to `TileConvertValue`. Inactive elements receive the ExecutionMask zero or merge value. It then marks the valid region defined, applies the bundle `PadValue` to the rest, and calls `TileCommitConversionResult`.
+
+Design point: the source is read from a snapshot taken before any destination write, so a source that aliases the destination still converts its original values.
+
+Design point: flags from every converted element are ORed together and recorded once, in `TileCommitConversionResult`, immediately before the destination is published. The body has no fault path, and legality rejection happens before the body runs, so a rejected TCVT changes neither the destination nor the sticky status.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-boundaries role=boundaries -->
+## Architectural boundaries
+
+Type-pair, rounding-mode, encoding, definedness, and layout legality are checked by `TileOperandsLegal_TCVT` and the block TCVT schema before this body runs. This body only asserts the shape rules, and it uses `HardwareTCVTTypePairSupported` only to choose a route.
+
+The rounding and special-value rules for each format live in the reference, TCVT, packed, and E8M0 conversion units.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-example role=example-usage -->
+## Non-normative reading example
+
+Convert S16 value -300 (`0xFED4`) with TCVT.
+
+- To S8 without saturation: the low 8 bits are `0xD4`, which is -44.
+- To S8 with saturation: -300 is below -128, so the result is the S8 minimum -128 (low byte `0x80`).
+- To U8 with saturation: the source is negative, so the result is 0.
+- To U16 without saturation: the result is `0xFED4` (65236).
+
+None of these integer conversions sets a flag.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-formats-related role=related-owners-navigation -->
+## Related owners
+
+- [Reference conversion](reference-conversion.md) owns the common conversion rule.
+- [TCVT conversion](tcvt-conversion.md) owns the closed scale and packed formats.
+- [E8M0 conversion](e8m0-conversion.md) owns type-pair legality and float to E8M0.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flags.
+- [TCVT](../../elementwise-tile-tile/format-conversion/TCVT.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

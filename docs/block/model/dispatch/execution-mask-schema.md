@@ -12,7 +12,59 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit decides whether a Tile bundle carries an execution mask, checks the carrier's shape, and captures its value. An execution mask is a per-element activity bit: an inactive element keeps its old destination value (merge) or becomes zero, as `B.DATR` selects.
+
+A mask has one of two carriers:
+
+- a GPR carrier, one or two general registers bound through `B.IOR` with the execution-mask flag set;
+- a predicate-Tile carrier, one extra `B.IOT` source after the operation's ordinary sources, whose storage kind is `TileStorage_PredicateCell`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit writes `_BundleExecutionMask`: `valid`, `carrier`, the coordinate domain (`layout`, `valid_rows`, `valid_columns`), `word_count`, `predicate_tile`, `predicate_source_ordinal`, `invert`, `zero_inactive`, and at merge preparation `merge_base` and `merge_base_valid`. `invert` and `zero_inactive` are copied from the `B.DATR` `PredInv` and `Zero` fields.
+
+The coordinate domain is the grid that the mask covers. For most operations it is the valid shape and layout of the first ordinary source. `TSEL` and `TSELS` use the second source when the first is a predicate cell. `TGATHER`, `TSCATTER`, `MSCATTER`, and `MSCATTER_MASK` use the second source. CUBE transport and closed expansion operations use `LB0` and `LB1`. `TPACK` and `TUNPACK` count columns in 32-bit words per row.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+`MarkSelectedBundleExecutionMaskCarrier` first clears the mask. If either scalar binding has its execution-mask flag set, the GPR carrier is selected. Its binding schema must be legal and its coordinate layout must be `CUBE_M16` or `CUBE_M32`. For most operations the domain must fit: at most 16 or 32 valid rows, and valid columns no more than the predicate field count times the word count. `TPACK` and `TUNPACK` use a bit-count rule instead. Otherwise, the predicate-Tile carrier is selected when the local source count is exactly one more than the ordinary count and that last source is a predicate cell. Its shape must match the domain, and its values must be 0 or 1.
+
+`CaptureSelectedBundleExecutionMask` then records the mask value. For a predicate Tile it copies bit 0 of each element in the domain into `predicate_tile_snapshot`. For a GPR carrier it reads the register values.
+
+`PrepareSelectedBundleExecutionMaskMerge` runs only for a valid mask with merge semantics and a destination. It takes the newest Tile on the destination's hand as the merge base. That Tile must be allocated, defined, and a legal CUBE descriptor, and must match the expected layout, valid shape, and type.
+
+Tile execution dispatch calls marking and capture in that order for a mask-eligible operation when the PE mask is not zero, before any specialized handler or generic schema check. It calls merge preparation before a specialized memory handler runs, or on the generic path before destination allocation. A failure in any of the three raises `Fault_TileLegality`.
+
+Design point: the mask is captured before destinations are allocated. The predicate-carrier contract requires the carrier to be snapshotted before an overlapping predicate destination is allocated or published. Activity is then read from `predicate_tile_snapshot` or the captured GPR words, not from the carrier Tile, so allocating, writing, or publishing a destination during the bundle cannot change which elements are active.
+
+Design point: merge reads old values from the newest Tile on the destination hand, not from the new destination. A Local destination is a fresh register, so the previous value of that hand lives in the existing Tile. Merge preparation checks that Tile before allocation, and an inactive element then copies from it.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not decide which operations may carry a mask; `TileOperationExecutionMaskEligible` does. It does not check `B.DATR` mask fields against the carrier; `BundleExecutionMaskDataAttributesLegal` does, right after capture. Per-element use of the mask, including merge and zeroing, belongs to the Tile execution-mask owners.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `TADD` bundle binds three local sources in `B.IOT`: left source, right source, and a predicate cell. `TADD` has 2 ordinary sources, so 3 local sources select the predicate-Tile carrier, with `predicate_source_ordinal` 2. If the left source is a `CUBE_M16` Tile with 16 valid rows and 32 valid columns, the predicate cell must also be `CUBE_M16` with 16 by 32 valid elements. Capture copies those 512 bits.
+
+With `B.DATR` `Zero` clear, merge preparation needs the newest Tile on the destination hand to be a defined `CUBE_M16` numeric Tile of the effective data type. Its valid shape must equal the `LB1` by `LB0` shape, here 16 by 32 when `B.DIM` sets `LB1` to 16 and `LB0` to 32.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution dispatch](tile-execution.md) calls marking, capture, and merge preparation.
+- [Scalar schema](scalar-schema.md) owns the GPR carrier binding schema and word count.
+- [Execution mask](../../../tile/model/execution/execution-mask.md) records the captured mask state.
+- [Predicate carriers](../../../tile/model/legality/predicate-carriers.md) owns the predicate-cell shape and value checks.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

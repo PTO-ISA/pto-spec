@@ -12,7 +12,83 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit defines the vocabulary of the GM atom/red family: the operation enumerations, the operation/type matrix, the per-element result rules, and the operand legality predicates. The execution bodies are in the GM atom/red execution unit.
+
+- An atom form performs an atomic read-modify-write per lane and returns each old value in a destination Tile.
+- A red (reduction) form performs the same kind of update but has no destination.
+
+It also holds the NDF clauses for the legacy `MGATHER_CAS` spelling and for the family encoding, body schema, type legality, INC/DEC and POPC semantics, ordering, and faults.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-concepts role=concepts-state -->
+## Concepts and visible state
+
+`GMAtomicOperation` lists CAS, EXCH, MAX, MIN, ADD, INC, DEC, AND, OR, and XOR. `GMReductionOperation` lists MAX, MIN, ADD, INC, DEC, AND, OR, XOR, and POPC; it has no CAS or EXCH.
+
+The accepted element types are fixed per operation:
+
+| Operation | Accepted types |
+| --- | --- |
+| CAS (atom only) | U16, U32, U64 |
+| EXCH (atom only) | U32, U64 |
+| ADD | FP16, BF16, FP32, FP64, S32, U32, U64 |
+| MAX, MIN | S32, S64, U32, U64 |
+| AND, OR, XOR | U32, U64 |
+| INC, DEC | U32 |
+| POPC (red only) | U32 |
+
+No four-bit or 8-bit type appears in this matrix.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-rules role=rules-interactions -->
+## Rules and interactions
+
+`GMAtomicResult` returns the new value and whether a write happens.
+
+- CAS compares the old value with `expected` at element width (`GMRawElementValue`) and writes `replacement` only on a match; otherwise it reports no write.
+- EXCH writes the new value unconditionally.
+- Integer ADD adds the two element-width raw values; the later store truncates to the element width, so it wraps.
+- MAX and MIN compare as signed for S32 and S64 and as unsigned otherwise.
+- AND, OR, and XOR are bitwise.
+- INC and DEC use `GMIncValue` and `GMDecValue` with the lane value as a limit.
+
+Design point: INC and DEC are wrap-around counters with an explicit limit (NDF `PTO-ATOM-RED-INC-DEC-SEMANTICS-001`). INC returns 0 when the old value is at or above the limit. DEC returns the limit when the old value is 0 or above the limit. A counter therefore cycles inside `0..limit` instead of wrapping at the type width.
+
+Floating ADD calls `GMFloatingAddPTX`, an implementation-defined hook. Its comment names the frozen PTX-derived profile: round to nearest even, no flush-to-zero for FP16 and BF16, and flush-to-zero for FP32 global atomics. The hook's model body adds the raw words and is not a floating addition.
+
+The four `TileOperandsLegal_GM_*` predicates all require defined index contents and S32, U32, S64, or U64 indices. The CAS, VALUE, and red VALUE forms also require a legal type for the operation, the same data type on every data Tile they bind, and equal valid shape and layout across those Tiles; the two atom forms also require a legal destination descriptor. `TileOperandsLegal_GM_RED_POPC` checks only the index Tile.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-boundaries role=boundaries -->
+## Architectural boundaries
+
+The type matrix excludes Shared operands, vectors, packed FP16x2 and BF16x2, and U128 (NDF `PTO-ATOM-RED-TYPE-LEGALITY-001`). The block dispatcher rejects any other combination with `Fault_TileLegality` before effects.
+
+These functions do not touch memory. Probing, ordering, duplicate-address serialization, and event recording belong to the execution unit and the architecture memory model.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-example role=example-usage -->
+## Non-normative reading example
+
+U32 INC with limit 3:
+
+- old 0 gives 1, old 2 gives 3, old 3 gives 0, and old 7 gives 0.
+
+U32 DEC with limit 3:
+
+- old 0 gives 3, old 2 gives 1, and old 7 gives 3.
+
+U32 ADD with old `0xFFFFFFFF` and value 2 computes `0x100000001`; the 4-byte store writes `0x00000001`.
+
+S32 MAX with old `0xFFFFFFFF` (-1) and value 1 keeps 1, because the comparison is signed. U32 MAX with the same bits keeps `0xFFFFFFFF`.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-related role=related-owners-navigation -->
+## Related owners
+
+- [GM atom/red execution](gm-atom-red-execution.md) runs these rules against memory.
+- [Atomics](atomics.md) owns the `MGATHER_CAS` body.
+- [Addressing](addressing.md) owns the byte-displacement address.
+- [Memory atomicity](../../../arch/memory-model/atomicity.md) owns atomic events.
+- [Block GM atom/red dispatch](../../../block/model/dispatch/tlsu-gm-atom-red.md) owns the bundle schema checks.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

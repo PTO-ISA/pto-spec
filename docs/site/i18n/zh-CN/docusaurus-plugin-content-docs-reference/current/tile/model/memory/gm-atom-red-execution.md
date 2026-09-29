@@ -12,7 +12,75 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-purpose role=purpose-scope -->
+## 作用与范围
 
+本单元对内存执行 GM atom/red 族。
+
+- `GMRunAtomic` 是共享的 atom 执行体。`GM_ATOM_CAS` 与 `GM_ATOM_VALUE` 调用它。
+- `GM_RED_VALUE` 以值 Tile 执行归约，没有目标。
+- `GM_RED_POPC` 在每个索引地址上加 1。
+- `GMReductionResult` 计算归约结果。
+- `GMAtomicOperationFromFunction` 与 `GMReductionOperationFromFunction` 把 TLSU Function 编号映射为操作。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-concepts role=concepts-state -->
+## 概念与可见状态
+
+Function 映射如下：
+
+| Function | 操作 |
+| --- | --- |
+| 8, 9, 10, 11, 12 | atom CAS, EXCH, MAX, MIN, ADD |
+| 14, 15, 16, 17, 18 | atom INC, DEC, AND, OR, XOR |
+| 19, 20, 21, 22, 23 | red MAX, MIN, ADD, INC, DEC |
+| 24, 25, 26, 27 | red AND, OR, XOR, POPC |
+
+Function 13 是 `GMOV`，不属于本族。atom 映射对未列出的 Function 返回 XOR，归约映射返回 POPC；块分派器只对列出的值调用它们。
+
+通道是索引 Tile 的一个活动有效坐标（对 atom 形式也可以说是目标的坐标，二者有效形状相同）。每个通道恰好产生一个原子事件。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-rules role=rules-interactions -->
+## 规则与交互
+
+每个执行体都有相同的三个步骤。
+
+- 预检：为每个活动通道计算 `base + displacement`，按读探测、按写探测，如果两次转换结果不同则产生 `Fault_DataPage`。快照该通道的值、期望值与替换值操作数。
+- 仅 atom 形式：初始化目标。非活动的有效坐标得到 ExecutionMask 的零值或合并值；其他每个物理元素得到填充值。
+- 提交：按 `ARBITRARY` 选择决定的顺序处理通道。每个通道加载旧值，计算新值，若执行写入则存储新值，把旧值写入 atom 目标，并记录一个原子事件。
+
+设计要点：所有探测都在第一个事件或本地发布之前完成（NDF `PTO-ATOM-RED-ORDERING-001`）。故障使 GM 保持不变，也不记录事件。其结果是：重试一个发生故障的 atom 或 red 请求不会把更新应用两次。
+
+设计要点：重复的有效地址按实现定义的顺序串行化，并且全部生效。同一地址上的两个 red ADD 通道都会相加，因此对整数 ADD 而言，最终和与顺序无关。
+
+归约形式总是存储新值，并把 `write_performed` 记录为 TRUE。atom CAS 在比较失败时记录 FALSE，且不存储。
+
+`GM_RED_POPC` 总是作用于 U32，没有值 Tile 也没有目标，每个通道恰好加 1。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-boundaries role=boundaries -->
+## 架构边界
+
+这些执行体假定操作数合法性已经通过；块分派器先调用 `TileOperandsLegal_GM_*` 谓词，否则以 `Fault_TileLegality` 报告故障。`PE_MASK=0000` 在 GM atom/red 分派器开头退出，早于其 schema、描述符、类型与内存检查。
+
+每个通道自身是原子的。整个请求不是一个原子事务，其事件携带 `CurrentBundleMemoryOrder()`。排序规则由架构内存模型拥有。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-example role=example-usage -->
+## 非规范阅读示例
+
+`MSCATTER_POPC`（Function 27），基地址 `0x1000`，1 x 3 的 U64 索引 Tile 保存 `0, 4, 0`。GM 在 `0x1000` 处保存 U32 值 10，在 `0x1004` 处保存 20。
+
+- 通道地址为 `0x1000`、`0x1004` 与 `0x1000`；全部 4 字节对齐。
+- 两个通道在 `0x1000` 上加 1，无论顺序如何最终为 12。
+- 一个通道在 `0x1004` 上加 1，最终为 21。
+- 记录三个原子事件，每个的 `write_performed` 都为 TRUE。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-atom-red-execution-related role=related-owners-navigation -->
+## 相关归属
+
+- [GM atom/red](gm-atom-red.md) 拥有操作/类型矩阵与结果规则。
+- [Atomics](atomics.md) 拥有 `MGATHER_CAS` 执行体。
+- [Restart](restart.md) 解释先全部探测的重启模式。
+- [Memory atomicity](../../../arch/memory-model/atomicity.md) 与 [ordering](../../../arch/memory-model/ordering.md) 拥有事件语义。
+- [MSCATTER_POPC](../../memory-and-data-movement/irregular/MSCATTER_POPC.md) 是本族中的一个指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

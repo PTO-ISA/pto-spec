@@ -12,7 +12,68 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit resolves the destination Tile for comparisons and for CUBE selects. It finds the destination binding, validates or allocates the Tile, and records the chosen register in the binding.
+
+It defines these functions:
+
+- `BundleFirstDestinationBinding` returns the lowest valid binding that has a destination.
+- `BundleFreeDestinationIndex` returns the first unallocated register in the destination hand. A hand is one of the four groups of 16 Local registers: T is 0 to 15, U is 16 to 31, M is 32 to 47, and N is 48 to 63.
+- `ResolveBundlePredicateDestination` resolves the predicate result of `TCMP` and `TCMPS`.
+- `BundleComparisonSelectTrueSource` picks the Tile that supplies the "true" values of `TSEL` or `TSELS`.
+- `ResolveBundleCUBESelectDestination` resolves the numeric result of a CUBE `TSEL` or `TSELS`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-concepts role=concepts-state -->
+## Concepts and visible state
+
+A comparison writes one of two predicate carriers, chosen by the layout of the first source:
+
+- A `RowMajor` source produces a packed predicate Tile with `TileStorage_Predicate`, one bit per element, stored in `(rows * columns + 7) DIVRM 8` bytes.
+- A `CUBE_M16` or `CUBE_M32` source produces a PredicateCell: a `U8` CUBE Tile with `TileStorage_PredicateCell` whose `predicate_basis_type` records the comparison type.
+
+The unit reads `_BundleTileBindings`, the source descriptor in `_Tiles`, `_TileAllocationMasks`, and Local capacity. When it allocates a new Tile, it writes the allocated Tile descriptor, sets the binding `destination` to the chosen register, and sets `destination_allocated_by_bundle`; when it only validates an existing destination, it writes nothing.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-rules role=rules-interactions -->
+## Rules and interactions
+
+`ResolveBundlePredicateDestination` takes shape and layout from source 0 of binding 0, not from the destination binding. The ASL comment gives the reason: a later binding may carry both the new destination and a PredicateCell ExecutionMask, so it does not own the source type.
+
+If the destination is already resolved for this bundle (allocated by the bundle or reused through a Local generation), the unit only validates it. A PredicateCell must be a legal PredicateCell whose basis type equals the comparison type and whose valid shape and layout equal the source's. A packed predicate Tile must have predicate storage, the same physical and valid shape, and `RowMajor`. Its allocation mask must equal the binding `PE_MASK`. Failure raises `Fault_TileLegality`.
+
+Otherwise it allocates a new Tile:
+
+- For a CUBE source, the comparison type must be a supported CUBE predicate type and width-compatible with the source, and the `U8` CUBE shape must fit the destination size.
+- For a `RowMajor` source, the source must be numeric, its physical shape must fit its own capacity, and the predicate storage bytes must fit the destination size.
+- Local capacity must fit on every PE in the binding mask, and the hand must have a free register.
+
+Each of these failures raises `Fault_TileAllocation`.
+
+`ResolveBundleCUBESelectDestination` follows the same pattern for a numeric CUBE result. The true source must hold a legal CUBE descriptor. The result has the effective operation type, the source valid shape, and the source layout.
+
+Design point: all checks run before `ConfigurePredicateTileForMask`, `ConfigurePredicateCellForMask`, or `ConfigureCubeTileForMask` changes a descriptor. The caller runs this resolution after the closed schemas have passed. If a later step fails, `RollBackBundleTileDestinations` releases any Tile marked `destination_allocated_by_bundle` that was not reused through a generation.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not compute comparison or select results. It is reached through `ResolveBundleTileDestinationsForOperation` in [destination operation](destination-operation.md): for `TCMP` and `TCMPS` after the effective data type resolves, and for `TSEL` and `TSELS` only when the true source is CUBE. A missing destination binding raises `Fault_BundleControl`. Comparisons that write a GPR carrier do not reach this unit.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Consider `TCMP <Row=8, Col=64, FP32, LT>, T#1, T#2, ->U<512B>`. The left source `T#1` is a `RowMajor` `FP32` Tile with 8 rows and 64 columns. The predicate needs (8 * 64 + 7) DIVRM 8 = 64 bytes, which fits in 512 bytes. If registers 16 and 17 are allocated and 18 is free, `BundleFreeDestinationIndex` returns 18. The new packed predicate Tile has 8 rows and 64 columns, and the binding records register 18 as its destination.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-predicate-destination-related role=related-owners-navigation -->
+## Related owners
+
+- [Destination operation](destination-operation.md) routes comparisons and CUBE selects to this unit.
+- [Comparison schema](comparison-schema.md) validates the comparison bundle before resolution.
+- [Tile allocation](../../../tile/model/state/allocation.md) defines the configure functions and predicate storage size.
+- [Predicate carrier legality](../../../tile/model/legality/predicate-carriers.md) defines PredicateCell legality.
+- [TCMP](../../../tile/elementwise-tile-tile/logical/TCMP.md) is one instruction page that uses this unit.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

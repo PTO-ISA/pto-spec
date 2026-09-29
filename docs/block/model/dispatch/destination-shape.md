@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the shared resolver that allocates a Tile bundle's Local destinations: `ResolveBundleTileDestinationsWithShapeAndType`, and its two wrappers `ResolveBundleTileDestinationsWithShape` and `ResolveBundleTileDestinations`. It also owns the default shape readers that turn bundle dimensions into a destination shape.
+
+A Local destination is a `B.IOT` destination written as `->DstTile<Size>`. It names a relative hand (0 to 3) and a size code, not an absolute Tile register.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-concepts role=concepts-state -->
+## Concepts and visible state
+
+The default shape readers use the bundle dimension slots. `BundleDestinationValidRows` reads `LB1` and `BundleDestinationValidColumns` reads `LB0`. `BundleDestinationPhysicalColumns` reads `LB2` when a `B.DIM` set it. When `LB2` was not set, it returns the valid column count; for `TCI` with a CUBE layout it rounds that count up to the CUBE cell width. A value above 65535 reads as 0.
+
+The resolver writes these states for each destination it allocates:
+
+- the absolute Tile register descriptor in `_Tiles` and its allocation mask, through `ConfigureBundleTileDestination`;
+- the binding's `destination` field, which changes from the hand to the absolute register index;
+- the binding's `destination_allocated_by_bundle` flag.
+
+A destination whose binding already has `destination_allocated_by_bundle` or `destination_reused_by_generation` set is not allocated again.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-rules role=rules-interactions -->
+## Rules and interactions
+
+The resolver works in four steps.
+
+1. It resolves the effective data type. If none exists, it raises `Fault_TileLegality`.
+2. It chooses a register for each new destination. Hand `h` owns registers `16h` to `16h+15`, and the resolver takes the lowest one that is not allocated and not already chosen in this bundle. If none is free, it raises `Fault_TileAllocation`. It then checks that, for each PE in each destination's PE mask, the Tile capacity in use plus the new destinations fits `TileCapacityLimitBytes`. A failure also raises `Fault_TileAllocation`.
+3. It computes and checks every destination descriptor. A shape that does not fit the size code raises `Fault_TileAllocation` for a new destination and `Fault_TileLegality` for a reused one. A reused destination must also match its existing descriptor in capacity, valid shape, type, and layout, and its allocation mask must cover the binding's PE mask; a mismatch raises `Fault_TileLegality`.
+4. Only then does it configure each new destination.
+
+The destination type depends on its position. The first destination gets the primary type: for a reduction, `U32` if it returns an index and the effective data type otherwise; else the caller's explicit type if one is given; else the matrix output type in a matrix bundle and the effective data type otherwise. Later destinations get the matrix output type in a matrix bundle and `U32` otherwise. In a matrix bundle, a RowMax output has 1 column, and a GroupMax output has the column count divided by the group size, rounded up.
+
+Design point: steps 1 to 3 change no Tile state. The ASL comment states the aim: B.IOT allocation is all-or-nothing, so a size code that is too small for its shape faults before any destination is allocated. For that failure, no destination of the group is allocated.
+
+Design point: a reused destination is the existing Tile of an open generation. Steps 2 and 4 skip it, so this resolver never allocates it. When its derived shape does not fit or does not match that Tile, the resolver raises `Fault_TileLegality`; it raises `Fault_TileAllocation` in step 3 only for destinations it would allocate.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-boundaries role=boundaries -->
+## Architectural boundaries
+
+Callers decide the shape and type. The destination router passes an explicit shape for most closed schema operations, and specialized paths such as `GMOV`, `MGATHER`, and Shared TLSU also call these resolvers. A Tile matrix bundle's primary destination is resolved by the CUBE matrix handler, not through the router.
+
+This unit publishes a destination as a relative source only for an assemble `INIT` phase. Rollback of allocated destinations after a later fault is owned by the fault rollback unit.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+```text
+TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>
+```
+
+The destination hand is 0, so the resolver scans registers 0 to 15. If registers 0 and 1 are allocated, it picks register 2. The shape is 8 valid rows by 64 valid columns with 64 physical columns. A 2 KB capacity holds 16384 bits, and one `FP32` row of 64 elements uses 2048 bits, so the derived row count is 8. The 8 valid rows fit, and register 2 is configured.
+
+With `->T<1KB>`, the derived row count would be 4. Step 3 would raise `Fault_TileAllocation`, and no register would be allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-destination-shape-related role=related-owners-navigation -->
+## Related owners
+
+- [Destination operation](destination-operation.md) chooses the shape and type arguments.
+- [Destination auxiliary](destination-auxiliary.md) owns `ConfigureBundleTileDestination` and the GroupMax column rule.
+- [Tile allocation](../../../tile/model/state/allocation.md) defines the allocation transitions that configure a register.
+- [Fault rollback](../faults/rollback.md) undoes allocated destinations after a later fault.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

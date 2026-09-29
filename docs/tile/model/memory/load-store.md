@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the element-level GM access helpers and the Local `TLOAD` and `TSTORE` bodies.
+
+- `ProbeTileMemoryAccess` checks one element access before it happens.
+- `LoadTileMemoryElement` and `DecodeTileMemoryElementRaw` read and decode one element.
+- `StoreTileMemoryElement` writes one element.
+- `TLOAD` copies a strided GM region into a Local Tile; `TSTORE` copies a Local Tile to GM.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-concepts role=concepts-state -->
+## Concepts and visible state
+
+A probe (`DataAccessProbe`) returns a fault code and a translated address. `ProbeTileMemoryAccess` probes `TileMemoryElementBytes(data_type)` bytes with the same value as the alignment, so every element access must be naturally aligned. Four-bit types probe one byte.
+
+A replay record is the fault-precision state from the architecture memory model. `TLOAD` and `TSTORE` open it with `BeginMemoryReplay`, mark each completed access with `CommitMemoryReplayEffect`, and close it with `CompleteMemoryReplay` on success or `FlushMemoryReplay` on a fault.
+
+Every recorded load and store event carries `CurrentBundleMemoryOrder()`, which is derived from the bundle acquire and release attributes.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-rules role=rules-interactions -->
+## Rules and interactions
+
+Decoding: for a four-bit type, `DecodeTileMemoryElementRaw` returns the selected nibble zero-extended, for S4X2 too. For other types it sign-extends signed integer types (S8, S16, S32, S64) and leaves the raw bits unchanged otherwise.
+
+Storing: for a type that is not four-bit, the value is truncated to the element width and written. For a four-bit type, the helper reads the containing byte, replaces one nibble, and writes the byte back.
+
+Design point: the four-bit store is a read-modify-write of the byte. The sibling nibble keeps its old memory value, so two adjacent columns can be written by different stores without destroying each other.
+
+`TLOAD` walks the valid region row by row. An inactive coordinate under an ExecutionMask receives the mask's zero or merge value and makes no access. An active coordinate is probed, loaded, recorded as a load event, and written into the result. After the walk the valid region is marked defined. CUBE layouts then receive the bundle `PadValue` in their physical tail.
+
+`TSTORE` requires an allocated source whose contents are defined; under an ExecutionMask it checks only the elementwise source definedness. It stores active valid coordinates in row-major order.
+
+Design point: both bodies stop at the first failing probe. Accesses completed before the fault are not undone: GM writes from `TSTORE` stay visible. The `TLOAD` body writes its partial result to the destination, but bundle dispatch then releases a destination that the bundle allocated. `FlushMemoryReplay` discards only event records after the last committed effect. The fault-precision contract says a retry re-executes the whole logical request, so a restart does not continue from an internal element cursor.
+
+`TLOAD` has a fast path for four-bit Tiles that are not CUBE, have no defined valid elements yet, and have no ExecutionMask, no event capture, zero stride, a full valid region, and full packed capacity. It still probes every column of row 0 through the normal probe path and uses the shortcut only if all those bytes are zero.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-boundaries role=boundaries -->
+## Architectural boundaries
+
+Bundle dispatch allocates the `TLOAD` destination and resolves base, stride, `PE_MASK`, and dimensions before these bodies run. Schema, descriptor, and definedness failures are rejected there, before any access.
+
+These bodies do not order `TSTORE` beats relative to each other beyond the program order of this loop, and they do not resolve overlap between PEs. Ordering belongs to the architecture memory model.
+
+Shared `TLOAD` and `TSTORE` forms are defined in the shared-movement unit.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-example role=example-usage -->
+## Non-normative reading example
+
+`TSTORE` of a U4X2 Tile writes element `(0, 1)` with value `0x5`. The address is the row base plus 1 / 2 = 0, and column 1 is odd, so the high nibble is selected.
+
+- The byte at that address currently holds `0xA7`.
+- The helper keeps the low nibble `0x7` and replaces the high nibble with `0x5`.
+- It stores `0x57`, and records a one-byte store event with value `0x57`.
+
+For an S16 `TLOAD` at an address ending in `0x...1`, the two-byte alignment probe fails with `Fault_DataAlignment` before any byte is read for that element.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-load-store-related role=related-owners-navigation -->
+## Related owners
+
+- [Stride](stride.md) computes the strided byte addresses used here.
+- [Restart](restart.md) points to the restart and precise-fault owners.
+- [Fault precision](../../../arch/memory-model/fault-precision.md) owns the replay record.
+- [Memory ordering](../../../arch/memory-model/ordering.md) owns the order of recorded events.
+- [Scalar AGU memory](../../../scalar/model/agu/memory.md) owns `ProbeDataAccess` and the byte load and store primitives.
+- [Shared movement](shared-movement.md) owns the Shared forms.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

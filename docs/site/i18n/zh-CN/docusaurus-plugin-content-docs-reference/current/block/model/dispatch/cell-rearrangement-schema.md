@@ -12,7 +12,74 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元负责四个 CUBE 单元重排操作的指令束操作数 schema 与目标分配：`TPERMUTE`、`TSHUF`、`TPACK` 和 `TUNPACK`。这些操作在 Local CUBE Tile 内移动字节或字，不做数值转换。
+
+它定义三个函数：
+
+- `TileOperationUsesCellRearrangementSchema` 识别这四个操作。
+- `SelectedBundleCellRearrangementSchemaLegal` 检查收集到的 `B.IOT` 与 `B.IOR` 记录是否恰好具有所选操作要求的形态。
+- `ResolveBundleCellRearrangementDestination` 从源 Tile 推导目标描述符，并分配或检查目标寄存器。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-concepts role=concepts-state -->
+## 概念与可见状态
+
+schema 检查读取头部状态，例如 `_BundleTileBindings`（`B.IOT` 记录）、`_BundleScalarBindings`（`B.IOR` 记录）、`_BundleExecutionMask` 以及 Shared 绑定数量。
+
+目标解析器读取 `_Tiles` 中的源描述符，成功时写入三项：
+
+- 通过 `ConfigureCubeTileForMask` 写入一个新的 CUBE Tile 描述符；
+- 把解析得到的绝对索引写入目标绑定的 `destination` 字段；
+- 把该绑定的 `destination_allocated_by_bundle` 置为真。
+
+对 `TPACK` 和 `TUNPACK`，目标数据类型是指令束选定的操作 `DataType`，且必须是 `U8`、`U16` 或 `U32`。对 `TPERMUTE` 和 `TSHUF`，目标保留源的数据类型和有效列数。四种情况下，目标都保留源的有效行数和布局。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-rules role=rules-interactions -->
+## 规则与交互
+
+当 `SelectedBundleTileMaskIsZero` 成立时（例如每个有效 Tile 绑定的 PE 掩码都是 `0000`），schema 检查立即返回真。否则它按以下两种形态之一检查。
+
+- `TPERMUTE` 需要恰好两个 Tile 绑定。第一个携带两个源且没有目标。第二个携带第三个源和新目标，并结束序列。它的源必须与第一个绑定的两个源都不同。只有当 ExecutionMask 由 GPR 携带时才存在 `B.IOR` 记录。
+- `TSHUF`、`TPACK` 和 `TUNPACK` 需要一条承载控制字的 `B.IOR` 记录和一个 Tile 绑定；当双源操作额外带有 Tile 载体的 ExecutionMask 时需要两个绑定。`TSHUF` 和 `TPACK` 使用两个源；`TUNPACK` 使用一个。
+
+设计要点：Tile 执行所有者在通用封闭 schema 检查之前调用本 schema 检查，并把其失败映射为 `Fault_BundleControl`。ASL 注释说明了原因：缺失或多余的 `B.IOR` 或 `B.IOT` 控制属于指令束结构。因此格式错误的指令束报告为指令束控制故障，而不是 Tile 合法性故障。
+
+对 `TPACK` 和 `TUNPACK`，目标列数等于源每行字数乘以目标每字元素数：`U8` 为 4，`U16` 为 2，`U32` 为 1。每行字数由源有效字节数向上取整到 4 字节字得到。`TPACK` 还要求第二个源与第一个源具有相同的布局、有效行数和每行字数。
+
+设计要点：目标形状由源描述符推导，而不是来自 `B.DIM`。宏汇编参考记录了其后果：`TPACK` 和 `TUNPACK` 没有编码的形状，因此其 Row 和 Col 取决于运行时描述符状态。
+
+缺失角色、非法的源描述符或类型，或复用目标不匹配，会引发 `Fault_TileLegality`。目标超过 65535 列、CUBE 形状非法、没有空闲寄存器或容量不足，会引发 `Fault_TileAllocation`。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-boundaries role=boundaries -->
+## 架构边界
+
+本单元不执行任何数据移动。字节与字语义、控制字检查以及源的已定义性属于 Tile 合法性和执行所有者。
+
+当目标绑定被 assemble 生成复用时，解析器不分配任何寄存器。它只检查现有描述符与推导出的容量、形状、类型、布局和 PE 掩码一致。
+
+设计要点：解析器用 `destination_allocated_by_bundle` 标记新分配的目标。`RollBackBundleTileDestinations` 恰好释放这些被标记的寄存器，因此当之后的写者验证或操作本身失败时，Tile 执行所有者会释放新分配的 Tile。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+```text
+TPACK <U32>, T#1, T#2, a0, ->T<2KB>
+```
+
+假设 `T#1` 和 `T#2` 是 Local `U32` `CUBE_M16` Tile，有 8 个有效行和 8 个有效列。每个源行有 32 个有效字节，即 8 个字。`U32` 每个字放 1 个元素，因此目标是 8 个有效行、8 个有效列的 `U32` `CUBE_M16`。只要该 CUBE 形状可容纳，解析器就在编码的目标 hand 的 16 个寄存器中取第一个空闲寄存器，并以 2048 字节分配它。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Tile 执行分派](tile-execution.md) 把本 schema 检查排在通用 schema 和目标解析之前。
+- [目标操作路由](destination-operation.md) 把这四个操作交给本解析器。
+- [布局重排合法性](../../../tile/model/legality/layout-rearrangement.md) 定义描述符、类型和每行字数辅助函数。
+- [回滚](../faults/rollback.md) 释放被标记为由指令束分配的目标。
+- [TPACK](../../../tile/layout-and-rearrangement/layout/TPACK.md) 是这四个操作之一的指令页面。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

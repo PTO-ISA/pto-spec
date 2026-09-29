@@ -12,7 +12,80 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the common conversion rule shared by scalar conversion and `TCVT`, plus three reference numeric helpers used by Tile execution units.
+
+- `ReferenceCommonConvert` converts between types in the common set.
+- `ReferenceTileFloatingModulo` computes floating remainder for `TREM`-style operations.
+- `ReferenceTileUnaryFinite` computes EXP, LOG, RECIP, SQRT, and RSQRT for finite inputs.
+- `ReferenceMatrixOrdinaryFloatingAccumulate` computes one multiply-accumulate step in FP32.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-concepts role=concepts-state -->
+## Concepts and visible state
+
+The common set is FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 (`ReferenceCommonConversionTypeSupported`). BF16 is not in it. `ReferenceCommonConvert` asserts that both types are in the set.
+
+Each helper returns a result word and a five-bit flag set: `0x01` NV, `0x02` DZ, `0x04` OF, `0x08` UF, `0x10` NX.
+
+The helpers accept different floating types:
+
+| Helper | Accepted floating types |
+| --- | --- |
+| `ReferenceCommonConvert` | FP64, FP32, FP16, E4M3 |
+| `ReferenceTileFloatingModulo` | FP32, FP16, BF16 |
+| `ReferenceTileUnaryFinite` | FP32, FP16, BF16 |
+| `ReferenceMatrixOrdinaryFloatingAccumulate` inputs | FP32, TF32, HF32, FP16, BF16 |
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-rules role=rules-interactions -->
+## Rules and interactions
+
+For a floating source, `ReferenceCommonConvertSpecial` handles special values first.
+
+- NaN or invalid encoding: a floating destination gets its canonical NaN, with NV only for a signaling NaN or invalid encoding. An integer destination gets 0 with NV.
+- Infinity: FP64, FP32, and FP16 destinations get infinity with no flag. E4M3 has no infinity, so it gets the finite endpoint `0x7e` or `0xfe` with OF and NX when saturating, and its canonical NaN with OF and NX otherwise. An integer destination gets its minimum or maximum with NV.
+- Zero to a floating destination keeps its sign.
+
+A finite value is then rounded once to the destination with `ReferenceMatrixFloatingEncoding` or `ReferenceMatrixIntegerEncoding`. An integer source converts exactly to a real first. Integer to integer uses `TileConvertIntegerValue` and produces no flag.
+
+Design point: floating to integer overflow sets OF and NX. With saturation the result clamps; without it the rounded integer is truncated to the destination width, so it wraps. NDF `PTO-COMMON-CONVERSION-001` requires scalar conversion to pass saturation disabled and requires identical results and flags for equal inputs, so scalar code and `TCVT` agree bit for bit whenever they convert the same value between the same types under the same control, which for scalar code always has saturation disabled.
+
+Floating modulo truncates the quotient toward zero, so the result has the dividend's sign. An infinite dividend or zero divisor gives canonical NaN with NV. An infinite divisor or zero dividend returns the dividend. The result is encoded with the default control, RNE and no saturation.
+
+`ReferenceTileUnaryFinite` computes the real result, using a series approximation for EXP and LOG, and encodes it with RNE. `ReferenceMatrixOrdinaryFloatingAccumulate` rounds the product to FP32, then rounds the sum to FP32, under the supplied control, and discards both flag sets.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-boundaries role=boundaries -->
+## Architectural boundaries
+
+Callers include `TileProfileConvert` and `ReferenceTCVTConvert` for TCVT, the scalar FSU conversion model, the elementwise modulo profile, the unary profile `TileProfileUnary` for SFU operations whose callers found no special value, and the matrix-scale unit when the destination is FP32, both operand types are supported ordinary floating types, and the accumulator and both operands are finite.
+
+This unit does not record flags. Each caller decides whether to record or discard them; for example, the elementwise modulo result helper discards them.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-example role=example-usage -->
+## Non-normative reading example
+
+Convert FP32 300.0 (`0x43960000`) to S8 with RNE.
+
+- The rounded integer is 300, which is above 127, so flags are OF and NX (`0x14`).
+- Without saturation, the low 8 bits of 300 give `0x2C` (44).
+- With saturation, the result is `0x7F` (127).
+
+Convert FP32 negative 2.5 (`0xC0200000`) to S8.
+
+- RNE gives -2 (`0xFE`), because the tie goes to the even integer, with NX.
+- RTZ also gives -2, with NX.
+
+Convert FP32 positive infinity (`0x7F800000`) to S8: the result is `0x7F` with NV only.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-related role=related-owners-navigation -->
+## Related owners
+
+- [Formats](formats.md) owns the TCVT dispatch into this rule.
+- [TCVT conversion](tcvt-conversion.md) owns the closed scale and packed formats.
+- [Matrix quantization](../execution/matrix-quantization.md) owns the finite encoders.
+- [Numeric classification](../../../arch/data-types/numeric-classification.md) owns value classes.
+- [Scalar FP model](../../../scalar/model/fsu/scalar-fp.md) is the scalar user of the common rule.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

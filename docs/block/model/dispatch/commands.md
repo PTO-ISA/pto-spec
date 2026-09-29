@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit is the central switch for block commands. After the top-level owner decodes a command form and checks its operands, it calls `ExecuteDecodedBundleCommand`. That function selects the semantic handler of the form, runs the handler-specific checks, updates bundle or architectural state, and advances `TPC` when the handler is sequential.
+
+The commands it routes include the header commands `B.CATR`, `B.DATR`, `B.FPATR`, `B.DIM`, `B.IOR`, `B.IOT`, `B.IOS`, `B.SUBVIEW`, and `B.ASSEMBLE`, the lifecycle commands `BSTART`, `BSTOP`, and `B.HINT`, the frame commands, the `HL.Q*` queue commands, and `MCOPY` and `MSET`.
+
+The unit also defines `BundleFixedPointAttributesCanBePlaced`, the placement rule for `B.FPATR`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-concepts role=concepts-state -->
+## Concepts and visible state
+
+A bundle has a header phase and a body phase. Header commands are legal only while `_BundleActive` is true and `_BundleBodyActive` is false. Most header handlers also reject a second copy: for example, a second `B.CATR` or `B.DATR` raises `Fault_BundleControl`.
+
+The handlers write header state such as `_BundleControlAttributes`, `_BundleDataAttributes`, `_BundleFixedPointAttributes`, `_BundleDimensions`, the scalar, Tile, and Shared binding tables, the range group used by `B.SUBVIEW` and `B.ASSEMBLE`, and `_BundleHint`.
+
+A range group is the open window that lets a following `B.SUBVIEW` or `B.ASSEMBLE` attach to the preceding `B.IOT` or `B.IOS`. Every command other than these two range modifiers closes it first.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-rules role=rules-interactions -->
+## Rules and interactions
+
+The function checks in a fixed order before any handler effect:
+
+1. Handlers for `ESAVE`, `ERCOV`, and cross-block transfer are unsupported and raise `Fault_IllegalInstruction`.
+2. A command that breaks an open `TGPR2T` or `TIMG2COL` command stream raises `Fault_BundleControl`.
+3. For `HL.QMT`, `HL.QPUSH`, and `HL.QPOP`, reserved flag combinations or illegal GPR selectors raise `Fault_IllegalInstruction`.
+4. The handler runs its own placement and field checks.
+
+If any fault is recorded, the function returns `CommandExecution_Rejected` and does not advance `TPC`.
+
+`B.FPATR` has a stricter placement rule. It must appear in the header, at most once, before any `B.IOR`, `B.IOT`, or `B.IOS`, and only when the selected operation is a Tile matrix operation or no operation descriptor is installed.
+
+`B.DIM` in register form adds a GPR value and an optional `uimm17` and keeps the low 16 bits. The immediate form uses `imm8`. A second value for the same dimension raises `Fault_BundleControl`.
+
+Design point: a `B.IOT` or `B.IOS` whose `PEMode` is `000` names no PE. After its size-code encoding check, the handler records zero participation when in a header, opens a zero-mode range group, advances `TPC`, and returns. The handler's placement, binding, and allocation checks are skipped. A binding that no PE uses therefore cannot fault on those rules, although the earlier steps 1 and 2 still apply.
+
+Design point: `B.SUBVIEW` and `B.ASSEMBLE` check the GPR selector and size code before reading any GPR. For `B.SUBVIEW`, the ASL comment states that reserved selectors or codes leave carriers and range state unchanged. In a zero-mode range group they record nothing and read no GPR.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-boundaries role=boundaries -->
+## Architectural boundaries
+
+`BSTART`, `BSTOP`, `FRET.RA`, and `FRET.STK` set `TPC` themselves, so this function does not advance it after them. It also does not advance `TPC` after a `B.HINT` trace form; the commit or the begin transition inside that handler sets it.
+
+A `B.HINT` trace form first commits any active bundle at the hint address. If that commit selected another address, the hint returns without starting a bundle. Otherwise it clears header state and begins a new standard fallthrough bundle.
+
+Operation-level validation and commit are not performed here. `BSTOP` delegates to `CompleteBundleAt`, and `BSTART` delegates to the start owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a bundle header contains a 4-byte `B.IOT` at address `0x2010` with `PEMode` `000` and a legal size code. `PEMaskOfPEMode` returns `0000`. The handler sets `_BundleZeroParticipationSeen`, opens a zero-mode range group, and writes `TPC` as `0x2014`. No Tile binding is added.
+
+If the same `B.IOT` had `PEMode` `111`, mask `1111`, and appeared after `BSTOP` had closed the bundle, the placement check would raise `Fault_BundleControl`, and `TPC` would stay at `0x2010`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-commands-related role=related-owners-navigation -->
+## Related owners
+
+- [Top-level dispatch](top-level.md) decodes the form, checks operands, and calls this unit.
+- [Command decode](decode.md) defines operand decoding and the supported-handler rules.
+- [Command data attributes](command-data-attributes.md) latches `B.DATR`.
+- [Bundle start dispatch](start.md) handles `BSTART` forms.
+- [Commit validation](../commit/validation.md) owns `CompleteBundleAt`.
+- [B.IOT](../../operands/B.IOT.md) is the instruction page for the Tile binding command.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

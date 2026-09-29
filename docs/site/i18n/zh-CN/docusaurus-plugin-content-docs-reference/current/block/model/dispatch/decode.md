@@ -12,7 +12,64 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把指令束命令的原始位转换为带类型的值。指令束命令是由命令分派处理的 Block 表面命令指令，例如 `BSTART`、`B.DIM`、`B.IOT`、`B.DATR` 或 `BSTOP`。形式（form）是这类命令在冻结命令目录中的一种具体编码。
+
+本单元定义命令处理程序调用的字段提取函数、两个处理程序分类谓词，以及 `DecodeBundleOperationDescriptor`，它构建 `BSTART` 形式携带的操作描述符。它还定义 `CommandExecutionStatus`，即命令分派返回的 `Executed` 或 `Rejected` 结果。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-concepts role=concepts-state -->
+## 概念与可见状态
+
+除枚举类型外，本单元的每个函数都是 `pure`。本单元不读取也不写入任何架构状态。
+
+- `CommandDecodedWord` 把字段扩展到 `PTO_XLEN` 位。目录标记为有符号的字段按其宽度符号扩展，该宽度必须是 8、12、15、17、25、30 或 42 位。其他字段一律零扩展。
+- `CommandDecodedReg5` 保留低 5 位作为 GPR 选择子。`CommandDecodedTile` 保留低 6 位作为 `TileIndex`。`CommandDecodedSmall` 保留低 4 位。`CommandDecodedBool` 检查位 0。
+- 队列标志辅助函数把单比特字段打包为 4 位值。Move 把 `i`、`e`、`s`、`r` 放在位 3 到 0。Pop 把 `e` 放在位 1，把 `r` 放在位 0。Push 把 `h` 放在位 3，把 `e` 放在位 2，把 `r` 放在位 0。
+- `CommandDecodedBundleDimension` 选择维度槽位。带 `LoopNest` 字段的形式使用该字段的低 2 位。否则由 `B.DIM` 形式本身指定槽位：`->LB0` 得到 0，`->LB1` 得到 1，其他形式得到 2。
+
+操作描述符记录 `form_identity`、`operation_class` 以及四个可选字段：`selector`、`data_type`、`mode` 和 `branch_type`。每个可选字段都有自己的有效标志。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-rules role=rules-interactions -->
+## 规则与交互
+
+选择子取自按以下顺序第一个适用的来源：编码变体常量、选择 Tile 操作的形式中的 10 位 Tile 操作码、5 位 `Function` 字段，以及目录选择子常量。若都不适用，`selector_valid` 为假。
+
+当形式选择 Tile 操作或具有 `DataType` 字段时，`data_type_valid` 为真。`mode` 是 `Mode` 字段的低 2 位，`branch_type` 是 `BrType` 字段的低 3 位，二者都只在对应字段存在时取值。
+
+设计要点：缺省字段与编码为零的字段保持区分。每个可选字段都带有有效标志，缺省字段以全零存储且标志为假。后续检查会测试该标志。例如，`BundleSelectorCode` 只有在 `mode_valid` 为真时才把 `mode` 放在选择子之上。
+
+`CommandHandlerSupported` 对三个处理程序返回假：`SaveExecutionContext`、`RecoverExecutionContext` 和 `ExecuteCrossBlockTransfer`，它们分别服务 `ESAVE`、`ERCOV` 和 `XB`。命令分派在调用任何处理程序之前检查它，并对这些处理程序引发 `Fault_IllegalInstruction`。
+
+设计要点：这些形式仍会解码为已知形式，但不会为它们运行任何处理程序。`XB` 契约说明了原因：保留解码得到的身份是为了冲突清点和失败即关闭（fail-closed）的分派。
+
+`CommandHandlerAdvancesSequentially` 对指令束开始、指令束停止、`FRET.RA` 和 `FRET.STK` 处理程序为假。对其他处理程序，命令分派通常在无故障执行之后把命令字节长度加到 `TPC` 上，但 `B.HINT` 的 trace 形式除外。
+
+设计要点：这四个处理程序自行选择下一个 `TPC`。开始和停止处理程序可能提交指令束，而提交会根据 `BARG` 写入 `TPC`。如果在它们之后再做固定的顺序步进，就会覆盖该选择。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-boundaries role=boundaries -->
+## 架构边界
+
+本单元不负责把原始位匹配到形式。`ExecuteCommandInstruction` 完成匹配，并在 `ExecuteDecodedBundleCommand` 运行之前检查操作数合法性。本单元也不判断描述符是否合法。`ExecuteDecodedBundleStart` 先解码描述符，再在提交任何前驱指令束之前用 `BundleOperationDescriptorLegal` 检查它。它只在 `BeginBundleAt` 无故障完成后才安装描述符。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+32 位的 `B.DIM RegSrc, uimm, ->LB1` 没有 `LoopNest` 字段，因此 `CommandDecodedBundleDimension` 返回 1。它的处理程序不属于四个非顺序处理程序，因此在 `TPC` 0x1004 处无故障执行后，`TPC` 变为 0x1008。
+
+`BSTART.STD DIRECT, <label>` 具有有符号的 17 位 `simm17` 字段。若对值为 `0x1FFFF` 的该字段应用 `CommandDecodedWord`，它会被符号扩展为 `PTO_XLEN` 位的 -1；同样的原始位若位于 `B.DIM` 的 `uimm17` 这类无符号 17 位字段中，则得到 131071。指令束开始路径本身通过生成的 `CommandSignedOffsetOfForm` 读取该偏移，它同样进行符号扩展。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-related role=related-owners-navigation -->
+## 相关所有者
+
+- [顶层分派](top-level.md) 在任何处理程序运行之前匹配形式并检查操作数。
+- [命令](commands.md) 调用提取函数，并为顺序处理程序推进 `TPC`。
+- [指令束开始分派](start.md) 解码、检查并安装操作描述符。
+- [描述符合法性](descriptor-legality.md) 决定哪些解码后的描述符可以被安装。
+- [XB](../../encoding/XB.md) 是一个保留形式，它可以解码但总是被拒绝。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

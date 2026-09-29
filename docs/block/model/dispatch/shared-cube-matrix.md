@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit defines how a CUBE matrix bundle reads operands from Shared Tiles. A Shared Tile is a Tile register visible to all four PEs of a core, bound with `B.IOS`. When a matrix bundle binds Shared sources and is not a GEMV form, it runs cooperatively: the four PEs split the M rows of the left matrix, and each PE computes its own row fragment.
+
+The unit has three groups of functions:
+
+- Schema checks: `BundleMatrixSharedSourcesReady`, `BundleMatrixSharedSchemasLegal`, and the per-source checks they call.
+- Row split: `BundleMatrixCooperativeMPerPE`, `BundleMatrixCooperativeValidM`, `BundleMatrixCooperativeCurrentPEMask`, and `BundleMatrixCooperativeMLayout`.
+- Materialization: functions that build a private `RowMajor` copy of each Shared operand for the current PE.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-concepts role=concepts-state -->
+## Concepts and visible state
+
+The Shared operands appear in a fixed order: left primary and its MX scale when the left side is Shared, then right primary and its MX scale. The left side is Shared exactly when the Shared count differs from the right group size (1, or 2 when the right MX type needs a scale).
+
+Each operand has a stored orientation. The left primary A is stored `[M, K]`, or `[K, M]` when `B.FPATR` sets TransA. The right primary B is stored `[N, K]`, or `[K, N]` when TransB is set.
+
+The row split uses 16 rows per PE when M is at most 64 and 32 rows per PE when M is at most 128; larger M has no split. PE p owns rows starting at p times that count. A PE whose first row is at or beyond M owns 0 rows.
+
+The unit reads `_BundleSharedBindings`, Shared Tile records, `_BundleFixedPointAttributes`, the layout of Local sources in `_Tiles`, and per-PE GPRs for subview offsets. It writes no architectural state; materialization returns `TileInfo` values.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-rules role=rules-interactions -->
+## Rules and interactions
+
+`BundleMatrixSharedSchemasLegal` enforces these rules:
+
+- With no Shared binding, TransA and TransB must both be off.
+- TransA requires a Shared left side.
+- A Shared left side requires M at most 128.
+- Every Shared source is a source binding (size code 0) of a Shared Tile that has a legal descriptor, is whole-parent ready, is published, and has defined contents.
+- Without a subview, the Shared Tile is `RowMajor` with the operand's data type, its valid rows and columns equal the stored shape, and its physical columns are at least the stored column count.
+- The number of operands consumed equals the Shared binding count.
+
+A subview selects a byte range of the parent Shared Tile. Its offset is a GPR plus an 11-bit immediate, counted in 128-byte cells and read separately for each PE in the binding mask. The range must fit the parent capacity, lie within one row or start at column 0 and cover whole rows, and, clipped to the parent valid region, equal the expected valid shape. The ASL comment states that this derives the view without reading payload.
+
+Design point: readiness is checked before the schema. If a Shared source is not yet published, `BundleMatrixSharedSourcesReady` returns false and the caller stops without setting a fault. The ASL comment in the caller describes this as structurally legal Shared groups waiting until they are whole-ready and published. A schema failure raises `Fault_TileLegality`.
+
+Design point: a PE that owns 0 rows has `BundleMatrixCooperativeValidM` 0 and an empty current-PE mask. The caller tests the row count, consumes the Shared bindings, and finishes that PE's attempt before any Local generation or destination work, so that PE allocates no Tile.
+
+`BundleMatrixCooperativeMLayout` takes the layout from the local left source when there is one. With a Shared left side it takes the layout from the accumulator source for an accumulating function, and otherwise picks `CUBE_M16` for up to 16 rows per PE and `CUBE_M32` for up to 32.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-boundaries role=boundaries -->
+## Architectural boundaries
+
+The caller, [CUBE TMATMUL dispatch](cube-tmatmul.md), owns the order: readiness, schema, zero-row exit, Local checks, layout, destination allocation, and only then materialization. It also requires `PE_MASK` 1111 on every binding of a cooperative bundle. The materializers read payload only after the destination group is allocated. `MaterializeBundleSharedMatrixSource` is defined here but has no caller in the current ASL.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Consider a cooperative `TMATMUL <M=40, N=32, K=64, FP16>, S1, S2, ->T<2KB>` with Shared A `S1` stored `[40, 64]` and Shared B `S2` stored `[32, 64]`. With Shared sources, N and K must be powers of two, and both are. M is at most 64, so each PE owns 16 rows. PE0 gets rows 0 to 15, PE1 rows 16 to 31, PE2 rows 32 to 39 (8 rows), and PE3 owns 0 rows.
+
+PE3 consumes the Shared bindings and allocates nothing. PE0 to PE2 use `CUBE_M16`. PE0 and PE1 each produce a 16 x 32 `FP32` fragment of 512 elements. PE2 produces an 8 x 32 fragment of 256 elements.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-cube-matrix-related role=related-owners-navigation -->
+## Related owners
+
+- [CUBE TMATMUL dispatch](cube-tmatmul.md) calls these checks and materializers in order.
+- [Shared generation](../operands/shared-generation.md) owns Shared subviews and per-PE offsets.
+- [Shared Tile registers](../../../tile/model/state/shared-registers.md) define readiness and publication.
+- [Matrix functions](../../../tile/model/legality/matrix-functions.md) define MX scale groups and right group size.
+- [TMATMUL](../../../tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
