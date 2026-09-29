@@ -12,7 +12,80 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns the shared element-by-element execution of Tile binary operations. It defines the per-element arithmetic helpers and three handlers:
+
+- `ExecuteTileBinary` executes the Tile-Tile forms TADD, TSUB, TMUL, TDIV, TREM, TMAX, TMIN, TAND, TOR, TXOR, TSHL, and TSHR.
+- `ExecuteTileScalar` executes the Tile-scalar forms TADDS, TSUBS, TMULS, TDIVS, TREMS, TMAXS, TMINS, TANDS, TORS, TXORS, TSHLS, and TSHRS.
+- `ExecuteTileFillScalar` executes TEXPANDS, which fills a Tile with one scalar.
+
+`TileProfileBinaryWithFlags` is also reused by the expansion, EXPDIF, and reduction units.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-concepts role=concepts-state -->
+## Concepts and visible state
+
+The operation type is the destination Tile's `data_type`. Sources must have a carrier width compatible with it, so a source of another type with the same element width is reinterpreted, not converted.
+
+`TileProfileBinaryWithFlags` chooses one arithmetic path per element and returns a value and five status flags. The flag bits are NV, DZ, OF, UF, and NX, from bit 0 to bit 4.
+
+- AND, OR, and XOR on carrier types up to 32 bits combine raw bits.
+- Integer DIV and REM use `TileIntegerDivRemValue`. Signed REM floors, so a nonzero remainder takes the divisor's sign.
+- Other integer operations use `TileIntegerBinaryValue`, which wraps to the element width. Shift amounts use only the low bits that fit the width, and SHR is arithmetic for signed types.
+- Floating MIN and MAX use `TileFloatingMinMaxValue`. Floating REM uses `ReferenceTileFloatingModulo`, which truncates.
+- Floating ADD, SUB, MUL, and DIV use `ScalarFPBinaryProfile` with RNE rounding.
+
+An ExecutionMask selects active coordinates. `BundleExecutionMaskActiveAt` is TRUE for every coordinate when no mask is in force.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-rules role=rules-interactions -->
+## Rules and interactions
+
+Each handler loops over the valid region. An active coordinate computes a value from the source elements and scalar, or takes the scalar itself for TEXPANDS; an inactive coordinate takes `BundleExecutionMaskDestinationValue`: zero under the ZERO policy or the merge-base element under MERGE.
+
+After the loop, the valid region is marked defined and the padding selected by `CurrentBundlePadValue` is applied. Without a B.DATR, that pad value is Null.
+
+Design point: sources are snapshotted before the first destination write. `ExecuteTileBinary` copies both source `TileInfo` records before the loop, so a destination that names a source still reads the old values. `ExecuteTileScalar` and `ExecuteTileFillScalar` build the result privately and publish it once.
+
+Design point: the scalar is normalized once with `TileRawElementValue`. Bits above the element width never take part, so a 64-bit register value such as `0x1_0000_0005` acts as 5 for a 32-bit Tile.
+
+Design point: `ExecuteTileBinary` calls `TileProfileBinary`, which discards the flags. `ExecuteTileScalar` ORs the flags of active elements and records them with `RecordNumericStatusFlags`. `ExecuteTileFillScalar` records no flags.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-boundaries role=boundaries -->
+## Architectural boundaries
+
+Operand legality is checked before these handlers run. Integer TDIV and TREM require every divisor read by an active coordinate to be nonzero. For TDIVS and TREMS, a zero scalar divisor is rejected only when at least one coordinate is active.
+
+`ScalarFPBinaryProfile` accepts FP64, FP32, FP16, and BF16. `ReferenceTileFloatingModulo` accepts FP32, FP16, and BF16. Legality admits more floating types, but the model does not define results for types that these helpers assert against.
+
+`TileBinaryValue` and the unary stubs such as `TileExponential` are not reached by any instruction path.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-example role=example-usage -->
+## Non-normative reading example
+
+Take TREMS on an S32 Tile of 32 by 4 elements with one valid row, a scalar divisor of 3 in `a0`, and no ExecutionMask:
+
+```text
+TREMS <Row=32, Col=4, ValidRow=1, S32>, T#1, a0, ->T<512B>
+```
+
+The valid source row holds 7, -7, 6, and -1.
+
+1. 7 REM 3: the quotient is 2 and the remainder is 1.
+2. -7 REM 3: the truncated quotient is -2 and the remainder is -1. Its sign differs from the divisor, so 3 is added and the result is 2.
+3. 6 REM 3 is 0.
+4. -1 REM 3: the remainder is -1, so the result is 2.
+
+The destination row is 1, 2, 0, 2. Integer paths return no flags, so the numeric status is unchanged.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-elementwise-related role=related-owners-navigation -->
+## Related owners
+
+- [Operand schema](../legality/operand-schema.md) owns the legality checks run before these handlers.
+- [Data type and layout legality](../legality/dtype-layout.md) owns the type sets.
+- [Min and max](minmax.md) owns the floating MIN and MAX helper.
+- [Execution-mask state](execution-mask-state.md) owns active and inactive coordinate handling.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flags.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

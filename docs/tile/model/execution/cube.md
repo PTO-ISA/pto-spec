@@ -12,7 +12,72 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit computes the CUBE matrix product for the TMATMUL and TGEMV families. It builds the raw accumulator result, adds an optional bias, and then hands the result to a commit helper.
+
+The complete-bundle path in `ExecuteBundleTMATMULOperation` calls `TMATMULShared` for ordinary forms and `TMATMULMXSharedWithOptionalScales` for MX forms. The unit also defines one direct function per mnemonic, from `TMATMUL` to `TGEMV_MX_ACC`, and `TMATMULMXShared`. No ASL caller of those functions was found.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-concepts role=concepts-state -->
+## Concepts and visible state
+
+- A is the left source with M rows and K columns. B is the right source with K rows and N columns.
+- C is the explicit accumulator input of ACC forms. D is the destination.
+- The accumulator type comes from `TileMatrixAccumulatorDataType`: S32 for signed inputs, U32 for unsigned inputs, and FP32 otherwise.
+- D must have the accumulator type, or the `BundleFPATROutputType` of the selected PreQuantMode when that mode is nonzero.
+- MX forms add per-group scales. A group covers 32 inner elements, or 64 for HiF4X2.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-rules role=rules-interactions -->
+## Rules and interactions
+
+For each result row and column, the sum starts from `MatrixInitialAccumulatorValue`. That value is zero without accumulation, the C element with accumulation, and the scaled C element when CScale is enabled.
+
+The inner index then runs from 0 to K-1 in increasing order. Each step calls `TileProfileMatrixAccumulate` for ordinary forms or `TileProfileMatrixScaledAccumulate` for MX forms.
+
+The FP32 reference path applies when the accumulator type is FP32, both inputs are FP32, TF32, HF32, FP16, or BF16, all three carriers are finite, and, for MX forms, neither scale is present. It rounds the product to FP32 and then rounds the sum to FP32; ordinary forms use RMode and Sat from B.DATR, MX forms use the default control. In every other case, including integer types and infinite or NaN operands, the ordinary helper returns `accumulator + MultiplyWord(left, right)` on the raw element carriers, and the MX helper first multiplies each input by its scale when that scale is present.
+
+`MatrixBiasResult` adds one bias row element per column after the product. When both the value and the bias are finite FP32, it rounds their sum with the default control; otherwise it adds carriers.
+
+With CCTRL bit 0 set, `CommitMatrixRawPartial` publishes the raw accumulator-type result and skips post-processing and auxiliary outputs. Otherwise `CommitMatrixResult` in the post-processing unit publishes D.
+
+Design point: A, B, and C are read into private copies before any destination write, and the result is built in a private `TileInfo`. The header comment states the consequence: when D names C, the operation reads the old C and writes the new D.
+
+Design point: the FP32 path rounds twice per inner step and walks K in a fixed order, so the result is not a fused multiply-add and the model gives one deterministic result for each input.
+
+Design point: `MarkLocalTileValidRegionDefined` clears every defined bit and then marks only the valid region. No PadValue is applied, so D's padding stays undefined.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-boundaries role=boundaries -->
+## Architectural boundaries
+
+The helpers assert their shape and type rules. The bundle preflight in `ExecuteBundleTMATMULOperation` checks them before any source snapshot, so a legal program does not reach a failing assert.
+
+On the bundle path, `ExecuteBundleTMATMULOperation` raises Fault_TileLegality when a TGEMV form has M other than 1; the direct TGEMV functions assert 1 valid row. CScale is legal only for TMATMUL_ACC and TMATMUL_MX_ACC; its schema is a U8 CUBE_M32 Tile with M rows and 1 column, and legality also requires an FP32 accumulator.
+
+Accumulation and bias discard numeric status flags. Only CScale and post-processing record flags.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-example role=example-usage -->
+## Non-normative reading example
+
+Consider an FP32 TMATMUL_ACC with M=1, N=1, and K=2:
+
+```text
+TMATMUL_ACC <M=1, N=1, K=2, FP32>, AccTile, SrcTile0, SrcTile1, ->DstTile<Size>
+```
+
+1. The left source row is 1.0 and 2.0. The right source column is 3.0 and 4.0. The accumulator element is 10.0.
+2. The sum starts at 10.0. Step 0 adds 1.0 x 3.0 = 3.0, giving 13.0.
+3. Step 1 adds 2.0 x 4.0 = 8.0, giving 21.0. Every value is exact, so no rounding occurs.
+4. With CScale enabled and exponent 1, the start value is 10.0 / 2 = 5.0, and the result is 16.0.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-related role=related-owners-navigation -->
+## Related owners
+
+- [Matrix scale](matrix-scale.md) owns the initial accumulator value, CScale, and the accumulate helpers.
+- [Post-processing](postprocess.md) owns `CommitMatrixResult` and the auxiliary outputs.
+- [Internal accumulator](internal-accumulator.md) owns the non-binding CCTRL cache hints.
+- [CUBE TMATMUL dispatch](../../../block/model/dispatch/cube-tmatmul.md) performs preflight and selects the shared entry point.
+- [Matrix operands](../legality/matrix-operands.md) owns accumulator, bias, and CScale legality.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

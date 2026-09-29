@@ -12,7 +12,71 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义 Tile 比较与选择。TCMP 比较两个 Tile，TCMPS 比较 Tile 与标量，TSEL 在掩码下于两个 Tile 之间选择，TSELS 在 Tile 与标量之间选择。
+
+指令单元通过 `ExecuteTileCompare`、`ExecuteTileCompareScalar`、`ExecuteTileSelect` 和 `ExecuteTileSelectScalar` 到达本单元。本单元还提供 `TileCompareCUBEToGPRAs`，当 CUBE TCMP 把谓词写入 GPR 时由块分派调用。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-concepts role=concepts-state -->
+## 概念与可见状态
+
+比较为每个坐标产生一个布尔值。目标载体取决于源布局：
+
+- RowMajor 源通过 `TileInfoWithPredicateBit` 写入旧式谓词 Tile，每个元素一位。
+- CUBE_M16 和 CUBE_M32 源委托给 [ExecutionMask 比较](execution-mask-comparison.md)中的 `ExecuteTileCompareCellAs`，它写入由 `0x00` 或 `0x01` 字节组成的 PredicateCell。
+- GPR 形式把每个坐标的一位打包进一个 64 位字。
+
+`TileCompareElement` 计算布尔值和一个五位状态值。整数类型在符号扩展或零扩展之后按类型所示的有符号或无符号方式比较。浮点类型使用 `TileProfileFloatingCompare`。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-rules role=rules-interactions -->
+## 规则与交互
+
+浮点比较先处理特殊值。只要任一操作数为 NaN，结果只对 NE 为 TRUE，并且仅当某个 NaN 为信号 NaN 时才置 NV 标志。正零与负零比较相等。其他值按 `TileFloatingOrderKey` 排序，它把符号-幅值编码映射为递增的无符号键。
+
+每个执行器先断言其合法性辅助函数。比较执行器把逐元素状态 OR 成一个值，并在循环结束后调用一次 `RecordNumericStatusFlags`。选择执行器不计算数值状态。
+
+RowMajor 比较之后，`PredicateTileWithPadding` 填充有效区域之外的位：Max 用 1 填充，Zero 和 Min 用 0 填充，Null 使其保持未定义。TSEL 和 TSELS 在 RowMajor 和 CUBE 布局上都调用 `TileWithValidRegionDefined`，然后以指令束 PadValue 调用 `TileWithPadding`。
+
+对于 CUBE 布局，TSEL 和 TSELS 读取 PredicateCell 字节，仅当其恰为 `0x01` 时选择真源。每个坐标先询问 `BundleExecutionMaskActiveAt`；非活动坐标取 `BundleExecutionMaskDestinationValue`。
+
+GPR 形式从 `TilePredicateGPRPaddingValue` 开始：Zero 或 Min 为全零，Max 为全一，Null 为配置档值，本模型将其设为零。随后它为每个活动的有效坐标覆写位 `row + field x rows`，其中 `rows` 对 CUBE_M16 为 16，对 CUBE_M32 为 32。当 ExecutionMask 生效时，块分派随后把该字交给 `TileExecutionMaskPredicateGPRResult`，它在 ZERO 下把每个非活动有效位设为 0，在 MERGE 下设为旧的 GPR 位。
+
+设计要点：每个执行器在循环之前复制其源 Tile（`left_tile`、`right_tile`、`source_tile`、`true_tile`、`false_tile`、`mask_tile`），并在私有的 `result` 中构建结果；目标只在最后的赋值处改变一次，因此与源别名的目标仍看到旧的源值。
+
+设计要点：NaN 使每个有序关系为 FALSE，使 NE 为 TRUE。这使 `!EQ` 与 NE 即使对 NaN 输入也保持一致。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-boundaries role=boundaries -->
+## 架构边界
+
+`TileCompareDataTypeSupported` 和 `TileSelectDataTypeSupported` 都接受 16 种 VEC 算术类型集合：FP64、FP32、TF32、HF32、FP16、BF16、E4M3、E5M2，以及有符号和无符号的 8、16、32 和 64 位整数。
+
+GPR 形式还要求 CUBE_M16 或 CUBE_M32 源以及 GPR 谓词类型。`high` 选择子仅对 8 位类型合法；它把起始列移到 CUBE_M32 的 2 或 CUBE_M16 的 4。
+
+`TileProfileCompare` 在当前 ASL 中没有调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-example role=example-usage -->
+## 非规范阅读示例
+
+CMode 为 LT 的 TCMP 比较两个 FP32 RowMajor Tile，有效区域为 1 行乘 4 列。
+
+| 列 | 左源行 | 右源行 | LT 结果 |
+| --- | --- | --- | --- |
+| 0 | 1.0 | 2.0 | 1 |
+| 1 | 静默 NaN | 1.0 | 0 |
+| 2 | -0.0 | +0.0 | 0 |
+| 3 | 2.0 | 2.0 | 0 |
+
+第 0 到 3 列的谓词位为 1、0、0、0。没有信号 NaN，因此不记录标志。若改用 CMode NE，第 1 和第 2 列将得到 1 和 0，因为 NaN 与任何值都不相等，而两个零相等。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-related role=related-owners-navigation -->
+## 相关所有者
+
+- [ExecutionMask 比较](execution-mask-comparison.md)拥有 CUBE PredicateCell 比较路径。
+- [谓词载体](predicate-carriers.md)拥有标量 GPR 比较以及 GPR 掩码选择形式。
+- [操作数 schema](../legality/operand-schema.md)定义比较与选择的合法性辅助函数。
+- [数值状态](../../../arch/state/numeric-status.md)定义粘滞标志寄存器。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the execution helpers for CUBE predicates carried in general-purpose registers (GPRs), the TGPR2T transposer, and the list of operations that may take an explicit ExecutionMask.
+
+Block dispatch reaches the GPR helpers from `ExecuteBundleComparisonGPRCarrier`:
+
+- TCMPS with a GPR destination calls `TileCompareCUBEScalarToGPRAs`.
+- TCMP and TCMPS with an ExecutionMask pass their word through `TileExecutionMaskPredicateGPRResult`.
+- TSEL with a GPR mask calls `ExecuteTileSelectCUBEGPRAs`, and TSELS calls `ExecuteTileSelectScalarCUBEGPRAs`.
+
+`TGPR2T` is the handler of the TGPR2T instruction.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-concepts role=concepts-state -->
+## Concepts and visible state
+
+A GPR predicate packs one bit per coordinate at index `row + field x rows`. Rows is 32 for CUBE_M32 and 16 for CUBE_M16. A field is one column. CUBE_M32 has 2 fields per word, and CUBE_M16 has 2 for 32-bit types and 4 otherwise. For 8-bit types the `high` selector starts at column 2 (M32) or 4 (M16).
+
+`TileOperationExecutionMaskEligible` is the list that bundle dispatch consults before accepting an ExecutionMask carrier. It lists 92 operation names, including MGATHER and MSCATTER forms, elementwise and Tile-scalar operations, expansions, TCMP, TSEL, TCVT, TPACK, TSHUF, TLOAD, TSTORE, and TGPR2T, and also TGATHER, TSCATTER, and TTRI, which the ExecutionMask source schema NDF says have no applicable ExecutionMask form. It lists no reduction and no matrix operation.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileCompareCUBEScalarToGPRAs` starts from `TilePredicateGPRPaddingValue`, so bits for coordinates outside the valid shape keep the pad pattern. For each valid active coordinate it normalizes the scalar, compares, and writes the bit. It records the accumulated flags once and returns the word.
+
+`TileExecutionMaskPredicateGPRResult` then revisits each valid inactive coordinate. Under ZERO it clears the bit. Under MERGE it copies the bit from the old value of the destination GPR, which dispatch reads before writing.
+
+The GPR-mask select helpers read the mask bit with `TileCubePredicateGPRBit` for active coordinates and use `BundleExecutionMaskDestinationValue` for inactive ones. They then mark the valid region defined and apply the bundle PadValue.
+
+`TGPR2T` reads four GPRs and applies the effective pad outside the valid region. That pad is the B.DATR PadValue when B.DATR is present, and Zero otherwise. Each active valid element is set to the pad value and each inactive one to its ExecutionMask value. The byte offset in B.DATR RMode bits 1 to 0 then selects the column that receives the packed bytes. For CUBE_M32 that column gets one byte per row, bit b taken from plane b. For CUBE_M16 two adjacent columns get planes 0 to 7 and 8 to 15. Each packed byte is written only where the coordinate is active.
+
+Design point: bits outside the valid shape start from the pad pattern and are never overwritten. A consumer that reads the whole GPR sees a value selected by PadValue, not a leftover.
+
+Design point: TGPR2T produces an ordinary numeric U8 Tile, not a PredicateCell. Its bytes are packed plane bits, so they are not restricted to `0x00` or `0x01`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-boundaries role=boundaries -->
+## Architectural boundaries
+
+TGPR2T requires a U8 CUBE destination with valid shape 32 by 4 (CUBE_M32) or 16 by 8 (CUBE_M16), RMode bit 2 clear, and Zero or Max as the effective pad. It records no numeric status and writes no GPR.
+
+The requirement comment calls the eligible set "the exact 91-op applicability set", while the function lists 92 names.
+
+`TileTGPR2TEncodingLegal` has no caller in the current ASL.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-example role=example-usage -->
+## Non-normative reading example
+
+TGPR2T on a CUBE_M32 destination with B.DATR PadValue Zero, RMode 0, and no ExecutionMask. The first GPR is `0x0000000100000001`, and the other three are zero.
+
+1. Padding and the valid-region loop together write `0x00` to every element and mark it defined.
+2. The offset is 0, so column 0 receives the packed bytes.
+3. For row 0, bit b comes from plane b. Plane 0 is GPR 0 bit 0, which is 1. Plane 1 is GPR 0 bit 32, which is 1. Planes 2 to 7 are 0.
+4. Row 0, column 0 becomes `0x03`. Rows 1 to 31 of column 0 are `0x00`, and columns 1 to 3 stay `0x00`.
+
+With PadValue Max, columns 1 to 3 would hold `0xff` instead.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-related role=related-owners-navigation -->
+## Related owners
+
+- [Comparison](comparison.md) owns `TileCompareCUBEToGPRAs`, `TileCompareElement`, and the GPR pad value.
+- [ExecutionMask state](execution-mask-state.md) owns `TileCubePredicateGPRBit` and inactive-value selection.
+- [Predicate carrier legality](../legality/predicate-carriers.md) owns field counts and GPR shape rules.
+- [TGPR2T schema](../../../block/model/dispatch/tgpr2t-schema.md) checks the TGPR2T bundle before this handler runs.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,73 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns `TFMA`, the handler for the TFMA instruction. For every active valid coordinate it computes left times right plus addend, with the same data type for all three sources and the destination.
+
+It also owns the per-element helper `TileFixedFusedMultiplyAddValue`, which the TFMA instruction page names as its value contract.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-concepts role=concepts-state -->
+## Concepts and visible state
+
+The handler has four Tile operands: the destination, the left source, the right source, and the addend. `TileOperandsLegal_TFMA` requires the same shape, layout, and data type for all four. The layout must be RowMajor, CUBE_M16, or CUBE_M32.
+
+The element result is a value plus five status flags, NV, DZ, OF, UF, and NX from bit 0 to bit 4. The handler ORs the flags of active elements.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-rules role=rules-interactions -->
+## Rules and interactions
+
+For an integer type, each source is read as an unsigned element of the element width. The result is the low bits of the product plus the addend, with no flags. Signed and unsigned types therefore produce the same bit pattern.
+
+For a floating type, three invalid cases are resolved first:
+
+- Any signaling NaN source.
+- Zero times infinity in either order.
+- An infinite product added to an infinite addend of the opposite sign.
+
+Each returns the canonical quiet NaN with NV. Other inputs go to `ScalarFPFusedProfile` with RNE rounding.
+
+Design point: all three sources are snapshotted before any write. The handler copies the destination and the three source `TileInfo` records before the loop and builds the result privately. A destination that names a source therefore reads old values.
+
+Design point: publication happens once. The valid payload, the valid-region definedness, and the padding are computed on the private copy and become visible together. The flags are recorded with `ScalarFPRecordFlags` after publication.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-boundaries role=boundaries -->
+## Architectural boundaries
+
+Operand legality is checked before the handler runs, and the handler itself raises no fault. For floating types, legality also requires the encoding of every valid source element to be valid, counting only active elements when an ExecutionMask is in force.
+
+Under an ExecutionMask, an inactive coordinate reads no source and takes the ZERO or MERGE value. It contributes no flags.
+
+`TileFusedMultiplyAddDataTypeSupported` admits the 16 arithmetic types. `ScalarFPFusedProfile` asserts that the type is FP64, FP32, or FP16. For the other floating types that legality admits, only the three invalid cases produce a result, the canonical quiet NaN; every other input reaches `ScalarFPFusedProfile`, whose assertion admits only FP64, FP32, and FP16.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-example role=example-usage -->
+## Non-normative reading example
+
+Take TFMA on a U8 Tile of 32 by 4 elements with one valid row and no ExecutionMask:
+
+```text
+TFMA <Row=32, Col=4, ValidRow=1, U8>, T#1, T#2, T#3, ->T<128B>
+```
+
+The first valid column holds left 20, right 13, and addend 7.
+
+1. The product is 20 x 13 = 260.
+2. Adding the addend gives 267.
+3. The U8 element keeps the low eight bits: 267 - 256 = 11.
+
+The destination element is 11 and no flag is recorded. In an S8 Tile the same bit patterns would produce the same result bits.
+
+The TFMA generated legality list names only FP16, FP32, and BF16, so this U8 case illustrates the executable ASL value helper rather than a form that list admits.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-related role=related-owners-navigation -->
+## Related owners
+
+- [TFMA](../../elementwise-tile-tile/arithmetic/TFMA.md) is the instruction that reaches this handler.
+- [Indexed layout legality](../legality/indexed-layout.md) owns `TileOperandsLegal_TFMA`.
+- [Scalar floating point](../../../scalar/model/fsu/scalar-fp.md) owns `ScalarFPFusedProfile`.
+- [Elementwise execution](elementwise.md) owns the shared element normalization helpers.
+- [Execution-mask state](execution-mask-state.md) owns inactive coordinate handling.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

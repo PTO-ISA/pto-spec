@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元包含通用寄存器（GPR）所承载的 CUBE 谓词的执行辅助函数、TGPR2T 转置器，以及可接受显式 ExecutionMask 的操作列表。
+
+块分派从 `ExecuteBundleComparisonGPRCarrier` 到达这些 GPR 辅助函数：
+
+- 带 GPR 目标的 TCMPS 调用 `TileCompareCUBEScalarToGPRAs`。
+- 带 ExecutionMask 的 TCMP 和 TCMPS 让其结果字经过 `TileExecutionMaskPredicateGPRResult`。
+- 带 GPR 掩码的 TSEL 调用 `ExecuteTileSelectCUBEGPRAs`，TSELS 调用 `ExecuteTileSelectScalarCUBEGPRAs`。
+
+`TGPR2T` 是 TGPR2T 指令的处理函数。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-concepts role=concepts-state -->
+## 概念与可见状态
+
+GPR 谓词在索引 `row + field x rows` 处为每个坐标打包一位。CUBE_M32 的 rows 为 32，CUBE_M16 为 16。一个字段就是一列。CUBE_M32 每字有 2 个字段，CUBE_M16 对 32 位类型有 2 个，其他情况有 4 个。对于 8 位类型，`high` 选择子从第 2 列（M32）或第 4 列（M16）开始。
+
+`TileOperationExecutionMaskEligible` 是指令束分派在接受 ExecutionMask 载体之前查询的列表。它列出 92 个操作名，包括 MGATHER 和 MSCATTER 形式、逐元素和 Tile-标量操作、扩展、TCMP、TSEL、TCVT、TPACK、TSHUF、TLOAD、TSTORE 和 TGPR2T，也包括 TGATHER、TSCATTER 和 TTRI，而 ExecutionMask 源 schema 的 NDF 规定这三者没有适用的 ExecutionMask 形式。它不列出任何归约或矩阵操作。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-rules role=rules-interactions -->
+## 规则与交互
+
+`TileCompareCUBEScalarToGPRAs` 从 `TilePredicateGPRPaddingValue` 开始，因此有效形状之外坐标的位保持填充模式。对每个有效的活动坐标，它规格化标量、比较并写入该位。它一次性记录累积标志并返回该字。
+
+`TileExecutionMaskPredicateGPRResult` 随后重新访问每个有效的非活动坐标。在 ZERO 下它清除该位。在 MERGE 下它从目标 GPR 的旧值复制该位，分派在写入之前读取该旧值。
+
+GPR 掩码选择辅助函数对活动坐标用 `TileCubePredicateGPRBit` 读取掩码位，对非活动坐标使用 `BundleExecutionMaskDestinationValue`。随后它们把有效区域标为已定义并施加指令束 PadValue。
+
+`TGPR2T` 读取四个 GPR，并在有效区域之外施加有效填充值。存在 B.DATR 时该填充为 B.DATR PadValue，否则为 Zero。每个活动的有效元素被设为填充值，每个非活动元素被设为其 ExecutionMask 值。随后 B.DATR RMode 第 1 到 0 位中的字节偏移选择接收打包字节的列。对于 CUBE_M32，该列每行得到一个字节，第 b 位取自平面 b。对于 CUBE_M16，两相邻列得到平面 0 到 7 和 8 到 15。每个打包字节只在坐标活动处写入。
+
+设计要点：有效形状之外的位从填充模式开始且从不被覆写。读取整个 GPR 的消费者看到的是由 PadValue 选择的值，而不是残留值。
+
+设计要点：TGPR2T 产生普通数值 U8 Tile，而不是 PredicateCell。其字节是打包的平面位，因此不限于 `0x00` 或 `0x01`。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-boundaries role=boundaries -->
+## 架构边界
+
+TGPR2T 要求 U8 CUBE 目标，有效形状为 32 乘 4（CUBE_M32）或 16 乘 8（CUBE_M16），RMode 第 2 位清零，有效填充为 Zero 或 Max。它不记录数值状态，也不写任何 GPR。
+
+需求注释称合格集合为“the exact 91-op applicability set”，而函数列出了 92 个名字。
+
+`TileTGPR2TEncodingLegal` 在当前 ASL 中没有调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-example role=example-usage -->
+## 非规范阅读示例
+
+在 CUBE_M32 目标上执行 TGPR2T，B.DATR PadValue 为 Zero，RMode 为 0，且没有 ExecutionMask。第一个 GPR 为 `0x0000000100000001`，其余三个为零。
+
+1. 填充和有效区域循环共同在每个元素写入 `0x00` 并标为已定义。
+2. 偏移为 0，因此第 0 列接收打包字节。
+3. 对于第 0 行，第 b 位来自平面 b。平面 0 是 GPR 0 的第 0 位，为 1。平面 1 是 GPR 0 的第 32 位，为 1。平面 2 到 7 为 0。
+4. 第 0 行第 0 列变为 `0x03`。第 0 列的第 1 到 31 行为 `0x00`，第 1 到 3 列保持 `0x00`。
+
+若 PadValue 为 Max，第 1 到 3 列将改为 `0xff`。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-related role=related-owners-navigation -->
+## 相关所有者
+
+- [比较](comparison.md)拥有 `TileCompareCUBEToGPRAs`、`TileCompareElement` 和 GPR 填充值。
+- [ExecutionMask 状态](execution-mask-state.md)拥有 `TileCubePredicateGPRBit` 和非活动值选择。
+- [谓词载体合法性](../legality/predicate-carriers.md)拥有字段数和 GPR 形状规则。
+- [TGPR2T schema](../../../block/model/dispatch/tgpr2t-schema.md)在此处理函数运行之前检查 TGPR2T 指令束。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

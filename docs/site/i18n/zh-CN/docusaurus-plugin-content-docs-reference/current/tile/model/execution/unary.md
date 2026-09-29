@@ -12,7 +12,79 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元拥有 `ExecuteTileUnary`，这是九个单源逐元素 Tile 操作共享的处理函数。封闭组为 TABS、TNOT、TNEG 和 TRELU。SFU 组为 TEXP、TLOG、TRECIP、TSQRT 和 TRSQRT。
+
+它还拥有逐元素辅助函数：封闭组使用的 `TileFixedUnaryValue`、SFU 特殊输入使用的 `TileSFUUnarySpecialValue`，以及 `TileProfileUnary`。EXPDIF 单元在其 EXP 步骤中复用这些 SFU 辅助函数。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-concepts role=concepts-state -->
+## 概念与可见状态
+
+操作类型是目标 Tile 的 `data_type`。源必须已分配、与目标形状匹配，并具有兼容的载体宽度。
+
+各操作的类型集合不同。TNOT 接受八种整数类型。TABS、TNEG 和 TRELU 接受 16 种算术类型。SFU 操作接受八种浮点类型 FP64、FP32、TF32、HF32、FP16、BF16、E4M3 和 E5M2。
+
+状态标志从 bit 0 到 bit 4 依次为 NV、DZ、OF、UF 和 NX。SFU 元素返回全部五个标志；封闭组元素只返回一个无效位，记录为 NV。处理函数把活动元素的标志按位或起来，并用 `ScalarFPRecordFlags` 记录一次。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-rules role=rules-interactions -->
+## 规则与交互
+
+整数封闭操作回绕到元素宽度。对有符号类型，最小负值的 TABS 返回相同的位模式，TRELU 对负值返回零。TNOT 翻转元素的每一位。
+
+浮点 TABS 清除符号位，TNEG 翻转符号位，即使输入是 NaN 也如此，且不产生标志。浮点 TRELU 对负值和 +0 返回零，保留正值，并把 NaN 变为规范静默 NaN；输入为信号 NaN 时设置 NV。
+
+SFU 元素首先经过 `TileSFUUnarySpecialValue`：
+
+- NaN 输入返回规范静默 NaN；信号 NaN 设置 NV。
+- TEXP 把零映射为 1.0，把 +inf 映射为 +inf，把 -inf 映射为 +0。
+- TLOG 把 1.0 映射为 +0，把零映射为 -inf 并设置 DZ，把 +inf 映射为 +inf，把负值映射为 NaN 并设置 NV。
+- TRECIP 把零映射为同号无穷并设置 DZ，把无穷映射为同号零。
+- TSQRT 保留零和 +inf，把负值映射为 NaN 并设置 NV。
+- TRSQRT 把零映射为同号无穷并设置 DZ，把 +inf 映射为 +0，把负值映射为 NaN 并设置 NV。
+
+E4M3 没有无穷编码，因此无界结果变为其规范 NaN。其他输入交给 `ReferenceTileUnaryFinite`，它按 RNE 舍入。
+
+设计要点：源在任何写入之前被快照。循环读取源 `TileInfo` 的副本并私下构建结果，因此目标即使命名该源，读取的仍是旧值。
+
+设计要点：特殊输入在有限值配置档之前就被决定。因此 NaN、零和无穷输入的结果，以及 TLOG、TSQRT 和 TRSQRT 的负值输入结果，由本单元固定，而不是由有限值参考实现决定。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-boundaries role=boundaries -->
+## 架构边界
+
+ExecutionMask 下的非活动坐标取 ZERO 或 MERGE 值，且不贡献标志。发布之后，处理函数把有效区域标记为已定义，并应用指令束填充。
+
+`ReferenceTileUnaryFinite` 只接受 FP32、FP16 和 BF16。合法性允许 SFU 操作使用 FP64、TF32、HF32、E4M3 和 E5M2，但模型没有为它们定义有限的非特殊结果。
+
+`TileUnaryValue` 在可执行模型中没有调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-example role=example-usage -->
+## 非规范阅读示例
+
+考虑在 32 乘 4 元素、有效行为一行的 FP32 Tile 上执行 TRECIP，没有 ExecutionMask：
+
+```text
+TRECIP <Row=32, Col=4, ValidRow=1, FP32>, T#1, ->T<512B>
+```
+
+有效源行为 2.0、-0.0、+inf 和 4.0。
+
+1. 2.0 是有限值，因此参考实现给出 0.5，编码为 `0x3f000000`，无标志。
+2. -0.0 是零，因此结果为 -inf，即 `0xff800000`，并设置 DZ。
+3. +inf 得到 +0，即 `0x00000000`。
+4. 4.0 得到 0.25，即 `0x3e800000`，无标志。
+
+记录的标志只有 DZ，它被按位或进已有的粘滞状态。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-related role=related-owners-navigation -->
+## 相关所有者
+
+- [逐元素执行](elementwise.md)拥有共享的二元辅助函数和类型规范化。
+- [操作数 schema](../legality/operand-schema.md)拥有一元合法性检查。
+- [参考转换](../numeric/reference-conversion.md)拥有 `ReferenceTileUnaryFinite`。
+- [EXPDIF 执行](expdif.md)复用 TEXP 辅助函数。
+- [数值状态](../../../arch/state/numeric-status.md)拥有粘滞标志。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

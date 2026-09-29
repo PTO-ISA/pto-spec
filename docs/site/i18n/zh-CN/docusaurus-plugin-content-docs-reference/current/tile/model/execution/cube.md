@@ -12,7 +12,72 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为 TMATMUL 和 TGEMV 族计算 CUBE 矩阵乘积。它构建原始累加结果，加上可选的偏置，然后把结果交给提交辅助函数。
+
+完整指令束路径 `ExecuteBundleTMATMULOperation` 对普通形式调用 `TMATMULShared`，对 MX 形式调用 `TMATMULMXSharedWithOptionalScales`。本单元还为每个助记符定义一个直接函数，从 `TMATMUL` 到 `TGEMV_MX_ACC`，以及 `TMATMULMXShared`。未找到这些函数的 ASL 调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-concepts role=concepts-state -->
+## 概念与可见状态
+
+- A 是左源，有 M 行 K 列。B 是右源，有 K 行 N 列。
+- C 是 ACC 形式的显式累加器输入。D 是目标。
+- 累加器类型来自 `TileMatrixAccumulatorDataType`：有符号输入为 S32，无符号输入为 U32，其他情况为 FP32。
+- D 必须具有累加器类型；当所选 PreQuantMode 非零时，D 必须具有该模式的 `BundleFPATROutputType`。
+- MX 形式增加按组缩放。一组覆盖 32 个内维元素，HiF4X2 为 64 个。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-rules role=rules-interactions -->
+## 规则与交互
+
+对每个结果行和列，和从 `MatrixInitialAccumulatorValue` 开始。不累加时该值为零，累加时为 C 元素，启用 CScale 时为缩放后的 C 元素。
+
+随后内维索引按递增顺序从 0 运行到 K-1。普通形式每一步调用 `TileProfileMatrixAccumulate`，MX 形式每一步调用 `TileProfileMatrixScaledAccumulate`。
+
+当累加器类型为 FP32、两个输入都是 FP32、TF32、HF32、FP16 或 BF16、三个载体都是有限值，并且对于 MX 形式两个缩放都不存在时，使用 FP32 参考路径。它先把乘积舍入到 FP32，再把和舍入到 FP32；普通形式使用 B.DATR 的 RMode 和 Sat，MX 形式使用默认控制。其他所有情况，包括整数类型以及无穷或 NaN 操作数，普通辅助函数都对原始元素载体返回 `accumulator + MultiplyWord(left, right)`，MX 辅助函数在缩放存在时先把每个输入乘以其缩放。
+
+`MatrixBiasResult` 在乘积之后为每列加上一个偏置行元素。当值和偏置都是有限的 FP32 时，它用默认控制对二者之和进行舍入；否则直接相加载体。
+
+CCTRL 位 0 置位时，`CommitMatrixRawPartial` 发布原始累加器类型结果，跳过后处理和辅助输出。否则由后处理单元中的 `CommitMatrixResult` 发布 D。
+
+设计要点：A、B 和 C 在任何目标写入之前被读入私有副本，结果在私有 `TileInfo` 中构建。头部注释说明了其后果：当 D 指向 C 时，操作读取旧的 C 并写入新的 D。
+
+设计要点：FP32 路径在每个内维步骤中舍入两次，并以固定顺序遍历 K，因此结果不是融合乘加，模型对每组输入给出唯一确定的结果。
+
+设计要点：`MarkLocalTileValidRegionDefined` 清除所有已定义位，然后只标记有效区域。不应用 PadValue，因此 D 的填充保持未定义。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-boundaries role=boundaries -->
+## 架构边界
+
+这些辅助函数断言其形状和类型规则。`ExecuteBundleTMATMULOperation` 中的指令束预检在任何源快照之前检查这些规则，因此合法程序不会触发失败的断言。
+
+在指令束路径上，当 TGEMV 形式的 M 不为 1 时，`ExecuteBundleTMATMULOperation` 产生 Fault_TileLegality；直接的 TGEMV 函数断言 1 个有效行。CScale 仅对 TMATMUL_ACC 和 TMATMUL_MX_ACC 合法；其 schema 是一个 M 行 1 列的 U8 CUBE_M32 Tile，合法性还要求 FP32 累加器。
+
+累加和偏置丢弃数值状态标志。只有 CScale 和后处理记录标志。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-example role=example-usage -->
+## 非规范阅读示例
+
+考虑一个 M=1、N=1、K=2 的 FP32 TMATMUL_ACC：
+
+```text
+TMATMUL_ACC <M=1, N=1, K=2, FP32>, AccTile, SrcTile0, SrcTile1, ->DstTile<Size>
+```
+
+1. 左源行为 1.0 和 2.0。右源列为 3.0 和 4.0。累加器元素为 10.0。
+2. 和从 10.0 开始。第 0 步加上 1.0 x 3.0 = 3.0，得到 13.0。
+3. 第 1 步加上 2.0 x 4.0 = 8.0，得到 21.0。每个值都是精确的，因此不发生舍入。
+4. 启用 CScale 且指数为 1 时，起始值为 10.0 / 2 = 5.0，结果为 16.0。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-related role=related-owners-navigation -->
+## 相关所有者
+
+- [矩阵缩放](matrix-scale.md)拥有初始累加值、CScale 和累加辅助函数。
+- [后处理](postprocess.md)拥有 `CommitMatrixResult` 和辅助输出。
+- [内部累加器](internal-accumulator.md)拥有非约束性的 CCTRL 缓存提示。
+- [CUBE TMATMUL 分派](../../../block/model/dispatch/cube-tmatmul.md)执行预检并选择共享入口。
+- [矩阵操作数](../legality/matrix-operands.md)拥有累加器、偏置和 CScale 的合法性。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

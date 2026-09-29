@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元保存 B.FPATR 矩阵后处理背后的逐位精确数值辅助函数。它对量化整数进行舍入和饱和，执行移位模式，并把实数值编码为整数、binary16 和 8 位浮点目标类型。
+
+它承载 NDF 条款 `PTO-MATRIX-QUANT-BITEXACT-001`。矩阵后处理单元调用 `MatrixQuantOffset`、`MatrixShiftS32ToS16`、`MatrixQuantizedAffine` 和各编码器；参考转换单元也使用整数和浮点编码器。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-concepts role=concepts-state -->
+## 概念与可见状态
+
+量化参数是一个 64 位 Word，包含以下字段：
+
+- 位 `[31:13]` 保存 FP19 缩放值。
+- 位 `[35:32]` 保存移位模式的移位码。
+- 对宽度 5、9 和 17，有符号偏移分别位于位 `[41:37]`、`[45:37]` 或 `[53:37]`。
+
+`MatrixQuantParameter` 和 `MatrixShiftParameter` 构造这样的 Word。未找到二者的 ASL 调用者。
+
+中间值是加上偏移之前产生的有符号整数。其宽度为 S5、S9 或 S17。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-rules role=rules-interactions -->
+## 规则与交互
+
+`MatrixQuantizedAffine` 遵循 NDF 的顺序。它用控制中的舍入模式把值乘以缩放的结果舍入为整数，然后钳位到 -16..15、-256..255 或 -65536..65535。它加上偏移，并把和交给 `ReferenceMatrixIntegerEncoding`。
+
+`MatrixRoundAndSaturateSigned` 在钳位时报告 OF 加 NX（`0x14`），在舍入不精确时报告 NX（`0x10`）。
+
+`ReferenceMatrixIntegerEncoding` 进行舍入，在设置 Sat 时钳位到目标范围，并规格化到目标宽度。无论值是否被钳位，溢出都会引发 `0x14`。
+
+`MatrixShiftS32ToS16` 算术右移 1 到 16 位。它饱和到 -32768..32767，并在溢出时引发 `0x14`。
+
+`ReferenceMatrixFloatingEncoding` 按目标类型分派。FP64 和 FP32 使用参考有限值编码器，并在设置 Sat 时把溢出钳位到最大有限值。FP16 和 BF16 使用 `ReferenceBinary16Encoding`。E4M3 和 HiF8 使用 `ReferenceFP8Encoding`，打包 4 位类型和 E6M2 使用各自的编码器。
+
+设计要点：饱和发生在中间宽度上，在加偏移之前。因此偏移作用于有界值，符合 NDF 的要求，而最终溢出仍可通过标志观察到。
+
+设计要点：`MatrixRoundMagnitude` 对幅值舍入，并对负值交换 RTP 和 RTM。它还为负值的 RHB 给出单独的规则。因此定向舍入相对于有符号值保持其含义。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-boundaries role=boundaries -->
+## 架构边界
+
+`ReferenceBinary16Encoding` 断言 FP16 或 BF16，`ReferenceFP8Encoding` 断言 E4M3 或 HiF8。调用者必须按类型选择编码器。
+
+不设置 Sat 时，E4M3 溢出编码为 `0x7f`，标志为 `0x14`。binary16 溢出在不设置 Sat 时编码为无穷，设置 Sat 时编码为最大有限值。
+
+binary16 和 FP8 中的下溢在结果不精确时报告 UF 加 NX（`0x18`）。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-example role=example-usage -->
+## 非规范阅读示例
+
+模式 3 采用 S32 累加器、标量参数、S9 中间值和 S8 结果。取缩放 0.25、偏移 3、RNE 舍入，并启用 Sat。
+
+1. 累加器 100 得到 100 x 0.25 = 25。它精确落入 S9，因此无标志。加 3 得到 28，编码为 S8 28。
+2. 累加器 2000 得到 500。它被钳位到 255 并置 `0x14`。加 3 得到 258，Sat 把它钳位到 S8 127 并置 `0x14`。
+3. 不设置 Sat 时，258 规格化为 S8 2，标志仍为 `0x14`。
+
+对于移位码为 3 的移位模式 12，移位量为 4。累加器 74565 变为 4660，落入 S16。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-related role=related-owners-navigation -->
+## 相关所有者
+
+- [矩阵后处理](matrix-postprocess.md)选择模式路径并调用这些辅助函数。
+- [B.FPATR](../../../block/attributes/B.FPATR.md)分配偏移宽度、移位模式和输出类型。
+- [参考转换](../numeric/reference-conversion.md)复用这些编码器。
+- [参考量化](../../../scalar/model/fsu/reference-quantization.md)提供共享的标量量化辅助函数。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,69 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit owns `ExecuteTileExpand`, the shared handler for row and column broadcast operations. It is reached by the eight TROWEXPAND forms (TROWEXPAND, TROWEXPANDADD, TROWEXPANDSUB, TROWEXPANDMUL, TROWEXPANDDIV, TROWEXPANDMAX, TROWEXPANDMIN, TROWEXPANDEXPDIF) and the eight matching TCOLEXPAND forms.
+
+It carries the accepted clause `PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-concepts role=concepts-state -->
+## Concepts and visible state
+
+Each operation has three Tile operands: the destination, the full-size source, and the broadcast source. The axis selects which broadcast element pairs with each destination coordinate:
+
+- Row axis: the element in the same row of the broadcast source, at the broadcast slot column.
+- Column axis: the element in row 0 of the broadcast source, in the same column.
+
+The broadcast slot is column 0 for RowMajor. For CUBE_M16 or CUBE_M32 row forms, `TileExpansionBroadcastSlot` divides the BroadcastByteOffset from B.DATR RMode by the element size in bytes.
+
+The operation kind selects the element function. COPY returns the broadcast element. ADD, SUB, MUL, DIV, MAX, and MIN apply `TileProfileBinaryWithFlags` to the source element and the broadcast element. EXPDIF uses the EXPDIF element helper.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler loops over the destination valid region. For an active coordinate it reads the broadcast element and, except for COPY, the source element at the same coordinate. It stores the value and ORs the element flags, NV, DZ, OF, UF, and NX from bit 0 to bit 4.
+
+After the loop it marks the valid region defined, applies the bundle padding, records the ORed flags, and publishes the destination.
+
+Design point: the three operand records are snapshotted before the loop and the result is built privately. A destination that names the source still reads the old values.
+
+Design point: COPY requires the source and broadcast operands to name the same Tile. The source element is never read for COPY, so no second full-size operand is involved.
+
+Design point: EXPDIF alone may have a destination type that differs from the source operation type. Every other kind requires the two types to be equal, so the arithmetic always runs in the destination type.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-boundaries role=boundaries -->
+## Architectural boundaries
+
+Under an ExecutionMask, an inactive coordinate reads neither source, contributes no flags, and takes the ZERO or MERGE value. A broadcast element is therefore read only if some active coordinate uses it.
+
+For integer DIV, legality requires a nonzero divisor for active outputs before the handler runs. Floating arithmetic follows the type limits of `TileProfileBinaryWithFlags`: ADD, SUB, MUL, and DIV use `ScalarFPBinaryProfile`, which accepts FP64, FP32, FP16, and BF16.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-example role=example-usage -->
+## Non-normative reading example
+
+Take TROWEXPANDSUB on RowMajor S32 Tiles with a valid region of 2 rows by 3 columns and no ExecutionMask:
+
+```text
+TROWEXPANDSUB <Row=32, Col=4, ValidRow=2, ValidCol=3, S32>, T#1, T#2, ->T<512B>
+```
+
+The source rows are 10, 20, 30 and 5, 6, 7. The broadcast source holds 1 in row 0 and 5 in row 1, at column 0.
+
+1. Row 0 subtracts 1: 9, 19, 29.
+2. Row 1 subtracts 5: 0, 1, 2.
+
+The integer path returns no flags, so the sticky status is unchanged.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expansion-related role=related-owners-navigation -->
+## Related owners
+
+- [Reduction and expansion legality](../legality/reduction-and-expansion.md) owns the operand checks and the broadcast slot.
+- [Elementwise execution](elementwise.md) owns the binary element helper.
+- [EXPDIF execution](expdif.md) owns the EXPDIF element helper.
+- [Reduction execution](reduction.md) owns the matching row and column reductions.
+- [Execution-mask state](execution-mask-state.md) owns inactive coordinate handling.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,62 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把一个 CUBE 累加器元素转换为其最终的 D 值。它应用 B.FPATR 的激活、缩放、偏移、舍入、饱和和特殊值规则。
+
+`MatrixPostQuantBaseWithFlags` 是逐元素入口，经由后处理单元中的 `TileProfileMatrixPostProcessWithFlags` 到达。本单元还为 MaxAbs 归约提供 `MatrixReductionAbsoluteWithFlags`。它承载 NDF 条款 `PTO-MATRIX-POSTPROCESS-BITEXACT-001`。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-concepts role=concepts-state -->
+## 概念与可见状态
+
+- 源类型是转换所见的累加器类型：PreQuantMode 为 0 时为输出类型，S32 模式为 S32，其他情况为 FP32。
+- ReluMode 0 表示不激活，1 表示 ReLU，2 或 3 表示取自标量或向量参数的 leaky 斜率。
+- 量化缩放是参数位 `[31:13]` 中的 FP19 值。有符号偏移宽度为 0、5、9 或 17 位，由 `BundleFPATRModeOffsetWidth` 选择。
+
+标志从位 0 起依次为 NV、DZ、OF、UF、NX。`0x14` 是 OF 加 NX。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-rules role=rules-interactions -->
+## 规则与交互
+
+当 PreQuantMode 和 ReluMode 都为 0 时，值原样通过。移位模式 12 和 13 直接进入 `MatrixShiftS32ToS16`，移位量为参数位 `[35:32]` 加一。
+
+对其他模式，`MatrixSelectedMultiplier` 选择一个乘数。对非负源或 ReluMode 0，它是缩放值。对负源，ReluMode 1 下为 0，ReluMode 2 或 3 下为 FP19 ReLU 参数。
+
+NaN 或无穷的 FP32 源由 `MatrixPostQuantSpecialValue` 处理。整数目标得到 0 或饱和规则所选的端点值，并引发 NV 或 OF 加 NX。浮点目标得到 NaN、零、无穷或最大有限值。乘数为 0 时，负无穷改为被视为 0.0。
+
+有限源乘以乘数。偏移宽度非零时，`MatrixQuantizedAffine` 在该宽度上舍入并饱和，加上偏移，再对结果编码。否则加上偏移后由 `MatrixEncodeReal` 编码其和。
+
+`MatrixFPATREffectiveControl` 对模式 25 和 28 强制 RHB，对其他固定舍入模式强制 RNE。其余模式保留 B.DATR 的舍入。
+
+设计要点：当 FP32 源为负零、乘数非零、偏移为零且目标为浮点时，返回 `MatrixFloatingSignedZero(output_type, TRUE)`：对 FP32、FP16、BF16 和 E4M3 为负零，对 HiF8 为 `0x00`。在格式具有负零时符号得以保留，而实数路径会丢失它。
+
+设计要点：除使用算术移位的移位模式外，每个步骤都以精确实数算术书写，每个阶段有一个明确的舍入点；NDF 要求结果逐位精确，因此每个实现都发布相同的 D。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-boundaries role=boundaries -->
+## 架构边界
+
+`MatrixFloatingLargestFinite` 没有 FP64 或 E5M2 条目，`MatrixFloatingInfinity` 对 FP32、FP16、BF16 和 HiF8 以外的每种类型返回规范 NaN。PreQuantMode 非零时，目标类型是 `BundleFPATROutputType` 为该模式列出的类型。
+
+对 MaxAbs，`MatrixReductionAbsoluteWithFlags` 把 S32 `0x80000000` 映射为 `0x7fffffff` 并置 OF。合法性只允许 FP32、FP16 和 BF16 归约，它们使用浮点 ABS。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-example role=example-usage -->
+## 非规范阅读示例
+
+一个 TMATMUL 具有 FP32 累加器、PreQuantMode 1 和 ReluMode 1。模式 1 输出 FP16，不使用缩放参数，并固定使用 RNE。
+
+1. 累加器元素 2.5 非负，因此乘数为 1.0。结果 2.5 精确编码为 FP16 `0x4100`。
+2. 累加器元素 -3.0 在 ReLU 下为负，因此乘数为 0。结果 0.0 编码为 `0x0000`。
+3. 乘数为 0 时，累加器元素负无穷被视为 0.0，因此 ReLU 同样得到 `0x0000`，且无标志。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-related role=related-owners-navigation -->
+## 相关所有者
+
+- [矩阵量化](matrix-quantization.md)拥有舍入、饱和和编码辅助函数。
+- [后处理](postprocess.md)路由参数并发布结果。
+- [B.FPATR](../../../block/attributes/B.FPATR.md)定义模式表。
+- [参考量化](../../../scalar/model/fsu/reference-quantization.md)拥有 FP32 有限值解码。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

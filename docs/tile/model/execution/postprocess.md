@@ -12,7 +12,65 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit finishes a CUBE matrix operation. It routes the B.FPATR post-processing operands, converts every valid D element when B.FPATR is present, computes the optional RowMax and GroupMax outputs, and publishes all outputs together.
+
+Its entry point is `CommitMatrixResult`. The CUBE execution unit calls it for every form that does not select raw-partial output.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-concepts role=concepts-state -->
+## Concepts and visible state
+
+- B.FPATR is the matrix post-processing command. Its fields include PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn.
+- The effective type is the D type after conversion. `BundleFPATREffectiveDataType` keeps the accumulator type when PreQuantMode is 0.
+- RowMaxOut holds one maximum per row. GroupMaxOut holds one maximum per group of GroupN columns.
+
+Extra sources follow the mathematical sources in this order: RowMaxIn when RowMaxEn and RowMaxInit are both set, then the vector quantization Tile, then the vector ReLU Tile. D is destination 0, RowMaxOut is destination 1, and GroupMaxOut is the next destination.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-rules role=rules-interactions -->
+## Rules and interactions
+
+`MatrixPostProcessResult` returns its input unchanged when no B.FPATR is present. Otherwise it visits every valid element and calls `TileProfileMatrixPostProcessWithFlags`.
+
+The quantization parameter comes from column `column` of the vector Tile, from the scalar operand, or is the constant 1, depending on PreQuantMode. The ReLU parameter comes from the vector Tile when ReluMode is 3 and from the scalar operand otherwise.
+
+`MatrixRowMaxResult` starts each row with column 0 and folds columns 1 to N-1 in increasing order. With RowMaxInit, it then folds in RowMaxIn for that row. `MatrixGroupMaxResult` folds each group of GroupN columns the same way, in increasing column order and stopping at the last valid column; it has no input Tile to fold in.
+
+Each fold step uses `TileProfileMatrixReductionStepWithFlags`. With MaxAbsEn it takes the absolute value of both operands first, then applies the ordinary MAX step.
+
+`CommitMatrixResult` computes D, RowMaxOut, and GroupMaxOut from pre-commit state. It then writes all enabled outputs and records the OR of all their flags.
+
+Design point: the reductions consume the final encoded D values, not the raw accumulator. RowMax therefore equals what a program would compute from the published D.
+
+Design point: every output is prepared from pre-commit state before any is written. RowMaxIn and the output Tiles are read before D is published, and D, the enabled reduction outputs, and the flags then change together as one commit.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-boundaries role=boundaries -->
+## Architectural boundaries
+
+Legality restricts RowMax and GroupMax to an effective type of FP32, FP16, or BF16. For those types, MAX follows the floating min/max rules, and only a signaling NaN raises NV.
+
+The reduction outputs are marked defined only in their valid region. `MatrixPostProcessResult` changes the D type in its record and leaves definedness as the product set it.
+
+The `TileProfileMatrixPostProcess` and `TileProfileMatrixReductionStep` wrappers drop flags; no caller of either was found in the ASL.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-example role=example-usage -->
+## Non-normative reading example
+
+An FP32 TMATMUL has PreQuantMode 0, ReluMode 0, RowMaxEn 1, and RowMaxInit 1. Row 0 of D is 3.0, -7.0, 5.0, and RowMaxIn row 0 is 6.0.
+
+1. Post-processing leaves D unchanged, because both modes are 0.
+2. Without MaxAbsEn, the row fold gives max(3.0, -7.0) = 3.0, then max(3.0, 5.0) = 5.0.
+3. Folding in RowMaxIn gives max(6.0, 5.0) = 6.0, so RowMaxOut row 0 is 6.0.
+4. With MaxAbsEn, the fold uses 3.0, 7.0, and 5.0, so it reaches 7.0 before RowMaxIn and publishes 7.0.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-related role=related-owners-navigation -->
+## Related owners
+
+- [Matrix post-processing](matrix-postprocess.md) owns the per-element conversion and activation.
+- [CUBE execution](cube.md) produces the result that this unit commits.
+- [Matrix post-processing legality](../legality/matrix-postprocess.md) checks operand counts and effective types.
+- [B.FPATR](../../../block/attributes/B.FPATR.md) defines the mode fields.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

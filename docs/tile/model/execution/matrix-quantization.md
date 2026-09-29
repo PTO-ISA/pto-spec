@@ -12,7 +12,70 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit holds the bit-exact numeric helpers behind B.FPATR matrix post-processing. It rounds and saturates quantized integers, performs the shift modes, and encodes real values into the integer, binary16, and 8-bit floating destination types.
+
+It carries NDF clause `PTO-MATRIX-QUANT-BITEXACT-001`. The matrix post-processing unit calls `MatrixQuantOffset`, `MatrixShiftS32ToS16`, `MatrixQuantizedAffine`, and the encoders; the reference-conversion unit also uses the integer and floating encoders.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-concepts role=concepts-state -->
+## Concepts and visible state
+
+A quantization parameter is one 64-bit Word with these fields:
+
+- Bits `[31:13]` hold the FP19 scale.
+- Bits `[35:32]` hold the shift code for the shift modes.
+- The signed offset sits at bits `[41:37]`, `[45:37]`, or `[53:37]` for widths 5, 9, and 17.
+
+`MatrixQuantParameter` and `MatrixShiftParameter` build such Words. No ASL caller of either was found.
+
+An intermediate is the signed integer produced before the offset is added. Its width is S5, S9, or S17.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-rules role=rules-interactions -->
+## Rules and interactions
+
+`MatrixQuantizedAffine` follows the NDF order. It rounds value times scale to an integer with the control's rounding mode, then clamps it to -16..15, -256..255, or -65536..65535. It adds the offset and passes the sum to `ReferenceMatrixIntegerEncoding`.
+
+`MatrixRoundAndSaturateSigned` reports OF plus NX (`0x14`) when it clamps and NX (`0x10`) when rounding was inexact.
+
+`ReferenceMatrixIntegerEncoding` rounds, clamps to the destination range when Sat is set, and normalizes to the destination width. Overflow raises `0x14` whether or not the value is clamped.
+
+`MatrixShiftS32ToS16` shifts arithmetically right by 1 to 16 bits. It saturates to -32768..32767 and raises `0x14` on overflow.
+
+`ReferenceMatrixFloatingEncoding` dispatches by destination type. FP64 and FP32 use the reference finite encoders and clamp an overflow to the largest finite value when Sat is set. FP16 and BF16 use `ReferenceBinary16Encoding`. E4M3 and HiF8 use `ReferenceFP8Encoding`, and packed 4-bit and E6M2 types use their own encoders.
+
+Design point: saturation happens at the intermediate width before the offset is added. The offset is therefore applied to a bounded value, as the NDF requires, and a final overflow can still be observed through the flags.
+
+Design point: `MatrixRoundMagnitude` rounds the magnitude and swaps RTP and RTM for negative values. It also gives RHB a separate rule for negative values. Directed rounding therefore keeps its meaning relative to the signed value.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ReferenceBinary16Encoding` asserts FP16 or BF16, and `ReferenceFP8Encoding` asserts E4M3 or HiF8. Callers must choose the encoder by type.
+
+Without Sat, an E4M3 overflow encodes `0x7f` with flags `0x14`. Binary16 overflow encodes infinity without Sat and the largest finite value with Sat.
+
+Underflow in binary16 and FP8 reports UF plus NX (`0x18`) when the result is inexact.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-example role=example-usage -->
+## Non-normative reading example
+
+Mode 3 takes an S32 accumulator, a scalar parameter, an S9 intermediate, and an S8 result. Take scale 0.25, offset 3, RNE rounding, and Sat enabled.
+
+1. Accumulator 100 gives 100 x 0.25 = 25. It fits S9 exactly, so no flags. Adding 3 gives 28, which encodes as S8 28.
+2. Accumulator 2000 gives 500. It clamps to 255 with `0x14`. Adding 3 gives 258, which Sat clamps to S8 127 with `0x14`.
+3. Without Sat, 258 normalizes to S8 2, and the flags are still `0x14`.
+
+For shift mode 12 with shift code 3, the shift is 4. Accumulator 74565 becomes 4660, which fits S16.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-quantization-related role=related-owners-navigation -->
+## Related owners
+
+- [Matrix post-processing](matrix-postprocess.md) selects the mode path and calls these helpers.
+- [B.FPATR](../../../block/attributes/B.FPATR.md) assigns offset widths, shift modes, and output types.
+- [Reference conversion](../numeric/reference-conversion.md) reuses the encoders.
+- [Reference quantization](../../../scalar/model/fsu/reference-quantization.md) supplies shared scalar quantization helpers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

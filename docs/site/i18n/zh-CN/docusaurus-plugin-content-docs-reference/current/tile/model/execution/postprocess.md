@@ -12,7 +12,65 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元完成一次 CUBE 矩阵操作。它路由 B.FPATR 后处理操作数，在存在 B.FPATR 时转换每个有效 D 元素，计算可选的 RowMax 和 GroupMax 输出，并一起发布所有输出。
+
+其入口是 `CommitMatrixResult`。对每个未选择原始部分输出的形式，CUBE 执行单元都会调用它。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-concepts role=concepts-state -->
+## 概念与可见状态
+
+- B.FPATR 是矩阵后处理命令。其字段包括 PreQuantMode、ReluMode、GroupNCode、RowMaxEn、GroupMaxEn、RowMaxInit 和 MaxAbsEn。
+- 有效类型是转换后的 D 类型。PreQuantMode 为 0 时，`BundleFPATREffectiveDataType` 保留累加器类型。
+- RowMaxOut 每行保存一个最大值。GroupMaxOut 每组 GroupN 列保存一个最大值。
+
+额外源按以下顺序跟在数学源之后：RowMaxEn 和 RowMaxInit 都置位时为 RowMaxIn，然后是向量量化 Tile，然后是向量 ReLU Tile。D 是目标 0，RowMaxOut 是目标 1，GroupMaxOut 是下一个目标。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-rules role=rules-interactions -->
+## 规则与交互
+
+没有 B.FPATR 时，`MatrixPostProcessResult` 原样返回输入。否则它访问每个有效元素并调用 `TileProfileMatrixPostProcessWithFlags`。
+
+量化参数根据 PreQuantMode 取自向量 Tile 的第 `column` 列、取自标量操作数，或为常数 1。ReluMode 为 3 时，ReLU 参数取自向量 Tile，否则取自标量操作数。
+
+`MatrixRowMaxResult` 以第 0 列开始每一行，并按递增顺序折叠第 1 到 N-1 列。启用 RowMaxInit 时，它随后折叠该行的 RowMaxIn。`MatrixGroupMaxResult` 以同样方式折叠每组 GroupN 列，按递增列顺序并在最后一个有效列处停止；它没有要折叠的输入 Tile。
+
+每个折叠步骤使用 `TileProfileMatrixReductionStepWithFlags`。启用 MaxAbsEn 时，它先对两个操作数取绝对值，再应用普通 MAX 步骤。
+
+`CommitMatrixResult` 从提交前的状态计算 D、RowMaxOut 和 GroupMaxOut。然后它写入所有启用的输出，并记录所有输出标志的 OR。
+
+设计要点：归约消耗的是最终编码的 D 值，而不是原始累加器。因此 RowMax 等于程序从已发布 D 计算出的值。
+
+设计要点：每个输出都在任何输出写入之前从提交前的状态准备好。RowMaxIn 和输出 Tile 在 D 发布之前被读取，随后 D、启用的归约输出和标志作为一次提交一起改变。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-boundaries role=boundaries -->
+## 架构边界
+
+合法性把 RowMax 和 GroupMax 限制为有效类型 FP32、FP16 或 BF16。对这些类型，MAX 遵循浮点 min/max 规则，只有信号 NaN 会引发 NV。
+
+归约输出只在其有效区域内被标记为已定义。`MatrixPostProcessResult` 修改其记录中的 D 类型，并保留乘积所设置的已定义性。
+
+`TileProfileMatrixPostProcess` 和 `TileProfileMatrixReductionStep` 包装函数丢弃标志；在 ASL 中未找到二者的调用者。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-example role=example-usage -->
+## 非规范阅读示例
+
+一个 FP32 TMATMUL 的 PreQuantMode 为 0，ReluMode 为 0，RowMaxEn 为 1，RowMaxInit 为 1。D 的第 0 行为 3.0、-7.0、5.0，RowMaxIn 第 0 行为 6.0。
+
+1. 后处理保持 D 不变，因为两种模式都为 0。
+2. 不启用 MaxAbsEn 时，行折叠给出 max(3.0, -7.0) = 3.0，然后 max(3.0, 5.0) = 5.0。
+3. 折叠 RowMaxIn 给出 max(6.0, 5.0) = 6.0，因此 RowMaxOut 第 0 行为 6.0。
+4. 启用 MaxAbsEn 时，折叠使用 3.0、7.0 和 5.0，在 RowMaxIn 之前达到 7.0，并发布 7.0。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-postprocess-related role=related-owners-navigation -->
+## 相关所有者
+
+- [矩阵后处理](matrix-postprocess.md)拥有逐元素转换和激活。
+- [CUBE 执行](cube.md)产生本单元提交的结果。
+- [矩阵后处理合法性](../legality/matrix-postprocess.md)检查操作数数量和有效类型。
+- [B.FPATR](../../../block/attributes/B.FPATR.md)定义模式字段。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

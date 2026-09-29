@@ -12,7 +12,60 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元定义 Local CUBE_M16 和 CUBE_M32 Tile 的四种字节级和通道级重排。`TPERMUTE` 用两个源之一的某个字节构建每个目标字节。`TSHUF` 在 CUBE 单元内的行（通道）之间移动元素。`TPACK` 把两个源的选定字节拼接为一个 32 位字。`TUNPACK` 从每个源字中提取选定字节。
+
+它还拥有字节访问函数 `TileInfoWithCellByte`、`TileReadCellWord` 和 `TileInfoWithCellWord`。单元字是某一行有效数据中连续的 4 个字节。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-concepts role=concepts-state -->
+## 概念与可见状态
+
+行字节数是一个 CUBE 单元行的字节宽度：CUBE_M16 为 8，CUBE_M32 为 4。一行的有效字节数为 `valid_columns x element bits`，向上取整到整字节。每行字数为有效字节数除以 4 并向上取整。
+
+四个操作都在入口处读取源 `TileInfo` 记录，在局部副本中构建结果，并对 `_Tiles` 赋值一次。合法性规则禁止目标与数据源相同，`TSHUF` 还禁止目标与控制 Tile 相同。
+
+四个操作都以 `TileWithValidRegionDefined` 和使用 `TilePad_Null` 的 `TileWithPadding` 结束，因此填充为零且未定义。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-rules role=rules-interactions -->
+## 规则与交互
+
+`TPERMUTE` 为每个目标字节读取一个 U8 索引。小于行字节数的索引选择源 0 的该字节；从行字节数到两倍行字节数之间的索引选择源 1。被选字节来自与目标字节相同的单元行分块。
+
+`TSHUF` 从控制位 7 到 0、15 到 8 和 23 到 16 取得 mode、段代码和 boundary。段宽为 2、4、8、16 或 32 个通道；32 要求 CUBE_M32。对每个元素，来自 U32 控制 Tile 的 5 位值在段内执行下移（mode 0）、上移（mode 1）、异或（mode 2）或选择通道 `b` 对段宽取模（mode 3）。如果候选通道在段外或超出有效行，boundary 0 保留元素自身所在行，boundary 1 写入零。
+
+`TPACK` 从控制位 7 到 0 取得源 0 的字节数，从位 15 到 8 取得源 1 的字节数。`TUNPACK` 从相同字段取得字节偏移和字节数。
+
+设计要点：`TileOperandsLegal_TPERMUTE` 在任何效果之前检查每个活动目标字节：其索引必须已定义且小于两倍行字节数，其选中的源字节也必须已定义。因此非法索引以 Fault_TileLegality 拒绝，目标不会被发布；处理函数在构建结果之前以断言重复范围检查。
+
+设计要点：在 ExecutionMask 下，非活动坐标不读取任何索引、控制或源字节；例外是 `TPERMUTE` 中容纳两个 4 位元素的字节只要其中一个元素活动就会被读取。`TPERMUTE` 和 `TSHUF` 使用目标元素坐标；`TPACK` 和 `TUNPACK` 使用 (源行, 字索引)，一个位控制整个目标字组：4 个 U8、2 个 U16 或 1 个 U32 元素。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-boundaries role=boundaries -->
+## 架构边界
+
+四个操作都仅适用于 CUBE_M16 或 CUBE_M32。`TPACK` 和 `TUNPACK` 的目标为 U8、U16 或 U32，其 `valid_columns` 等于每行字数乘以每字元素数。64 位元素类型被排除。
+
+`TPERMUTE` 和 `TSHUF` 的非活动路径调用 `BundleExecutionMaskDestinationValue`。`TPACK` 和 `TUNPACK` 的非活动路径在未选择 ZERO 时直接读取 `_BundleExecutionMask.merge_base`。它不断言 `merge_base_valid`；分派在 `PrepareSelectedBundleExecutionMaskMerge` 中建立合并基准。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-example role=example-usage -->
+## 非规范阅读示例
+
+`TPACK` 使用有 8 个有效列的 CUBE_M16 U8 源，因此每行有 8 个有效字节和 2 个字。目标为 U16，有 4 个有效列。控制字从每个源选择 2 个字节。源 0 第 0 行保存字节 `0x01` 到 `0x08`，源 1 第 0 行保存 `0x11` 到 `0x18`。
+
+1. 字 0 依次打包源 0 的字节 0 和 1，然后是源 1 的字节 0 和 1：`0x01`、`0x02`、`0x11`、`0x12`。
+2. 目标得到元素 `0x0201` 和 `0x1211`。
+3. 字 1 从字节 4 开始，得到 `0x0605` 和 `0x1615`。
+
+没有 ExecutionMask 时，全部 4 个元素都被写入并变为已定义。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-related role=related-owners-navigation -->
+## 相关所有者
+
+- [布局重排合法性](../legality/layout-rearrangement.md)拥有行字节数、字节读取和操作数检查。
+- [布局与重排分派](../dispatch/layout-and-rearrangement.md)把这些指令路由到这里。
+- [TPERMUTE](../../layout-and-rearrangement/layout/TPERMUTE.md)、[TSHUF](../../layout-and-rearrangement/layout/TSHUF.md)、[TPACK](../../layout-and-rearrangement/layout/TPACK.md)和[TUNPACK](../../layout-and-rearrangement/layout/TUNPACK.md)拥有指令契约。
+- [ExecutionMask schema](../../../block/model/dispatch/execution-mask-schema.md)准备掩码和合并基准。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
