@@ -19,56 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsel-purpose role=purpose -->
 ## What TSEL does
 
-`TSEL` selects exact carrier bits from two Tile sources under a packed predicate Tile.
+`TSEL` builds a new Local Tile by choosing each element from one of two source Tiles under a predicate. Where the predicate is 1 it takes the `SrcTrue` element, and where it is 0 it takes the `SrcFalse` element. The predicate is normally produced by `TCMP`.
+
+Design point: `TSEL` has no standalone opcode. `BSTART.VEC` Mode 0 Function 26 (TEPL selector `0x01A`) selects it. `PadValueOrByteId` is the only applicable `B.DATR` field.
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-mechanism role=mechanism -->
 ## Operation mechanism
 
-Predicate bit zero selects the false input and bit one selects the true input; selected carrier bits are copied without numeric conversion.
+After complete preflight, `TSEL` snapshots the predicate and both data sources. For each coordinate of the valid rectangle `ValidRow x ValidCol`, it reads the predicate and copies the exact bits of the chosen source element into the destination.
+
+Design point: `TSEL` is a raw-carrier operation. It does not require selected payloads to be valid encodings of the operation `DataType`, and it performs no conversion, rounding, saturation, canonicalization, or numeric-status update. A selected NaN keeps its payload, and a signaling NaN does not raise invalid. Choosing between two values needs no arithmetic, so the destination holds exactly the bits that were chosen.
+
+Design point: the selected operation `DataType` still matters. It is the destination backing type and sets the element width that each source's backing type must match. In the PredicateCell form it must equal the PredicateCell basis, and in the GPR form it sets the mask-word geometry. Validating numeric encodings is left to any later operation that interprets the values.
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the predicate: a packed Predicate Tile, a CUBE PredicateCell Tile, or the first mask GPR.
+- `source1` is `SrcTrue`, the Tile selected where the predicate is 1.
+- `source2` is `SrcFalse`, the Tile selected where the predicate is 0.
+- `destination0` is a newly allocated `RowMajor` or CUBE numeric Tile. Its `DataType` is the selected operation `DataType`.
 
-- `source0` supplies the packed predicate Tile.
+`TSEL` consumes exactly one of three mutually exclusive predicate carriers.
 
-- `source1` supplies a persistent source Tile.
+| Form | Data layout | Bindings |
+| --- | --- | --- |
+| Legacy | `RowMajor` | `B.IOT` Predicate, SrcTrue; then `B.IOT` SrcFalse and the new destination |
+| PredicateCell | `CUBE_M16` or `CUBE_M32` | The same two `B.IOT` records, with a PredicateCell as the predicate |
+| GPR | `CUBE_M16` or `CUBE_M32` | One `B.IOT` with SrcTrue, SrcFalse, and the new destination, plus one source-only `B.IOR` carrying the mask |
 
-- `source2` supplies a persistent source Tile.
+The legacy predicate is a packed Tile with one bit per element, and every predicate bit in its valid region must be defined. A PredicateCell holds one byte per element, and its basis type must equal the operation `DataType`. A PredicateCell byte is checked and read at every valid coordinate, or only at active coordinates when an ExecutionMask is in force, and each such byte must be defined and canonical: `0x00` or `0x01`. In the GPR form, an 8-bit operation type uses two mask GPRs, and 16- and 32-bit types use one.
 
-- The closed applicable DataType set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Each data source may use a different same-width, non-packed backing type. Its bits are copied unchanged into a destination tagged with the operation `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-effects role=effects -->
 ## Definedness, padding, and publication
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The predicate and both data payloads are snapshotted before the first destination write. Both data sources may name the same Tile, and either may alias the destination; each read sees old values.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+The selected payload, the padding definedness, and the destination descriptor publish together. A rejected `TSEL` has no architectural effect, and all three sources persist either way.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` are defined, and `Null`, selected when `B.DATR` is omitted, leaves them undefined.
 
-Source Tiles persist and are not modified by successful execution.
+In the CUBE forms, an ExecutionMask may be in force. Inactive coordinates then receive the mask's zero or merge value instead of a selected element. `TSEL` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The CUBE forms further restrict it to the CUBE predicate types, which exclude the 64-bit types.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+Source data must be defined (at every active coordinate, in the CUBE forms), even though its encoding is not validated. `PE_MASK=0000` is a strict no-op before GPR, predicate, source, allocation, or payload checks.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+A malformed or mixed carrier schema, a missing dimension, an unsupported `DataType`, a PredicateCell basis that differs from the operation `DataType`, a noncanonical or undefined active predicate byte, undefined active source data, a shape or layout mismatch, insufficient destination capacity, or allocation failure rejects before any effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSEL <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+With `DataType=S32`, predicate bits `[1, 0, 1]`, a `SrcTrue` row `[10, 20, 30]`, and a `SrcFalse` row `[-1, -2, -3]` produce `[10, -2, 30]`. With `DataType=FP32`, a selected `0x7FC00001` NaN is copied as `0x7FC00001`, and no status is recorded.
+
+In macro form, `TSEL <Row=8, Col=64, FP32>, U#1, T#1, T#2, ->T<2KB>` uses the packed Predicate Tile `U#1` to choose between `T#1` and `T#2` for all 8 x 64 elements.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

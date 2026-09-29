@@ -15,39 +15,47 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-instruction-class-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This page explains the declared Tile programming classes, execution-engine categories, and TEPL alias policy. Determine a concrete operation's assignments from its current instruction record rather than treating this guide as catalog-wide proof.
+Every direct Tile operation carries two labels. Its programming class says what kind of computation it is. Its execution engine says which PTO execution unit runs it. This page defines both label sets and the rule that ties engine to assembly spelling for the shared TEPL carrier.
+
+The same unit also owns the canonical TileOp macro spelling used in Tile assembly. To find the class and engine of one operation, read that operation's instruction record; this page gives the rules, not a catalog-wide proof.
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-concepts role=concepts-state -->
 ## Classification axes
 
-- Programming classes cover elementwise, Tile-scalar/immediate, reduce/expand, memory/data movement, matrix/matrix-vector, layout/rearrangement, and irregular/complex operations.
-- Execution engines are exactly `VEC`, `TLSU`, `CUBE`, and `SFU`.
-- Sync and Config is a Tile programming class, but the current direct binary carrier has no direct Tile operation in that class.
+- Programming class: every direct Tile operation belongs to exactly one of seven classes: Elementwise Tile-Tile, Tile-Scalar and Immediate, Reduce and Expand, Memory and Data Movement, Matrix and Matrix-Vector, Layout and Rearrangement, or Irregular and Complex.
+- Execution engine: every direct Tile operation selects exactly one of `VEC`, `TLSU`, `CUBE`, or `SFU`.
+- Sync and Config is an eighth PTO Tile programming class, but the current binary carrier has no direct Tile operation in that class, and `TileInstructionClass` lists only the seven above.
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-rules role=rules-interactions -->
 ## Class and engine rules
 
-The programming-class axis is independent of the execution-engine axis.
+The engine rules are fixed. `VEC` executes only elementwise operations. Global-memory and data-transfer operations use `TLSU`. Matrix and matrix-vector operations use `CUBE`. Specialized complex operations use `SFU`.
 
-`VEC` is restricted to elementwise operations; global-memory and transfer operations use `TLSU`; matrix work uses `CUBE`; specialized complex work uses `SFU`.
+Design point: classification must remain independent of execution-engine choice. The class describes the programmer's view of the operation, while the engine describes where it runs, so one class can span several engines. In the current records, Elementwise Tile-Tile contains both `VEC` operations such as `TADD` and `SFU` operations such as `TDIV`, and Layout and Rearrangement contains `TLSU` `TMOV` alongside `SFU` operations.
 
-`TileEngineHasCanonicalBundleStartAlias` returns true only for `TileEngine_VEC` and `TileEngine_SFU`.
+`TileEngineHasCanonicalBundleStartAlias` returns true only for `TileEngine_VEC` and `TileEngine_SFU`. Only these two engines have an engine-named `BSTART` spelling over the TEPL carrier.
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-boundaries role=boundaries -->
 ## Alias boundary
 
-`BSTART.VEC` and `BSTART.SFU` reuse the TEPL `Mode` and `Function` carrier. `BSTART.TEPL` remains accepted compatibility input, while canonical assembly and disassembly select the engine-specific spelling and do not render `BSTART.TEPL`.
+`BSTART.VEC` and `BSTART.SFU` use the unchanged TEPL `Mode` and `Function` carrier. `BSTART.TEPL` remains an accepted compatibility spelling. Canonical assembly and disassembly render `BSTART.VEC` or `BSTART.SFU`, chosen by the selected Tile operation's engine, and never render `BSTART.TEPL`.
+
+Design point: TEPL is a binary carrier, not an engine. `VEC` and `SFU` operations share one `Mode` and `Function` selector space, so the aliases add no encoding bits. The spelling instead makes the engine visible in text: `BSTART.VEC` accepts only a `VEC` operation and `BSTART.SFU` only an `SFU` operation, while `BSTART.TEPL` accepts either.
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-example role=example-usage -->
 ## Non-normative classification example
 
 Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
+`TADD` is Elementwise Tile-Tile on `VEC`, so its bundle starts with `BSTART.VEC TADD, FP32`. `TDIV` is in the same class but runs on `SFU`, so it starts with `BSTART.SFU TDIV, FP32`. Both assemble to the TEPL carrier, and a disassembler prints the engine-specific spelling for each. `TMOV` is Layout and Rearrangement on `TLSU` and is not a TEPL operation, so it has no `BSTART.VEC` or `BSTART.SFU` form.
+
 <!-- PTO-READER-BLOCK: arch-instruction-class-related role=related-owners-navigation -->
 ## Related owners
 
-- Packed data types provide type context for classified Tile operations.
-- Encoding ownership separates active carriers from reserved roots and deleted names; follow concrete instruction owners for target-profile questions.
+- [Packed data types](../data-types/packed.md) provide type context for classified Tile operations.
+- [Encoding ownership](encoding-ownership.md) separates active carriers from reserved roots and deleted names.
+- [BSTART.VEC](../../block/execution/BSTART.VEC.md), [BSTART.SFU](../../block/execution/BSTART.SFU.md), and [BSTART.TEPL](../../block/execution/BSTART.TEPL.md) own the alias legality for each spelling.
+- [TileOp macro assembly](../../virtual-isa/tileop-macro-assembly.md) presents the canonical macro forms this unit owns.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,65 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the frame templates behind `FENTRY`, `FEXIT`, `FRET.RA`, and `FRET.STK`. A frame template saves or restores a contiguous range of general registers on the stack and adjusts the stack pointer, all as one command.
+
+It also defines two execution-context helpers, `SaveExecutionContextState` and `RecoverExecutionContextState`. The command dispatcher never reaches them in PTO; see the boundaries section.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-concepts role=concepts-state -->
+## Concepts and visible state
+
+- The stack pointer is GPR 1 (`PTOFrameStackPointerIndex`). The return-address register is GPR 10 (`PTO_FRAME_RA_INDEX`).
+- A register range runs from a begin register to an end register. Both endpoints must be in `2..23`. When the end is lower than the begin, the range wraps from 23 back to 2, so the 22 registers `R2..R23` form a ring.
+- Slot `k` of a frame is at `caller_sp - 8*(k+1)`. Slot 0 holds the begin register.
+- `_FrameTemplate` records the kind, the instruction PC, the register range, the frame size, the caller stack pointer, whether the stack pointer has been adjusted, the progress (the next register not yet transferred), the return target, and, for `FENTRY`, the source values.
+- `_FrameDepth`, `_LastFrameBegin`, `_LastFrameEnd`, and `_LastFrameSize` are updated when a template completes.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-rules role=rules-interactions -->
+## Rules and interactions
+
+A template starts only if its operands are legal: both endpoints in `2..23`, a frame size that is a multiple of 8 and at least 8 bytes per register, and, for `FRET.STK`, a begin register of 10. Otherwise it raises `Fault_IllegalInstruction` before any effect.
+
+`FENTRY` takes the current stack pointer as the caller stack pointer and copies every source register into the template. It then sets the stack pointer to `caller_sp - size` and stores one 8-byte register per step. The exit forms compute `caller_sp = sp + size`, restore the stack pointer to that value, and load one register per step.
+
+`FRET.RA` takes its return target from `_ReturnAddress`. `FRET.STK` takes it from the first loaded slot. An odd return target raises `Fault_InstructionPC`. On completion, `FENTRY` increments `_FrameDepth`, the exit forms decrement it, and both return forms write `TPC` with the return target.
+
+Design point: each 8-byte access is its own restart boundary. A step that faults does not advance `progress`, and `_FrameTemplate` is saved in the trap context. When the same instruction runs again, it continues at the first register that has not been transferred. Committed stores or loads are never repeated.
+
+Design point: a restart does not start a new template. The template is reused only when its recorded PC and kind match the current instruction; otherwise the instruction raises `Fault_IllegalInstruction`. The `stack_adjusted` flag prevents a second stack-pointer adjustment on the retry.
+
+Design point: `FENTRY` copies its sources before it changes the stack pointer. A restarted `FENTRY` stores the values captured on its first attempt, not whatever the registers hold at the retry.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-boundaries role=boundaries -->
+## Architectural boundaries
+
+Frame templates are standalone commands. They do not open or commit a bundle and do not write `BARG`.
+
+`SaveExecutionContextState` and `RecoverExecutionContextState` are defined here, but `CommandHandlerSupported` returns false for their handlers. `ESAVE` and `ERCOV` therefore raise `Fault_IllegalInstruction` before either helper runs.
+
+`_FrameDepth` saturates. It is not incremented past `PTO_MODEL_MEMORY_EVENTS` and not decremented below zero.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+`FENTRY` with begin register 20, end register 3, and a 48-byte frame saves six registers: 20, 21, 22, 23, 2, and 3. With `sp = 0x8000`, the stack pointer becomes `0x7FD0`. Register 20 is stored at `0x7FF8`, and register 3 at `0x7FD0`. If the store of register 2 faults, `progress` is 4. The retry stores registers 2 and 3 only.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-lifetime-related role=related-owners-navigation -->
+## Related owners
+
+- [FENTRY](../../lifecycle/FENTRY.md), [FEXIT](../../lifecycle/FEXIT.md), [FRET.RA](../../lifecycle/FRET.RA.md), and [FRET.STK](../../lifecycle/FRET.STK.md) are the instruction pages that call these templates.
+- [ESAVE](../../lifecycle/ESAVE.md) and [ERCOV](../../lifecycle/ERCOV.md) are the rejected context commands.
+- [State types](../state/types.md) defines `FrameTemplateState`.
+- [Trap context](../../../arch/state/trap-context.md) saves and restores `_FrameTemplate`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

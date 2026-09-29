@@ -7,8 +7,65 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-COMMIT-VALIDATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-commit-validation-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines bundle commit. `CompleteBundleAt(continuation)` is called by `BSTOP`, by a following `BSTART`, by a trace `B.HINT` that closes the active bundle, and by the architecture enter request. It checks that the bundle may commit, runs the selected tile operation, and then retires the bundle through `StopBundleAt`.
+
+The unit also defines the Linx runtime trace-boundary hint helpers.
+
+<!-- PTO-READER-BLOCK: block-model-commit-validation-concepts role=concepts-state -->
+## Concepts and visible state
+
+Commit reads the accumulated bundle state: the `BARG` continuation record, the `B.CATR` control attributes, and the operation descriptor installed by `BSTART`. The `continuation` argument is the sequential next address. `BSTOP` passes the address after itself; a following `BSTART` or a trace `B.HINT` passes its own address, so a fall-through predecessor continues into that instruction; the architecture enter request passes `_BundleSequentialPC`.
+
+The result is true only when commit finished with no fault.
+
+<!-- PTO-READER-BLOCK: block-model-commit-validation-rules role=rules-interactions -->
+## Rules and interactions
+
+Commit applies these steps in order and stops at the first failure:
+
+1. No active bundle raises `Fault_BundleControl`.
+2. An odd continuation, or an odd next PC selected by `BARG`, raises `Fault_InstructionPC`.
+3. The `DR` (dimension reduction) control attribute on a block that is not `TileElement` or `TileMemory` raises `Fault_BundleControl`.
+4. A tile-operation descriptor (`TileElement`, `TileMemory`, or `TileMatrix`) runs the tile operation. If it fails, commit returns false. A `FixedPoint` descriptor raises `Fault_IllegalInstruction`.
+5. `StopBundleAt(continuation)` retires the bundle and writes `TPC`.
+
+Design point: the continuation is checked before any tile effect. The ASL comment notes that `SETC.TGT` can replace `BARG.BPCN` after `BSTART`, so the final target is known only at commit. Checking it first means a bad target never leaves behind a published Tile result.
+
+Design point: `DR` is checked at commit, not when `B.CATR` executes. The ASL comment explains that the raw bit may be collected before the complete header selects its operation. The check reads the block kind from `BARG` and runs at commit, before any block effect.
+
+Design point: a failed tile operation returns before `StopBundleAt`. The bundle therefore stays active with its header intact, and the `BARG` continuation is not applied. The tile-execution owner has already rolled back allocations and aborted generations. A trap handler sees the failing block, and recovery can retry it as a whole.
+
+<!-- PTO-READER-BLOCK: block-model-commit-validation-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not contain operation-specific legality. Schema, binding, type, and shape checks live in the tile-execution path, which checks them before destination allocation and the operation body.
+
+A bundle with no valid descriptor, or a control-only descriptor, commits without an operation and goes straight to `StopBundleAt`.
+
+`LinxTraceBoundaryHintApplies` always returns false, because its condition ends with a constant `FALSE`. The portable profile therefore never takes the Linx marker path, and trace hints follow the ordinary `B.HINT` lifecycle.
+
+<!-- PTO-READER-BLOCK: block-model-commit-validation-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A bundle `BSTART.VEC TADD, FP32` has a missing source binding. `BSTOP` calls `CompleteBundleAt`. Steps 1 to 3 pass. The tile path rejects the incomplete operand set with `Fault_BundleControl` and returns false. `StopBundleAt` is not reached. The trap context saved by the fault records the bundle as active and the `BSTOP` address as its `TPC`, and no destination Tile exists.
+
+<!-- PTO-READER-BLOCK: block-model-commit-validation-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution](../dispatch/tile-execution.md) runs the selected operation with its own preflight and rollback.
+- [Enter and stop](../lifecycle/enter-stop.md) defines `StopBundleAt`.
+- [Bundle start dispatch](../dispatch/start.md) commits a predecessor before opening a new bundle.
+- [BSTOP](../../lifecycle/BSTOP.md) and [B.HINT](../../lifecycle/B.HINT.md) are commit boundaries.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

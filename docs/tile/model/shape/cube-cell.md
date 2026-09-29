@@ -7,8 +7,81 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-SHAPE-CUBE-CELL}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the storage geometry of the three Local CUBE layouts: `CUBE_M16`, `CUBE_M32`, and `CUBE_N8`. CUBE layouts are the layouts used by the CUBE matrix operations. Their storage is a sequence of CELLs, where one CELL is exactly 128 bytes (`PTO_TILE_CELL_BYTES`).
+
+It owns the accepted requirement `PTO-CUBE-CELL-STATE-001` and the scale-grid requirement `PTO-CUBE-MATRIX-SCALE-CELL-001`. It computes CELL shape, storage rows and columns, repeat counts, byte counts, descriptor legality, and the payload index of each element.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-concepts role=concepts-state -->
+## Concepts and visible state
+
+The CELL shape depends on the layout and the element width:
+
+| Layout | 32-bit | 16-bit | 8-bit | 4-bit | 64-bit |
+| --- | --- | --- | --- | --- | --- |
+| `CUBE_M16` | 16 x 2 | 16 x 4 | 16 x 8 | 16 x 16 | illegal |
+| `CUBE_M32` | 32 x 1 | 32 x 2 | 32 x 4 | 32 x 8 | illegal |
+| `CUBE_N8` | 4 x 8 | 8 x 8 | 16 x 8 | 32 x 8 | 2 x 8, U64 only |
+
+Each entry is CELL rows by CELL columns. Every entry holds 128 bytes.
+
+A CUBE `TileInfo` records four derived values: `cube_k_repeat`, `cube_n_repeat`, `cube_cell_count`, and `cube_storage_bytes`. The model checks them against the physical shape before indexing.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-rules role=rules-interactions -->
+## Rules and interactions
+
+Storage rows and columns round the valid region up to whole CELLs:
+
+- `CUBE_M16` and `CUBE_M32` always have exactly 16 or 32 physical rows; the valid rows must not exceed that.
+- `CUBE_N8` rounds valid rows up to a multiple of the CELL rows.
+- All layouts round valid columns up to a multiple of the CELL columns.
+
+The repeat counts follow from the physical shape. For M16 and M32, the K repeat is columns divided by CELL columns and the N repeat is 1. For N8, the K repeat is rows divided by CELL rows and the N repeat is columns divided by 8. The CELL count is K repeat times N repeat, and the storage is 128 bytes per CELL.
+
+`TileCubeDescriptorShapeAndPhysicalLegal` also requires a legal capacity, a positive valid region inside the physical shape, and storage no larger than capacity.
+
+Design point: storage is always a whole number of 128-byte CELLs. `PTO-CUBE-CELL-STATE-001` requires storage to be derived independently of valid M, N, and K, and requires unsupported types or insufficient capacity to be rejected before effects. `ConfigureCubeTileForMaskWithPhysical` returns FALSE before writing any state when this check fails.
+
+Design point: M16 and M32 hold one physical M block. Their descriptors may carry a physical column envelope wider than the valid region, but N8 keeps the valid-derived geometry, as the source comment states.
+
+Design point: 64-bit types are excluded except `CUBE_N8` with U64, which uses K2 x N8 CELLs. `PTO-CUBE-CELL-STATE-001` names this as the sole b64 exception.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-boundaries role=boundaries -->
+## Architectural boundaries
+
+Inside a CELL, `TileCubeCellElementIndex` orders N8 elements with K fastest and M16 or M32 elements with the column direction fastest. `CUBE_M16` with a 4-bit type additionally swaps inner columns 4 to 7 with 8 to 11.
+
+`TileCubePayloadIndex` orders CELLs with K repeat fastest for N8, and by column CELL for M16 and M32.
+
+`PTO-CUBE-MATRIX-SCALE-CELL-001` states that the generic grid must not expand primary A, C, or D legality beyond M16 and M32. Operand role rules belong to the matrix legality owners.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-example role=example-usage -->
+## Non-normative reading example
+
+A `CUBE_N8` FP16 Tile has valid K = 20 rows and valid N = 12 columns. The CELL is 8 x 8.
+
+- Storage rows round 20 up to 24, and storage columns round 12 up to 16.
+- K repeat is 24 / 8 = 3 and N repeat is 16 / 8 = 2, so there are 6 CELLs and 768 bytes.
+
+Element row 10, column 9 lies in CELL K index 1 and CELL N index 1, so its CELL index is 1 x 3 + 1 = 4. Its inner position is row 2, column 1, which maps to 1 x 8 + 2 = 10. The payload index is 4 x 64 + 10 = 266.
+
+A `CUBE_M16` FP16 Tile with a valid region of 10 by 6 has 16 rows and 8 columns, a K repeat of 2, and 256 bytes.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-related role=related-owners-navigation -->
+## Related owners
+
+- [Allocation](../state/allocation.md) records the CUBE geometry through `ConfigureCubeTileForMaskWithPhysical`.
+- [Valid region](valid-region.md) owns the non-CUBE shape checks.
+- [Descriptor shape legality](../legality/descriptor-shape.md) rechecks stored CUBE geometry.
+- [Element definedness](../definedness/elements.md) routes CUBE indexing through `TileCubePayloadIndex`.
+- [CUBE destination](../../../block/model/dispatch/cube-destination.md) allocates CUBE destinations for matrix operations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

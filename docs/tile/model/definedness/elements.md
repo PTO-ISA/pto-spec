@@ -7,8 +7,78 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit tracks which Tile elements hold defined values and provides the generic element read and write helpers. An element is defined once an operation has written it; until then, a generic read of it is not legal.
+
+It also owns element indexing for the ordinary layouts, the type classification helpers, the padding values, and the predicate-Tile bit accessors. It carries the accepted requirement `PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001`.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-concepts role=concepts-state -->
+## Concepts and visible state
+
+Each `TileInfo` carries three pieces of definedness state:
+
+- A bitmap with one bit per element: `defined_elements`, or `packed_defined_elements` (one bit per logical element) for Tiles using the packed carrier.
+- `defined_valid_elements`, the number of defined elements inside the valid region.
+- `contents_defined`, which is TRUE when that count equals `valid_rows x valid_columns`.
+
+Element writes keep `contents_defined` equal to whether that count has reached the valid-region size. Whole-Tile consumers test it through `TileSourceContentsDefined`, which also requires a legal descriptor, while single-element readers test the element's own bit.
+
+Element position comes from the layout. RowMajor is `row x columns + column` and ColumnMajor is `column x rows + row`. ZN and NZ use fractals of 16 rows by 32 bytes, so the inner width is 256 bits divided by the element width. CUBE layouts use the CUBE payload index.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-rules role=rules-interactions -->
+## Rules and interactions
+
+`WriteTileElement` stores one value and sets its bit. If the element was undefined and lies inside the valid region, the count increases by one. Rewriting a defined element does not change the count.
+
+`ReadTileElement` asserts that the selected element is defined. `TileElementDefined` answers the same question without asserting, and reports the padding lane of a row-paired packed row as undefined.
+
+Whole-region producers call `MarkTileValidRegionDefined`, which sets every valid-region bit and sets `contents_defined`. `MarkTilePhysicalRegionDefined` does the same for the whole physical shape.
+
+`ApplyTilePadding` writes the elements outside the valid region with the pad value for the Tile's type. Zero, Max, and Min make those elements defined. Null writes a zero carrier but leaves them undefined.
+
+Design point: definedness is per element. One element write does not make its neighbors readable, so a reduction or a whole-Tile operation cannot consume a value that no architectural operation produced.
+
+Design point: writes outside the valid region set their bit but never increase `defined_valid_elements`. Padding therefore never makes an incomplete valid region look complete.
+
+Design point: padding Null is distinct from Zero. Both leave a zero carrier, but only Zero marks the padding defined, so a later read of a Null padding element is still illegal.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-boundaries role=boundaries -->
+## Architectural boundaries
+
+Generic indexing requires a non-CUBE layout, and ZN or NZ additionally require rows divisible by 16 and columns divisible by the fractal inner width. `TileLayout_ImplementationDefined` is always rejected.
+
+Predicate Tiles store one bit per element in RowMajor order, eight per payload byte. Their bits are defined individually through `WriteTilePredicateBit` and padded through `ApplyPredicateTilePadding`, where Max pads with 1 and Zero or Min pad with 0.
+
+`PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001` states that a PredicateCell is distinct U8 CUBE predicate storage with valid values `0x00` and `0x01`, and that Null is per-element undefined.
+
+Indexed TLSU transfers reject four-bit data types, because a byte-displacement address cannot select a nibble.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-example role=example-usage -->
+## Non-normative reading example
+
+An FP32 RowMajor Tile has a physical shape of 8 by 8 and a valid region of 4 by 4, so it needs 16 defined valid elements.
+
+1. After allocation, the count is 0.
+2. A producer writes row 0, column 0. The count becomes 1 and `contents_defined` stays FALSE. Reading row 0, column 1 is still illegal.
+3. The producer writes row 6, column 6. That element is outside the valid region, so its bit is set but the count stays 1.
+4. An operation that writes the whole valid region calls `MarkTileValidRegionDefined`. The count becomes 16 and `contents_defined` becomes TRUE.
+5. `ApplyTilePadding` with Null then marks all 48 padding elements undefined, including row 6, column 6.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-elements-related role=related-owners-navigation -->
+## Related owners
+
+- [Packed boundary](packed-boundary.md) owns the packed carrier representation used by the logical read and write helpers.
+- [Allocation](../state/allocation.md) clears all definedness when a Tile is allocated.
+- [CUBE cell geometry](../shape/cube-cell.md) supplies the CUBE payload index.
+- [Descriptor shape legality](../legality/descriptor-shape.md) defines `TileSourceContentsDefined`.
+- [Definedness state](../../../arch/state/definedness.md) gives the architectural definedness rules.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

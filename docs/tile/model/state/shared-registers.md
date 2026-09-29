@@ -7,8 +7,77 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-STATE-SHARED-REGISTERS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the behavior of the Core-private Shared Tile registers S0 to S63. A Shared register holds one Tile record that all four PEs of a Core address.
+
+It defines readiness and legality predicates, the read path for consumers, and the single commit transition `AtomicUpdateSharedTileWithPublication`. It carries the accepted requirement `PTO-B-SHARED-WHOLE-PARENT-READY-001`.
+
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-concepts role=concepts-state -->
+## Concepts and visible state
+
+Each `SharedTileInfo` record wraps a `TileInfo` with five fields:
+
+- `descriptor_valid`: the register holds a descriptor.
+- `allocation_mask`: the PEs that participate in the parent, fixed by the first update.
+- `initialized_mask`: the producer PEs that have written their part.
+- `whole_parent_ready`: the complete parent is ready.
+- `published`: the parent is visible to consumers.
+
+A "parent" is the whole Shared Tile, as opposed to the part one PE writes.
+
+`SharedTileFullyInitialized` requires a descriptor, `initialized_mask` equal to `allocation_mask`, and defined contents. `SharedTilePublished` additionally requires `whole_parent_ready` and `published`.
+
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-rules role=rules-interactions -->
+## Rules and interactions
+
+`AtomicUpdateSharedTileWithPublication` has three paths:
+
+1. Empty register: the whole record is installed, with `allocation_mask` and `initialized_mask` set to the PE mask. It becomes ready and published only when publishing, the mask names one PE or all four, and the Tile contents are defined.
+2. Existing register, one publishing PE: the Tile is replaced, marked fully defined, ready, and published.
+3. Otherwise: each producer copies only the defined elements that fall in its own quarter of the capacity, `initialized_mask` gains the new bits, and contents become defined when every allocated PE has contributed.
+
+Before any of these, `SharedTileUpdateCompatible` rejects CUBE layouts, illegal Shared capacities, and shapes that do not match capacity. For an existing descriptor, it requires the mask to stay inside `allocation_mask` and the descriptor to match in capacity, physical shape, valid region, data type, layout, and CUBE geometry fields. For a new descriptor, it requires room in the Shared pool.
+
+Design point: one complete record assignment is the commit point. The source comment states this, and the transition builds the new record in a local copy before a single write to `_SharedTiles`. A consumer can never see a half-updated descriptor.
+
+Design point: a zero PE mask is a true no-op. The update returns TRUE without reading or writing state.
+
+Design point: producer coverage, readiness, and visibility stay distinct. `PTO-B-SHARED-WHOLE-PARENT-READY-001` requires every Shared consumer to wait or no-op before payload access until both `whole_parent_ready` and `published` are true, and states that producer and consumer masks are independent.
+
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-boundaries role=boundaries -->
+## Architectural boundaries
+
+`MaterializeSharedTile` gives every consumer the same complete parent snapshot. The PE mask selects consumers, not payload quarters, and materialization never changes Shared state.
+
+Reading a Shared register that has no descriptor is allowed through `MaterializeSharedTileForReadSchema`. It builds a temporary read-only descriptor, using `MinimumTileCapacityBytesForShape` when no capacity is known. Elements come from `ReadSharedTileWord`, which returns a deterministic model word when the descriptor is missing, the parent is not ready, or the element is undefined. That word is not a portable value, and the read never allocates the register or raises a fault.
+
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-example role=example-usage -->
+## Non-normative reading example
+
+S5 is empty. PE0 writes a defined 64 KiB RowMajor Tile to it with mask `1000` and publication requested.
+
+- The first path installs the record with `allocation_mask` and `initialized_mask` both `1000`.
+- The mask names one PE and the contents are defined, so `whole_parent_ready` and `published` become TRUE.
+
+A later write from PE1 with mask `0100` is rejected: `0100` is not inside the fixed `allocation_mask` of `1000`.
+
+If instead the first write had used mask `1100`, the record would be installed with both masks `1100`, but it would not become ready. Direct readiness on the first path requires a mask naming exactly one PE or all four.
+
+<!-- PTO-READER-BLOCK: tile-model-state-shared-registers-related role=related-owners-navigation -->
+## Related owners
+
+- [Types](types.md) defines `SharedTileInfo`.
+- [Shared capacity](../capacity/shared.md) supplies the pool limit.
+- [Shared movement](../memory/shared-movement.md) calls the update transition for Local-to-Shared moves.
+- [Shared TLSU](../../../block/model/dispatch/shared-tlsu.md) and [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) consume Shared registers.
+- [Shared tile state](../../../arch/features/shared-tile-state.md) gives the architectural model.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

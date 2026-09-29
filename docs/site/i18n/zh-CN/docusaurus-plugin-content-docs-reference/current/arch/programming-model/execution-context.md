@@ -15,49 +15,56 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-execution-context-purpose-scope role=purpose-scope -->
 ## 用途与范围
 
-执行上下文是 PTO 执行期间主要架构可见标量、控制、故障、内存、维护、扩展系统寄存器和陷阱上下文存储的中央所有者。
+执行上下文声明了 PTO 执行时读写的大部分存储：标量寄存器、临时队列、程序控制、故障记录、内存、维护纪元、扩展系统寄存器和陷阱上下文。它还定义了 T 与 U 临时队列上的三种操作。
 
-一个 Core 有四组私有标量寄存器文件。指令携带一个绝对 GPR 选择器，但每个 PE 都在自己的寄存器文件中解析这个选择器。
+一个 Core 有四组私有标量寄存器文件，每个 PE 一组。指令携带一个绝对 GPR 选择器，但每个 PE 都在自己的寄存器文件中解析这个选择器。
 
 <!-- PTO-READER-BLOCK: arch-execution-context-concepts-state role=concepts-state -->
 ## 概念与状态族
 
-- `PTO-STATE-ARCH-GPR` 拥有 PE 私有寄存器文件；`PTO-STATE-ARCH-TEMPORARY-QUEUES` 拥有 T、U 值队列及其逐项有效位。
-- `PTO-STATE-ARCH-PROGRAM-CONTROL` 拥有 `PC`、`BPC`、指令束活动状态、返回值、提交值和谓词寄存器；`PTO-STATE-ARCH-FAULT` 拥有最近一次故障及其地址。
-- `PTO-STATE-ARCH-MEMORY` 拥有建模的字节、保留状态、屏障选择器、捕获的内存事件和当前内存主体。
-- 维护纪元、扩展系统寄存器、按 ACR 索引的陷阱元数据、保存的陷阱上下文和当前 ACR，分别属于本单元中显式声明的状态族。
+- `PTO-STATE-ARCH-GPR` 拥有 PE 私有寄存器文件，`PTO-STATE-ARCH-TEMPORARY-QUEUES` 拥有 T 与 U 值队列及每个条目的有效位。
+- `PTO-STATE-ARCH-PROGRAM-CONTROL` 拥有 `PC`、`BPC`、指令束活动状态、返回值与提交值以及谓词寄存器；`PTO-STATE-ARCH-FAULT` 拥有最近一次故障及其地址。
+- `PTO-STATE-ARCH-MEMORY` 拥有建模的字节、保留状态、fence 选择器、捕获的内存事件以及当前内存代理。
+- 维护纪元、扩展系统寄存器、按 ACR 索引的陷阱元数据、保存的陷阱上下文以及当前 ACR，属于本单元中各自显式声明的状态族。
+
+临时队列是由四个 64 位值组成的列表。标量选择器 `24` 到 `27` 读取 T 位置 `T#1` 到 `T#4`，选择器 `28` 到 `31` 读取 U 位置 `U#1` 到 `U#4`。位置 `#1`（ASL 中的索引 `0`）始终是最新值。
+
+设计要点：压入队列的结果不会覆盖任何 GPR。压缩二元 ALU 形式和压缩 AGU 加载通过 `WriteCompressedTResult` 写结果，它总是压入 T。普通目标选择器 `31` 压入 T，`30` 压入 U。
 
 <!-- PTO-READER-BLOCK: arch-execution-context-rules-interactions role=rules-interactions -->
 ## 队列规则与交互
 
 `ReadTemporaryQueue` 在 `use_t_queue` 为真时选择 T 队列，否则选择 U 队列，并返回所请求相对索引处的值。
 
-`TemporaryQueueSourceAvailable` 对有效位快照采用相同的 T 或 U 选择，并返回所请求相对索引处的有效位。压入操作移动某个值时，会把对应的有效位与该值一起移动。
+`TemporaryQueueSourceAvailable` 对有效位快照采用相同的 T 或 U 选择，并返回所请求相对索引处的有效位。
 
 `PushTemporaryQueue` 把新值插入索引 `0`，将该项标记为有效，并把所选队列索引 `0` 至 `2` 的值和有效位一起移到索引 `1` 至 `3`。
+
+设计要点：每个条目都带有一个随值移动的有效位。标量操作数检查会使用它：读取从未写入过的队列位置是非法源，会在执行前引发 `Fault_IllegalInstruction`，而不是返回过时值或复位值。
 
 <!-- PTO-READER-BLOCK: arch-execution-context-boundaries role=boundaries -->
 ## 边界
 
 T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修改另一个队列的值或有效位快照。
 
-一次压入会保留所选队列中最新的四项。当索引 `0` 至 `2` 上移时，之前的索引 `3` 项会被替换。
+一次压入会保留所选队列中最新的四项。当索引 `0` 至 `2` 上移时，之前的索引 `3` 项被丢弃。
 
-本单元声明上述架构存储，但不单独定义这些存储上的每一种状态转换。内存排序、复位、系统寄存器行为和陷阱恢复仍由各自专门的 ASL 所有者定义。
+本单元声明共享的架构存储，但不单独定义这些存储上的每一种状态转换。内存排序、复位、系统寄存器行为和陷阱恢复仍由各自专门的 ASL 所有者定义。例如，复位把每个队列值清为零、每个有效位清为假，陷阱捕获则连同有效位一起保存两个队列。
 
 <!-- PTO-READER-BLOCK: arch-execution-context-example-usage role=example-usage -->
 ## 非规范队列演示
 
-假设复位后 T 队列的所有相对索引都不可用。压入 `0x11` 后，T 索引 `0` 变为可用，值为 `0x11`；再压入 `0x22` 后，索引 `0` 保存 `0x22`，索引 `1` 保存较早的 `0x11`，并且两项都可用。
+复位后，T 队列的所有相对索引都不可用。压入 `0x11` 后，T 索引 `0` 变为可用，值为 `0x11`；再压入 `0x22` 后，索引 `0` 保存 `0x22`，索引 `1` 保存较早的 `0x11`，并且两项都可用。
 
 随后把 `0x33` 压入 U 队列，只会改变 U 索引 `0`。上一步中的 T 值仍留在各自的 T 相对位置。
 
 <!-- PTO-READER-BLOCK: arch-execution-context-related-owners role=related-owners-navigation -->
 ## 相关所有者
 
-- [系统寄存器寻址](../system-registers/addressing.md)是执行上下文单元声明的依赖项。
-- [内存排序](../memory-model/ordering.md)解释这里保存的内存事件。
-- [陷阱上下文](../state/trap-context.md)提供具体的访问与陷阱上下文行为。
+- [系统寄存器寻址](../system-registers/addressing.md)是声明的依赖项，并拥有清除这些状态的复位。
+- [标量操作数](../../scalar/model/types/operands.md)把标量选择器映射到 GPR 和队列位置。
+- [内存排序](../memory-model/ordering.md)解释存放在这里的内存事件。
+- [陷阱上下文](../state/trap-context.md)提供具体的访问和陷阱上下文行为。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

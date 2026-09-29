@@ -17,44 +17,51 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tnot-purpose role=purpose -->
-## 用途
+## TNOT 的作用
 
-`TNOT` 按元素宽度对一个 Local 整数 Tile 执行逐位取反。
+`TNOT` 翻转一个 Local 整数 Tile 中每个元素的每一位，并把结果写入一个新分配的 Local 目标 Tile。它就是按位取反。
+
+设计要点：`TNOT` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 16（TEPL 选择器 `0x010`）选中，并与 `TABS`、`TNEG` 和 `TRELU` 共用封闭的一元指令束模式。
 
 <!-- PTO-READER-BLOCK: tile-tnot-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileUnary`。
+完整预检通过后，`ExecuteTileUnary` 读取源，并对有效矩形 `ValidRow x ValidCol` 内的每个坐标，恰好对所选的 8、16、32 或 64 位元素位宽取反。符号性不影响结果：`S8` 与 `U8` 都把 `0x0F` 映射为 `0xF0`。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+设计要点：只对元素自身的 `W` 位取反，结果中 `W` 以上的载体位为零。模型用 64 位载体保存每个元素；若对整个载体取反，未使用的高位会变成 1。把结果限制在 `W` 位，可保证 8 位结果仍是 8 位值。
+
+设计要点：`TNOT` 是位操作，因此不施加数值舍入、饱和或状态。`TABS`、`TNEG` 与 `TRELU` 也接受浮点类型，而 `TNOT` 只接受八种整数类型。
 
 <!-- PTO-READER-BLOCK: tile-tnot-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 目的地；`source0` 是逐位操作源。
+- `source0` 是按位操作的源，必须是已分配的现有 Local Tile。
+- `destination0` 是新分配的 Local Tile，其物理形状、有效形状、布局与 `DataType` 均与源相同。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定两个 Tile；`B.IOR` 与 `B.IOS` 非法。`PE_MASK=0000` 是严格无操作，发生在维度、源访问、模式检查或目标分配之前。
+
+设计要点：`TNOT` 的一元合法性路径要求源后备 `DataType` 等于操作 `DataType`。它不使用 `TABS`、`TNEG` 与 `TRELU` 允许的同位宽重解释，因此以其他后备类型存储的源会在任何效果之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-tnot-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+源载荷在第一次写目标之前被快照，因此与目标互为别名的源按旧值读取。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+目标描述符、有效区域结果、填充以及每个元素的已定义性同时发布；被拒绝的 `TNOT` 不产生任何架构效果。`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`：`Zero`、`Max` 与 `Min` 为已定义值，而 `Null`（省略 `B.DATR` 时的值）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TNOT` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tnot-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+可接受的数据类型集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。浮点与打包格式会被拒绝。默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`；`CUBE_N8`、Shared Tile 以及混合布局均非法。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+绑定格式错误、维度缺失或为零、源状态未定义或不匹配、`DataType` 不受支持、布局非所选布局，或出现非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 时，会在任何效果之前引发 `Fault_TileLegality`。目标形状无法表示或 `TSize` 容量不足时，会在分配之前引发 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tnot-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TNOT, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+当 `DataType=U16` 时，有效元素 `[0x0000, 0x00FF, 0xFFFF]` 变为 `[0xFFFF, 0xFF00, 0x0000]`。宏形式 `TNOT <Row=8, Col=64, U16>, T#1, ->T<1KB>` 把全部 8 x 64 个元素取反，写入新的 1 KB 目标。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

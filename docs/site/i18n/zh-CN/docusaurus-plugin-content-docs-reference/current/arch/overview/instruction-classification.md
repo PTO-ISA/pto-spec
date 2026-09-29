@@ -15,39 +15,47 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-instruction-class-purpose role=purpose-scope -->
 ## 用途与范围
 
-本页解释已声明的 Tile 编程类别、执行引擎类别与 TEPL 别名策略。具体操作的归类应从其当前指令记录中确定，不要把本指南当作目录级证明。
+每个直接 Tile 操作都带有两个标签。编程类别说明它是哪一类计算；执行引擎说明由哪个 PTO 执行单元运行它。本页定义这两组标签，以及把引擎与共享 TEPL 载体的汇编拼写联系起来的规则。
+
+本单元还拥有 Tile 汇编中使用的规范 TileOp 宏拼写。要查找某个操作的类别和引擎，应阅读该操作的指令记录；本页给出规则，而不是目录级证明。
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-concepts role=concepts-state -->
 ## 分类维度
 
-- 编程类别覆盖逐元素、Tile-标量/立即数、归约/扩展、内存/数据搬运、矩阵/矩阵-向量、布局/重排与非规则/复杂操作。
-- 执行引擎恰好是 `VEC`、`TLSU`、`CUBE` 与 `SFU`。
-- 同步与配置是 Tile 编程类别，但当前直接二进制载体中没有该类直接 Tile 操作。
+- 编程类别：每个直接 Tile 操作恰好属于七个类别之一：Elementwise Tile-Tile、Tile-Scalar and Immediate、Reduce and Expand、Memory and Data Movement、Matrix and Matrix-Vector、Layout and Rearrangement 或 Irregular and Complex。
+- 执行引擎：每个直接 Tile 操作恰好选择 `VEC`、`TLSU`、`CUBE` 或 `SFU` 之一。
+- Sync and Config 是第八个 PTO Tile 编程类别，但当前二进制载体中没有属于该类别的直接 Tile 操作，`TileInstructionClass` 也只列出上述七个类别。
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-rules role=rules-interactions -->
 ## 类别与引擎规则
 
-编程类别维度独立于执行引擎维度。
+引擎规则是固定的。`VEC` 只执行逐元素操作。全局内存和数据传输操作使用 `TLSU`。矩阵与矩阵-向量操作使用 `CUBE`。专用复杂操作使用 `SFU`。
 
-`VEC` 只用于逐元素操作；全局内存与传输操作使用 `TLSU`；矩阵操作使用 `CUBE`；专用复杂操作使用 `SFU`。
+设计要点：分类必须独立于执行引擎的选择。类别描述程序员视角下的操作，引擎描述它在哪里运行，因此一个类别可以跨越多个引擎。在当前记录中，Elementwise Tile-Tile 既包含 `TADD` 等 `VEC` 操作，也包含 `TDIV` 等 `SFU` 操作；Layout and Rearrangement 则同时包含 `TLSU` 上的 `TMOV` 和 `SFU` 操作。
 
-`TileEngineHasCanonicalBundleStartAlias` 只对 `TileEngine_VEC` 和 `TileEngine_SFU` 返回真。
+`TileEngineHasCanonicalBundleStartAlias` 只对 `TileEngine_VEC` 和 `TileEngine_SFU` 返回真。只有这两个引擎在 TEPL 载体上拥有以引擎命名的 `BSTART` 拼写。
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-boundaries role=boundaries -->
 ## 别名边界
 
-`BSTART.VEC` 与 `BSTART.SFU` 复用 TEPL 的 `Mode` 和 `Function` 载体。`BSTART.TEPL` 仍是可接受的兼容输入，而规范汇编与反汇编选择引擎专用拼写，不输出 `BSTART.TEPL`。
+`BSTART.VEC` 与 `BSTART.SFU` 使用未改变的 TEPL `Mode` 和 `Function` 载体。`BSTART.TEPL` 仍是可接受的兼容拼写。规范汇编与反汇编按所选 Tile 操作的引擎输出 `BSTART.VEC` 或 `BSTART.SFU`，从不输出 `BSTART.TEPL`。
+
+设计要点：TEPL 是二进制载体，而不是引擎。`VEC` 与 `SFU` 操作共享同一个 `Mode` 和 `Function` 选择器空间，因此别名不增加任何编码位。拼写的作用是让引擎在文本中可见：`BSTART.VEC` 只接受 `VEC` 操作，`BSTART.SFU` 只接受 `SFU` 操作，而 `BSTART.TEPL` 两者都接受。
 
 <!-- PTO-READER-BLOCK: arch-instruction-class-example role=example-usage -->
 ## 非规范分类示例
 
 本示例块只用于帮助阅读：先应用上文规则，再到规范 ASL 所有者中确认结果。它不会增加任何架构契约。
 
+`TADD` 属于 Elementwise Tile-Tile 并运行在 `VEC` 上，因此其指令束以 `BSTART.VEC TADD, FP32` 开始。`TDIV` 属于同一类别但运行在 `SFU` 上，因此以 `BSTART.SFU TDIV, FP32` 开始。两者都汇编到 TEPL 载体，反汇编器为每个操作输出引擎专用拼写。`TMOV` 属于 Layout and Rearrangement、运行在 `TLSU` 上，且不是 TEPL 操作，因此它没有 `BSTART.VEC` 或 `BSTART.SFU` 形式。
+
 <!-- PTO-READER-BLOCK: arch-instruction-class-related role=related-owners-navigation -->
 ## 相关所有者
 
-- 紧凑数据类型为已分类的 Tile 操作提供类型上下文。
-- 编码所有权把活动载体与保留根、已删除名称分开；目标配置档问题应继续前往具体指令所有者。
+- [打包数据类型](../data-types/packed.md)为已分类的 Tile 操作提供类型背景。
+- [编码所有权](encoding-ownership.md)把现行载体与保留根和已删除名称区分开。
+- [BSTART.VEC](../../block/execution/BSTART.VEC.md)、[BSTART.SFU](../../block/execution/BSTART.SFU.md) 和 [BSTART.TEPL](../../block/execution/BSTART.TEPL.md) 拥有各拼写的别名合法性。
+- [TileOp 宏汇编](../../virtual-isa/tileop-macro-assembly.md)展示本单元拥有的规范宏形式。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

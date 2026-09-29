@@ -7,8 +7,75 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-STATE-DESCRIPTORS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit collects the small descriptor helpers that every Tile operation relies on. It covers three topics:
+
+- Hand structure and relative naming of the 64 Local Tile registers.
+- Capacity and SizeCode legality for Local and Shared objects.
+- Element width and the logical element capacity of a byte budget.
+
+It owns no state of its own. It reads and updates `_TileRelativeOrder` and `_TileRelativeValid`, which are declared by the Local register unit.
+
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-concepts role=concepts-state -->
+## Concepts and visible state
+
+The 64 absolute Local registers form four hands of 16: indices 0 to 15 are hand T, 16 to 31 are U, 32 to 47 are M, and 48 to 63 are N. `TileHandOf` returns the hand, and `TileIndexWithinHand` returns the 1-based position inside it.
+
+A relative selector names a hand and a distance. `RelativeTileHandIndex` is the selector divided by 16 and `RelativeTileDistance` is the selector modulo 16. Distance 0 is `#1`, the newest published generation of that hand.
+
+Each hand keeps a 16-entry order list and a 16-bit validity vector. `ResolveRelativeTileSource` returns the absolute register stored at the selected distance, after asserting that the entry is valid and still allocated.
+
+A SizeCode is a four-bit field that selects a byte budget. `TileSizeCodeBytes` maps codes 1 to 12 to 128 B through 256 KiB, doubling at each step.
+
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-rules role=rules-interactions -->
+## Rules and interactions
+
+`PublishRelativeTileDestination` pushes a new destination to distance 0 of its hand and shifts older entries one step toward distance 15. The entry at distance 15 falls off.
+
+Design point: publishing a register that is already present in its hand's list is a no-op. A destination that is reused does not appear twice, and the order of the other generations is unchanged.
+
+`RemoveRelativeTileMapping` deletes a register from every hand and compacts the remaining entries toward distance 0. `ReleaseTile` calls it, so a freed register cannot be resolved as a source.
+
+`TileCapacityIsLegal` requires at least 128 bytes, a multiple of 128, at most 65536 bytes, and no more than the `TILE_CAPACITY` limit. `SharedTileCapacityIsLegal` has the same granule rule but allows up to the 256 KiB Shared limit.
+
+Design point: the SizeCode table is shared, but the legal range depends on the role. `LocalTileSizeCodeIsLegal` accepts only codes 1 to 10, while `TileSizeCodeIsLegal` accepts 1 to 12. One Local object is capped at 64 KiB, while one Shared parent may occupy the full 256 KiB Shared pool.
+
+`TileLogicalElementCapacity` is `capacity_bytes x 8 / TileElementBits`. `TileElementBits` returns 4 for the X2 packed formats, 8, 16, 32, or 64 otherwise.
+
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-boundaries role=boundaries -->
+## Architectural boundaries
+
+These are pure or read-only helpers. Faults for an illegal SizeCode or an unavailable relative source are raised by the bundle binders that call them, such as the Tile-binding, command, range-modifier, and Shared TLSU owners.
+
+`InstallRelativeTileFixture` places a register at an arbitrary distance. `ConfigureTile`, `ConfigurePredicateTile`, and `ConfigureCubeTile` call it with the register's own index as the selector, after it removes any other entry for that register; it is not the publication rule.
+
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-example role=example-usage -->
+## Non-normative reading example
+
+Start with hand T empty. A bundle publishes register 3, then a later bundle publishes register 7.
+
+- After the first publish, hand T distance 0 holds 3.
+- After the second publish, distance 0 holds 7 and distance 1 holds 3.
+- Selector 0 now resolves to register 7 and selector 1 resolves to register 3.
+
+If register 3 is then released, `RemoveRelativeTileMapping` compacts the list, so distance 0 still holds 7 and distance 1 becomes invalid.
+
+A Local SizeCode 10 gives 65536 bytes. For FP16 that is 65536 x 8 / 16 = 32768 logical elements.
+
+<!-- PTO-READER-BLOCK: tile-model-state-descriptors-related role=related-owners-navigation -->
+## Related owners
+
+- [Local registers](local-registers.md) declares the relative order state and the publication requirement.
+- [Local capacity](../capacity/local.md) supplies `TileCapacityLimitBytes`.
+- [Tile bindings](../../../block/model/operands/tile-bindings.md) resolves and publishes relative Tiles for bundles.
+- [Tile allocation feature](../../../arch/features/tile-allocation.md) states the architectural pool and object limits.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

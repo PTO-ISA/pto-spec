@@ -7,8 +7,68 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-STATE-CONTROL-STATE}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-control-state-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit declares `PTO-STATE-BLOCK-CONTROL`, the closed set of architecture-visible bundle-control state. Its contract, `PTO-REQ-BUNDLE-STATE-001`, says bundle-control state is exactly this set.
+
+It also defines read helpers for the current bundle and the `B.DATR` data-attribute writer, including the layout-code table.
+
+<!-- PTO-READER-BLOCK: block-model-state-control-state-concepts role=concepts-state -->
+## Concepts and visible state
+
+The members fall into groups:
+
+- Continuation: `_BARG`, `_BundleSequentialPC`, `_FrameStackReturnTarget`, and the markers `_BundleCommitTargetSet`, `_BundleConditionSet`, and `_SystemBlockTerminalPending`.
+- Header configuration: `_BundleOperation`, `_BundleDimensions` and their presence bits, `_BundleControlAttributes`, `_BundleDataAttributes`, `_BundleHint`, `_BundleFixedPointAttributes`, `_BundleExecutionMask`, and `_BundleArgument`.
+- Bindings: scalar, Tile, and Shared binding arrays, `_BundleRangeGroup`, and `_BundleZeroParticipationSeen`.
+- Cross-bundle records: `_LocalGenerations`, `_SharedGenerations`, and the execution-domain tokens.
+- Restartable templates: `_MemoryCopyTemplate` and `_FrameTemplate`.
+- Last-command records such as `_LastQueueLeft` and `_LastMemoryCommandAddress`.
+
+`_BundleActive` and `_BundleBodyActive` are declared in the execution-context unit, not here.
+
+<!-- PTO-READER-BLOCK: block-model-state-control-state-rules role=rules-interactions -->
+## Rules and interactions
+
+`CurrentBundleMemoryOrder` derives the order from `B.CATR`: acquire plus release gives `AcquireRelease`, one of them gives `Acquire` or `Release`, and neither gives `Relaxed`.
+
+`CurrentBundlePadValue` returns `Null` when `B.DATR` is absent. When present, code `00` is `Zero`, `01` is `Max`, `10` is `Min`, and `11` is `Null`.
+
+`SetBundleDataAttributeState` raises `Fault_TileLegality` for an invalid data-type field or a layout code outside the accepted set, and then writes nothing. The accepted layout codes are 0, 1, 3, 4, 6, 8 to 11, 17, 18, 20, and 21 to 31. Every accepted code is supported; profiles cannot withdraw one.
+
+Design point: `_BundleCommitTargetSet` is a separate marker, not a test of `BPCN`. The ASL comment explains that `BSTART` already initializes `BPCN` before any setter runs, so the value alone cannot show whether the compressed `C.SETC.TGT` setter has already written it.
+
+Design point: `_SystemBlockTerminalPending` survives the trap raised by the final `ACRC` of a SYS block. The comment states the purpose: recovery can then accept only `BSTOP` or a new `BSTART`, so the terminal step of the block is not followed by further body instructions.
+
+Design point: Local generations live outside the per-bundle header and survive `ClearBundleHeaderState` until an explicit `LAST`. A `B.ASSEMBLE` destination can therefore be filled by several consecutive bundles.
+
+<!-- PTO-READER-BLOCK: block-model-state-control-state-boundaries role=boundaries -->
+## Architectural boundaries
+
+Pending Shared generations are Core-private. The comment states they stay invisible through the architectural `S` register file until complete collective publication.
+
+The execution-domain token is execution context, never an encoded operand. The next-token counter is unbounded in the reference model, and implementations may use any non-aliasing internal representation.
+
+<!-- PTO-READER-BLOCK: block-model-state-control-state-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A bundle with `B.CATR` acquire and release set and no `B.DATR` has memory order `AcquireRelease` and pad value `Null`. Adding `B.DATR` with pad code `00` changes the pad value to `Zero`.
+
+<!-- PTO-READER-BLOCK: block-model-state-control-state-related role=related-owners-navigation -->
+## Related owners
+
+- [State types](types.md) defines the record types.
+- [Descriptor state](descriptor-state.md) and [reset](../lifecycle/reset.md) clear the members.
+- [Execution context](../../../arch/programming-model/execution-context.md) declares the active flags.
+- [B.CATR](../../attributes/B.CATR.md) and [B.DATR](../../attributes/B.DATR.md) write the attribute records.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

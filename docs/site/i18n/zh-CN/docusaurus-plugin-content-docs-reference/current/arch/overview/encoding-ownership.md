@@ -15,36 +15,53 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-purpose role=purpose-scope -->
 ## 用途与范围
 
-本单元把已接受的 PTO 编码与永久保留的扩展根、已删除名称分开。目录投影记录保留见证；嵌入的 NDF 条款拥有其架构状态。
+本页针对任意位模式回答一个问题：它是已接受的 PTO 指令、保留的扩展编码，还是两者都不是？它区分三个类别：已接受编码、永久保留的扩展根，以及已删除的指令名称。
+
+本单元的目录投影列出每一项保留及其 mask 和 match。两条嵌入的 NDF 条款 `PTO-ARCH-ENCODING-OWNERSHIP-001` 与 `PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001` 拥有这些编码的架构状态。
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-concepts role=concepts-state -->
 ## 所有权类别
 
-- 已接受的标量、块与 Tile 编码由 PTO 指令源拥有。
-- 两级向量、机器块、扩展 `BSTART` 与 `B.TEXT` 根仍属于保留扩展空间。
-- 块体条件分支根另行保留给条件分支扩展空间。
-- `B.IOD`、`BSTART.PAR` 与 `C.B.IOS` 是已删除名称，不是别名。
+- 已接受：PTO 通过其指令 ASL 拥有每一个已接受的标量、块和 Tile 编码。
+- 保留：两级 vector、machine-block 和扩展 `BSTART` 编码、`B.TEXT` 离线块根，以及每个非零的 `BSTART.FP`、`BSTART.STD` 或 `BSTART.SYS` FALL Fixup 载荷。未来的 PTO 指令不得分配到这些位置。目录还保留六个已退役的 `BSTART.TEPL` 选择器，例如 `0x065`。
+- 保留的分支形式：`B.EQ`、`B.NE`、`B.LT`、`B.GE`、`B.LTU`、`B.GEU`、`B.Z` 与 `B.NZ` 是保留的两级块体形式。
+- 已删除：`B.IOD`、`BSTART.PAR` 和 `C.B.IOS` 等名称是汇编错误，既不是别名也不是保留项。
+
+设计要点：保留与删除保护的对象不同。保留保护编码空间，因此任何 PTO 指令都永远不能占用这些位。删除只是废弃一个拼写：汇编器拒绝旧名称，而其原来的槽位可以分配给现行 PTO 指令。
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-rules role=rules-interactions -->
 ## 保留检查
 
-`VectorExtensionRoot64Reserved` 识别低 `7` 位为 `0x7f` 的首字。`ConditionalBranchExtensionRoot32Reserved` 识别保留的 `0x27` 与 `0x37` 根及其功能字段。`BTextExtensionRoot32Reserved` 识别低 `7` 位等于 `0x03` 的情况。
+三个 ASL 谓词从原始指令位中识别保留根。
+
+- `VectorExtensionRoot64Reserved` 匹配低 `7` 位等于 `0x7f` 的第一个 32 位字。
+- `ConditionalBranchExtensionRoot32Reserved` 用 `0x0000707f` 屏蔽该字，并匹配六个 `0x27` 根和两个 `0x37` 根，二者由位 `14:12` 中的功能字段区分。
+- `BTextExtensionRoot32Reserved` 匹配低 `7` 位等于 `0x03` 的字。
+
+PTO 标量译码必须在读取操作数或产生架构效果之前，拒绝保留条件分支族中的每一个完整编码。
+
+设计要点：在任何操作数读取或效果之前拒绝，意味着保留的分支编码绝不会被部分执行。PTO 完全不赋予这些编码分支含义，从而把该空间留给拥有它的扩展。
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-boundaries role=boundaries -->
-## 保留与激活的边界
+## 保留与现行
 
-`B.EQ`、`B.NE`、`B.LT`、`B.GE`、`B.LTU`、`B.GEU`、`B.Z` 与 `B.NZ` 等保留拼写不是活动指令，也不会作为规范 PTO 汇编输出。保留项用于保护未来空间，并不定义执行行为。
+`B.EQ`、`B.NE`、`B.LT`、`B.GE`、`B.LTU`、`B.GEU`、`B.Z` 与 `B.NZ` 等保留拼写不是现行指令，不得作为现行 PTO 汇编输出。保留项用于保护未来空间，并不定义执行行为。
+
+分支保留的范围很窄。`ConditionalBranchExtensionRoot32Reserved` 只匹配恰好八个屏蔽后的值。屏蔽后的值不在这八个之中的字，不会被该谓词保留。
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-example role=example-usage -->
-## 非规范解码示例
+## 非规范译码示例
 
 本示例块只用于帮助阅读：先应用上文规则，再到规范 ASL 所有者中确认结果。它不会增加任何架构契约。
+
+以 32 位字 `0x00000027` 为例。用 `0x0000707f` 屏蔽后得到 `0x00000027`，这是保留值之一，因此 `ConditionalBranchExtensionRoot32Reserved` 返回真，PTO 译码拒绝它。字 `0x00006027` 屏蔽后为 `0x00006027`，不在列表中，因此该谓词不保留它。
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-related role=related-owners-navigation -->
 ## 相关所有者
 
-- 指令分类解释活动 Tile 类别与执行引擎。
-- 各指令 ASL 和生成目录拥有已接受编码与解码器见证；配置档问题应返回这些当前所有者。
+- [指令分类](instruction-classification.md)解释现行 Tile 类别与执行引擎。
+- [顶层分派](../dispatch/top-level.md)拥有唯一的已编码指令入口及其非法指令故障。
+- 各指令 ASL 与生成目录拥有已接受编码和译码器见证。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,86 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-STATE-ALLOCATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the transitions that turn a Local Tile register into an allocated Tile and back. A Local Tile register is one of the 64 absolute entries of `_Tiles`, each described by a `TileInfo` record, with a four-bit allocation mask in `_TileAllocationMasks`.
+
+It defines four allocation families and one release transition:
+
+- `ConfigureTileForMask` for ordinary (non-CUBE) numeric Tiles; it stores the supplied layout without checking it.
+- `ConfigurePredicateTileForMask` for bit-packed predicate Tiles.
+- `ConfigureCubeTileForMaskWithPhysical` and its wrappers for CUBE layouts.
+- `ConfigurePredicateCellForMask` for U8 CUBE predicate cells.
+- `ReleaseTile`, which returns the register to the unallocated state.
+
+The single-PE wrappers `ConfigureTile`, `ConfigurePredicateTile`, `ConfigureCubeTile`, and `ConfigurePredicateCell` pass mask `0001`; the first three also install the register as a relative-source fixture (`ConfigureCubeTile` only when allocation succeeds).
+
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-concepts role=concepts-state -->
+## Concepts and visible state
+
+Every allocation writes the complete descriptor part of `TileInfo`:
+
+- `capacity_bytes` is the per-PE byte budget of the object.
+- `rows` and `columns` are the physical shape; `valid_rows` and `valid_columns` bound the valid region inside it.
+- `data_type` and `layout` select element width and element order.
+- `storage_kind` is `TileStorage_Numeric`, `TileStorage_Predicate`, or `TileStorage_PredicateCell`.
+- `predicate_basis_type` records the comparison type for predicate cells and otherwise equals `data_type`.
+- `cube_k_repeat`, `cube_n_repeat`, `cube_cell_count`, and `cube_storage_bytes` are nonzero only for CUBE layouts.
+
+The allocation mask names the PEs that own a copy of the object. PE0 is the high bit, so `1000` is PE0 alone and `0001` is PE3 alone.
+
+Design point: allocation defines `TileInfo` but not the payload. Every allocation sets `contents_defined` to FALSE, clears `defined_elements`, and sets `defined_valid_elements` to 0. The numeric and predicate paths also clear `packed_defined_elements`; CUBE Tiles never use that packed bitmap. A producer must write the Tile before a generic payload read is legal, so a generic read cannot return a value left by an earlier allocation of the same register.
+
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-rules role=rules-interactions -->
+## Rules and interactions
+
+`ConfigureTileForMask` asserts, in this order: a legal capacity (`TileCapacityIsLegal`), a nonzero mask, positive `rows`, `valid_rows <= rows`, a legal descriptor shape at the derived row count, `valid_rows` within the configured row count, a legal physical shape at the configured row count, and room in every selected PE's Local pool (`LocalTileAllocationFitsExcept`). Only then does it write state.
+
+The configured row count depends on the column count. For a power-of-two column count, the rows come from `DerivedTileRows`; for types other than E2M1X2 and E1M2X2 the Tile then exactly fills its capacity. For a column count that is not a power of two, with FP32, FP16, BF16, E2M1X2, or E1M2X2, the caller's `rows` is kept, and it only has to fit.
+
+Predicate Tiles use `PredicateTileStorageBytes`, which is one bit per element rounded up to whole bytes. Their `data_type` is always U8 and their layout is always RowMajor.
+
+CUBE allocation returns FALSE instead of asserting when the mask is zero, the geometry is illegal, or the pool is full. It records the cell geometry computed by the CUBE helpers.
+
+Design point: every allocation and `ReleaseTile` call `InvalidateTileFeatureMapDescriptor`. The feature-map descriptor is invalidated on every allocation and release, even if the new shape is identical, so it must be configured again before use.
+
+Design point: capacity is checked with `LocalTileAllocationFitsExcept`, which excludes the register being configured. Reconfiguring a register replaces its old contribution instead of adding to it.
+
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-boundaries role=boundaries -->
+## Architectural boundaries
+
+These helpers are not instructions. Bundle dispatch calls them, for example through `ConfigureBundleTileDestination` in destination-auxiliary, the predicate, CUBE, and TCVT destination resolvers, cell rearrangement, subview materialization, and the TIMG2COL and layout-conversion paths. Fault rollback and local-generation abort call `ReleaseTile` for destinations that the bundle allocated, and subview handling releases its temporary materializations.
+
+`ReleaseTile` also calls `RemoveRelativeTileMapping`, so a released register can no longer be reached through a relative `#n` selector.
+
+`PTO_MODEL_TILE_ELEMENTS` (32768 in this model) sizes the executable definedness bitmap and bounds predicate Tiles. It is a model bound, not a claim about every implementation.
+
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-example role=example-usage -->
+## Non-normative reading example
+
+Consider `ConfigureTile` on register 5 with capacity 4096 bytes, a `rows` argument of 64, 16 columns, valid region 50 by 10, FP32, RowMajor.
+
+- The capacity is a multiple of 128 and no larger than 64 KiB, so it is legal.
+- 16 is a power of two, so rows are derived: 4096 x 8 = 32768 bits divided by 16 x 32 = 512 bits per row gives 64 rows.
+- Valid rows 50 and valid columns 10 fit inside 64 by 16.
+- Mask `0001` charges 4096 bytes to PE3's Local pool.
+
+After the call, `rows` is 64 and `contents_defined` is FALSE. Reading any element before a producer writes it violates the definedness precondition.
+
+<!-- PTO-READER-BLOCK: tile-model-state-allocation-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile model types](types.md) defines `TileInfo` and `TileStorageKind`.
+- [Rows and columns](../shape/rows-columns.md) and [valid region](../shape/valid-region.md) own the shape checks used here.
+- [CUBE cell geometry](../shape/cube-cell.md) owns the CUBE repeat, cell, and byte counts.
+- [Local capacity](../capacity/local.md) owns the per-PE pool check.
+- [Destination auxiliary](../../../block/model/dispatch/destination-auxiliary.md) shows how bundle dispatch reaches these transitions.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

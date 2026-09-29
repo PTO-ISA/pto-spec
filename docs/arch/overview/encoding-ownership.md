@@ -15,36 +15,53 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit separates accepted PTO encodings from permanently reserved extension roots and deleted names. Its catalog projection records reservation witnesses; the embedded NDF clauses own their architectural status.
+This page answers one question about any bit pattern: is it an accepted PTO instruction, a reserved extension encoding, or neither? It separates three categories: accepted encodings, permanently reserved extension roots, and deleted instruction names.
+
+The unit's catalog projection lists every reservation with its mask and match. The two embedded NDF clauses, `PTO-ARCH-ENCODING-OWNERSHIP-001` and `PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001`, own the architectural status of those encodings.
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-concepts role=concepts-state -->
 ## Ownership categories
 
-- Accepted scalar, block, and Tile encodings are owned by PTO instruction sources.
-- Two-level vector, machine-block, extended `BSTART`, and `B.TEXT` roots remain reserved extension space.
-- Block-body conditional-branch roots remain separately reserved for the conditional-branch extension space.
-- `B.IOD`, `BSTART.PAR`, and `C.B.IOS` are deleted names and are not aliases.
+- Accepted: PTO owns every accepted scalar, block, and Tile encoding through its instruction ASL.
+- Reserved: the two-level vector, machine-block, and extended `BSTART` encodings, the `B.TEXT` out-of-line block root, and every nonzero `BSTART.FP`, `BSTART.STD`, or `BSTART.SYS` FALL Fixup payload. A future PTO instruction must not be assigned there. The catalog also reserves six retired `BSTART.TEPL` selectors, such as `0x065`.
+- Reserved branch forms: `B.EQ`, `B.NE`, `B.LT`, `B.GE`, `B.LTU`, `B.GEU`, `B.Z`, and `B.NZ` are reserved two-level block-body forms.
+- Deleted: names such as `B.IOD`, `BSTART.PAR`, and `C.B.IOS` are assembler errors, not aliases and not reservations.
+
+Design point: a reservation and a deletion protect different things. A reservation protects encoding space, so no PTO instruction may ever take those bits. A deletion only retires a spelling: the assembler rejects the old name, and its former slot may be assigned to an active PTO instruction.
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-rules role=rules-interactions -->
 ## Reservation checks
 
-`VectorExtensionRoot64Reserved` recognizes first words whose low `7` bits are `0x7f`. `ConditionalBranchExtensionRoot32Reserved` recognizes the reserved `0x27` and `0x37` roots with their function fields. `BTextExtensionRoot32Reserved` recognizes low `7` bits equal to `0x03`.
+Three ASL predicates recognize reserved roots from raw instruction bits.
+
+- `VectorExtensionRoot64Reserved` matches a first 32-bit word whose low `7` bits equal `0x7f`.
+- `ConditionalBranchExtensionRoot32Reserved` masks the word with `0x0000707f` and matches six `0x27` roots and two `0x37` roots, distinguished by the function field in bits `14:12`.
+- `BTextExtensionRoot32Reserved` matches a word whose low `7` bits equal `0x03`.
+
+PTO scalar decode must reject every complete encoding in the reserved conditional-branch families before operand reads or architectural effects.
+
+Design point: rejecting before any operand read or effect means a reserved branch encoding never partially executes. PTO gives these encodings no branch meaning at all, which keeps the space free for the extension that owns it.
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-boundaries role=boundaries -->
 ## Reserved versus active
 
-Reserved spellings such as `B.EQ`, `B.NE`, `B.LT`, `B.GE`, `B.LTU`, `B.GEU`, `B.Z`, and `B.NZ` are not active instructions and are not emitted as canonical PTO assembly. A reservation protects future space; it does not define execution behavior.
+Reserved spellings such as `B.EQ`, `B.NE`, `B.LT`, `B.GE`, `B.LTU`, `B.GEU`, `B.Z`, and `B.NZ` are not active instructions and must not be emitted as active PTO assembly. A reservation protects future space; it does not define execution behavior.
+
+The branch reservation is narrow. `ConditionalBranchExtensionRoot32Reserved` matches exactly eight masked values. A word whose masked value is not one of those eight is not reserved by this predicate.
 
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-example role=example-usage -->
 ## Non-normative decoder example
 
 Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
+Take the 32-bit word `0x00000027`. Masking with `0x0000707f` leaves `0x00000027`, one of the reserved values, so `ConditionalBranchExtensionRoot32Reserved` returns true and PTO decode rejects it. The word `0x00006027` masks to `0x00006027`, which is not in the list, so this predicate does not reserve it.
+
 <!-- PTO-READER-BLOCK: arch-encoding-ownership-related role=related-owners-navigation -->
 ## Related owners
 
-- Instruction classification explains active Tile classes and execution engines.
-- Individual instruction ASL and generated catalogs own accepted encodings and decoder witnesses; profile questions return to those current owners.
+- [Instruction classification](instruction-classification.md) explains active Tile classes and execution engines.
+- [Top-level dispatch](../dispatch/top-level.md) owns the single encoded-instruction entry point and its illegal-instruction fault.
+- Individual instruction ASL and generated catalogs own accepted encodings and decoder witnesses.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

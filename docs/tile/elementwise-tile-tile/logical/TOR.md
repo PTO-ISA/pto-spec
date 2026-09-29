@@ -17,44 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tor-purpose role=purpose -->
-## Purpose
+## What TOR does
 
-`TOR` computes bitwise OR of corresponding integer elements.
+`TOR` computes the bitwise OR of corresponding elements of two Local integer Tiles and writes the results into a newly allocated Local destination Tile. Bitwise OR sets a bit where either source has it set.
+
+Design point: `TOR` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 7 (TEPL selector `0x007`). Its operand legality and execution follow the same closed Local binary Tile contract as `TADD`, and it differs from `TAND` and `TXOR` only in the bit operation.
 
 <!-- PTO-READER-BLOCK: tile-tor-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileBinary` through the instruction's selector-encoded block carrier.
+Preflight checks the complete bundle first: operand schema, dimensions, `DataType`, layout, source definedness, and destination capacity. Only then does `ExecuteTileBinary` read both sources and compute `left OR right` for each coordinate of the valid rectangle `ValidRow x ValidCol`.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+For an element width `W` of 8, 16, 32, or 64 bits, the result is the low `W` bits of the OR, and carrier bits above `W` are zero. Signedness does not change the operation: `S8` and `U8` produce the same bits.
+
+Design point: `TOR` is a raw-carrier operation. Arithmetic operations such as `TADD` require every source element to be a valid encoding of the selected `DataType`; `TOR` skips that numeric validation and consumes the stored bits as they are. A bit operation has no numeric meaning to validate, and it produces no rounding, saturation, or numeric status.
 
 <!-- PTO-READER-BLOCK: tile-tor-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local destination; `source0` is the ordered left Local source; `source1` is the ordered right Local source.
+- `source0` is the left operand. It is an existing, allocated Local Tile.
+- `source1` is the right operand. Its physical shape, valid shape, and layout must match `source0`.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+One terminating `B.IOT` binds all three Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are not accepted. `PE_MASK=0000` is a strict no-op before reads, allocation, or faults.
+
+Design point: each source may be stored with a different same-width, non-packed backing type, and its bits are used unchanged. For example, `FP32` data read as `U32` and ORed with `0x80000000` sets each sign bit and yields the `U32` encodings of the negated absolute values.
 
 <!-- PTO-READER-BLOCK: tile-tor-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+Both source payloads are snapshotted before the first destination write. Either source may alias the destination, and both sources may name the same Tile; the result is always computed from the old values.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish as one commit. A rejected `TOR` leaves descriptors, payloads, and allocation state unchanged.
+
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero, and `Max` and `Min` write the numeric maximum and minimum of the integer `DataType`; `Null`, selected when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TOR` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-tor-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed operation types are rejected before effects; floating data can still be processed through a same-width integer operation type, as shown above.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined, even though its encoding is not validated. Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported `DataType`, or invalid destination capacity raises `Fault_TileLegality` before effects. A nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
 
 <!-- PTO-READER-BLOCK: tile-tor-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.VEC TOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+With `DataType=U8`, a left source row `[0x0F, 0xF0, 0xFF]` and a right source row `[0x3C, 0x3C, 0x81]` produce the destination row `[0x3F, 0xFC, 0xFF]`.
+
+In macro form, `TOR <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` computes all 8 x 64 results of two `U32` Tiles into a new 2 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

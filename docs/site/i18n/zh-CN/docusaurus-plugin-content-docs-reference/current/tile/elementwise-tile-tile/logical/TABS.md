@@ -19,47 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tabs-purpose role=purpose -->
 ## TABS 的作用
 
-`TABS` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它对每个有效源坐标独立执行有类型绝对值运算；当前指令契约拥有精确的指令束形式和发布边界。
+`TABS` 对一个 Local Tile 的每个元素取绝对值，并把结果写入一个新分配的 Local 目标 Tile。"绝对值"的含义取决于所选 `DataType`：有符号整数、无符号整数与浮点类型各有各的规则。
+
+设计要点：`TABS` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 15（TEPL 选择器 `0x00F`）选中。它与 `TNOT`、`TNEG` 和 `TRELU` 共用封闭的一元指令束模式：一条终止 `B.IOT`、一个源和一个新目标。这四个操作的可接受 `DataType` 集合与逐元素变换仍各不相同，且 `TNOT` 还要求源后备类型完全一致。
 
 <!-- PTO-READER-BLOCK: tile-tabs-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数对每个有效源坐标独立执行有类型绝对值运算。当前契约允许别名时，源载荷会在目标写入前完成快照。
+预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性、源编码以及目标容量。只有全部通过后，`ExecuteTileUnary` 才读取源，并变换有效矩形 `ValidRow x ValidCol` 内的每个坐标。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+- 有符号整数类型：负元素按元素位宽取模求负，其余元素不变。最小负值没有对应的正值，因此保持原位模式：`S8` `0x80`（-128）仍为 `0x80`。
+- 无符号整数类型：`TABS` 是恒等操作。
+- 浮点类型：`TABS` 只清除符号位。负零变为正零，负无穷变为正无穷，NaN 保持其类别与载荷。
+
+设计要点：浮点 `TABS` 是符号位操作而非算术操作。因此即使遇到信号 NaN，它也从不报告无效条件，且从不改变指数位或尾数位。
+
+设计要点：执行前源仍会作为数值被校验。有效区域内的每个元素（存在 ExecutionMask 时为每个活动元素）都必须是所选 `DataType` 的合法编码。例如，低 13 位尾数不为零的 `TF32` 元素会被拒绝。`TAND` 等原始载体操作不做这种检查。
 
 <!-- PTO-READER-BLOCK: tile-tabs-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local 目标”。
-- `source0` 的精确契约角色是“绝对值运算源”。
+- `source0` 是取绝对值的源，必须是已分配的现有 Local Tile。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，物理形状、有效形状和布局与源一致。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定两个 Tile；`B.IOR` 与 `B.IOS` 非法。只要 `B.IOT` 编码本身格式正确，`PE_MASK=0000` 就是严格无操作：不读取任何源，也不分配目标。
+
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如把 `U16` 数据按 `FP16` 处理。这些位按所选 `DataType` 校验和解释，因此重解释式的取绝对值无需额外拷贝。
 
 <!-- PTO-READER-BLOCK: tile-tabs-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+源载荷在预检之后、第一次写目标之前被快照。若源与目标互为别名，结果按旧的源值计算。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+目标描述符、有效区域结果、填充以及每个元素的已定义性同时发布。被拒绝的 `TABS` 不产生任何架构效果。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 写入已定义值；`Null`（省略 `B.DATR` 时的选择）使这些元素保持未定义。
+
+`TABS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是绝对值。
 
 <!-- PTO-READER-BLOCK: tile-tabs-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。打包四位格式不在其中。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；`CUBE_N8`、Shared Tile 以及混合布局均非法。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
+
+绑定格式错误、维度缺失或为零、源状态未定义或不匹配、`DataType` 不受支持、布局非所选布局，或浮点源编码无效时，会在任何效果之前引发 `Fault_TileLegality`。目标形状无法表示或 `TSize` 容量不足时，会在分配之前引发 `Fault_TileAllocation`。下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: tile-tabs-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TABS` 示例说明：有效元素 `[-2, 3]` 变为 `[2, 3]`。
+当 `DataType=S8` 时，有效元素 `[-2, 3, -128]` 变为 `[2, 3, -128]`。当 `DataType=FP16` 时，编码 `0x8000`（负零）变为 `0x0000`，`0xFC00`（负无穷）变为 `0x7C00`。
+
+宏形式 `TABS <Row=8, Col=64, S8>, T#1, ->T<512B>` 把一个 `S8` Tile 的全部 8 x 64 个结果计算到新的 512 字节目标中。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

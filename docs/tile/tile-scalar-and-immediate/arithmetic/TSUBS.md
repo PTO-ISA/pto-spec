@@ -19,54 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsubs-purpose role=purpose -->
 ## What TSUBS does
 
-`TSUBS` subtracts one scalar from every valid source element and publishes a new Local destination.
+`TSUBS` subtracts one scalar from every element in the valid rectangle of a Local source Tile and writes the differences into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 1 (selector `0x021`), written canonically as `BSTART.VEC TSUBS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TSUB` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TSUBS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-mechanism role=mechanism -->
-## Operation mechanism
+## Scalar source and element mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
+
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. A floating scalar must already be in the encoding of the selected type, and a signed integer scalar is read as a two's-complement value of the element width.
+
+After preflight, `ExecuteTileScalar` computes `source - scalar` for each coordinate in `ValidRow x ValidCol`. Operand order is fixed: the Tile element is always the left operand, so the result is `source - scalar` and never `scalar - source`. Integer subtraction wraps at the element width; floating-point subtraction follows the profile of the selected `DataType` with its fixed default rounding.
+
+Design point: because the order is fixed, `TSUBS` has no reversed form. A program that needs `scalar - source` can first build a Tile holding the scalar with `TEXPANDS` and then use `TSUB` with that Tile as the left source.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
 
-- `scalar0` supplies the per-PE scalar operand.
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
 
-- The closed applicable DataType set is `FP32`, `FP16`, `BF16`, `S32`, `S16`, `S8`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: the source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`. Its bits and the scalar are then validated and interpreted as the selected `DataType`, which allows a reinterpreting read without a copy. A width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, the definedness of every element, and any numeric status are published together. A rejected bundle has no architectural effect.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+Omitting `B.IOR` makes the scalar zero, so each result is its source element minus zero.
 
-Source Tiles persist and are not modified by successful execution.
+`TSUBS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The legality check `TileBinaryDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`; packed four-bit formats are excluded. The element arithmetic it reaches, `ScalarFPBinaryProfile`, is defined only for the `FP64`, `FP32`, `FP16`, and `BF16` floating types, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`. A scalar whose low bits are not a valid encoding of the selected type, such as a `TF32` value with nonzero low 13 bits, is rejected.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, an invalid source or scalar encoding, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSUBS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For an `S32` example, a source row `[10, -5]` and scalar `3` produce `[7, -8]`. The scalar is the right operand, so the result is not `[-7, 8]`.
+
+A full `S32` Tile is written in macro form as `TSUBS <Row=8, Col=64, S32>, T#1, a2, ->T<2KB>`. All 8 x 64 = 512 elements are valid, so the destination has no padding elements.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

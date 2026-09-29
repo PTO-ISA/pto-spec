@@ -19,54 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tshl-purpose role=purpose -->
 ## What TSHL does
 
-`TSHL` left-shifts each integer element by the corresponding masked count and publishes a new Local destination.
+`TSHL` shifts each element of a Local integer value Tile left by the count held in the corresponding element of a second Local integer Tile. It writes the results into a newly allocated Local destination Tile. Each element has its own shift count.
+
+Design point: `TSHL` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 9 (TEPL selector `0x009`), and its operand legality and execution follow the same closed Local binary Tile contract as `TADD`.
 
 <!-- PTO-READER-BLOCK: tile-c-tshl-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+After complete preflight, `ExecuteTileBinary` reads both sources and processes each coordinate of the valid rectangle `ValidRow x ValidCol`. For an element width `W` of 8, 16, 32, or 64 bits, the shift count is the unsigned value of the low `log2(W)` bits of the `source1` element: 3 bits for 8-bit types, 4 for 16-bit, 5 for 32-bit, and 6 for 64-bit. Other count bits are ignored.
+
+The destination element is the low `W` bits of `source0` shifted left by the count; bits shifted past bit `W-1` are discarded and zeros enter from the right. Signedness does not change the operation. Carrier bits above `W` are zero in the result.
+
+Design point: masking the count to `log2(W)` bits keeps every count in the range 0 to `W-1`. No count is out of range and none needs a fault or a special case. A count of `W` or larger wraps modulo `W`, and a negative signed count uses its low bits in the same way.
+
+Design point: `TSHL` is a raw-carrier operation. The value source is not validated as a number, and the shift produces no rounding, saturation, or numeric status. A left shift is the same bit operation for signed and unsigned types, so one rule serves all eight integer types.
 
 <!-- PTO-READER-BLOCK: tile-c-tshl-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the integer value source. It is an existing, allocated Local Tile.
+- `source1` is the integer shift-count source. Its physical shape, valid shape, and layout must match `source0`.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds all three Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are not accepted. `PE_MASK=0000` is a strict no-op before reads, allocation, or faults.
 
-- `source1` supplies a persistent source Tile.
-
-- The closed applicable DataType set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: `source0` may be stored under any same-width, non-packed backing type and its bits are used unchanged. Legality separately requires the stored backing `DataType` of `source1` to be an integer type, independent of the operation `DataType`. A same-width floating count Tile, such as an `FP32` count with a `U32` shift, is therefore rejected, while `source0` has no such check.
 
 <!-- PTO-READER-BLOCK: tile-c-tshl-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+Both source payloads are snapshotted before the first destination write. Either source may alias the destination, and both may name the same Tile; the result is computed from the old values.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish as one commit. A rejected `TSHL` leaves descriptors, payloads, and allocation state unchanged.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` are defined, with `Max` and `Min` using the integer `DataType` bounds; `Null`, selected when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TSHL` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tshl-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed operation types are rejected before effects.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. Malformed bindings, missing or zero dimensions, undefined or mismatched sources, a non-integer count backing type, an unsupported layout, an unsupported `DataType`, or invalid destination capacity raises `Fault_TileLegality` before effects. A nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
 
 <!-- PTO-READER-BLOCK: tile-c-tshl-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSHL <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+With `DataType=U8`, a value row `[0x81, 0x01, 0x01]` and a count row `[1, 7, 9]` produce `[0x02, 0x80, 0x02]`. The count 9 is masked to its low 3 bits, which give 1.
+
+In macro form, `TSHL <Row=8, Col=64, S32>, T#1, T#2, ->T<2KB>` shifts all 8 x 64 elements of the `S32` value Tile `T#1` by the counts in `T#2`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

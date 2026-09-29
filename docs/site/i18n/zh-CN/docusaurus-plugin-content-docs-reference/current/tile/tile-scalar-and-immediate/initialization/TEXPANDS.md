@@ -19,46 +19,59 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texpands-purpose role=purpose -->
 ## TEXPANDS 的作用
 
-`TEXPANDS` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它把标量低元素位宽的原始编码复制到每个有效目标坐标；当前指令契约拥有精确的指令束形式和发布边界。
+`TEXPANDS` 用一个标量填充新分配 Local Tile 的有效矩形。它没有 Tile 源。它由 TEPL Mode 1 Function 27（选择器 `0x03B`）选中，以 `BSTART.VEC TEXPANDS, DataType` 在 `VEC` 上执行，没有独立 opcode。
+
+设计要点：`TEXPANDS` 是从标量到 Tile 的桥梁。`TSUBS` 等 Tile-标量操作把 Tile 固定为左操作数。当程序需要标量位于左侧，或需要为 Tile-Tile 操作提供常量 Tile 时，由 `TEXPANDS` 一次性构造该 Tile。
 
 <!-- PTO-READER-BLOCK: tile-texpands-mechanism role=mechanism -->
-## 元素与 Tile 机制
+## 标量来源与填充机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数把标量低元素位宽的原始编码复制到每个有效目标坐标。当前契约允许别名时，源载荷会在目标写入前完成快照。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此每个 PE 可以用不同的值填充自己的分片。指令束中没有用于标量的立即数字段。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+`ExecuteTileFillScalar` 用 `TileRawElementValue` 收窄 64 位 GPR 值，只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位，并把该位模式写入 `ValidRow x ValidCol` 内的每个坐标。
+
+设计要点：填充是原始拷贝而不是转换。没有舍入、饱和、规范化或数值状态更新，因此浮点标量必须已按所选类型编码。这使结果不依赖任何数值配置档。
 
 <!-- PTO-READER-BLOCK: tile-texpands-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local 数值目标”。
-- `scalar0` 的精确契约角色是“每个参与 PE 的私有 GPR 标量”。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local 数值 Tile，其 `DataType` 为所选 `DataType`。
 
-目标描述符采用所选的 RowMajor、CUBE_M16 或 CUBE_M32 布局，并遵循当前契约规定的逻辑形状。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+一条终止 `B.IOT` 只绑定目标及其 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
+
+设计要点：由于没有源 Tile，也就没有需要检查的源已定义性。`TEXPANDS` 把寄存器值变为一个有效区域完全已定义的 Tile。
+
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
 <!-- PTO-READER-BLOCK: tile-texpands-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+目标载荷、填充已定义性与描述符作为一个整体发布。被拒绝的指令束没有任何架构效果，`TEXPANDS` 也没有全局内存效果。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 定义这些元素；省略 `B.DATR` 时默认的 `Null` 使其保持未定义。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+省略 `B.IOR` 时用所选类型的全零编码填充有效区域，对浮点类型即 `+0.0`。显式的全零 `B.IOR` 是不同的编码，但提供相同的值。
+
+存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是标量。
 
 <!-- PTO-READER-BLOCK: tile-texpands-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`。
+可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。打包四位格式不在其中。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16`（最多 16 个有效行）或 `CUBE_M32`（最多 32 个有效行）。`Layout` 与 `PadValueOrByteId` 是唯一适用的 `B.DATR` 字段。
+
+目标绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、`DataType` 不受支持、维度缺失或为零、容量或分配失败时，会在任何效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-texpands-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TEXPANDS` 示例说明：FP32 标量 `1.0` 的原始编码原样复制到每个有效 FP32 目标元素。
+若要用 1.0 填充 `FP32` Tile，应把 `FP32` 编码 `0x3F800000` 放入 `a2`，并写作 `TEXPANDS <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, a2, ->T<2KB>`。7 x 60 = 420 个有效元素保存 `0x3F800000`，其余 92 个物理元素被定义为零。
+
+如果 `a2` 保存的是 1.0 的 `FP64` 编码 `0x3FF0000000000000`，其低 32 位为零，每个有效元素都会变为 `+0.0`，因为不执行任何转换。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

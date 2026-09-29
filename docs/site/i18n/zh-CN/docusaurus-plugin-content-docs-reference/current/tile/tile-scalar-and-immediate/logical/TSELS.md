@@ -19,56 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsels-purpose role=purpose -->
 ## TSELS 的作用
 
-`TSELS` 在打包谓词 Tile 控制下，从 Tile 源或逐 PE 标量选择结果。
+`TSELS` 构造一个新的 Local Tile：对有效矩形内的每个元素，选择真值源 Tile 的元素或一个标量。谓词为一时选择 Tile 元素，为零时选择标量。它由 TEPL Mode 1 Function 26（选择器 `0x03A`）选中，规范写法为 `BSTART.VEC TSELS, DataType`，没有独立 opcode。
+
+设计要点：假值备选是标量而不是 Tile。Tile-Tile 形式 `TSEL` 需要第二个源 Tile，因此用它把未选中的元素替换为同一个常量时，必须先构造一个填满该常量的 Tile。`TSELS` 直接从 GPR 获取该常量。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-mechanism role=mechanism -->
-## 操作机制
+## 选择机制
 
-谓词位为零时选择假输入，为一时选择真输入；选中的载体位会原样复制，不执行数值转换。
+假值标量来自 `B.IOR` 源寄存器，在每个参与 PE 的私有 GPR 文件中解析。在下述 RowMajor 与 PredicateCell 形式中，省略 `B.IOR` 时标量为所选 `DataType` 的全零编码。
+
+GPR 值由 `TileRawElementValue` 收窄为所选 `DataType` 的低元素位宽位。不发生数值转换。
+
+设计要点：选择是原始拷贝。谓词为一时复制真值源的精确编码，为零时复制收窄后的标量位。两者都不按数值校验，也没有舍入、饱和、规范化或数值状态更新，因此选中 NaN 不会置无效状态。
+
+完整预检在对谓词、真值源与标量做快照之前完成，并且只有在每个元素都选定之后才发布目标。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色与掩码载体
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是掩码，其载体取决于下述形式。
+- `source1` 是真值源，是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是逐 PE 假值标量。
+- `destination0` 是新分配的 Local Tile，其 `DataType` 为所选 `DataType`。
 
-- `source0` 提供打包谓词 Tile。
+三种互斥形式提供掩码：
 
-- `source1` 提供持久源 Tile。
+- RowMajor：`B.IOT` 中的传统打包谓词 Tile，每个元素一位。假值标量为 `B.IOR.RegSrc0`。
+- 带 PredicateCell 的 `CUBE_M16` 或 `CUBE_M32`：`B.IOT` 中的 `U8` PredicateCell，其基准类型等于操作 `DataType`。假值标量为 `B.IOR.RegSrc0`。
+- 带 GPR 掩码的 `CUBE_M16` 或 `CUBE_M32`：一条只含源的 `B.IOR` 先携带掩码字，再携带假值标量，因此对一字掩码标量是第二个源，对 8 位类型的两字掩码标量是第三个源。
 
-- `scalar0` 提供逐 PE 标量操作数。
-
-- 封闭的适用 DataType 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-effects role=effects -->
-## 已定义性、填充与发布
+## 发布、已定义性与填充
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+目标载荷、填充已定义性与描述符作为一个整体发布。被拒绝的指令束没有任何架构效果，`TSELS` 也没有全局内存效果。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 定义这些元素；省略 `B.DATR` 时默认的 `Null` 使其保持未定义。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
-
-源 Tile 在成功执行后保持不变。
+在 CUBE 形式上使用 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是被选中的值。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-constraints role=constraints -->
-## 合法性、故障与顺序边界
+## 类型、布局与故障边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。CUBE 形式受进一步限制：PredicateCell 形式不包括 `FP64`、`S64` 与 `U64`，且其基准类型必须等于操作类型；GPR 形式受 GPR 谓词几何限制。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+真值源可以使用位宽相同、非打包的其他后备类型；目标始终使用操作 `DataType`。`PadValueOrByteId` 是唯一适用的 `B.DATR` 字段，布局来自源描述符。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+掩码字节与真值源元素在每个活动坐标上都必须已定义，PredicateCell 字节必须是规范的 `0x00` 或 `0x01`。载体模式格式错误或混用、PredicateCell 基准类型错误、形状或布局不匹配、容量不足或分配失败时，指令束会在任何效果之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TSELS <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+以 `FP32` 为例：真值源行 `[-1.5, 2.0]` 与谓词 `[0, 1]`，在省略标量时产生 `[+0.0, 2.0]`：第一个元素取全零标量，第二个元素被复制。
+
+与 `TCMPS` 配合可把负数钳位到零：`TCMPS <Row=8, Col=64, FP32, GE>, T#1, ->U<128B>` 标记不小于零的元素，随后 `TSELS <Row=8, Col=64, FP32>, U#1, T#1, ->T<2KB>` 保留它们，并把 512 个元素中的其余元素替换为 `+0.0`。NaN 元素不会被标记，因此也变为 `+0.0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -19,46 +19,59 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texpands-purpose role=purpose -->
 ## What TEXPANDS does
 
-`TEXPANDS` is a selector-encoded Tile operation executed by `VEC`. It copies the low element-width raw scalar encoding into every valid destination coordinate; its current instruction contract owns the exact bundle form and publication boundary.
+`TEXPANDS` fills the valid rectangle of a newly allocated Local Tile with one scalar. It has no Tile source. It is selected by TEPL Mode 1 Function 27 (selector `0x03B`), executes on `VEC` as `BSTART.VEC TEXPANDS, DataType`, and has no standalone opcode.
+
+Design point: `TEXPANDS` is the bridge from a scalar to a Tile. Tile-scalar operations such as `TSUBS` fix the Tile as the left operand. When a program needs the scalar on the left, or needs a constant Tile for a Tile-Tile operation, `TEXPANDS` builds that Tile once.
 
 <!-- PTO-READER-BLOCK: tile-texpands-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Scalar source and fill mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler copies the low element-width raw scalar encoding into every valid destination coordinate. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so each PE can fill its fragment with a different value. The bundle has no immediate field for the scalar.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+`ExecuteTileFillScalar` narrows the 64-bit GPR value with `TileRawElementValue`, keeping only the low 8, 16, 32, or 64 bits that match the element width of the selected `DataType`. It writes that bit pattern to every coordinate in `ValidRow x ValidCol`.
+
+Design point: the fill is a raw copy, not a conversion. There is no rounding, saturation, canonicalization, or numeric-status update, so a floating scalar must already be encoded in the selected type. This keeps the result independent of any numeric profile.
 
 <!-- PTO-READER-BLOCK: tile-texpands-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local numeric destination**.
-- `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local numeric Tile whose `DataType` is the selected `DataType`.
 
-The destination descriptor uses the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical shape stated by the current contract.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds only the destination and its `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
+
+Design point: because there is no source Tile, there is no source definedness to check. `TEXPANDS` turns a register value into a Tile whose valid region is fully defined.
+
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads a scalar register.
 
 <!-- PTO-READER-BLOCK: tile-texpands-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination payload, padding definedness, and descriptor are published as one unit. A rejected bundle has no architectural effect, and `TEXPANDS` has no global-memory effect.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them; `Null`, the default when `B.DATR` is omitted, leaves them undefined.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Omitting `B.IOR` fills the valid region with the all-zero encoding of the selected type, which is `+0.0` for floating types. An explicit all-zero `B.IOR` is a distinct encoding that supplies the same value.
+
+When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of the scalar.
 
 <!-- PTO-READER-BLOCK: tile-texpands-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16`, which allows at most 16 valid rows, or `CUBE_M32`, which allows at most 32. `Layout` and `PadValueOrByteId` are the only applicable `B.DATR` fields.
+
+A malformed destination binding, `B.IOS`, a surplus `B.IOR` field, an unsupported `DataType`, a missing or zero dimension, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any effect.
 
 <!-- PTO-READER-BLOCK: tile-texpands-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TEXPANDS` example, an FP32 scalar raw encoding for `1.0` is copied unchanged to every valid FP32 destination element.
+To fill an `FP32` Tile with 1.0, place the `FP32` encoding `0x3F800000` in `a2` and write `TEXPANDS <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, a2, ->T<2KB>`. The 7 x 60 = 420 valid elements hold `0x3F800000`, and the other 92 physical elements are defined as zero.
+
+If `a2` instead holds the `FP64` encoding of 1.0, `0x3FF0000000000000`, its low 32 bits are zero and every valid element becomes `+0.0`, because no conversion is performed.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

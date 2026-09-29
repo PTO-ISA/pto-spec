@@ -19,48 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tands-purpose role=purpose -->
 ## What TANDS does
 
-`TANDS` is a selector-encoded Tile operation executed by `VEC`. It applies element-width bitwise AND between every valid integer element and one scalar; its current instruction contract owns the exact bundle form and publication boundary.
+`TANDS` computes the bitwise AND of every element in the valid rectangle of an integer Local source Tile with one scalar, and writes the results into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 6 (selector `0x026`), written canonically as `BSTART.VEC TANDS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TAND` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TANDS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-tands-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Scalar source and element mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler applies element-width bitwise AND between every valid integer element and one scalar. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. The retained bits are used as a raw element-width pattern.
+
+After preflight, `ExecuteTileScalar` computes `source AND scalar` for each coordinate in `ValidRow x ValidCol`. Only the low element-width bits of each element and of the scalar take part. Signedness does not change the bit operation, and no numeric-status flag is produced.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-tands-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local numeric destination**.
-- `source0` has the exact contract role **persistent Local numeric source**.
-- `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
+
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
+
+Design point: the source may be stored with a different same-width, non-packed backing type. Bitwise and shift operations consume the stored carrier bits directly, so the bits are not validated as numbers; a width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-tands-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, and the definedness of every element are published together. The operation produces no numeric status, and a rejected bundle has no architectural effect.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Omitting `B.IOR` supplies zero, so every valid result element is cleared to zero.
+
+`TANDS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-tands-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating, packed, and other encodings are rejected before effects.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, a carrier-width mismatch, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tands-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TANDS` example, integer element `0xc` and scalar `0xa` produce `0x8`.
+For a `U8` example, a source row `[0x0C, 0xF7]` and scalar `0x0F` produce `[0x0C, 0x07]`: the scalar keeps the low four bits of each element.
+
+The macro form is `TANDS <Row=8, Col=64, U8>, T#1, a2, ->T<512B>`; all 512 one-byte elements are valid.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

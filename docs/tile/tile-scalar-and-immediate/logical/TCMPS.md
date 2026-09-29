@@ -19,49 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcmps-purpose role=purpose -->
 ## What TCMPS does
 
-`TCMPS` is a selector-encoded Tile operation executed by `VEC`. It compares each valid numeric element with one private-GPR scalar under `CMode` and packs the predicates; its current instruction contract owns the exact bundle form and publication boundary.
+`TCMPS` compares every element in the valid rectangle of a Local source Tile with one scalar and produces one predicate per element. It is selected by TEPL Mode 1 Function 13 (selector `0x02D`), written canonically as `BSTART.VEC TCMPS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TCMP` needs a second source Tile of the same shape, so comparing against one threshold that way first requires a Tile filled with it. `TCMPS` reads the threshold directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-tcmps-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Scalar source and comparison mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler compares each valid numeric element with one private-GPR scalar under `CMode` and packs the predicates. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is the all-zero encoding of the selected `DataType`.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens, so a floating scalar must already be in the encoding of the selected type.
+
+`B.DATR.CMode` selects the comparison: codes 0, 1, 2, 3, 4, and 5 select EQ, NE, LT, GT, LE, and GE. Codes 6 and 7 are reserved and rejected. Omitting `B.DATR` selects EQ.
+
+The Tile element is always the left operand, so LT is true when `source < scalar`. Signed and unsigned integers compare as signed and unsigned values. For floating types, any NaN makes only NE true, a signaling NaN raises the invalid status, and `+0.0` equals `-0.0`.
+
+Design point: the selected `DataType` is the operation type. It governs scalar narrowing, the comparison, and the predicate geometry, while the source keeps its own backing type. A same-width, non-packed source can therefore be compared under a different interpretation without a copy.
 
 <!-- PTO-READER-BLOCK: tile-tcmps-inputs role=inputs-outputs -->
-## Operand roles and descriptors
+## Operand roles and result carriers
 
-- `destination0` has the exact contract role **new packed Local predicate destination**.
-- `source0` has the exact contract role **persistent Local numeric source**.
-- `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
-- `comparison` has the exact contract role **six-mode comparison**.
+- `source0` is an existing Local numeric Tile. It persists unchanged.
+- `scalar0` is the per-PE scalar, the right operand of every comparison.
+- `comparison` is the six-mode `CMode` value.
+- `destination0` is a new predicate destination, or is absent when the result goes to a GPR.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+The source layout selects one of three mutually exclusive result forms:
+
+- RowMajor source: a new legacy packed predicate Tile. Logical element `i = row x Col + column` is bit `i mod 8` of byte `floor(i / 8)`, so the Tile needs at least `ceil(Row x Col / 8)` bytes.
+- `CUBE_M16` or `CUBE_M32` source with a `B.IOT` destination: a new `U8` PredicateCell Tile, one byte per element, whose basis is the operation `DataType`.
+- `CUBE_M16` or `CUBE_M32` source without a `B.IOT` destination: one GPR named by `B.IOR.RegDst`. For an 8-bit type, `Sat` selects the Low or High column half.
+
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads a scalar register.
 
 <!-- PTO-READER-BLOCK: tile-tcmps-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The selected carrier is published as one unit: the predicate payload, its padding, any numeric status, and the destination descriptor or GPR value become visible together. A rejected bundle has no architectural effect.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Predicate positions outside `ValidRow x ValidCol` follow `PadValue`: `Zero` and `Min` write zero bits, `Max` writes one bits, and `Null`, the default, leaves them undefined.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Design point: omitting `B.IOR` compares against zero of the selected type. For signed integer and floating types, `CMode` LT without a scalar is therefore a sign test; `-0.0` compares equal to zero, and a NaN element yields zero for both LT and GE. For unsigned types LT always yields zero and GE always yields one.
+
+`TCMPS` has no global-memory effect. With an ExecutionMask on a CUBE form, inactive coordinates keep their old predicate (merge) or receive zero, and contribute no numeric status.
 
 <!-- PTO-READER-BLOCK: tile-tcmps-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The PredicateCell form excludes `FP64`, `S64`, and `U64`, and the GPR form is further limited by the GPR predicate geometry.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+`B.DATR` accepts `CMode`, `PadValueOrByteId`, and `Sat`; `Sat` is legal only in the 8-bit GPR form, and `Canonicalize` must stay zero. There is no `Layout` field: the layout comes from the source descriptor.
+
+A malformed or mixed carrier schema, a missing dimension, a reserved `CMode`, an unsupported `DataType`, an undefined source element, a source or scalar encoding invalid for the operation type, insufficient predicate capacity, or an allocation failure rejects the bundle before any effect.
 
 <!-- PTO-READER-BLOCK: tile-tcmps-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCMPS` example, under greater-than mode, `[1, 3]` compared with scalar `2` produces `[0, 1]`.
+For an `S32` example with `CMode` GT, a source row `[1, 3]` and scalar `2` produce predicates `[0, 1]`.
+
+For a RowMajor `FP32` source with 8 x 64 = 512 elements, `TCMPS <Row=8, Col=64, FP32, GT>, T#1, a2, ->U<128B>` writes 512 predicate bits, which fill 64 bytes. Element row 1, column 3 has logical index 67 and lands in byte 8, bit 3.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

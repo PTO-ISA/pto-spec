@@ -19,54 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-txor-purpose role=purpose -->
 ## What TXOR does
 
-`TXOR` computes bitwise XOR for corresponding integer elements and publishes a new Local destination.
+`TXOR` computes the bitwise XOR of corresponding elements of two Local integer Tiles and writes the results into a newly allocated Local destination Tile. Bitwise XOR sets a bit where exactly one source has it set.
+
+Design point: `TXOR` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 8 (TEPL selector `0x008`). Its operand legality and execution follow the same closed Local binary Tile contract as `TADD`, and it differs from `TAND` and `TOR` only in the bit operation.
 
 <!-- PTO-READER-BLOCK: tile-c-txor-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+Preflight checks the complete bundle first: operand schema, dimensions, `DataType`, layout, source definedness, and destination capacity. Only then does `ExecuteTileBinary` read both sources and compute `left XOR right` for each coordinate of the valid rectangle `ValidRow x ValidCol`.
+
+For an element width `W` of 8, 16, 32, or 64 bits, the result is the low `W` bits of the XOR, and carrier bits above `W` are zero. Signedness does not change the operation: `S8` and `U8` produce the same bits.
+
+Design point: `TXOR` is a raw-carrier operation. Arithmetic operations such as `TADD` require every source element to be a valid encoding of the selected `DataType`; `TXOR` skips that numeric validation and consumes the stored bits as they are. A bit operation has no numeric meaning to validate, and it produces no rounding, saturation, or numeric status.
 
 <!-- PTO-READER-BLOCK: tile-c-txor-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the left operand. It is an existing, allocated Local Tile.
+- `source1` is the right operand. Its physical shape, valid shape, and layout must match `source0`.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds all three Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are not accepted. `PE_MASK=0000` is a strict no-op before reads, allocation, or faults.
 
-- `source1` supplies a persistent source Tile.
-
-- The closed applicable DataType set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: each source may be stored with a different same-width, non-packed backing type, and its bits are used unchanged. For example, `FP32` data read as `U32` and XORed with `0x80000000` flips each sign bit and yields the `U32` encodings of the negated values.
 
 <!-- PTO-READER-BLOCK: tile-c-txor-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+Both source payloads are snapshotted before the first destination write. Either source may alias the destination, and both sources may name the same Tile; the result is always computed from the old values.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish as one commit. A rejected `TXOR` leaves descriptors, payloads, and allocation state unchanged.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero, and `Max` and `Min` write the numeric maximum and minimum of the integer `DataType`; `Null`, selected when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TXOR` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-c-txor-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed operation types are rejected before effects; floating data can still be processed through a same-width integer operation type, as shown above.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined, even though its encoding is not validated. Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported `DataType`, or invalid destination capacity raises `Fault_TileLegality` before effects. A nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
 
 <!-- PTO-READER-BLOCK: tile-c-txor-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TXOR <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+With `DataType=U8`, a left source row `[0x0F, 0xF0, 0xFF]` and a right source row `[0x3C, 0x3C, 0x81]` produce the destination row `[0x33, 0xCC, 0x7E]`.
+
+In macro form, `TXOR <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` computes all 8 x 64 results of two `U32` Tiles into a new 2 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

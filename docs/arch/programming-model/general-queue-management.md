@@ -15,23 +15,33 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-gqm-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-General Queue Management models addressed queues, their entries, and the status returned by queue operations. `PTO-STATE-ARCH-GQM` owns the queue tables, entry storage, release/acquire epochs, and event-observation state.
+General Queue Management (GQM) provides software-visible queues of 64-bit entries, each identified by a 64-bit address. Programs create a queue, push and pop entries, suspend or restore it, and optionally broadcast an event with a successful queue operation. `PTO-STATE-ARCH-GQM` owns the queue tables, entry storage, release and acquire epochs, and event-observation state.
 
-The owner defines initialization, suspension and corruption state, push and pop behavior, and event notification. Instruction decoding remains in the instruction owners that call these helpers.
+This unit defines the queue behavior as helper functions. The `HL.QMT`, `HL.QPUSH`, and `HL.QPOP` instructions decode their operands and call these helpers through the queue-manager effect functions.
 
 <!-- PTO-READER-BLOCK: arch-gqm-concepts-state role=concepts-state -->
 ## Queue state and result words
 
 Each valid model slot records an address, capacity, count, head, suspended flag, corrupt flag, and entry array. Each entry contains a `Word` value and a release epoch.
 
-`GQMResult` places its primary value in bits `12:0` and its two-bit status in bits `63:62`; all other result bits start at zero. Status `00` is the successful path. A push uses `01` when the queue is suspended or full, while a pop uses `01` when the queue is empty. Status `10` is used when the queue is missing or corrupt.
+Every operation reports its outcome in a result word built by `GQMResult`. The primary value, such as remaining capacity or remaining count, sits in bits `12:0`. A two-bit status sits in bits `63:62`, and all other bits are zero.
+
+| Status | Push | Pop |
+| --- | --- | --- |
+| `00` | Entry stored | Entry removed |
+| `01` | Queue suspended or full | Queue empty |
+| `10` | Queue missing or corrupt | Queue missing or corrupt |
+
+Design point: the push and pop helpers report an unsuccessful outcome in the result word and do not raise a fault. Software can therefore test the status bits and retry or back off, and a full or empty queue is an ordinary outcome.
 
 <!-- PTO-READER-BLOCK: arch-gqm-rules-interactions role=rules-interactions -->
 ## Push, pop, and notification
 
-`PushGQMQueueEntry` rejects a missing or corrupt queue, returns remaining capacity for a suspended or full queue, and otherwise inserts at the head or tail selected by `at_head`. A non-relaxed push increments `_GQMReleaseEpoch` and stores that epoch with the entry; a relaxed push stores epoch `0`.
+`PushGQMQueueEntry` rejects a missing or corrupt queue, returns remaining capacity for a suspended or full queue, and otherwise inserts at the head or tail selected by `at_head`. The storage is circular: a head insert moves the head back one slot, wrapping to the last slot, and a tail insert writes the slot after the last entry.
 
-`PopGQMQueueEntry` returns zero data with status `10` for a missing or corrupt queue, status `01` for an empty queue, and otherwise removes the head entry. A non-relaxed pop copies a nonzero entry release epoch into `_LastGQMAcquireEpoch`.
+`PopGQMQueueEntry` returns zero data with status `10` for a missing or corrupt queue and status `01` for an empty queue. Otherwise it removes the head entry and returns its value with the remaining count. When the last entry is removed, the head resets to zero.
+
+Design point: release and acquire epochs link a pop to the push that produced its entry. A non-relaxed push increments `_GQMReleaseEpoch` and stores the new value in the entry; a relaxed push stores epoch `0`. A non-relaxed pop copies a nonzero entry epoch into `_LastGQMAcquireEpoch`, so that field names the most recent non-relaxed push whose entry a non-relaxed pop consumed. A relaxed push or pop leaves no such link.
 
 When `notify_event` is true on a successful push or pop, `BroadcastGQMEvent` increments `_GQMEventEpoch` and records the queue address in `_LastGQMEventAddress`.
 
@@ -42,10 +52,14 @@ One queue capacity is in the range `0` through `1023`. `PTO_MODEL_GQM_QUEUE_SLOT
 
 Initialization reuses an existing slot for the same address or selects the first free slot. The executable profile must provide enough model slots for its workload; exhaustion reaches an assertion instead of defining a portable queue-count failure result.
 
+Design point: push and pop treat a queue marked corrupt exactly like a missing queue: both return status `10` and change no queue state. Initializing the same address again with `HL.QMT` clears the corrupt flag.
+
 <!-- PTO-READER-BLOCK: arch-gqm-example-usage role=example-usage -->
 ## Non-normative queue walkthrough
 
-For a capacity-two queue, a successful tail push changes the count from zero to one and reports one remaining entry. A following non-relaxed pop returns the stored value, changes the count back to zero, resets the head to zero, and observes the entry's nonzero release epoch.
+For a capacity-two queue, a successful non-relaxed tail push changes the count from zero to one and returns status `00` with primary value `1`, the remaining capacity. A second push fills the queue and reports `0`. A third push returns status `01` with primary value `0` and stores nothing.
+
+A following non-relaxed pop returns the first stored value, reports one remaining entry, and copies that entry's nonzero release epoch into `_LastGQMAcquireEpoch`.
 
 This walkthrough is illustrative; the embedded ASL remains the exact source for status fields and state-update order.
 
@@ -53,6 +67,7 @@ This walkthrough is illustrative; the embedded ASL remains the exact source for 
 ## Related owners
 
 - [Execution context](execution-context.md) supplies the architectural context on which GQM depends.
+- [HL.QMT](../../block/lifecycle/HL.QMT.md), [HL.QPUSH](../../block/lifecycle/HL.QPUSH.md), and [HL.QPOP](../../block/lifecycle/HL.QPOP.md) are the instructions that call these helpers.
 - [Memory ordering](../memory-model/ordering.md) owns the architecture's ordering relations; GQM's epoch fields do not replace that owner.
 - [Trap context](../state/trap-context.md) owns portable save and recovery of execution context.
 <!-- SUPPLEMENTARY-END -->

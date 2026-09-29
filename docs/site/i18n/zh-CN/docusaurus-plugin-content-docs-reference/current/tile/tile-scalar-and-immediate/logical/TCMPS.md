@@ -19,49 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcmps-purpose role=purpose -->
 ## TCMPS 的作用
 
-`TCMPS` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它按照 `CMode` 把每个有效数值元素与一个私有 GPR 标量比较，并紧凑存放谓词；当前指令契约拥有精确的指令束形式和发布边界。
+`TCMPS` 把 Local 源 Tile 有效矩形内的每个元素与一个标量比较，并为每个元素产生一个谓词。它由 TEPL Mode 1 Function 13（选择器 `0x02D`）选中，规范写法为 `BSTART.VEC TCMPS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TCMP` 需要第二个形状相同的源 Tile，因此用它与单个阈值比较时，必须先构造一个填满该阈值的 Tile。`TCMPS` 直接从 GPR 读取阈值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-tcmps-mechanism role=mechanism -->
-## 元素与 Tile 机制
+## 标量来源与比较机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数按照 `CMode` 把每个有效数值元素与一个私有 GPR 标量比较，并紧凑存放谓词。当前契约允许别名时，源载荷会在目标写入前完成快照。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为所选 `DataType` 的全零编码。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换，因此浮点标量必须已经是所选类型的编码。
+
+`B.DATR.CMode` 选择比较方式：编码 0、1、2、3、4、5 分别选择 EQ、NE、LT、GT、LE、GE。编码 6 与 7 保留并被拒绝。省略 `B.DATR` 时选择 EQ。
+
+Tile 元素始终是左操作数，因此当 `source < scalar` 时 LT 为真。有符号与无符号整数分别按有符号值与无符号值比较。对浮点类型，任何 NaN 只使 NE 为真，信号 NaN 置无效状态，且 `+0.0` 等于 `-0.0`。
+
+设计要点：所选 `DataType` 是操作类型。它决定标量收窄方式、比较方式以及谓词几何，而源保留自己的后备类型。因此位宽相同、非打包的源无需拷贝即可按另一种解释进行比较。
 
 <!-- PTO-READER-BLOCK: tile-tcmps-inputs role=inputs-outputs -->
-## 操作数角色与描述符
+## 操作数角色与结果载体
 
-- `destination0` 的精确契约角色是“新分配的紧凑 Local 谓词目标”。
-- `source0` 的精确契约角色是“持久 Local 数值源”。
-- `scalar0` 的精确契约角色是“每个参与 PE 的私有 GPR 标量”。
-- `comparison` 的精确契约角色是“六模式比较”。
+- `source0` 是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是逐 PE 标量，是每次比较的右操作数。
+- `comparison` 是六种模式之一的 `CMode` 值。
+- `destination0` 是新的谓词目标；当结果写入 GPR 时它不存在。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+源布局从三种互斥的结果形式中选择一种：
+
+- RowMajor 源：新的传统打包谓词 Tile。逻辑元素 `i = row x Col + column` 位于第 `floor(i / 8)` 字节的第 `i mod 8` 位，因此该 Tile 至少需要 `ceil(Row x Col / 8)` 字节。
+- 带 `B.IOT` 目标的 `CUBE_M16` 或 `CUBE_M32` 源：新的 `U8` PredicateCell Tile，每个元素一个字节，其基准类型为操作 `DataType`。
+- 不带 `B.IOT` 目标的 `CUBE_M16` 或 `CUBE_M32` 源：由 `B.IOR.RegDst` 指定的一个 GPR。对 8 位类型，`Sat` 选择低半或高半列。
+
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
 <!-- PTO-READER-BLOCK: tile-tcmps-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+所选载体作为一个整体发布：谓词载荷、其填充、任何数值状态以及目标描述符或 GPR 值同时变为可见。被拒绝的指令束没有任何架构效果。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+`ValidRow x ValidCol` 之外的谓词位置遵循 `PadValue`：`Zero` 与 `Min` 写入零位，`Max` 写入值为一的位，默认的 `Null` 使其保持未定义。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+设计要点：省略 `B.IOR` 时与所选类型的零比较。因此对有符号整数与浮点类型，`CMode` 为 LT 且不带标量的 `TCMPS` 就是符号测试；`-0.0` 与零相等，NaN 元素在 LT 与 GE 下都得到零。对无符号类型，LT 恒得到零，GE 恒得到一。
+
+`TCMPS` 没有全局内存效果。在 CUBE 形式上使用 ExecutionMask 时，非活动坐标保留旧谓词（合并）或接收零，并且不产生数值状态。
 
 <!-- PTO-READER-BLOCK: tile-tcmps-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。PredicateCell 形式不包括 `FP64`、`S64` 与 `U64`，GPR 形式还受 GPR 谓词几何的进一步限制。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+`B.DATR` 接受 `CMode`、`PadValueOrByteId` 与 `Sat`；`Sat` 只在 8 位 GPR 形式中合法，`Canonicalize` 必须保持为零。没有 `Layout` 字段：布局来自源描述符。
+
+载体模式格式错误或混用、维度缺失、`CMode` 为保留值、`DataType` 不受支持、源元素未定义、源或标量编码对操作类型无效、谓词容量不足或分配失败时，指令束会在任何效果之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-tcmps-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCMPS` 示例说明：在大于模式下，`[1, 3]` 与标量 `2` 比较后产生 `[0, 1]`。
+以 `CMode` 为 GT 的 `S32` 为例：源行 `[1, 3]` 与标量 `2` 产生谓词 `[0, 1]`。
+
+对 8 x 64 = 512 个元素的 RowMajor `FP32` 源，`TCMPS <Row=8, Col=64, FP32, GT>, T#1, a2, ->U<128B>` 写入 512 个谓词位，占满 64 字节。第 1 行第 3 列的元素逻辑索引为 67，位于第 8 字节第 3 位。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
