@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-purpose role=purpose -->
-## What LHU.PCR does
+## What `LHU.PCR` does
 
-`LHU.PCR` is a standalone `32`-bit AGU instruction that forms a PC-relative address and loads one aligned little-endian `2`-byte value.
+`LHU.PCR` loads one unsigned `2`-byte halfword from an address relative to the instruction's own aligned address, and publishes the zero-extended value.
+
+The canonical assembly is `lhu.pcr [symbol], ->{t, u, Rd}`.
+
+Design point: neither a base nor an index register is read, so the whole address depends on `TPC` and `simm17`; the encoding has no field that software can leave uninitialized.
 
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LHU.PCR` clears `TPC[1:0]`, sign-extends `simm17` from `-65536..65535`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+`TPC` with bits `1:0` cleared supplies the base, and the sign-extended `simm17` multiplied by `4` supplies the displacement. The addition is modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and zero-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight tests `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The halfword is zero-extended to `PTO_XLEN` and published through `RegDst`; `TPC` then advances by `4` bytes.
+
+Design point: base and displacement are multiples of `4`, so the effective address is a multiple of `4` and the `2`-byte alignment rule is satisfied by construction.
 
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `TPC` supplies the aligned implicit base; `simm17` supplies the signed displacement.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `TPC` is the implicit base. Bits `1:0` are cleared, so the reference point is a `4`-byte boundary even if the instruction stream is denser.
+- `simm17` is signed and covers `-65536`..`65535` units of `4` bytes, that is `-262144`..`262140` bytes.
+- `RegDst` is the only selector in the encoding. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: `RegDst` accepts every `5`-bit code, including the queue pushes `30` and `31`, so an unsigned halfword can enter a queue directly.
 
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is the pre-advance `TPC`, so the address is fixed by the instruction's position and not by anything the program wrote.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and the reservation unchanged, publishes the zero-extended halfword, and advances `TPC` by `4` bytes.
+
+Design point: the result holds `0`..`65535`, so no bit above `15` is set by the load and the value can be compared as an unsigned count directly.
 
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch raises `Fault_IllegalInstruction` before any instruction effect; there is no register operand whose legality could fail.
+- A displacement that produced an odd address would raise `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing, and keeps `TPC` on the faulting instruction so the attempt can be reissued.
+- Design point: the `4`-byte displacement scale makes the alignment stage unreachable, so `Fault_DataPage` is the only data-side failure `LHU.PCR` can report.
 
 <!-- PTO-READER-BLOCK: scalar-lhu-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `TPC` = `0x2000` and `simm17` = `2`, the byte displacement is `8` and the address is `0x2008`.
+- Bytes `00 80` at `0x2008` are the halfword `0x8000`, published as `0x8000`.
+- If `TPC` were `0x2002`, the base would still be `0x2000` because bits `1:0` are cleared before the addition.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

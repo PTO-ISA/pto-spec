@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-purpose role=purpose -->
-## What HL.SWP.U does
+## What `HL.SWP.U` does
 
-`HL.SWP.U` is a standalone `48`-bit AGU instruction that forms a register-offset address and stores two adjacent aligned little-endian `4`-byte values.
+`HL.SWP.U` stores two adjacent `4`-byte little-endian units from `SrcD` and `SrcD1` at a `SrcL` base plus a `SrcR` index that is added without scaling.
+
+The canonical assembly is `hl.swp.u SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}>]`.
+
+Design point: dropping the fixed shift lets the index count bytes, so the pair can start at an arbitrary byte offset. Alignment then becomes a property of the index and the base together.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the two addresses and the transfers are formed
 
-`HL.SWP.U` transforms `SrcR` according to `SrcRType` and adds the unscaled result modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The index is `SrcR` after the `SrcRType` transformation, added to the `SrcL` snapshot modulo `2^PTO_XLEN` with no shift. The first address is that sum and the second is the first plus `4`.
 
-The instruction preflights two adjacent `4`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+Both addresses are probed before either store; only then are `SrcD` and `SrcD1` read and the two relaxed stores committed in address order.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+This encoding has no destination field, so neither the base nor the index is updated.
+
+Design point: the modifier still runs before the addition and no shift follows it, so `.sw` and `.uw` change the index by the full `32`-bit difference between the sign-extended and zero-extended readings.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+- `SrcD` and `SrcD1` supply the two stored units. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcL` supplies the base and `SrcR` the byte index. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcRType` selects unchanged, `.sw`, or `.uw`, and reserves the raw value `3`.
+- Design point: the same register can be named as base and as index; both are read before the addition, so the sum uses pre-instruction values for both.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the first store, so the two units are written from pre-instruction register values.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+Success writes two adjacent `4`-byte ranges, records two relaxed store events in address order, and advances `TPC` by `6` bytes.
+
+Design point: nothing is published after the stores, because this form has no destination selector.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, a `SrcRType` of `3`, or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before the index, the base, or the data is read.
+- Either address that is not a multiple of `4` raises `Fault_DataAlignment` before either store; a later permission or bounded-memory failure raises `Fault_DataPage` at the address that failed.
+- A fault records no event, writes neither unit, and keeps `TPC` on the faulting instruction for a complete reissue.
+- Design point: an odd index produces a first address that is not a multiple of `4`, which is rejected before either unit is written.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `4`, and the fixed shift `0`, the aligned displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. After both addresses pass preflight, the second `4`-byte store uses `0x108`.
+- With `SrcL` = `0x3000`, `SrcR` = `2`, and `SrcRType` `0`, the addresses are `0x3002` and `0x3006`; the first is not a multiple of `4`, so `Fault_DataAlignment` is raised.
+- With `SrcR` = `4` the addresses become `0x3004` and `0x3008`, and both units are written.
+- Because the index is added unscaled, an index of `4` moves the pair by `4` bytes while the scaled `HL.SWP` would move it by `16`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

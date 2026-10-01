@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lhui-u-purpose role=purpose -->
-## What LHUI.U does
+## What `LHUI.U` does
 
-`LHUI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `2`-byte value.
+`LHUI.U` loads one unsigned `2`-byte halfword at an unscaled immediate distance from a base register. Each encoded unit is one byte of address and the result is zero-extended.
+
+The canonical assembly is `lhui.u [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the `.u` form is the byte-granular version of `LHUI`: the same `12`-bit field now means `-2048`..`2047` bytes instead of `-4096`..`4094`.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LHUI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The sign-extended `simm12` is added, without a shift, to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and zero-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight tests `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian, one relaxed load event is recorded, and the zero-extended halfword is published.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The base register is read but never written; only `RegDst` changes.
+
+Design point: unscaled displacements can be odd, so this form can reach a halfword at an odd byte offset from an odd base. The sum, not the base alone, decides alignment.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed, covers `-2048`..`2047`, and is used unscaled.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: the base is the only register read; every Reg5 source code is accepted and a queue entry used as the base is read without being consumed.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base snapshot is taken before the memory operation, so a later write to the same register cannot change this access.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, changes no memory byte, preserves the reservation, publishes the zero-extended halfword, and advances `TPC` by `4` bytes.
+
+Design point: the result is exactly `0`..`65535`, because the zero-extension clears every bit above `15`.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` entry, raises `Fault_IllegalInstruction` before the address is formed.
+- An odd sum raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing to `RegDst`, and leaves `TPC` on the faulting instruction so the attempt can be reissued.
+- Design point: an odd displacement combined with an odd base is still legal, while an odd sum is not; the difference is reported as `Fault_DataAlignment` before translation.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `SrcL` = `0x1001` and `simm12` = `1`, the address is `0x1002` and the access is legal.
+- With the same base and `simm12` = `0`, the address is `0x1001` and `Fault_DataAlignment` is raised.
+- The halfword read on the legal attempt is zero-extended, so it enters `RegDst` in `0`..`65535`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

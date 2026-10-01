@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-swp-purpose role=purpose -->
-## What HL.SWP does
+## What `HL.SWP` does
 
-`HL.SWP` is a standalone `48`-bit AGU instruction that forms a register-offset address and stores two adjacent aligned little-endian `4`-byte values.
+`HL.SWP` stores two adjacent `4`-byte little-endian units from `SrcD` and `SrcD1` at a `SrcL` base plus a `SrcR` index that is shifted left by `2` before the addition.
+
+The canonical assembly is `hl.swp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}><<2]`.
+
+Design point: the fixed shift of `2` makes one index unit one `4`-byte element, so advancing the index by `1` moves the pair base onto the second element of the previous pair.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the two addresses and the transfers are formed
 
-`HL.SWP` transforms `SrcR` according to `SrcRType`, multiplies the result by `4`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The offset is `LSL(Modify(SrcR, SrcRType), 2)`, added to the `SrcL` snapshot modulo `2^PTO_XLEN`. The first address is the base plus that offset and the second is the first plus `4`.
 
-The instruction preflights two adjacent `4`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+Both addresses are probed before either store is issued. After both probes pass, `SrcD` and `SrcD1` are read and the two relaxed `4`-byte stores are committed in address order.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+There is no destination field in the encoding, so the computed addresses are not published anywhere.
+
+Design point: the shift also means consecutive index values address overlapping pairs, so two index units are needed to advance past one pair.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+- `SrcD` and `SrcD1` supply the two stored units. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcL` is the base and `SrcR` the index. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcRType` selects unchanged, `.sw`, or `.uw`; the raw value `3` is reserved and rejected in the legality stage.
+- Design point: the shifted index can come from a queue entry, so a pair base computed by an earlier instruction can be used directly without a GPR copy.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the first store, so the two units and the two addresses come from pre-instruction register values.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+Success writes the two adjacent `4`-byte ranges, records two relaxed store events in address order, and advances `TPC` by `6` bytes.
+
+Design point: an overlapping reservation is invalidated per stored range, so a pair that touches the reserved granule with only one of its units still invalidates it.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, the reserved `SrcRType` value `3`, or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before the index, base, or data is read.
+- Either address that is not a multiple of `4` raises `Fault_DataAlignment` before either store; a later permission or bounded-memory failure raises `Fault_DataPage` at the address that failed.
+- A fault records no event, writes neither unit, and leaves `TPC` on the faulting instruction for a complete reissue.
+- Design point: with `SrcRType` `1` or `2` the index is replaced by a `32`-bit extension before the shift, so the modifier decides the sign of the pair base while the shift only scales it.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swp-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and the fixed shift `2`, the offset is `8` and base plus offset is `0x108`. The memory access uses `0x108`. The second `4`-byte store uses `0x10c` after both addresses pass preflight.
+- With `SrcL` = `0x3000`, `SrcR` = `1`, and `SrcRType` `0`, the offset is `4` and the addresses are `0x3004` and `0x3008`.
+- With `SrcR` = `2` the offset is `8`, so the pair starts on what was the second unit of the previous pair.
+- A `SrcRType` of `3` would be rejected before any source is read, so no address would be formed at all.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

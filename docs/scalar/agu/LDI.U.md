@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-ldi-u-purpose role=purpose -->
-## What LDI.U does
+## What `LDI.U` does
 
-`LDI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `8`-byte value.
+`LDI.U` loads one `8`-byte little-endian unit at an unscaled signed-immediate distance from a base register. The immediate counts bytes, so the field can land on any byte offset.
+
+The canonical assembly is `ldi.u [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the `.u` form keeps the `8`-byte transfer but drops the `8`-byte scale, so `simm12` reaches `-2048`..`2047` bytes and can be any residue modulo `8`.
 
 <!-- PTO-READER-BLOCK: scalar-ldi-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LDI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The sign-extended `simm12` is added, unscaled, to the `SrcL` snapshot modulo `2^PTO_XLEN`. Each encoded unit is worth `1` byte of address.
 
-After complete preflight, the instruction performs one little-endian `8`-byte load and preserves the complete 64-bit loaded pattern for destination publication.
+Preflight tests `8`-byte alignment, then translation, then permission and bounded memory. On success `8` bytes are read little-endian, one relaxed load event is recorded, and the `64` bits are published unchanged.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Only the immediate and the base participate in the address; the form has no index register and no destination for an updated base.
+
+Design point: an unscaled immediate can be any residue modulo `8`, so this form can align a base that is otherwise misaligned; the sum, not the base alone, must still be a multiple of `8`.
 
 <!-- PTO-READER-BLOCK: scalar-ldi-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed, covers `-2048`..`2047`, and is used without scaling, so each unit is one byte.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: the byte-granular window is much shorter than the scaled `8`-byte window, so the two forms answer different questions: one trades reach for a finer step.
 
 <!-- PTO-READER-BLOCK: scalar-ldi-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the memory operation and before publication, so the value read never depends on a write performed by this instruction.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and reservation state unchanged, and advances `TPC` by `4` bytes.
+
+Design point: the full `64`-bit pattern reaches `RegDst`, so this form is the byte-addressed way to fetch a whole-width value.
 
 <!-- PTO-READER-BLOCK: scalar-ldi-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` entry, raises `Fault_IllegalInstruction` before any effect.
+- A sum that is not a multiple of `8` raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing, and keeps `TPC` on the faulting instruction so the attempt can be reissued.
+- Design point: the `.u` suffix changes the scale only; the transfer width and therefore the alignment rule stay at `8` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-ldi-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `8`, the displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. If permitted, the instruction loads `8` bytes from that aligned address.
+- With `SrcL` = `0x2004` and `simm12` = `4`, the address is `0x2008`, which is `8`-byte aligned; the unscaled immediate repaired a misaligned base.
+- With `SrcL` = `0x2004` and `simm12` = `1`, the address is `0x2005` and `Fault_DataAlignment` is raised.
+- As in `LDI`, the successful case publishes the `8` bytes as one `64`-bit value with no extension.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

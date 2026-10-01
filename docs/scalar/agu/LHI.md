@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lhi-purpose role=purpose -->
-## What LHI does
+## What `LHI` does
 
-`LHI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `2`-byte value.
+`LHI` loads one signed `2`-byte halfword at an immediate distance from a base register. The immediate is scaled by `2`, so each encoded unit names a halfword slot.
+
+The canonical assembly is `lhi [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the scale is fixed by the instruction, so `simm12` covers `-4096`..`4094` bytes. The `.u` form of this instruction drops that scale and covers `-2048`..`2047` bytes instead.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LHI` sign-extends `simm12` from its complete `-2048..2047` domain, multiplies it by `2`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`LHI` sign-extends `simm12` and shifts it left by `1`, which is the multiplication by `2` recorded in the address kind, then adds it to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and sign-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight checks `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The halfword is sign-extended to `PTO_XLEN` and published through `RegDst`; the base register is not written back.
+
+Design point: scaling by `2` leaves the low bit of the byte displacement at `0`, so the effective address is even exactly when the base is even. `LHI` cannot align an odd base and reports the sum as `Fault_DataAlignment`.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed, covers `-2048`..`2047` units, and is scaled by `2`, so `0x800` decodes to `-2048` units, that is `-4096` bytes.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: the byte window reaches `4096` bytes below the base and `4094` bytes above it, and every displacement is an even number of bytes, so a halfword array can be walked with one base register and no index register.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is snapshotted before the memory operation, so nothing this instruction writes can affect the address it reads.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and the reservation unchanged, publishes the sign-extended halfword, and advances `TPC` by `4` bytes.
+
+Design point: the load is signed, so a halfword `0xFFFF` read through `LHI` publishes `0xFFFFFFFFFFFFFFFF` rather than `65535`.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` queue entry, raises `Fault_IllegalInstruction` before the base is read.
+- An odd sum raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes no destination value, and keeps `TPC` on the faulting instruction for a complete reissue.
+- Design point: an immediate that is a multiple of `2` bytes can never repair the low bit of the base, so an aligned base is a precondition this form cannot substitute for.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `SrcL` = `0x1000` and `simm12` = `3`, the byte displacement is `6` and the address is `0x1006`.
+- Bytes `FF FF` there are the halfword `0xFFFF`, which publishes as `0xFFFFFFFFFFFFFFFF`.
+- The same instruction with `SrcL` = `0x1001` produces `0x1007`, an odd address, so `Fault_DataAlignment` is raised and no destination is written.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

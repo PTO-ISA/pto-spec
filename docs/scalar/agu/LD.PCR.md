@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-purpose role=purpose -->
-## What LD.PCR does
+## What `LD.PCR` does
 
-`LD.PCR` is a standalone `32`-bit AGU instruction that forms a PC-relative address and loads one aligned little-endian `8`-byte value.
+`LD.PCR` loads one `8`-byte little-endian unit from an address relative to the instruction itself. It reads no base register: the reference point is the aligned current `TPC`.
+
+The canonical assembly is `ld.pcr [symbol], ->{t, u, Rd}`.
+
+Design point: `LD.PCR` is the one member of this PC-relative group whose access size (`8` bytes) is larger than the `4`-byte displacement scale, so alignment is decided by bit `2` of the sum.
 
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LD.PCR` clears `TPC[1:0]`, sign-extends `simm17` from `-65536..65535`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+The base is `TPC` with bits `1:0` cleared, so the reference point is the `4`-byte-aligned address of this instruction. `simm17` is sign-extended, multiplied by `4`, and added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `8`-byte load and preserves the complete 64-bit loaded pattern for destination publication.
+Preflight tests `8`-byte alignment, then translation, then permission and bounded memory. On success `8` bytes are read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+All `64` loaded bits are published unchanged through `RegDst`; there is no base register to update and no extension step.
+
+Design point: both the cleared base and the scaled displacement are multiples of `4`, so the sum is always a multiple of `4`. A sum that is `4` modulo `8` raises `Fault_DataAlignment` even though nothing in the encoding is malformed.
 
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `TPC` supplies the aligned implicit base; `simm17` supplies the signed displacement.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `TPC` is the implicit base. Bits `1:0` are cleared before the displacement is added, and `TPC` still holds the address of the instruction being executed.
+- `simm17` is signed and covers `-65536`..`65535` units; each unit is `4` bytes, so the byte displacement covers `-262144`..`262140`.
+- `RegDst` is the only selector in the encoding. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: with no register operand the encoding has room for a `17`-bit displacement, which is what gives a `32`-bit instruction a reach of `262144` bytes around its own address.
 
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is read from `TPC` before the memory operation, so the displacement is always measured from this instruction and never from the following one.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, changes no memory byte, preserves the reservation, publishes the `8` loaded bytes, and advances `TPC` by `4` bytes.
+
+Design point: because the address is tied to the instruction, the same encoding loads the same relative unit wherever the code is placed; only the faults that depend on the permitted region can differ between placements.
 
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any memory or destination effect.
+- An address that is not a multiple of `8` raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no load event, publishes nothing, and keeps `TPC` on the faulting instruction so the attempt can be reissued unchanged.
+- Design point: `LD.PCR` can raise `Fault_DataAlignment` precisely because its required alignment is stricter than the multiple-of-`4` sum that the encoding guarantees.
 
 <!-- PTO-READER-BLOCK: scalar-ld-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction loads `8` bytes from that address.
+- With `TPC` = `0x100` and `simm17` = `3`, the byte displacement is `12` and the address is `0x10C`.
+- `0x10C` is `4` modulo `8`, so the preflight raises `Fault_DataAlignment` and no byte is loaded.
+- With `simm17` = `2` the address is `0x108`, which is `8`-byte aligned, and the `8` bytes there are published as one `64`-bit value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

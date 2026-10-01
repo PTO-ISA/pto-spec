@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-purpose role=purpose -->
-## What LBU.PCR does
+## What `LBU.PCR` does
 
-`LBU.PCR` is a standalone `32`-bit AGU instruction that forms a PC-relative address and loads one aligned little-endian `1`-byte value.
+`LBU.PCR` loads one unsigned `1`-byte unit from an address relative to the instruction, and publishes the byte as a value in `0`..`255`.
+
+The canonical assembly is `lbu.pcr [symbol], ->{t, u, Rd}`.
+
+Design point: `LBU.PCR` is the unsigned twin of `LB.PCR`. The two forms share the addressing fields, so they always access the same address and differ only in the extension of the loaded byte.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LBU.PCR` clears `TPC[1:0]`, sign-extends `simm17` from `-65536..65535`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+`TPC` with bits `1:0` cleared supplies the base. The sign-extended `simm17` is multiplied by `4` and added to it modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `1`-byte load and zero-extends the loaded `1`-byte value to `PTO_XLEN` for destination publication.
+Preflight tests `1`-byte alignment, then translation, then permission and bounded memory. On success `1` byte is read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The byte is zero-extended to `PTO_XLEN` and published through `RegDst`; no base register exists to write back.
+
+Design point: the cleared base and the `4`-byte-scaled displacement are both multiples of `4`, so the sum is a multiple of `4` and the `1`-byte access is aligned for every encoding.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `TPC` supplies the aligned implicit base; `simm17` supplies the signed displacement.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `TPC` is the implicit base. Clearing bits `1:0` makes the reference point a `4`-byte boundary.
+- `simm17` is signed and covers `-65536`..`65535` units of `4` bytes, so `-262144`..`262140` bytes.
+- `RegDst` is the only selector in the encoding. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: destination codes `30` and `31` push the byte onto the `U` or `T` queue, so a constant byte can be loaded straight into a queue entry.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is read before the memory operation, so the access is fixed by the instruction's own position and nothing else.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and the reservation unchanged, publishes the zero-extended byte, and advances `TPC` by `4` bytes.
+
+Design point: the result is exactly `0`..`255`, because the zero-extension clears every bit above `7`.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `1`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch raises `Fault_IllegalInstruction` before any instruction effect.
+- The address must satisfy `1`-byte alignment before translation is consulted; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes no byte, and keeps `TPC` on the faulting instruction for a full reissue.
+- Design point: `Fault_DataAlignment` is unreachable, so the only data-side rejection left after the legality stage is `Fault_DataPage` from the permission check.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction loads `1` byte from that address.
+- With `TPC` = `0x2000` and `simm17` = `1`, the byte displacement is `4` and the address is `0x2004`.
+- A byte `0xFF` at that address publishes `0xFF`, while the same access through `LB.PCR` would publish `0xFFFFFFFFFFFFFFFF`.
+- With `simm17` = `-1` the address is `0x1FFC`, still a multiple of `4`, so the negative displacement is reached without any alignment failure.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

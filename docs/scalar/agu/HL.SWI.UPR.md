@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-purpose role=purpose -->
-## What HL.SWI.UPR does
+## What `HL.SWI.UPR` does
 
-`HL.SWI.UPR` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `4`-byte value.
+`HL.SWI.UPR` stores one `4`-byte little-endian unit from `SrcD` at the sum of the `SrcR` base and an unscaled signed immediate, and publishes that same sum to `RegDst`.
+
+The canonical assembly is `hl.swi.upr SrcD, [SrcR, simm], ->{t, u, Rd}`.
+
+Design point: pre-index mode makes the memory address and the published value the same word. The store and the base update can never refer to two different addresses.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the result are formed
 
-`HL.SWI.UPR` sign-extends `simm17` from its complete `-65536..65535` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The immediate store address kind makes `SrcR` the base. The sign-extended `simm17` is added to the `SrcR` snapshot modulo `2^PTO_XLEN`, and that sum is used both as the address and as the published result.
 
-After complete preflight, the instruction performs one little-endian `4`-byte store from its snapshotted store-data source.
+Preflight tests `4`-byte alignment, then translation, then permission and bounded memory. The store-data source is read from `SrcD`, and only after the whole address passes does the `4`-byte little-endian store happen and one relaxed store event is recorded.
 
-Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.
+The sum reaches `RegDst` after the store, and only if the store completed without a fault.
+
+Design point: the base register keeps its old value on a fault, because the write-back shares the store's success condition; the published base and the stored address are therefore always the same word.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies store data; `RegDst` receives the updated base; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD` supplies the stored `4` bytes. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcR` supplies the base. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm17` is signed and unscaled, so it covers `-65536`..`65535` bytes.
+- `RegDst` receives the updated base. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: a queue destination receives the updated base without disturbing the `SrcD` data path, so a store can advance a pointer and push it in one instruction.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is snapshotted before the memory operation, so a destination that aliases the data source or the base does not change what is stored where.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+Success records one relaxed store event, writes exactly the `4` bytes of the range, publishes the updated base, and advances `TPC` by `6` bytes.
+
+Design point: the reservation is invalidated only when the stored range overlaps the `64`-byte granule holding it, so a store elsewhere in memory leaves it valid.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before any instruction effect.
+- A sum that is not a multiple of `4` raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, writes no byte, publishes no base value, and keeps `TPC` on the faulting instruction so the attempt can be reissued.
+- Design point: the same `4`-byte alignment rule applies to the updated address, so a misaligned sum is rejected before translation and nothing at all changes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swi-upr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `4`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. If permitted, the instruction stores `4` bytes at that aligned address.
+- With GPR `6` = `0x1000` as the base and `simm` = `4`, both the access address and the published base are `0x1004`.
+- With `SrcD` = `0xDEADBEEF`, the bytes `EF BE AD DE` land at `0x1004`..`0x1007`.
+- A base of `0x1002` with `simm` = `1` would give `0x1003`, an address that is not a multiple of `4`, so `Fault_DataAlignment` would be raised and the base would stay `0x1002`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

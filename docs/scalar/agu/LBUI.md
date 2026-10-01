@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lbui-purpose role=purpose -->
-## What LBUI does
+## What `LBUI` does
 
-`LBUI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `1`-byte value.
+`LBUI` loads one `1`-byte unit at a signed immediate distance from a base register and zero-extends it. It is the immediate counterpart of `LBU`, with the same byte-granular window as `LBI`.
+
+The canonical assembly is `lbui [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the immediate is not scaled by the access width, so `simm12` reaches any byte in `-2048`..`2047`, and the result is the raw `0`..`255` byte rather than a signed number.
 
 <!-- PTO-READER-BLOCK: scalar-lbui-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LBUI` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The displacement is the sign-extended `simm12` added to the `SrcL` snapshot modulo `2^PTO_XLEN`. The base is read before any memory effect, so a later write of the same register cannot move this address.
 
-After complete preflight, the instruction performs one little-endian `1`-byte load and zero-extends the loaded `1`-byte value to `PTO_XLEN` for destination publication.
+The address is preflighted, and on success one little-endian byte is read and one relaxed load event is recorded. The byte is zero-extended and published through `RegDst`.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+There is no destination for an updated base: the sum is used only as the address of this load.
+
+Design point: the permission check tests `address + 1` against the permitted bound, so the last permitted byte is reachable and the first byte beyond it is not.
 
 <!-- PTO-READER-BLOCK: scalar-lbui-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed and covers `-2048`..`2047`. It is the only addressing operand besides `SrcL`; there is no `SrcRType` and no `shamt` in this encoding.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: because the base can be any Reg5 source, `LBUI` can read through a queue entry produced earlier in the same instruction stream without a GPR round trip.
 
 <!-- PTO-READER-BLOCK: scalar-lbui-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the memory operation, so the published byte cannot depend on anything written by this instruction.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and reservation state unchanged, publishes the zero-extended byte, and advances `TPC` by `4` bytes.
+
+Design point: `RegDst` never carries sign information, so a byte stored as `0xFF` and read back through `LBUI` is the number `255`.
 
 <!-- PTO-READER-BLOCK: scalar-lbui-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `1`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` queue entry, raises `Fault_IllegalInstruction` before any source value is read.
+- The `1`-byte alignment stage precedes translation and permission; a permission or bounded-memory failure later raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes no value, and leaves `TPC` on the faulting instruction so that the complete attempt can be reissued.
+- Design point: no encoding of `LBUI` can reach the alignment failure, because a `1`-byte access only requires the address to be a multiple of `1`.
 
 <!-- PTO-READER-BLOCK: scalar-lbui-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction loads `1` byte from that address.
+- With GPR `6` = `0x1000` and `simm12` = `-1`, the address is `0xFFF`.
+- A byte `0xFF` there publishes `0xFF`, while the same address through `LBI` would publish `0xFFFFFFFFFFFFFFFF`.
+- Because the sum wraps modulo `2^PTO_XLEN`, the negative displacement never underflows the `64`-bit address space.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
