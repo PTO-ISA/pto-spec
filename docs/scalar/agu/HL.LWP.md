@@ -19,52 +19,76 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-purpose role=purpose -->
 ## What HL.LWP does
 
-`HL.LWP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 4-byte little-endian values and sign-extends each transferred value when it is narrower than `PTO_XLEN` using `Register` addressing.
+`HL.LWP` is a standalone `48`-bit scalar AGU load. It forms its address from the `SrcL` base plus a register offset that is transformed and then shifted, loads two adjacent aligned little-endian `4`-byte values, and sign-extends the transferred bits to `PTO_XLEN` when the result is narrower than that width.
+
+The second address is the first address plus `4`, and no address-base writeback is published, so `SrcL` keeps its value.
+
+Design point: a register offset reaches the whole `PTO_XLEN` value, so a loop-invariant stride can live in `SrcR` instead of in the instruction stream.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How HL.LWP forms its address and completes the transfer
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcR` supplies the offset. `SrcRType` first selects how the whole `PTO_XLEN` value is transformed: `0` leaves it, `1` sign-extends bits `[31:0]`, and `2` zero-extends bits `[31:0]`.
 
-Both adjacent addresses are preflighted before either aligned little-endian `4`-byte load occurs. Each result is sign-extended; the two loads commit in increasing-address order.
+The transformed offset is shifted left by the encoded `shamt`, and that product is added to the `SrcL` value modulo `2^PTO_XLEN`. That sum is the accessed address.
 
-This form does not publish an address-base writeback.
+Both adjacent addresses are preflighted: the first probe covers the computed address, and after it succeeds the second probe covers that address plus `4`. The two 4-byte loads then run in address order and are recorded as two relaxed load events.
+
+The executable path normalizes both results with `NormalizeScalarLoadResult`, which sign-extends each `4`-byte result to `PTO_XLEN` because `ScalarAGUSignedLoadOfForm` reports `TRUE` here, and publishes them first then second in address order.
+
+Design point: the transformation is applied before the shift, so a scaled word offset stays scaled. Shifting first would scale different bits and change what bit `31` means for `SrcRType=1`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and what they select
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the second loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+- `RegDst0` is a `5`-bit selector for the first loaded value.
+
+- `RegDst1` is a `5`-bit selector for the second loaded value.
+
+- `SrcL` is a `5`-bit selector for the address base.
+
+- `SrcR` is a `5`-bit selector for the register offset.
+
+- `SrcRType` is a `2`-bit selector for the offset transformation.
+
+- `shamt` is a `5`-bit field supplying the left shift applied after the transformation.
+
+Codes `1`..`23` write absolute GPRs, `30` pushes `U`, `31` pushes `T`, `0` discards only that result, and codes `24`..`29` write nothing.
+
+`SrcL` and `SrcR` use the complete `Reg5` source domain: codes `0`..`23` select absolute GPRs, codes `24`..`27` select `T#1`..`T#4`, and codes `28`..`31` select `U#1`..`U#4` without consuming them. Selector `0` reads the architectural zero GPR.
+
+Design point: only `SrcRType` values `0`, `1`, and `2` are assigned and `3` is reserved, so `3` faults instead of naming a fourth transformation. The address modifier has no negate case either.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-effects role=effects -->
-## Effects and completion order
+## Effects, snapshots, and completion order
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+- `SrcL` and `SrcR` are snapshotted before the memory operation, so a destination that aliases either source cannot change the address or offset used.
 
-Successful execution records two relaxed load events in address order; memory and reservation state are preserved.
+- Successful execution records two relaxed load events in address order, preserves memory contents and reservation state, and publishes no base writeback.
 
-After all result or writeback publication, `HL.LWP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+- After all results have been published, `HL.LWP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `4`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+Faults are raised in this order: `SrcRType=3` or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any effect; a misaligned address raises `Fault_DataAlignment` before address translation; a permission or bounded-memory failure raises `Fault_DataPage` at the original address, after translation.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+Alignment applies to the accessed address, not to `SrcR`. `shamt` may be `0` and `SrcR` is an unconstrained `Reg5` value, so the access is misaligned exactly when the accessed address is not a multiple of `4`.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+Design point: the reserved `SrcRType` encoding is rejected during the legality preflight, before any address is formed, so it cannot raise an alignment or page fault instead.
+
+A fault emits no successful memory event and no partial memory or destination effect, and leaves `TPC` at the faulting instruction; a retry recomputes the source snapshots, the address, the preflight, the transfer, and the publication.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwp-example role=example -->
 ## Non-normative reading walkthrough
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lwp [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Start with the canonical assembly `hl.lwp [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->Dst0, Dst1` and identify the base, the register offset, the transformation, the shift, and the destination selectors.
+
+- Compute the sum of `SrcL` and the shifted offset modulo `2^PTO_XLEN`, then check the alignment of the address this form actually accesses.
+
+- Then compare what this form publishes with the ASL contract below.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
