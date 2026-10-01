@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sdi-u-purpose role=purpose -->
-## What SDI.U does
+## What `SDI.U` does
 
-`SDI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `8`-byte value.
+`SDI.U` writes the low `8` bytes of `SrcL` to the address formed from the `SrcR` base plus a signed immediate. Its canonical assembly is `sdi.u SrcL, [SrcR, simm]`.
+
+Design point: the base is `SrcR` and the stored data is `SrcL`, the reverse of the load forms' field usage, and the `.u` marker then removes the `8`-byte scale that `SDI` applies to the same immediate field.
 
 <!-- PTO-READER-BLOCK: scalar-sdi-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `SDI.U` forms the address and completes the store
 
-`SDI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+`simm12` is sign-extended from `12` bits to `PTO_XLEN`, giving a displacement in `-2048`..`2047` bytes, and added to `SrcR` modulo `2^PTO_XLEN`. No scale is applied to the intermediate value.
 
-After complete preflight, the instruction performs one little-endian `8`-byte store from its snapshotted store-data source.
+The value written to that address is the low `8` bytes of `SrcL`, least-significant byte at the lowest address. The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: an unscaled `8`-byte store succeeds only when the base plus displacement is a multiple of `8`, so an `8`-byte-aligned base accepts just one displacement in every `8`. The program must keep the byte count aligned itself.
 
 <!-- PTO-READER-BLOCK: scalar-sdi-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the store consumes
 
-- `SrcR` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcL` supplies store data.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` supplies the store data and `SrcR` supplies the base. Both are `5`-bit Reg5 sources: codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `simm12` is a signed `12`-bit field, so all `4096` encodings are values, and encoded zero supplies a zero displacement rather than denoting omission. The encodable byte displacements are `-2048` through `2047` bytes.
+- The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
+
+Design point: the `12`-bit field is sign-extended before the addition, so the encodable byte displacements run from `-2048` to `2047` rather than from `0` to `4095`.
 
 <!-- PTO-READER-BLOCK: scalar-sdi-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL` and `SrcR` are read before the memory effect, so the stored bytes are the pre-instruction value of `SrcL`.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `8`-byte store and records one store event. A store whose byte range overlaps the `64`-byte reservation granule that contains a valid reservation invalidates that reservation; a store outside the granule leaves it valid. `TPC` then advances by `4` bytes.
+
+Design point: the instruction changes memory and possibly the reservation state, and nothing else. Neither `SrcL` nor `SrcR` is written, so it cannot disturb a pointer the program keeps in the base.
 
 <!-- PTO-READER-BLOCK: scalar-sdi-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, or when a selected `T`/`U` source is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The preflight tests the low `3` bits of the effective address, because the access is `8` bytes wide. An unaligned value raises `Fault_DataAlignment` before translation; an aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault writes no memory byte, records no store event, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, and the store.
+
+Design point: because the displacement is unscaled, `Fault_DataAlignment` is reachable from any base whose low three bits are not zero. The scaled `SDI` removes that risk by construction, so the choice between the two forms is a choice about who guarantees the alignment.
 
 <!-- PTO-READER-BLOCK: scalar-sdi-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `8`, the displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. If permitted, the instruction stores `8` bytes at that aligned address.
+- Take `sdi.u 6, [3, 4]` with GPR3 = `0x2000` and GPR6 = `0x0123456789ABCDEF`.
+- The displacement is `4` bytes, so the effective address is `0x2004`.
+- `0x2004` is a multiple of `4` but not of `8`, so the preflight raises `Fault_DataAlignment` and no byte is written, even though the base itself is `8`-byte aligned.
+- With `sdi` instead, the same field would be multiplied by `8` and the address would be `0x2020`, where the `8` bytes would be stored.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

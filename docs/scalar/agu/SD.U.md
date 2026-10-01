@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sd-u-purpose role=purpose -->
-## What SD.U does
+## What `SD.U` does
 
-`SD.U` is a standalone `32`-bit AGU instruction that forms a register-offset address and stores one aligned little-endian `8`-byte value.
+`SD.U` writes the low `8` bytes of `SrcD` to the address formed from the `SrcL` base plus the transformed `SrcR` register offset. Its canonical assembly is `sd.u SrcD, [SrcL, SrcR<{.sw,.uw}>]`.
+
+Design point: the `.u` marker removes the element-size scale. `SD` multiplies the offset by `8`, while `SD.U` adds it unchanged, so one offset register value reaches a location `8` times further from the base under `SD` than under `SD.U`.
 
 <!-- PTO-READER-BLOCK: scalar-sd-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `SD.U` forms the address and completes the store
 
-`SD.U` transforms `SrcR` according to `SrcRType` and adds the unscaled result modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`SrcL` supplies the base. `SrcR` is transformed by `SrcRType` — `0` keeps the complete `64`-bit value, `1` sign-extends the low `32` bits, `2` zero-extends them — and the fixed scale of `1` leaves it unshifted. Base and offset are added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `8`-byte store from its snapshotted store-data source.
+The value written to that address is the low `8` bytes of `SrcD`, least-significant byte at the lowest address. The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: with an unscaled offset, an offset of `1` is misaligned for an `8`-byte access whenever the base is `8`-byte aligned. In `SD` that same offset of `1` is multiplied by `8` and stays aligned, so the `.u` form moves the alignment burden onto the offset value.
 
 <!-- PTO-READER-BLOCK: scalar-sd-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the store consumes
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies store data.
-- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+- `SrcD`, `SrcL`, and `SrcR` are `5`-bit Reg5 sources. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `SrcRType` is assigned for `0`, `1`, and `2`; raw `3` is reserved. The form has no `shamt` field, so the scale of the offset is fixed at `1`.
+- The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
+
+Design point: the three register fields are all validated before the access, so an offset that names an unavailable `T`/`U` slot is rejected before any address arithmetic, just like an unavailable base or data source.
 
 <!-- PTO-READER-BLOCK: scalar-sd-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Both sources are read before the memory effect, so the stored bytes are the pre-instruction value of `SrcD`.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `8`-byte store and records one store event. A store whose byte range overlaps the `64`-byte reservation granule that contains a valid reservation invalidates that reservation; a store outside the granule leaves it valid. `TPC` then advances by `4` bytes.
+
+Design point: nothing in this form can publish an updated address, so software that needs a running pointer must recompute it with a separate instruction. The store itself leaves `SrcL` and `SrcR` untouched.
 
 <!-- PTO-READER-BLOCK: scalar-sd-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, when `SrcRType` holds the reserved value `3`, or when a selected `T`/`U` source is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The preflight tests the low `3` bits of the effective address, because the access is `8` bytes wide. An unaligned value raises `Fault_DataAlignment` before translation; an aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault writes no memory byte, records no store event, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, and the store.
+
+Design point: because the scale is `1`, both operands decide the alignment: the same offset register that is aligned for one base can be misaligned for another. This form suits a program whose byte offset is already computed.
 
 <!-- PTO-READER-BLOCK: scalar-sd-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `8`, and the fixed shift `0`, the aligned displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. If permitted, the instruction stores `8` bytes at that aligned address.
+- Take `sd.u 6, [2, 3]` with GPR2 = `0x1000`, GPR3 = `1`, and GPR6 = `0x0123456789ABCDEF`.
+- The offset is used as encoded, so the effective address is `0x1001`.
+- `0x1001` is not a multiple of `8`, so the preflight raises `Fault_DataAlignment` and no byte is written.
+- With the same operands in `sd`, the offset would be `1` times `8` and the address `0x1008`, where the `8` bytes `EF CD AB 89 67 45 23 01` would be written.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-prf-purpose role=purpose -->
-## What PRF does
+## What `PRF` does
 
-`PRF` is a standalone `32`-bit AGU instruction that forms a register-offset address and issues a non-binding prefetch hint with no destination effect.
+`PRF` forms the same kind of byte address as `LW` — a base register plus a transformed and shifted register offset — and issues a non-binding prefetch hint for it. Its canonical assembly is `prf [SrcL, SrcR<{.sw,.uw}><<<shamt>]`, and it exposes no destination.
+
+Design point: the hint is non-binding, so `PRF` can never raise a data-access fault. A hint for a misaligned, unmapped, or out-of-range address retires exactly like a hint for a valid one, and software needs no accessibility test of its own before issuing it.
 
 <!-- PTO-READER-BLOCK: scalar-prf-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `PRF` forms the address and issues the hint
 
-`PRF` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`SrcL` is read as the base. `SrcR` is transformed by `SrcRType` — `0` keeps the complete `64`-bit value, `1` sign-extends the low `32` bits, `2` zero-extends them — and shifted left by the encoded `shamt`. The offset is added to the base modulo `2^PTO_XLEN`.
 
-The formed address is a non-binding one-byte-granularity prefetch hint; legal execution performs no architectural translation, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+The formed address is passed to the hint and then discarded. No encoded field publishes it, so there is no result to read and no base writeback to observe.
 
-No encoded destination publishes the hint address, and the instruction performs no base-register update.
+Design point: the offset transformation is still architecturally defined even though the hint has no result. Two hints that differ only in `SrcRType` or `shamt` name different addresses; that difference is simply not visible in any architectural state.
 
 <!-- PTO-READER-BLOCK: scalar-prf-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the hint consumes
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` is an ignored alias; every `RegDst` code is an assigned non-writing alias.
-- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+- `SrcL` and `SrcR` are `5`-bit Reg5 sources. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `SrcRType` is assigned for `0`, `1`, and `2`; raw `3` is reserved. `shamt` is assigned for all `32` values `0`..`31`, and encoded zero performs no shift.
+- `RegDst` is retained in the encoding but names no destination. Every code `0`..`31` is legal, none of them writes a GPR or pushes a queue slot, and the canonical assembly exposes no destination.
+
+Design point: because `RegDst` is an alias rather than a destination, code `0` in that field is not a discard selector either. The field has no effect at any value, and an implementation cannot turn it into a queue push.
 
 <!-- PTO-READER-BLOCK: scalar-prf-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Both source reads happen before the hint, so the address reflects the pre-instruction values of `SrcL` and `SrcR`.
 
-A legal hint produces no memory event, reservation change, or destination write and advances `TPC` by `4` bytes.
+Successful execution changes no architectural state: no memory byte, no reservation entry, no queue entry, and no register. `TPC` then advances by `4` bytes, the length of this encoding.
+
+Design point: a legal hint records no memory event and creates no ordering edge, so it cannot make an earlier or later access observe anything. The only architectural difference after `PRF` is that `TPC` has moved.
 
 <!-- PTO-READER-BLOCK: scalar-prf-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-A legal prefetch does not perform data alignment, translation, permission, or bounded-memory checks and therefore cannot raise a data-access fault.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, when `SrcRType` holds the reserved value `3`, or when a selected `T`/`U` source slot is unavailable because nothing has been pushed into it.
 
-A reserved prefetch model rejects before source reads and before any optional address publication.
+A legal `PRF` performs no alignment test, no translation, and no permission or bounded-memory test. Neither `Fault_DataAlignment` nor `Fault_DataPage` is reachable from a legal encoding.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+The rejection happens before the address is formed, so a rejected attempt has no partial effect and `TPC` stays on the faulting instruction; reissue repeats the same encoding checks.
+
+Design point: the only way this form can leave `TPC` unchanged is an encoding rejection, because the legal path has no fault outcome. A rejected hint contributes no hint at all, which keeps the non-binding contract intact.
 
 <!-- PTO-READER-BLOCK: scalar-prf-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and `shamt=1`, the formed hint address is `0x104`; it is issued only as a non-binding hint and causes no architectural memory or destination effect.
+- Take `prf [2, 3<.sw><<<3]` with GPR2 = `0x2000` and GPR3 = `0xFFFFFFFE`.
+- `SrcRType=1` sign-extends the low `32` bits, giving `-2`; `shamt=3` shifts it left by `3`, giving `-16`.
+- The hint address is `0x2000` minus `16`, which is `0x1FF0`. The instruction forms it and discards it.
+- No register, queue slot, memory byte, or reservation entry changes; the only architectural difference is that `TPC` has advanced by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
