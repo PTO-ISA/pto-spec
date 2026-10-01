@@ -19,34 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-std-purpose role=purpose -->
 ## What BSTART.STD contributes
 
-`BSTART.STD` is a 32-bit block-start command for the STD form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.STD` opens a Standard block. A block (also called a bundle) is a run of header commands and scalar body instructions that ends at a commit boundary: `BSTOP` or the next `BSTART`. A Standard block runs no Tile operation. Its job is control flow: it records where the program continues when the block commits.
+
+The mnemonic has six accepted 32-bit forms: `FALL`, `DIRECT`, `COND`, `CALL`, `IND`, and `RET`. Bits `14:12` of the match value select the form (`1`, `2`, `3`, `4`, `5`, and `7`), and `FALL`, `DIRECT`, `COND`, and `CALL` carry a signed 17-bit `simm17` in bits `31:15`.
 
 <!-- PTO-READER-BLOCK: block-bstart-std-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+The dispatcher runs [bundle start dispatch](../model/dispatch/start.md) for every form. It computes the candidate target first:
 
-```text
-BSTART.STD retires any active predecessor block, then opens one standard block whose header commands execute sequentially until BSTOP or the next BSTART selects the BARG continuation.
-COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND requires and snapshots a retiring Standard or Floating BARG.BPCN, while RET snapshots architectural ra before predecessor retirement.
-```
+- `FALL` uses the fallthrough address, the `BSTART` address plus 4.
+- `DIRECT`, `COND`, and `CALL` use the `BSTART` address plus `simm17` shifted left by 1.
+- `IND` uses the `BARG.BPCN` of the block that is about to retire.
+- `RET` uses `_ReturnAddress`.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+Only then does it commit an active predecessor, and it opens the new block only if that commit selected this `BSTART` address as the next `TPC`. [Begin](../model/lifecycle/begin.md) then writes `BARG` with block kind Standard, the transfer type, the target in `BPCN`, and `taken`, and moves `TPC` to the next instruction.
+
+Design point: `BSTART.STD` never jumps when it executes. The target waits in `BARG.BPCN` until commit, where `BARGCommitPC` selects it. A body `SETC.TGT` may still replace `BPCN`, and a body `SETC` condition sets `taken` for `COND`, so the final decision is made once, after the whole block has run.
+
+Design point: `IND` and `RET` read their target before the predecessor commits. `IND` keeps a snapshot of the retiring `BPCN`, because that commit resets `BARG`; `RET` reads `_ReturnAddress` at the same point.
 
 <!-- PTO-READER-BLOCK: block-bstart-std-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `simm17` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
+- `simm17` is a signed halfword displacement. The byte offset is `simm17` times 2, so the reach is from -131072 to +131070 bytes relative to the `BSTART`.
+- `FALL` must encode `simm17=0`. Nonzero values are extension-reserved.
+- `IND` and `RET` have no operand field; their targets come from architectural state.
+- `CALL` also records a return target, the fallthrough address, in `_ReturnAddress` and GPR 10.
+
+Standard blocks install no Tile descriptor, so no Tile operation consumes a `B.DIM`, `B.DATR`, or Tile binding in their header.
 
 <!-- PTO-READER-BLOCK: block-bstart-std-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+A successful `BSTART.STD` sets `BPC` to its own address, sets `BARG` block type Standard, records the transfer type and the candidate `BPCN`, and sets `taken` to false only for `COND`. Header and body instructions then execute at the sequential PC.
+
+At commit, `BARG` selects `BPCN` for `DIRECT`, `CALL`, `IND`, and `RET`, and for `COND` only when `taken` is set. `FALL`, and `COND` with `taken` false, continue at the sequential continuation. The form has no memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-std-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+These checks run before the predecessor commits, so a rejected `BSTART.STD` leaves the active predecessor and its continuation in place:
+
+- A nonzero `FALL` payload is not a legal operand value and raises `Fault_IllegalInstruction`.
+- `IND` with no active Standard or Floating block to retire raises `Fault_BundleControl`, because only those kinds carry a candidate `BPCN`.
+- A target with bit 0 set raises `Fault_InstructionPC`.
+
+Design point: a PC-relative target is always even, because it is an even `BSTART` address plus a displacement shifted left by 1. The odd-target check therefore matters in practice for `IND` and `RET`, whose targets come from state.
+
+If the predecessor commit fails, or selects a different next PC, no Standard block is installed and the predecessor's outcome stays authoritative.
 
 <!-- PTO-READER-BLOCK: block-bstart-std-example role=example -->
 ## Non-normative worked example
@@ -57,7 +78,7 @@ This worked example is non-normative; it illustrates the current owner without r
 BSTART.STD COND, <label>
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.STD COND, <label>` opens the pending `BSTART.STD` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+Suppose this `BSTART.STD COND` sits at `0x1000` and `<label>` is `0x1040`. The assembler encodes `simm17 = 0x20`, and the instruction word is `0x00103001`. After begin, `BPC` is `0x1000`, `BPCN` is `0x1040`, `taken` is false, and `TPC` is `0x1004`. If a body `SETC` sets `taken` and a 4-byte `BSTOP` at `0x1010` commits, `TPC` becomes `0x1040`. If `taken` stays false, `TPC` becomes `0x1014`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

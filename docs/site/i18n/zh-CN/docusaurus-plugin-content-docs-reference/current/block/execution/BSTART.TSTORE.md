@@ -19,39 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tstore-purpose role=purpose -->
 ## BSTART.TSTORE 的作用
 
-`BSTART.TSTORE` 打开一个活动 Block 描述符；Block 体在完成前提供所需属性与绑定。
+`BSTART.TSTORE` 打开一个 Tile 内存指令束，其操作为 `TSTORE`：把一个 Tile 的有效矩形按步长写入全局内存（GM）。它是一个 32 位字（匹配值 `0x00111181`，掩码 `0x07ffffff`），`DataType` 位于位 31 到 27。该形式携带固定的 TLSU 选择器 1，因此指令束总是运行 `TSTORE`。
+
+源有三种：普通 Local Tile、已发布的 Shared Tile，或转换回普通 GM 布局的 Local CUBE Tile。源 Tile 只被读取，从不被修改或释放。
+
+设计要点：起始命令不写内存。[指令束启动分派](../model/dispatch/start.md)先验证描述符并提交任何有效的前驱，存储在本指令束被提交时执行，例如在 `BSTOP`、下一条 `BSTART`、trace `B.HINT` 或架构进入请求处。保留的 `DataType` 编码在 `BSTART` 处、前驱提交之前引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: block-bstart-tstore-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`BSTART.TSTORE` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)按如下方式路由指令束：
 
-已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+- `B.DATR` 布局为 `M322ND`（24）、`M162ND`（25）或 `N82ND`（26）时，选择 [CUBE 传输](../model/dispatch/tlsu-layout-conversion.md) 的 function 1。
+- `B.IOS` 源选择 [Shared TLSU](../model/dispatch/shared-tlsu.md) 的 function 1。
+- 否则由通用路径对 `B.IOT` 源调用 Tile 层的 [TSTORE](../../tile/memory-and-data-movement/regular/TSTORE.md)。
 
-完成时，只有全部模式与状态预检成功，描述符才会执行所选 Block 操作。
+每个被选中的 PE 把元素（row, column）写到 `base + row * row_stride_bytes + column * element_size`，其中 `B.IOR` 的 `RegSrc0` 是基址，`RegSrc1` 是字节行步长，二者都从该 PE 自己的 GPR 读取。打包四位列加上 `floor(column / 2)` 字节，并按列的奇偶写入低半字节或高半字节。
+
+设计要点：`TSTORE` 逐个元素探测并写入，并在第一个故障处停止。故障之前完成的存储保留在 GM 中，源保持不变。NDF 条款 `PTO-BSTART-TSTORE-MEMORY-001` 规定了这一首故障规则。
+
+设计要点：Shared 源受发布状态门控。若 Shared Tile 尚未发布，处理程序不引发故障地返回，不读取载荷、不消耗绑定，也不写 GM。指令束保持有效，因此生产者发布之后可以重试提交。
 
 <!-- PTO-READER-BLOCK: block-bstart-tstore-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`DataType` — 源元素数据类型; `B.IOR.RegSrc0` — 每个 PE 的私有 GPR GM 基址; `B.IOR.RegSrc1` — 每个 PE 的私有 GPR 字节行步长; `B.DIM.LB0` — 普通 ValidCol 或 CUBE 有效列数; `B.DIM.LB1` — 普通 ValidRow 或 CUBE 有效行数; `B.DIM.LB2` — 普通物理 Col；CUBE 转换禁止使用; `B.IOT/B.IOS` — Local 或 Shared 源及参与掩码。
-- Local 与 CUBE 存储使用终止源 `B.IOT`；完整或部分 Shared 存储改用源 `B.IOS`；可选 `B.DATR`、`B.DIM` 和 `B.IOR` 补全布局、形状、基址与行步长。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `DataType` 是源元素类型；接受编码 0 到 14、16 到 20 以及 24 到 28。
+- `B.DIM` 的 `LB0`、`LB1` 和 `LB2` 给出 ValidCol、ValidRow 和物理 Col。每个省略的维度有效值为一；省略不会复制源描述符的形状。
+- 可选的 `B.IOR` 给出基址与字节行步长。省略时基址为零，步长为稠密行大小 `ceil(columns * element_bits / 8)`；显式 `zero` 选择器给出真实的零值。
+- 源恰好是一条终止的仅源 `B.IOT`，或恰好一条源 `B.IOS`（`SizeCode` 0）。`B.IOS` 之后可选的 `B.SUBVIEW` 为每个 PE 选择显式范围。
+- CUBE 形式要求 `B.DATR` 的 `DataType` 为 `DTYPE_NONE`，`LB0` 与 `LB1` 为有效列数与有效行数，没有 `LB2`，并使用一条 `B.IOT`。
+
+设计要点：Shared 的 `PE_MASK` 只选择消费者 PE。对 function 1，任何非零掩码都合法，且掩码不隐含四分之一划分或范围；当每个 PE 要存储不同部分时，由 `B.SUBVIEW` 携带显式几何。
 
 <!-- PTO-READER-BLOCK: block-bstart-tstore-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+成功时只有 GM 与内存事件状态发生变化，源绑定由正常的指令束完成过程消耗。Local 或 Shared 源保持其载荷、描述符、生产者掩码、就绪状态与生命周期。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+被选中的 Shared 存储 PE 之间没有架构定义的相对发出或提交顺序。让两个 PE 存储重叠 GM 范围的程序必须另行建立顺序。
 
 <!-- PTO-READER-BLOCK: block-bstart-tstore-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+`PE_MASK=0000` 是严格无操作，发生在 schema、描述符、GPR、内存或故障效果之前。否则 ValidCol 与 ValidRow 必须非零，ValidCol 不得超过物理 Col，且有效矩形必须位于源描述符之内。
 
-无效模式、状态、地址或后继条件通过当前归属单元定义的故障行为报告；本页不添加故障规则。
+schema、形状、类型与描述符错误在第一次 GM 写入之前引发 `Fault_TileLegality`。Shared 路径对非法的 `B.IOR` schema 引发 `Fault_BundleControl`。GM 转换、权限或对齐故障以其自身故障类型在该元素处停止存储。
 
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+设计要点：故障之后，[提交验证](../model/commit/validation.md)使指令束保持有效且 header 完整。重试从第一个元素重新运行存储处理程序，因此故障前已写的元素可能被第二次写入。
 
 <!-- PTO-READER-BLOCK: block-bstart-tstore-example role=example -->
 ## 非规范示例
@@ -59,10 +73,16 @@ The current instruction contract is owned by the ASL source linked above.
 该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
 
 ```asm
-BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T#1, mask=1111, last; BSTOP
+BSTART.TSTORE U8
+B.DIM zero, 64, ->LB0
+B.DIM zero, 8, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR a0, a1
+B.IOT T#1, mask=1111, last
+BSTOP
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+`T#1` 是一个 8 x 64 的 `U8` Local 源。四个 PE 各存储 8 * 64 = 512 字节。在 `a1` 为 128 的 PE 上，元素（7, 63）写到 `a0 + 7 * 128 + 63`，即 `a0 + 959`，每行末尾未使用的 64 字节不会被写入。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

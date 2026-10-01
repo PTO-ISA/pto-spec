@@ -19,39 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tmov-purpose role=purpose -->
 ## What BSTART.TMOV does
 
-`BSTART.TMOV` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`BSTART.TMOV` opens a Tile memory bundle whose operation is `TMOV`: a copy between Tiles that never touches global memory. It is one 32-bit word (match `0x00211181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. The form carries the fixed TLSU selector 2 (Function 2).
+
+Three directions are accepted: Local to Local, Local to Shared, and Shared to Local. Function 13 (`GMOV`, the peer-Local move) is a separate operation with its own start. Other former Shared movement function encodings are reserved and raise `Fault_IllegalInstruction`.
+
+Design point: `TMOV` is the only Tile operation whose start may encode `DataType` 31 (`DTYPE_NONE`). [Descriptor legality](../model/dispatch/descriptor-legality.md) accepts that code only when the descriptor selects `TMOV`. At commit, a concrete `B.DATR` type wins, then a concrete start type, and otherwise the type is inferred from the bound source descriptor. `DTYPE_NONE` itself is never installed in a Tile descriptor.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmov-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`BSTART.TMOV` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+[Bundle start dispatch](../model/dispatch/start.md) checks the descriptor before it commits any predecessor, so a reserved `DataType` (15, 21 to 23, 29, or 30) leaves the predecessor in place. The copy itself runs when the bundle is committed, for example at `BSTOP`, at a following `BSTART`, at a trace `B.HINT`, or at the architecture enter request.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+At commit, [Tile execution](../model/dispatch/tile-execution.md) sends any bundle with a `B.IOS` binding to [Shared TLSU](../model/dispatch/shared-tlsu.md), function 2. A bundle with only `B.IOT` bindings takes the generic path and the Tile-level [TMOV](../../tile/layout-and-rearrangement/layout/TMOV.md) handler.
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+Design point: a Shared source is gated by publication before any Local destination is allocated. If the Shared Tile is not yet published, the handler returns without a fault and without consuming the bindings. The bundle stays active, so commit can retry after the producer publishes. No undefined Shared payload is ever copied.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmov-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DataType` — concrete source/destination Tile type or DTYPE_NONE source-descriptor inference; `B.DATR.Layout` — Local or Shared Tile layout selection; `B.DIM.LB0/LB1/LB2` — ValidCol, ValidRow, and physical Col; `B.IOT` — Local source and/or renamed Local destination; `B.IOS` — absolute Shared source or atomic Shared destination.
-- Function 2 uses one terminating `B.IOT` for a Local source and renamed Local destination; L2S uses source `B.IOT` plus destination `B.IOS`; S2L uses source `B.IOS` plus destination `B.IOT`, with matching masks.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DataType` is a concrete transfer interpretation, or `DTYPE_NONE` for source-descriptor inference.
+- `B.DIM` `LB0`, `LB1`, and `LB2` give ValidCol, ValidRow, and physical Col. Each omitted dimension has effective value one; omission does not copy the source shape.
+- Local to Local: one terminating `B.IOT` binds one Local source and one newly allocated Local destination under one `PE_MASK`.
+- Local to Shared: one source-only `B.IOT` names the Local source and one destination `B.IOS` names the Shared parent. Both bindings use the same mask, and the source capacity must equal the Shared `SizeCode` capacity.
+- Shared to Local: one source `B.IOS` names the Shared parent and one destination-only `B.IOT` allocates the Local result. An optional `B.SUBVIEW` selects a partial source range.
+
+Design point: for Local to Local, the source and destination must agree on capacity, layout, physical Col, and valid shape. A concrete non-packed `DataType` may differ from the source backing type only at the same element width, and the destination keeps the source backing type, so the copy can reinterpret bits without converting them.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmov-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+Local to Local copies payload and definedness into one renamed Local destination and keeps the Local source.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+Local to Shared with a single participating PE publishes the whole parent. With more than one PE, `B.ASSEMBLE` is required, each writer commits its range into an open generation, and the parent publishes atomically at a complete LAST.
+
+Shared to Local reads the Shared source without changing its descriptor, payload, readiness, or lifetime. The Local destination must match the Shared view in rows, columns, valid shape, data type, and layout; a mismatch releases the destination and raises `Fault_TileLegality`.
+
+`TMOV` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmov-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+`PE_MASK=0000` is a strict no-op before source reads, allocation, publication checks, faults, or binding consumption.
 
-The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+Role, mask, size, descriptor, shape, type, layout, readiness, and allocation checks run before any payload is copied or published. A failure raises `Fault_TileLegality`, or `Fault_BundleControl` on the generic Local path for an incomplete binding stream, and releases any destination the bundle allocated.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+Design point: a failed commit leaves the bundle active with its header intact, as [commit validation](../model/commit/validation.md) describes, so no partial copy is published and a retry reruns the whole move.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmov-example role=example -->
 ## Non-normative worked example
@@ -59,10 +71,15 @@ Complete schema, binding, readiness, alias, capacity, and allocation preflight p
 This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
 
 ```asm
-BSTART.TMOV U8; B.IOT T#1, mask=1111, ->U<1>, last; BSTOP
+BSTART.TMOV U8
+B.DIM zero, 16, ->LB0
+B.DIM zero, 8, ->LB1
+B.DIM zero, 16, ->LB2
+B.IOT T#1, mask=1111, last, ->U<1>
+BSTOP
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+`T#1` is an 8 x 16 `U8` Local Tile in 128 bytes. `SizeCode` 1 is also 128 bytes, so the new `U#1` has 128 / 16 = 8 rows, and all 8 * 16 = 128 bytes are copied on each PE. The bundle has no `B.IOS`, so it takes the generic Local path.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

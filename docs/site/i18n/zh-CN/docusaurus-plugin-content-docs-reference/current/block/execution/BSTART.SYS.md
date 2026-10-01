@@ -19,34 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-sys-purpose role=purpose -->
 ## BSTART.SYS 的作用
 
-`BSTART.SYS` 是 `SYS` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.SYS` 打开一个 System 块。块（也称指令束）是一段 header 命令和标量主体指令，结束于提交边界：`BSTOP` 或下一条 `BSTART`。System 块是系统标量操作可用的块类型，例如 `SSRSET`、`FENCE.I`、`TLB.IALL` 和 `ACRC`。
+
+该助记符只有一种 32 位形式 `BSTART.SYS FALL`，匹配值为 `0x00001081`。它没有转移目标，也不运行 Tile 操作。
 
 <!-- PTO-READER-BLOCK: block-bstart-sys-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+[指令束启动分派](../model/dispatch/start.md)处理该形式。其转移类型为 `Fallthrough`，因此候选目标是 `BSTART` 地址加 4。分派先提交有效前驱，并且只有当该提交选择本 `BSTART` 地址作为下一个 `TPC` 时才打开 System 块。
 
-```text
-BSTART.SYS retires any active predecessor block, then opens one system block whose header commands execute sequentially until BSTOP or the next BSTART.
-SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot select the next PC.
-```
+随后[开始](../model/lifecycle/begin.md)把 `BPC` 设为 `BSTART` 地址，把 `BARG` 块类型设为 System。对于 System 块，它忽略传入的转移：写入 `BARG` 转移 `Fallthrough`、`taken` 为假、`BPCN` 为零。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：System 块没有候选后续地址，因此 `BARG` 保存固定的非选择值。提交时 `BARGCommitPC` 总是返回顺序后续地址，任何残留目标都无法改变程序流向。
 
 <!-- PTO-READER-BLOCK: block-bstart-sys-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `simm17` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
+- `simm17` 占据位 `31:15`，必须为零。非零值保留给扩展。
+- 该形式没有 `DataType`、选择器或目标操作数。
+
+在主体中，`SETC.TGT` 无法写入目标：`BundleCommitTargetWritable` 仅对 Standard 和 Floating 块为真，因此在 System 块中它引发 `Fault_BundleControl`。
 
 <!-- PTO-READER-BLOCK: block-bstart-sys-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+成功的 `BSTART.SYS` 清除每指令束标志（包括 `_SystemBlockTerminalPending`），记录 `BPC`，设置 System 块类型，并把 `TPC` 移到下一条指令。该形式没有内存效果。
+
+在块主体有效期间，标量分派器接受系统标量操作；在 System 块主体之外它们引发 `Fault_BundleControl`。`ACRC` 设置 `_SystemBlockTerminalPending` 之后，[顶层分派](../model/dispatch/top-level.md)只接受 `BSTOP` 或 `BSTART` 作为下一条块命令。
+
+提交时，块在顺序后续地址继续。
 
 <!-- PTO-READER-BLOCK: block-bstart-sys-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- 非零 `simm17` 不满足操作数合法性，在前驱提交之前引发 `Fault_IllegalInstruction`。
+- 如果前驱提交失败，或选择了本 `BSTART` 之外的下一 PC，则不会安装 System 块，前驱的结果保持有效。
+- 块仍有效时执行开始会引发 `Fault_BundleControl`；分派通过先提交前驱来避免这种情况。
+
+设计要点：固定为零的载荷使唯一编码保持无歧义。所有非零值都保留并被拒绝，因此以后的扩展可以分配它们而不改变现有代码的含义。
 
 <!-- PTO-READER-BLOCK: block-bstart-sys-example role=example -->
 ## 非规范示例
@@ -57,7 +67,7 @@ SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot
 BSTART.SYS FALL
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.SYS FALL` 会打开待处理的 `BSTART.SYS` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+假设 `BSTART.SYS FALL` 位于 `0x2000`，主体包含 `FENCE.I`，随后是位于 `0x2008` 的 4 字节 `BSTOP`。开始之后，`BPC` 为 `0x2000`，`BARG.BPCN` 为零，`TPC` 为 `0x2004`。由于主体位于 System 块中，`FENCE.I` 可用。`BSTOP` 以后续地址 `0x200C` 提交，而 System `BARG` 从不选择 `BPCN`，因此 `TPC` 变为 `0x200C`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

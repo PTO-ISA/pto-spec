@@ -19,52 +19,72 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tload-purpose role=purpose -->
 ## BSTART.TLOAD 的作用
 
-`BSTART.TLOAD` 是 `TLOAD` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.TLOAD` 打开一个 Tile 内存指令束，其操作为 `TLOAD`：从全局内存（GM）按步长读入一个 Tile。它是一个 32 位字（匹配值 `0x00011181`，掩码 `0x07ffffff`），唯一的字段是位 31 到 27 的 `DataType`。该形式携带固定的 TLSU 选择器 0，因此指令束总是运行 `TLOAD`。
+
+四种目标共用这个起始命令：普通 Local Tile、Shared Tile、从普通 GM 布局转换而来的 Local CUBE Tile，以及权重模式 Shared Tile。`B.DATR` 的 `Layout` 与绑定种类（`B.IOT` 或 `B.IOS`）在它们之间选择。
+
+设计要点：起始命令不读取内存。[指令束启动分派](../model/dispatch/start.md)检查描述符，提交任何有效的前驱，并以顺延（fallthrough）续址打开指令束。加载在该指令束被提交时执行，例如在 `BSTOP`、下一条 `BSTART`、trace `B.HINT` 或架构进入请求处。保留的 `DataType` 编码（15、21 到 23，或 29 到 31）在 `BSTART` 处、前驱提交之前引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: block-bstart-tload-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)按固定顺序测试各专用选择器。对 `TLOAD` 指令束，结果如下：
 
-```text
-Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
-Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, SizeCode, and PE_MASK. One participating issuer loads the complete parent from its private GPR base and stride; multiple issuers require B.ASSEMBLE with explicit ranges.
-Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT.
-```
+- `B.DATR` 布局为 `OHWI2NK`（编码 10）或 `OIHW2NK`（编码 11）时，选择[权重到 Shared 执行](../model/dispatch/weight-to-shared-execution.md)。
+- 布局编码在 21 到 26 之间时，选择 [CUBE 传输](../model/dispatch/tlsu-layout-conversion.md)。加载只接受 `ND2M32`（21）、`ND2M16`（22）和 `ND2N8`（23）。
+- 存在任何 `B.IOS` 绑定时，选择 [Shared TLSU](../model/dispatch/shared-tlsu.md) 的 function 0。
+- 否则由通用路径分配 `B.IOT` 指定的 Local 目标，并调用 Tile 层的 [TLOAD](../../tile/memory-and-data-movement/regular/TLOAD.md)。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+每个被选中的 PE 读取自己的 `B.IOR` GPR：`RegSrc0` 是 GM 基址，`RegSrc1` 是以字节计的行步长。元素（row, column）从 `base + row * row_stride_bytes + column * element_size` 读取。打包四位列则在行基址上加 `floor(column / 2)` 字节，并按列的奇偶选择低半字节或高半字节。
+
+设计要点：`TLOAD` 在第一个内存故障处停止。Tile 层例程逐个元素探测并读取，因此故障之前已读元素的加载事件仍保留记录。随后通用提交路径调用 `RollBackBundleTileDestinations`，释放本指令束分配的目标，因此不会发布新的 Local Tile。对 Shared 目标，契约允许已完成的读取保留在一个既不完整、也不是 whole-parent-ready 的记录中。
 
 <!-- PTO-READER-BLOCK: block-bstart-tload-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
-- `B.IOR.RegSrc0` 选择具名的绝对 GPR 角色；其确切分配域仍以下方生成契约为准。
-- `B.IOR.RegSrc1` 选择具名的绝对 GPR 角色；其确切分配域仍以下方生成契约为准。
-- `B.DIM.LB0` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
-- `B.DIM.LB1` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
-- `B.DIM.LB2` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
-- `B.IOT/B.IOS` 标识目的位置或发布选择；其确切分配域仍以下方生成契约为准。
+- `DataType` 是目标元素类型；接受编码 0 到 14、16 到 20 以及 24 到 28。在 CUBE 与权重形式中它是传输类型，且 `B.DATR` 的 `DataType` 字段必须为 `DTYPE_NONE`。
+- 对普通形式，`B.DIM` 的 `LB0`、`LB1` 和 `LB2` 给出 ValidCol、ValidRow 和物理 Col。在 CUBE 形式中 `LB0` 和 `LB1` 是有效列数与有效行数，不使用 `LB2`。在权重模式中它们是 ValidK、ValidN 和 TotalK。
+- 可选的 `B.IOR` 提供基址与字节行步长。权重模式则需要恰好一条三源 `B.IOR GMBase, ShapeGPR, StartGPR, ->zero`。
+- 目标是一条终止的仅目标 `B.IOT`，或一条目标 `B.IOS`，二者不可兼有。源 Tile 绑定非法。
+
+设计要点：省略 `B.IOR` 与编码 `zero` 不同。省略时基址为零，行步长为稠密值 `ceil(columns * element_bits / 8)`，使用解析后的 Col（CUBE 形式中为 `LB0`）。显式 `zero` 选择器读取零 GPR，因此提供真实的零基址或零步长；步长为零时每一行都读取相同的 GM 字节。
 
 <!-- PTO-READER-BLOCK: block-bstart-tload-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+Local 形式分配一个目标，其 Rows 由 `B.IOT` 的 `SizeCode`、Col 与 `DataType` 推导，填充有效区域，并在提交成功时发布。
+
+只有一个参与 PE 的 Shared 形式加载并发布完整的父对象。掩码中有多于一个 PE 时，`B.ASSEMBLE` 是必需的：Tile 执行在处理程序运行之前，以 `Fault_TileLegality` 拒绝没有它的多 PE Shared 目标。此时父对象在无空隙的 LAST 写者处原子发布。
+
+CUBE 形式安装一个持久 CUBE 描述符，其几何由布局、`DataType`、`LB1` 和 `LB0` 决定；`TSize` 只表示容量。权重形式写入行主序的 Shared `[N][K]` 窗口，Cin 填充通道成为原始零值，不访问 GM。
 
 <!-- PTO-READER-BLOCK: block-bstart-tload-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+`PE_MASK=0000` 是严格无操作，发生在 GPR 读取、分配、内存访问或故障之前。否则 ValidCol 和 ValidRow 必须非零，且不大于推导出的 Col 与 Rows，二者均为 2 的幂。
+
+提交时，schema、形状与类型错误引发 `Fault_TileLegality`。Shared 路径对非法的 `B.IOR` schema 引发 `Fault_BundleControl`，CUBE 传输在没有可容纳的目标时引发 `Fault_TileAllocation`。GM 转换或权限故障保持其自身类型，并停止该请求。
+
+设计要点：如[提交验证](../model/commit/validation.md)所述，失败的提交在指令束停止之前返回。指令束保持有效且 header 完整，因此陷阱处理程序看到的是整个指令束，重试会重新执行完整的加载。
 
 <!-- PTO-READER-BLOCK: block-bstart-tload-example role=example -->
 ## 非规范示例
 
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
+一个物理形状为 8 x 64、有效区域为 7 x 60 的部分 `FP32` Tile，用宏形式写作 `TLOAD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32>, [base=a0, stride=a1], ->T<2KB>`。它展开为如下指令束：
+
 ```asm
-BSTART.TLOAD DataType
+BSTART.TLOAD FP32
+B.DIM zero, 60, ->LB0
+B.DIM zero, 7, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR a0, a1
+B.IOT mask=1111, last, ->T<5>
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.TLOAD DataType` 会打开待处理的 `BSTART.TLOAD` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`SizeCode` 5 表示 2048 字节，因此 Rows 为 2048 / (64 * 4) = 8，覆盖 ValidRow 7。每个 PE 读取 7 * 60 = 420 个元素。若某 PE 的 `a1` 为 256，则元素（6, 59）从 `a0 + 6 * 256 + 59 * 4` 读取，即 `a0 + 1772`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

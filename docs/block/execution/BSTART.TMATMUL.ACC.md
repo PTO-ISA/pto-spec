@@ -19,50 +19,104 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-purpose role=purpose -->
 ## What BSTART.TMATMUL.ACC does
 
-`BSTART.TMATMUL.ACC` opens an active Block descriptor for `TileOperation_TMATMUL_ACC`; the body supplies the attributes and bindings required before completion.
+`BSTART.TMATMUL.ACC` opens a bundle whose operation is the CUBE matrix product `TMATMUL_ACC`. It is a 32-bit standalone start command. Its fixed bits select CUBE Function 2 and `TileOperation_TMATMUL_ACC`, and its only encoded field is the 5-bit `DataType` in bits 31:27. That field becomes AType, the element type of the left operand A.
+
+The result D is the explicit Local accumulator C (M x N) plus the product of A (M x K) and B (K x N).
+
+Design point: the operation identity is fixed entirely by the start command. The following commands (`B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, and `B.IOR`) supply only types, shape, and operands. All 12 CUBE matrix start commands commit through one handler, `ExecuteBundleTMATMULOperation`, which tells the bias, accumulator, MX, and GEMV variants apart only by the function code.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`BSTART.TMATMUL.ACC` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+At the start, `BSTART.TMATMUL.ACC` builds a Tile matrix descriptor with selector 2 and the encoded `DataType`. A `DataType` code of 15, 21 to 23, or 29 to 31 is outside the accepted set and is rejected by the encoding check with `Fault_IllegalInstruction`. All start checks run before any active predecessor bundle is committed, so a rejected start leaves the predecessor in place. See [bundle start dispatch](../model/dispatch/start.md).
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+The header commands that follow only record bundle state. No operand is read and no Tile is allocated until the bundle commits at `BSTOP` or at the next `BSTART`.
 
-At completion, the descriptor runs `TileOperation_TMATMUL_ACC` only after schema, type, dimension, descriptor, readiness, alias, and capacity preflight succeeds.
+At commit, [commit validation](../model/commit/validation.md) runs the Tile operation, and [Tile execution](../model/dispatch/tile-execution.md) routes it to [CUBE TMATMUL dispatch](../model/dispatch/cube-tmatmul.md). `ExecuteBundleTMATMULOperation` then works in this order:
+
+1. If every Tile and Shared binding selects no PE, it returns with no effect.
+2. A missing `B.FPATR` raises `Fault_BundleControl`.
+3. Types, binding counts, `B.DATR` fields, `CCTRL`, dimensions, and PE masks are checked together. Any failure raises `Fault_TileLegality`.
+4. It waits, without a fault, until every Shared source is published, and then checks the Shared schemas.
+5. It checks the Local sources, the separation of C from D, the result layout, and the post-processing sources.
+6. It allocates the destination group, snapshots the operands, and computes the result. A fault after allocation rolls the destinations back.
+
+Design point: allocation is the last preflight step. Every field, stream, descriptor, shape, and capacity rule is closed before the first destination is reserved, so a bundle rejected by a legality check leaves no allocated destination and no changed source.
+
+Design point: a failed commit returns before the bundle stops. The bundle stays active with its header intact and its continuation is not applied, so the trap context still describes the failing bundle.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DataType` — tile element data type selector.
-- The Block schema is completed by the ordered companion carriers `BSTART.TMATMUL.ACC`, `B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, `B.IOT/B.IOR`; omitted optional carriers take only the defaults named by this owner.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DataType` in the start command is AType. The optional `B.DATR` supplies BType in its `DataType` field; when `B.DATR` is omitted, BType equals AType, rounding is RNE, and saturation is off. AType and BType must be ordinary matrix input types of one class: both floating, both signed, or both unsigned.
+- `B.DATR` may set BType, `RMode`, `Sat`, and `CCTRL`, which travels in its `PadValueOrByteId` field. Its `Layout` and `CMode` must be zero and `Canonicalize` must be off.
+- Exactly one `B.FPATR` is required. All-zero fields select no conversion, activation, or reduction; nonzero fields add the RowMax, GroupMax, quantization, ReLU, or CScale operands that they enable.
+- `B.DIM` `LB0`, `LB1`, and `LB2` give M, N, and K, and each defaults to 1 when omitted. In a cooperative bundle `LB0` is the Core-total group_M.
+- `B.IOT` binds the Local mathematical sources in this order: C first, then A and then B, then CScale when `CScaleEn` is set. Post-processing sources follow them.
+- The destination bindings are D, then RowMaxOut and GroupMaxOut when `B.FPATR` enables them.
+- An optional `B.IOS` supplies the right group (B) or both matrix groups from Shared Tiles. Supplementary sources and all destinations stay Local.
+
+Local A uses `CUBE_M16` (M at most 16) or `CUBE_M32` (M at most 32), and Local B uses `CUBE_N8`. C uses the same layout as A, holds M x N elements of the result type, and must have the same capacity as D unless `PreQuantMode` is nonzero.
+
+D's element type follows AType: `S32` for signed, `U32` for unsigned, and `FP32` for floating inputs. A nonzero `PreQuantMode` selects that mode's output type for D instead.
+
+Design point: C must be distinct from D. The contract requires C's encoded source selector to differ from D's zero-extended `DstTile` hand, and `BundleMatrixAccumulatorDestinationIndicesDistinct` raises `Fault_TileLegality` before allocation when its comparison fails. C is snapshotted before the product and is unchanged after success or rejection, so the old accumulator stays readable.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+The start command changes only bundle state. It records a fallthrough `BARG` of kind `TileMatrix` and installs the descriptor; no Tile, Shared Tile, or memory changes.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them. No source is consumed or modified, and a successful read leaves every Shared source descriptor, publication state, and payload unchanged.
+
+D is allocated in A's M layout. When A itself is Shared, the layout is taken from C.
+
+`CCTRL` is read from `B.DATR` and is `00` when `B.DATR` is absent. Bit 0 publishes D as the raw accumulator-type result and forbids quantization, ReLU, and the RowMax, GroupMax, and max-abs reductions. Bit 1 is a non-binding hint to reuse or prefetch C.
+
+Design point: omitting `B.DATR` is not the same as encoding pad value `11`. `BundleTMATMULCCTRL` returns `00` when `B.DATR` is absent, so a bundle without `B.DATR` never requests raw output by accident. See [accumulator routing](../model/dispatch/cube-accumulator-routing.md).
+
+Design point: the cache hints call implementation-defined hooks that do nothing in the portable model. They cannot change results, faults, allocation, or publication; only the output type chosen by bit 0 is observable.
+
+The bundle has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and N and K must be powers of two. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M consumes its Shared bindings and finishes with no Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_TileLegality`; no prose on this page creates an additional fault rule.
+`TransA` and `TransB` are legal only when the corresponding primary is Shared. A Shared source that is not yet published makes the commit return without a fault, and the bundle stays active.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+`CScaleEn` is legal for this form only with an `FP32` result. The CScale source is a Local `U8` `CUBE_M32` Tile with M rows and 1 column, and it must not share an index with any destination hand. See [matrix scale](../model/dispatch/matrix-scale.md).
+
+`PE_MASK` 0000 on every binding is a strict no-op: the matrix handler reads no descriptor and raises no fault.
+
+A `DataType` outside the accepted set raises `Fault_IllegalInstruction` at the start. A missing `B.FPATR` raises `Fault_BundleControl`. A failed type, count, shape, layout, alias, or post-processing check raises `Fault_TileLegality`, and a full destination hand or insufficient capacity raises `Fault_TileAllocation`. Each of these faults occurs before any destination is published.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmul-acc-example role=example -->
 ## Non-normative worked example
 
 This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
 
-```asm
-BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
+The canonical macro below computes a 16 x 32 result with K equal to 64. C is `T#3`, a 16 x 32 `FP32` Tile in `CUBE_M16` with a capacity of 2KB; A is `T#2`, a 16 x 64 `FP16` Tile in `CUBE_M16`; B is `T#1`, a 64 x 32 `FP16` Tile in `CUBE_N8`.
+
+```text
+TMATMUL_ACC <M=16, N=32, K=64, FP16>, T#3, T#2, T#1, ->T<2KB>
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+One physical bundle for this macro follows. The all-zero `B.FPATR` is still required.
+
+```asm
+BSTART.TMATMUL.ACC FP16
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
+B.DIM zero, 16, ->LB0
+B.DIM zero, 32, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOT T#3, T#2, mask=1111
+B.IOT T#1, mask=1111, last, ->T<5>
+BSTOP
+```
+
+With no `B.DATR`, BType is also `FP16`, so the result type is `FP32`. Each selected PE adds C to the product, computing 16 x 32 = 512 elements from sums of 64 products, and C keeps its old value. D is a new `FP32` Tile in `CUBE_M16` that occupies 16 cells of 128 bytes, which is 2KB and matches SizeCode 5.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

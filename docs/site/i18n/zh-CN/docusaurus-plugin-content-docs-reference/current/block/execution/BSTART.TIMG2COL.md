@@ -19,40 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-purpose role=purpose -->
 ## BSTART.TIMG2COL 的作用
 
-`BSTART.TIMG2COL` 打开一个 TLSU Block，把滑动的特征图窗口物化为二维 Tile。起始命令选择元素类型；完整 Block 则提供源视图、窗口参数、目的位置和发布边界。
+`BSTART.TIMG2COL` 打开一个 Tile 内存指令束，其操作为 IMG2COL：从全局内存（GM）读取卷积输入图像，并把它写成矩阵。矩阵的每一行是一个输出像素，每一列是一个卷积核位置与输入通道，按 32 字节的 `C0` 通道组分组。该命令是一个 32 位字（匹配值 `0x01c11181`，掩码 `0x07ffffff`），`DataType` 位于位 31 到 27。它是命令形式 94，携带固定的 TLSU 选择器 28。
+
+结果写到两处之一：普通行主序（ND）的 Shared Tile，或 `CUBE_M16`、`CUBE_M32` 布局的 Local Tile，可直接供 CUBE 引擎使用。
+
+设计要点：[描述符合法性](../model/dispatch/descriptor-legality.md)对形式 94 有专门的规则。只有当描述符恰为 TIMG2COL 描述符且 `DataType` 受支持时才合法。因此不受支持的编码在 `BSTART` 处引发 `Fault_IllegalInstruction`，发生在[指令束启动分派](../model/dispatch/start.md)提交任何前驱之前。
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-mechanism role=mechanism -->
 ## 位置与机制
 
-可以把结果理解为矩阵：每个逻辑行对应一个输出空间位置，每个逻辑列对应一个卷积核与通道位置。源布局选择稠密 NCHW 或 NHWC 索引方式，目的布局选择 Shared ND 结果或直接的 Local CUBE 物化。
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)首先测试 TIMG2COL 选择器，并调用 [TIMG2COL 执行](../model/dispatch/timg2col-execution.md)。对该操作，它跳过通用的效果资格检查、阶段 2 准备、Local 续接复用以及 ExecutionMask 捕获。处理程序先验证整个指令束，再构建矩阵。
 
-```text
-Shared: BSTART.TIMG2COL; optional B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOS; optional B.ASSEMBLE for multiple PEs; BSTOP.
-Local CUBE: BSTART.TIMG2COL; explicit CUBE-producing B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOT; BSTOP.
-```
+`B.DATR` 布局选择输出。`ND2M16`（编码 22）和编码 31 选择 Local M16；`ND2M32`（编码 21）和编码 29 选择 Local M32；`NORM`（编码 0）、`DN2ND`（编码 6）或省略 `B.DATR` 选择 Shared ND。编码 6、29 和 31 通过通道主序（DN，NCHW）索引读取图像；其他布局使用通道次序（ND，NHWC）索引。每个单元的几何由 [TIMG2COL schema](../model/dispatch/timg2col-schema.md)定义。
 
-任何 GM 读取之前都会先验证完整 header。空间填充位置和通道尾部位置直接成为已定义的零元素，这些位置不会发起源访问。
+设计要点：验证阶段不读取内存，随后 `BundleTIMG2COLPreflightGM` 在第一次加载之前探测全部 ValidRow 行的每个 GM 地址。转换或权限故障不会留下任何加载事件、分配或 Shared 代的变化。
+
+设计要点：输入坐标落在空间填充中、或通道不小于 `Cin` 的单元，是已定义的原始零值，不访问 GM。填充永远不会引发故障，也不会记录加载事件。
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择特征图元素表示；确切可接受编码以下方生成契约为准。
-- `B.DATR.Layout` 选择稠密源顺序，并决定结果是 Shared ND 还是 Local CUBE。
-- `B.DIM.LB0`、`B.DIM.LB1` 和 `B.DIM.LB2` 分别描述有效输出列数、有效输出行数和总输出列数。
-- 第一条 `B.IOR` 提供 `GMBase`，并且只能作为源记录。
-- 紧邻的下一条 `B.IOR` 提供三个参数 GPR，其中包含特征图、卷积核、步幅、膨胀、裁剪和通道填充值。
-- `B.IOS` 指定 Shared 目的位置，`B.IOT` 指定 Local CUBE 目的位置。
-- 多个 PE 发布同一个 Shared 结果时，`B.ASSEMBLE` 合并显式行范围。
+- `DataType` 是元素类型：`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`HiF8`、`E4M3`、`E5M2`、`E8M0`、`S32`、`S16`、`S8`、`U32`、`U16` 或 `U8`。
+- 显式的 `B.DATR` 必须使用 `DTYPE_NONE`、Zero 填充（编码 0），且比较、舍入、饱和与规范化控制均为零；只有它的布局起作用。
+- `B.DIM` 的 `LB0`、`LB1` 和 `LB2` 给出 ValidCol、ValidRow（1 到 128，Local M16 最多 64）和 TotalCol。
+- 两条相邻的仅源 `B.IOR` 记录：第一条为 `GMBase, zero, zero`，第二条为 `ParamGPR0, ParamGPR1, ParamGPR2`。[TIMG2COL 参数](../model/operands/timg2col-parameters.md)定义了打包方式。
+- Shared ND 输出恰好使用一条 `B.IOS`，没有 `B.IOT`。Local 输出恰好使用一条 `PE_MASK` 为 `1111` 的目标 `B.IOT`，没有 `B.IOS`。
+
+设计要点：每个参与 PE 必须持有相同的 `GMBase` 与参数字。每个 PE 根据同一几何计算不同的行份额，因此该检查使所有份额属于同一个矩阵；不一致时在任何 GM 访问之前拒绝。
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-effects role=effects -->
 ## 结果与发布
 
-成功完成时只写入逻辑输出矩形及其已定义状态。Shared 结果作为一个完整 generation 可见；Local CUBE 结果的逻辑值等同于对应的 Shared ND 结果再执行所选 ND-to-CUBE 布局转换。
+ValidRow 分给四个 PE，先填满 PE 0。Local M16 每个 PE 16 行，Local M32 每个 PE 32 行；Shared ND 在 ValidRow 不超过 64 时每个 PE 16 行，否则 32 行。行数为零的 Local PE 不分配也不读取，但仍是参与者。
+
+Shared ND 的掩码必须是单个 PE 或 `1111`，并且必须包含当前 PE。单个 PE 不得使用 `B.ASSEMBLE`，并直接发布 Tile。使用 `1111` 时 `B.ASSEMBLE` 是必需的：PE 0 携带 INIT，PE 3 携带 LAST，PE 1 与 PE 2 两者都不携带。其寄存器与立即数必须为零，因为处理程序根据行起点以 32 字节为单位推导每个写者的偏移。父对象只在无空隙的 LAST 写者到达时发布。
+
+只写入逻辑矩形及其已定义性；物理存储尾部既不写入，也不标记为已定义。Local CUBE 结果等于 Shared ND 结果再经过普通的 ND 到 CUBE 转换。
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-constraints role=constraints -->
 ## 合法性与故障边界
 
-Block 要求受支持的元素和布局编码、一组完整参数、规定的四 PE mask、兼容的目的形式，以及能够容纳在所选容量内的维度。所有 schema、算术、访问、分配、就绪、别名和 PE 一致性失败，都在 GM 访问或目的发布之前处理。
+裁剪必须按 `C0` 对齐：ValidCol、TotalCol 与 ColStart 是 `C0` 的倍数，ValidCol 不超过 TotalCol，`RowStart + ValidRow` 不超过 `Hout * Wout`，`ColStart + ValidCol` 不超过 `KValid`。非零的参数扩展位、零尺寸以及错误的绑定数量同样会被拒绝。
+
+没有记录故障的失败检查变为 `Fault_TileLegality`；内存故障保持其自身类型。任何失败时，`BundleTIMG2COLAbortFailedAttempt` 中止 Shared 代或回滚 Local 目标，因此之前的 Shared 代保持不变。
+
+设计要点：如 NDF 条款 `PTO-BSTART-TIMG2COL-CONTRACT-001` 所述，重复、转置、双源以及隐藏的描述符状态都不属于这一逐指令束接口。操作的每个输入都在指令束自己的命令与 GPR 中可见。
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-example role=example -->
 ## 非规范示例
@@ -61,17 +72,17 @@ Block 要求受支持的元素和布局编码、一组完整参数、规定的�
 
 ```asm
 BSTART.TIMG2COL FP16
-B.DIM LB0, ValidCol
-B.DIM LB1, ValidRow
-B.DIM LB2, TotalCol
-B.IOR GMBase, zero, zero
-B.IOR ParamGPR0, ParamGPR1, ParamGPR2
-B.IOS PE_MASK, ->S0<SizeCode>
-B.ASSEMBLE 1, 1, zero, 0, ParentSizeCode
+B.DIM zero, 64, ->LB0
+B.DIM zero, 64, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR a0, zero, zero
+B.IOR a1, a2, a3
+B.IOS mask=1111, ->S0<7>
+B.ASSEMBLE 1, 0, zero, 0, 5
 BSTOP
 ```
 
-两条 `B.IOR` 必须保持相邻。只有所有参与范围都成功后，`BSTOP` 才会验证完整组成并发布结果。
+这是 PE 0 的指令束。PE 1 与 PE 2 绑定 `B.IOS S0, mask=1111` 并使用 `B.ASSEMBLE 0, 0, zero, 0, 5`，PE 3 使用 `B.ASSEMBLE 0, 1, zero, 0, 5`。对 `FP16`，`C0` 为 16。ValidRow 64 使每个 PE 得到 16 行，每个写者覆盖 16 * 64 / 16 = 64 个 32 字节单位，偏移分别为 0、64、128 和 192。`SizeCode` 7 为 8192 字节，即 256 个单位，因此 PE 3 的 LAST 范围恰好结束于 256，父对象随之发布。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

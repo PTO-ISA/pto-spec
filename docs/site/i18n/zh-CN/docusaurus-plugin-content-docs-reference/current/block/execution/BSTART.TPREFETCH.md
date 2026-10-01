@@ -19,39 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-purpose role=purpose -->
 ## BSTART.TPREFETCH 的作用
 
-`BSTART.TPREFETCH` 打开一个活动 Block 描述符；Block 体在完成前提供所需属性与绑定。
+`BSTART.TPREFETCH` 打开一个 Tile 内存指令束，其操作为 `TPREFETCH`：在全部四个 PE 上对全局内存（GM）做带类型的步长读取，不产生任何 Tile。它是一个 32 位字（匹配值 `0x00311181`，掩码 `0x07ffffff`），`DataType` 位于位 31 到 27。该形式携带固定的 TLSU 选择器 3。
+
+成功时的架构结果仅限于加载事件及其顺序。Tile 或 Shared 的描述符、分配、载荷、已定义性或发布状态都不改变。缓存层级、放置与保留不是架构结果。
+
+设计要点：起始命令不读取内存。[指令束启动分派](../model/dispatch/start.md)验证描述符并提交任何有效的前驱，预取在该指令束被提交时执行，例如在 `BSTOP`、下一条 `BSTART`、trace `B.HINT` 或架构进入请求处。保留的 `DataType` 编码在 `BSTART` 处引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`BSTART.TPREFETCH` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)在所有较早的专用选择器都不匹配之后到达 [TPREFETCH 处理程序](../model/dispatch/tlsu-prefetch.md)。处理程序检查类型、没有 Tile 绑定、`B.IOR` 记录、维度与数据属性，然后调用 `TPREFETCHCore`。
 
-已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+对四个 PE 中的每一个以及 `ValidRow x ValidCol` 中的每个元素，地址为 `base + (row * row_stride_elements + column) * element_size`。打包四位类型使用与 `TLOAD` 相同的逻辑元素字节寻址。
 
-完成时，只有全部模式与状态预检成功，描述符才会执行所选 Block 操作。
+设计要点：`TPREFETCHCore` 在记录第一个加载事件之前探测每个 PE 的每个元素。因此任何 PE 上的转换或权限故障都不会留下任何 PE 的加载事件。契约把四个访问范围称为一次合并尝试，恢复时重新发出完整的访问范围。
+
+设计要点：没有可携带 `PE_MASK` 的 Tile 绑定，因此参与关系隐含为 `1111`。每个 PE 根据自己的基址与步长 GPR 计算自己的访问范围，四个访问范围一起检查。
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`DataType` — 预取元素数据类型; `B.IOR.RegSrc0` — 每个 PE 的私有 GPR GM 基址; `B.IOR.RegSrc1` — 每个 PE 的私有 GPR 逻辑行步长（按元素计）; `B.DIM.LB0` — ValidCol; `B.DIM.LB1` — ValidRow; `B.DIM.LB2` — physical Col。
-- 头部可包含 `B.DATR`、`B.DIM` 和 `B.IOR`；TPREFETCH 没有 Tile/Shared 绑定或目的端，因此明确禁止 `B.IOT` 与 `B.IOS`。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `DataType` 是预取的元素类型；接受编码 0 到 14、16 到 20 以及 24 到 28。
+- `B.DIM` 的 `LB0`、`LB1` 和 `LB2` 给出 ValidCol、ValidRow 和物理 Col。省略的 `LB0` 与 `LB1` 默认为一，省略的 `LB2` 默认为解析后的 ValidCol。
+- 可选的 `B.IOR` 在 `RegSrc0` 中给出每个 PE 的基址，在 `RegSrc1` 中给出行步长，均从该 PE 自己的 GPR 读取。省略时基址为零，步长为 Col。
+- `B.IOT` 与 `B.IOS` 不是 `TPREFETCH` 指令束的成员。
+
+设计要点：这里的行步长以元素计，而非字节。`TPREFETCHCore` 把 `row * row_stride_elements + column` 乘以元素大小，而 `TLOAD` 与 `TSTORE` 把 `RegSrc1` 当作字节步长。因此同一个 GPR 值对两类操作描述的是不同的访问范围。
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+成功时，每个 PE 为每个有效元素记录一个带类型的加载事件，事件分解与 `TLOAD` 相同。所有访问都以指令束的 `aq` 与 `rl` 属性参与 PTO-RC，与 `TLOAD` 完全一致。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+不写任何寄存器。由于没有 Tile 绑定，最后的 `FinalizeBundleTileAttempt` 不发布任何内容。
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+每个维度必须在 1 到 65535 之间，ValidCol 不得超过 Col，Col 必须是非零的 2 的幂，且 `ValidRow * ValidCol` 不得超过 `PTO_MODEL_TILE_ELEMENTS`。这些失败、不支持的类型、格式错误的 `B.IOR`，或任何 `B.IOT` 或 `B.IOS`，都在第一次探测之前引发 `Fault_TileLegality`。
 
-无效模式、状态、地址或后继条件通过当前归属单元定义的故障行为报告；本页不添加故障规则。
-
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+设计要点：省略与编码零不同。省略的 `B.DIM` 有效值为一，但显式零仍是一个值并会引发故障。由于省略的 `LB2` 等于 ValidCol，ValidCol 为 48 且没有 `LB2` 的指令束其 Col 为 48，不是 2 的幂，同样引发故障。
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-example role=example -->
 ## 非规范示例
@@ -59,10 +66,15 @@ The current instruction contract is owned by the ASL source linked above.
 该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
 
 ```asm
-BSTART.TPREFETCH FP16; B.DIM zero, 64, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 64, ->LB2; B.IOR zero, a0; BSTOP
+BSTART.TPREFETCH FP16
+B.DIM zero, 64, ->LB0
+B.DIM zero, 4, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR zero, a0
+BSTOP
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+每个 PE 预取 4 x 64 = 256 个 `FP16` 元素，因此在全部 1024 次探测成功之后，指令束记录 1024 个加载事件。`RegSrc0` 为 `zero`，是真实的零基址。在 `a0` 为 64 的 PE 上，元素（3, 63）位于 `(3 * 64 + 63) * 2`，即字节 510。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

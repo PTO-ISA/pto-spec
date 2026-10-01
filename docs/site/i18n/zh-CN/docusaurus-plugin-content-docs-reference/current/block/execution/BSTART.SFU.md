@@ -19,35 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-sfu-purpose role=purpose -->
 ## BSTART.SFU 的作用
 
-`BSTART.SFU` 是使用现有 32 位 `BSTART.TEPL` 编码承载 SFU 操作时的规范拼写。它是 encoding alias，不是独立编码的 Block 起始命令。
+`BSTART.SFU` 是启动其操作在 SFU 引擎上运行的块的规范写法，例如 `TEXP`、`TDIV` 或 `TSQRT`。它是编码别名：没有自己的位。`BSTART.SFU TileOp, DataType` 把 `TileOp` 解析为其 `Mode:Function` 选择器，并以该选择器和 `DataType` 生成 [BSTART.TEPL](BSTART.TEPL.md) 指令字。
+
+规范汇编与反汇编对每个 SFU 操作使用 `BSTART.SFU`，对每个 VEC 操作使用 [BSTART.VEC](BSTART.VEC.md)。
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+别名所有者把每个部分映射到 `BSTART.TEPL`：`InstructionContractMatches_BSTART_SFU` 匹配 TEPL 形式，`InstructionContractHandler_BSTART_SFU` 返回 TEPL 处理器 `CommandHandler_ExecuteBundleStart`。因此执行过程与 TEPL 路径完全相同。
 
-```text
-TileOp resolves to one assigned TEPL Mode:Function selector whose execution engine is SFU; the alias adds no encoding bits or ownership.
-The resulting block uses the same descriptor, header composition, commit, and rollback rules as BSTART.TEPL.
-```
+1. [指令束启动分派](../model/dispatch/start.md)在提交任何前驱之前检查译码后的描述符。
+2. 它提交前驱、打开 Tile 元素块并安装描述符。
+3. 在 `BSTOP` 或下一条 `BSTART` 时，[Tile 执行分派](../model/dispatch/tile-execution.md)验证指令束并运行操作。
 
-alias 解析把 `TileOp` 映射到执行引擎为 SFU 的已分配 TEPL `Mode:Function`，随后使用不变的 `BSTART.TEPL` carrier 位和起始处理程序。最终描述符、header 执行、提交与回滚均沿用 TEPL 路径；该 alias 不增加状态或编码字段。
+`TileTEPLAliasAcceptsOperation(TileTEPLAlias_SFU, operation)` 定义别名接受哪些名称：操作必须使用 TEPL 载体，且执行引擎必须是 SFU。
+
+设计要点：一些 SFU 操作保留位于 VEC 选择器之间的 TEPL 选择器。`TEXP` 为 `Mode` 0 `Function` 18，`TDIV` 为 `Mode` 0 `Function` 3。引擎是操作的属性，因此写法随引擎而定，选择器位保持不变。
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `TileOp` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
+- `TileOp` 命名一个由 TEPL 承载的 SFU 操作。它转换为 `Mode` 和 `Function`。
+- `DataType` 是元素类型，编码方式与 `BSTART.TEPL` 相同。它必须是具体类型。
+
+其余 header 命令由所选操作决定。对 `TEXP` 而言，是 `B.DIM LB0`、可选的 `LB1`、`LB2` 与 `B.DATR`，以及一条带一个 Local 源和一个新 Local 目标的终止 `B.IOT`。
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-effects role=effects -->
 ## 待处理状态与完成
 
-适用性、SFU 引擎匹配、carrier 字段和描述符合法性都会在前序 Block 退休前检查。退休成功后，解析得到的 TEPL 描述符进入待处理状态；只有完整 Block 提交时，选中的 SFU 操作才会执行。
+别名不增加任何状态。前驱提交后，起始命令安装与解析出的选择器和 `DataType` 完全对应的 TEPL 描述符，把块类型设为 Tile 元素，并把 `TPC` 移到下一条指令。
+
+所选 SFU 操作只在块提交时运行。成功时它原子地发布目标；失败时块保持有效，其目标被回滚。起始命令没有内存效果。
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-constraints role=constraints -->
 ## 合法性与故障边界
 
-未知 `TileOp`、属于其他引擎的选择器、TEPL selector hole 或保留 `DataType`，都会在前序 Block 退休或新 `BARG` 影响之前被拒绝。前序退休失败会保留前序 Block，并且不发布 alias 描述符。
+`BSTART.SFU` 只接受 `TileTEPLAliasAcceptsOperation` 对 SFU 认可的名称。未知名称、`TADD` 等 VEC 操作，或 TLSU、CUBE 操作都没有 `BSTART.SFU` 写法。
+
+对于生成的指令字，TEPL 检查先于前驱提交：保留的 `DataType` 编码或未分配的选择器引发 `Fault_IllegalInstruction`，有效前驱保持不变。
+
+设计要点：由于别名与 `BSTART.TEPL` 产生相同的位，任何程序都无法观察到两者的差别。它们安装相同的描述符，并以相同方式产生故障。
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-example role=example -->
 ## 非规范示例
@@ -58,7 +69,7 @@ alias 解析把 `TileOp` 映射到执行引擎为 SFU 的已分配 TEPL `Mode:Fu
 BSTART.SFU TEXP, FP32
 ```
 
-`BSTART.SFU TEXP, FP32` 把 TEXP 解析为已分配的 SFU `Mode:Function`，并发出已有的 `BSTART.TEPL` carrier。前序 Block 退休成功后，这个继承的 TEPL 描述符保持待处理状态，直到完整 TEXP Block 提交。
+`TEXP` 解析为 `Mode` 0 `Function` 18，`FP32` 为 `DataType` 1，因此生成的指令字为 `0x09219181`，与 `BSTART.TEPL 0, 18, FP32` 相同。完整的指令束再加上 `B.DIM` 命令和一条命名源与目标的 `B.IOT`，然后是 `BSTOP`。同一指令束的宏形式写作 `TEXP <Row=8, Col=64, FP32>, T#1, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Alias contract

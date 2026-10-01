@@ -19,53 +19,100 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-purpose role=purpose -->
 ## What BSTART.TGEMV.BIAS contributes
 
-`BSTART.TGEMV.BIAS` is a 32-bit block-start command for the TGEMV.BIAS form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.TGEMV.BIAS` opens a bundle whose operation is the CUBE matrix-vector product `TGEMV_BIAS`. It is a 32-bit standalone start command. Its fixed bits select CUBE Function 17 and `TileOperation_TGEMV_BIAS`, and its only encoded field is the 5-bit `DataType` in bits 31:27. That field becomes AType, the element type of the left operand A.
+
+The result D is the product of A (M x K) and B (K x N) plus a 1 x N Bias row, which is broadcast by output column to every output row. For this form M is fixed to 1, so A is one row of K elements and D is one row of N elements.
+
+Design point: the operation identity is fixed entirely by the start command. The following commands (`B.DATR`, `B.FPATR`, `B.DIM`, `B.IOT`, and `B.IOR`) supply only types, shape, and operands. All 12 CUBE matrix start commands commit through one handler, `ExecuteBundleTMATMULOperation`, which tells the bias, accumulator, MX, and GEMV variants apart only by the function code.
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+At the start, `BSTART.TGEMV.BIAS` builds a Tile matrix descriptor with selector 17 and the encoded `DataType`. A `DataType` code of 15, 21 to 23, or 29 to 31 is outside the accepted set and is rejected by the encoding check with `Fault_IllegalInstruction`. All start checks run before any active predecessor bundle is committed, so a rejected start leaves the predecessor in place. See [bundle start dispatch](../model/dispatch/start.md).
 
-```text
-BSTART.TGEMV.BIAS AType
-B.DATR BType, RMode, Sat (optional; BType defaults to AType)
-B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one)
-B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)
-B.DIM LB1 N (optional, default 1)
-B.DIM LB2 K (optional, default 1)
-B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias
-B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations
-B.IOT/B.IOR postprocess operands selected by B.FPATR
-BSTOP or the next BSTART completion boundary
-```
+The header commands that follow only record bundle state. No operand is read and no Tile is allocated until the bundle commits at `BSTOP` or at the next `BSTART`.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+At commit, [commit validation](../model/commit/validation.md) runs the Tile operation, and [Tile execution](../model/dispatch/tile-execution.md) routes it to [CUBE TMATMUL dispatch](../model/dispatch/cube-tmatmul.md). `ExecuteBundleTMATMULOperation` then works in this order:
+
+1. If every Tile and Shared binding selects no PE, it returns with no effect.
+2. A missing `B.FPATR` raises `Fault_BundleControl`.
+3. Types, binding counts, `B.DATR` fields, `CCTRL`, dimensions, and PE masks are checked together. Any failure, or an M other than 1, raises `Fault_TileLegality`.
+4. A Shared binding has already failed the binding-count check, so this form never waits for a Shared source.
+5. It checks the Local sources, the result layout, and the post-processing sources.
+6. It allocates the destination group, snapshots the operands, and computes the result. A fault after allocation rolls the destinations back.
+
+Design point: allocation is the last preflight step. Every field, stream, descriptor, shape, and capacity rule is closed before the first destination is reserved, so a bundle rejected by a legality check leaves no allocated destination and no changed source.
+
+Design point: a failed commit returns before the bundle stops. The bundle stays active with its header intact and its continuation is not applied, so the trap context still describes the failing bundle.
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `DataType` in the start command is AType. The optional `B.DATR` supplies BType in its `DataType` field; when `B.DATR` is omitted, BType equals AType, rounding is RNE, and saturation is off. AType and BType must be ordinary matrix input types of one class: both floating, both signed, or both unsigned.
+- `B.DATR` may set BType, `RMode`, `Sat`, and `CCTRL`, which travels in its `PadValueOrByteId` field. Its `Layout` and `CMode` must be zero and `Canonicalize` must be off.
+- Exactly one `B.FPATR` is required. All-zero fields select no conversion, activation, or reduction; nonzero fields add the RowMax, GroupMax, quantization, or ReLU operands that they enable.
+- `B.DIM` `LB1` and `LB2` give N and K, and each defaults to 1 when omitted. `LB0` gives M, which defaults to 1 and must equal 1.
+- `B.IOT` binds the Local mathematical sources in this order: A and then B, then Bias. Post-processing sources follow them.
+- The destination bindings are D, then RowMaxOut and GroupMaxOut when `B.FPATR` enables them.
+
+Local A uses `CUBE_M16` (M at most 16) or `CUBE_M32` (M at most 32), and Local B uses `CUBE_N8`. Bias is a Local `CUBE_N8` Tile with 1 row and N columns of the result type.
+
+D's element type follows AType: `S32` for signed, `U32` for unsigned, and `FP32` for floating inputs. A nonzero `PreQuantMode` selects that mode's output type for D instead.
+
+Design point: Bias is checked against the result type, not against AType. A Bias Tile with another type, layout, or shape is rejected with `Fault_TileLegality` before allocation, so a program must hold Bias in the result type.
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+The start command changes only bundle state. It records a fallthrough `BARG` of kind `TileMatrix` and installs the descriptor; no Tile, Shared Tile, or memory changes.
+
+On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them. No source is consumed or modified.
+
+D is allocated in A's M layout, `CUBE_M16` or `CUBE_M32`, on each selected PE.
+
+`CCTRL` is read from `B.DATR` and is `00` when `B.DATR` is absent. Bit 0 publishes D as the raw accumulator-type result and forbids quantization, ReLU, and the RowMax, GroupMax, and max-abs reductions. Bit 1 must be zero, because this form has no C source.
+
+Design point: omitting `B.DATR` is not the same as encoding pad value `11`. `BundleTMATMULCCTRL` returns `00` when `B.DATR` is absent, so a bundle without `B.DATR` never requests raw output by accident. See [accumulator routing](../model/dispatch/cube-accumulator-routing.md).
+
+Design point: the cache hints call implementation-defined hooks that do nothing in the portable model. They cannot change results, faults, allocation, or publication; only the output type chosen by bit 0 is observable.
+
+The bundle has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+This form is Local-only. Any `B.IOS` binding, a nonzero `TransA` or `TransB`, or an M other than 1 raises `Fault_TileLegality`. All bindings share one nonzero `PE_MASK`, and each selected PE computes its own result.
+
+`CScaleEn` must be zero, because CScale is accepted only by CUBE Functions 2 and 6.
+
+`PE_MASK` 0000 on every binding is a strict no-op: the matrix handler reads no descriptor and raises no fault.
+
+A `DataType` outside the accepted set raises `Fault_IllegalInstruction` at the start. A missing `B.FPATR` raises `Fault_BundleControl`. A failed type, count, shape, layout, alias, or post-processing check raises `Fault_TileLegality`, and a full destination hand or insufficient capacity raises `Fault_TileAllocation`. Each of these faults occurs before any destination is published.
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-bias-example role=example -->
 ## Non-normative worked example
 
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
-```asm
-BSTART.TGEMV.BIAS DataType
+The canonical macro below computes a 1 x 32 result with K equal to 64. A is `T#3`, a 1 x 64 `FP16` Tile in `CUBE_M16`; B is `T#2`, a 64 x 32 `FP16` Tile in `CUBE_N8`; Bias is `T#1`, a 1 x 32 `FP32` Tile in `CUBE_N8`.
+
+```text
+TGEMV_BIAS <M=1, N=32, K=64, FP16>, T#3, T#2, T#1, ->T<2KB>
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.TGEMV.BIAS DataType` opens the pending `BSTART.TGEMV.BIAS` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+One physical bundle for this macro follows. The mandatory M=1 needs no `LB0` command, because the omitted value is 1.
+
+```asm
+BSTART.TGEMV.BIAS FP16
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
+B.DIM zero, 32, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOT T#3, T#2, mask=1111
+B.IOT T#1, mask=1111, last, ->T<5>
+BSTOP
+```
+
+With no `B.DATR`, BType is also `FP16`, so the result type is `FP32`. Each selected PE computes 1 x 32 = 32 elements from sums of 64 products, and every output row adds the same 32 Bias values. D is a new `FP32` Tile in `CUBE_M16` that occupies 16 cells of 128 bytes, which is 2KB and matches SizeCode 5.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

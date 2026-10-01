@@ -19,40 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-purpose role=purpose -->
 ## What BSTART.MSCATTER contributes
 
-`BSTART.MSCATTER` is a 32-bit block-start command for the MSCATTER form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.MSCATTER` opens a Tile memory bundle whose operation is `MSCATTER`: an indexed store. Each element of a Local data Tile is written to global memory (GM) at a base address plus a byte displacement taken from a Local index Tile. The command is one 32-bit word (match `0x00511181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It carries the fixed TLSU selector 5.
+
+A scatter produces no Tile. Neither source is consumed or modified.
+
+Design point: the start command writes no memory. [Bundle start dispatch](../model/dispatch/start.md) validates the descriptor and commits any active predecessor first; the scatter runs when the bundle is committed, for example at `BSTOP`, at a following `BSTART`, at a trace `B.HINT`, or at the architecture enter request. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the predecessor commits.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+At commit, [Tile execution](../model/dispatch/tile-execution.md) reaches the [MSCATTER handler](../model/dispatch/tlsu-mscatter.md) after the earlier specialized selectors, including plain `MGATHER`, decline. The handler validates the complete bundle and calls the Tile-level [MSCATTER](../../tile/memory-and-data-movement/irregular/MSCATTER.md).
 
-```text
-BSTART.MSCATTER DataType
-B.DATR Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT DataTile, IndexTile, mask=PE_MASK, <last>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+For each active lane, the address is `BaseGPR` plus the index value. The index is a byte displacement: an S32, U32, S64, or U64 value that is not scaled by the element size or decomposed.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+Design point: the Tile-level `MSCATTER` probes every active lane for write permission before it commits any store. A translation or permission fault found while probing therefore leaves no store of this scatter in GM. Only after every probe succeeds are the stores committed and their store events recorded.
+
+Design point: when two lanes name the same address, the lane that wins is implementation-defined. The commit order of lanes is chosen arbitrarily in the ASL, and a `B.CATR` atomic attribute does not select one. A program that needs a defined result must avoid duplicate indices.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `DataType` is the transfer element type. The data Tile must have exactly this type.
+- `B.DIM` `LB0`, `LB1`, and `LB2` must equal the data Tile's ValidCol, ValidRow, and physical Col.
+- The first `B.IOT` has no destination and a `SizeCode` of zero. It carries the data Tile in `source0` and the index Tile in `source1`. Without a predicate-Tile ExecutionMask it is the only binding and carries `last`.
+- `B.IOR` is required. `RegSrc0` selects the per-PE `BaseGPR`; `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero. `RegSrc0` equal to `zero` supplies base address zero.
+- The optional `B.DATR` selects the layout: `ROWMAJOR`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` is rejected. Both Tiles must use the bundle layout.
+
+Design point: `B.DIM` restates the shape of an existing Tile instead of describing a new destination. The handler compares the data Tile's valid rows, valid columns, and physical columns with the dimension values, so the bundle must describe that Tile exactly.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+Each active lane stores one transfer element. For a packed four-bit `DataType`, each index names one byte, which receives the low nibble from data column `2 * c` and the high nibble from column `2 * c + 1`. The data ValidCol must then be exactly twice the index ValidCol, so no pair is incomplete.
+
+On success the handler finalizes the attempt; no Tile is published. PTO memory ordering is unchanged, apart from the implementation-defined order among duplicate addresses.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+`PE_MASK=0000` is a strict no-op before schema, source, GPR, dimension, address, or memory checks. Otherwise all bindings must use one `PE_MASK`.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. A `B.IOS` binding, a missing or nonzero-field `B.IOR`, a malformed binding schema, an undefined source element, a wrong type or layout, a shape mismatch, or a dimension outside `BundleMGATHERDimensionsLegal` raises `Fault_TileLegality` before the first probe. For `ROWMAJOR`, that check requires ValidCol not above Col and Col a nonzero power of two.
+
+A memory fault keeps its own kind. There is no destination to roll back, and the bundle stays active for a retry, as [commit validation](../model/commit/validation.md) describes.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-example role=example -->
 ## Non-normative worked example
@@ -60,10 +69,16 @@ Reserved selectors, invalid targets, malformed completed composition, or failed 
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-BSTART.MSCATTER DataType
+BSTART.MSCATTER FP32
+B.DIM zero, 16, ->LB0
+B.DIM zero, 2, ->LB1
+B.DIM zero, 16, ->LB2
+B.IOT T#2, T#1, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.MSCATTER DataType` opens the pending `BSTART.MSCATTER` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+The data Tile `T#2` is a 2 x 16 `FP32` row-major Tile with 16 physical columns, and the index Tile `T#1` is a 2 x 16 `S32` Tile. On each PE, 32 lanes are probed and then 32 stores are committed. A lane whose index is 40 writes 4 bytes at `a0 + 40`; the index is not multiplied by 4.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

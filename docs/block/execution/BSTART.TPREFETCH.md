@@ -19,39 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-purpose role=purpose -->
 ## What BSTART.TPREFETCH does
 
-`BSTART.TPREFETCH` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`BSTART.TPREFETCH` opens a Tile memory bundle whose operation is `TPREFETCH`: a typed, strided read of global memory (GM) on all four PEs that produces no Tile. It is one 32-bit word (match `0x00311181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. The form carries the fixed TLSU selector 3.
+
+The successful architectural result is limited to load events and their ordering. No Tile or Shared descriptor, allocation, payload, definedness, or publication changes. Cache level, placement, and retention are not architectural results.
+
+Design point: the start command reads no memory. [Bundle start dispatch](../model/dispatch/start.md) validates the descriptor and commits any active predecessor, and the prefetch runs when the bundle is committed, for example at `BSTOP`, at a following `BSTART`, at a trace `B.HINT`, or at the architecture enter request. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`.
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`BSTART.TPREFETCH` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+At commit, [Tile execution](../model/dispatch/tile-execution.md) reaches the [TPREFETCH handler](../model/dispatch/tlsu-prefetch.md) after every earlier specialized selector declines. The handler checks the type, the absence of Tile bindings, the `B.IOR` record, the dimensions, and the data attributes, and then calls `TPREFETCHCore`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+For each of the four PEs and each element in `ValidRow x ValidCol`, the address is `base + (row * row_stride_elements + column) * element_size`. Packed four-bit types use the same logical-element byte addressing as `TLOAD`.
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+Design point: `TPREFETCHCore` probes every element of every PE before it records the first load event. A translation or permission fault on any PE therefore leaves no load event from any PE. The contract calls the four footprints one combined attempt, and recovery reissues the complete footprint.
+
+Design point: there is no Tile binding to carry a `PE_MASK`, so participation is implicitly `1111`. Every PE computes its own footprint from its own base and stride GPRs, and the four footprints are checked together.
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DataType` — prefetched element data type; `B.IOR.RegSrc0` — each PE's private-GPR GM base; `B.IOR.RegSrc1` — each PE's private-GPR logical row stride in elements; `B.DIM.LB0` — ValidCol; `B.DIM.LB1` — ValidRow; `B.DIM.LB2` — physical Col.
-- The header may contain `B.DATR`, `B.DIM`, and `B.IOR`; `B.IOT` and `B.IOS` are forbidden because TPREFETCH has no Tile or Shared binding or destination.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DataType` is the prefetched element type; codes 0 to 14, 16 to 20, and 24 to 28 are accepted.
+- `B.DIM` `LB0`, `LB1`, and `LB2` give ValidCol, ValidRow, and physical Col. Omitted `LB0` and `LB1` default to one, and omitted `LB2` defaults to the resolved ValidCol.
+- The optional `B.IOR` gives each PE's base in `RegSrc0` and row stride in `RegSrc1`, read from that PE's own GPRs. Omitted, the base is zero and the stride is Col.
+- `B.IOT` and `B.IOS` are not members of a `TPREFETCH` bundle.
+
+Design point: the row stride here counts elements, not bytes. `TPREFETCHCore` multiplies `row * row_stride_elements + column` by the element size, while `TLOAD` and `TSTORE` treat `RegSrc1` as a byte stride. The same GPR value therefore describes different footprints for the two operations.
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+On success each PE records one typed load event per valid element, with the same event decomposition as `TLOAD`. All accesses participate in PTO-RC with the bundle's `aq` and `rl` attributes, exactly as for `TLOAD`.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+No register is written. With no Tile binding, the final `FinalizeBundleTileAttempt` publishes nothing.
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+Each dimension must be in 1 to 65535, ValidCol may not exceed Col, Col must be a nonzero power of two, and `ValidRow * ValidCol` may not exceed `PTO_MODEL_TILE_ELEMENTS`. These failures, an unsupported type, a malformed `B.IOR`, or any `B.IOT` or `B.IOS` raise `Fault_TileLegality` before the first probe.
 
-The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
-
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+Design point: omission and an encoded zero differ. An omitted `B.DIM` has effective value one, but an explicit zero stays a value and faults. Because omitted `LB2` equals ValidCol, a bundle with ValidCol 48 and no `LB2` has Col 48, which is not a power of two, and also faults.
 
 <!-- PTO-READER-BLOCK: block-bstart-tprefetch-example role=example -->
 ## Non-normative worked example
@@ -59,10 +66,15 @@ Complete schema, binding, readiness, alias, capacity, and allocation preflight p
 This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
 
 ```asm
-BSTART.TPREFETCH FP16; B.DIM zero, 64, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 64, ->LB2; B.IOR zero, a0; BSTOP
+BSTART.TPREFETCH FP16
+B.DIM zero, 64, ->LB0
+B.DIM zero, 4, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR zero, a0
+BSTOP
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+Each PE prefetches 4 x 64 = 256 `FP16` elements, so the bundle records 1024 load events after all 1024 probes succeed. `RegSrc0` is `zero`, a real zero base. On a PE whose `a0` is 64, element (3, 63) is at `(3 * 64 + 63) * 2`, which is byte 510.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
