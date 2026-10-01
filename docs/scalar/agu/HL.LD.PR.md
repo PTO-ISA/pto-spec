@@ -17,54 +17,62 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-purpose role=purpose -->
-## What HL.LD.PR does
+## What `HL.LD.PR` does
 
-`HL.LD.PR` is a standalone `48`-bit scalar AGU instruction that loads one 8-byte little-endian value and zero-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Register` addressing.
+`HL.LD.PR` is a `48`-bit pre-indexed load of one `8`-byte little-endian value. It builds an offset from `SrcR` and `shamt`, adds it to the `SrcL` base, reads eight bytes at the sum, publishes the `64`-bit pattern to `Dst0`, and publishes the same sum to `Dst1`.
+
+The canonical assembly is `hl.ld.pr [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->Dst0, Dst1`.
+
+Design point: the effective address includes the offset, so the alignment of the sum decides whether the access is legal. An `8`-byte-aligned base with a stride that is a multiple of `8` keeps every access aligned; a stride of `4` produces an alternating pattern in which half of the iterations raise `Fault_DataAlignment` before translation.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the offset and the address are formed
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcR` is transformed by `SrcRType` and shifted left by the encoded `shamt`. The sum `SrcL + offset` is taken modulo `2^PTO_XLEN` and serves as both the access address and the value for `Dst1`.
 
-After complete preflight, one aligned little-endian `8`-byte load is performed. Its result is kept as the complete 64-bit pattern before destination publication.
+`SrcL` is never written, so a published base change reaches the register file only through `Dst1`.
 
-Pre-index mode accesses the updated address and publishes that same updated base only after the memory operation succeeds.
+After the encoding checks and the address preflight pass, the handler performs one `8`-byte little-endian load and publishes the bytes unchanged to `Dst0`, then the updated base to `Dst1`.
+
+Design point: an aligned base register can be repaired by the offset, because the sum is what the preflight tests. A base of `0x5004` with an offset of `4` produces the `8`-byte-aligned address `0x5008` and is accepted, while the same base with an offset of `2` produces `0x5006` and raises the alignment fault.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the two results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the updated-base result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+- `SrcL` is the base and `SrcR` the offset source, both `5`-bit Reg5 selectors over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`.
+- `SrcRType` is `0` unchanged, `1` for `.sw` on `SrcR[31:0]`, or `2` for `.uw` on `SrcR[31:0]`; `3` is reserved.
+- `shamt` is the `5`-bit left shift applied after the transform. With an unchanged `SrcR` of `1`, a `shamt` of `3` gives a stride of `8`, which preserves `8`-byte alignment for any `8`-byte-aligned base.
+- `Dst0` receives the loaded pattern and `Dst1` the updated base; codes `1`..`23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` and `24`..`29` discard that result alone.
+
+Design point: `Dst1` is an ordinary destination, so the updated base can be pushed to the `T` or `U` queue instead of written to a register. That push moves the older queue entries along, exactly as any other queue-push destination does.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Both sources are read before any memory or destination effect, so aliases between `SrcR`, `SrcL`, and the destinations observe pre-instruction values. `Dst0` is published before `Dst1`.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+On success one relaxed `8`-byte load event is recorded and memory bytes and reservation state are unchanged. `TPC` advances by `6` bytes after both publications, and a rejected or faulting attempt does not retire.
 
-After all result or writeback publication, `HL.LD.PR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+Design point: the written order matters when both destinations name one register: the loaded bytes are replaced by the updated base inside the same instruction. The instruction therefore cannot be used to obtain both results in one register.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `8`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect, a `SrcRType` of `3` is rejected by the form constraint before any source is read, and an unavailable `T` or `U` slot named by `SrcL` or `SrcR` raises the same fault before execution.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight tests the low `3` bits of the effective address, which here is the sum, and raises `Fault_DataAlignment` before translation and before the permission check. A later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, publishes neither destination, and leaves `TPC` on the faulting instruction. Recovery recomputes the transform, the shift, the sum, and the load; because `SrcL` was never modified, the retry starts from the same base.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ld-pr-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.ld.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.ld.pr [9, 10<<<2], ->11, 9` with `SrcRType` selecting the unchanged transform, GPR9 = `0x5004`, and GPR10 = `1`.
+- The offset is `1` shifted left by `2`, which is `4`. The effective address is `0x5004` plus `4`, which is `0x5008` and is `8`-byte aligned.
+- GPR11 receives the `8` bytes at `0x5008` through `0x500F`, and GPR9 receives `0x5008` because `Dst1` names the base register.
+- With a shift amount of `1` the address would be `0x5006`, and the instruction would raise `Fault_DataAlignment` before translation.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,54 +17,62 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-purpose role=purpose -->
-## What HL.LBU.PR does
+## What `HL.LBU.PR` does
 
-`HL.LBU.PR` is a standalone `48`-bit scalar AGU instruction that loads one 1-byte little-endian value and zero-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Register` addressing.
+`HL.LBU.PR` is a `48`-bit pre-indexed byte load with zero extension. It forms an offset from `SrcR` and `shamt`, adds it to `SrcL`, reads one byte at that sum, zero-extends the byte, and publishes the byte to `Dst0` and the sum to `Dst1`.
+
+The canonical assembly is `hl.lbu.pr [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->Dst0, Dst1`.
+
+Design point: the sum is formed modulo `2^PTO_XLEN`, so a displacement that carries past the top of the address space wraps to a low address instead of being rejected. The wrap itself raises nothing; the wrapped address is then subject to the same preflight as any other, so a wrap that lands outside the permitted region shows up as `Fault_DataPage` and not as a distinct overflow fault.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the offset and the address are formed
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcR` is transformed by `SrcRType`, shifted left by the encoded `shamt`, and added to the snapshot of `SrcL`. That sum is both the address of the access and the value published to `Dst1`.
 
-After complete preflight, one aligned little-endian `1`-byte load is performed. Its result is zero-extended before destination publication.
+`SrcL` is only read; the base register keeps its value on the success and the fault path alike.
 
-Pre-index mode accesses the updated address and publishes that same updated base only after the memory operation succeeds.
+After the encoding checks and the address preflight pass, one `1`-byte little-endian load is performed, the byte is zero-extended to the word width, and both destinations are published in the order `Dst0` then `Dst1`.
+
+Design point: the shift amount is a `5`-bit field, so the offset spans at most a factor of `2^31`. Combined with the `.uw` transform, which keeps only `SrcR[31:0]`, the largest positive offset that path can produce is `0x7FFFFFFF80000000`, reached with `shamt` of `31` and `SrcR[31:0]` equal to `0xFFFFFFFF`. Larger strides must be built by changing the base instead.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the two results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the updated-base result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+- `SrcL` is the base and `SrcR` the offset source, both `5`-bit Reg5 selectors over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`.
+- `SrcRType` is `0` unchanged, `1` for `.sw`, or `2` for `.uw` applied to `SrcR[31:0]`; `3` is reserved.
+- `shamt` is the `5`-bit left shift applied after the transform.
+- `Dst0` receives the zero-extended byte and `Dst1` the updated base; codes `1`..`23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` and `24`..`29` discard that result alone.
+
+Design point: the offset cannot come from an immediate; this form always takes it from a register. A stride that is a compile-time constant therefore needs a register to hold it, and the register must be live for the whole loop because the shift amount is encoded rather than the displacement itself.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Both sources are snapshotted before any memory or destination effect, so an alias between `SrcR`, `SrcL`, and a destination uses pre-instruction values.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+On success one relaxed `1`-byte load event is recorded and memory and reservation state are unchanged. `TPC` advances by `6` bytes after the two publications; a rejected or faulting attempt does not retire.
 
-After all result or writeback publication, `HL.LBU.PR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+Design point: because `Dst1` is written after `Dst0`, naming one register for both results leaves the updated base in it. That is a defined outcome of the write order rather than a conflict, so a pointer bump can be combined with a loaded value that is known to be superseded.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect, a `SrcRType` of `3` is rejected by the form constraint before any source read, and an unavailable `T` or `U` slot named by `SrcL` or `SrcR` raises the same fault before execution.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight applies the `1`-byte alignment requirement, which every address meets, so no address raises `Fault_DataAlignment` for this form. The translation and permission test can still fail and raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, publishes neither result, and leaves `TPC` on the faulting instruction. Recovery rebuilds the transform, the shift, the sum, and the load from the snapshots with no retained progress.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbu-pr-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lbu.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lbu.pr [15, 16<<<31], ->17, 15` with `SrcRType` selecting `.uw`, GPR15 = `0x1000`, and GPR16 = `1`.
+- The transform zero-extends `SrcR[31:0]`, which is `1`, and the shift by `31` gives an offset of `0x80000000`, which is `2147483648`.
+- The effective address is `0x1000` plus `0x80000000`, which is `0x80001000`. The byte there is zero-extended into GPR17, and GPR15 receives `0x80001000` because `Dst1` names the base register.
+- GPR16 still holds `1`, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

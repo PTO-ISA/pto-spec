@@ -17,51 +17,63 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-purpose role=purpose -->
-## What HL.LBI does
+## What `HL.LBI` does
 
-`HL.LBI` is a standalone `48`-bit scalar AGU instruction that loads one 1-byte little-endian value and sign-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Immediate` addressing.
+`HL.LBI` is a `48`-bit byte load with a signed `22`-bit immediate displacement and no base update. It adds the immediate to the `SrcL` base, reads one byte there, sign-extends the byte to `PTO_XLEN`, and publishes it to the single `RegDst` field.
+
+The canonical assembly is `hl.lbi [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: this form has one destination field, so although the handler computes the base-plus-displacement sum for the access, there is no place to publish it. The address is therefore not available as a result, and a traversal that needs a running pointer must compute it with a separate instruction.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm22`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The displacement is the sign-extended `22`-bit immediate with a scale of `1`, added to the snapshot of `SrcL` modulo `2^PTO_XLEN`. The update mode is none, so the effective address is the sum and nothing is written back to any base register.
 
-After complete preflight, one aligned little-endian `1`-byte load is performed. Its result is sign-extended before destination publication.
+The base selector is only read; no state records that an address was formed.
 
-This form does not publish an address-base writeback.
+After the encoding checks and the address preflight pass, the handler performs one `1`-byte little-endian load, sign-extends bit `7`, and publishes the result to `RegDst`.
+
+Design point: widening the immediate to `22` bits extends the reachable window to `-2097152` through `2097151` bytes, in byte steps. That window is a property of the immediate field alone, which is why this form can address an offset object without spending a register on the displacement.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the result
 
-- `RegDst` is a `5`-bit field selecting the loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm22` is a `22`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcL` is a `5`-bit Reg5 selector over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm22` is a signed `22`-bit immediate covering `-2097152` to `2097151`, used with a scale of `1`.
+- `RegDst` is a `5`-bit selector. Codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard the value without suppressing the access.
+
+Design point: a discard is a real destination code, so the load and its fault checks still happen. A program can therefore use this form as a checked read whose value it throws away, but it cannot use it to skip the memory reference.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+`SrcL` is snapshotted before any memory or destination effect, so a destination that names the base still contributes the pre-instruction value to the address.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+A successful execution records one relaxed `1`-byte load event. Memory bytes and reservation state are unchanged, because a load neither writes memory nor disturbs a reservation.
 
-After all result or writeback publication, `HL.LBI` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes after the publication. A rejected or faulting attempt does not retire and leaves `TPC` on the faulting instruction.
+
+Design point: the sign extension happens before publication, so the destination holds a value whose bits `63`:`8` are all copies of bit `7`. A later unsigned comparison on that value is therefore not equivalent to the unsigned reading of the byte.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch in the `48`-bit encoding raises `Fault_IllegalInstruction` before any effect, and a `SrcL` code selecting an unavailable `T` or `U` slot raises the same fault before execution. The encoding carries no transform or shift field, so no other value can be rejected at that stage.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight applies the `1`-byte alignment requirement, which every address satisfies, so this form does not raise `Fault_DataAlignment`. A permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction. Recovery recomputes the displacement and the sum from the same `SrcL`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbi-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lbi [SrcL, simm], ->{t, u, Rd}` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lbi [4, -8], ->7` with GPR4 = `0xA000`. The immediate is `-8`, so the effective address is `0xA000` minus `8`, which is `0x9FF8`.
+- The instruction reads the byte at `0x9FF8`. If it is `80`, GPR7 receives `-128`, which is `0xFFFFFFFFFFFFFF80`.
+- GPR4 still holds `0xA000`, because this form publishes only one result and has no base update.
+- `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

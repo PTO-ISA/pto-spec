@@ -17,51 +17,64 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-c-swi-purpose role=purpose -->
-## What C.SWI does
+## What `C.SWI` does
 
-`C.SWI` is a standalone `16`-bit scalar AGU instruction that stores one 4-byte little-endian value using `Compressed` addressing. The compressed form snapshots implicit `T#1` as store data and preserves that queue entry.
+`C.SWI` is a `16`-bit compressed store of one `4`-byte little-endian word. The base is the `SrcL` selector, the byte displacement is the sign-extended `simm5` field multiplied by `4`, and the data written to memory is the low `32` bits of the newest temporary-queue value `t#1`.
+
+The form has no destination field and no writeback.
+
+Design point: only the low `4` bytes of the `64`-bit queue entry reach memory. The store writes exactly the access size, taking byte `k` of the value from bits `8k` to `8k+7`, so `C.SWI` truncates while `C.SDI` writes the whole entry. A `T#1` of `0x00000000FFFFFFFF` stored by `C.SWI` writes `FF FF FF FF`, and the upper half is lost.
 
 <!-- PTO-READER-BLOCK: scalar-c-swi-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the store are formed
 
-The address path sign-extends `simm5`, scales it by `4`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The address path snapshots `SrcL`, sign-extends `simm5`, shifts it left by `2` bits, and adds the two modulo `2^PTO_XLEN`.
 
-After complete preflight, one aligned little-endian `4`-byte store commits at the selected address.
+No updated-base value is computed for publication, so `SrcL` is read-only for this instruction on both the success and the fault path.
 
-This form does not publish an address-base writeback.
+Once the encoding checks and the address preflight pass, the handler reads `T#1`, performs one aligned `4`-byte little-endian store, and records the store event.
+
+Design point: the scale factor matches the `4`-byte access. The reachable byte displacement is `-64` to `60` in steps of `4`, and because both the displacement and the required alignment are multiples of `4`, an aligned base keeps every reachable address aligned. The narrower scale is what makes the reachable window smaller than the one `C.SDI` offers.
 
 <!-- PTO-READER-BLOCK: scalar-c-swi-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and data source
 
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm5` is a `5`-bit field selecting the signed displacement before the `4` scale factor.
-- `T#1` is the implicit non-consuming store-data source.
+- `SrcL` is a `5`-bit Reg5 selector covering absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`.
+- `simm5` is a signed `5`-bit displacement scaled by `4`; all `32` encodings are values.
+- The data source is implicit `T#1`, read through the queue without being popped.
+- There is no destination field, so no result register is named and none is written.
+
+Design point: the availability of `T#1` is part of legality, checked before the memory operation. A clear validity flag therefore rejects the instruction with `Fault_IllegalInstruction` and no byte is written, which keeps a store from publishing a stale or undefined queue entry.
 
 <!-- PTO-READER-BLOCK: scalar-c-swi-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+The `SrcL` snapshot and the `T#1` read precede the memory effect, so any alias between them uses the pre-instruction value.
 
-Successful execution records one relaxed store event; an overlapping reservation is invalidated only after complete preflight.
+On success one relaxed store event is recorded. A store whose byte range overlaps the reservation granule that contains the reserved address clears the reservation; a store outside that granule leaves it valid.
 
-After all result or writeback publication, `C.SWI` advances `TPC` by `2` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `2` bytes after the store completes. A rejected or faulting attempt does not retire.
+
+Design point: the event is recorded after the bytes are written, so a later observer that sees the event also sees the stored value. A faulting store produces neither.
 
 <!-- PTO-READER-BLOCK: scalar-c-swi-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `4`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch in the `16`-bit encoding raises `Fault_IllegalInstruction` before any effect, as does an unavailable `SrcL` `T` or `U` slot and an unavailable `T#1`.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight tests the low `2` bits of the effective address. A nonzero value raises `Fault_DataAlignment` before translation and before the permission check; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault writes no memory byte, records no store event, and leaves the reservation and `TPC` unchanged. Recovery reissues `SrcL` snapshot, address formation, preflight, `T#1` read, and store with no retained progress.
 
 <!-- PTO-READER-BLOCK: scalar-c-swi-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `c.swi t#1, [srcL, simm]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `c.swi t#1, [9, -1]` with GPR9 holding `0x5000`. The signed `simm5` is `-1`, scaled by `4` gives `-4`, so the effective address is `0x5000` minus `4`, which is `0x4FFC`.
+- The instruction writes the low `4` bytes of `T#1` to `0x4FFC` through `0x4FFF`, least significant byte first.
+- If `T#1` holds `0x1122334455667788`, the bytes written are `88 77 66 55`.
+- GPR9 still holds `0x5000` and `TPC` becomes the instruction address plus `2`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

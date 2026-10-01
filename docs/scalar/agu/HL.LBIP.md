@@ -17,52 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-purpose role=purpose -->
-## What HL.LBIP does
+## What `HL.LBIP` does
 
-`HL.LBIP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 1-byte little-endian values and sign-extends each transferred value when it is narrower than `PTO_XLEN` using `Immediate` addressing.
+`HL.LBIP` is a `48`-bit load of a pair of adjacent bytes. It adds a signed `17`-bit immediate to the `SrcL` base, reads the bytes at that address and at that address plus `1`, sign-extends each of them to `PTO_XLEN`, and publishes the lower byte to `Dst0` and the higher byte to `Dst1`.
+
+The canonical assembly is `hl.lbip [SrcL, simm], ->Dst0, Dst1`.
+
+Design point: the pair is a single instruction with a single fault boundary. Both address probes complete before either byte is read, so a fault on the second address leaves the first byte unread and no load event is recorded for it. There is no state in which one byte of the pair has been observed and the other has not.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the two addresses and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The immediate is sign-extended with a scale of `1` and added to the snapshot of `SrcL` modulo `2^PTO_XLEN`. The second address is the first plus the access size, which is `1` byte, so the pair always covers two consecutive bytes.
 
-Both adjacent addresses are preflighted before either aligned little-endian `1`-byte load occurs. Each result is sign-extended; the two loads commit in increasing-address order.
+The probes are performed in ascending address order, and the handler returns on the first one that faults. Only when both probes succeed are the two bytes read, the two relaxed load events recorded in address order, and the results published with `Dst0` first and `Dst1` second.
 
-This form does not publish an address-base writeback.
+Design point: the pair stride is the access size, not a fixed offset, so a pair of wider elements would be separated by that width. For this `1`-byte form the two elements are adjacent, which is what makes the form usable for reading a two-byte field in one instruction without a second encoding.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the two results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the second loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcL` is a `5`-bit Reg5 selector over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`.
+- `simm17` is a signed `17`-bit immediate covering `-65536` to `65535`, scaled by `1`; it locates the first address of the pair.
+- `Dst0` receives the byte at the first address and `Dst1` the byte at the second. Codes `1`..`23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` and `24`..`29` discard that single result.
+
+Design point: the two destinations are independent, and a discard suppresses only the publication of that one byte. The instruction still probes and reads both addresses, so a discarded result does not remove half of the memory work.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+`SrcL` is read before any memory or destination effect, so a destination naming the base still contributes the pre-instruction value to both addresses.
 
-Successful execution records two relaxed load events in address order; memory and reservation state are preserved.
+On success two relaxed `1`-byte load events are recorded in address order, and memory bytes and reservation state are unchanged. `TPC` advances by `6` bytes after both publications; a rejected or faulting attempt does not retire.
 
-After all result or writeback publication, `HL.LBIP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+Design point: both events are recorded before either destination is written, so an observer of the event stream sees the complete pair of memory effects before any register effect of the instruction.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect, and an unavailable `T` or `U` slot named by `SrcL` raises the same fault before execution.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight applies the `1`-byte alignment requirement to each address, which both satisfy, so this form does not raise `Fault_DataAlignment`. The permission and bounded-memory test can still fail: the first failing address, tested in ascending order, raises `Fault_DataPage` at that original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, publishes neither byte, and leaves `TPC` on the faulting instruction. Recovery re-derives both addresses and repeats both probes from the snapshots.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbip-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lbip [SrcL, simm], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lbip [4, 6], ->9, 10` with GPR4 = `0xD000`. The immediate is `6`, so the first address is `0xD006` and the second is `0xD007`.
+- The instruction probes `0xD006` and then `0xD007`. Only if both probes succeed does it read the two bytes.
+- If the byte at `0xD006` is `7F` and the byte at `0xD007` is `80`, GPR9 receives `127` and GPR10 receives `-128`.
+- GPR4 still holds `0xD000`, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
