@@ -19,31 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-ios-purpose role=purpose -->
 ## What B.IOS contributes
 
-`B.IOS` is a 32-bit block header command that records ordered Core-wide Shared tile sources and destinations. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.IOS` is a 32-bit block header command that binds one Shared Tile to the operation of the current block. A Shared Tile is one of 64 Core-private registers `S0` to `S63` that all four PEs of the Core can see. One `B.IOS` names the register, says whether it is a source or a new destination, and gives a PE participation mode.
+
+`B.IOS` executes nothing by itself. It appends one record to the block's Shared bindings, and the selected operation consumes them when the block commits. See [Shared bindings](../model/operands/shared-bindings.md).
 
 <!-- PTO-READER-BLOCK: block-b-ios-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+A participating `B.IOS` must appear in the header of an active block, before the first body instruction. A block holds at most four Shared bindings, in encoded order, and the operation consumes them in its schema order.
 
-The common PE-mode decoder forms the four-PE mask once. A zero mask is a strict no-op; an effective Shared source is read-only, while an effective destination is recorded for atomic publication after complete validation.
+The handler checks in this order: the SizeCode encoding, zero participation, placement, and then `BindBundleSharedIO`. That function requires the mask to be nonzero and equal to the mask of every Tile and Shared binding already recorded, rejects a Shared Tile ID that is already bound, and fills the first free entry. The next non-modifier header command closes the range group that a following `B.SUBVIEW` or `B.ASSEMBLE` may modify.
+
+Design point: one Shared Tile ID may appear only once per block. Every recorded entry therefore names a distinct Shared Tile, and no block can bind the same `Sx` as both a source and a destination.
 
 <!-- PTO-READER-BLOCK: block-b-ios-inputs role=inputs-outputs -->
-## Operands and header roles
+## Fields and encoded values
 
-- `SharedTileID` selects the absolute Shared register; its exact assigned domain remains in the generated contract below.
-- `SizeCode` selects source-only or destination capacity; its exact assigned domain remains in the generated contract below.
-- `PEMode` encodes the participating-PE mode; its exact assigned domain remains in the generated contract below.
+- `SharedTileID` (bits 25:20) names `S0` to `S63` directly. Code zero names `S0`; it does not mean absence.
+- `SizeCode` (bits 18:15) is 0 for a source. Codes 1 to 12 make a destination of 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, or 256 KiB. Codes 13 to 15 are reserved.
+- `PEMode` (bits 11:9) uses the same table as `B.IOT`: `000` none, `001` PE0, `010` PE1, `011` PE2, `100` PE3, `101` PE0 and PE1, `110` PE0 to PE2, `111` all four.
+- Bits 31:26 and bit 19 are fixed at zero.
+
+Design point: the Shared capacity is the size of one complete Core-wide object in the 256 KiB Shared pool. Unlike `B.IOT`, it is not multiplied by the number of participating PEs. `PEMode` selects which PEs issue or consume the binding; it does not assign payload quarters or offsets to them.
 
 <!-- PTO-READER-BLOCK: block-b-ios-effects role=effects -->
-## Pending state and completion
+## Pending state and publication
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+An accepted `B.IOS` changes only the pending Shared binding. A source binding is read-only: it never changes the Shared descriptor, allocation mask, initialized mask, or payload.
+
+A destination written by a single PE publishes the complete Shared object when the operation succeeds. A destination with more than one participating PE must carry a `B.ASSEMBLE` modifier, in which each writer names an explicit non-overlapping range and LAST publishes the object.
+
+Design point: `PEMode = 000` is a strict no-op after the `SizeCode` encoding check; codes 13 to 15 still raise `Fault_IllegalInstruction`. Inside a header it records zero participation and opens a zero-mode range group; it then skips placement, duplicate, schema, allocation, and descriptor checks and advances `TPC`. No record is appended.
 
 <!-- PTO-READER-BLOCK: block-b-ios-constraints role=constraints -->
 ## Legality and fault boundary
 
-The contract separates raw decode failures, header-stream errors, and tile-legality failures. Zero-mask bindings bypass downstream schema, duplicate, allocation, descriptor, and memory checks as a strict no-op.
+- `SizeCode` 13 to 15, or a nonzero fixed bit, raises `Fault_IllegalInstruction`.
+- A participating `B.IOS` outside an active header raises `Fault_BundleControl`.
+- A mask that differs from an earlier Tile or Shared binding in the block raises `Fault_TileLegality`.
+- A repeated Shared Tile ID, or a fifth Shared binding, raises `Fault_BundleControl`.
+- A multi-PE destination without `B.ASSEMBLE` raises `Fault_TileLegality` before descriptor, payload, memory, or publication effects.
+
+The architecture imposes no ordering between conflicting PE accesses to the same Shared payload offsets. Software avoids such conflicts or adds its own synchronization.
 
 <!-- PTO-READER-BLOCK: block-b-ios-example role=example -->
 ## Non-normative worked example
@@ -51,10 +68,11 @@ The contract separates raw decode failures, header-stream errors, and tile-legal
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>
+B.IOS S2, mask=1000
+B.IOS mask=1000, ->S5<4KB>
 ```
 
-Assume an active compatible header with no earlier conflicting `B.IOS` command. Placing `B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+Both records use `PEMode = 001`, so only PE0 participates and the masks agree. The first binds `S2` as a source with `SizeCode = 0` and encodes as `0x00201213`. The second makes `S5` a 4 KiB destination with `SizeCode = 6` and encodes as `0x00531213`. The destination has one writer, so it needs no `B.ASSEMBLE`. A third record `B.IOS S2, mask=1000` would raise `Fault_BundleControl`, because `S2` is already bound.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,23 +19,27 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-b-dimi-purpose role=purpose -->
 ## What C.B.DIMI does
 
-`C.B.DIMI` is a compressed Block-header attribute that writes one selected bundle-local dimension exactly once.
+`C.B.DIMI` is the 16-bit compressed form of `B.DIM`. It writes one bundle-local dimension register, `LB0`, `LB1`, or `LB2`, from an unsigned 8-bit immediate. It reads no register.
+
+Like `B.DIM`, it gives the register no meaning. The completed operation schema decides whether the value is a valid column count, a row count, or a matrix extent.
 
 <!-- PTO-READER-BLOCK: block-c-b-dimi-mechanism role=mechanism -->
-## Placement and execution mechanism
+## Placement and mechanism
 
-`C.B.DIMI` is legal only after `BSTART` in the active header and before the first body operation; standalone or body placement raises `Fault_BundleControl`.
+The command dispatcher accepts `C.B.DIMI` only while a block is active and still in its header, after `BSTART` and before the first body instruction. Otherwise it raises `Fault_BundleControl`.
 
-The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+The command writes `ZeroExtend(imm8)` through `SetBundleDimension`, the same writer that `B.DIM` uses (see the [dimension schema model](../model/schema/dimensions.md)).
 
 `C.B.DIMI` and `B.DIM` share one write-once presence bit for each of `LB0`, `LB1`, and `LB2`.
 
-<!-- PTO-READER-BLOCK: block-c-b-dimi-inputs role=inputs-outputs -->
-## Carrier, bindings, and inputs
+Design point: because the presence bit is shared, the compressed and full forms are interchangeable for a register but cannot both write it. Mixing them, for example `C.B.DIMI` for `LB0` and `B.DIM` for `LB2`, is legal; writing `LB0` with both is rejected.
 
-- Encoded operands: `LoopNest` — encoded LB0, LB1, or LB2 selector; `imm8` — unsigned eight-bit bundle-local dimension value.
-- `LoopNest` selects `LB0..LB2`; `imm8` is zero-extended, and code `3` is reserved before Block state changes.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+<!-- PTO-READER-BLOCK: block-c-b-dimi-inputs role=inputs-outputs -->
+## Encoded fields
+
+- `imm8`, bits 6 to 13: an unsigned value 0 to 255, zero-extended to the dimension word.
+- `LoopNest`, bits 14 and 15: codes 0, 1, and 2 select `LB0`, `LB1`, and `LB2`. Code 3 is reserved and raises `Fault_IllegalInstruction` before any state change.
+- Bits 0 to 5 are fixed at `0x3c`.
 
 <!-- PTO-READER-BLOCK: block-c-b-dimi-effects role=effects -->
 ## State effects and ordering
@@ -44,10 +48,13 @@ Placement and duplicate-write checks precede the dimension update.
 
 Success publishes the selected raw LB value and its shared presence bit atomically, then advances `TPC` by `2` bytes.
 
+Design point: `imm8` is always encoded, so an encoded zero writes numeric zero. It is not omission: an `LB` register that is never written has effective value 1, while `C.B.DIMI 0, ->LB0` makes it 0. The operation schema then decides whether 0 is legal.
+
 <!-- PTO-READER-BLOCK: block-c-b-dimi-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- `LoopNest` code 3 raises `Fault_IllegalInstruction` before any change to `TPC` or block state.
+- A `C.B.DIMI` outside an active block header raises `Fault_BundleControl`.
 
 The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
 
@@ -62,7 +69,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 C.B.DIMI 0, ->LB0
 ```
 
-After an active `BSTART`, this header command writes numeric zero to `LB0`; the same LB cannot be written again before the Block body.
+After an active `BSTART`, this header command writes numeric zero to `LB0` and sets its presence bit. A value above 255, such as 256, does not fit in `imm8` and needs `B.DIM` with a register or its 17-bit immediate, for example `B.DIM zero, 256, ->LB2`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

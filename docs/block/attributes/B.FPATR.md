@@ -17,46 +17,64 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: block-b-fpatr-purpose role=purpose -->
-## What B.FPATR contributes
+## What B.FPATR does
 
-`B.FPATR` is a 32-bit block header command that records the required fixed-point Matrix post-processing descriptor. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.FPATR` (fixed-point post-processing attributes) is a 32-bit header command for CUBE matrix blocks such as `TMATMUL` and `TGEMV`. It latches one descriptor that controls what happens to the accumulator result before it is published: pre-quantization, activation, row and group maxima, logical transpose of Shared inputs, and scaling of an explicit FP32 accumulator `C`.
+
+Every CUBE matrix block must contain exactly one `B.FPATR`. Other blocks must not contain one. The descriptor is written by `SetBundleFixedPointAttributeState`; see the [attribute schema model](../model/schema/attributes.md).
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command appears exactly once in a CUBE Matrix header, before scalar or tile bindings and before the body. Its operand-stream roles are interpreted by the completed Matrix schema.
+`BundleFixedPointAttributesCanBePlaced` accepts the command only when a block is active and in its header, no `B.FPATR` is latched yet, the selected operation (if any) is a matrix operation, and no scalar, Tile, or Shared binding exists yet. Otherwise the command raises `Fault_BundleControl`.
 
-The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+The writer then checks the cross-field rules below. If they fail, it raises `Fault_TileLegality` and writes nothing.
+
+Design point: `B.FPATR` must come before the bindings because it changes the operand schema. Enabled RowMax input, vector quantization parameters, vector PReLU parameters, and `CScale` add Local sources, and RowMax and GroupMax add destinations. The bindings that follow are checked against a schema that is already fixed.
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-inputs role=inputs-outputs -->
-## Operands and header roles
+## Encoded fields
 
-- `PreQuantMode` selects Matrix pre-quantization and output conversion; its exact assigned domain remains in the generated contract below.
-- `ReluMode` selects the activation multiplier; its exact assigned domain remains in the generated contract below.
-- `GroupNCode` selects the group-maximum column count; its exact assigned domain remains in the generated contract below.
-- `RowMaxEn` enables row-maximum input and output; its exact assigned domain remains in the generated contract below.
-- `GroupMaxEn` enables group-maximum output; its exact assigned domain remains in the generated contract below.
-- `RowMaxInit` enables initialization from RowMaxIn; its exact assigned domain remains in the generated contract below.
-- `MaxAbsEn` selects maximum-absolute reduction; its exact assigned domain remains in the generated contract below.
-- `Func` carries the fixed function discriminator; its exact assigned domain remains in the generated contract below.
-- `ElementWiseEn` carries the fixed complete-bundle selector; its exact assigned domain remains in the generated contract below.
-- `TransA` enables logical transpose of A; its exact assigned domain remains in the generated contract below.
-- `TransB` enables logical transpose of B; its exact assigned domain remains in the generated contract below.
-- `CScaleEn` enables per-row accumulator C scaling; its exact assigned domain remains in the generated contract below.
-- `Reserved` must retain its fixed reserved value; its exact assigned domain remains in the generated contract below.
-- `Opc1` carries the fixed command-class discriminator; its exact assigned domain remains in the generated contract below.
-- `Opcode` carries the fixed attribute opcode; its exact assigned domain remains in the generated contract below.
-- `W` carries the fixed command-width discriminator; its exact assigned domain remains in the generated contract below.
+The fixed bits are `W=1` (bit 0), `Opcode=1` (bits 1 to 3), `Opc1=2` (bits 4 to 6), `Reserved=0` (bit 10), `ElementWiseEn=0` (bit 11), and `Func=2` (bits 12 to 14). The variable fields are:
+
+- `TransA`, bit 7, and `TransB`, bit 8: logical transpose of a Shared A or B primary.
+- `CScaleEn`, bit 9: per-row scaling of the explicit FP32 accumulator `C`.
+- `MaxAbsEn`, bit 15: reduce by maximum absolute value instead of signed maximum.
+- `RowMaxInit`, bit 16; `GroupMaxEn`, bit 17; `RowMaxEn`, bit 18.
+- `GroupNCode`, bits 19 to 22: codes 0 to 9 select a group width of 0, 8, 16, 32, 48, 64, 80, 96, 112, or 128 columns.
+- `ReluMode`, bits 23 to 25: codes 0 to 3 select none, ReLU, scalar LReLU/PReLU, and vector PReLU.
+- `PreQuantMode`, bits 26 to 31: codes 0 to 5, 12, 13, 16 to 20, 23 to 28, and 32 to 39.
+
+Values outside these code sets, or fixed-bit mismatches, do not decode and raise `Fault_IllegalInstruction`.
+
+Design point: `PreQuantMode` is a closed code table. The ASL comment notes that `U8` is not a synonym for `S8`. Each nonzero code fixes both the required accumulator class (`S32` or `FP32`) and the output type; code 0 accepts `FP32`, `S32`, or `U32` and keeps that type.
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-effects role=effects -->
-## Pending state and completion
+## Defaults, state, and outputs
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+All-zero fields mean: no pre-quantization, no activation, no group maximum, no row maximum, no transpose, and no `CScale`. The effective output type, `EffectiveDType`, is then the accumulator type.
+
+Design point: omitting `B.FPATR` is not the same as an all-zero `B.FPATR`. A matrix block without one fails complete preflight with `Fault_BundleControl`, because the matrix operand schema requires the descriptor. The all-zero command is the way to request plain output.
+
+When the block commits, `D`, `RowMaxOut`, and `GroupMaxOut` are published together as one output group. A rejected block publishes none of them. RowMax and GroupMax reduce the final encoded `D` values in `EffectiveDType`.
+
+The descriptor is cleared when the block commits and is preserved with the pending block across trap save and recovery.
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and faults
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+Checked by the command, with `Fault_TileLegality`:
+
+- `RowMaxInit` requires `RowMaxEn`.
+- `GroupMaxEn` and a nonzero `GroupNCode` require each other.
+- `MaxAbsEn` requires `RowMaxEn` or `GroupMaxEn`.
+
+Checked by complete preflight, with `Fault_TileLegality`, before any effect:
+
+- The accumulator type must match the `PreQuantMode` class. With `RowMaxEn` or `GroupMaxEn`, `EffectiveDType` must be `FP32`, `FP16`, or `BF16`.
+- `TransA` or `TransB` requires that primary to be Shared. `CScaleEn` is accepted only by FP32 `TMATMUL.ACC` and `TMATMULMX.ACC`.
+- Matrix `B.DATR` supplies only conversion controls: with `PreQuantMode` 0 or a shift mode (12, 13), `RMode` and `Sat` must be zero; with a fixed-rounding mode, `RMode` must be zero.
+- If `B.DATR` sets `CCTRL[0]=1` (raw-partial output), every post-processing and reduction field must be zero; only legal `CScale` remains.
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-example role=example -->
 ## Non-normative worked example
@@ -64,10 +82,12 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
 ```
 
-Assume an active compatible header with no earlier conflicting `B.FPATR` command. Placing `B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+This command requests plain output: with an `FP32` accumulator, `D` is published as `FP32`. A second `B.FPATR` in the same header raises `Fault_BundleControl`.
+
+Now take `PreQuantMode` code 16, `ReluMode` 1, `GroupNCode` 2, `RowMaxEn=1`, and `GroupMaxEn=1`. Code 16 needs an `FP32` accumulator and outputs `BF16`, so `EffectiveDType` is `BF16` and both reductions are allowed; each group maximum covers 16 columns. Code 16 has fixed rounding, so the matrix `B.DATR` must leave `RMode` zero. With `PreQuantMode` code 2 instead, the output type is `S8`, and the same reduction enables fail preflight with `Fault_TileLegality`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

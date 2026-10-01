@@ -17,32 +17,48 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: block-b-dim-purpose role=purpose -->
-## What B.DIM contributes
+## What B.DIM does
 
-`B.DIM` is a 32-bit block header command that writes one block-local dimension register during header construction. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.DIM` is a 32-bit header command that writes one bundle-local dimension register: `LB0`, `LB1`, or `LB2`. The value is the low 16 bits of an absolute GPR plus an unsigned 17-bit immediate, zero-extended.
+
+`B.DIM` gives the register no meaning of its own. The completed operation schema decides whether an `LB` register is a valid column count, a row count, a physical column count, or an M, N, or K extent. For example, `TADD` reads `LB0` as `ValidCol`, `LB1` as `ValidRow`, and `LB2` as `Col`.
 
 <!-- PTO-READER-BLOCK: block-b-dim-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+The command dispatcher accepts `B.DIM` only while a block is active and still in its header. Otherwise it raises `Fault_BundleControl`. It then computes `GPR[RegSrc] + uimm17`, keeps bits 15 to 0, and calls `SetBundleDimension`.
 
-The command adds the unsigned immediate to the selected absolute GPR, keeps the low 16 bits, zero-extends that value, and writes the selected `LB0`, `LB1`, or `LB2` slot once.
+`SetBundleDimension` checks the target's presence bit. If the bit is already set, it raises `Fault_BundleControl` and keeps the first value. Otherwise it sets the presence bit and stores the value. See the [dimension schema model](../model/schema/dimensions.md).
+
+Design point: each `LB` register is write-once per block, and `B.DIM` shares one presence bit per register with the compressed `C.B.DIMI`. A second write by either form is rejected rather than silently overriding the first, so the value an operation reads is always the single value written in the header.
 
 <!-- PTO-READER-BLOCK: block-b-dim-inputs role=inputs-outputs -->
-## Operands and header roles
+## Encoded fields
 
-- `RegSrc` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
-- `uimm17` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
+- The target register is fixed by the form, through bits 12 to 14: `0x00000043` writes `LB0`, `0x00001043` writes `LB1`, and `0x00002043` writes `LB2`.
+- `RegSrc`, bits 15 to 19: an absolute GPR selector 0 to 23. Selector 0 reads the architectural zero register. Codes 24 to 31 are not absolute GPRs; in other commands they name block-relative queue entries. No executable check in the command path constrains `RegSrc` to 0 to 23 for `B.DIM`, unlike the range modifiers `B.SUBVIEW` and `B.ASSEMBLE`, which reject those codes before any GPR read.
+- `uimm17`, bits 20 to 31 (value bits 0 to 11) and bits 7 to 11 (value bits 12 to 16): an unsigned addend. Encoded zero adds zero.
+
+Both fields are always encoded; no part of `B.DIM` is optional.
 
 <!-- PTO-READER-BLOCK: block-b-dim-effects role=effects -->
-## Pending state and completion
+## Defaults and the value written
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+The written value is `ZeroExtend((GPR[RegSrc] + uimm17)[15:0])`. The sum is truncated to 16 bits, so values of 65536 or more wrap.
+
+Design point: an `LB` register that is never written has effective value 1, and an explicit write, including a write of 0, replaces that default. A program that writes 0 gets 0, not 1, and the operation schema then decides whether 0 is legal. For example, `TADD` rejects an explicitly present zero dimension.
+
+Some operation schemas also read the presence bit. For `TADD`, an omitted `LB2` selects `Col = ValidCol` rather than 1, and `LB0` is required. The page of each operation gives its exact defaults.
+
+Dimension values and presence bits are cleared when the block commits, so they never carry into the next block. `B.DIM` has no memory effect and changes no Tile state.
 
 <!-- PTO-READER-BLOCK: block-b-dim-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and faults
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+- The form metadata reserves `RegSrc` codes 24 to 31, but the current handler performs no such check: it reads whatever selector it decoded (`asl/block/model/dispatch/commands.asl:123-138`). A reserved-selector fault is therefore not an executable outcome on this page's owning unit.
+- A `B.DIM` outside an active block header raises `Fault_BundleControl`.
+- A second write to the same `LB` register, through `B.DIM` or `C.B.DIMI`, raises `Fault_BundleControl` and keeps the first value.
+- Range limits on the value, such as nonzero or power-of-two requirements, belong to the operation schema and are checked at block preflight.
 
 <!-- PTO-READER-BLOCK: block-b-dim-example role=example -->
 ## Non-normative worked example
@@ -50,10 +66,11 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.DIM RegSrc, uimm, ->LB2
+B.DIM a0, 16, ->LB0
+B.DIM zero, 0, ->LB2
 ```
 
-Assume an active compatible header with no earlier conflicting `B.DIM` command. Placing `B.DIM RegSrc, uimm, ->LB2` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+With `a0 = 0x10010`, the first line computes `0x10020`, keeps the low 16 bits, and writes `0x0020`, which is 32, to `LB0`. The second line writes 0 to `LB2` and sets its presence bit, so `LB2` no longer has the default value 1. `LB1` stays at its default of 1. A later `C.B.DIMI 8, ->LB0` in the same header reaches the same presence bit and raises `Fault_BundleControl` for the duplicate write.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,36 +17,55 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: block-b-catr-purpose role=purpose -->
-## What B.CATR contributes
+## What B.CATR does
 
-`B.CATR` is a 32-bit block header command that records optional block control, ordering, remote-execution, and reduction attributes. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.CATR` (block control attributes) is an optional 32-bit header command. It records six one-bit block controls: `trap`, `atom`, `aq`, `rl`, `far`, and `DR`. It performs no computation and no memory access. The block's operation and its commit read the recorded flags later.
+
+The flags are stored in one record with a `present` bit, written by `SetBundleControlAttributeState`. See the [attribute schema model](../model/schema/attributes.md) for the writer.
 
 <!-- PTO-READER-BLOCK: block-b-catr-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to the active block header before the first body instruction. Duplicate or misplaced use is rejected before pending header state changes.
+A block header is the part of a block after its `BSTART` and before its first body instruction. `B.CATR` belongs there. The command dispatcher raises `Fault_BundleControl` when no block is active, when the block body has already begun, or when the record's `present` bit is already set.
 
-The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+Design point: a second `B.CATR` is detected from the `present` bit, not from the field values. A `B.CATR` with every flag clear still counts as written, so a later `B.CATR` in the same header is rejected instead of silently replacing it.
+
+After a successful commit, the record is cleared with the rest of the header state. The flags never carry into the next block.
 
 <!-- PTO-READER-BLOCK: block-b-catr-inputs role=inputs-outputs -->
-## Operands and header roles
+## Encoded fields
 
-- `DR` selects multidimensional or operation-defined reduction mode; its exact assigned domain remains in the generated contract below.
-- `trap` requests a synchronous post-commit trap; its exact assigned domain remains in the generated contract below.
-- `far` requests routing-selected remote execution; its exact assigned domain remains in the generated contract below.
-- `atom` selects whole-block transactional visibility; its exact assigned domain remains in the generated contract below.
-- `aq` selects acquire ordering; its exact assigned domain remains in the generated contract below.
-- `rl` selects release ordering; its exact assigned domain remains in the generated contract below.
+The fixed bits are the low 15 bits equal to `0x0023` and bits 20 to 25 and 27 to 31 equal to zero (mask `0xfbf07fff`, match `0x00000023`). The six flags are:
+
+- `rl`, bit 15: release ordering.
+- `aq`, bit 16: acquire ordering.
+- `atom`, bit 17: whole-block transaction request.
+- `far`, bit 18: remote execution request.
+- `trap`, bit 19: synchronous post-commit trap request.
+- `DR`, bit 26: dimension-reduction mode.
+
+All six bits are independent. `aq` and `rl` do not require `atom`.
+
+Design point: omitting `B.CATR` is equivalent to encoding every flag as zero. Unlike `B.DATR`, this command has no field whose omission and encoded zero differ, because the reset value of each flag is zero.
 
 <!-- PTO-READER-BLOCK: block-b-catr-effects role=effects -->
-## Pending state and completion
+## What each flag changes
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+`aq` and `rl` select the block memory order through `CurrentBundleMemoryOrder`: both set gives acquire-release, one set gives acquire or release, neither gives relaxed. Tile memory operations, for example the gather, scatter, and atomic paths, pass this order to their memory events.
+
+`trap` acts only after a successful commit. `StopBundleAt` first clears the block and selects the next PC, then raises `Fault_BundlePostCommit` at that PC. Recovering the trap resumes at the continuation, not at the retired block. A block that fails to commit raises no post-commit trap.
+
+`far` changes the path of a tile operation. The formal model executes the operation against the initiating core's inputs and publishes results only through the normal local commit. No intermediate remote result is observable.
+
+`atom` and `DR` are recorded and readable in bits 8 and 12 of the packed control word that `LSRGET` identifier 2 returns (see [BARG](../model/state/barg.md)). The contract states that `atom=1` makes the block one all-or-nothing transaction. In the current executable ASL, no operation reads `CurrentBundleAtomic` or `CurrentBundleDimensionReduction`; the only executable check on `DR` is the commit rule below.
 
 <!-- PTO-READER-BLOCK: block-b-catr-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and faults
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+- Misplaced or duplicate `B.CATR` raises `Fault_BundleControl` before the record changes.
+- `DR=1` is checked at commit. If the block kind recorded in `BARG` is neither `TileElement` nor `TileMemory`, [commit validation](../model/commit/validation.md) raises `Fault_BundleControl` before any block effect. A block of any other kind, for example a CUBE matrix block or a floating-point block, therefore cannot carry `DR=1`.
+
+Design point: `DR` is checked at commit, not when `B.CATR` executes. The ASL comment states that the raw bit may be collected before the complete header selects its operation, so the check waits until the block kind is final.
 
 <!-- PTO-READER-BLOCK: block-b-catr-example role=example -->
 ## Non-normative worked example
@@ -57,7 +76,7 @@ This worked example is non-normative; it illustrates the current owner without r
 B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}
 ```
 
-Assume an active compatible header with no earlier conflicting `B.CATR` command. Placing `B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+A `B.CATR` that sets only `aq` and `rl` encodes bits 15 and 16 on top of the fixed `0x23`, giving the word `0x00018023`. A tile memory operation in that block then runs with acquire-release order. Setting only `trap` instead gives `0x00080023`: the block commits normally, and then `Fault_BundlePostCommit` is raised at the selected continuation.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

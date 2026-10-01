@@ -19,32 +19,45 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-ior-purpose role=purpose -->
 ## What B.IOR contributes
 
-`B.IOR` is a 32-bit block header command that records scalar GPR inputs and an optional scalar destination. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.IOR` is a 32-bit block header command that binds general-purpose registers (GPRs) to the operation of the current block. One record names up to three GPR inputs and one GPR output. The operation uses them for scalar operands such as a global-memory base address, a row stride, a scalar parameter, or a scalar result.
+
+`B.IOR` reads no GPR when it executes. It records the selectors, and the selected operation reads the registers at commit. See [Scalar bindings](../model/operands/scalar-bindings.md).
 
 <!-- PTO-READER-BLOCK: block-b-ior-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+`B.IOR` must appear in the header of an active block, after the block start and before the first body instruction. An ordinary block accepts one record. Three kinds of operation accept a second, immediately contiguous record: TGPR2T, TIMG2COL, and eligible Local CUBE forms that take an ExecutionMask from GPRs.
 
-The command records one pending scalar-binding record. Sources are read later according to the selected operation, and executing `B.IOR` alone does not write a GPR destination.
+The complete operation schema decides how many selectors are consumed and what each one means. The record itself always stores four selectors. Inputs pack densely into `RegSrc0`, `RegSrc1`, and `RegSrc2` in the order the operation defines, and a GPR ExecutionMask word follows every operation-owned input.
+
+Design point: omission and encoded zero are different. When `B.IOR` is omitted, each consumed slot takes the operation's own default. When `B.IOR` is present, selector code 0 names the architectural zero GPR, which reads 0. For `TLOAD` and `TSTORE`, omission supplies base address zero and a dense row stride computed from the column count and `DataType`, while an explicit `RegSrc1 = zero` supplies stride 0.
 
 <!-- PTO-READER-BLOCK: block-b-ior-inputs role=inputs-outputs -->
-## Operands and header roles
+## Fields and encoded values
 
-- `RegDst` identifies a destination or publication selector; its exact assigned domain remains in the generated contract below.
-- `RegSrc0` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
-- `RegSrc1` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
-- `RegSrc2` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
+- `RegSrc0` (bits 19:15), `RegSrc1` (bits 24:20), and `RegSrc2` (bits 31:27) are input selectors.
+- `RegDst` (bits 11:7) is the output selector.
+- Each selector is spelled as an absolute GPR code 0 to 23: `zero`, `sp`, `a0` to `a7`, `ra`, `s0` to `s8`, and `x0` to `x3`. Codes 24 to 31 are reserved for `B.IOR`; a relative T or U queue selector is never a valid `B.IOR` field, and the schema checks named above are what reject the reserved codes.
+- `ExecMaskPresent` (bit 26) marks the record that carries the GPR ExecutionMask word or words. Bit 25 is fixed at zero.
+
+Design point: `ExecMaskPresent` distinguishes a mask selector of `zero` from an unused zero selector. It is set only on the final `B.IOR` record, and only when the schema binds a GPR ExecutionMask. `PredInv` and the zero-versus-merge choice are `B.DATR` controls, not `B.IOR` fields.
 
 <!-- PTO-READER-BLOCK: block-b-ior-effects role=effects -->
-## Pending state and completion
+## Pending state
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+An accepted `B.IOR` writes one scalar-binding entry: the four selectors, a source capacity, and the `ExecMaskPresent` flag. It modifies no GPR and accesses no memory.
+
+The operation reads the bound inputs before it publishes any destination. A destination selector receives the operation's scalar result when the operation defines one. Sources may repeat, and a source may name the same GPR as the destination when the schema permits a destination.
 
 <!-- PTO-READER-BLOCK: block-b-ior-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+- Selector codes 24 to 31 are reserved. The record still stores them; a fault appears only where an operation-specific check requires an absolute GPR or a mask source, for example CUBE `TCI` and `TGPR2T`, which reject at preflight with `Fault_TileLegality`.
+- `B.IOR` outside an active header, a second record where the operation allows only one, a third record, or a record that breaks the TGPR2T or TIMG2COL stream rules raises `Fault_BundleControl`.
+- A nonzero selector in a slot the schema does not consume, a nonfinal or inapplicable `ExecMaskPresent`, or another schema mismatch raises the operation's legality fault before operation effects.
+- Indexed TLSU operations require an explicit `B.IOR` with `RegSrc0` as the base address and `RegSrc1`, `RegSrc2`, and `RegDst` all zero.
+
+Design point: a surplus selector must be zero. Because the schema rejects a nonzero unused field, a stray register name in a slot the operation ignores is reported instead of silently dropped.
 
 <!-- PTO-READER-BLOCK: block-b-ior-example role=example -->
 ## Non-normative worked example
@@ -52,10 +65,10 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
+B.IOR a0, a1, zero, ->zero
 ```
 
-Assume an active compatible header with no earlier conflicting `B.IOR` command. Placing `B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+In a `TLOAD` block this record supplies the base address from `a0` and the row stride in bytes from `a1`. `RegSrc2` and `RegDst` are `zero`, the selectors for unused slots. The fields are `RegSrc0 = 2`, `RegSrc1 = 3`, `RegSrc2 = 0`, `RegDst = 0`, and `ExecMaskPresent = 0`, which encode as `0x00310013`. If the block omitted `B.IOR` instead, the load would use base address zero and a dense row stride.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,37 +17,52 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: block-b-datr-purpose role=purpose -->
-## What B.DATR contributes
+## What B.DATR does
 
-`B.DATR` is a 32-bit block header command that records the optional data-layout, data-type, conversion, and numeric attributes. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.DATR` (block data attributes) is an optional 32-bit header command. It latches the data attributes that the block's Tile operation reads: element `DataType`, `Layout`, `PadValueOrByteId`, comparison mode `CMode`, rounding mode `RMode`, `Sat`, `Canonicalize`, and the two ExecutionMask controls `PredInv` and `Zero`. It changes no Tile, register, or memory state.
+
+`B.DATR` only records values. Each Tile operation decides which nonzero fields it accepts and what they mean; the page of that operation lists them.
 
 <!-- PTO-READER-BLOCK: block-b-datr-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to the active block header before the first body instruction. Duplicate or misplaced use is rejected before pending header state changes.
+The command dispatcher accepts `B.DATR` only while a block is active and still in its header (after `BSTART`, before the first body instruction), and only once per block. Otherwise it raises `Fault_BundleControl`. The contract also places `B.DATR` before any `B.IOR`, `B.IOT`, or `B.IOS`.
 
-The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+The writer `SetBundleDataAttributeState` stores the seven data fields. `SetBundleDataAttributesFromCommand` then stores `PredInv` and `Zero` and sets the presence flag. See the [data-attribute dispatch model](../model/dispatch/command-data-attributes.md) and the [control-state model](../model/state/control-state.md).
+
+Design point: legality of the values is checked later, when the complete block runs its preflight. `B.DATR` executes before the operands are bound, so it cannot know which operation-specific rules apply; the operation schema rejects inapplicable nonzero fields with `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: block-b-datr-inputs role=inputs-outputs -->
-## Operands and header roles
+## Encoded fields
 
-- `Layout` selects tile layout or an assigned conversion layout; its exact assigned domain remains in the generated contract below.
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
-- `PadValueOrByteId` supplies the operation-selected padding value or byte identifier; its exact assigned domain remains in the generated contract below.
-- `CMode` selects the comparison predicate; its exact assigned domain remains in the generated contract below.
-- `RMode` selects the rounding mode; its exact assigned domain remains in the generated contract below.
-- `Sat` enables saturation; its exact assigned domain remains in the generated contract below.
-- `Canonicalize` enables private-format canonicalization; its exact assigned domain remains in the generated contract below.
+- `Layout`, bits 7 to 11: tile layout or layout conversion. Code 0 is `NORM`. Codes 21 to 26 select `ND2M32`, `ND2M16`, `ND2N8`, `M322ND`, `M162ND`, and `N82ND`. Code 29 selects direct Local `CUBE_M32` and code 31 selects `CUBE_M16`. Codes 10 and 11 are weight-mode `TLOAD` layouts.
+- `Zero`, bit 13, and `PredInv`, bit 14: ExecutionMask controls. Bit 12 is fixed at one.
+- `RMode`, bits 15 to 17: codes 0 to 7 are operation default, `RNE`, `RTZ`, `RTM`, `RTP`, `RNA`, `RTO`, and `RHB`.
+- `DataType`, bits 20 to 24: codes 0 to 21 and 24 to 28 are concrete element types, and code 31 is `DTYPE_NONE`. Code 0 is `FP64`.
+- `Canonicalize`, bit 25, and `Sat`, bit 26.
+- `PadValueOrByteId`, bits 27 and 28: `Zero`, `Max`, `Min`, `Null` for pad-valued operations, or a byte identifier.
+- `CMode`, bits 29 to 31: codes 0 to 5 are `EQ`, `NE`, `LT`, `GT`, `LE`, `GE`.
+
+Reserved `DataType` codes 22, 23, 29, 30, unassigned `Layout` codes, and `CMode` codes 6 and 7 do not decode; the command raises `Fault_IllegalInstruction`.
 
 <!-- PTO-READER-BLOCK: block-b-datr-effects role=effects -->
-## Pending state and completion
+## Defaults, omission, and encoded zero
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+When `B.DATR` is omitted, the block reset values apply: `PadValueOrByteId` reads as `Null`, and `Layout`, `CMode`, `RMode`, `Sat`, `Canonicalize`, `PredInv`, and `Zero` read as zero. The element type comes from the `BSTART` descriptor.
+
+Design point: an explicit `B.DATR` encodes every field, so omission and encoded zero differ. Omitted padding is `Null`, which leaves elements outside the valid region undefined; an explicit code `00` selects `Zero` padding. Likewise an explicit `DataType` of 0 is `FP64`, not "inherit".
+
+Design point: code 31, `DTYPE_NONE`, is the way to latch the other fields without overriding the type. The effective type is resolved in order: a concrete `B.DATR` type, then a concrete `BSTART` type, then, for `TMOV` only, the type of a configured source. If none resolves, complete preflight raises `Fault_TileLegality`.
+
+In matrix and CUBE schemas the two pad bits are `CCTRL`: bit 0 selects raw-partial `D` output plus a cache-replacement hint, and bit 1 is an explicit-C cache-use or prefetch hint. Omission gives `CCTRL=00`, the final-output path.
 
 <!-- PTO-READER-BLOCK: block-b-datr-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and faults
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+- Misplaced or duplicate `B.DATR` raises `Fault_BundleControl` before the latched fields change.
+- Nonzero `PredInv` or `Zero` is legal only when the complete block binds an explicit ExecutionMask for an eligible Local `CUBE_M16` or `CUBE_M32` operation. Otherwise preflight raises `Fault_TileLegality`.
+- `Canonicalize` is accepted only by `TCVT`. For `TROWEXPAND` and its seven arithmetic variants on `CUBE_M16` or `CUBE_M32`, `RMode` is a `BroadcastByteOffset`; `RowMajor` requires zero.
+- Any other nonzero field that the selected operation does not accept raises `Fault_TileLegality` before effects.
 
 <!-- PTO-READER-BLOCK: block-b-datr-example role=example -->
 ## Non-normative worked example
@@ -55,10 +70,11 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
+B.DATR {NORM, FP32, Zero, None, RNE, 0, 0, 0, 0}
+B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0, 0, 0}
 ```
 
-Assume an active compatible header with no earlier conflicting `B.DATR` command. Placing `B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+The first line overrides the `BSTART` type with `FP32`, selects `Zero` padding, and requests `RNE` rounding. An operation such as `TADD`, which accepts only `PadValueOrByteId` and `Layout` as nonzero fields, would reject the `RNE` code at preflight with `Fault_TileLegality`. The second line keeps the `BSTART` type through `DTYPE_NONE`, selects the GM-to-`CUBE_M16` conversion (code 22), and leaves padding `Null`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

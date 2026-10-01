@@ -19,33 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-assemble-purpose role=purpose -->
 ## What B.ASSEMBLE contributes
 
-`B.ASSEMBLE` is a 32-bit block header command that attaches one assembler-range modifier to an open Local or Shared binder group. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.ASSEMBLE` is a 32-bit header command that turns the destination of the binder just before it into one writer of a multi-block build. The binder is a `B.IOT` or `B.IOS`. A build of this kind is called a generation: one parent Tile is written in ranges by several blocks, or by several PEs, and is published once, at LAST.
+
+Like `B.SUBVIEW`, the command is a range modifier. It attaches to its binder and records fields; it allocates nothing when it executes. See [Range modifiers](../model/operands/range-modifiers.md), [Local generation](../model/operands/local-generation.md), and [Shared generation](../model/operands/shared-generation.md).
 
 <!-- PTO-READER-BLOCK: block-b-assemble-mechanism role=mechanism -->
-## Placement and mechanism
+## Phases and mechanism
 
-The modifier is valid only while it remains contiguous with the `B.IOT` or `B.IOS` binder group that opened its carrier. Intervening, reversed, or duplicate modifiers are rejected before carrier state changes.
+`INIT` and `LAST` select one of four phases:
 
-The command records its raw selector and range fields in the open binder carrier together with the derived XLEN offset. A binder whose decoded PE mask is zero keeps only a discarded syntactic group and performs no source read or role effect.
+- INIT (`INIT = 1`, `LAST = 0`) starts a generation. The binder's destination `SizeCode` becomes the parent capacity, and the parent is allocated.
+- MIDDLE (`INIT = 0`, `LAST = 0`) adds one writer to an open generation.
+- LAST (`INIT = 0`, `LAST = 1`) adds the final writer and closes the generation.
+- INIT_LAST (`INIT = 1`, `LAST = 1`) starts and closes a generation in one block.
+
+A continuation (MIDDLE or LAST) names the parent differently on each surface. For Local Tiles the binder has no destination, and the final source slot of the binder becomes the parent reference instead of a data source. For Shared Tiles the final `B.IOS` with `SizeCode = 0` is reused as the destination of the open generation.
+
+Design point: a Local parent is named by an ordinary relative selector such as `T#1`. INIT publishes the parent into the ordinary relative queue, and no private assemble namespace exists. A continuation therefore finds the parent the same way any source finds a Tile.
 
 <!-- PTO-READER-BLOCK: block-b-assemble-inputs role=inputs-outputs -->
-## Operands and header roles
+## Fields and encoded values
 
-- `INIT` marks the first assembler carrier; its exact assigned domain remains in the generated contract below.
-- `LAST` marks the final assembler carrier; its exact assigned domain remains in the generated contract below.
-- `RegSrc` selects the named absolute GPR role; its exact assigned domain remains in the generated contract below.
-- `uimm11` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
-- `ParentSizeCode` supplies the parent range size code; its exact assigned domain remains in the generated contract below.
+- `INIT` (bit 31) selects INIT or INIT_LAST when 1, and MIDDLE or LAST when 0.
+- `uimm11` (bits 30:20) is an unsigned addend, zero-extended. Zero is a real zero.
+- `RegSrc` (bits 19:15) names an absolute GPR 0 to 23. Code zero names the zero GPR.
+- `LAST` (bit 11) marks the final writer.
+- `WriterSizeCode` (bits 10:7) is the size of this writer's range: 1 to 10 for a Local group and 1 to 12 for a Shared group, from 128 B upward. Raw codes 13 to 15 are reserved.
+
+The writer offset is `GPR[RegSrc] + uimm11` modulo 2^XLEN, counted in 128-byte CELLs of the parent. The handler stores the raw fields and this offset in the destination's range record.
+
+Design point: `WriterSizeCode` is the size of the current writer in every phase, never the parent size. The parent capacity comes from the INIT binder's `SizeCode`, so one parent can be filled by several smaller writers whose ranges must fit inside it and must not overlap on a shared PE.
 
 <!-- PTO-READER-BLOCK: block-b-assemble-effects role=effects -->
-## Pending state and completion
+## Recorded state and publication
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+An accepted `B.ASSEMBLE` changes only the binder's range record, and for a Local continuation it moves the final source into the parent reference. It reads no Tile payload.
+
+After the operation succeeds, the writer's CELLs are marked covered. At LAST the generation closes. It is marked published only when every participating PE is eligible, which requires every required CELL to be covered and also ready for that PE.
+
+Design point: a zero-participation binder (`PEMode = 000`) opens a zero-mode group. There, each raw-legal `B.ASSEMBLE` passes only the open-group check, reads no GPR, and records nothing.
 
 <!-- PTO-READER-BLOCK: block-b-assemble-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+- A `RegSrc` code 24 to 31, a raw `WriterSizeCode` 13 to 15, or a nonzero fixed bit raises `Fault_IllegalInstruction` before any GPR read.
+- `WriterSizeCode` 11 or 12 attached to a participating Local group raises `Fault_TileLegality`.
+- No open group, INIT on a binder without an unused destination role, a continuation on a binder that has a destination, or a writer size code of 0 in a participating group raises `Fault_BundleControl`.
+- At stage-2 preparation, a range outside the parent, a range that overlaps an earlier writer on a shared PE, a writer mask that is not a subset of the generation's mask, or a parent reference that names no open generation raises a fault before the operation's effects.
+- A Shared destination with more than one participating PE and no `B.ASSEMBLE` raises `Fault_TileLegality`.
 
 <!-- PTO-READER-BLOCK: block-b-assemble-example role=example -->
 ## Non-normative worked example
@@ -53,11 +74,11 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>
-B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode
+B.IOT T#2, mask=1111, <last>, ->T<4KB>
+B.ASSEMBLE 1, 0, zero, 0, 5
 ```
 
-The destination form of `B.IOT` opens the exact destination carrier group. The immediately following `B.ASSEMBLE` applies its assembler range to that destination carrier; any intervening command breaks contiguity and makes the modifier group invalid.
+This block starts a Local generation. The binder's `SizeCode` 6 makes a 4 KiB parent, which is 32 CELLs. The modifier is INIT, not LAST, with offset 0 + 0 = 0 and writer size code 5, which is 2 KiB or 16 CELLs, and encodes as `0x800012d3`. After commit, CELLs 0 to 15 are covered and the parent is the new `T#1`. A later block `B.IOT T#2, T#1, mask=1111, <last>` followed by `B.ASSEMBLE 0, 1, zero, 16, 5` (encoded `0x01001ad3`) uses `T#1` as the parent reference, writes CELLs 16 to 31 from its source `T#2`, and closes the generation. An offset of 8 in that second block would overlap CELLs 8 to 15 and fault.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
