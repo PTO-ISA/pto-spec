@@ -19,54 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowprod-purpose role=purpose -->
 ## What TROWPROD does
 
-`TROWPROD` reduces each row to its ordered product.
+`TROWPROD` is a Tile reduce-and-expand operation executed by the `SFU` engine. It reduces every valid row of one Local source Tile to a single element. It is selected by `TEPL` Mode 2 Function 3 (selector `0x043`) and has no standalone opcode.
+
+Design point: the axis belongs to the operation identity, not to a bundle field: `TEPL` fixes `TileAxis_Row` as a constant argument, and the destination shape repeats it as a logical dimension of one, so the direction follows from the mnemonic alone.
 
 <!-- PTO-READER-BLOCK: tile-c-trowprod-mechanism role=mechanism -->
 ## Operation mechanism
 
-Each row is scanned in strictly increasing column order; reassociation is not permitted.
+Preflight checks the bundle schema, the source descriptor, source definedness, source encodings, the destination capacity, and the operand schema. Only then does `ExecuteTileReduction` walk every valid row: the accumulator starts at the typed one encoding and every element of that row is multiplied into it.
 
-Floating results and element status follow the active named numeric profile; the portable contract owns selection, shape, publication, and fault order.
+Each step is the typed `TMUL` operation, in strictly increasing column order. An integer result keeps only the element-width bits of the exact result, and a floating result follows the numeric profile of the selected type.
+
+Design point: `TROWPROD` is an ordered fold, not a tree. Reassociation changes a rounded floating result, so the ASL fixes the order in which the elements are combined.
 
 <!-- PTO-READER-BLOCK: tile-c-trowprod-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the persistent Local source Tile. Every coordinate of its valid region participates, and its stored backing type may differ from the operation type only through an equal-width, non-packed carrier view.
 
-- `source0` supplies a persistent source Tile.
+- `destination0` is a newly allocated Local Tile with the operation DataType and a logical shape of 7 valid rows by one valid column, one result per valid row; its other physical coordinates are padding coordinates, and for `RowMajor` the physical row count is derived from the destination capacity.
 
-- The closed applicable DataType set is `FP32`, `FP16`, `BF16`, `S32`, `S16`, `U32`, `U16`.
+- The destination uses the source layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted.
 
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+- The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: a reduction does not accept the shared Local CUBE ExecutionMask. Any valid mask state, encoded in the bundle or injected into the model, makes the operand check fail, so the bundle faults instead of reducing a subset; every valid source coordinate is defined, encoding-checked, and included.
 
 <!-- PTO-READER-BLOCK: tile-c-trowprod-effects role=effects -->
 ## Definedness, padding, and publication
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination becomes visible as one unit: descriptor, results, definedness, padding outside the valid result rectangle, and accumulated numeric status publish together, and a rejected execution publishes none of them. The source persists unchanged and the operation has no GM memory effect.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical destination coordinates outside the `7 x 1` valid region receive the selected `PadValue`. `Zero`, `Max`, and `Min` define those coordinates; `Null` leaves them undefined.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` code `00` selects `Zero`. Omission and encoded zero differ, so a program that reads the whole physical destination must ask for `Zero`, `Max`, or `Min`.
 
 <!-- PTO-READER-BLOCK: tile-c-trowprod-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted operation types are `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The destination DataType equals the operation type. The source may be stored with a different same-width, non-packed backing type, but `RCPE6M2` must never be a reduction backing, and an active bundle must resolve the operation DataType from `BSTART` or reject.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+- Exactly one terminating Local `B.IOT` supplies the source and the new destination, so `B.IOR`, `B.IOS`, a second `B.IOT`, a nonterminating binding, and a destination that names the source are illegal.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+- A malformed binding stream, a missing or zero dimension, an unsupported DataType, a bad, mixed, or mismatched source layout, an undefined source element, or an invalid source encoding raises `Fault_TileLegality` before effects; a result shape, `TSize`, rename, or capacity failure raises `Fault_TileAllocation` before publication.
+
+Design point: legality admits sixteen types, but this floating fold step reaches `ScalarFPBinaryProfile`, which is defined only for `FP64`, `FP32`, `FP16`, and `BF16`. The ASL defines no element result for `TF32`, `HF32`, `E4M3`, and `E5M2`, so those four types cannot be used here even though legality accepts them.
 
 <!-- PTO-READER-BLOCK: tile-c-trowprod-example role=example -->
 ## Non-normative example
 
-This example illustrates the current ASL-bound contract and is not a second instruction definition.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-`TROWPROD <bundle operands>` snapshots the source and scans each valid row in increasing column order before atomically publishing the row result.
+For a small `TROWPROD` example, the rows `[1, 4]` and `[3, 2]` reduce to `[4, 6]`: the first row folds `1 * 1 * 4` and the second row folds `1 * 3 * 2`.
+
+For an 8 x 64 `FP32` source whose valid region is 7 x 60 with `Zero` padding, the walk visits 7 valid rows and performs 60 combine steps in each, so the destination receives 7 results in a `7 x 1` valid region inside the 512 x 1 shape derived from a `2KB` `TSize`, where 505 of the 512 coordinates are padding that `Zero` defines.
+
+In macro form the same operation is written `TROWPROD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

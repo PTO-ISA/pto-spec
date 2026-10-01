@@ -19,48 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-purpose role=purpose -->
 ## TCOLEXPANDMUL 的作用
 
-`TCOLEXPANDMUL` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它把每个完整形状元素乘以同列广播值；当前指令契约拥有精确的指令束形式和发布边界。
+`TCOLEXPANDMUL` 是由 `SFU` 引擎执行的 Tile 归约与扩展操作。它把完整形状源与每个有效列的一个广播值结合：对每个目标坐标 `[r,c]` 计算 `source0[r,c] * BroadcastTile[0,c]`，因此广播 Tile 为每个有效列提供一个值。它由 `TEPL` Mode 2 Function 23（选择器 `0x057`）选中，没有独立 opcode。
+
+设计要点：列扩展与对应的列归约在形状上互为逆操作：归约为每个有效列产生一个值，扩展则为每个有效列消费一个值并在每个有效行上复用，这也是广播操作数是 Tile 而不是标量的原因。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数把每个完整形状元素乘以同列广播值。当前契约允许别名时，源载荷会在目标写入前完成快照。
+完整预检之后，`ExecuteTileExpand` 独立计算每个目标坐标 `[r,c]`，即 `source0[r,c] * BroadcastTile[0,c]`，其中 `source0[r,c]` 始终是左操作数，`BroadcastTile[0,c]` 始终是右操作数。整数结果停留在元素位宽上；浮点结果、异常值、带符号零行为与逐元素的数值状态标志与对应的 `TMUL` 有类型操作完全一致。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+设计要点：操作数顺序由架构规定而不是可配置的，每个元素的状态按位或合并为一次事务，并与结果一起发布。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local 同类型数值目标”。
-- `source0` 的精确契约角色是“持久 Local 完整形状数值源”。
-- `source1` 的精确契约角色是“持久 Local 单行广播源”。
+- `source0` 是持久 Local 完整形状源。其逻辑有效几何与布局必须与目标一致。
 
-参与操作的源与目标描述符采用所选的 RowMajor、CUBE_M16 或 CUBE_M32 布局，并遵循当前契约规定的逻辑形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+- `source1` 是持久 Local 列广播源。只有 `BroadcastTile[0,c]` 提供取值；后面的有效行会被忽略且不做编码校验，只有在不施加 ExecutionMask 时才必须已定义。
+
+- `destination0` 是新分配的 Local Tile，DataType 为操作 DataType，几何由 `B.DIM` 推导；`LB0` 必需并提供非零 `ValidCol`，省略 `LB1` 选择 `ValidRow` 等于 1，省略 `LB2` 选择 `Col` 等于 `ValidCol`。其余物理坐标是填充坐标。
+
+- 所有操作数使用同一布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。
+
+- 各操作数共享同一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、状态或载荷效果之前。
+
+设计要点：广播源只在被消费的位置检查。其有效列数必须与目标相同；不施加 ExecutionMask 时整个广播有效区域都必须已定义，施加 ExecutionMask 时只有至少含一个活动目标坐标的列所对应的 `BroadcastTile[0,c]` 必须已定义。其余广播元素不做编码校验。
+
+设计要点：与归约不同，扩展接受共享的 Local CUBE ExecutionMask。非活动目标坐标取掩码的零值或合并值，而不是计算结果，也不贡献源读取与数值状态；带掩码时完整形状源必须与掩码的布局及两个有效范围一致。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+目标作为一个整体发布：描述符、每个有效结果、已定义性、有效矩形之外的填充与累积的数值状态同时出现，被拒绝的执行不会发布其中任何一项。两个源的载荷都在写入第一个目标元素前快照，因此合法别名读取旧的源值，源本身保持不变。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+`ValidRow x ValidCol` 有效区域之外的物理目标坐标接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 会定义这些坐标；`Null` 使它们保持未定义。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+设计要点：省略 `B.DATR` 选择 `Null`，而显式 `PadValue` 编码 `00` 选择 `Zero`。省略与编码零并不相同，因此要读取整个物理目标的程序必须请求 `Zero`、`Max` 或 `Min`。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-精确的可接受类型或类型组合由下方生成的合法性章节拥有；本指南不会扩大该集合。
+可接受的操作类型为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`，`BSTART` DataType 同时是源操作 DataType 与目标 DataType。每个源后备只有在等位宽、非打包载体视图下才允许与它不同；原始位按操作 DataType 解释，不重新打标签，也不做数值转换。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+- 恰好一条终止的 Local `B.IOT` 提供各操作数与一个新分配的 Local 目标；`B.IOR` 与 `B.IOS` 非法。
+
+- 绑定流格式错误、维度缺失或为零、DataType 不受支持、布局不受支持或混合、源元素未定义、源几何不匹配，或参与运算的操作视图编码无效，会在效果之前引发 `Fault_TileLegality`。目标形状无法表示、`TSize` 不足、重命名目标不可用或 Tile 容量耗尽，会在发布之前引发 `Fault_TileAllocation`。
+
+设计要点：合法性接受十六种类型，但浮点元素步骤会走到 `ScalarFPBinaryProfile`，它只为 `FP64`、`FP32`、`FP16` 与 `BF16` 定义。ASL 对 `TF32`、`HF32`、`E4M3` 与 `E5M2` 不给出元素结果，因此即使合法性接受这四种类型，这里也无法使用它们。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandmul-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCOLEXPANDMUL` 示例说明：完整形状行 `[2, 3]` 乘广播行 `[4, 5]` 产生 `[8, 15]`。
+以一个小型 `TCOLEXPANDMUL` 示例说明：完整形状的行 `[2, 3]` 与 `[4, 5]` 乘以广播第 0 行 `[4, 5]` 产生 `[[8, 15], [16, 25]]`。
+
+对于有效区域为 7 x 60 且使用 `Zero` 填充的 8 x 64 `FP32` 源，目标有效区域为 7 x 60，因此计算 420 个元素，512 个坐标中有 92 个接收填充值。
+
+同样的操作在宏形式下写作 `TCOLEXPANDMUL <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, T#2, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

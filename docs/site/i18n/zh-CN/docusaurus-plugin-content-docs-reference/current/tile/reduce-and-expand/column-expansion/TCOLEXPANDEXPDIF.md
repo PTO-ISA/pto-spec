@@ -19,48 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-purpose role=purpose -->
 ## TCOLEXPANDEXPDIF 的作用
 
-`TCOLEXPANDEXPDIF` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它计算每个完整形状元素减去同列广播值后的有类型指数函数；当前指令契约拥有精确的指令束形式和发布边界。
+`TCOLEXPANDEXPDIF` 是由 `SFU` 引擎执行的 Tile 归约与扩展操作。它把完整形状源与每个有效列的一个广播值结合：对每个目标坐标 `[r,c]` 计算 `exp(source0[r,c] - BroadcastTile[0,c])`，因此广播 Tile 为每个有效列提供一个值。它由 `TEPL` Mode 2 Function 27（选择器 `0x05B`）选中，没有独立 opcode。
+
+设计要点：列扩展与对应的列归约在形状上互为逆操作：归约为每个有效列产生一个值，扩展则为每个有效列消费一个值并在每个有效行上复用，这也是广播操作数是 Tile 而不是标量的原因。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数计算每个完整形状元素减去同列广播值后的有类型指数函数。当前契约允许别名时，源载荷会在目标写入前完成快照。
+完整预检之后，`ExecuteTileExpand` 把每个目标坐标 `[r,c]` 计算为 `exp(source0[r,c] - BroadcastTile[0,c])`，指数，两个操作数都按 `SrcDataType` 解释。同类型对在该类型上做减法和指数；`FP16` 或 `BF16` 到 `FP32` 的混合对先把两个值精确加宽到 `FP32`。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+设计要点：`FP16` 或 `BF16` 到 `FP32` 的加宽是精确的，因此它是解释步骤而不是转换，不产生转换状态。差值只在 `FP32` 精度上舍入一次，两个阶段的状态按位 OR 合并为一次事务。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“采用 DstDataType 的新 Local 目标”。
-- `source0` 的精确契约角色是“持久 Local 完整形状数值源”。
-- `source1` 的精确契约角色是“持久 Local 单行广播源”。
+- `source0` 是持久 Local 完整形状源。其逻辑有效几何与布局必须与目标一致。
 
-参与操作的源与目标描述符采用所选的 RowMajor、CUBE_M16 或 CUBE_M32 布局，并遵循当前契约规定的逻辑形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+- `source1` 是持久 Local 列广播源。只有 `BroadcastTile[0,c]` 提供取值；后面的有效行会被忽略且不做编码校验，只有在不施加 ExecutionMask 时才必须已定义。
+
+- `destination0` 是新分配的 Local Tile，其后备类型为 `DstDataType`；不引入目标别名，也不对源描述符重新打标签。
+
+- 所有操作数使用同一布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。
+
+- 各操作数共享同一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、状态或载荷效果之前。
+
+设计要点：广播源只在被消费的位置检查。其有效列数必须与目标相同；不施加 ExecutionMask 时整个广播有效区域都必须已定义，施加 ExecutionMask 时只有至少含一个活动目标坐标的列所对应的 `BroadcastTile[0,c]` 必须已定义。其余广播元素不做编码校验。
+
+设计要点：与归约不同，扩展接受共享的 Local CUBE ExecutionMask。非活动目标坐标取掩码的零值或合并值，而不是计算结果，也不贡献源读取与数值状态；带掩码时完整形状源必须与掩码的布局及两个有效范围一致。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+目标作为一个整体发布：描述符、每个有效结果、已定义性、有效矩形之外的填充与累积的数值状态同时出现，被拒绝的执行不会发布其中任何一项。两个源的载荷都在写入第一个目标元素前快照，因此合法别名读取旧的源值，源本身保持不变。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+`ValidRow x ValidCol` 有效区域之外的物理目标坐标接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 会定义这些坐标；`Null` 使它们保持未定义。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+设计要点：省略 `B.DATR` 选择 `Null`，而显式 `PadValue` 编码 `00` 选择 `Zero`。省略与编码零并不相同，因此要读取整个物理目标的程序必须请求 `Zero`、`Max` 或 `Min`。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-精确的可接受类型或类型组合由下方生成的合法性章节拥有；本指南不会扩大该集合。
+`TROWEXPANDEXPDIF` 与 `TCOLEXPANDEXPDIF` 接受的 `(SrcDataType,DstDataType)` 对恰好是 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 与 `(BF16,FP32)`。`BSTART` 选择 `SrcDataType`；省略 `B.DATR`，或显式 `DataType` 等于 `DTYPE_NONE` 时，`DstDataType` 等于 `SrcDataType`；具体的 `B.DATR` `DataType` 则选择 `DstDataType`。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+设计要点：编码为 0 的 `DataType` 表示 `FP64`，永远不表示缺失，因此继承需要单独的 `DTYPE_NONE` 哨兵；想要源类型的程序必须省略 `B.DATR` 或有意编码 `DTYPE_NONE`。
+
+- 恰好一条终止的 Local `B.IOT` 提供各操作数与一个新分配的 Local 目标；`B.IOR` 与 `B.IOS` 非法。
+
+- 绑定流格式错误、维度缺失或为零、DataType 不受支持、布局不受支持或混合、源元素未定义、源几何不匹配，或参与运算的操作视图编码无效，会在效果之前引发 `Fault_TileLegality`。目标形状无法表示、`TSize` 不足、重命名目标不可用或 Tile 容量耗尽，会在发布之前引发 `Fault_TileAllocation`。
+
+设计要点：指数阶段只接受 `FP32`、`FP16` 与 `BF16`，而该操作的每个合法对都映射到这些类型上，因此合法性与可执行定义在可接受对集合上一致。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCOLEXPANDEXPDIF` 示例说明：完整形状值与广播值相等时差为零，因此指数结果为一。
+以一个小型 `TCOLEXPANDEXPDIF` 示例说明：完整形状的行 `[1, 2]` 与 `[3, 4]` 减去广播第 0 行 `[1, 2]` 得到差值 `[[0, 0], [2, 2]]`，因此目标为 `[[1, 1], [e^2, e^2]]`。
+
+对于有效区域为 7 x 60 且使用 `Zero` 填充的 8 x 64 `FP32` 源，目标有效区域为 7 x 60，因此计算 420 个元素，512 个坐标中有 92 个接收填充值。
+
+同样的操作在宏形式下写作 `TCOLEXPANDEXPDIF <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, T#2, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
