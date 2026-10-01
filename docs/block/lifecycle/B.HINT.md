@@ -17,35 +17,53 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: block-b-hint-purpose role=purpose -->
-## What B.HINT contributes
+## What B.HINT does
 
-`B.HINT` is a 32-bit block header command that records optional branch, temperature, prefetch-size, or trace-boundary hints. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.HINT` attaches advisory information to a block. A block (also called a bundle) opens with a block-start command, collects configuration from header commands, runs its body, and commits as one unit. `B.HINT` has two 32-bit forms:
+
+- The ordinary form carries branch, temperature, and prefetch hints for the active block.
+- The `TRACE` form marks a trace boundary. It is itself a block start: it opens a new, empty fall-through block.
 
 <!-- PTO-READER-BLOCK: block-b-hint-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The ordinary hint form is optional at most once in an already active block header, after `BSTART` and before the first body instruction.
+The ordinary form is a header command. It is legal while a block is active and still in its header phase, before the first body instruction. At most one hint may belong to a block.
 
-Ordinary hint fields are retained as non-functional pending metadata. The TRACE form instead behaves as a block start: it first retires an active predecessor when retirement succeeds, then opens an empty trace block and records whether the boundary is begin or end. TRACE does not complete the newly opened block by itself.
+The `TRACE` form follows the block-start rules in [start dispatch](../model/dispatch/start.md). If a block is active, it first commits that block with the `TRACE` address as the fall-through continuation. If that commit faults, the fault stands and no trace block opens. If the commit selects a different PC, the `TRACE` was on a path the program did not take, and it changes no hint or trace state. Otherwise, and also when no block was active, it opens a standard block whose transfer is fall-through and records the boundary kind.
+
+Design point: an installed `TRACE` does not complete its new block. That block ends like any other, at `BSTOP` or the next block start.
 
 <!-- PTO-READER-BLOCK: block-b-hint-inputs role=inputs-outputs -->
-## Operands and header roles
+## Encoded fields
 
-- `V` marks the branch hint valid; its exact assigned domain remains in the generated contract below.
-- `L/UL` selects likely or unlikely when the hint is valid; its exact assigned domain remains in the generated contract below.
-- `temp` selects the temperature hint; its exact assigned domain remains in the generated contract below.
-- `prefetch_size` selects the cache-line prefetch count; its exact assigned domain remains in the generated contract below.
-- `B/E` selects the trace begin or end boundary; its exact assigned domain remains in the generated contract below.
+Ordinary form (bits `14:0` are `0x033`, bit 19 is zero):
+
+- `V`, bit 15: branch-hint validity. 0 means no branch hint.
+- `L/UL`, bit 16: when `V` is 1, 0 means unlikely (fall-through) and 1 means likely (taken).
+- `temp`, bits `18:17`: temperature. 0 is none, 1 is cool, 2 is warm, 3 is hot.
+- `prefetch_size`, bits `31:20`: the number of cache lines to prefetch, starting with the line that holds the current block instruction. 0 requests no prefetch.
+
+`TRACE` form: bits `14:0` are `0x1033`, and bit 15 is `B/E`. 0 means `TRACE.begin` and 1 means `TRACE.end`. All other bits are zero.
+
+Design point: omitting `B.HINT` and encoding an all-zero ordinary hint both give no guidance. They still differ: an explicit hint occupies the block's single hint slot, so a later ordinary `B.HINT` in the same block is rejected.
 
 <!-- PTO-READER-BLOCK: block-b-hint-effects role=effects -->
-## Pending state and completion
+## State effects
 
-An accepted ordinary hint updates the pending hint record and hint epoch without changing body-visible data. An accepted TRACE form installs the empty trace block only after predecessor retirement; a predecessor retirement failure leaves the predecessor authoritative and opens no trace block.
+A successful `B.HINT` records its fields as pending state of the active block, saves the raw instruction in `_LastBundleHintPayload`, and increments the non-functional hint epoch. The hint is cleared with the rest of the header state when the block commits.
+
+Design point: the hint never changes a functional result. In the current ASL, the recorded hint is cleared, reset, and saved and restored with the trap context. Apart from the one-hint check, no execution or commit rule reads the branch, temperature, prefetch, or trace fields. A program therefore behaves the same with or without the hint.
+
+`B.HINT` has no memory effect. The ordinary form advances `TPC` to the next instruction. An installed `TRACE` moves `TPC` to the instruction after itself through the new block's start.
 
 <!-- PTO-READER-BLOCK: block-b-hint-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+An ordinary `B.HINT` with no active block, after the body has begun, or when the block already has a hint raises `Fault_BundleControl` before any hint state changes. The first hint stays in place.
+
+A `TRACE` hint also sets the hint slot of the block it opens. An ordinary `B.HINT` inside a trace block is therefore rejected as a duplicate.
+
+Design point: rejecting the second hint, rather than replacing the first, keeps the recorded hint equal to the one the header first stated. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-b-hint-example role=example -->
 ## Non-normative worked example
@@ -53,10 +71,10 @@ Reserved encodings are rejected before reads or pending-state changes. Placement
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.HINT {BR.{likely, unlikely}, TEMP.{hot, warm, cool, none}, PRFSIZE}
+B.HINT {BR.likely, TEMP.hot, 64}
 ```
 
-Assume an active compatible header with no earlier conflicting `B.HINT` command. Placing `B.HINT {BR.{likely, unlikely}, TEMP.{hot, warm, cool, none}, PRFSIZE}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+In the header of an active block, this hint sets `V` to 1, `L/UL` to 1, `temp` to 3, and `prefetch_size` to 64. The encoded word is `0x00000033 | 1<<15 | 1<<16 | 3<<17 | 64<<20 = 0x04078033`. A second `B.HINT` in the same header raises `Fault_BundleControl`. By contrast, `B.HINT TRACE.begin` (`0x00001033`) placed after a fall-through block commits that block and opens a new empty block at its own address.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

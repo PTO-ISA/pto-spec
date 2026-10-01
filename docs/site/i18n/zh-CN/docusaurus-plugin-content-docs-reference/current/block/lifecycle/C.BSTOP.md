@@ -19,39 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstop-purpose role=purpose -->
 ## C.BSTOP 的作用
 
-`C.BSTOP` 是 Block 完成边界；它先验证并提交活动描述符，再选择下一架构 PC。
+`C.BSTOP` 结束并提交当前活动 block。block（也称为指令束）由 block 启动命令打开，从头部命令收集配置，执行其主体，并在提交边界处作为一个整体生效。`C.BSTOP` 是该边界的显式 16 位形式；下一个 block 启动则是隐式边界。
+
+提交时，block 所选操作被执行，`BARG`（block 参数寄存器）中记录的延续被应用，所有 block 私有状态被清除。
 
 <!-- PTO-READER-BLOCK: block-c-bstop-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`C.BSTOP` 不是 Block 体属性；它完成已经活动的 Block，没有兼容活动 Block 时属于非法。
+`C.BSTOP` 位于活动 block 主体的末尾。它以自身之后的地址作为顺序延续，调用 [提交验证](../model/commit/validation.md) 中的提交所有者。提交按以下步骤执行，并在第一次失败时停止：
 
-已接受载体使用 `C16` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+1. 没有活动 block 时引发 `Fault_BundleControl`。
+2. 延续为奇数，或 `BARG` 选择的下一 PC 为奇数时，引发 `Fault_InstructionPC`。
+3. 在非 Tile 元素或 Tile 内存 block 上出现 `DR` 控制属性时，引发 `Fault_BundleControl`。
+4. 启动命令所选的 Tile 操作执行，并带有其自身的预检与回滚。
+5. [停止](../model/lifecycle/enter-stop.md)清除 block 状态并写入 `TPC`。
 
-命令会在第一个可见效果前快照所有必需源，随后遵循归属单元定义的提交或重启边界。
+设计要点：停止形式 [BSTOP](BSTOP.md)、`C.BSTOP` 与 [L.BSTOP](L.BSTOP.md) 共用同一个处理函数 `ExecuteBundleStop`。它们只有长度不同，而长度决定顺序延续地址。位于 `P` 的 2 字节 `C.BSTOP` 在 block 未选择 `BPCN` 时于 `P + 2` 继续。
 
 <!-- PTO-READER-BLOCK: block-c-bstop-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 该指令没有编码操作数字段。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- 载体是单个 16 位半字 `0x0000`。
+- `C.BSTOP` 没有操作数字段。所有位都是固定的，因此没有默认值，也没有需要解释的编码零。
+- 输入是累积的 block 状态：`BARG`、启动命令安装的操作描述符、头部属性、维度以及操作数绑定。
 
 <!-- PTO-READER-BLOCK: block-c-bstop-effects role=effects -->
 ## 状态效果与顺序
 
-完成操作会先执行选定的活动操作，再清除 Block 私有描述符、绑定、属性与活动状态字段。
+对于 `DIRECT`、`CALL`、`IND`、`ICALL` 或 `RET` block，以及 `TAKEN` 标志被设置的 `COND` block，下一 PC 为 `BARG.BPCN`。否则为 `C.BSTOP` 之后的地址。
 
-只有 Block 提交后才发布通过验证的后继地址；被拒绝的完成会保留故障契约要求的状态。
+block 的所有架构可见内存效果都在选择延续之前提交。提交成功后，`BARG`、`BPC`、描述符、维度、操作数绑定、属性以及活动与主体标志都被清除，`TPC` 接收下一 PC。
+
+设计要点：下一 PC 与 `B.CATR` 的 `trap` 属性在清除状态之前被捕获。若 `trap` 被设置，则在 block 退役之后以下一 PC 为地址引发 `Fault_BundlePostCommit`。因此恢复会从 block 之后继续，不会让该 block 执行两次。
 
 <!-- PTO-READER-BLOCK: block-c-bstop-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+模式、适用性、执行或最终 PC 故障都在清除 block 私有状态之前引发。block 保持活动且头部完整，`BARG` 不被应用，因此陷阱上下文仍描述失败的那个 block。
 
-当前归属单元通过 `Fault_BundleControl` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+设计要点：最终目标在提交时检查，因为主体中的 `SETC.TGT` 可能在启动命令之后替换 `BPCN`。因此错误目标会在该 block 的任何 Tile 结果发布之前被拒绝。
 
-除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+在系统 block 终止请求（`ACRC`）之后，只能跟随停止或 block 启动；此处允许 `C.BSTOP`。下方生成的异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-c-bstop-example role=example -->
 ## 非规范示例
@@ -62,7 +70,7 @@ The current instruction contract is owned by the ASL source linked above.
 C.BSTOP
 ```
 
-此处完成指令作用于已经活动且兼容的 Block；若没有该活动状态，相同编码会在提交前引发故障。
+一个 `COND` block 的 `BPCN = 0x2000`。其 `C.BSTOP` 位于 `0x1040`，因此顺序延续为 `0x1042`。若主体中没有 `SETC.*` 设置 `TAKEN`，提交选择 `0x1042`；若 `TAKEN` 被设置，则选择 `0x2000`。两种情况下头部状态都被清除，block 不再活动。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

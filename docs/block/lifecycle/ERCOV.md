@@ -19,39 +19,41 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-ercov-purpose role=purpose -->
 ## What ERCOV does
 
-`ERCOV` identifies an extension-owned raw carrier family that PTO inventories but never accepts for execution.
+In PTO, `ERCOV` does nothing except fault. Its encoding family is reserved for an extension-owned execution-context recovery command. PTO lists the family so that no PTO instruction can be assigned a colliding encoding, but it never executes it.
+
+A matching instruction raises `Fault_IllegalInstruction`, except after a pending system-block terminal request as described below. The companion family [ESAVE](ESAVE.md) is reserved in the same way.
 
 <!-- PTO-READER-BLOCK: block-ercov-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-Every raw carrier matching the `ERCOV` family is reserved in PTO; it is not a standalone command or a Block-body member.
+The family is every 32-bit word whose masked bits `word & 0x06007fff` equal `0x00003031`: bits `14:0` are `0x3031` and bits `26:25` are zero. `ERCOV` has no legal placement, inside or outside a block.
 
-The matched raw carrier uses the `L32` encoding class, but `RegSrc0`, `RegSrc1`, and `RegSrc2` remain uninterpreted.
+The command dispatcher decodes the form, finds its handler `RecoverExecutionContext`, and checks `CommandHandlerSupported`. That function returns false for this handler, so the dispatcher raises `Fault_IllegalInstruction` and returns before the handler body runs.
 
-Profile rejection raises `Fault_IllegalInstruction` unconditionally before register reads, field interpretation, memory access, or architectural effects.
+Design point: the ASL does define a helper, `RecoverExecutionContextState`, in [frame lifetime](../model/lifecycle/lifetime.md). It is unreachable in PTO, because the support check rejects the command first. Its text does not describe PTO behavior.
 
 <!-- PTO-READER-BLOCK: block-ercov-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `RegSrc0` — uninterpreted extension field reserved in PTO; `RegSrc1` — uninterpreted extension field reserved in PTO; `RegSrc2` — uninterpreted extension field reserved in PTO.
-- The three displayed fields are collision-protected extension bits, not PTO operands, and are never read.
-- All `32` values of each displayed field remain reserved; zero has no PTO operand meaning.
+- `RegSrc0` (bits `19:15`), `RegSrc1` (bits `24:20`), and `RegSrc2` (bits `31:27`) appear in the canonical spelling as `BasePtr`, `LenBytes`, and `Kind`.
+- PTO never interprets these fields and never reads the registers they would name.
+- All 32 values of each field, including zero, are part of the reserved family.
+
+Design point: there is no default and no meaning for encoded zero, because rejection happens before any field is decoded as an operand.
 
 <!-- PTO-READER-BLOCK: block-ercov-effects role=effects -->
 ## State effects and ordering
 
-No source is read and no register, memory, recovery/save, Block, event, or control-flow state changes.
-
-Decode retains only the occupied-family identity so PTO cannot allocate a colliding instruction.
+None beyond the trap delivery that every fault performs. No register is read, and no register, memory, block, or memory-command state changes. The fault address is the `ERCOV` itself; `SetFault` saves the trap context and writes `TPC` to the trap vector entry, which is the fault address when no trap vector base is programmed.
 
 <!-- PTO-READER-BLOCK: block-ercov-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-The complete matched family is reserved and rejection precedes every architectural effect.
+In an ordinary context, every matching word raises `Fault_IllegalInstruction` at the current `TPC` before any effect. Rejection is unconditional: it does not depend on the field values, on the privilege ring, or on whether a block is active. There is no restart or partial-progress path.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+The dispatcher checks a pending system-block terminal request before it reaches the support check. After an `ACRC` has marked a system block as terminating, a matching word therefore raises `Fault_BundleControl` instead.
 
-Rejection is unconditional and has no restart or retained-progress path.
+The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-ercov-example role=example -->
 ## Non-normative worked example
@@ -62,7 +64,7 @@ This is a rejection example only; PTO accepts no matching carrier as an executab
 ERCOV [RegSrc0=BasePtr, RegSrc1=LenBytes, RegSrc2=Kind] (reserved in PTO)
 ```
 
-The shown spelling names reserved extension space; PTO rejects it before interpreting any displayed field.
+The word `0x00003031` (all three fields zero) and the same word with all three fields set to 31 both match the family. Both raise `Fault_IllegalInstruction` at the `ERCOV` address, and no register is read.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

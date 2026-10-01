@@ -19,39 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-fexit-purpose role=purpose -->
 ## What FEXIT does
 
-`FEXIT` is a standalone frame-lifecycle command that validates its register range and stack state before publishing frame or control-flow effects.
+`FEXIT` removes a stack frame in one command. It raises the stack pointer by the frame size and reloads a range of callee-save registers from the frame, one 8-byte slot per register. It undoes a matching [FENTRY](FENTRY.md) and then continues with the next instruction. [FRET.RA](FRET.RA.md) and [FRET.STK](FRET.STK.md) do the same restore and also return.
+
+The stack pointer is GPR 1 (`sp`). The shared frame template is described in [frame lifetime](../model/lifecycle/lifetime.md).
 
 <!-- PTO-READER-BLOCK: block-fexit-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`FEXIT` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`FEXIT` is a standalone 32-bit command. It does not open or commit a block and does not write `BARG`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows a fixed order:
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+1. Check the endpoints and frame size.
+2. Reconstruct the caller stack pointer as `caller_sp = sp + size` and record it with the instruction PC, range, and frame size.
+3. Write `sp = caller_sp`.
+4. Load the registers in range order from `caller_sp - 8`, `caller_sp - 16`, and so on, one load per step.
+5. After the last load, decrement the frame depth if it is nonzero, record the last-frame tuple, and advance `TPC` by 4.
+
+Design point: `sp` is restored before the first load, and the template records that it has done so. A retried `FEXIT` therefore does not add the frame size to `sp` a second time.
 
 <!-- PTO-READER-BLOCK: block-fexit-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DstBegin` — first register in the inclusive R2..R23 ring range; `DstEnd` — last register in the inclusive R2..R23 ring range; `uimm` — frame byte count, encoded in multiples of eight.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DstBegin`, bits `19:15`, is the first register of the range.
+- `DstEnd`, bits `24:20`, is the last register of the range.
+- `uimm` is a 12-bit field split across bits `31:25` (value bits `6:0`) and bits `11:7` (value bits `11:7`). The frame size in bytes is `uimm << 3`.
+
+The range is inclusive over the ring `R2..R23` and wraps from R23 to R2 when `DstEnd` is below `DstBegin`. Slot `k` of the range is at `caller_sp - 8*(k+1)`, the same slot `FENTRY` used for the same range.
+
+Design point: every field is always encoded; there is no default. Encoded zero in an endpoint names R0, which is outside the ring and reserved. Encoded zero in `uimm` is a real zero-byte frame and is illegal.
 
 <!-- PTO-READER-BLOCK: block-fexit-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+Each load reads one aligned 8 bytes as a relaxed load event and writes the destination register. Restoring R10 also updates the return-address state `_ReturnAddress`.
 
-The command commits at the restart boundaries named by its memory contract; earlier committed steps remain visible only where the owner explicitly permits restart progress.
+Design point: each load, its register write, and its progress step commit together as one restart event. If a load faults, earlier restored registers and the `sp` update remain. Re-executing the same `FEXIT` at the same PC resumes with the first register not yet restored and does not repeat an earlier load.
+
+Completion decrements `_FrameDepth` only when it is nonzero, and records `DstBegin`, `DstEnd`, and the frame size as the last frame.
 
 <!-- PTO-READER-BLOCK: block-fexit-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- An endpoint outside `2..23` raises `Fault_IllegalInstruction` before any `sp`, register, or memory effect.
+- A frame smaller than 8 bytes per register raises `Fault_IllegalInstruction` before any effect.
+- A load follows the ordinary data-access fault rules and faults precisely at its step.
+- While a frame template is in progress, a frame command of another kind, or one at another PC, raises `Fault_IllegalInstruction` instead of continuing it.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-fexit-example role=example -->
 ## Non-normative worked example
@@ -62,7 +77,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 FEXIT [RegDst0 ~ RegDstn], sp!, uimm
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+After `FENTRY` saved R8 to R11 in a 48-byte frame, `sp` is `0x7FD0`. `FEXIT` with `DstBegin = 8`, `DstEnd = 11`, and encoded `uimm` 6 computes `caller_sp = 0x7FD0 + 48 = 0x8000` and writes it to `sp`. It then loads R8 from `0x7FF8`, R9 from `0x7FF0`, R10 from `0x7FE8`, and R11 from `0x7FE0`. If the load of R10 faults, R8, R9, and `sp` are already restored; the retry loads R10 and R11 only.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

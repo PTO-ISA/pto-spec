@@ -19,39 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-fentry-purpose role=purpose -->
 ## What FENTRY does
 
-`FENTRY` is a standalone frame-lifecycle command that validates its register range and stack state before publishing frame or control-flow effects.
+`FENTRY` creates a stack frame in one command. It lowers the stack pointer by the frame size and saves a range of callee-save registers into the new frame, one 8-byte slot per register. It is the entry half of a pair: [FEXIT](FEXIT.md), [FRET.RA](FRET.RA.md), and [FRET.STK](FRET.STK.md) undo it.
+
+The stack pointer is GPR 1 (`sp`). The shared frame template behind all four commands is described in [frame lifetime](../model/lifecycle/lifetime.md).
 
 <!-- PTO-READER-BLOCK: block-fentry-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`FENTRY` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`FENTRY` is a standalone 32-bit command. It does not open or commit a block and does not write `BARG`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows a fixed order:
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+1. Check the endpoints and frame size.
+2. Record the instruction PC, range, frame size, and the current `sp` as the caller `sp`, and copy every source register into the template.
+3. Write `sp = caller_sp - size`.
+4. Store the saved registers in range order to `caller_sp - 8`, `caller_sp - 16`, and so on, one store per step.
+5. After the last store, increment the frame depth, record the last-frame tuple, and advance `TPC` by 4.
+
+Design point: the source registers are copied before `sp` changes, and a retried `FENTRY` stores the copies, not the current register values. A restart therefore saves exactly the values the command first observed.
 
 <!-- PTO-READER-BLOCK: block-fentry-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `SrcBegin` — first register in the inclusive R2..R23 ring range; `SrcEnd` — last register in the inclusive R2..R23 ring range; `uimm` — frame byte count, encoded in multiples of eight.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `SrcBegin`, bits `19:15`, is the first register of the range.
+- `SrcEnd`, bits `24:20`, is the last register of the range.
+- `uimm` is a 12-bit field split across bits `31:25` (value bits `6:0`) and bits `11:7` (value bits `11:7`). The frame size in bytes is `uimm << 3`.
+
+The range is inclusive over the ring `R2..R23`. When `SrcEnd` is below `SrcBegin`, the range wraps from R23 to R2. A singleton range and the full 22-register ring are both legal.
+
+Design point: every field is always encoded; there is no default. Encoded zero in `SrcBegin` or `SrcEnd` names R0, which is outside the ring and reserved. Encoded zero in `uimm` is a real zero-byte frame, which is illegal because every range holds at least one register.
 
 <!-- PTO-READER-BLOCK: block-fentry-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+Each store is one aligned 8-byte relaxed store event. The stores go to descending slots below the caller `sp`: the first register of the range is at `caller_sp - 8`.
 
-The command commits at the restart boundaries named by its memory contract; earlier committed steps remain visible only where the owner explicitly permits restart progress.
+Completion increments `_FrameDepth` (it saturates at its upper bound) and records `SrcBegin`, `SrcEnd`, and the frame size as the last frame.
+
+Design point: each store and its progress step commit together, so every store is a restart boundary. If a store faults, earlier stores and the `sp` update remain, and the template keeps the progress. Re-executing the same `FENTRY` at the same PC resumes with the first unsaved register. It does not reread the source registers, adjust `sp` again, or repeat an earlier store.
 
 <!-- PTO-READER-BLOCK: block-fentry-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- An endpoint outside `2..23` raises `Fault_IllegalInstruction` before any effect.
+- A frame smaller than 8 bytes per register raises `Fault_IllegalInstruction` before any effect.
+- A store follows the ordinary data-access fault rules. A misaligned or unmapped slot raises `Fault_DataAlignment` or `Fault_DataPage` at that step.
+- While a frame template is in progress, a frame command of another kind, or one at another PC, raises `Fault_IllegalInstruction` instead of continuing it.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-fentry-example role=example -->
 ## Non-normative worked example
@@ -62,7 +77,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 FENTRY [RegSrc0 ~ RegSrcn], sp!, uimm
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+Take `SrcBegin = 8`, `SrcEnd = 11`, and a 48-byte frame (encoded `uimm` 6), with `sp = 0x8000`. The range holds 4 registers, so the minimum frame is 32 bytes and 48 is legal. `sp` becomes `0x7FD0`. R8 is stored at `0x7FF8`, R9 at `0x7FF0`, R10 at `0x7FE8`, and R11 at `0x7FE0`. The 16 bytes from `0x7FD0` to `0x7FDF` are part of the frame but are not written. `FEXIT` with the same range and size restores all four registers and returns `sp` to `0x8000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
