@@ -33,7 +33,7 @@
     "@playwright/test": "1.62.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
-    "lighthouse": "13.4.1",
+    "lighthouse": "13.5.0",
     "typescript": "5.9.3"
   },
   "engines": {
