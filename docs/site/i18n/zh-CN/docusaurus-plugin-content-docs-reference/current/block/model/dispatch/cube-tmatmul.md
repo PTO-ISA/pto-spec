@@ -37,7 +37,7 @@ This page is a generated reference view of the normative ASL unit.
 3. 它检查指令束结构。类型对、源与目标数量、`B.DATR` 字段、`CCTRL` 用法、维度和 PE 掩码都必须合法。所有掩码必须一致，协作指令束需要掩码 `1111`。GEMV 功能要求 M 等于 1。失败时引发 `Fault_TileLegality`。
 4. 它在不故障的情况下等待每个 Shared 源都已发布，然后检查 Shared schema。
 5. 行数为零的协作 PE 消费其 Shared 绑定并返回成功。
-6. 否则它解析相对源和 subview，并检查 Local 源、CScale、累加器与 CScale 的别名、结果布局以及后处理源。
+6. 否则它解析相对源和 subview，并检查 Local 源、CScale、累加器与 CScale 的别名、结果布局以及后处理源。分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求编码的 C 选择器在重命名前不同于零扩展后的目标句柄。当前可执行模型却在解析后执行累加器检查，并把 C 的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较；issue #367 跟踪此冲突。
 7. 它分配目标组，对操作数做快照，并运行操作。若此后故障，则回滚目标。
 
 MX 功能的结果类型为 `FP32`。否则，左类型为有符号、无符号或其他类型时，结果类型分别为 `S32`、`U32` 或 `FP32`。`CCTRL` 位 1 只对累加器功能合法。位 0 要求 `pre_quant_mode`、`relu_mode` 和 `group_n_code` 为零，且 `row_max_en`、`group_max_en` 和 `max_abs_en` 为 false。
@@ -62,7 +62,7 @@ MX 功能的结果类型为 `FP32`。否则，左类型为有符号、无符号�
 TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#3, T#2, T#1, ->T<1KB>
 ```
 
-所有源都是 Local，因此该指令束不是协作的。源序号 0 是累加器 `T#3`，序号 1 是左矩阵 `T#2`，序号 2 是右矩阵 `T#1`。累加器不是 `T#1`，因为其选择器会等于 `->T` 目标句柄，而累加器别名检查会拒绝这种情况。左类型为 `FP16`，没有 `B.DATR` 时右类型也是 `FP16`，因此结果类型为 `FP32`。
+所有源都是 Local，因此该指令束不是协作的。源序号 0 是累加器 `T#3`，序号 1 是左矩阵 `T#2`，序号 2 是右矩阵 `T#1`。只有当队列解析把 `T#3` 映射到不同于 `->T` 目标句柄的物理 `TileIndex` 时，该示例才可在当前 ASL 下执行；仅凭编码写法不能证明这个检查会通过。左类型为 `FP16`，没有 `B.DATR` 时右类型也是 `FP16`，因此结果类型为 `FP32`。
 
 现在假设一个协作 `TMATMUL`，其右组来自 Shared，组 M 为 40。每个 PE 取 16 行。PE0 拥有 16 行，PE1 拥有 16 行，PE2 拥有 8 行，PE3 拥有 0 行。PE3 通过阶段 1 到 4，然后在阶段 5 停止。
 

@@ -35,7 +35,7 @@ Design point: encoded immediate zero contributes a zero displacement, so the ins
 <!-- PTO-READER-BLOCK: scalar-addtpc-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-`imm20` supplies the signed `20`-bit page displacement: the encoded value is sign-extended, then scaled by `4096` bytes. Its `20` bits cover a range of plus or minus two gigabytes of pages.
+`imm20` supplies a signed `20`-bit page displacement from `-524288` through `524287` pages. Scaling by `4096` bytes gives a byte displacement from `-2147483648` through `2147479552` (`-2 GiB` through `2 GiB - 4 KiB`).
 
 `RegDst` names the destination. Codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
 
@@ -60,8 +60,6 @@ Design point: the address arithmetic and the program counter advance are separat
 Decode runs first. A fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
 
 The only constrained field is `RegDst`, whose value `10` is reserved and also raises `Fault_IllegalInstruction` before any effect. `imm20` has no reserved values: all `20`-bit patterns are assigned, including the sign bit.
-
-An unavailable selected `T` or `U` source is rejected during the operand-legality step, before the destination is written. A failure leaves the destination register, the queues, and `TPC` unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-example role=example -->
 ## Non-normative example

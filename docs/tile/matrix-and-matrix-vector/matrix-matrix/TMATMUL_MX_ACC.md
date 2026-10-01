@@ -45,7 +45,7 @@ Exactly one `B.FPATR` then selects post-processing. With all fields zero, D keep
 
 The Local mathematical sources are bound in this order:
 
-- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero, and it must not name D's destination hand.
+- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero. Mnemonic clause `PTO-TMATMUL-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require its encoded relative selector to differ from D's zero-extended `DstTile` hand before rename; the executable check differs as explained below.
 - `source1` is the left matrix A: valid shape [M, K], type AType, and layout `CUBE_M16` (M at most 16) or `CUBE_M32` (M at most 32).
 - `source2` is A's scale, bound only when AType is not FP16 or BF16: valid shape [M, G] in `CUBE_M32`, where G is K divided by the group size, rounded up. The carrier is `E8M0` with groups of 32, or `U32` with groups of 64 for HiF4X2.
 - `source3` is the right matrix B: valid shape [K, N], type BType, and layout `CUBE_N8`.
@@ -62,7 +62,7 @@ AType and BType are chosen independently from FP16, BF16, E4M3, E5M2, E2M1X2, E1
 
 Design point: a side carries a scale exactly when it needs one. FP16 and BF16 need none, so a form with an FP16 left side and an E4M3 right side binds only the right scale, and a form with two FP16 sides takes the FP32 rounding path described above.
 
-Design point: C is read into a private copy before D is written, and C stays unchanged after success or rejection. A chain of accumulating steps therefore names the previous D as the next C.
+Design point: mnemonic clause `PTO-TMATMUL-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but an accumulating chain is executable only when the resolved C index passes the current comparison.
 
 Cooperative execution: `B.IOS` may replace the complete right group (B and its scale when one is needed), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M, from 1 to 128, N and K must be powers of two, and every binding needs `PE_MASK` 1111. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
 
@@ -101,7 +101,7 @@ With FP16 on both sides, no scale is bound, and the sources are C, A, and B. Tak
 
 With HiF4X2 on both sides and K = 128, each side needs a `U32` scale with G = 128 / 64 = 2. The sources are then C, A, A's scale [16, 2], B, and B's scale [16, 2].
 
-In macro form, the two cases are:
+The two non-normative macro sketches below are conditional on queue resolution mapping C to a physical `TileIndex` different from the destination hand, which is what the current executable model actually checks:
 
 ```text
 TMATMUL_MX_ACC <M=16, N=16, K=16, FP16>, T#1, T#2, T#3, ->T<1KB>

@@ -58,7 +58,7 @@ Reg5 源码读取绝对 GPR、`T#1..T#4` 或 `U#1..U#4`，且不消费队列项�
 <!-- PTO-READER-BLOCK: scalar-fexp-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+本示例用于说明当前所有者，不会脱离规范规则或活动配置档另行定义算术语义。
 
 规范 FP64 示例是 `fexp.fd a0, ->a1`：GPR `a0` 保存 `0x0000000000000000`，表示 `0.0`，GPR `a1` 收到 `0x3ff0000000000000`，表示 `1.0`，且不记录任何标志。
 

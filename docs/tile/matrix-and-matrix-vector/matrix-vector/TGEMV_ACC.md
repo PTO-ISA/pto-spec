@@ -45,7 +45,7 @@ Exactly one `B.FPATR` then selects post-processing. With all fields zero, D keep
 
 The Local mathematical sources are bound in this order:
 
-- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero, and its encoded relative selector must differ from D's zero-extended `DstTile` hand.
+- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero. Mnemonic clause `PTO-TGEMV-ACC-CONTRACT-001` permits C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The executable check differs from both descriptions as explained below.
 - `source1` is the left vector A: valid shape [1, K], type AType, and layout `CUBE_M16` or `CUBE_M32`.
 - `source2` is the right matrix B: valid shape [K, N], type BType, and layout `CUBE_N8`.
 
@@ -57,7 +57,7 @@ AType is the `BSTART` data type. BType is the `B.DATR` `DataType`, and equals AT
 
 AType and BType must both be ordinary Matrix types of one numeric class: both floating, both signed integer, or both unsigned integer. HiF4X2 is not an ordinary Matrix type; it is accepted only by the MX forms.
 
-Design point: C is read into a private copy before D is written, and C stays unchanged after success or rejection. A later bundle can therefore bind a previous D as its C, as long as that C's encoded relative selector differs from the new D's `DstTile` hand.
+Design point: the mnemonic NDF allows C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires their encoded selector and destination hand to differ before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this three-way source conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but a later bundle is executable only when the resolved C index passes the current comparison.
 
 `TGEMV_ACC` is Local only. Every Shared binding and a nonzero `TransA` or `TransB` is rejected, and any common nonzero `PE_MASK` is legal.
 
@@ -75,7 +75,7 @@ The operation has no global-memory effect. Post-processing is the only source of
 <!-- PTO-READER-BLOCK: tile-tgemv-acc-constraints role=constraints -->
 ## Legality and fault boundary
 
-- `PE_MASK=0000` on every binding is a strict no-op before any descriptor read, fault, or allocation.
+- After command-level encoding and size-code checks pass, `PE_MASK=0000` on every binding skips matrix-handler descriptor reads, faults, and allocation. Earlier command checks still apply.
 - A missing `B.FPATR` raises `Fault_BundleControl`, and an undecodable CUBE selector raises `Fault_IllegalInstruction`.
 - An illegal type pair, source or destination count, `B.DATR` field, `CCTRL` use, dimension, mask, descriptor, alias, layout, or post-processing source raises `Fault_TileLegality` before allocation.
 - A full destination hand, a destination size too small for the CUBE storage of D, RowMaxOut, or GroupMaxOut, or a destination group that exceeds the remaining capacity, raises `Fault_TileAllocation`.
@@ -92,7 +92,7 @@ Take FP16 inputs with N = 2 and K = 2. The accumulator row C is 0.5, -1.0, the l
 
 Column 0 starts at 0.5 and adds 3.0 and 8.0 to reach 11.5. Column 1 starts at -1.0 and adds 5.0 and 12.0 to reach 16.0. C still holds 0.5, -1.0 afterwards.
 
-In macro form, `T#2` is C, `T#1` is the vector, and `T#3` is the matrix:
+In the non-normative macro sketch below, `T#2` is C, `T#1` is the vector, and `T#3` is the matrix. It is conditional on queue resolution mapping C to a physical `TileIndex` different from the destination hand, which is what the current executable model actually checks:
 
 ```text
 TGEMV_ACC <M=1, N=16, K=16, FP16>, T#2, T#1, T#3, ->T<1KB>

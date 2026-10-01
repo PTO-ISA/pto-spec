@@ -55,7 +55,7 @@ This page is a generated reference view of the normative ASL unit.
 - [打包数据类型](../data-types/packed.md)为已分类的 Tile 操作提供类型背景。
 - [编码所有权](encoding-ownership.md)把现行载体与保留根和已删除名称区分开。
 - [BSTART.VEC](../../block/execution/BSTART.VEC.md)、[BSTART.SFU](../../block/execution/BSTART.SFU.md) 和 [BSTART.TEPL](../../block/execution/BSTART.TEPL.md) 拥有各拼写的别名合法性。
-- [TileOp 宏汇编](../../virtual-isa/tileop-macro-assembly.md)展示本单元拥有的规范宏形式。
+- [本页规范 ASL](#normative-asl)中的 `PTO-AS-TILEOP-MACRO-001` 和 `PTO-TILEOP-MACRO` 记录拥有规范 TileOp 宏拼写与字段映射。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

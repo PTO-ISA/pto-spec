@@ -22,7 +22,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-numeric-status-concepts-state role=concepts-state -->
 ## 共享字中的标志布局
 
-`NumericStatusFlags` 只是读取 `core_state[36:32]`。该子句按从高到低的顺序命名这些位，因此位 `36` 是 `NV`，位 `35` 是 `DZ`，位 `34` 是 `OF`，位 `33` 是 `UF`，位 `32` 是 `NX`。
+`NumericStatusFlags` 只是读取 `core_state[36:32]`。数值运算的标志生成函数把 `NV` 编码在标志位 `0`，把 `DZ`、`OF`、`UF` 和 `NX` 分别编码在位 `1`、`2`、`3` 和 `4`。存储这个向量后，位 `32` 是 `NV`，位 `33` 是 `DZ`，位 `34` 是 `OF`，位 `35` 是 `UF`，位 `36` 是 `NX`；子句中标志名称的排列不会反转这一映射。
 
 其他代码会读写字中的相邻位：`asl/arch/system-registers/access-control.asl` 中的 `SetCurrentACR` 把当前环写入 `core_state[3:0]`，而 `asl/scalar/model/fsu/scalar-fp.asl` 中的 `ScalarFPActiveRoundingMode` 从 `core_state[39:37]` 读取当前生效的舍入模式。
 

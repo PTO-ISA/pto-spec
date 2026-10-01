@@ -35,8 +35,8 @@ Design point: the setter forms pass the `11` modifier through unchanged, so `SET
 <!-- PTO-READER-BLOCK: scalar-setc-ne-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left absolute GPR source.
-- `SrcR` supplies the right absolute GPR source.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcR` uses the same Reg5 mapping.
 - `SrcRType` transforms the `SrcR` snapshot before the test: value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and values `0` and `3` leave the complete word unchanged.
 
 Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Sources are not consumed, and the instruction writes no `GPR`, `T`, or `U` destination.

@@ -35,7 +35,7 @@ Design point: the shift makes the immediate field cover values that a plain `12`
 <!-- PTO-READER-BLOCK: scalar-setc-geui-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left absolute GPR source, read as a complete word.
+- `SrcL` is a Reg5 source read as a complete word: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
 - `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
 - `uimm12` supplies the unsigned encoded immediate; encoded zero supplies numeric zero.
 

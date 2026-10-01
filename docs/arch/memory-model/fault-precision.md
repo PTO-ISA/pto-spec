@@ -42,9 +42,9 @@ The body writes `_MemoryReplayState`, the trap bank arrays, `_LastFault`, `_Faul
 
 Design point: `FlushMemoryReplay` rewrites `_MemoryEventCount` and nothing else, so it cannot undo a GM write or a tile payload element; the caller wrote those before recording the event. Records above the checkpoint stay in `_MemoryEvents` but unreachable: readers bound themselves by `_MemoryEventCount`, and `AddMemoryEvent` overwrites that slot next.
 
-Design point: `MemoryReplayCanRetryWholeRequest` needs `!_MemoryReplayState.active` and a `request` equal to the saved one or `Zeros{PTO_XLEN}`. Because `FlushMemoryReplay` clears `active`, a request is retryable only after a flush or a completion, and the caller must pass the same `Word` it passed to `BeginMemoryReplay`.
+Design point: `MemoryReplayCanRetryWholeRequest` requires inactive replay state and either a saved request equal to the supplied `request` or a saved request of `Zeros{PTO_XLEN}`. A saved zero is a wildcard that accepts any supplied request; supplying zero does not bypass a nonzero saved request. `FlushMemoryReplay` and `CompleteMemoryReplay` clear `active`, and reset also starts with inactive state and a zero saved request.
 
-Design point: `SetFaultWithCause` writes the code before the `case`, so `Fault_None` leaves a bank with zero cause, false argument-valid and trap number `0`, while `_FaultAddress` keeps its previous value. Clearing the indicator therefore does not clear the address; `ClearFault` zeroes both.
+Design point: `SetFaultWithCause` writes the supplied `address` and `cause` before the `case`, even for `Fault_None`. That code leaves argument-valid false and trap number `0`, but `_FaultAddress` becomes the supplied address and the current bank stores the supplied cause. `ClearFault` instead zeroes the fault address and the bank's cause.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-boundaries role=boundaries -->
 ## Boundaries

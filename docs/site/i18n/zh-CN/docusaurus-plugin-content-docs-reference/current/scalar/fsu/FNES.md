@@ -30,7 +30,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 指令契约指定 `FloatingCompare_NE`，并声明自己是一次 signaling 比较。只要任一输入是 NaN（无论 quiet 还是 signaling），处理程序都会记录 `NV`，因为本形式属于 signaling。
 
-相等性按值而不是按原始编码判定：`-0` 与 `+0` 的编码不同，但按值相等，因此该组合发布的判定结果是 `0`。这里只需要不等测试，所以结果就是相等测试的取反。
+相等性按值而不是按原始编码判定：`-0` 与 `+0` 的编码不同，但按值相等，因此该组合发布的判定结果是 `0`。对于非 NaN 操作数，不等结果是相等结果的取反；只要任一操作数是 NaN，有序比较结果就是 `0`。
 
 设计要点：NaN 与任何值比较都是无序的，而本形式被声明为 signaling，因此无序情况既体现在结果侧，也体现在状态侧。到达 signaling 比较的 quiet NaN 因此会在 `CORE_STATE[32]` 中可见，这正是让程序知道比较中有 NaN 参与的信号。
 

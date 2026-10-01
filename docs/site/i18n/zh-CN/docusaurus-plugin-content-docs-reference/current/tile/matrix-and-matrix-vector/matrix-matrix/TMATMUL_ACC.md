@@ -45,7 +45,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 Local 数学源按以下顺序绑定：
 
-- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量，且其编码相对选择器必须不同于 D 零扩展后的 `DstTile` 句柄。
+- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量。助记符条款 `PTO-TMATMUL-ACC-CONTRACT-001` 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求 C 的编码相对选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄。可执行检查与这两种描述都不同，见下文。
 - `source1` 是左矩阵 A：有效形状 [M, K]，类型 AType，布局 `CUBE_M16`（M 不超过 16）或 `CUBE_M32`（M 不超过 32）。
 - `source2` 是右矩阵 B：有效形状 [K, N]，类型 BType，布局 `CUBE_N8`。
 - 设置 `CScaleEn` 时，后面再跟一个源：有效形状为 [M, 1] 的 `U8` `CUBE_M32` Tile，每行保存一个指数。CScale 要求 FP32 累加器。
@@ -58,7 +58,7 @@ AType 是 `BSTART` 数据类型。BType 是 `B.DATR` 的 `DataType`，省略 `B.
 
 AType 与 BType 必须都是同一数值类别的普通矩阵类型：同为浮点、同为有符号整数或同为无符号整数。HiF4X2 不是普通矩阵类型；只有 MX 形式接受它。
 
-设计要点：在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝，C 都保持不变。因此后续指令束可以把前一个 D 绑定为自己的 C，前提是该 C 的编码相对选择器不同于新 D 的 `DstTile` 句柄。
+设计要点：助记符 NDF 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求它们的编码选择器与目标句柄在重命名前不同。当前可执行模型先解析 C，再把它的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。Issue #367 跟踪这一三方来源冲突。在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝都保持不变；但累加链只有在解析后的 C 索引通过当前比较时才可执行。
 
 协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128，N 与 K 必须是 2 的幂，且每个绑定都需要 `PE_MASK` 1111。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
 
@@ -80,7 +80,7 @@ D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在�
 <!-- PTO-READER-BLOCK: tile-tmatmul-acc-constraints role=constraints -->
 ## 合法性与故障边界
 
-- 所有绑定的 `PE_MASK=0000` 是严格无操作，发生在任何描述符读取、故障或分配之前。
+- 命令级编码与 size code 检查通过后，所有绑定的 `PE_MASK=0000` 会跳过矩阵处理程序的描述符读取、故障与分配；更早的命令检查仍然适用。
 - 缺少 `B.FPATR` 会引发 `Fault_BundleControl`，无法解码的 CUBE 选择器会引发 `Fault_IllegalInstruction`。
 - 非法的类型对、源或目标数量、`B.DATR` 字段、`CCTRL` 用法、维度、掩码、描述符、别名、布局或后处理源，会在分配之前引发 `Fault_TileLegality`。
 - 目标句柄已满、目标大小不足以容纳 D、RowMaxOut 或 GroupMaxOut 的 CUBE 存储，或目标组超出剩余容量时，引发 `Fault_TileAllocation`。
@@ -97,7 +97,7 @@ D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在�
 
 累加和从 10.0 开始，加上 1.0 x 3.0 = 3.0 得到 13.0，再加上 2.0 x 4.0 = 8.0 得到 21.0。启用 CScale 且指数为 1 时，起始值为 10.0 / 2 = 5.0，D 为 16.0。之后 C 仍保存 10.0。
 
-以宏形式表示，第二行中 `T#2` 是 C，`T#1` 是 A，`T#3` 是 B，`T#4` 是 CScale Tile：
+下面的两份非规范宏草图中，`T#2` 都是 C，`T#1` 是 A，`T#3` 是 B；第二行中的 `T#4` 是 CScale Tile。它们以队列解析把 C 映射到不同于目标句柄的物理 `TileIndex` 为条件；这正是当前可执行模型实际检查的条件：
 
 ```text
 TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#2, T#1, T#3, ->T<1KB>

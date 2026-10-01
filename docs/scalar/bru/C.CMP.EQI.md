@@ -30,7 +30,7 @@ The contract returns `ScalarHandler_ExecuteCompare` with the condition `ScalarCo
 
 Both operands are read before the queue write. The left operand is fixed by the handler, not by an encoded field: the model reads `T#1` as register code `24`, which selects temporary queue index zero without consuming it. The right operand is `simm5`, sign-extended from `5` bits to XLEN.
 
-The destination is fixed too: register code `31`, which the destination model maps to a push onto the `T` queue. The model reads the implicit `T#1` source without consulting its queue-validity flag, so no fault is defined for reading an empty `T` queue: that requirement is an architectural precondition on software, not a check the executable model performs.
+The destination is fixed too: register code `31`, which the destination model maps to a push onto the `T` queue. The model reads the implicit `T#1` source without consulting its queue-validity flag. The current ASL compares the backing `_TQueue[[0]]` word even when that entry is invalid; it does not raise a queue-validity fault. Whether that invalid read must fault or may expose the backing word remains an owner gap, so this page does not impose a software precondition.
 
 Design point: read-then-push ordering is what makes the single queue both the source and the result carrier. The push shifts the existing entries toward older indices, so the value that was `T#1` becomes `T#2` and the new result becomes `T#1`, while the compared value is already snapshotted.
 
@@ -59,7 +59,7 @@ Design point: the result is a data value, not a commit decision. A program that 
 
 All `32` values of `simm5` are assigned; there is no reserved immediate and nothing for a reserved-encoding check to reject.
 
-The check order is decode, then operand legality, then scalar source availability. Operand legality covers encoded fields only, and this form encodes no source selector: register code `24` is written into the handler, not into the instruction. There is therefore no source-availability check to fail, and an empty `T` queue is not rejected with `Fault_IllegalInstruction`.
+The check order is decode, then operand legality, then scalar source availability. Operand legality covers encoded fields only, and this form encodes no source selector: register code `24` is written into the handler, not into the instruction. The current availability preflight therefore does not validate implicit `T#1`; whether an invalid entry must raise `Fault_IllegalInstruction` remains an owner gap.
 
 An instruction rejected for a fixed-bit mismatch leaves the `T` queue contents and the push order unchanged, and trap entry saves the original `TPC`.
 

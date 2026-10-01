@@ -36,7 +36,7 @@ The contract is `PTO-ARCH-GM-ACCESS-001`. The unit has two executable functions 
 
 `SharedGMPESelected(pe_mask, pe)` returns `pe_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1'`, so mask bit `3` is PE0 and mask bit `0` is PE3.
 
-Design point: a zero mask is legal for every function because it is handled before the function test, while a nonzero subset is legal only for Function `1`. A Shared store written with Function `14` and a subset mask is therefore rejected by the caller as a `Fault_TileLegality` rather than silently ignored, and the zero mask that Function `14` does accept is the all-PE selection that `SharedGMPESelected` maps to every PE.
+Design point: a zero mask is legal for every function because it is handled before the function test, while a nonzero subset is legal only for Function `1`. A Shared store written with Function `14` and a subset mask is therefore rejected by the caller as a `Fault_TileLegality` rather than silently ignored, and the zero mask that Function `14` does accept selects no PE through `SharedGMPESelected`. Mask legality and PE participation are separate checks; accepting zero does not turn it into an all-PE selection.
 
 Design point: base defaulting and stride defaulting are different operations. An absent `B.IOR` gives base zero and a stride of the dense physical row width, but an explicitly encoded zero GPR value gives a base of zero and a stride of zero, so all rows of that request alias one row of GM. `SharedStorePEMaskLegal` and `SharedGMPESelected` implement none of this: the defaulting belongs to the bundle dispatch that materializes the per-PE base and stride words.
 

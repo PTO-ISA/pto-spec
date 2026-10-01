@@ -35,8 +35,8 @@ Design point: the committed value is canonicalized to `1` or `0` instead of bein
 <!-- PTO-READER-BLOCK: scalar-setc-geu-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left absolute GPR source.
-- `SrcR` supplies the right absolute GPR source.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcR` uses the same Reg5 mapping.
 - `SrcRType` selects the transformation applied to the `SrcR` snapshot before the relation is tested: value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and values `0` and `3` both leave the complete value unchanged.
 
 Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Neither source is consumed, and the instruction writes no `GPR`, `T`, or `U` destination.

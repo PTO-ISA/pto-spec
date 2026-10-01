@@ -59,7 +59,7 @@ Design point: overflow returns infinity in every rounding mode, because step 2 a
 
 Callers must remove NaN and infinity inputs before calling the finite functions. For scalar arithmetic, `ReferenceScalarFPBinarySpecial` in this unit and the unary and fused special functions in the special-value unit do this.
 
-The ASL comment above `ReferenceScalarFPDataType` states that scalar FP operations follow IEEE 754-2008 and that non-finite and signed-zero handling is kept outside the finite kernel, so an overflowed infinity stays a legal input to the next instruction.
+The comment above `ReferenceScalarFPDataType` describes an IEEE 754-2008 intent, but it is not a conformance guarantee. Executable helper behavior and the active profile owners define the current result; full conformance remains tracked by issue #367.
 
 `ReferenceFP16FiniteEncoding` has no caller in the ASL tree; the scalar FP16 path uses `ReferenceBinary16Encoding` instead.
 

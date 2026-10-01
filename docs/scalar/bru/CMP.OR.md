@@ -35,12 +35,12 @@ Design point: the two operands are combined first and tested second, so the inst
 <!-- PTO-READER-BLOCK: scalar-cmp-or-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left absolute GPR source and `SrcR` supplies the right absolute GPR source.
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
 - `SrcRType` selects the right-source transformation.
 
 `RegDst` names the destination: codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
 
-Encoded zero in `SrcL` names the architectural zero GPR. Sources are read as values and are not consumed.
+Code `0` in either source reads the architectural zero GPR. Queue sources are read without being consumed.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-or-effects role=effects -->
 ## Effects and ordering

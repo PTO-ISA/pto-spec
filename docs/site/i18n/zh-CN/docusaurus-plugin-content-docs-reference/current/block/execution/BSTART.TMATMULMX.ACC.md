@@ -62,7 +62,7 @@ D 的元素类型为 `FP32`。非零的 `PreQuantMode` 会为 D 选择该模式�
 
 设计要点：缩放 Tile 恰好在其所在一侧需要时出现。`FP16` 与 `BF16` 侧不携带缩放，因此预期的源数量取决于两侧类型。缺少或多出缩放会改变数量，并在分配之前以 `Fault_TileLegality` 被拒绝。
 
-设计要点：C 必须与 D 不同。契约要求 C 的编码源选择器不同于 D 零扩展后的 `DstTile` 手，比较失败时 `BundleMatrixAccumulatorDestinationIndicesDistinct` 在分配之前引发 `Fault_TileLegality`。C 在乘积计算之前被快照，无论成功还是被拒绝都保持不变，因此旧的累加器仍可读取。
+设计要点：助记符条款 `PTO-TMATMUL-MX-ACC-CONTRACT-001` 与分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 都要求 C 的编码选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄。可执行模型却在阶段 2 解析 C，随后 `BundleMatrixAccumulatorDestinationIndicesDistinct` 把 C 的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。比较失败时，它在分配之前引发 `Fault_TileLegality`。Issue #367 跟踪此冲突。C 在乘积计算之前被快照，无论成功还是被拒绝都保持不变。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-effects role=effects -->
 ## 状态效果与顺序
@@ -90,14 +90,14 @@ D 按 A 的 M 布局分配。当 A 本身为 Shared 时，布局取自 C。
 
 此形式只有在结果为 `FP32` 时 `CScaleEn` 才合法。CScale 源是一个 M 行 1 列的 Local `U8` `CUBE_M32` Tile，并且不得与任何目标手共享索引。参见[矩阵缩放](../model/dispatch/matrix-scale.md)。
 
-所有绑定的 `PE_MASK` 均为 0000 时是严格无操作：矩阵处理程序不读取任何描述符，也不引发任何故障。
+`PE_MASK` 为 0000 时，固定的 `B.IOT` 译码与 SizeCode 合法性检查仍然适用。这些检查通过后，每条零掩码 `B.IOT` 都会在放置与 schema 检查之前返回。提交时，零参与使 Tile 分派在调用矩阵操作处理程序之前返回。
 
 不在接受集合内的 `DataType` 在起始时引发 `Fault_IllegalInstruction`。缺少 `B.FPATR` 会引发 `Fault_BundleControl`。类型、数量、形状、布局、别名或后处理检查失败会引发 `Fault_TileLegality`，目标手已满或容量不足会引发 `Fault_TileAllocation`。这些故障都发生在任何目标发布之前。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-example role=example -->
 ## 非规范示例
 
-该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
+该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。只有当队列解析把 C 映射到不同于目标句柄的物理 `TileIndex` 时，它才可在当前 ASL 下执行。
 
 下面的规范宏计算一个 16 x 32 的结果，K 等于 64。C 是 `T#5`，即一个 16 x 32、位于 `CUBE_M16`、容量为 2KB 的 `FP32` Tile；A 是 `T#4`，即一个 16 x 64、位于 `CUBE_M16` 的 `E4M3` Tile；A 缩放 是 `T#3`，即一个 16 x 2、位于 `CUBE_M32` 的 `E8M0` Tile；B 是 `T#2`，即一个 64 x 32、位于 `CUBE_N8` 的 `E4M3` Tile；B 缩放 是 `T#1`，即一个 32 x 2、位于 `CUBE_M32` 的 `E8M0` Tile。
 

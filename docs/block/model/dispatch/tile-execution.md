@@ -48,7 +48,9 @@ When the generic path is taken, the unit decodes the operation and returns true 
 
 Design point: the ASL comment says raw B.IOR values are validated after the zero-mask exit and before destination allocation. Invalid values never reach the operand record or Tile state.
 
-On success the unit commits Local generations, retires consumer dependencies, discards subviews, and finalizes the attempt, which publishes bundle-allocated destinations. On failure it rolls back bundle-allocated destinations and aborts generations. The outer function also aborts Local and Shared generations whenever the attempt did not complete.
+On success the unit commits Local generations, retires consumer dependencies, discards subviews, and finalizes the attempt, which publishes bundle-allocated destinations. After destination resolution succeeds, a later failure rolls back bundle-allocated destinations and aborts generations. The outer function also aborts Local and Shared generations whenever the attempt did not complete.
+
+Current executable gap: if `ResolveBundleTileDestinationsForOperation` itself fails after an earlier binding has already allocated a destination, this path aborts generations and discards subviews but does not call `RollBackBundleTileDestinations`. Destination resolution can allocate an earlier binding before a later binding fails, so cleanup for this resolution-failure case is not established. Issue #367 tracks the conflict; the rollback guarantee above applies only to failures after successful destination resolution.
 
 Design point: when `far` is set, the far path calls the local path unchanged. The ASL comment states that routing and transport are not architecturally observable, so results are published only through the same commit path as a local bundle.
 

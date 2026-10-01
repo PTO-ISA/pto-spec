@@ -56,7 +56,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setret-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not create a second semantic definition.
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
 在 `TPC=1000` 处执行编码字段为 `imm20=64` 的形式。位移缩放为 `128`，因此 `R10` 和 Bundle 局部返回地址都收到 `1128`，而执行继续，下一条指令的 `TPC=1004`。
 <!-- SUPPLEMENTARY-END -->

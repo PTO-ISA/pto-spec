@@ -22,7 +22,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-numeric-status-concepts-state role=concepts-state -->
 ## Flag layout in the shared word
 
-`NumericStatusFlags` performs a plain read of `core_state[36:32]`. The clause names the bits in descending order, so bit `36` is `NV`, bit `35` is `DZ`, bit `34` is `OF`, bit `33` is `UF` and bit `32` is `NX`.
+`NumericStatusFlags` performs a plain read of `core_state[36:32]`. The numeric producers encode `NV` in flag bit `0`, `DZ` in bit `1`, `OF` in bit `2`, `UF` in bit `3` and `NX` in bit `4`. Storing that vector puts `NV` at bit `32`, `DZ` at bit `33`, `OF` at bit `34`, `UF` at bit `35` and `NX` at bit `36`; the clause's list of flag names does not reverse this mapping.
 
 Other code reads and writes neighbouring bits of the same word: `SetCurrentACR` in `asl/arch/system-registers/access-control.asl` writes the current ring into `core_state[3:0]`, and `ScalarFPActiveRoundingMode` in `asl/scalar/model/fsu/scalar-fp.asl` reads the active rounding mode from `core_state[39:37]`.
 

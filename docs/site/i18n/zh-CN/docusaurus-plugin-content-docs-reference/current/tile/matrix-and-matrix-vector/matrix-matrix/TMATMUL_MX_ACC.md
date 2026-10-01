@@ -45,7 +45,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 Local 数学源按以下顺序绑定：
 
-- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量，且它不得指向 D 的目标句柄。
+- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量。助记符条款 `PTO-TMATMUL-MX-ACC-CONTRACT-001` 与分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 都要求其编码相对选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄；可执行检查与此不同，见下文。
 - `source1` 是左矩阵 A：有效形状 [M, K]，类型 AType，布局 `CUBE_M16`（M 不超过 16）或 `CUBE_M32`（M 不超过 32）。
 - `source2` 是 A 的缩放，仅在 AType 不是 FP16 或 BF16 时绑定：`CUBE_M32` 中的有效形状 [M, G]，其中 G 为 K 除以组大小后向上取整。载体为按 32 分组的 `E8M0`，HiF4X2 则为按 64 分组的 `U32`。
 - `source3` 是右矩阵 B：有效形状 [K, N]，类型 BType，布局 `CUBE_N8`。
@@ -62,7 +62,7 @@ AType 与 BType 各自独立地从 FP16、BF16、E4M3、E5M2、E2M1X2、E1M2X2 �
 
 设计要点：某一侧恰好在需要时才带缩放。FP16 与 BF16 不需要缩放，因此左侧为 FP16、右侧为 E4M3 的形式只绑定右侧缩放，而两侧都为 FP16 的形式走上文所述的 FP32 舍入路径。
 
-设计要点：在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝，C 都保持不变。因此一串累加步骤把前一个 D 作为下一个 C。
+设计要点：助记符条款 `PTO-TMATMUL-MX-ACC-CONTRACT-001` 与分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 都要求 C 的编码相对选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄。当前可执行模型先解析 C，再把它的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。Issue #367 跟踪此冲突。在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝都保持不变；但累加链只有在解析后的 C 索引通过当前比较时才可执行。
 
 协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B 及其所需的缩放），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128，N 与 K 必须是 2 的幂，且每个绑定都需要 `PE_MASK` 1111。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
 
@@ -101,7 +101,7 @@ D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在�
 
 两侧都为 HiF4X2 且 K = 128 时，每一侧都需要 G = 128 / 64 = 2 的 `U32` 缩放。此时源依次为 C、A、A 的缩放 [16, 2]、B 与 B 的缩放 [16, 2]。
 
-以宏形式表示，两种情况分别为：
+下面两份非规范宏草图以队列解析把 C 映射到不同于目标句柄的物理 `TileIndex` 为条件；这正是当前可执行模型实际检查的条件：
 
 ```text
 TMATMUL_MX_ACC <M=16, N=16, K=16, FP16>, T#1, T#2, T#3, ->T<1KB>

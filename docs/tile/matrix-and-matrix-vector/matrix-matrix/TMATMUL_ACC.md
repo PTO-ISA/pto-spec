@@ -45,7 +45,7 @@ Exactly one `B.FPATR` then selects post-processing. With all fields zero, D keep
 
 The Local mathematical sources are bound in this order:
 
-- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero, and its encoded relative selector must differ from D's zero-extended `DstTile` hand.
+- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero. Mnemonic clause `PTO-TMATMUL-ACC-CONTRACT-001` permits C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The executable check differs from both descriptions as explained below.
 - `source1` is the left matrix A: valid shape [M, K], type AType, and layout `CUBE_M16` (M at most 16) or `CUBE_M32` (M at most 32).
 - `source2` is the right matrix B: valid shape [K, N], type BType, and layout `CUBE_N8`.
 - When `CScaleEn` is set, one more source follows: a `U8` `CUBE_M32` Tile with valid shape [M, 1] that holds one exponent per row. CScale requires an FP32 accumulator.
@@ -58,7 +58,7 @@ AType is the `BSTART` data type. BType is the `B.DATR` `DataType`, and equals AT
 
 AType and BType must both be ordinary Matrix types of one numeric class: both floating, both signed integer, or both unsigned integer. HiF4X2 is not an ordinary Matrix type; it is accepted only by the MX forms.
 
-Design point: C is read into a private copy before D is written, and C stays unchanged after success or rejection. A later bundle can therefore bind a previous D as its C, as long as that C's encoded relative selector differs from the new D's `DstTile` hand.
+Design point: the mnemonic NDF allows C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires their encoded selector and destination hand to differ before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this three-way source conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but an accumulating chain is executable only when the resolved C index passes the current comparison.
 
 Cooperative execution: `B.IOS` may replace the complete right group (B), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M, from 1 to 128, N and K must be powers of two, and every binding needs `PE_MASK` 1111. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
 
@@ -80,7 +80,7 @@ A cooperative bundle waits, without a fault, until every Shared source is whole-
 <!-- PTO-READER-BLOCK: tile-tmatmul-acc-constraints role=constraints -->
 ## Legality and fault boundary
 
-- `PE_MASK=0000` on every binding is a strict no-op before any descriptor read, fault, or allocation.
+- After command-level encoding and size-code checks pass, `PE_MASK=0000` on every binding skips matrix-handler descriptor reads, faults, and allocation. Earlier command checks still apply.
 - A missing `B.FPATR` raises `Fault_BundleControl`, and an undecodable CUBE selector raises `Fault_IllegalInstruction`.
 - An illegal type pair, source or destination count, `B.DATR` field, `CCTRL` use, dimension, mask, descriptor, alias, layout, or post-processing source raises `Fault_TileLegality` before allocation.
 - A full destination hand, a destination size too small for the CUBE storage of D, RowMaxOut, or GroupMaxOut, or a destination group that exceeds the remaining capacity, raises `Fault_TileAllocation`.
@@ -97,7 +97,7 @@ Take FP16 inputs and an FP32 accumulator with M = 1, N = 1, and K = 2. The accum
 
 The sum starts at 10.0, adds 1.0 x 3.0 = 3.0 to reach 13.0, and adds 2.0 x 4.0 = 8.0 to reach 21.0. With CScale enabled and exponent 1, the start value is 10.0 / 2 = 5.0 and D is 16.0. C still holds 10.0 afterwards.
 
-In macro form, `T#2` is C, `T#1` is A, `T#3` is B, and `T#4` is the CScale Tile in the second line:
+In the non-normative macro sketches below, `T#2` is C, `T#1` is A, `T#3` is B, and `T#4` is the CScale Tile in the second line. They are conditional on queue resolution mapping C to a physical `TileIndex` different from the destination hand, which is what the current executable model actually checks:
 
 ```text
 TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#2, T#1, T#3, ->T<1KB>

@@ -45,7 +45,7 @@ Exactly one `B.FPATR` then selects post-processing. With all fields zero, D keep
 
 The Local mathematical sources are bound in this order:
 
-- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero, and its encoded relative selector must differ from D's zero-extended `DstTile` hand.
+- `source0` is the accumulator C: valid shape [M, N], the accumulator type, and the same M layout as D. Its capacity must equal D's unless `PreQuantMode` is nonzero. Mnemonic clause `PTO-TGEMV-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require its encoded relative selector to differ from D's zero-extended `DstTile` hand before rename; the executable check differs as explained below.
 - `source1` is the left vector A: valid shape [1, K], type AType, and layout `CUBE_M16` or `CUBE_M32`.
 - `source2` is A's scale, bound only when AType is not FP16 or BF16: valid shape [1, G] in `CUBE_M32`, where G is K divided by the group size, rounded up. The carrier is `E8M0` with groups of 32, or `U32` with groups of 64 for HiF4X2.
 - `source3` is the right matrix B: valid shape [K, N], type BType, and layout `CUBE_N8`.
@@ -61,7 +61,7 @@ AType and BType are chosen independently from FP16, BF16, E4M3, E5M2, E2M1X2, E1
 
 Design point: a side carries a scale exactly when it needs one. FP16 and BF16 need none, so a form with an FP16 left side and an E4M3 right side binds only the right scale, and a form with two FP16 sides takes the FP32 rounding path described above.
 
-Design point: C is read into a private copy before D is written, and C stays unchanged after success or rejection. A later bundle can therefore bind a previous D as its C, as long as that C's encoded relative selector differs from the new D's `DstTile` hand.
+Design point: mnemonic clause `PTO-TGEMV-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but a later bundle is executable only when the resolved C index passes the current comparison.
 
 `TGEMV_MX_ACC` is Local only. Every Shared binding and a nonzero `TransA` or `TransB` is rejected, and any common nonzero `PE_MASK` is legal.
 
@@ -79,7 +79,7 @@ The operation has no global-memory effect. Post-processing is the only source of
 <!-- PTO-READER-BLOCK: tile-tgemv-mx-acc-constraints role=constraints -->
 ## Legality and fault boundary
 
-- `PE_MASK=0000` on every binding is a strict no-op before any descriptor read, fault, or allocation.
+- After command-level encoding and size-code checks pass, `PE_MASK=0000` on every binding skips matrix-handler descriptor reads, faults, and allocation. Earlier command checks still apply.
 - A missing `B.FPATR` raises `Fault_BundleControl`, and an undecodable CUBE selector raises `Fault_IllegalInstruction`.
 - An illegal type pair, source or destination count, `B.DATR` field, `CCTRL` use, dimension, mask, descriptor, alias, layout, or post-processing source raises `Fault_TileLegality` before allocation.
 - A full destination hand, a destination size too small for the CUBE storage of D, RowMaxOut, or GroupMaxOut, or a destination group that exceeds the remaining capacity, raises `Fault_TileAllocation`.
@@ -96,7 +96,7 @@ With BF16 on both sides, no scale is bound, and the sources are C, A, and B. Tak
 
 With E4M3 on both sides and K = 64, the sources become C, A, A's scale [1, 2], B, and B's scale [16, 2].
 
-In macro form, the two cases are, with C bound to an older Tile so that its encoded relative selector differs from the `->T` destination hand:
+The two non-normative macro sketches below are conditional on queue resolution mapping C to a physical `TileIndex` different from the destination hand, which is what the current executable model actually checks:
 
 ```text
 TGEMV_MX_ACC <M=1, N=16, K=16, BF16>, T#2, T#1, T#3, ->T<1KB>

@@ -37,12 +37,12 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧绝对 GPR 源。
+- `SrcL` 是 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
 - `simm12` 提供 `12` 位有符号立即数。
 
 `RegDst` 命名目的：编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
-`SrcL` 编码为零时指向架构零 GPR。源按值读取，不会被消耗。
+源编码为 `0` 时读取架构零 GPR。队列源只被读取，不会被消费。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-effects role=effects -->
 ## 效果与排序
@@ -51,7 +51,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 它没有内存效果、没有保留效果、没有描述符效果，也没有数值状态标志。它保持提交参数、块参数和块条件标记不变，因为它不是条件设置指令。
 
-设计要点：由于该比较既不能观察提交条件，也不能安装控制流目标，编译器可以在其目的被读取之前，把它与其他纯标量操作自由重排。
+模型先读取所有选中的寄存器源，再写入目的。标量派发只在该目的效果之后推进 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-constraints role=constraints -->
 ## 合法性与故障顺序

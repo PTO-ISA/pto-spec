@@ -59,7 +59,7 @@ NaN 源为目的发布零，无穷源发布目的端点值，两种情形都记�
 <!-- PTO-READER-BLOCK: scalar-fcvtm-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+本示例用于说明当前所有者，不会脱离规范规则或活动配置档另行定义算术语义。
 
 规范示例是 `fcvtm.fd2sd a0, ->a1`：GPR `a0` 保存 `0x4004000000000000`，表示 `2.5`，而编码 `DstType` 选择 `SD` 的形式会把 `2` 写入目的。
 

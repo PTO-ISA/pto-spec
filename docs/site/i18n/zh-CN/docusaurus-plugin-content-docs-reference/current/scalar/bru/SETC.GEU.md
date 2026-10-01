@@ -35,8 +35,8 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geu-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧绝对 GPR 源。
-- `SrcR` 提供右侧绝对 GPR 源。
+- `SrcL` 是 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
+- `SrcR` 使用相同的 Reg5 映射。
 - `SrcRType` 选择在测试关系之前施加于 `SrcR` 快照的变换：值 `1` 代入低 `32` 位的符号扩展结果，值 `2` 代入低 `32` 位的零扩展结果，值 `0` 和 `3` 都保持完整值不变。
 
 `SrcL` 或 `SrcR` 中的编码零指向架构零 GPR。两个源都不会被消费，该指令也不写任何 `GPR`、`T` 或 `U` 目的。
@@ -60,7 +60,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geu-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not create a second semantic definition.
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
 把 `5` 放入 GPR1、`5` 放入 GPR2，然后执行 `setc.geu R1, R2`。无符号关系 `5 >= 5` 成立，因此提交参数和 `BARG.TAKEN` 变为 `1`。把 GPR2 设为 `6`，同一形式则提交 `0`。
 <!-- SUPPLEMENTARY-END -->

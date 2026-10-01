@@ -42,9 +42,9 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：`FlushMemoryReplay` 只重写 `_MemoryEventCount`，别的什么都不动，所以它无法撤销一次 GM 写入或一个 tile 载荷元素：那些是调用者在记录事件之前写下的。检查点之上的记录仍留在 `_MemoryEvents` 中但不可达：读取者都以 `_MemoryEventCount` 为界，而 `AddMemoryEvent` 下一次就会覆写该槽。
 
-设计要点：`MemoryReplayCanRetryWholeRequest` 要求 `!_MemoryReplayState.active`，并且 `request` 等于已保存的值或是 `Zeros{PTO_XLEN}`。由于 `FlushMemoryReplay` 会清除 `active`，一个请求只有在一次冲刷或一次完成之后才可重试，且调用者必须传入与传给 `BeginMemoryReplay` 相同的 `Word`。
+设计要点：`MemoryReplayCanRetryWholeRequest` 要求重放状态不活动，并且已保存的请求等于传入的 `request`，或者已保存的请求为 `Zeros{PTO_XLEN}`。已保存的零是接受任意传入请求的通配值；传入零不能绕过一个非零的已保存请求。`FlushMemoryReplay` 和 `CompleteMemoryReplay` 清除 `active`，复位也以不活动状态和零的已保存请求开始。
 
-设计要点：`SetFaultWithCause` 在 `case` 之前就写入编号，因此 `Fault_None` 留下 cause 为零、实参有效为假、陷阱号为 `0` 的陷阱库，而 `_FaultAddress` 保留其先前值。因此清除故障指示并不清除故障地址；同时把两者归零的是 `ClearFault`。
+设计要点：`SetFaultWithCause` 在 `case` 之前就写入传入的 `address` 和 `cause`，即使编号是 `Fault_None` 也一样。该编号使实参有效标志为假、陷阱号为 `0`，但 `_FaultAddress` 变为传入地址，当前陷阱库保存传入的 cause。`ClearFault` 则把故障地址和陷阱库的 cause 归零。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-boundaries role=boundaries -->
 ## 边界

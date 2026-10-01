@@ -55,7 +55,7 @@ Use this example block only as a reading aid: apply the rules above, then confir
 - [Packed data types](../data-types/packed.md) provide type context for classified Tile operations.
 - [Encoding ownership](encoding-ownership.md) separates active carriers from reserved roots and deleted names.
 - [BSTART.VEC](../../block/execution/BSTART.VEC.md), [BSTART.SFU](../../block/execution/BSTART.SFU.md), and [BSTART.TEPL](../../block/execution/BSTART.TEPL.md) own the alias legality for each spelling.
-- [TileOp macro assembly](../../virtual-isa/tileop-macro-assembly.md) presents the canonical macro forms this unit owns.
+- [Normative ASL on this page](#normative-asl) contains `PTO-AS-TILEOP-MACRO-001` and the `PTO-TILEOP-MACRO` records that own canonical TileOp spelling and field mapping.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -35,7 +35,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addtpc-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`imm20` 提供有符号的 `20` 位页位移：编码值先做符号扩展，再按 `4096` 字节缩放。它的 `20` 位覆盖正负两千兆字节的页范围。
+`imm20` 提供范围为 `-524288` 到 `524287` 页的有符号 `20` 位页位移。按 `4096` 字节缩放后，字节位移范围是 `-2147483648` 到 `2147479552`（`-2 GiB` 到 `2 GiB - 4 KiB`）。
 
 `RegDst` 命名目的。编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
@@ -60,8 +60,6 @@ The current instruction contract is owned by the ASL source linked above.
 先执行解码。固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
 
 唯一受约束的字段是 `RegDst`，其取值 `10` 是保留的，也会在任何效果之前抛出 `Fault_IllegalInstruction`。`imm20` 没有保留取值：包括符号位在内，全部 `20` 位模式都已分配。
-
-被选中但不可用的 `T` 或 `U` 源会在操作数合法性步骤被拒绝，且早于目的写入。失败时目的寄存器、队列和 `TPC` 都保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-example role=example -->
 ## 非规范示例

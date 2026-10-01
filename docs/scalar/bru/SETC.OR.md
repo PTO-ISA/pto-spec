@@ -35,8 +35,8 @@ Design point: the committed value is the reduced truth value, not the OR result.
 <!-- PTO-READER-BLOCK: scalar-setc-or-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left absolute GPR source.
-- `SrcR` supplies the right absolute GPR source.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcR` uses the same Reg5 mapping.
 - `SrcRType` transforms the `SrcR` snapshot before the combination: value `0` leaves the complete word unchanged, value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and value `3` substitutes the one's complement of the full word, which is the `.not` annotation on the canonical assembly.
 
 Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Sources are not consumed, and no `GPR`, `T`, or `U` destination is written.

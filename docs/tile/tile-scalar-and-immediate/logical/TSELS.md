@@ -42,13 +42,13 @@ Complete preflight finishes before the predicate, true source, and scalar are sn
 - `scalar0` is the per-PE false scalar.
 - `destination0` is a newly allocated Local Tile whose `DataType` is the selected `DataType`.
 
-Three mutually exclusive forms supply the mask:
+Three mutually exclusive forms are described by the contract:
 
-- RowMajor: a legacy packed predicate Tile in `B.IOT`, one bit per element. The false scalar is `B.IOR.RegSrc0`.
+- RowMajor: a legacy packed predicate Tile in `B.IOT`, one bit per element. The false scalar is `B.IOR.RegSrc0`. This remains the intended legacy form, but the current executable schema cannot reach it: the same first Tile is required to pass both Predicate and Numeric carrier checks. Treat this branch as an executable-model gap tracked in issue #367, not as a runnable form.
 - `CUBE_M16` or `CUBE_M32` with a PredicateCell: a `U8` PredicateCell in `B.IOT` whose basis equals the operation `DataType`. The false scalar is `B.IOR.RegSrc0`.
 - `CUBE_M16` or `CUBE_M32` with a GPR mask: one source-only `B.IOR` carries the mask words first and then the false scalar, so the scalar is the second source for a one-word mask and the third source for the two-word mask of an 8-bit type.
 
-Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads a scalar register.
+Design point: fixed `B.IOT` decoding and SizeCode legality still apply when `PE_MASK=0000`. After those checks, the zero-mask command returns before placement and schema checks. At commit, zero participation makes Tile dispatch return before the TSELS operation handler is called, so no GPR or descriptor is read and no Tile is allocated.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-effects role=effects -->
 ## Publication, definedness, and padding
@@ -73,9 +73,7 @@ Mask bytes and true-source elements must be defined at every active coordinate, 
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-For an `FP32` example, a true-source row `[-1.5, 2.0]` and predicates `[0, 1]` with the scalar omitted produce `[+0.0, 2.0]`: the first element takes the all-zero scalar and the second is copied.
-
-Together with `TCMPS`, this clamps negatives to zero: `TCMPS <Row=8, Col=64, FP32, GE>, T#1, ->U<128B>` marks the elements that are not below zero, then `TSELS <Row=8, Col=64, FP32>, U#1, T#1, ->T<2KB>` keeps them and replaces the other elements of the 512 with `+0.0`. A NaN element is not marked, so it also becomes `+0.0`.
+Consider a `CUBE_M16` `FP32` true-source row `[-1.5, 2.0]`, a matching PredicateCell row `[0, 1]`, and an omitted false scalar. Conceptually, CUBE selection produces `[+0.0, 2.0]`: the first element takes the all-zero scalar and the second copies the source encoding. This is only a non-normative data-flow example; it does not claim a particular macro expansion or make the unreachable RowMajor branch runnable.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

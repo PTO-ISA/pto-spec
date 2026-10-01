@@ -62,7 +62,7 @@ D's element type is `FP32`. A nonzero `PreQuantMode` selects that mode's output 
 
 Design point: a scale Tile is present exactly when its side needs one. `FP16` and `BF16` sides carry none, so the expected source count depends on both types. A missing or extra scale changes the count and is rejected with `Fault_TileLegality` before allocation.
 
-Design point: C must be distinct from D. The contract requires C's encoded source selector to differ from D's zero-extended `DstTile` hand, and `BundleMatrixAccumulatorDestinationIndicesDistinct` raises `Fault_TileLegality` before allocation when its comparison fails. C is snapshotted before the product and is unchanged after success or rejection, so the old accumulator stays readable.
+Design point: mnemonic clause `PTO-TMATMUL-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require C's encoded selector to differ from D's zero-extended `DstTile` hand before rename. The executable model instead resolves C in stage 2, after which `BundleMatrixAccumulatorDestinationIndicesDistinct` compares the physical C `TileIndex` with D's destination hand (`DstTile MOD 4`). A failed comparison raises `Fault_TileLegality` before allocation. Issue #367 tracks this conflict. C is snapshotted before the product and is unchanged after success or rejection.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-effects role=effects -->
 ## State effects and ordering
@@ -90,14 +90,14 @@ A bundle with any Shared source is cooperative. Every binding must then use `PE_
 
 `CScaleEn` is legal for this form only with an `FP32` result. The CScale source is a Local `U8` `CUBE_M32` Tile with M rows and 1 column, and it must not share an index with any destination hand. See [matrix scale](../model/dispatch/matrix-scale.md).
 
-`PE_MASK` 0000 on every binding is a strict no-op: the matrix handler reads no descriptor and raises no fault.
+Fixed `B.IOT` decoding and SizeCode legality still apply when `PE_MASK` is 0000. After those checks, each zero-mask `B.IOT` returns before placement and schema checks. At commit, zero participation makes Tile dispatch return before the matrix operation handler is called.
 
 A `DataType` outside the accepted set raises `Fault_IllegalInstruction` at the start. A missing `B.FPATR` raises `Fault_BundleControl`. A failed type, count, shape, layout, alias, or post-processing check raises `Fault_TileLegality`, and a full destination hand or insufficient capacity raises `Fault_TileAllocation`. Each of these faults occurs before any destination is published.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-example role=example -->
 ## Non-normative worked example
 
-This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract. It is executable under the current ASL only when queue resolution maps C to a physical `TileIndex` different from the destination hand.
 
 The canonical macro below computes a 16 x 32 result with K equal to 64. C is `T#5`, a 16 x 32 `FP32` Tile in `CUBE_M16` with a capacity of 2KB; A is `T#4`, a 16 x 64 `E4M3` Tile in `CUBE_M16`; the A scale is `T#3`, a 16 x 2 `E8M0` Tile in `CUBE_M32`; B is `T#2`, a 64 x 32 `E4M3` Tile in `CUBE_N8`; the B scale is `T#1`, a 32 x 2 `E8M0` Tile in `CUBE_M32`.
 

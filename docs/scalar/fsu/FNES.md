@@ -30,7 +30,7 @@ The integer result is a plain word in a Reg5 destination, so a deciding compare 
 
 The instruction contract names `FloatingCompare_NE` and reports itself as a signaling compare. The handler records `NV` whenever any input is a NaN, quiet or signaling, because this form is signaling.
 
-Equality is decided on the value, not on the raw encoding: `-0` and `+0` compare equal even though their encodings differ, so the published verdict is `0` for that pair. Only the inequality test is needed, so the result is the negation of the equality test.
+Equality is decided on the value, not on the raw encoding: `-0` and `+0` compare equal even though their encodings differ, so the published verdict is `0` for that pair. For non-NaN operands, the inequality result is the negation of equality; if either operand is a NaN, the ordered result is `0`.
 
 Design point: comparing a NaN against anything is unordered, and this form is declared signaling, so the unordered case is reported on the status side as well as the result side. A quiet NaN that reaches a signaling compare is therefore visible in `CORE_STATE[32]`, which is what tells a program that a NaN took part in the comparison.
 

@@ -35,8 +35,8 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-lt-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧绝对 GPR 源。
-- `SrcR` 提供右侧绝对 GPR 源。
+- `SrcL` 是 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
+- `SrcR` 使用相同的 Reg5 映射。
 - `SrcRType` 在测试关系之前变换 `SrcR` 快照：值 `1` 代入低 `32` 位的符号扩展结果，值 `2` 代入低 `32` 位的零扩展结果，值 `0` 和 `3` 保持完整字不变。
 
 `SrcL` 或 `SrcR` 中的编码零指向架构零 GPR。源按值读取且不会被消费，也不写任何 `GPR`、`T` 或 `U` 目的。
@@ -58,7 +58,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-lt-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not create a second semantic definition.
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
 把 `-1` 放入 GPR1、`1` 放入 GPR2，然后执行 `setc.lt R1, R2`。有符号比较 `-1 < 1` 成立，因此提交参数和 `BARG.TAKEN` 变为 `1`。同样的操作数在无符号形式 `SETC.LTU` 下提交 `0`，因为 `-1` 表示最大的无符号值。
 <!-- SUPPLEMENTARY-END -->

@@ -36,7 +36,7 @@ This page is a generated reference view of the normative ASL unit.
 
 `SharedGMPESelected(pe_mask, pe)` 返回 `pe_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1'`，因此掩码位 `3` 是 PE0，掩码位 `0` 是 PE3。
 
-设计要点：零掩码对每个功能号都合法，因为它在该功能号判定之前就被处理；而非零子集只对功能号 `1` 合法。因此，用功能号 `14` 加子集掩码写出的 Shared store 会被调用者作为 `Fault_TileLegality` 拒绝，而不是被静默忽略；而功能号 `14` 确实接受的零掩码，正是 `SharedGMPESelected` 映射到每个 PE 的全 PE 选择。
+设计要点：零掩码对每个功能号都合法，因为它在该功能号判定之前就被处理；而非零子集只对功能号 `1` 合法。因此，用功能号 `14` 加子集掩码写出的 Shared store 会被调用者作为 `Fault_TileLegality` 拒绝，而不是被静默忽略；而功能号 `14` 确实接受的零掩码，通过 `SharedGMPESelected` 不会选择任何 PE。掩码合法性与 PE 参与是两个独立检查；接受零掩码不会把它变成全 PE 选择。
 
 设计要点：base 取默认值与步长取默认值是两种不同的操作。缺失 `B.IOR` 给出 base 为零与稠密物理行宽步长；而显式编码的零 GPR 值给出 base 为零与零步长，于是该请求的所有行都别名到 GM 的同一行。`SharedStorePEMaskLegal` 与 `SharedGMPESelected` 都不实现这些：取默认值属于实体化每 PE base 与步长字的指令束分派。
 

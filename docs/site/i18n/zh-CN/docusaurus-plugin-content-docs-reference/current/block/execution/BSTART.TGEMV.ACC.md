@@ -59,7 +59,7 @@ Local A 使用 `CUBE_M16`（M 不超过 16）或 `CUBE_M32`（M 不超过 32）�
 
 D 的元素类型随 AType 而定：有符号输入为 `S32`，无符号输入为 `U32`，浮点输入为 `FP32`。非零的 `PreQuantMode` 会为 D 选择该模式指定的输出类型。
 
-设计要点：C 必须与 D 不同。契约要求 C 的编码源选择器不同于 D 零扩展后的 `DstTile` 手，比较失败时 `BundleMatrixAccumulatorDestinationIndicesDistinct` 在分配之前引发 `Fault_TileLegality`。C 在乘积计算之前被快照，无论成功还是被拒绝都保持不变，因此旧的累加器仍可读取。
+设计要点：助记符条款 `PTO-TGEMV-ACC-CONTRACT-001` 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求 C 的编码选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄。可执行模型并不直接遵循其中任一描述：阶段 2 先解析 C，随后 `BundleMatrixAccumulatorDestinationIndicesDistinct` 把 C 的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。比较失败时，它在分配之前引发 `Fault_TileLegality`。Issue #367 跟踪这一三方来源冲突。C 在乘积计算之前被快照，无论成功还是被拒绝都保持不变。
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-acc-effects role=effects -->
 ## 待处理状态与完成
@@ -85,14 +85,14 @@ D 在每个被选中的 PE 上按 A 的 M 布局（`CUBE_M16` 或 `CUBE_M32`）�
 
 `CScaleEn` 必须为零，因为只有 CUBE Function 2 与 6 接受 CScale。
 
-所有绑定的 `PE_MASK` 均为 0000 时是严格无操作：矩阵处理程序不读取任何描述符，也不引发任何故障。
+`PE_MASK` 为 0000 时，固定的 `B.IOT` 译码与 SizeCode 合法性检查仍然适用。这些检查通过后，每条零掩码 `B.IOT` 都会在放置与 schema 检查之前返回。提交时，零参与使 Tile 分派在调用矩阵操作处理程序之前返回。
 
 不在接受集合内的 `DataType` 在起始时引发 `Fault_IllegalInstruction`。缺少 `B.FPATR` 会引发 `Fault_BundleControl`。类型、数量、形状、布局、别名或后处理检查失败会引发 `Fault_TileLegality`，目标手已满或容量不足会引发 `Fault_TileAllocation`。这些故障都发生在任何目标发布之前。
 
 <!-- PTO-READER-BLOCK: block-bstart-tgemv-acc-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+以下为非规范示例，仅用于说明当前所有者，不替代其定义。只有当队列解析把 C 映射到不同于目标句柄的物理 `TileIndex` 时，它才可在当前 ASL 下执行。
 
 下面的规范宏计算一个 1 x 32 的结果，K 等于 64。C 是 `T#3`，即一个 1 x 32、位于 `CUBE_M16`、容量为 2KB 的 `FP32` Tile；A 是 `T#2`，即一个 1 x 64、位于 `CUBE_M16` 的 `FP16` Tile；B 是 `T#1`，即一个 64 x 32、位于 `CUBE_N8` 的 `FP16` Tile。
 

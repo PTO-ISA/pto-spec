@@ -42,13 +42,13 @@ GPR 值由 `TileRawElementValue` 收窄为所选 `DataType` 的低元素位宽�
 - `scalar0` 是逐 PE 假值标量。
 - `destination0` 是新分配的 Local Tile，其 `DataType` 为所选 `DataType`。
 
-三种互斥形式提供掩码：
+契约描述了三种互斥的掩码形式：
 
-- RowMajor：`B.IOT` 中的传统打包谓词 Tile，每个元素一位。假值标量为 `B.IOR.RegSrc0`。
+- RowMajor：`B.IOT` 中的传统打包谓词 Tile，每个元素一位。假值标量为 `B.IOR.RegSrc0`。这仍是预期的传统形式，但当前可执行 schema 无法到达该分支：同一个首个 Tile 被同时要求通过 Predicate 与 Numeric 载体检查。应把它视为 issue #367 跟踪的可执行模型缺口，而不是可运行形式。
 - 带 PredicateCell 的 `CUBE_M16` 或 `CUBE_M32`：`B.IOT` 中的 `U8` PredicateCell，其基准类型等于操作 `DataType`。假值标量为 `B.IOR.RegSrc0`。
 - 带 GPR 掩码的 `CUBE_M16` 或 `CUBE_M32`：一条只含源的 `B.IOR` 先携带掩码字，再携带假值标量，因此对一字掩码标量是第二个源，对 8 位类型的两字掩码标量是第三个源。
 
-设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
+设计要点：`PE_MASK=0000` 时，固定的 `B.IOT` 译码与 SizeCode 合法性检查仍然适用。这些检查通过后，零掩码命令会在放置与 schema 检查之前返回。提交时，零参与使 Tile 分派在调用 TSELS 操作处理程序之前返回，因此不会读取 GPR 或描述符，也不会分配 Tile。
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-effects role=effects -->
 ## 发布、已定义性与填充
@@ -73,9 +73,7 @@ GPR 值由 `TileRawElementValue` 收窄为所选 `DataType` 的低元素位宽�
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-以 `FP32` 为例：真值源行 `[-1.5, 2.0]` 与谓词 `[0, 1]`，在省略标量时产生 `[+0.0, 2.0]`：第一个元素取全零标量，第二个元素被复制。
-
-与 `TCMPS` 配合可把负数钳位到零：`TCMPS <Row=8, Col=64, FP32, GE>, T#1, ->U<128B>` 标记不小于零的元素，随后 `TSELS <Row=8, Col=64, FP32>, U#1, T#1, ->T<2KB>` 保留它们，并把 512 个元素中的其余元素替换为 `+0.0`。NaN 元素不会被标记，因此也变为 `+0.0`。
+考虑一个 `CUBE_M16` `FP32` 真值源行 `[-1.5, 2.0]`、匹配的 PredicateCell 行 `[0, 1]`，并省略假值标量。从概念数据流看，CUBE 选择得到 `[+0.0, 2.0]`：第一个元素取全零标量，第二个元素复制源编码。这只是非规范的数据流示例；它不声称存在某个特定宏展开，也不会让不可达的 RowMajor 分支变得可运行。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

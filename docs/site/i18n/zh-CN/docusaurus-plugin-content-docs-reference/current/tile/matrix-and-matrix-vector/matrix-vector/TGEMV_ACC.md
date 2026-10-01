@@ -45,7 +45,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 Local 数学源按以下顺序绑定：
 
-- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量，且其编码相对选择器必须不同于 D 零扩展后的 `DstTile` 句柄。
+- `source0` 是累加器 C：有效形状 [M, N]，累加器类型，且与 D 使用相同的 M 布局。除非 `PreQuantMode` 非零，其容量必须等于 D 的容量。助记符条款 `PTO-TGEMV-ACC-CONTRACT-001` 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求 C 的编码相对选择器在重命名前不同于 D 零扩展后的 `DstTile` 句柄。可执行检查与这两种描述都不同，见下文。
 - `source1` 是左向量 A：有效形状 [1, K]，类型 AType，布局 `CUBE_M16` 或 `CUBE_M32`。
 - `source2` 是右矩阵 B：有效形状 [K, N]，类型 BType，布局 `CUBE_N8`。
 
@@ -57,7 +57,7 @@ AType 是 `BSTART` 数据类型。BType 是 `B.DATR` 的 `DataType`，省略 `B.
 
 AType 与 BType 必须都是同一数值类别的普通矩阵类型：同为浮点、同为有符号整数或同为无符号整数。HiF4X2 不是普通矩阵类型；只有 MX 形式接受它。
 
-设计要点：在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝，C 都保持不变。因此后续指令束可以把前一个 D 绑定为自己的 C，前提是该 C 的编码相对选择器不同于新 D 的 `DstTile` 句柄。
+设计要点：助记符 NDF 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求它们的编码选择器与目标句柄在重命名前不同。当前可执行模型先解析 C，再把它的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。Issue #367 跟踪这一三方来源冲突。在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝都保持不变；但后续指令束只有在解析后的 C 索引通过当前比较时才可执行。
 
 `TGEMV_ACC` 只使用 Local 操作数。任何 Shared 绑定以及非零 `TransA` 或 `TransB` 都会被拒绝，任何共同的非零 `PE_MASK` 都合法。
 
@@ -75,7 +75,7 @@ D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在�
 <!-- PTO-READER-BLOCK: tile-tgemv-acc-constraints role=constraints -->
 ## 合法性与故障边界
 
-- 所有绑定的 `PE_MASK=0000` 是严格无操作，发生在任何描述符读取、故障或分配之前。
+- 命令级编码与 size code 检查通过后，所有绑定的 `PE_MASK=0000` 会跳过矩阵处理程序的描述符读取、故障与分配；更早的命令检查仍然适用。
 - 缺少 `B.FPATR` 会引发 `Fault_BundleControl`，无法解码的 CUBE 选择器会引发 `Fault_IllegalInstruction`。
 - 非法的类型对、源或目标数量、`B.DATR` 字段、`CCTRL` 用法、维度、掩码、描述符、别名、布局或后处理源，会在分配之前引发 `Fault_TileLegality`。
 - 目标句柄已满、目标大小不足以容纳 D、RowMaxOut 或 GroupMaxOut 的 CUBE 存储，或目标组超出剩余容量时，引发 `Fault_TileAllocation`。
@@ -92,7 +92,7 @@ D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在�
 
 第 0 列从 0.5 开始，加上 3.0 与 8.0 得到 11.5。第 1 列从 -1.0 开始，加上 5.0 与 12.0 得到 16.0。之后 C 仍保存 0.5、-1.0。
 
-以宏形式表示，`T#2` 是 C，`T#1` 是向量，`T#3` 是矩阵：
+下面的非规范宏草图中，`T#2` 是 C，`T#1` 是向量，`T#3` 是矩阵。它以队列解析把 C 映射到不同于目标句柄的物理 `TileIndex` 为条件；这正是当前可执行模型实际检查的条件：
 
 ```text
 TGEMV_ACC <M=1, N=16, K=16, FP16>, T#2, T#1, T#3, ->T<1KB>

@@ -58,7 +58,7 @@ Reg5 源码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读
 <!-- PTO-READER-BLOCK: scalar-fabs-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+本示例用于说明当前所有者，不会脱离规范规则或活动配置档另行定义算术语义。
 
 对 FP64 形式，规范示例是 `fabs.fd a0, ->a1`：GPR `a0` 保存 `0xc000000000000000`，表示 `-2.0`，GPR `a1` 收到 `0x4000000000000000`，表示 `2.0`，其余各位完全相同。
 

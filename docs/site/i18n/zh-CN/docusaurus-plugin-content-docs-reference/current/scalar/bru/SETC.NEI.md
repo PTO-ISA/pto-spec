@@ -35,7 +35,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-nei-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧绝对 GPR 源，按完整字读取。
+- `SrcL` 是按完整字读取的 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
 - `shamt` 提供施加于立即数的移位量；编码零表示不移位。
 - `simm12` 提供有符号编码立即数；编码零提供数值零。
 
@@ -58,7 +58,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-nei-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not create a second semantic definition.
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
 把 `0` 放入 GPR1，并执行编码字段为 `SrcL=1`、`shamt=0`、`simm12=0` 的形式。被比较的常量为 `0`，两个字相等，因此该形式提交 `0`。把 GPR1 设为 `1`，同一形式则提交 `1`。
 <!-- SUPPLEMENTARY-END -->

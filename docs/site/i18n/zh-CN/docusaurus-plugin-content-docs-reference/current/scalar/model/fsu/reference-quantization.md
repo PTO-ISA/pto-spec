@@ -59,7 +59,7 @@ This page is a generated reference view of the normative ASL unit.
 
 调用者必须在调用有限值函数之前去除 NaN 和无穷大输入。对于标量算术，这由本单元中的 `ReferenceScalarFPBinarySpecial` 以及特殊值单元中的一元和融合特殊函数完成。
 
-`ReferenceScalarFPDataType` 上方的 ASL 注释说明，标量 FP 运算遵循 IEEE 754-2008，并且非有限值和带符号零处理放在有限值内核之外，因此上溢得到的无穷大仍是下一条指令的合法输入。
+`ReferenceScalarFPDataType` 上方的注释描述了遵循 IEEE 754-2008 的意图，但它不是符合性保证。当前结果由可执行辅助函数与活动配置档所有者定义；完整符合性仍由议题 #367 跟踪。
 
 `ReferenceFP16FiniteEncoding` 在 ASL 树中没有调用者；标量 FP16 路径改用 `ReferenceBinary16Encoding`。
 

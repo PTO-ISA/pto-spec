@@ -61,7 +61,7 @@ NaN 源会发布目的格式的规范 NaN。目的格式存在无穷时，无穷
 <!-- PTO-READER-BLOCK: scalar-fcvt-example role=example -->
 ## 非规范示例
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+本示例用于说明当前所有者，不会脱离规范规则或活动配置档另行定义算术语义。
 
 规范的加宽示例是 `fcvt.fd2fs a0, ->a1`：GPR `a0` 保存 `0x3ff0000000000000`，表示 FP64 的 `1.0`，GPR `a1` 收到 `0x3f800000`，即 `1.0` 的 FP32 编码位于低字并零扩展。
 

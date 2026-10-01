@@ -37,7 +37,7 @@ The handler runs these stages in order.
 3. It checks the bundle structure. The type pair, source and destination counts, `B.DATR` fields, `CCTRL` use, dimensions, and PE masks must be legal. All masks must agree, and a cooperative bundle needs mask `1111`. A GEMV function needs M equal to 1. Failures raise `Fault_TileLegality`.
 4. It waits, without a fault, until every Shared source is published, and then checks the Shared schemas.
 5. A cooperative PE with zero rows consumes its Shared bindings and returns success.
-6. Otherwise it resolves relative sources and subviews and checks Local sources, CScale, accumulator and CScale aliasing, the result layout, and post-processing sources.
+6. Otherwise it resolves relative sources and subviews and checks Local sources, CScale, accumulator and CScale aliasing, the result layout, and post-processing sources. Dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires the encoded C selector to differ from the zero-extended destination hand before rename. The current executable instead performs the accumulator check after resolution and compares the physical C `TileIndex` with D's destination hand (`DstTile MOD 4`); issue #367 tracks this conflict.
 7. It allocates the destination group, snapshots operands, and runs the operation. A fault then rolls the destinations back.
 
 The result type is `FP32` for MX functions. Otherwise it is `S32`, `U32`, or `FP32` for signed, unsigned, and other left types. `CCTRL` bit 1 is legal only for an accumulator function. Bit 0 requires `pre_quant_mode`, `relu_mode`, and `group_n_code` to be zero and `row_max_en`, `group_max_en`, and `max_abs_en` to be false.
@@ -62,7 +62,7 @@ This example illustrates the current ASL owner and does not replace the normativ
 TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#3, T#2, T#1, ->T<1KB>
 ```
 
-All sources are Local, so the bundle is not cooperative. Source ordinal 0 is the accumulator `T#3`, ordinal 1 is the left matrix `T#2`, and ordinal 2 is the right matrix `T#1`. The accumulator is not `T#1`, because its selector would equal the `->T` destination hand, which the accumulator alias check rejects. The left type is `FP16`, and with no `B.DATR` the right type is also `FP16`, so the result type is `FP32`.
+All sources are Local, so the bundle is not cooperative. Source ordinal 0 is the accumulator `T#3`, ordinal 1 is the left matrix `T#2`, and ordinal 2 is the right matrix `T#1`. The example is executable under the current ASL only when queue resolution maps `T#3` to a physical `TileIndex` different from the `->T` destination hand; the encoded spelling alone does not prove that check. The left type is `FP16`, and with no `B.DATR` the right type is also `FP16`, so the result type is `FP32`.
 
 Now suppose a cooperative `TMATMUL` with a Shared right group and group M of 40. Each PE takes 16 rows. PE0 owns 16 rows, PE1 owns 16, PE2 owns 8, and PE3 owns 0. PE3 passes stages 1 to 4 and then stops at stage 5.
 
