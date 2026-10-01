@@ -17,48 +17,74 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-purpose role=purpose -->
-## What HL.SHIP.U does
+## What `HL.SHIP.U` stores
 
-`HL.SHIP.U` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores two adjacent aligned little-endian `2`-byte values.
+`HL.SHIP.U` is a standalone `48`-bit scalar AGU instruction that stores two adjacent `2`-byte little-endian units at an unscaled `simm17` displacement from the `SrcR` base.
+
+The canonical assembly is `hl.ship.u SrcD, SrcD1, [SrcR, simm]`.
+
+Design point: the pair covers `4` consecutive bytes, so two halfword sources are saved with one instruction and no index register is consumed.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address is formed
 
-`HL.SHIP.U` sign-extends `simm17` from its complete `-65536..65535` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The displacement is the sign-extended `simm17` value, which is already a byte count, and it is added to the `SrcR` snapshot modulo `2^PTO_XLEN`; the second address is that sum plus `2`.
 
-The instruction preflights two adjacent `2`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+The scale is `0`, so the displacement is a byte count and the two units of the pair are always exactly `2` bytes apart.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The update mode is none, so both stores use the computed addresses and no register receives a result: this form has no `RegDst` field.
+
+Both addresses are probed before either store, and `SrcD` and `SrcD1` are read only after both probes succeed; success then writes the low address first.
+
+Design point: an odd displacement is encodable, so the first address can be odd; the alignment probe then rejects the whole pair before either unit is written.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operands
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD`, `SrcD1`, and `SrcR` are `5`-bit Reg5 source selectors: codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed, and code `0` reads the architectural zero GPR.
+
+- `simm17` is a `17`-bit signed field that assigns every value from `-65536` through `65535`; the encoded byte displacement is that value multiplied by `1`, and encoded zero is a zero displacement rather than omission.
+
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: the `17`-bit signed domain is a byte range here because the multiplier is `1`, so this form reaches `-65536` through `65535` bytes with byte granularity.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is read before the first store, so each value used is a pre-instruction value; `SrcD` and `SrcD1` are read only after both probes succeed.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+A successful execution records two relaxed store events in increasing address order and changes only the `4` bytes of the two units.
+
+A valid reservation is invalidated when either store overlaps the reservation's `64`-byte granule, and only after both probes succeed; a reservation whose granule neither store touches stays valid.
+
+`TPC` advances by `6` bytes after the store completes. A rejected or faulting attempt does not retire.
+
+Design point: only the low `2` bytes of `SrcD` and `SrcD1` reach memory; the upper `48` bits of both registers are untouched and no register is written.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- Both effective addresses must be a multiple of `2`. The first address is probed first: a misaligned first address raises `Fault_DataAlignment` before translation, and a permission or bounded-memory failure raises `Fault_DataPage` at the original address. The second address repeats both tests.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+- A fixed-bit mismatch, or a source selector naming an unavailable `T` or `U` entry, raises `Fault_IllegalInstruction` at `PC` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fault records no store event: memory and every register keep their pre-instruction values, `TPC` is not advanced, and recovery recomputes both addresses, both probes, and both stores.
+
+Design point: the second address is the first plus `2`, so a misaligned pair is always reported against the first address, and the second probe can only fail its permission check.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ship-u-example role=example -->
-## Non-normative address example
+## Worked example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. The second `2`-byte store uses `0x104` after both addresses pass preflight.
+- `hl.ship.u 20, 21, [2, 2]` with GPR2 = `0x4000`, GPR20 = `0xbeef`, and GPR21 = `0x1234`.
+
+- The displacement `2` multiplied by `1` is `2`, so the two addresses are `0x4002` and `0x4004`.
+
+- The first store writes `0xef`, `0xbe` at `0x4002` through `0x4003`, and the second writes `0x34`, `0x12` at `0x4004` through `0x4005`, both in increasing address order.
+
+- `SrcD`, `SrcD1`, and `SrcR` keep their pre-instruction values, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

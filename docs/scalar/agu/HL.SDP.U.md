@@ -17,48 +17,76 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-purpose role=purpose -->
-## What HL.SDP.U does
+## What `HL.SDP.U` stores
 
-`HL.SDP.U` is a standalone `48`-bit AGU instruction that forms a register-offset address and stores two adjacent aligned little-endian `8`-byte values.
+`HL.SDP.U` is a standalone `48`-bit scalar AGU instruction that stores two adjacent `8`-byte little-endian units at a register-computed address.
+
+The canonical assembly is `hl.sdp.u SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}>]`.
+
+Design point: the address comes from two registers, so one index register can walk a sequence of `8`-byte units while a separate base register stays fixed.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address is formed
 
-`HL.SDP.U` transforms `SrcR` according to `SrcRType` and adds the unscaled result modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The offset is the `SrcR` snapshot selected by `SrcRType`, used without a shift, then added to the `SrcL` snapshot modulo `2^PTO_XLEN`; the second address is that sum plus `8`.
 
-The instruction preflights two adjacent `8`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+The scale is `0`, so the encoded register value is a byte count: the offset is the transformed `SrcR` value itself, and both units are `8` bytes apart.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The update mode is none, so both stores use the computed addresses and no register receives a result: this form has no `RegDst` field.
+
+Both addresses are probed before either store, and `SrcD` and `SrcD1` are read only after both probes succeed; success then writes the low address first.
+
+Design point: a byte count can be any value, so the first address can be unaligned; the alignment probe then rejects the pair before either unit is written, and no partial update is possible.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operands
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+- `SrcD`, `SrcD1`, `SrcL`, and `SrcR` are `5`-bit Reg5 source selectors: codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed, and code `0` reads the architectural zero GPR.
+
+- `SrcRType` is `2` bits applied to `SrcR` before the shift: `00` keeps the whole register value, `01` and `10` replace it with the signed and unsigned readings of its low `32` bits, and `11` is reserved.
+
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: `SrcRType` is applied before the fixed scale, so `01` and `10` redefine the index as the signed or unsigned reading of the low `32` bits of `SrcR` and never as the whole register.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is read before the first store, so each value used is a pre-instruction value; `SrcD` and `SrcD1` are read only after both probes succeed.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+A successful execution records two relaxed store events in increasing address order and changes only the `16` bytes of the two units.
+
+A valid reservation is invalidated when either store overlaps the reservation's `64`-byte granule, and only after both probes succeed; a reservation whose granule neither store touches stays valid.
+
+`TPC` advances by `6` bytes after the store completes. A rejected or faulting attempt does not retire.
+
+Design point: only the low `8` bytes of each source reach memory, which is the complete `64`-bit register; both sources keep their values.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- Both effective addresses must be a multiple of `8`. The first address is probed first: a misaligned first address raises `Fault_DataAlignment` before translation, and a permission or bounded-memory failure raises `Fault_DataPage` at the original address. The second address repeats both tests.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+- A fixed-bit mismatch, or a source selector naming an unavailable `T` or `U` entry, raises `Fault_IllegalInstruction` at `PC` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- `SrcRType` raw `11` is reserved: it raises `Fault_IllegalInstruction` at `PC` before any source is read, so the address modifier decode only defines `00`, `01`, and `10`.
+
+- A fault records no store event: memory and every register keep their pre-instruction values, `TPC` is not advanced, and recovery recomputes both addresses, both probes, and both stores.
+
+Design point: the first probe stops the pair, so a misaligned first address means the second address is never examined at all, and the fault names the first address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdp-u-example role=example -->
-## Non-normative address example
+## Worked example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `8`, and the fixed shift `0`, the aligned displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. After both addresses pass preflight, the second `8`-byte store uses `0x110`.
+- `hl.sdp.u 20, 21, [2, 7]` with `SrcRType` `01`, GPR2 = `0x4000`, GPR7 = `0x8`, GPR20 = `0x1122334455667788`, and GPR21 = `0x99aabbccddeeff00`.
+
+- The index `0x8` is used directly as a byte offset, giving `8`, so the two addresses are `0x4008` and `0x4010`.
+
+- The first store writes `0x88`, `0x77`, `0x66`, `0x55`, `0x44`, `0x33`, `0x22`, `0x11` at `0x4008` through `0x400f`, and the second writes `0x00`, `0xff`, `0xee`, `0xdd`, `0xcc`, `0xbb`, `0xaa`, `0x99` at `0x4010` through `0x4017`, both in increasing address order.
+
+- `SrcD`, `SrcD1`, and `SrcL` keep their pre-instruction values, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

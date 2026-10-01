@@ -17,48 +17,74 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-purpose role=purpose -->
-## What HL.SDIP does
+## What `HL.SDIP` stores
 
-`HL.SDIP` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores two adjacent aligned little-endian `8`-byte values.
+`HL.SDIP` is a standalone `48`-bit scalar AGU instruction that stores two adjacent `8`-byte little-endian units: `SrcD` at the first address and `SrcD1` at the second.
+
+The canonical assembly is `hl.sdip SrcD, SrcD1, [SrcR, simm]`.
+
+Design point: one instruction covers `16` consecutive bytes, and both stored values come from registers, so the pair writes two `8`-byte units without a store-data memory operand and without changing either source.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address is formed
 
-`HL.SDIP` sign-extends `simm17` from its complete `-65536..65535` domain, multiplies it by `8`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The displacement is the sign-extended `simm17` value multiplied by `8`, and it is added to the `SrcR` snapshot modulo `2^PTO_XLEN`; the second address is that sum plus `8`.
 
-The instruction preflights two adjacent `8`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+The scale is `3`, so the encoded displacement counts `8`-byte units: raising it by `1` moves both addresses by `8` bytes without changing either address's alignment relative to the base.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The update mode is none, so both stores use the computed addresses and no register receives a result: this form has no `RegDst` field.
+
+Both addresses are probed before either store, and `SrcD` and `SrcD1` are read only after both probes succeed; success then writes the low address first.
+
+Design point: the whole `-65536..65535` domain is multiplied by `8`, so the reachable byte displacement runs from `-524288` through `524280` and every reachable displacement is a multiple of `8`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operands
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD`, `SrcD1`, and `SrcR` are `5`-bit Reg5 source selectors: codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed, and code `0` reads the architectural zero GPR.
+
+- `simm17` is a `17`-bit signed field that assigns every value from `-65536` through `65535`; the encoded byte displacement is that value multiplied by `8`, and encoded zero is a zero displacement rather than omission.
+
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: `SrcD` and `SrcD1` may name the same register; both units then receive the same pre-instruction value, because both sources are read after both probes and before the first byte is written.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is read before the first store, so each value used is a pre-instruction value; `SrcD` and `SrcD1` are read only after both probes succeed.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+A successful execution records two relaxed store events in increasing address order and changes only the `16` bytes of the two units.
+
+A valid reservation is invalidated when either store overlaps the reservation's `64`-byte granule, and only after both probes succeed; a reservation whose granule neither store touches stays valid.
+
+`TPC` advances by `6` bytes after the store completes. A rejected or faulting attempt does not retire.
+
+Design point: each store writes the complete `64`-bit register value, so the pair is a pure memory effect and neither `SrcD` nor `SrcD1` changes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- Both effective addresses must be a multiple of `8`. The first address is probed first: a misaligned first address raises `Fault_DataAlignment` before translation, and a permission or bounded-memory failure raises `Fault_DataPage` at the original address. The second address repeats both tests.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+- A fixed-bit mismatch, or a source selector naming an unavailable `T` or `U` entry, raises `Fault_IllegalInstruction` at `PC` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fault records no store event: memory and every register keep their pre-instruction values, `TPC` is not advanced, and recovery recomputes both addresses, both probes, and both stores.
+
+Design point: the second address is exactly `8` bytes above an address that already passed the alignment probe, so the alignment test on the second probe cannot fail; that probe can only fail its permission or bounded-memory check, which raises `Fault_DataPage`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdip-example role=example -->
-## Non-normative address example
+## Worked example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `16` and base plus displacement is `0x110`. The memory access uses `0x110`. The second `8`-byte store uses `0x118` after both addresses pass preflight.
+- `hl.sdip 20, 21, [2, -2]` with GPR2 = `0x4000`, GPR20 = `0x1122334455667788`, and GPR21 = `0x99aabbccddeeff00`.
+
+- The displacement `-2` multiplied by `8` is `-16`, so the two addresses are `0x3ff0` and `0x3ff8`.
+
+- The first store writes `0x88`, `0x77`, `0x66`, `0x55`, `0x44`, `0x33`, `0x22`, `0x11` at `0x3ff0` through `0x3ff7`, and the second writes `0x00`, `0xff`, `0xee`, `0xdd`, `0xcc`, `0xbb`, `0xaa`, `0x99` at `0x3ff8` through `0x3fff`, both in increasing address order.
+
+- `SrcD`, `SrcD1`, and `SrcR` keep their pre-instruction values, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

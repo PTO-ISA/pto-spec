@@ -17,48 +17,76 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-purpose role=purpose -->
-## What HL.SH.PO does
+## What `HL.SH.PO` stores
 
-`HL.SH.PO` is a standalone `48`-bit AGU instruction that forms a register-offset address and stores one aligned little-endian `2`-byte value.
+`HL.SH.PO` is a standalone `48`-bit scalar AGU instruction that stores one `2`-byte little-endian unit from `SrcD` and publishes an advanced base through `RegDst`.
+
+The canonical assembly is `hl.sh.po SrcD, [SrcL, SrcR<{.sw,.uw}><<1], ->{t, u, Rd}`.
+
+Design point: the access uses the original `SrcL` value and the advanced base goes to the separate `RegDst` field, so a pointer that must be preserved and a pointer that must advance are selected by the destination field alone.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address is formed
 
-`HL.SH.PO` transforms `SrcR` according to `SrcRType`, multiplies the result by `2`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The offset is the `SrcR` snapshot selected by `SrcRType`, left-shifted by `1`, and it is added to the `SrcL` snapshot modulo `2^PTO_XLEN`, which gives the computed address.
 
-After complete preflight, the instruction performs one little-endian `2`-byte store from its snapshotted store-data source.
+The scale is `1`, so the encoded register offset counts `2`-byte units: an index of `1` advances the base by `2` bytes.
 
-Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.
+The update mode is post-index: the access uses the original `SrcL` value, and the sum `SrcL` plus the offset is published to `RegDst` only after the store succeeds.
+
+The address is probed before the store, and `SrcD` is read before that probe; on success one `2`-byte little-endian store and one relaxed store event are performed.
+
+Design point: the alignment rule applies to the post-index access address, which is the original base, and not to the published sum; a published base that is odd is therefore legal.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operands
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies store data; `RegDst` receives the updated base; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+- `SrcD`, `SrcL`, and `SrcR` are `5`-bit Reg5 source selectors: codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed, and code `0` reads the architectural zero GPR.
+
+- `SrcRType` is `2` bits applied to `SrcR` before the shift: `00` keeps the whole register value, `01` and `10` replace it with the signed and unsigned readings of its low `32` bits, and `11` is reserved.
+
+- `RegDst` is a `5`-bit destination selector: codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard that one result without suppressing the store.
+
+Design point: `RegDst` may name `SrcL`, `SrcR`, or `SrcD`; the address, the offset, and the stored data all come from the pre-instruction values, so the write-back cannot change what the store used.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL`, `SrcR`, and `SrcD` are all read before the store, so a `RegDst` naming one of them cannot change the base, the offset, or the stored data.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+A successful execution records one relaxed store event and changes only the `2` bytes of the unit.
+
+A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+The updated base is published after the store, and `TPC` then advances by `6` bytes. A rejected or faulting attempt does not retire.
+
+Design point: the base is published only after the store succeeds, so a faulting attempt leaves `RegDst` at its old value and a reissue recomputes the same address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- The effective address must be a multiple of `2`. A misaligned address raises `Fault_DataAlignment` before translation or permission; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+- A fixed-bit mismatch, or a source selector naming an unavailable `T` or `U` entry, raises `Fault_IllegalInstruction` at `PC` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- `SrcRType` raw `11` is reserved: it raises `Fault_IllegalInstruction` at `PC` before any source is read, so the address modifier decode only defines `00`, `01`, and `10`.
+
+- A fault records no store event and publishes no base: memory, `SrcD`, `RegDst`, and `TPC` keep their values, so recovery recomputes the snapshot, the address, the probe, and the store.
+
+Design point: the alignment probe tests the original base, so an odd base fails the store even though the published sum may be even; the rule follows the range that is actually accessed.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sh-po-example role=example -->
-## Non-normative address example
+## Worked example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and the fixed shift `1`, the offset is `4` and base plus offset is `0x104`. The memory access uses `0x100`, and the computed sum is published only after success. If aligned and permitted, the instruction stores `2` bytes at that address.
+- `hl.sh.po 20, [2, 7<<1], ->4` with `SrcRType` `01`, GPR2 = `0x1000`, GPR7 = `0x8`, and GPR20 = `0xbeef`.
+
+- The index `0x8` left-shifted by `1` gives an offset of `16`; the access uses the original base `0x1000` and the sum `0x1010` is published to `RegDst` `4`.
+
+- The store writes `0xef`, `0xbe` at `0x1000` through `0x1001` in increasing address order.
+
+- `SrcD` and `SrcL` keep their pre-instruction values, and `TPC` advances by `6` bytes after `RegDst` `4` receives `0x1010`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
