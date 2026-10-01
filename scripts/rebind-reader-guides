@@ -354,16 +354,13 @@ def attest(unit_ids: list[str], batch_id: str, contexts: dict[str, str],
             continue
         old_claims = set(item["reviewed_claim_ids"])
         old_nodes = set(item["reviewed_node_ids"])
-        stale_claims = {
-            claim for claim in old_claims
-            if any(claim.startswith(f"PTO-READER-CLAIM-{_suffix(english, u)}-") for u in selected
-                   if u in item["unit_risks"])
-        }
-        stale_nodes = {
-            node for node in old_nodes
-            if any(node.startswith(f"PTO-READER-NODE-{_suffix(english, u)}-") for u in selected
-                   if u in item["unit_risks"])
-        }
+        touched = [u for u in selected if u in item["unit_risks"]]
+        claim_owners = owners_of(english, touched, "CLAIM")
+        node_owners = owners_of(english, touched, "NODE")
+        stale_claims = {claim for claim in old_claims
+                        if any(owner.match(claim) for owner in claim_owners)}
+        stale_nodes = {node for node in old_nodes
+                       if any(owner.match(node) for owner in node_owners)}
         _drop_units(item, selected, "reviewed_claim_ids", "reviewed_node_ids",
                     stale_claims, stale_nodes)
         if not item["unit_risks"]:
@@ -376,16 +373,13 @@ def attest(unit_ids: list[str], batch_id: str, contexts: dict[str, str],
         item = json.loads(path.read_text(encoding="utf-8"))
         if not selected & set(item["unit_ids"]):
             continue
-        stale_claims = {
-            claim for claim in item["reviewed_claim_ids"]
-            if any(claim.startswith(f"PTO-READER-CLAIM-{_suffix(english, u)}-") for u in selected
-                   if u in item["unit_ids"])
-        }
-        stale_nodes = {
-            node for node in item["reviewed_node_ids"]
-            if any(node.startswith(f"PTO-READER-NODE-{_suffix(english, u)}-") for u in selected
-                   if u in item["unit_ids"])
-        }
+        touched = [u for u in selected if u in item["unit_ids"]]
+        claim_owners = owners_of(english, touched, "CLAIM")
+        node_owners = owners_of(english, touched, "NODE")
+        stale_claims = {claim for claim in item["reviewed_claim_ids"]
+                        if any(owner.match(claim) for owner in claim_owners)}
+        stale_nodes = {node for node in item["reviewed_node_ids"]
+                       if any(owner.match(node) for owner in node_owners)}
         _drop_units(item, selected, "reviewed_claim_ids", "reviewed_node_ids",
                     stale_claims, stale_nodes)
         if not item["unit_ids"]:
@@ -473,6 +467,23 @@ def attest(unit_ids: list[str], batch_id: str, contexts: dict[str, str],
 
 def _suffix(english: dict[str, dict], unit_id: str) -> str:
     return id_suffix(english[unit_id])
+
+
+def identifier_owner(kind: str, suffix: str) -> re.Pattern[str]:
+    """Match exactly the claim or node identifiers one unit suffix owns.
+
+    Unit identifiers extend each other. ``PTO-BLOCK-BSTART`` owns
+    ``PTO-READER-CLAIM-BLOCK-BSTART-001``, and the text of that identifier also
+    prefixes every identifier of ``PTO-BLOCK-BSTART-FP`` and of the other units
+    whose identifier starts with ``BLOCK-BSTART``. A prefix test would therefore
+    drop their reviewed claims when one of them is rebound. Anchor the trailing
+    number instead.
+    """
+    return re.compile(rf"PTO-READER-{kind}-{re.escape(suffix)}-\d+\Z")
+
+
+def owners_of(english: dict[str, dict], unit_ids: list[str], kind: str) -> list[re.Pattern[str]]:
+    return [identifier_owner(kind, _suffix(english, unit_id)) for unit_id in unit_ids]
 
 
 def _refresh_english_digests(item: dict, units: dict[str, dict]) -> None:
